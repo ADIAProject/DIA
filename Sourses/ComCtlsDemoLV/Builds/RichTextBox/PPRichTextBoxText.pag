@@ -1,0 +1,79 @@
+VERSION 5.00
+Begin VB.PropertyPage PPRichTextBoxText 
+   Caption         =   "Text"
+   ClientHeight    =   4350
+   ClientLeft      =   0
+   ClientTop       =   0
+   ClientWidth     =   6450
+   PaletteMode     =   0  'Halftone
+   ScaleHeight     =   4350
+   ScaleWidth      =   6450
+   Begin VB.TextBox TextSingleLineText 
+      Height          =   315
+      Left            =   120
+      TabIndex        =   1
+      Top             =   120
+      Visible         =   0   'False
+      Width           =   6180
+   End
+   Begin VB.TextBox TextMultiLineText 
+      Height          =   4095
+      Left            =   120
+      MultiLine       =   -1  'True
+      ScrollBars      =   3  'Both
+      TabIndex        =   0
+      Top             =   120
+      Visible         =   0   'False
+      Width           =   6180
+   End
+End
+Attribute VB_Name = "PPRichTextBoxText"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+Private FreezeChanged As Boolean
+
+Private Sub PropertyPage_ApplyChanges()
+With PropertyPage.SelectedControls(0)
+If .MultiLine = True Then
+    .Text = TextMultiLineText.Text
+Else
+    .Text = TextSingleLineText.Text
+End If
+End With
+End Sub
+
+Private Sub PropertyPage_SelectionChanged()
+Dim i As Long
+FreezeChanged = True
+With PropertyPage.SelectedControls(0)
+If .MultiLine = True Then
+    TextMultiLineText.Visible = True
+    TextSingleLineText.Visible = False
+    TextMultiLineText.Text = .Text
+    TextSingleLineText.Text = vbNullString
+Else
+    TextMultiLineText.Visible = False
+    TextSingleLineText.Visible = True
+    TextMultiLineText.Text = vbNullString
+    TextSingleLineText.Text = .Text
+End If
+End With
+FreezeChanged = False
+End Sub
+
+Private Sub TextMultiLineText_Change()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub TextMultiLineText_KeyPress(KeyAscii As Integer)
+If KeyAscii = vbKeyReturn Then KeyAscii = AscW(vbLf)
+End Sub
+
+Private Sub TextSingleLineText_Change()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
