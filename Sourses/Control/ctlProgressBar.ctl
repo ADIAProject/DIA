@@ -272,7 +272,7 @@ Private Function pvCreate() As Boolean
 
     End If
 
-    pbHwnd = CreateWindowEx(0, PROGRESS_CLASSA, "", dwStyle, 0, 0, UserControl.ScaleWidth \ Screen.TwipsPerPixelX, UserControl.ScaleHeight \ Screen.TwipsPerPixelY, UserControl.hWnd, 0&, App.hInstance, 0&)
+    pbHwnd = CreateWindowEx(0, StrPtr(PROGRESS_CLASSA), StrPtr(vbNullString), dwStyle, 0, 0, UserControl.ScaleWidth \ Screen.TwipsPerPixelX, UserControl.ScaleHeight \ Screen.TwipsPerPixelY, UserControl.hWnd, 0&, App.hInstance, ByVal 0&)
     UserControl.BackColor = vbButtonFace
 
     If pbHwnd Then

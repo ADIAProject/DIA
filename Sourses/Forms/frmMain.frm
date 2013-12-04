@@ -3,13 +3,13 @@ Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.Ocx"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "Помощник установки драйверов (Drivers Installer Assistant)"
-   ClientHeight    =   10185
+   ClientHeight    =   10935
    ClientLeft      =   3540
    ClientTop       =   4215
    ClientWidth     =   11265
    DrawStyle       =   6  'Inside Solid
    BeginProperty Font 
-      Name            =   "Lucida Console"
+      Name            =   "Courier New"
       Size            =   8.25
       Charset         =   204
       Weight          =   400
@@ -20,19 +20,19 @@ Begin VB.Form frmMain
    Icon            =   "frmMain.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   10185
+   ScaleHeight     =   10935
    ScaleWidth      =   11265
    Begin prjDIADBS.ctlUcStatusBar ctlUcStatusBar1 
       Align           =   2  'Align Bottom
       Height          =   705
       Left            =   0
       TabIndex        =   18
-      Top             =   9480
+      Top             =   10230
       Width           =   11265
       _ExtentX        =   19870
       _ExtentY        =   1244
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Lucida Console"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -46,13 +46,22 @@ Begin VB.Form frmMain
       Align           =   2  'Align Bottom
       AutoSize        =   -1  'True
       BorderStyle     =   0  'None
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
       Height          =   525
       Left            =   0
       ScaleHeight     =   525
       ScaleWidth      =   11265
       TabIndex        =   0
       TabStop         =   0   'False
-      Top             =   8955
+      Top             =   9705
       Visible         =   0   'False
       Width           =   11265
       Begin prjDIADBS.ctlJCbutton cmdBreakUpdateDB 
@@ -152,7 +161,7 @@ Begin VB.Form frmMain
             _ExtentX        =   19394
             _ExtentY        =   450
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-               Name            =   "Lucida Console"
+               Name            =   "Tahoma"
                Size            =   8.25
                Charset         =   204
                Weight          =   400
@@ -173,7 +182,7 @@ Begin VB.Form frmMain
             _ExtentX        =   19394
             _ExtentY        =   450
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-               Name            =   "Lucida Console"
+               Name            =   "Tahoma"
                Size            =   8.25
                Charset         =   204
                Weight          =   400
@@ -249,7 +258,7 @@ Begin VB.Form frmMain
             ForeColor       =   -2147483630
             MouseIcon       =   "frmMain.frx":002C
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-               Name            =   "Lucida Console"
+               Name            =   "Tahoma"
                Size            =   8.25
                Charset         =   204
                Weight          =   400
@@ -293,7 +302,7 @@ Begin VB.Form frmMain
                WordWrap        =   0   'False
                ForeColor       =   -2147483635
                BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-                  Name            =   "Lucida Console"
+                  Name            =   "Tahoma"
                   Size            =   8.25
                   Charset         =   204
                   Weight          =   400
@@ -441,13 +450,6 @@ Begin VB.Form frmMain
             Width           =   1830
             _ExtentX        =   3228
             _ExtentY        =   979
-            Caption         =   "Кнопка пакета драйверов"
-            ButtonStyle     =   3
-            PictureWidth    =   32
-            PictureHeight   =   32
-            ShowFocusRect   =   0   'False
-            XPColor_Pressed =   15116940
-            XPColor_Hover   =   4692449
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -457,6 +459,13 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
+            Caption         =   "Кнопка пакета драйверов"
+            ButtonStyle     =   3
+            PictureWidth    =   32
+            PictureHeight   =   32
+            ShowFocusRect   =   0   'False
+            XPColor_Pressed =   15116940
+            XPColor_Hover   =   4692449
             TextColor       =   0
             MenuExist       =   -1  'True
          End
@@ -509,15 +518,15 @@ Begin VB.Form frmMain
             Alignment       =   0
             GradientHeaderStyle=   1
             Begin prjDIADBS.ComboBoxW cmbCheckButton 
-               Height          =   285
+               Height          =   330
                Left            =   120
                TabIndex        =   5
                Top             =   480
                Width           =   3075
-               _ExtentX        =   4233
-               _ExtentY        =   503
+               _ExtentX        =   5424
+               _ExtentY        =   582
                BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-                  Name            =   "Lucida Console"
+                  Name            =   "Tahoma"
                   Size            =   8.25
                   Charset         =   204
                   Weight          =   400
@@ -966,6 +975,40 @@ Begin VB.Form frmMain
          End
       End
    End
+   Begin prjDIADBS.ToolTip TTStatusIcon 
+      Left            =   900
+      Top             =   9000
+      _ExtentX        =   450
+      _ExtentY        =   450
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Courier New"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      VisualStyles    =   -1  'True
+      Title           =   "frmMain.frx":01A0
+   End
+   Begin prjDIADBS.ToolTip TT 
+      Left            =   300
+      Top             =   9000
+      _ExtentX        =   450
+      _ExtentY        =   450
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Courier New"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      VisualStyles    =   -1  'True
+      Title           =   "frmMain.frx":01C0
+   End
    Begin VB.Menu mnuRezim 
       Caption         =   "Обновление баз данных"
       Begin VB.Menu mnuRezimBaseDrvUpdateALL 
@@ -1287,8 +1330,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private TT                              As cToolTipEx
-Private TTStatusIcon                    As cToolTipEx
 Private WithEvents TaskBar              As cITaskBarList3
 Attribute TaskBar.VB_VarHelpID = -1
 
@@ -4589,41 +4630,15 @@ End Sub
 '! -----------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
-'    Const WM_SYSCOMMAND As Long = &H112
-'    Const SC_CLOSE As Long = &HF060
-' Выход из программы по "Escape"
-'    If Not mbFirstStart And KeyCode = vbKeyEscape Then
-'        If Not mbCheckUpdNotEnd Then
-'            If MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
-'                Unload Me
-'                Dim lngHWnd As Long
-'                SendMessage Me.Hwnd, WM_CLOSE, 0&, 0&
-'                If Not InIDE() Then
-'                    lngHWnd = FindWindow(StrPtr("ThunderRT6Main"), StrPtr(App.Title))
-'                    If App.LogMode <> 0 Then ExitProcess GetExitCodeProcess(GetCurrentProcess(), 0)
-'                Else
-'                    lngHWnd = FindWindow(StrPtr("ThunderMain"), StrPtr(App.Title))
-'                    IDEStopProtectionHandler
-'                    SendMessage App.hInstance, WM_SYSCOMMAND, SC_CLOSE, 0&
-'                    SendMessage App.hInstance, WM_CLOSE, 0&, 0&
-'                End If
-'                Debug.Print App.Title
-'                Debug.Print frmMain.Caption
-'                Debug.Print lngHWnd & "-" & Me.hWnd & "-" & App.hInstance
-'                'SendMessage Me.hWnd, WM_SYSCOMMAND, SC_CLOSE, 0&
-'                SendMessage Me.hWnd, WM_CLOSE, 0&, 0&
-'                If Not InIDE() Then
-'                    SendMessage lngHWnd, WM_CLOSE, 0&, 0&
-'                End If
-'                SendMessage lngHWnd, WM_SYSCOMMAND, SC_CLOSE, 0&
-'                 SendMessage App.hInstance, WM_SYSCOMMAND, SC_CLOSE, 0&
-'                CloseWindow Me.Hwnd
-'            End If
-'        End If
-'    End If
-
-' Нажата кнопка "Ctrl"
-    If Shift = 2 Then
+    ' Выход из программы по "Escape"
+    If Not mbFirstStart And KeyCode = vbKeyEscape Then
+        If Not mbCheckUpdNotEnd Then
+            If MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
+                Unload Me
+            End If
+        End If
+    ' Нажата кнопка "Ctrl"
+    ElseIf Shift = 2 Then
 
         Select Case KeyCode
 
@@ -4828,11 +4843,17 @@ Dim ii                                  As Long
     ' Выставляем шрифт
     FontCharsetChange
 
-    ' Создаем элемент Всплывающей подсказки
-    Set TT = New cToolTipEx
-    TT.CreateToolTip Me.hWnd, TTS_NOPREFIX Or TTS_ALWAYSTIP, , strTTipTextTitle, 100, 400, 15000
-
-    'Me
+    ' Изменяем параметры Всплывающей подсказки для кнопок
+    With TT
+        .Font.Name = strMainForm_FontName
+        .Font.Size = lngMainForm_FontSize
+        .MaxTipWidth = Me.Width
+        .SetDelayTime TipDelayTimeInitial, 400
+        .SetDelayTime TipDelayTimeShow, 15000
+        .Title = strTTipTextTitle
+    End With
+    
+    ' Изменяем параметры кнопок и картинок
     imgOK.BorderStyle = 0
     imgOkAttention.BorderStyle = 0
     imgOkNew.BorderStyle = 0
@@ -4842,10 +4863,7 @@ Dim ii                                  As Long
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
-    'cmdRunTask.CheckExist = False
-    'cmdRunTask.EnabledCtrl = False
     cmdRunTask.Enabled = False
-    'cmdRunTask.MenuExist = True
     'загрузка меню кнопки CmdRunTask
     LoadCmdRunTask
 
@@ -5114,11 +5132,6 @@ Private Sub Form_Unload(Cancel As Integer)
 
     'Unload Me
     ' Выгружаем из памяти другие компоненты
-
-    TT.DestroyToolTip
-    TTStatusIcon.DestroyToolTip
-    Set TT = Nothing
-    Set TTStatusIcon = Nothing
     Set TaskBar = Nothing
     
     Unload Me
@@ -7429,7 +7442,7 @@ Dim TimeScriptFinish                    As Long
             End If
         End If
 
-        TT.AddToolTip acmdPackFiles(Index).mhwnd, strTTipText
+        TT.Tools.Add acmdPackFiles(Index).mhwnd, , strTTipText, True
 
         TimeScriptFinish = GetTickCount
         DebugMode str2VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
@@ -8240,9 +8253,10 @@ End Sub
 '! -----------------------------------------------------------
 Private Sub ToolTipStatusLoad()
 
-Dim arrTTipStatusIconTemp(8)            As String
+Dim arrTTipStatusIconTemp()            As String
 
-    ReDim arrTTipStatusIcon(8)
+    ReDim arrTTipStatusIcon(8) As String
+    ReDim arrTTipStatusIconTemp(8) As String
 
     DebugMode "ToolTipStatusLoad-Start"
     arrTTipStatusIconTemp(0) = "В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & str2vbNewLine & "Такие же драйвера (тех же версий) уже установлены на вашем компьютере." & str2vbNewLine & "Ваши действия:" & vbNewLine & "Никаких действий не требуется. " & str2vbNewLine & "Примечание:" & vbNewLine & "Если в колонке статус для устроуства стоит '0', то это означает:" & vbNewLine & " * - устройство блокировано;" & vbNewLine & " * - драйвер для данного устройства не активен (см. сведения в диспетчере устройств)"
@@ -8310,46 +8324,45 @@ Dim arrTTipStatusIconTemp(8)            As String
     arrTTipStatusIcon(7) = LocaliseString(strPCLangCurrentPath, strFormName, "ToolTipArrStatusIcon8", arrTTipStatusIconTemp(7))
     arrTTipStatusIcon(8) = LocaliseString(strPCLangCurrentPath, strFormName, "ToolTipArrStatusIcon9", arrTTipStatusIconTemp(8))
 
-    Set TTStatusIcon = New cToolTipEx
-
-    If TTStatusIcon.ToolTipCount > 0 Then
-        TTStatusIcon.DestroyToolTip
-    End If
-
+    ' Изменяем параметры Всплывающей подсказки для статусных картинок
     With TTStatusIcon
-        .CreateToolTip Me.hWnd, TTS_NOANIMATE, , strTTipTextTitleStatus, 100, 200, 15000
-        .MaxToolTipWidth = 500
-        .AddToolTip imgOK.hWnd, arrTTipStatusIcon(0)
-        .AddToolTip imgOkAttention.hWnd, arrTTipStatusIcon(1)
-        .AddToolTip imgOkNew.hWnd, arrTTipStatusIcon(2)
-        .AddToolTip imgOkOld.hWnd, arrTTipStatusIcon(3)
-        .AddToolTip imgOkAttentionNew.hWnd, arrTTipStatusIcon(4)
-        .AddToolTip imgOkAttentionOLD.hWnd, arrTTipStatusIcon(5)
-        .AddToolTip imgNo.hWnd, arrTTipStatusIcon(6)
-        .AddToolTip imgNoDB.hWnd, arrTTipStatusIcon(7)
-        .AddToolTip imgUpdBD.hWnd, arrTTipStatusIcon(8)
+        'Если уже созданы, то очистка
+        If .Tools.Count > 0 Then
+            .Tools.Clear
+        End If
+        .Font.Name = strMainForm_FontName
+        .Font.Size = lngMainForm_FontSize
+        .MaxTipWidth = frDescriptionIco.Width
+        .SetDelayTime TipDelayTimeInitial, 200
+        .SetDelayTime TipDelayTimeShow, 15000
+        .Tools.Add imgOK.hWnd, , arrTTipStatusIcon(0)
+        .Tools.Add imgOkAttention.hWnd, , arrTTipStatusIcon(1)
+        .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
+        .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
+        .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
+        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
+        .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
+        .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
     End With
+    
+    Erase arrTTipStatusIconTemp
 
-    'TTSTATUSICON
     DebugMode "ToolTipStatusLoad-End"
 
 End Sub
 
 ' Перезагрузка всплывающих подсказок для кнопок с драйверами
 Private Sub ToolTipBtnReLoad()
-Dim i                                   As Long
-Dim strTTipText                         As String
-
     DebugMode str2VbTab & "ReloadToolTip-Start"
-
-    If Not (TT Is Nothing) Then
-        If TT.ToolTipCount > 0 Then
-            TT.DestroyToolTip
-        End If
+    
+    'Если подсказки уже созданы, то очистка
+    If TT.Tools.Count > 0 Then
+        TT.Tools.Clear
+        TT.Title = strTTipTextTitle
     End If
 
-    ' Создаем элемент Всплывающей подсказки
-    TT.CreateToolTip Me.hWnd, TTS_NOPREFIX Or TTS_ALWAYSTIP, , strTTipTextTitle, 100, 400, 15000
+    ' Обновляем всплывающую подсказку
     UpdateStatusButtonAll True
     DebugMode str2VbTab & "ReloadToolTip-End"
 End Sub

@@ -65,11 +65,11 @@ Public Const GW_HWNDPREV                As Long = 3
 Public Const GW_OWNER = 4
 
 'Tooltip Window Constants
-'Public Const TTS_NOPREFIX        As Long = &H2
+Public Const TTS_NOPREFIX               As Long = &H2
 Public Const TTF_TRANSPARENT            As Long = &H100
 
-'Public Const TTF_IDISHWND        As Long = &H1
-'Public Const TTF_CENTERTIP       As Long = &H2
+Public Const TTF_IDISHWND               As Long = &H1
+Public Const TTF_CENTERTIP              As Long = &H2
 Public Const TTM_ADDTOOLA               As Long = (WM_USER + 4)
 Public Const TTM_ADDTOOLW               As Long = (WM_USER + 50)
 Public Const TTM_ACTIVATE               As Long = WM_USER + 1
@@ -80,9 +80,9 @@ Public Const TTM_SETTIPTEXTCOLOR        As Long = (WM_USER + 20)
 Public Const TTM_SETTITLE               As Long = (WM_USER + 32)
 Public Const TTM_SETTITLEW              As Long = (WM_USER + 33)
 
-'Public Const TTS_BALLOON         As Long = &H40
-'Public Const TTS_ALWAYSTIP       As Long = &H1
-'Public Const TTF_SUBCLASS        As Long = &H10
+Public Const TTS_BALLOON                As Long = &H40
+Public Const TTS_ALWAYSTIP              As Long = &H1
+Public Const TTF_SUBCLASS               As Long = &H10
 Public Const TOOLTIPS_CLASSA            As String = "tooltips_class32"
 
 
@@ -90,7 +90,7 @@ Public Const TOOLTIPS_CLASSA            As String = "tooltips_class32"
 Public Const WM_GETMINMAXINFO           As Long = &H24
 
 Public Type MINMAXINFO
-    ptReserved                              As POINT
+    ptReserved                          As POINT
     ptMaxSize                           As POINT
     ptMaxPosition                       As POINT
     ptMinTrackSize                      As POINT
@@ -98,7 +98,7 @@ Public Type MINMAXINFO
 End Type
 
 Public Type Resize
-    xMin                                    As Single
+    xMin                                As Single
     yMin                                As Single
     xMax                                As Single
     yMax                                As Single
@@ -126,6 +126,30 @@ Public Declare Function EnableWindow _
 Public Declare Function GetWindow _
                          Lib "user32.dll" (ByVal hWnd As Long, _
                                            ByVal wCmd As Long) As Long
+
+Public Declare Function RedrawWindow _
+                         Lib "user32.dll" (ByVal hWnd As Long, _
+                                           lprcUpdate As RECT, _
+                                           ByVal hrgnUpdate As Long, _
+                                           ByVal fuRedraw As Long) As Long
+Public Declare Function SetWindowPos _
+                         Lib "user32.dll" (ByVal hWnd As Long, _
+                                           ByVal hWndInsertAfter As Long, _
+                                           ByVal X As Long, _
+                                           ByVal Y As Long, _
+                                           ByVal CX As Long, _
+                                           ByVal CY As Long, _
+                                           ByVal wFlags As Long) As Long
+
+Public Declare Function DestroyWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
+
+Public Declare Function MoveWindow _
+                         Lib "user32.dll" (ByVal hWnd As Long, _
+                                           ByVal X As Long, _
+                                           ByVal Y As Long, _
+                                           ByVal nWidth As Long, _
+                                           ByVal nHeight As Long, _
+                                           ByVal bRepaint As Long) As Long
 
 Public Declare Function SendMessage _
                          Lib "user32.dll" _
@@ -159,11 +183,12 @@ Public Declare Function GetWindowLong _
                              Alias "GetWindowLongA" (ByVal hWnd As Long, _
                                                      ByVal nIndex As Long) As Long
 
-Public Declare Function SetWindowLong _
+'Public Declare Function SetWindowLong _
                          Lib "user32.dll" _
                              Alias "SetWindowLongA" (ByVal hWnd As Long, _
                                                      ByVal nIndex As Long, _
                                                      ByVal dwNewLong As Long) As Long
+Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 
 Public Declare Function SetWindowLongA _
                          Lib "user32.dll" (ByVal hWnd As Long, _
@@ -179,7 +204,7 @@ Public Declare Function PostMessageLong _
 
 Public Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hwndLock As Long) As Long
 
-Public Declare Function SetFocusApi _
+Public Declare Function SetFocusAPI _
                          Lib "user32.dll" _
                              Alias "SetFocus" (ByVal hWnd As Long) As Long
 

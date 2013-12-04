@@ -199,7 +199,8 @@ Private Declare Function RegSetValueEx _
                                                       lpData As Any, _
                                                       ByVal cbData As Long) As Long
 
-Private Declare Function SetWindowLong _
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+'Private Declare Function SetWindowLong _
                           Lib "user32.dll" _
                               Alias "SetWindowLongA" (ByVal hWnd As Long, _
                                                       ByVal nIndex As Long, _
@@ -439,14 +440,14 @@ Private Sub PicList_MouseDown(Button As Integer, _
                               X As Single, _
                               Y As Single)
 
-Dim ti                                  As Integer
+Dim TI                                  As Integer
 
-    ti = Int(Y \ (mComboFontSize * 2))
+    TI = Int(Y \ (mComboFontSize * 2))
 
-    If ti < mRecentCount Then
-        mListPos = mRecent(ti).fIndex
+    If TI < mRecentCount Then
+        mListPos = mRecent(TI).fIndex
     Else
-        mListPos = fList(ti - mRecentCount).fIndex
+        mListPos = fList(TI - mRecentCount).fIndex
 
     End If
 
@@ -459,18 +460,18 @@ Private Sub PicList_MouseMove(Button As Integer, _
     On Local Error Resume Next
 
     Dim tFont                           As String
-    Dim ti                              As Integer
+    Dim TI                              As Integer
 
-    ti = Int(Y \ (mComboFontSize * 2))
-    fPos = ti
+    TI = Int(Y \ (mComboFontSize * 2))
+    fPos = TI
 
     If TmrAutoText.Enabled = False Then
         SelBox.Move 0, CLng(Y \ (mComboFontSize * 2)) * (mComboFontSize * 2), PicList.ScaleWidth + 2, (mComboFontSize * 2) + 2
 
-        If ti < mRecentCount Then
-            tFont = mRecent(ti).fName
+        If TI < mRecentCount Then
+            tFont = mRecent(TI).fName
         Else
-            tFont = fList(ti - mRecentCount).fName
+            tFont = fList(TI - mRecentCount).fName
 
         End If
 
@@ -1251,7 +1252,8 @@ Dim tFormat                             As Long
         tFormat = tFormat + DT_WORD_ELLIPSIS
     End If
     tFormat = tFormat + DT_NOCLIP
-    DrawText ObjhDC, oText, Len(oText), TxtRect, tFormat
+    'DrawText ObjhDC, oText, Len(oText), TxtRect, tFormat
+    DrawTextW ObjhDC, StrPtr(oText & vbNullChar), -1, TxtRect, tFormat
 
 End Sub
 

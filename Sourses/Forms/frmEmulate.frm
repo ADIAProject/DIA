@@ -6,6 +6,15 @@ Begin VB.Form frmEmulate
    ClientLeft      =   45
    ClientTop       =   435
    ClientWidth     =   8160
+   BeginProperty Font 
+      Name            =   "Tahoma"
+      Size            =   8.25
+      Charset         =   204
+      Weight          =   400
+      Underline       =   0   'False
+      Italic          =   0   'False
+      Strikethrough   =   0   'False
+   EndProperty
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -31,7 +40,7 @@ Begin VB.Form frmEmulate
       ToolTipText3    =   "Click Here to Locate File"
    End
    Begin prjDIADBS.ComboBoxW cmbOS 
-      Height          =   315
+      Height          =   330
       Left            =   120
       TabIndex        =   0
       Top             =   1080
@@ -39,7 +48,7 @@ Begin VB.Form frmEmulate
       _ExtentX        =   13996
       _ExtentY        =   556
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -260,7 +269,7 @@ Private Sub ucFilePath_Click()
     End If
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы

@@ -33,11 +33,12 @@ Private Declare Sub CopyMemory _
                                                 ByRef Source As Any, _
                                                 ByVal Length As Long)
 
-Private Declare Function SetWindowLong _
+'Private Declare Function SetWindowLong _
                           Lib "user32.dll" _
                               Alias "SetWindowLongA" (ByVal hWnd As Long, _
                                                       ByVal nIndex As Long, _
                                                       ByVal dwNewLong As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 
 Private Declare Function VirtualAlloc _
                           Lib "kernel32.dll" (ByRef lpAddress As Long, _
@@ -70,9 +71,7 @@ Private Declare Function ScrollWindowByNum& _
                                                     ByVal lpClipRect As Long)
 
 Private Declare Function GetWindowDC Lib "user32.dll" (ByVal hWnd As Long) As Long
-Private Declare Function GetWindowRect& _
-                          Lib "user32.dll" (ByVal hWnd As Long, _
-                                            lpRect As RECT)
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 
 Private Declare Function ExcludeClipRect _
                           Lib "gdi32.dll" (ByVal hDC As Long, _
@@ -82,23 +81,41 @@ Private Declare Function ExcludeClipRect _
                                            ByVal Y2 As Long) As Long
 
 Private Declare Function GetFocus Lib "user32.dll" () As Long
-Private Declare Function IsChild _
-                          Lib "user32.dll" (ByVal hWndParent As Long, _
-                                            ByVal hWnd As Long) As Long
+Private Declare Function IsChild Lib "user32.dll" (ByVal hWndParent As Long, ByVal hWnd As Long) As Long
+Private Declare Function ClientToScreen Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINT) As Long
+Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
+Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
+Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Function GetWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
+Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
+Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcW" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
+Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
+Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function GetParent Lib "user32.dll" (ByVal hWnd As Long) As Long
 
-Private Declare Function ClientToScreen _
-                          Lib "user32.dll" (ByVal hWnd As Long, _
-                                            ByRef lpPoint As POINT) As Long
+Private Type RECT
+    Left                                As Long
+    Top                                 As Long
+    Right                               As Long
+    Bottom                              As Long
+End Type
+
+Private Type POINT
+    X                                   As Long
+    Y                                   As Long
+End Type
 
 Private Type SCROLLINFO
-    cbSize                                  As Long
+    cbSize                              As Long
     fMask                               As Long
     nMin                                As Long
     nMax                                As Long
     nPage                               As Long
     nPos                                As Long
     nTrackPos                           As Long
-
 End Type
 
 Private Const MEM_COMMIT                As Long = &H1000

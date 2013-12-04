@@ -1,0 +1,37 @@
+HALFDONE DEVELOPMENT SOFTWARE END USER AGREEMENT
+------------------------------------------------
+
+Basic idea: Don't blame me if something goes wrong and I still retain the Copyright so
+            don't just take my program and slap your name on it.
+
+
+All  title and  copyrights in  and to  The SOFTWARE  (including  but not limited to  all images,
+animations, audio,  and text) are owned  by  HALFDONE DEVELOPMENT. The SOFTWARE is protected  by
+copyright  laws.  Accordingly,  the user is  required  to  treat  The  SOFTWARE  like any  other
+copyrighted material, except as otherwise allowed by agreement with HALFDONE DEVELOPMENT.
+
+You  agree to use The SOFTWARE in compliance with all applicable laws and regulations  including
+all  laws  governing  the export or re-export of The SOFTWARE. You agree to  indemnify  HALFDONE
+DEVELOPMENT from and against your violation of any such laws or regulations.
+
+THE  SOFTWARE AND DOCUMENTATION ARE PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTY OF ANY  KIND,
+EXPRESS,   IMPLIED  OR  STATUTORY  INCLUDING  WITHOUT  LIMITATION  ANY  IMPLIED  WARRANTIES   OF
+MERCHANTABILITY, NONINFRINGEMENT OR FITNESS FOR PARTICULAR USE OR PURPOSE.
+
+IN  NO  EVENT SHALL HALFDONE DEVELOPMENT OR ITS SUPPLIERS OR RESELLERS BE LIABLE TO  YOU OR  ANY
+OTHER  PERSON  FOR ANY INDIRECT,  SPECIAL,  INCIDENTAL, OR CONSEQUENTIAL  DAMAGES  OF  ANY  KIND
+INCLUDING,  WITHOUT LIMITATION,  DAMAGES  FOR LOSS OF PROFITS  OR  DATA,  ARISING  OUT  OF  THIS
+AGREEMENT OR USE  OF  The SOFTWARE.  IN  NO  EVENT  WILL HALFDONE DEVELOPMENT BE LIABLE FOR  (a)
+ANY DAMAGES IN EXCESS  OF  THE  AMOUNT  HALFDONE DEVELOPMENT RECEIVED  FROM  YOU FOR USE  OF THE
+SOFTWARE, EVEN IF HALFDONE DEVELOPMENT HAS  BEEN  ADVISED OF THE  POSSIBILITY  OF  SUCH  DAMAGES
+AND NOTWITHSTANDING THE FAILURE OF ESSENTIAL PURPOSE OF  ANY REMEDY, OR (b) FOR ANY CLAIM BY ANY
+THIRD PARTY.
+
+This  Agreement shall be governed by the laws of the State of Massachusetts. If any provision of
+this  Agreement  is  held  to be unenforceable, such provision shall be  reformed  only  to  the
+extent  necessary to make it enforceable.
+
+
+HALFDONE DEVELOPMENT can be contacted at http://www.HALFDONE.com
+
+By running The SOFTWARE you are consenting to this agreement.

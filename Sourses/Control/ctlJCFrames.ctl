@@ -149,7 +149,6 @@ Public Enum jcStyleConst
 End Enum
 
 #If False Then
-
     Private XPDefault, jcGradient, TextBox, Windows, Messenger, InnerWedge, OuterWedge, Header, Panel
 #End If
 
@@ -173,7 +172,7 @@ Public Enum jcThemeConst
     xThemeOffice2003Style1 = 15
 End Enum
 
-'Respons?l por mover o form
+'Respons·vel por mover o form
 Public Enum jcResp
     jcTitulo = 0
     jcPainel = 1
@@ -206,11 +205,9 @@ End Enum
 Public Enum jcShadowConst
     [No shadow] = 0
     Shadow = 1
-
 End Enum
 
 #If False Then
-
     Private Shadow
 #End If
 
@@ -222,7 +219,6 @@ Public Enum IconAlignConst
 End Enum
 
 #If False Then
-
     Private vbLeftAligment, vbRightAligment
 #End If
 
@@ -238,6 +234,52 @@ End Enum
 Private useMask                         As Boolean
 Private useGrey                         As Boolean
 
+Private Type RECT
+    Left                                As Long
+    Top                                 As Long
+    Right                               As Long
+    Bottom                              As Long
+End Type
+
+Private Type POINT
+    X                                   As Long
+    Y                                   As Long
+End Type
+
+Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function CopyRect Lib "user32.dll" (lpDestRect As RECT, lpSourceRect As RECT) As Long
+Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+Private Declare Function SetWindowRgn Lib "user32.dll" (ByVal hWnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
+Private Declare Function SetRect Lib "user32.dll" (lpRect As RECT, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Private Declare Function RoundRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal Left As Long, ByVal Top As Long, ByVal Right As Long, ByVal Bottom As Long, ByVal EllipseWidth As Long, ByVal EllipseHeight As Long) As Long
+Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINT) As Long
+Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+
+' --Formatting Text Consts
+Private Const DT_LEFT                    As Long = &H0
+Private Const DT_CENTER                  As Long = &H1
+Private Const DT_RIGHT                   As Long = &H2
+Private Const DT_NOCLIP                  As Long = &H100
+Private Const DT_WORDBREAK               As Long = &H10
+Private Const DT_CALCRECT                As Long = &H400
+Private Const DT_RTLREADING              As Long = &H20000
+Private Const DT_DRAWFLAG                As Long = DT_CENTER Or DT_WORDBREAK
+Private Const DT_TOP                     As Long = &H0
+Private Const DT_BOTTOM                  As Long = &H8
+Private Const DT_VCENTER                 As Long = &H4
+Private Const DT_SINGLELINE              As Long = &H20
+Private Const DT_WORD_ELLIPSIS = &H40000
+Private Const TransColor                 As Long = &H8000000F
+
+                                             
+                                             
 '*************************************************************
 '   Members
 '*************************************************************
@@ -265,7 +307,6 @@ Private m_TextWidth                     As Long
 Private m_Height                        As Long
 Private m_TextColor                     As Long
 Private m_Alignment                     As Long
-'Private m_Font                          As StdFont
 Private m_RoundedCorner                 As Boolean
 Private m_RoundedCornerTxtBox           As Boolean
 Private m_Style                         As jcStyleConst
@@ -311,26 +352,18 @@ Private Const m_def_Collapsar = False
 
 Dim temp_height                         As Integer
 
-'Public Collapsado As Boolean
-Dim m_Responsavel                       As jcResp
-Dim m_AllowDraging                      As Boolean
-Dim m_AllowParentDraging                As Boolean
-Dim m_AtivarResizeDoForm                As Boolean
-Dim m_Collapsar                         As Boolean
-Dim m_Collapsado                        As Boolean
+Private m_Responsavel                       As jcResp
+Private m_AllowDraging                      As Boolean
+Private m_AllowParentDraging                As Boolean
+Private m_AtivarResizeDoForm                As Boolean
+Private m_Collapsar                         As Boolean
+Private m_Collapsado                        As Boolean
 
 Private m_bIsWinXpOrLater               As Boolean
 
-
-Private Declare Function DrawTextEx _
-                          Lib "user32.dll" _
-                              Alias "DrawTextExA" (ByVal hDC As Long, _
-                                                   ByVal lpsz As String, _
-                                                   ByVal n As Long, _
-                                                   lpRect As RECT, _
-                                                   ByVal un As Long, _
-                                                   lpDrawTextParams As Any) As Long
-                                                   
+'*************************************************************
+'   DRAW TEXT
+'*************************************************************
 Private Type DRAWTEXTPARAMS
    cbSize As Long
    iTabLength As Long
@@ -341,48 +374,50 @@ End Type
                                                    
 Private Declare Function DrawTextExW Lib "user32.dll" (ByVal hDC As Long, ByVal lpsz As Long, ByVal n As Long, ByRef lpRect As RECT, ByVal dwDTFormat As Long, ByRef lpDrawTextParams As DRAWTEXTPARAMS) As Long
                                                    
-'*****************************************************
+'*************************************************************
+'   FONT PROPERTIES
+'*************************************************************
 Private Const LF_FACESIZE As Long = 32
 Private Const FW_NORMAL As Long = 400
 Private Const FW_BOLD As Long = 700
 Private Const DEFAULT_QUALITY As Long = 0
 Private Type LOGFONT
-        LFHeight As Long
-        LFWidth As Long
-        LFEscapement As Long
-        LFOrientation As Long
-        LFWeight As Long
-        LFItalic As Byte
-        LFUnderline As Byte
-        LFStrikeOut As Byte
-        LFCharset As Byte
-        LFOutPrecision As Byte
-        LFClipPrecision As Byte
-        LFQuality As Byte
-        LFPitchAndFamily As Byte
-        LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
+    LFHeight As Long
+    LFWidth As Long
+    LFEscapement As Long
+    LFOrientation As Long
+    LFWeight As Long
+    LFItalic As Byte
+    LFUnderline As Byte
+    LFStrikeOut As Byte
+    LFCharset As Byte
+    LFOutPrecision As Byte
+    LFClipPrecision As Byte
+    LFQuality As Byte
+    LFPitchAndFamily As Byte
+    LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
 
 Private Const WM_SETFONT As Long = &H30
 Private Const WS_EX_RTLREADING As Long = &H2000
 
-'Private FrameHandle As Long
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
+Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+
 Private FrameFontHandle As Long
 Private FrameLogFont As LOGFONT
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
-
-
+'*************************************************************
+'   UPDATE WINDOW
+'*************************************************************
 Private Const RDW_UPDATENOW As Long = &H100
 Private Const RDW_INVALIDATE As Long = &H1
 Private Const RDW_ERASE As Long = &H4
 Private Const RDW_ALLCHILDREN As Long = &H80
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
-'*******************************************************************
 
 '*************************************************************
 '   events
@@ -477,8 +512,8 @@ Public Property Let BackColor(ByRef new_BackColor As OLE_COLOR)
 End Property
 
 'Blend two colors
-Private Function BlendColors(ByVal lﬂlor1 As Long, ByVal lﬂlor2 As Long) As Single
-    BlendColors = RGB(((lﬂlor1 And &HFF) + (lﬂlor2 And &HFF)) / 2, (((lﬂlor1 \ &H100) And &HFF) + ((lﬂlor2 \ &H100) And &HFF)) / 2, (((lﬂlor1 \ &H10000) And &HFF) + ((lﬂlor2 \ &H10000) And &HFF)) / 2)
+Private Function BlendColors(ByVal lColor1 As Long, ByVal lColor2 As Long) As Single
+    BlendColors = RGB(((lColor1 And &HFF) + (lColor2 And &HFF)) / 2, (((lColor1 \ &H100) And &HFF) + ((lColor2 \ &H100) And &HFF)) / 2, (((lColor1 \ &H10000) And &HFF) + ((lColor2 \ &H10000) And &HFF)) / 2)
 End Function
 
 Public Property Get Caption() As String
@@ -935,7 +970,6 @@ Dim m_roundedRadius                     As Long
         .FillColor = MyFillColor
         .ForeColor = MyBorderColor
         .FillStyle = IIf(blnTransparent, 1, 0)
-
     End With
 
     m_roundedRadius = IIf(blnRounded = False, 0&, LngRoundValue)
@@ -1109,98 +1143,64 @@ Attribute FillColor.VB_Description = "Returns/Sets the Fill color for TextBox an
 
 End Property
 
-'Public Property Get Font() As StdFont
-'    Set Font = m_Font
-'End Property
-
-'Public Property Let Font(ByRef New_Font As StdFont)
-'    SetFont New_Font
-'    PropertyChanged "Font"
-'    PaintFrame
-'End Property
-
-'Public Property Set Font(ByRef New_Font As StdFont)
-'    SetFont New_Font
-'    PropertyChanged "Font"
-'    PaintFrame
-'End Property
-
-'Private Sub SetFont(ByRef New_Font As StdFont)
-'
-'    With m_Font
-'        .Bold = New_Font.Bold
-'        .Italic = New_Font.Italic
-'        .Name = New_Font.Name
-'        .Size = New_Font.Size
-'    End With
-'
-'    'M_FONT
-'    Set UserControl.Font = m_Font
-'
-'End Sub
-
-
 Public Property Get Font() As StdFont
 Attribute Font.VB_Description = "Returns a Font object."
 Attribute Font.VB_UserMemId = -512
-Set Font = PropFont
+    Set Font = PropFont
 End Property
 
 Public Property Let Font(ByVal NewFont As StdFont)
-Set Me.Font = NewFont
+    Set Me.Font = NewFont
 End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
 Dim OldFontHandle As Long
-Set PropFont = NewFont
-Call OLEFontToLogFont(NewFont, FrameLogFont)
-OldFontHandle = FrameFontHandle
-FrameFontHandle = CreateFontIndirect(FrameLogFont)
-If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
-If OldFontHandle <> 0 Then DeleteObject OldFontHandle
-Me.Refresh
-'PaintFrame
-UserControl.PropertyChanged "Font"
+    Set PropFont = NewFont
+    Call OLEFontToLogFont(NewFont, FrameLogFont)
+    OldFontHandle = FrameFontHandle
+    FrameFontHandle = CreateFontIndirect(FrameLogFont)
+    If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
+    If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    Me.Refresh
+    'PaintFrame
+    UserControl.PropertyChanged "Font"
 End Property
 
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
-Call OLEFontToLogFont(PropFont, FrameLogFont)
-OldFontHandle = FrameFontHandle
-FrameFontHandle = CreateFontIndirect(FrameLogFont)
-If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
-If OldFontHandle <> 0 Then DeleteObject OldFontHandle
-Me.Refresh
-UserControl.PropertyChanged "Font"
-'PaintFrame
+    Call OLEFontToLogFont(PropFont, FrameLogFont)
+    OldFontHandle = FrameFontHandle
+    FrameFontHandle = CreateFontIndirect(FrameLogFont)
+    If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
+    If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    Me.Refresh
+    UserControl.PropertyChanged "Font"
+    'PaintFrame
 End Sub
 
 Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
 Dim FontName As String
-With LF
-FontName = Left$(Font.Name, LF_FACESIZE)
-CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
-.LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
-If Font.Bold = True Then
-    .LFWeight = FW_BOLD
-Else
-    .LFWeight = FW_NORMAL
-End If
-.LFItalic = IIf(Font.Italic = True, 1, 0)
-.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
-.LFUnderline = IIf(Font.Underline = True, 1, 0)
-.LFQuality = DEFAULT_QUALITY
-.LFCharset = CByte(Font.Charset And &HFF)
-End With
+    With LF
+        FontName = Left$(Font.Name, LF_FACESIZE)
+        CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
+        .LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
+        If Font.Bold = True Then
+            .LFWeight = FW_BOLD
+        Else
+            .LFWeight = FW_NORMAL
+        End If
+        .LFItalic = IIf(Font.Italic = True, 1, 0)
+        .LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
+        .LFUnderline = IIf(Font.Underline = True, 1, 0)
+        .LFQuality = DEFAULT_QUALITY
+        .LFCharset = CByte(Font.Charset And &HFF)
+    End With
 End Sub
 
 Public Property Get FrameColor() As OLE_COLOR
     FrameColor = m_FrameColorIni
 End Property
 
-'==========================================================================
-' Properties
-'==========================================================================
 Public Property Let FrameColor(ByRef new_FrameColor As OLE_COLOR)
     m_FrameColorIni = TranslateColor(new_FrameColor)
 
@@ -1551,7 +1551,7 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
         m_caption_aux = TrimWord(m_Caption, R_Caption.Right - R_Caption.Left)
         'Draw text
         UserControl.ForeColor = IIf(m_Enabled, m_TextColor, TranslateColor(TEXT_INACTIVE))
-        Set Me.Font = PropFont
+        'Set Me.Font = PropFont
         lpDrawTextParams.cbSize = Len(lpDrawTextParams)
         
         If m_Style = Panel Then
@@ -1632,7 +1632,7 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
     '    End If
     Label.Move UserControl.ScaleWidth - 30, CInt(ScaleY((ScaleY(m_TextBoxHeight, vbPixels, vbTwips) - Label.Height) / 2, vbTwips, vbPixels)) - iY
     Set UserControl.Picture = UserControl.Image
-    Set Me.Font = PropFont
+    'Set Me.Font = PropFont
 End Sub
 
 Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Long)
@@ -2444,7 +2444,6 @@ Private Sub UserControl_InitProperties()
         m_Caption = .DisplayName
         m_BackColor = TranslateColor(.BackColor)
         m_FillColorIni = TranslateColor(.BackColor)
-
     End With
     
     m_Responsavel = m_def_Responsavel
@@ -2482,12 +2481,9 @@ End Sub
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
     With PropBag
-        'Set m_Font = .ReadProperty("Font", Ambient.Font)
-        'SetFont m_Font
         
         Set PropFont = .ReadProperty("Font", Ambient.Font)
         Set UserControl.Font = PropFont
-
         m_FillColorIni = .ReadProperty("FillColor", Ambient.BackColor)
         m_TextBoxColorIni = .ReadProperty("TextBoxColor", vbWhite)
         m_AtivarResizeDoForm = .ReadProperty("AtivarResizeDoForm", m_def_AtivarResizeDoForm)
@@ -2609,7 +2605,6 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
         .WriteProperty "TextColor", m_TextColor, vbBlack
         .WriteProperty "Alignment", m_Alignment, vbCenter
         .WriteProperty "IconAlignment", m_IconAlignment, vbLeftAligment
-        '.WriteProperty "Font", m_Font, Ambient.Font
         .WriteProperty "Picture", m_Icon, Nothing
         .WriteProperty "IconSize", m_IconSize, 16
         .WriteProperty "ThemeColor", m_ThemeColor, Blue

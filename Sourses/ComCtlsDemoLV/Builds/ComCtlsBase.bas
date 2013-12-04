@@ -126,15 +126,15 @@ e_ip As Integer
 e_cs As Integer
 e_lfarlc As Integer
 e_onvo As Integer
-e_res(3) As Integer
+e_res(0 To 3) As Integer
 e_oemid As Integer
 e_oeminfo As Integer
-e_res2(9) As Integer
+e_res2(0 To 9) As Integer
 e_lfanew As Long
 End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function VirtualAlloc Lib "kernel32" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal flAllocType As Long, ByVal flProtect As Long) As Long
-Private Declare Function VirtualProtect Lib "kernel32" (ByRef lpAddress As Any, ByVal dwSize As Long, ByVal flNewProtect As Long, ByRef lpflOldProtect As Long) As Long
+Private Declare Function VirtualProtect Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flNewProtect As Long, ByRef lpflOldProtect As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
 Private Const MEM_COMMIT As Long = &H1000
@@ -399,7 +399,7 @@ If PEHdr.Magic = IMAGE_NT_SIGNATURE Then
     IATPos = lpIAT
     Do Until IATPos >= lpIAT + IATLen
         If DeRef(IATPos) = OldLibFncAddr Then
-            VirtualProtect ByVal IATPos, 4, PAGE_EXECUTE_READWRITE, 0&
+            VirtualProtect IATPos, 4, PAGE_EXECUTE_READWRITE, 0
             CopyMemory ByVal IATPos, NewAddr, 4
             HookIATEntry = IATPos
             Exit Do

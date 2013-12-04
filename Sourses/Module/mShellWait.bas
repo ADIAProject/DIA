@@ -456,6 +456,7 @@ Static Busy                             As Boolean
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
+                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile If InStr(.lpParameters, """") Then .lpParameters = Replace(.lpParameters, """", """""""")
                 End If
                 'MSDN's instructions don't seem to work in XP

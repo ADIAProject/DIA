@@ -964,7 +964,7 @@ If CheckBoxTransparentBrush <> 0 Then
     CheckBoxTransparentBrush = 0
 End If
 UserControl.Refresh
-If CheckBoxHandle <> 0 Then RedrawWindow CheckBoxHandle, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
+RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub
 
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long

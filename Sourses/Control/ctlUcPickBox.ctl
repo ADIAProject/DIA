@@ -1048,7 +1048,7 @@ Const FUNC_CWP                          As String = "CallWindowProcA"
 Const FUNC_EBM                          As String = "EbMode"
 
     'VBA's EbMode function allows the machine code thunk to know if the IDE has stopped or is on a breakpoint
-Const FUNC_SWL                          As String = "SetWindowLongA"
+Const FUNC_SWL                          As String = "SetWindowLongW"
 
     'SetWindowLongA allows the cSubclasser machine code thunk to unsubclass the subclasser itself if it detects via the EbMode function that the IDE has stopped
 Const MOD_USER                          As String = "user32.dll"

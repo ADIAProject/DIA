@@ -244,7 +244,7 @@ PROC_EXIT:
 PROC_ERR:
 
     If Not mbSilentRun Then
-        MsgBox "Error:  Err.Number: " & err.Number & " Err.Description: " & err.Description, vbExclamation + vbOKOnly, "GetValueString"
+        MsgBox "Error:  Err.Number: " & Err.Number & " Err.Description: " & Err.Description, vbExclamation + vbOKOnly, "GetValueString"
 
     End If
 
@@ -298,22 +298,17 @@ Public Function IniStringPrivate(ByVal SekName As String, _
                                  ByVal IniFileName As String) As String
 
 'строковый буфер(под значение ключа)
-'Dim sTemp                               As String * 2048
 Dim sTemp(4096) As Byte
 Dim nTemp                               As Long
 
     'в неё запишется количество символов в строке ключа
-    'nTemp = GetPrivateProfileString(SekName, KeyName, "no_key", sTemp, 2048, IniFileName)
-    'sTemp = Space$(2048)
-    nTemp = GetPrivateProfileStringW(StrPtr(SekName), StrPtr(KeyName), StrPtr("no_key"), VarPtr(sTemp(0)), 4096, StrPtr(IniFileName))
-    
-    'Debug.Print Left$(StrConv(sTemp(), vbUnicode), nTemp * 2)
-    'Debug.Print Left$(Format$(sTemp(), vbUnicode), nTemp * 2)
-    IniStringPrivate = Left$(Format$(sTemp(), vbUnicode), nTemp * 2)
-    'IniStringPrivate = Left$(sTemp(), InStr(sTemp(), vbNullChar))
-    IniStringPrivate = TrimNull(IniStringPrivate)
+    'ограничение - параметр не может быть больше 4096 символов
+    nTemp = GetPrivateProfileStringW(StrPtr(SekName), StrPtr(KeyName), StrPtr("no_key"), VarPtr(sTemp(0)), -1, StrPtr(IniFileName))
 
-    'ограничение - параметр не может быть больше 255 символов
+    IniStringPrivate = Left$(sTemp(), nTemp * 2)
+    IniStringPrivate = TrimNull(IniStringPrivate)
+    Erase sTemp
+
 End Function
 
 '! -----------------------------------------------------------

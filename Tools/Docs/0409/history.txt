@@ -1,0 +1,892 @@
+"Excuse me for my english. Givenned text translated with use the online-service "translate.google.com""
+
+!To install the update program, you must unzip the archive with the replacement of all files.
+
+The Indications:
+	"-" - Correct mistake
+	"+" - Added function
+	"*" - Make-up change
+	"!" - An Important notes on working the program.
+
+Version 5.10.29 Final (29.10.2013)
+	+ Added the "Save information about the devices to emulate a program on the other PC"
+	+ Added form for emulation . Now also allows you to select the target operating system.
+	* Fixed issue progress if more than one tab, and some of them are empty
+	* Adding additional debug messages
+	* Optimization of the program loading and indexing driver packages
+	* Improved responsiveness of the program to index the driver packages
+	* Add information on the current progress in the implementation of the program header
+	* Fixed the GUI
+	* Code optimization program
+	* Updated support for markers prozvoditelya operating systems and laptops, for the correct determination of the touchpad
+
+Version 5.10.4 Final (04.10.2013)
+	- Fixed compatibility analysis of drivers, if markers FORCED or STRICT were in the beginning.
+	- Fixed some rare errors in indexing driverpack's.
+	* Performance indexing increased by 20%.
+	- Fixed run the program without driverpack's.
+	* Replacement of the many elements of the interface to more stable .
+	+ Added partial to emulate the program to another computer on the basis of the file %Temp%\DriversInstaller\HwidsTempExt.txt, which is created each time then you start the program.
+	  Emulated by all except the version of the operating system. Functionality is available via the menu item - "Updating drivers database - Download information of another PC (Emulation work)".
+	* Added support for the latest markers
+	* Updated Program System Information Viewer to version V4.40
+	* Updated program Unknown Device Identifier to version V8.01
+	* Updated program DevManView to version V1.35
+	
+Version 5.7.17 Final (17.07.2013)
+	* Changed the procedure for checking updates , added a timeout waiting for a response from the server = 5 seconds , the update check is in asynchronous mode , ie without "freezing" of the program .
+	* Changed to switch between tabs in different modes
+	* Increased stability of the application, fixes random crashes the program - have been replaced with some GUI elements.
+	+ Added additional messages if there are no suitable driver packages in different modes of operation
+	* Work Mode "Removing older versions of the driver packages" also adapted for DriverPacksTeam Driverpack's, previously tested only on SamLab Driverpack's
+	- Fixed mode "Removing non-existent database driverpack's if in the program is more than one tab
+	+ Added functionality (requires testing) of the unzipped driver packages. Operating mode is mutually exclusive , ie, either the directories or files.
+	To enable it, set in the configuration file DriversInstaller.ini
+		[OS]
+		DP_is_aFolder = 1
+	- Fixed a bug when running the program with the parameters for resource recovery program
+	* Responsiveness of the program when you start external processes
+	* Updated the other language files
+	* Updated program DevManView to version V1.30
+
+Version 5.4.18 Final (18.04.2013)
+	- Fixed a few bugs
+	* Updated Program System Information Viewer to version V4.36
+
+Version 5.4.15 Final (15.04.2013)
+	This is a summary list of the changes since the last public version 3.12.12
+	! Attention, renamed configuration file - now DriversInstaller.ini, instead settings.ini
+	
+	[GUI Changes]
+	* Large restyling program appearance (changed/added many elements), expanding the program settings on registration
+	* Change progressbar systems 6.x - now the progress is displayed on taskbar
+	* Fixed displacement of some elements in the form of the different operating systems.
+	* The form of display information about the operating system in the future, this form may be filled with information.
+	* The field is added to the main form with the information about the computer model/motherboard
+	* Changed dialog delete index files for non-existent driver packages
+	* Increased the height of the status bar
+	* The language files are converted to Unicode, for a correct display of text.
+	* In the language files (*. Lng) added parameter that determines the code page - "Charset". This parameter is required for correct display of text in elements that are not supported Unicode. For example, Russia's code page Windows 1251, and, accordingly, "Charset = 1251".
+	* Stretching the program in full screen, after screen resolution change the program if it was less than 800x600
+	* In the settings you added bordered text fields when focused
+	
+	[Functional]
+	+ Added the ability to copy to the clipboard HWID (context menu)
+	+ Rewrote functionality for working with the command line. To date, the program provides the following initial options:
+	  "/?", "/h", "-h", "-help", "/help" - display the Help window;
+	  "/Extractdll [: path]" - extract files from program to the specified directory, if a directory is specified, the recovery is a temporary location;
+	  "/Regdll" - registration of software components (dll and ocx);
+	  "/s[(:|=) mode]", "-s[(:|=) mode]", "-s[(:|=) mode]" - Run silent mode installation of drivers, with the ability to select selection of drivers.
+		  Parameter [mode] can be set to mode "installation (compatible drivers)" and "Installation (Full - the whole package)," respectively:
+		  n or n2 - Select driver packages with newer drivers
+		  q or q2 - Select driver packages with unknown drivers,
+		  a or a2 - Select all driver packages to the tab can be set.
+	  "/t[(:|=) time]", "-t[(:|=) time]", "-t[(:|=) time]" - time in seconds, before the start silent mode install the drivers. The default interval is 10 seconds.
+	+ Added functionality "Removing legacy driver packages", is available in the "Update databases".
+	+ Drayverpak TouchPad tested for compatibility only on laptops
+	+ For accurate selection of drivers for touchpad, Samlab markers introduced by producers, the right driver is located in the subfolder\%NOTEBOOK_VENDOR% _nb\
+	  The program analyzes the information on the laptop manufacturer and marker and make a decision on the compatibility of
+	  For complete support of all manufacturers of notebook and flexibility of the program, introduced support for the filter parameter %NOTEBOOK_VENDOR% and retrieval of information on the laptop manufacturer
+	  To file DriversInstaller.Ini added a new section
+		[NotebookVendor]
+			FilterCount = 22
+			Filter_1 = 3Q;*3q*
+			Filter_2 = Acer;*acer*
+			Filter_3 = Alienware;*alienware*
+			Filter_4 = Apple;*apple*
+			Filter_5 = Asus;*asus*
+			Filter_6 = BenQ;*benq*
+			Filter_7 = Clevo;*clevo*
+			Filter_8 = Dell;*dell*
+			Filter_9 = eMachines;*emachines*
+			Filter_10 = Eurocom;*eurocom*
+			Filter_11 = Fujitsu;*fujitsu*
+			Filter_12 = Getac;*getac*
+			Filter_13 = Gigabyte;*gigabyte*
+			Filter_14 = iRU;*iru*
+			Filter_15 = HP;*hp*;*hewle*
+			Filter_16 = Lenovo;*lenovo*
+			Filter_17 = LG;*lg*
+			Filter_18 = MSI;*msi*;*micro-star*
+			Filter_19 = Packard;*packard* bell*
+			Filter_20 = Samsung;*samsung*
+			Filter_21 = Sony;*sony*;*vaio*
+			Filter_22 = Toshiba;*toshiba*
+		where Filter_X =%NOTEBOOK_VENDOR%; required text for information on product model, supports search mask
+	- Fixed work on systems nt6 when the DEP (on Windows Server 2003 to work properly it is necessary to add a program to the exceptions DEP, until the solution is not found)
+	* Added an additional check in the formation of the restore point, as on server platforms, it does not work.
+	* Removed the obsolete driver database indexing algorithms
+	* Removed the obsolete mode "Read the drivers," now reads ever.
+	* Fixed fitting algorithm drivers if no markers in inf does not clearly indicate the version of the operating system.
+	* For information about the version of Windows is taken now by using WMI, under the old system had problems in determining the version of Windows Blue
+	
+	[Debug]
+	+ Debug mode settings in a separate block of the program settings.
+	+ Added option "Create a log-file in the subdirectory" logs "program
+	+ Added the ability to create a log file with a unique name. Template file name is written in the program settings.
+	+ In debug mode settings added to the "Add a date and time in each line of the log file"
+	* In the setting debug mode divided the "path to log file" - now have to specify two parameters, the catalog to create a log file, and the file name pattern
+	* At the end of the debug-log added synthesis of available drivers to install, To compare the selection of drivers (more functionality added in version 5.4.4, but I was not described)
+	
+	[Other]
+	* Slightly modified procedure of checking software upgrade, the inaccessibility of the site.
+	* Optimizing ads Api-functions
+	* Many other minor fixes.
+	* Updated Ukrainian translation (thanks Lisabon)
+	* Updated Czech translation (Thanks Tron - Marek Pavlik)
+	* Updated other language files
+	* Updated program DevManView to version V1.30
+	* Updated Program System Information Viewer to version V4.35
+
+Version 5.4.12 RC5 (12.04.2013)
+	* Minor changes in some elements for better Unicode support
+	* Added translation on the fly tooltips for the driver packages, after a change of language in the program.
+	* Fixed behavior of the "List of all the drivers ..." if there is a device driver not found, the default is a list for them
+	* Fixed behavior of the "Scan for hardware changes" in the form of a "list of all the drivers ..."
+
+Version 5.4.11 RC4 (11.04.2013)
+	- Fixed "Runtime error '429 ': ActiveX component can't create object" when saving the settings, and then restart the program at the request of
+	* Fixed scaling of certain elements of the form is resized
+	* Fixed behavior progressbar for certain operations on Vista and above
+
+Version 5.4.9 RC3 (09.04.2013)
+	+ DriverPack's "TouchPad" tested for compatibility only on laptops
+	+ For accurate selection of drivers for touchpad, Samlab markers introduced by producers the right driver is located in the subfolder \%NOTEBOOK_VENDOR%_nb\
+	  The program analyzes the information on the laptop manufacturer and marker and make a decision on the compatibility of
+	  For complete support of all manufacturers of notebook and flexibility of the program, introduced support for the filter parameter %NOTEBOOK_VENDOR% and retrieval of information on the laptop manufacturer
+	  To file DriversInstaller.Ini added a new section
+		[NotebookVendor]
+		  FilterCount = 22
+		  Filter_1 = 3Q;*3q*
+		  Filter_2 = Acer;*acer*
+		  Filter_3 = Alienware;*alienware*
+		  Filter_4 = Apple;*apple*
+		  Filter_5 = Asus;*asus*
+		  Filter_6 = BenQ;*benq*
+		  Filter_7 = Clevo;*clevo*
+		  Filter_8 = Dell;*dell*
+		  Filter_9 = eMachines;*emachines*
+		  Filter_10 = Eurocom;*eurocom*
+		  Filter_11 = Fujitsu;*fujitsu*
+		  Filter_12 = Getac;*getac*
+		  Filter_13 = Gigabyte;*gigabyte*
+		  Filter_14 = iRU;*iru*;
+		  Filter_15 = HP;*hp*;*hewle*
+		  Filter_16 = Lenovo;*lenovo*
+		  Filter_17 = LG;*lg*
+		  Filter_18 = MSI;*msi*;*micro-star*
+		  Filter_19 = Packard;*packard*bell*
+		  Filter_20 = Samsung;*samsung*
+		  Filter_21 = Sony;*sony*;*vaio*
+		  Filter_22 = Toshiba;*toshiba*
+		where Filter_X =%NOTEBOOK_VENDOR%;"required text for searching information on product model, supports search mask"
+	* Minor changes in some elements for better Unicode support
+	* Updated Czech translation (Thanks Tron [Marek Pavlik]))
+	* At the end of the debug-log added synthesis of available drivers to install, To compare the selection of drivers (this functionality added in version 5.4.4, but it was not described)
+
+Version 5.4.5 RC2 (05.04.2013)
+	- Fixed error "Invalid use of NULL" when running on windows 8
+	- Fixed handling Charset for the font selection of a language menu
+	* Increased the height of the status bar
+	* Updated Ukrainian translation (thanks Lisabon)
+	* In the settings you added bordered text fields when focused
+
+Version 5.4.4 RC1 (04.04.2013)
+	+ Rewrote functionality for working with the command line. To date, the program provides the following initial options:
+	   "/?", "/h", "-h", "-help", "/help" - display the Help window;
+	   "/extractdll [: path]" - extract files from program to the specified directory, if a directory is specified, the recovery is a temporary location;
+	   "/regdll" - registration of software components (dll and ocx);
+	   "/s[(:|=)mode]", "-s[(:|=)mode]", "-s[(:|=)mode]" - Run silent mode installation of drivers, with the ability to select selection of drivers.
+		Parameter [mode] can be set to mode "installation (compatible drivers)" and "Installation (Full - the whole package)," respectively:
+		n or n2 - Select driver packages with newer drivers
+		q or q2 - Select driver packages with unknown drivers,
+		a or a2 - Select all driver packages to the tab can be set.
+	   "/t[(:|=)time]", "-t[(:|=)time]", "-t[(:|=)time]" - time in seconds, before the start silent mode install the drivers. The default interval is 10 seconds.
+	! All language files are converted to Unicode, for a correct display of text.
+	* In the language files (*. Lng) added parameter that determines the code page - "Charset". This parameter is required for correct display of text in elements that are not supported Unicode. For example, Russia's code page Windows 1251, and, accordingly, "Charset = 1251".
+	- Fixed bug of the folding element for Frame
+	* Stretching the program in full screen, after screen resolution change the program if it was less than 800x600
+	+ Added functionality "Removing legacy driver packages", is available in the "Update databases".
+	* For information about the version of Windows is taken now by using WMI, under the old system had problems in determining the version of Windows Blue
+	+ In debug mode settings added to the "Add a date and time in each line of the log file"
+	* In the setting debug mode divided the "path to log file" - now have to specify two parameters, the catalog to create a log file, and the file name pattern
+	* Refactoring
+	* Improved stability of the application
+	
+Version 4.12.29 Beta (29.12.2012)
+	* Fixed fitting algorithm drivers if no markers in inf does not clearly indicate the version of the operating system.
+	* The form of display information about the operating system in the future, this form may be filled with information.
+	* Changes in the GUI for blocks Frame, as well as the added element folding Frame
+	* Small changes in the GUI when scaling forms
+	- Fixed some minor bugs
+	* Optimizing ads Api-functions
+	* Removed the obsolete mode "Read the drivers," now reads ever.
+	
+Version 4.12.25 Beta (25.12.2012)
+	- Fixed delete index files for non-existent driver packages
+	* Changed dialog delete index files for non-existent driver packages
+	- Fixed run the program, if there are packages with not created indexes
+	+ Added the ability to copy to the clipboard HWID (context menu)
+	- Fixed function to open a dialog for selecting the directory, if the working directory was the network path (UNC)
+	+ Added some new strings in language files
+	* Removed obsolete software algorithms
+	- Fixed improper selection of drivers, if the installation is blocked in inf
+	- A few other minor bugs
+	* Setting the debug mode in a separate block of program options.
+	+ Added the ability to create a log file with a unique name. Template file name is written in the settings.
+	* Updated language files
+	
+Version 4.12.12 Alpha (12.12.2012)
+	! Attention, renamed configuration file instead DriversInstaller.ini settings.ini
+	
+	* Large restyling program appearance (changed/added many elements) and expanding the program settings on registration
+	* Change progressbar systems 6.x - now the progress is displayed on taskbar
+	+ Added option "Create a log-file in the subdirectory" logs "program
+	- Fixed work on systems nt6 when the DEP (on Windows Server 2003 to work properly it is necessary to add a program to the exceptions DEP, until the solution is not found)
+	+ Added an additional check in the formation of a restore point - on server platforms, it does not work.
+	+ On the main form field is added to the information about the computer model/motherboard
+	* Slightly modified procedure of checking software upgrade, the inaccessibility of the site.
+	Fixed displacement of some elements in the form of the different operating systems.
+	* Many other minor fixes.
+
+Version 3.12.12 Final (12.12.2012)
+	! Attention, the program will require to re-create the index files
+	* Improved algorithm for matching drivers on the basis of section [Manufactured], take into account the feature when the driver can approach 6.0 and 6.1 and 6.2
+	+ Support of the "markers" (the idea used in the collection SamDrivers - driveroff.net) program to help better identify the compatibility of the driver if it is difficult to determine on the basis of section [Manufactured]
+	- Fixed incorrect definition program OS - Windows 8
+	- Fixed a crash program to Permison Denied error when deleting temporary files
+	- Fixed error when building the DB, the program sometimes could not identify the device name and wrote "Not defined in the inf"
+	- Fixed error when building the database when the program can write data to the wrong version of the driver
+	+ Added Czech translation (Thanks Tron)
+	* Description of the "Extract" (context menu in group mode)
+	+ Added the ability to copy to the clipboard HWID (context menu)
+	- Fixed a bug where in the database could be found right driver if the same part HWID, for example, you device is in "USB\CLASS_09" and in the database there is an entry HWID "FLUSB\CLASS_09"
+	* By default, the program opens the tab "Update available"
+	* HWID added to exceptions PCI\CC_0604, Settings.ini file if you already have, then change the setting manually
+		[OS]
+		ExcludeHWID = USB\ROOT_HUB*;ROOT\*;STORAGE\*;USBSTOR\*;PCIIDE\IDECHANNEL;PCI\CC_0604
+	* Added check and create the directory for the file "Debug", if it does not exist.
+	* Added the ability to resize form in Mode "selective installation" 
+	+ Selection rules are modified drivers, is now added another feature in the structure of inf-files - Exceptions for installation on certain systems, if there is a section referred to in [manufactured], but it is empty.
+	* Fixed tabs work to go to the start mode after updating indexes when the program starts
+	- Fixed non-fatal errors when working with tabs, if the driver is found in the first DP
+	* Added sorting an array of filenames obtained driver packages. On systems with Fat32 program receives a list of files is not sorted by name
+	- Fixed behavior of the progress in the program if only one tab
+	* Many other minor fixes.
+	* Updated program DevManView to version V1.27
+	* Updated Program System Information Viewer to version V4.33
+	+ Updated Program Unknown Device Identifier to version V8.0
+	
+	! Supported "markers" version and bit:
+	5x64 - Windows XP x64
+	5x86 - Windows XP x86
+	6x64 - Windows Vista x64
+	6x86 - Windows Vista x86
+	7x64 - Windows 7 x64
+	7x86 - Windows 7 x86
+	8x64 - Windows 8 x64
+	8x86 - Windows 8 x86
+	NTx64 - Windows Vista/7/8 x64
+	NTx86 - Windows Vista/7/8 x86
+	Allx64 - All Windows x64
+	Allx86 - All Windows x86
+	AllXP - Windows XP x86/x64
+	All6 - Windows Vista x86/x64
+	All7 - Windows 7 x86/x64
+	All8 - Windows 8 x86/x64
+	WinAll - All Windows
+	STRICT - If the marker comes after another marker version OS, it should be that the driver is only installed on the system is not less than the specified
+	FORCED - If the marker comes after another marker version OS, removed the priorities determine the compatibility of the driver under section [Manufactured] inf-file
+
+Version 3.04.12 RC1 (12.04.2011)
+	+ For a custom installation added a selection of drivers in groups, "Unidentified or powered down", "Update Available", "Installed", "Older than the established."
+	+ Added ability to extract the driver (selected or all that apply). Available for group treatment.
+	+ More accurate selection of drivers. To install the driver will be offered that are matched to the fullest HWID.
+	+ For additional utilities added to the setup executable file for 64-bit OS. If the setting is not specified, the default is to run a file, prescribed for 32-bit OS.
+	- Fixed appearance of messages at work in quiet mode.
+	- There was no transfer of some elements. Fixed.
+	* Updated program DevManView to version V1.22 (Added run 64-bit version).
+	* Updated Program System Information Viewer to version V4.17 (Added run 64-bit version).
+	* Changed the checkbox element in all forms.
+	* Fixed the displacement of some elements in the form on different operating systems.
+	* Many other small fixes.
+
+Version 3.02.16 Final (16.02.2011)
+	+ For each tab, the tab is added to the group of driver packages "All the driver packages", "Update Available", "Unidentified," "Installed", "DB is not created."
+	+ Added full support for compatible HWID for each device on your computer. Parameter in settings.ini - [OS] CompatiblesHWID = 1
+	  To work correctly, you must turn off the option "Treat duplicate HWID", and then restart the program and re-create the database.
+	  Increases the startup time, but is required to more accurately determine the appropriate drivers.
+	* Significant speed optimization run the program.
+	* Starting with version 2.12.15 program is very slow with the cd\dvd and on the network. Now, the launch speed is almost independent of the location of the program.
+	+ Now compatible HWID searched in all the tabs for all OS. Return to the old mode of operation is possible through the setting: Section [OS] SearchCompatibleDriverOtherOS = 0
+	+ When you run the program looks for the unknown device driver (not in the index files), and if such changes the description and the text color button "List all your hardware drivers + Search the Internet for the HWID".
+	  When you press this button the program displays a list of missing drivers in the database program where you can search for drivers on the Internet.
+	+ Added a new option for the supported operating systems - "Ignore the bit OS.
+	+ In the "Tools" menu added new paragraphs:
+	    Update the status of all driver packages (the current tab) Shift + F6
+	    Scan for hardware changes (the current tab) Shift + F5
+	+ Added a new option when the program starts: Do not handle the tab for unsupported operating systems. Parameter in settings.ini - [OS] LoadUnSupportedOS = 0
+	  Buttons driver packages for these operating systems will not change the status at startup, thereby reducing the startup time.
+	  After loading the status can be changed for each button separately (context menu) or for all tabs SHIFT + F6
+	* Fixed progress not correct behavior when loading the program.
+	+ Added possibility to change the font and font color for new bookmarks via the setup program.
+	* Added change of the parameter "Process compatible HWID (CompatibleIDs)" via the interface.
+	- Fixed partially removing temporary directories.
+	- Considered a rare feature of the Inf-file, because of which could not get entry into the database.
+	- Fixed error handling if the driver database in the database only one line.
+	- Fixed incorrect behavior of the checkbox. Checkmark posed only after the item was removed from the mouse.
+	+ Added the hidden settings - Section [Main] option LoadIniTmpAfterRestart. If the parameter is "0", then the option is not included in the work, and if "1", the logic is as follows:
+	  1. When the program is a CD\DVD settings saving program, the temporary file %temp%\settings_dia_tmp.ini;
+	  2. With the positive response to a request to restart the program after saving the program will start with new settings;
+	  3. In the usual exit from the program a temporary configuration file is deleted.
+	* Many other minor changes
+	* Updated program DevManView to version V1.20.
+	* Updated Program System Information Viewer to version V4.16.
+
+Version 2.12.24 RC2 (24.12.2010)
+	- Fixed bug in comparing drivers by date, if the option display the date format as dd/mm/yyyy
+	+ Added Hotkeys:
+		Ctrl+Q - Allocation of driver packages with unidentified driver
+		Ctrl+S - Select all the driver packages in the current tab
+	* At the time of creating a restore point, the basic form elements are disabled.
+	+ Added a new command-line option to run in quiet mode-s [mode] (includes-t10).
+	  Parameter determines which packets to provide for the installation.
+	  Option [mode] can take values for Setting mode (compatible drivers) "and" Set (Full - the whole package), respectively:
+		n or n2 - Select driver packages with newer drivers.
+		q or q2 - Select driver packages with unidentified driver.
+		a or a2 - Select all driver packages on the tab.
+
+Version 2.12.15 RC1 (15.12.2010)
+	- Fixed a bug with tabbed SSTab, if the program there is only one driver package on the tab than the first (Lisabon).
+	- Fixed a bug with tabbed SSTab, if there is a folder with the package of drivers, specified in the settings (ShaddyR).
+	* Speed up the program for the analysis of driver packages. Startup time decreased by more than two times (depending on computer configuration).
+	* Updated archiver 7-zip (7za.exe) to version 9.20 Final.
+	* Updated Program System Information Viewer to version V4.15.
+	* Updated Turkish language file (Rokobozz)
+	+ Added a new option in settings.ini
+		[Description]
+		BuildBy = (My Super-Puper collection of drivers)
+	  This option will add the author builds his description/authorship in the title of the program.
+	  If this parameter is empty or missing, the header of the main window is formed by default ...
+	* The distribution is added to a set of icons denote buttons driver packages from Lisabon.
+
+Version 2.10.28 Final (28.10.2010)
+	- Fixed some bugs when running on Windows 2000.
+	- Fixed display of the path of the alternate folder temp.
+	* Added check for zero bytes inf-file (Thanks to Komsomolets).
+	+ Added ability to change the date format in the version in dd/mm/yyyy - more appropriately for Russian users.
+	+ Added search functionality of new devices plug and play when you start the program - to collect information about your computer.
+	  After searching may put a pause to wait for the reaction of the computer.
+	+ Added possibility to create a restore point when you start the program and through the "Tools" menu.
+	- Fixed an error processing program devcon, due to which the program could not see some of the device are not installed a driver or drivers have startup problems.
+	* Fixed handling version of the driver in the driver database, if the field is "Unknown".
+	* When loading a program no longer creates a file with a list HWID (Build file for visual browsing ...).
+	  File will be created at the first call on the Tools menu - Show HWIDs computer devices (text file).
+	+ Completely rewritten the collection of information about drivers. Information no longer read through WMI, but is taken directly from the registry. Reading speed is minimal.
+	* Optimized the function of converting the date.
+	+ Optimized search algorithm for the best driver in the driver package. The rate of selection has increased by about 30%.
+	* The list of exceptions HWID added: PCIIDE\IDECHANNEL and ROOT\*.
+	+ Partially implemented to search for compatible drivers (in Device Manager, referred to as - "The code (ID) device")
+	  (Can be disabled via settings.ini - [OS] MatchingHWID = 0).
+	- Fixed function to read data from registry. Improperly took into account the user's registry.
+	- Fixed a bug with the tabs.
+	+ On the form "List all your hardware + driver search on the Internet HWID" updated modes of working with groups.
+	  Added a mode of "No drivers in the database" - displays the list of drivers for whom the program did not detect any drivers.
+	  Added checkbox "Hide everything except the selected group."
+	* In the construction of base drivers for the device name is no longer taken into account the uniqueness.
+	* Changed the select mode drayverpakov "Featured" when used in comparing drivers to date. No longer selected drayverpaki with the old drivers.
+	* On the Tools menu - for the item "Show DPInst.log" added check for file existence. If there is no file menu item is inactive.
+	+ Added localization program of the Ukrainian language. (Thanks to Lisabon)
+	* The shape of the "About ..." added information about the current transfer program (the author, and the ability to go to his website)
+	  From the Language menu is removed information about the authorship of the translation.
+	* From the library resources of the program removed msinfo.dll (this library is no longer used by the program).
+	* Changed bypassing the form elements by pressing "Tab".
+	+ Added selection of the active driver package by pressing "Space"
+	* Some menu items are added hotkeys
+	+ Added keyboard shortcuts for the following modes:
+	 	Ctrl + A - Select all driver packages
+	 	Ctrl + Z - Deselect all driver packages
+	 	Ctrl + N - Select driver packages with newer drivers
+	 	Ctrl + I - Set selected driver
+	 	Ctrl + U - Update/create a database of drivers for the designated driver packages
+	 	Ctrl + Tab - round-trip through the tabs. Switching occurs only in active tabs
+	 	Ctrl + Break - Break batch
+	- Fixed saving settings on exit.
+	+ The distribution is added to the program Unknown Devices V1.4.20 (Developer - Huntersoft http://www.halfdone.com/ukd/). Available from the menu "Tools".
+	  The program displays all devices in the computer, and allows you to identify unknown devices in its database.
+	  For example, is very useful when Drivers Installer Assistant found several drivers for the same device, and you do not know which driver set!
+	* Updated archiver 7-zip (7za.exe) to version 9.17 beta.
+	* Updated program DevManView to version V1.12.
+	* Updated Program System Information Viewer to version V4.13.
+
+Version 2.9.18 Final (18.09.2010)
+	- Fixed a bug when you save the program settings from a Windows 64-Bit (Thanks to 007lion007, SamLab, IvGrad, BadPointer, Lisabon)
+	- Fixed an error starting the program with one driver package, if it is not in the first folder of supported operating systems (Thanks to Lisabon)
+	- Fixed bug when comparing date if the month or day was equal to 12
+	- Fixed incorrect map data on a form with custom installation
+	- Fixed compatibility analysis of drivers under section [Manufacturer] inf-file drivers (Thanks to rusfedan, BadPointer)
+	  If had several coincidences on HWID Analiz first match was negative then remaining not analyzed
+	- Fixed handling HWID Monitor
+	- Fixed small bug when creating a database using native drivers
+	* Updated Turkish language file (Thanks to rokobozz)
+	* Updated Program System Information Viewer to version V4.12
+	* Replaced some icons
+
+Version 2.9.10 Final (10.09.2010)
+	- Fixed a bug is not the activity of certain items in the settings.
+	* Added comments for new items to the settings from version 2.8.1916.
+	- Fixed bug does not create the database, if the path contain the characters "()" or spaces.
+	* Optimization of the regime sorting HWID. Rates database drivers enabled mode sort HWID, increased on average by 20-40%
+	+ Added support devcon.exe for 64-bit operating systems.
+	- Fixed error "Invalid property value".
+	* Fixed display of date "local" driver. Previously displayed as dd.mm.yyyy, but in the drivers accepted value mm/dd/yyyy.
+	+ Added a new block settings: "Comparison of versions of drivers. There you can change the mode of comparison drivers: by date or version.
+	  Comparison of versions should be more correct when comparing to date. Since the inf-file field has the format DriverVer DriverVer = mm/dd/yyyy[,wxyz].
+	* If you save the program settings, in the process of restarting the message - now it is with a timer for 4 seconds to close.
+	+ Added new option "Silent registration/updating dll"
+	* Sort the file being displayed on HWID is now available for the native parsing algorithm works.
+	- Fixed a procedure for creating a database containing the data was entered incorrectly variable% var% in HWID.
+	- When deleting files, databases of missing driver packages removed file DevDBVersions.ini - corrected
+	- In some cases the program could not find the current HWID driver in the database (due to the presence of lines are rarely used characters) - fixed.
+	* Change the appearance of the tooltip - is now more like a table.
+	* When deleting a package of drivers, as well as removing non-existent database driver driver packages from the file is deleted DevDBVersions.ini relevant information.
+	* "Ride and" DPinst: replacement of resources and optimization of the dialogues (Thanks Jekson07, Bizonozubr, rokobozz)
+	- Re-fixed a bug where in case of failure in a group setting, all elements remain locked
+	* Removed the column "Section" in the tooltip.
+	+ Added context menu for the driver packages "Remove device drivers"
+	+ Added menu "Auto Update configuration equipment when removing drivers" in the "Tools" menu.
+	+ Added button "Scan for hardware changes" in the form of "List all devices on your computer ..."
+	+ If the form "List all devices on your computer ..." removed the driver, then after closing the form you are prompted to update the hardware configuration.
+	- Fixed incorrect behavior of the checkbox. Checkmark to ask only once removed from the element the mouse.
+	* Changed the form of checks for program updates. Now in the form of text displayed in the format rtf. At the top switch is added for viewing change history of the program.
+	* Update language file (Thanks stasys44 and rokobozz)
+	* Optimization of code.
+	* Updated Archiver 7za to version 9.16 beta.
+	* Updated program DoubleDriver to version V4.1.1
+
+Version 2.8.16 Stable Beta (16.08.2010)
+	+ Added a new mode of parsing inf-files. The regime is based on the algorithm BadPointer - analysis using the regular expression RegExp.
+	  This mode provides faster processing of inf-files. Also possible inclusion sorting displayed in the data file for the HWID.
+	* Optimized native mode parser inf-files. The rate of work increased by an average of 7-15%, depending on the configuration of your computer.
+	+ Added a new block configuration - "Creating a Database Driver" These settings control the operating modes of parsing inf-file.
+	  In the settings you can change the parameters of processing duplicate HWID, and also choose a processing mode inf-files: by Romeo91 or by BadPointer.
+	  In the ini-file all the settings are stored in the section [DevParser]
+	+ The database driver when processing inf-file is added to the new field-section-in which is placed in a section which was found HWID. For example, INTEL.MFG.NTX86.5.1
+	  This section analyzes the program for compatibility of the current driver and the chosen OS.
+	  Thus, the program does not offer to install the driver unsuitable, for example, placed in a folder by mistake.
+	  Accordingly, the corrected tooltips and tables. Unfortunately clues were even longer.
+	+ When you create a database driver in the directory with the database driver file is created DevDBVersions.ini, which recorded version of the database.
+	  This version will read the program and in case of discrepancy of the program and version of the database, message will be issued a badge with this package will remain as "Database not available".
+	+ Added check for return codes program 7-zip (2 - Fatal error, 7-Command line error, 255 - User stopped the process)
+	  If there are errors in your program, then the message and work with this archive is suspended.
+	+ Added a new item in the popup menu button driver package - "Test data driver package in the program 7-zip"
+	- Fixed a bug where the program will not run if configured count of tabs was less than 3.
+	+ If you run the program did not find the tab with the necessary drivers (setup "Operating System"), you have a message.
+	  For only available mode of a database driver, all functions of the installation will be blocked.
+	- Fixed overlay objects, if the number of tabs on one line was less than the total number of tabs.
+	+ On the Tools menu - Added new item "Update information on all packages.
+	  Which causes the system to initialize the search for new devices, then the program collects data and updates the data on all packages.
+	  This functionality can help when, after installing the drivers, the system could be new devices, but the program they are not yet aware, and therefore offers no drivers for installation.
+	* In the default settings:
+	   for 1 tabs [OS_1] display values:
+	   	Ver = 5.0; 5.1; 5.2
+	     instead:
+	   	Ver = 5.1; 5.2
+	   for 3 tabs [OS_3] exhibited values:
+	   	Ver = 6.0; 6.1
+	   	Name = Vista\7\Server 2008\Server 2008 R2 x64
+	     instead:
+	   	Ver = 6.0
+	   	Name = Vista x64
+	  For those who use the default program settings, it is recommended to delete the file Settings.ini and run the program again.
+	* On the main form of control is replaced by Checkbox, for better readability and to correct errors display on some systems.
+	+ When you save the program settings, you are prompted to restart the program.
+	* At the stage of collecting information about your computer basic form of the program is blocked. This is done in order to remove a window appears with the buttons "Switch to" and "Retry", if at this stage you are applying to the program.
+	* Fixed minor translation errors.
+	* If you put up the option "Hide the tabs ...", the width of each tab is calculated from the total count of wa tabs. Now the width to fit the width of the window.
+	* Removed a few frames at the main elements of the form, the general perception of the form should improve.
+	* Updated program System Information Viewer to version V4.11
+	* Updated program DevManView to version V1.10
+	* Updated program DoubleDriver to version V4.1.0
+
+Version 2.7.29 Final (29.07.2010)
+	- Fixed bug (introduced in 2.7.26) where a case of refusal when a group setting, all elements remain locked
+	- Fixed "no transfer" some of the main menu and context menu when you select the type of installation.
+	+ The distribution program was added DoubleDriver V4.0.0 (Developer - Budy Setiawan Kusumah http://www.boozet.org). This is a very handy utility to create copies of driver system.
+	* When you run the system checks for the existence of working directory of additional utilities (DevManView, DoubleDriver, System Information Viewer, Unknown Device Identifier), and if the directory does not exist, then the corresponding menu items are hidden.
+	* Updated device database programs, System Information Viewer, Unknown Device Identifier (in the future this will occur without reference to the list of changes since the base is updated very often)
+
+Version 2.7.26 Final (26.07.2010)
+	* Renumbered versions of the program. Now the second and the third group of digits in the version indicate the month and day of issue of release.
+	- Fixed a fatal error, because of which in some cases the program does not start, and without errors.
+	- Fixed bug: If the program settings spelled several identical OS (different directories) and there was a setting to "inactive tabs ...", then all supported operating systems, except the last have become inactive
+	- For the language file "Turkish.lng" changed the language identifier (ID = 041f)
+	- Fixed handling of language files, if there were some language files with the same identifier ID
+	- Fixed a database of drivers, if the program has only one driver package.
+	+ Implemented optionally hide the tabs driver packages for unsupported OS.
+	  That is, for example, for Windows XP will show only those tabs, for which the settings spelled OS version 5.1
+	+ You can view the properties of the device drivers the computer using the "Device Manager". Available on the shortcut menu window "List of all devices on your computer ..."
+	+ Added ability to remove the device drivers the computer using devcon. Available on the shortcut menu window "List of all devices on your computer ..."
+	* In the "List of all devices on your computer ..." double click on the line properties of the device appears.
+	+ In the "List of all devices on your computer ..." in the table added a new column "Device ID", which displays the full code device instance.
+	* Fixed a function to create a database driver. Removed extra characters (";), that in very rare cases (for example, the package "WebCam") could fall into the HWID, and other fields when parsing inf-files.
+	+ Added ability to set in language files IDs (LCID).
+	  For example, English (ID = 0409, 0009; 0c09; 2809; 1009, 2409, 4009, 1809, 2009, 4409, 1409, 3409, 4809; 1c09; 2c09; 0809, 3009; 3c09; 3809)
+	- Fixed errors when running on systems using Unicode.
+	! to correctly display Unicode-character in "Regional Settings - Language programs for non-Unicode", should be the language used in the program.
+	* In setup mode "The installation (complete - the whole package) to install all the packages are now active, and not just those that are found suitable driver.
+	* Updated Archiver 7za to version 9.15 beta.
+	- Fixed "does not translate" menu items added in version 2.4.0
+	+ Added progress bar in batch mode to install drivers for stage decompression drivers.
+	+ Added ability to interrupt the group mode to install drivers for unpacking stage driver (the program work archiver 7zip does not interrupt, and waits until the end of the unpacking of the current archive).
+	* Added visualization of transition (the effect of pressing buttons, checkboxes retracting after deep) from one package to another when unpacking drivers in batch mode.
+	* When using the program (Unpacking\install drivers, creating\update database drivers) unused elements of the main window is blocked, until the end of work.
+	+ The distribution program was added Unknown Device Identifier V7.0 (Developer - Huntersoft http://www.zhangduo.com/).
+	  The program displays all of the computer, and allows you to identify unknown devices in its database.
+	  For example very useful when Drivers Installer Assistant found several drivers for the same device, and you do not know which driver set!
+	+ The distribution program was added System Information Viewer V4.10 (Developer - Ray Hinchliffe http://rh-software.com).
+	  The program displays a lot of detailed information about the operating system and computer, and also monitors the temperature of various components of the computer.
+	+ The distribution program was added DevManView V1.07 (Developer - Nir Sofer http://www.nirsoft.net).
+	  The program is an alternative to the standard controller devices. All devices are displayed in a table
+	+ In the "Help" menu item was added to the "Download driver packages ...", leading to the forum section of the program with direct links to download the driver packages command DriverPacksTeam.
+	- Fixed inaccuracy when the program can not display the sign, the fact that the driver is not installed
+	* Also fixed many many other small fix in the program, did everything they remember! :)
+
+Version 2.4.0 PreFinal (21.05.2010)
+	* Changed the registration of the system libraries (MSFLXGRD.OCX, TabCtl32.Ocx, msinfo.dll, vbscript.dll, RICHTX32.ocx):
+	  If the library or ActiveX component is missing, is extracting a file from the resources of the program and register it in the system, with a preliminary copy the system directory.
+	  If the library or ActiveX component is present, but an older version than the program uses, the default program asks the user to upgrade. Further, in the affirmative, is used before unregistering a file, extract the new file from the resources of the program and register it in the system, with a preliminary copy the system directory.
+	  Request to update you can hide, holding the appropriate settings in the file Settings.ini (SilentDll = 1 in Section [Main])
+	  Update the file vbscript.dll now occurs only for 32-bit systems 2000/XP/2003
+	+ Added functionality allows you to re-update the status of the buttons (button labels) driver packages. This function is available for a specific driver package (from the context menu), or for all crystals (in the Tools menu)
+	- Fixed bug due to which the program can not display the driver package, if the previous directory (tab) does not contain the driver package.
+	  For example, if the directory ".\Drivers\XP" - is empty, then the first driver package from the directory ".\Drivers\vista" is not displayed.
+	+ Added a message to migrate to the site Driverpacks.net, if the program runs without a single driver package.
+	  Some interface elements at the same time blocked to avoid errors.
+	+ Go to "About" menu item added "Visit DriverPacks.net"
+	* Updated Archiver 7za to version 9.13 beta.
+	* Added additional error messages for the appearance of type "ActiveX component can't create object".
+	- Fixed bug in handling the return code of the program at DPInst Nongroup mode installation. As a result, which in some cases, the processes finish-processing files or update the status of the buttons can be run when it should not have to do.
+	- Fixed a bug when calling the "story" notation keys.
+	- Fixed bug when resizing the program window after loading. Error occurs if there was, at least one inactive tab.
+	* Changed behavior of pop-up window on the possible obsolescence of the program. Now the window does not appear every time you start, but once in 5 days after 45-day period.
+	* Updated documentation in Russian
+
+Version 2.3.39 PreFinal (09.03.2010)
+	- Fixed search drivers in the database. Due to an error, some drivers could not get in the list available for installation.
+	- Fixed several rare error when creating database draverov, some drivers could not get into the base of drivers, because of the curvature of inf-file.
+	- Fixed some of the functions work on Win2k.
+	  In the distribution program update version devconw2k.exe, work correctly on Windows 2000.
+	  Settings ways also appeared in the interface.
+	+ Cleaning driver database. Now when you create a database of drivers duplicates HWID are simultaneous matches for "HWID - Catalog - inf-file.
+	  Earlier taken into account and the version name. As a result, the proposed list of drivers for installation can be reduced.
+	  Rates database increased.
+	+ Now when you create a database of drivers DriverPack *.ini file is copied to the driver database.
+	  As a result of this accelerated installing drivers when the file handling "finish".
+	  Also removed puknty menu: "Define and prescribe classes of driver packages in the settings" and "Edit class and to register the driver package in the setup.
+	! Attention. To work correctly, this version of the program, drivers need to re-create the database.
+	* When processing files "finish" is no longer verified the existence of the file installation panels.
+	  This is done for the possibility of the teams start the installation type "cmd.exe /c DEL /F /S /Q %DPSROOT%\D\3run\vcredist_x86_2005_sp1.exe".
+	- Fixed many errors in the processing finish-files
+	+ Slightly increased the speed of execution.
+	- Fixed delete temporary directories, sometimes remained empty folders.
+	+ Added removal of temporary files that remain after installing the drivers to exit the program.
+	+ When you run the program checks the version used her system libraries.
+	  If the version is lower than the required program, the program displays a message asking to update the components.
+	- Fixed bug due to which, sometimes after work DPInst not zapuskazalas processing files "finish" and not be updated tooltips.
+	* Cleaning and optimization package.
+	* Fixed minor shortcomings and errors.
+	+ Added Turkish interface translation (Translate by Rokobozz - www.sgnlive.org)
+	- Fixed start DPinst (click on the button the driver package), if when you start the program offers a database of drivers for the new packages. Error exists from version 2.3.0.
+	+ Added a reminder of the "necessity" test to update the program if the older version of the program 30 days.
+	+ For the parameters PathPhysX, PathLanguages, Runtimes, ExcludeFiles possible indication of the mask. For example - "drivers\XP\DP_Graphics_PhysX*.7z"
+	- Fixed a logic for the group to install the drivers. Extract all the archives is a common directory, excluding the package name drivers.
+	- Additional files for the class package Display retrieved at the end of the group set previously unpacked for each selected packet class Display
+
+Version 2.3.16 RC1 (03.02.2010)
+	* Problems of translation of several elements of the interface
+	* Date of release program is no longer taken from the date of the file.
+	+ Added Italian translation (Translate by JinKazama - www.rezet.info) (still partial)
+	+ Added Lithuanian translation (Translate by stasys44)
+	+ Fixed the English translation (Thank to stasys44)
+	+ New functionality allows you to exclude certain HWID from processing.
+	  Default excludes the following: USB\ROOT_HUB*; ROOT\LEGACY_*; ROOT\MEDIA; STORAGE\*; USBSTOR\*
+	  Changing the settings available in the Options menu under the 'Supported OS'
+	! Use this functional must be very carefully
+	* Ability to change the size of some forms
+	* Removed several messages at work in quiet mode.
+	* Fixed offset program when you change screen resolution when running on-demand programs.
+	- Fixed run on Windows 2000
+	- Fixed non-functional in the button to change the path to the package Runtimes
+	- Fixed bug when receiving the file size on some systems
+	* A few cosmetic changes in the interface.
+	- Fix error Automation Error (-2147217389)
+	  Added checking for file msinfo.dll on systems below the MS Windows Vista (6.0).
+	  In the library resources of the program added msinfo.dll (version 6.0.0.1230).
+	  In the absence of libraries in Windows, the program tries to register.
+	  If the error still appears, the work program is terminated.
+	* A small change in the text license and donate-information
+
+Version 2.3.5 Stable beta (19.01.2010)
+	- Fixed an annoying bug introduced in version 2.3.3.
+	  When you run the program in the working directory created file with inv.
+	  So start with CD\DVD was impossible.
+	+ Added a new button in the modes of "list of all devices on your computer + driver search on the Internet for HWID"
+	+ Added message about unavailable temporary directory% Temp%. If the temporary directory is missing, then the program shuts down.
+	* Added a few icons on the buttons.
+	* Removed several messages at work in quiet mode.
+	* Reshaping Donate
+	* Other minor changes
+
+Version 2.3.3 beta (13.01.2010)
+	- Fixed some bugs when the program start without a single driver package.
+	- Fixed "Type mismatch" when you start the program.
+	* Slightly Improved the function to create a database. Cleaning of unnecessary lines.
+	* Removed message when you run the program, about which there is no new versions.
+	* The description of the button "Execute the task ..." now displayed in brackets count allocated driver packages.
+	+ On the form, a list of all devices ... " and the list of available drivers' ability to sort the table by clicking on the name of the column
+	* Fixed some visual bugs.
+
+Version 2.3.0 beta (07.01.2010)
+	+ Increased the speed of execution when reading information on current drivers (50%). 
+	+ In the status bar added on the final time the program starts. 
+	- Rewrote the function counting the time, where it is implemented. In some cases, due to regional settings to be issued incorrect results. 
+	+ When you start the program, checked for driver packages with missing databases, if such is proposed to create a database. 
+	- Fixed function to check for updates and the associated comparison function versions. For some values of versions of the program could produce an incorrect result of the comparison. 
+	+ Added new field "Developer" and "Compatible HWID" in the table the list of drivers - See the full list of devices on the computer. 
+	* Fixed the behavior of progress, now the process should be more visible. 
+	+ Is improved form of "See the full list of devices in the computer", now search for the drivers become more comfortable and visibility. 
+	+ Is improved form "Update ...", Buttons" Download ... " got the drop-down menu. Some improvements in connection with support for multilingual interface. 
+	+ Added new option "Check for the presence of beta-versions of the program." Default is disabled. 
+	- Another attempt to correct an error when deleting temporary files when you exit the program. 
+	+ From the body of the program removed all the resources associated with the icon buttons. Now all icons can be changed. What kind of support skins ... 
+	  In connection with this change the folder structure ".\Tools\Graphics \". There were two subfolders "StatusButton" and "Main". 
+	  Standard images are located in the "Standart". 
+	  Changed configuration management icons. In the settings you can choose a separate skin for each group of icons. Example see the folder "StatusButton". 
+	* Optimized the functions work with files and directories. 
+	* Modules Devcon.exe and 7za.exe replaced by the latest version.
+
+Version 2.1.8 beta (10.12.2009)
+	+ New option for handling the new additional package DP_Runtimes_ *. 7z.
+	- Removed the closing program, with a negative result, with verification of changes to the text of the license agreement.
+	- Fixed bug when starting the program when checking the license agreement.
+	* Changed the allocation of packages in the "Recommended" in the allocation is no longer accounted for packages with equal drivers.
+	- Removed bug zadvoeniya tips for the buttons, the status displays.
+	* Length strings are stored in the parameter ExcludeFileName increased to 1024.
+
+Version 2.1.3 beta (01.12.2009)
+	- Is Corrected error of the unpacking all package driver under selective installation and unless it were prescribed parameters (PathPhysX, PathLanguages) + Partly marketed support multilanguage interface (the Language files lies in file Lang) For autocheck language is used code of the language, which registers in tongue file (for instance, Russian ID=0419, English ID = 0409).
+	  At desire of autocheck language possible to switch off and most prescribe the language of the interface at start of the program (if specified language file will be absent, that will by default is chose english).
+	  The Changed structure of the file Tools\Docs - all reference files lies in subdirectory ID-code of the language (if some from files will be absent, that will by default is chose similar in file 0409 - i.e. english).
+	! The Note: Some elements are translated only when start (for instance, text of some helps). Switching the language in interface for they do not affect.
+	+ In menu service is added new point menu "Show the full list a device computer"
+	+ In the form "to Show the full list a device computer" marketed transition on site devid.info at двойном call on line device + In the main adjustment выведен hidden parameters "to Start the external processes hidden". Under his(its) unhooking started external processes are seen user.
+	+ Checking will Added for parameter in roll, disconnecting surfacing messages Windows (HCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\EnableBalloonTi)
+	- Is Corrected logic of the image of the badge "in BD more old driver, than on computer" on button. Not badge was exposed unless all driver in BD were an старее.
+	  !If there is at least one driver in BD older than on PC, but rest are, but not newer, that is exposed sign older.
+	  !Presence new driver always in priority for exposing the badge.
+	+ For clarity in "surfacing help" is added new column "!" displaying sign of the comparison version driver ("<";">";"=").
+	  !Vsvyazi with this, is completely transcribed a function of the comparison driver. Must work the stable.
+	* Closing of any form on striking Esc
+	* Shifted to the right size of the main forms for permit 640*480
+	+ Possibility will Added to change the location of the directory Temp through menu of the adjustment. The Directory itself does not, he must exist if he is not found, that rs the directory Temp by default.
+	+ Parameter "files discardable from processing" is carried. He now available to each supported OS.
+	* The Removed message when start the program at inaccessibility of the site of the renovation.
+	- Is Corrected errors at determination local version driver.
+	- Is Corrected error when processing the parameter of the start for calm mode "-t<number seconds of the waiting>". Rotational latency was ignored.
+	* The Modules DPInst.exe and DPInst64.exe are replaced on the last from kit MS Windows Driver Kit version 7.0.0.
+	* When boot in status line are displayed name of the processed files.
+	* Ensemble of the make-up change
+	- An Attempt to correct the error of the start on some computer. When start heard sound errors and nothing more does not occur. The Ravines do not.
+
+Version 2.0.1 Final (11.09.2009)
+	- Is Corrected error of the appearance window selective installation at choice usual.
+	- Is Corrected error of the unpacking of the whole package driver in mode "compatible" if in list found driver in BD was whole one record.
+	* The Shifted to the right reference to file help.
+
+Version 2.0.0 Final (09.09.2009)
+	+ Will Added possibility "Calm" (with show GUI) of the mode of the installation driver, when start the program with parameter -t<number seconds of the waiting> (For instance -t10).
+	  The Debugging mode is included automatically.
+	  The Scenario of the start following:
+	    1. Boot the program and collection of the information about driver.
+	    2. They Are Switched in mode "Installation (compatible driver)"
+	    3. We Choose "recommended" for installing packages driver.
+	    4. We Start group installation. The Program DPInst starting in silent mode.
+	    5. If required are fixed the panels (in accordance with file finish).
+	    6. After installing program is closed.
+	  The Big part of messages is extinguished, details possible to find in file debug.log and DPInst.log Also start the calm installation possible from menu "Service".
+	+ Possibility will Added to change the parameters of the start the program DPInst (refer to. Adjustment).
+	+ Support of the functioning(working) the program will Restored under Windows 2000 + is Added additional decryption of the code of the completion of the functioning DPInst.
+	+ Determination of the size of the file will Added in surfacing help.
+	+ Extended debugging information.
+	+ At renovation or making the base driver, class of the package registers on automaton.
+	+ New point menu "will Added to View DPInst.log".
+	- Is Corrected error of the start the program from network (when worker directory has frontal "\\").
+	- Is Corrected error несохранения in adjusting the directory with alternative иконками.
+	* Kit alternative иконок is enclosed In distribution program for buttons from Amigos. Necessary to choose directory in adjustment
+	- At conservation adjustment file Settings.ini was created anew, hereunder got lost some adjustment. It Is Corrected
+	- Is Corrected error of the miss all element in window of the selective installation. And неотображения version beside some element.
+	- Is Corrected error of the miss necessary directory for unpacking in usual mode of the installation.
+	- Is Corrected error of the processing the files when making BD if were present the files without extension.
+	- Is Corrected error "subscript out of range" when start the program.
+	- Is Corrected error of the highlighting spare package driver when use the button "to select" in some mode.
+	- Are Corrected different errors when start and functioning(working) the program, when no, what or directory with driver prescribed in adjustment.
+	- Is Corrected error "Type mismatch" when reading the code of the close-down of the program DPInst.
+	  Such could occur if was fixed more than 9 drivers (the reason recoding from HEX in number).
+	* The Corrected behaviour of the program when finding version driver if unable define the local version of the driver (Neizvest.).
+	  Now, the program shows badge that there is more new driver for such variant
+	* Centering Forms is Changed on screen. Is it Now taken into account size and position to panels of the tasks (where button Starting).
+	* The Corrected appearance surfacing menu when striking on button of the package driver in mode "renovations".
+	* Added checking for record in file adjustment if file "for reading" only.
+	* Aktualizirovan help
+	* And many-many others
+
+Version 1.9.8 RC3 (03.08.2009)
+	+ Optional Change picture will Added for buttons package driver (are supported files:*.ico,*.gif,*.bmp)
+	+ is Added possibility to select the buttons a mark and produce the group operations on them.
+	+ Possibility of the selective installation will Added in mode "compatible driver". Available also to group mode.
+	  When striking the button, appears the falling out menu, where possible choose usual installation or selective.
+	+ Presentation of the list HWID computer is Changed on right button mouse, now this table.
+	- Is Corrected error at version driver. If length of the text version driver differed, that program defined that there is more new driver.
+	- Is Corrected small error when making BD. Could appear the device with HWID equal ntamd64. (the packages monitor and misc) + When change the way main scrap if whilst in transit is present the way a worker directory of the program DriversInstaller, that displayed way is cut.
+	+ Appearance скроллеров will Remade if all buttons do not enter on screen. Now скроллеры are displayed on табконтроле. Became much Better and functionally.
+	+ Possibility will Added to disconnect reading local version driver device. Available through menu of the adjustment.
+	+ Check will Added for "unascertained driver" (works only under included mode of the reading version local driver). If beside driver status "0", and is discovered version of the local driver, that иконка is not changed.
+	* It Is Removed first starting form. I.e now immediately main elements of the interface is seen.
+	* Little are changed text surfacing helps for status of the buttons. 
+	* Dialogues of the choice directory now correct (i.e. it is displayed exactly dialogue choice directory, rather then files)
+	* Little are shifted to the right procedure of the renaming of the buttons. By default name of the button is substituted in dialogue.
+	* The Corrected image of the text of the button, now text does not overrun, but correct is carried.
+	* From text of the button by default cleares out the set a symbol "x64".
+	* The Changed size of the width of the buttons by default. Now enters 5 buttons in one row.
+	* In connection with change the design are changed minimum importances of the sizes of the forms and buttons in smaller side.
+	+ License agreement will Added. It Appears under the first start the program on computer.
+	* Will Added new status of the button - goes creation BD.
+
+Version 1.8.9 RC2 (10.07.2009)
+	* The Size of the helps for indications of the buttons is reduced.
+	* The Corrected image of the helps for buttons, now list HWID looks as normal tablet, without offset.
+	+ Creation BD is Changed. When making BD in HWID are not taken into account &REV_ , &MI_ and &SS_ (presence these symbol speaks that this copy HWID).
+          Hereunder BD became "чище". It Is Required пересоздание + is Added determination all device on computer disregarding headline of the identifier (all headline it is difficult to take into account).
+	  The Program must see all device on computer, and define them if they there is in BD.
+	+ Image of the legend "status" will Added on separate form, available on striking the right button mouse in window with status.
+	* Again small change the interface.
+	
+Version 1.8.6 RC1 (06.07.2009)
+	- Is Corrected error ("Type mismatch") when reading the versions driver.
+	- A Removing the temporary files now "soft", error when leaving to be must not.
+	* The Interface main window returned to versions 1.7.0 with small change (on multiple request of the users)
+	+ When start file settings.ini first to search for in directory of the program, but in file Tools then.
+	- Is Corrected incorrect behaviour of the program at examination of the renovation.
+	+ Detailed descriptions of the indications of the buttons will Added when aiming on signature to picture.
+
+Version 1.8.1 beta (29.06.2009)
+	+ Now when start the program are read versions local driver, information falls into swimming downstream message.
+	* Little are changed exterior main window (the block state of working and statuses) + is Added reading and analysis local version driver. They Are Added corresponding to подстатусы (time of the start the program greatly increased ~1 mines.)
+	+ Possibility will Added to change the displayed name of the package driver in program (available through contextual menu) + Checking the renovation of the program обзавелась the own form (earlier was MsgBox).
+	+ New point menu "will Added to Visit the page of the program", allowing move to page of the program on forum OSZONE.
+	+ Finding device will Added with HWID, beginning with "ROOT\" (such device little, but all) + is Added possibility to disconnect processing the filename of the package driver, which forms the text of the button.
+	+ Possibility will Added to change the font and colour of the text bookmark.
+	* Corrected image of the text bookmark and location of the buttons if "number bookmark us line" "Numbers less supported OS"
+	- Is Corrected image of the total of the functioning DPInst in status line after installing driver. Sometimes total could be not displayed.
+	+ Adjustment will Added for exception from processing "spare" files, liing in directory with package DP (the name of the files are enumerated through ";").
+	- Is Corrected error at start of the program "Division by zero" (because of incorrect behaviour прогрессбара).
+          The Error appeared on system with rare subjects of the registration.
+
+Version 1.7.0 beta (17.06.2009)
+	+ New possibility will Added to define and enter the class of the package driver. For all package (is brought in ini).
+	  For separate package possible this do on right button mouse. Sensing pi start the program is included опционально.
+	+ Is Added опциональная possibility to process the files 'finish in package driver from Bashrata.
+	+ In adjustment OS is added possibility to prescribe the way before files DP_Graphics_A_PhysX_*.7z and DP_Graphics_Languages_*.7z.
+	  If in adjustment is included read the class of the package, that packages in addition unpack when installing package class "Display" + is Added possibility to delete the package a driver (through call contextual menu). The Package deletes together with file BD.
+	+ Extended message surfacing helps. The Added row "Status".
+	- Is Corrected behaviour of the program when change the sizes of the form - when form minimum importances less. Now visual jamb no.
+	- Next is once corrected renovation of the status of the button after installing driver.
+	  The Program checks returned importance DPInst, and if sees that were обновлены driver, that starts first collection to information on device (through devcon), but then renovation of the status of the buttons.
+	+ Total of the functioning(working) the program DPInst is displayed in status line. For instance (Install: 1 NOtInstall: 1 NeedReboot) + is Added possibility to change the font and colour of the text of the buttons.
+	- Is Corrected several errors of the calling the points menu when work with CD + is Changed function of the reception of the variable encirclement %Temp%.
+	  Now if whilst in transit contains gaps, that variable TEMP is defined as %windir%\Temp
+	* The Carried button "to break the renovation" on panel of the progress.
+	* Messages is Added more in status line.
+	* All processes of the archiver hidden and now are not displayed in panels.
+	* The Option to process the subdirectories is moved in block adjustment Supported OS.
+	* In resource обновлены system libraries (MSFLXGRD.OCX,TabCtl32.Ocx) on the last versions.
+
+Version 1.5.3 Final (10.06.2009)
+	* The Changed image "to Show the list available driver for PC".
+	  Now given are removed not in MsgBox, but on own form. In total all enter on screen.
+	- Is Corrected error when making directory database in mode of the renovation.
+
+Version 1.5.2 RC3 (04.06.2009)
+	+ Will Added new point menu - "Delete the files BD being absent package".
+	+ subdirectory docs and file Settings.ini are carried in directory Tools.
+	- An Options "to Start to be unfolded on the whole screen" and "Save the sizes of the form when leaving" now взаимоисключающие.
+	- Is Changed image скроллбаров if the form when start was максимизирована, but afterwards her(its) have brought back into normal type.
+	+ Adjustment "will Added to Display the text of the buttons in uppercases" (is by default switched off).
+	- Is Corrected error when making BD - got the duplicating line if name or HWID device differed the register + is Added new point POPUP menu for buttons    Show the list available driver for PC , on event if surfacing help is not displayed.
+
+Version 1.5.0 RC2 (03.06.2009)
+	- Is Corrected errors when run under Windows x64 (Happened to to abandon to file Devcon64 because of incorrect functioning)
+	- Is Added change the status of the buttons after installing driver.
+	- Is Added checking for existence of the directory BD in mode of the renovation.
+	+ At accompaniment new scrap and "OS" through adjustment, full ways are changed relative if lies in subdirectory of the program.
+	+ Scrolling will Added if all buttons do not enter on screen (the realization, possible, requires the доработки).
+	+ Little are changed exterior of the program when start + is Added new point menu - "will Update the bases for NEW package driver".
+
+Version 1.4.1 RC (26.05.2009)
+	- Is Corrected error when work with CD
+	- Is Corrected renovation of the status of the buttons under mass renovation BD
+
+Version 1.4.0 RC (26.05.2009)
+	- Is Corrected error start additional scrap.
+	- Is Corrected renovation of the status of the buttons at renovation BD.
+	- Is Corrected error of the reading the directory driver. If in directory driver last file in list was not shown by archive, that directory was ignored.
+	+ Checking will Added for permit of the screen. Minimum importance is installed in 800x600
+	- Is Changed a minimum of the form.
+	- Is Corrected image of the progress under switched off subject Windows + For страждущих has added in dop. utilities батник, correcting errors of the installation driver nvidia.
+
+Version 1.3.8 beta (23.05.2009)
+	- Is Corrected sorting additional scrap.
+	- Is Corrected filling adjusting the ways additional scrap (way themselves were changed full)
+	- After interruption of the process of the renovation button "to Break the process..." escapes
+	- Is Corrected extraction of the files driver for mode of the installation compatible driver
+	- Is Corrected error in procedure of the registrations ActiveX
+	- An Installation current вкладки at start depending on OS not always operated
+	- Is Corrected error when making BD (for file DP_PrintersHP_wnt5_x86-32_71126.7z) + is Added adjustment "to Do the inactive вкладки, not supporting your OS (except mode of the renovation BD)". Is it By default included + For package driver monitor necessary to create BD anew. In BD has changed by force ID device with monitor\XXXXXXX on display\XXXXXXX. Devcon returns exactly Display, rather then Monitor.
+
+Version 1.3.0 beta (21.05.2009)
+	- Is Corrected error of the processing the parameter "to Start unfolded..."
+	- Is Shifted to the right procedure of the start additional scrap (not importance Parameters start was zeroized) + is Added possibility in adjusting the ways additional scrap to use relative ways (including "..\"), and variable encirclements
+	- Is Corrected error необработки subdirectory if in корневом directory no nor one file.
+	- Is Corrected error of the making the temporary file BD for Ration, liing in subdirectory.
+	! Removed adjustment "to Include support a stiletto XP" (as well as her(its) processing), because of error, appearing under her(its) unhooking.
+	+ Adjustment "will Added to Save the sizes of the form when leaving", is by default switched off.
+	+ check will added in adjustment on minimum importances for sizes of the forms and buttons.
+	* Standard чекбокс is replaced new, possible visual глюки with potting by black colour disappear.
+	+ Signature will Added to button in adjustment.
+	! The Removed dependency of the program from megabyte component mscomctl.OCX, way of the small change the interface of the program "Adjustment" and change some element from given ActiveX on elements written on API + Components MSFLXGRD.OCX, TabCtl32.Ocx are added in facility of the program. Now their presence in directory of the program not it is necessary (because of this size little подрос) + Check at conservation adjustment when work with CD\DVD + For state of working, except "Renovation BD", buttons are displayed inactive if in data package driver are absent the driver for your PC. For mode of the renovation BD - always all buttons active.
+
+Version 1.1.4 beta (18.05.2009)
+	- Is Corrected errors of the conservation adjusting the program from interface.
+	+ Possibility will Added in adjustment for driver, BD, and standard scrap to indicate "..\" (i.e. on one directory above directory of the location of the program) Indicate possible only once (i.e. ..\..\..\..\ program not understand) + Added possibility in adjustment for driver, BD, and standard scrap indicate variable encirclements (for instance %windir%) + Processing subdirectory for directory keeping driver now опциональна. Corresponding to adjustment is added
+	* Checking the renovations at start is included by default
+
+Version 1.1.0 beta (17.05.2009)
+	+ Checking will Added for absence of the registrations external component (mscomctl.OCX,MSFLXGRD.OCX,TabCtl32.Ocx).
+	  The file will copy At program in system directory %windir%\system32 and will register them.
+	+ Recursive перебор files will Added in directory package driver. The Program adds the files a package driver from all subdirectory + is Added possibility to break the process of the renovation BD (at activations of the process of the renovation, appears the button for his(its) interruptions).
+	  Acts only for mode "Update the bases all package driver" + is Changed procedure of searching for local Hwid in BD. Now, the program takes in attention only given before the second слеша.
+	  For instance, correspondence to will be searched for instead of local Hwid ACPI\ATK0100\1010100 in BD ACPI\ATK0100.
+          Hereunder must disappear the problems with необнаружением driver some device, when you undoubtedly know that they there is in package driver.
+	- Is Corrected error at unpacking driver in mode of the installation "COMPATIBLE DRIVER".
+	  Under powerfully long fetter inwardly archive were extracted all files from package driver, rather then only necessary.
+	- Is Corrected error парсинга local HWID. Could appear the error "index out of bound" + is Added new adjustment allowing "partly" disconnect the style XP in program.
+	  Possible, this adjustment will help to take away some problems of the image element.
+	* the program has changed the name on engl. language - Drivers Installation Assistant. So more correct translation
+
+The Version 1.0.2 beta (13.05.2009)
+	- Is Corrected error of the functioning(working) the program if program was situated in directory, containing gaps
+	- Is Corrected error with start the reference from program + is Added calling the reference on striking the button F1 (acts only on main form)
+	* The Changed exterior of the file containing Hwid (the Point menu - Show HWIDs PC (the Text)) + is Added function автообновления (by default check is switched off, included in adjustment). Or possible start from menu 'Reference
+
+Version 1.0.0 beta (11.05.2009) First public version

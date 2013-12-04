@@ -7,7 +7,7 @@ Begin VB.Form frmFontDialog
    ClientTop       =   405
    ClientWidth     =   4425
    BeginProperty Font 
-      Name            =   "@Arial Unicode MS"
+      Name            =   "Tahoma"
       Size            =   8.25
       Charset         =   204
       Weight          =   400
@@ -31,7 +31,7 @@ Begin VB.Form frmFontDialog
       _ExtentX        =   7541
       _ExtentY        =   873
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
+         Name            =   "Tahoma"
          Size            =   18
          Charset         =   204
          Weight          =   400
@@ -53,7 +53,7 @@ Begin VB.Form frmFontDialog
       _ExtentX        =   0
       _ExtentY        =   0
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "@Arial Unicode MS"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -74,7 +74,7 @@ Begin VB.Form frmFontDialog
       _ExtentX        =   0
       _ExtentY        =   0
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "@Arial Unicode MS"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -95,7 +95,7 @@ Begin VB.Form frmFontDialog
       _ExtentX        =   0
       _ExtentY        =   0
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "@Arial Unicode MS"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -114,7 +114,7 @@ Begin VB.Form frmFontDialog
       _ExtentX        =   1191
       _ExtentY        =   556
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "@Arial Unicode MS"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -189,7 +189,7 @@ Begin VB.Form frmFontDialog
       ComboFontSize   =   10
       ButtonOverColor =   0
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -397,7 +397,7 @@ Private Sub Form_Load()
 
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange

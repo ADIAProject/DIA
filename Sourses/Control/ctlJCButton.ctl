@@ -95,7 +95,6 @@ Private Enum MsgWhen
 End Enum
 
 #If False Then
-
     Private MSG_AFTER, MSG_BEFORE, MSG_BEFORE_AND_AFTER
 #End If
 
@@ -379,12 +378,8 @@ Private m_bttRTL                        As Boolean    'Right to Left reading
 Private m_lttHwnd                       As Long
 Private m_hMode                         As Long    'Added this, as tooltips
 
-'were not displayed in
-'compiled exe. (Thanks to Jim Jose)
+
 ' --Caption variables
-
-
-
 Private lpSignRect                      As RECT    'Drop down Symbol rect
 Private m_bRTL                          As Boolean
 Private m_TextRect                      As RECT    'Caption drawing area
@@ -410,28 +405,38 @@ Private tmppic                          As New StdPicture    'Temp picture
 Private m_PicRect                       As RECT    'Picture drawing area
 Private lh                              As Long    'ScaleHeight of button
 Private lw                              As Long    'ScaleWidth of button
-
-Private Type tLOGFONT
-    LFHeight                            As Long
-    LFWidth                             As Long
-    LFEscapement                        As Long
-    LFOrientation                       As Long
-    LFWeight                            As Long
-    LFItalic                            As Byte
-    LFUnderline                         As Byte
-    LFStrikeOut                         As Byte
-    LFCharset                           As Byte
-    LFOutPrecision                      As Byte
-    LFClipPrecision                     As Byte
-    LFQuality                           As Byte
-    LFPitchAndFamily                    As Byte
-    LFFaceName                          As String * 32
+                            
+'*************************************************************
+'   FONT PROPERTIES
+'*************************************************************
+Private Const LF_FACESIZE As Long = 32
+Private Const FW_NORMAL As Long = 400
+Private Const FW_BOLD As Long = 700
+Private Const DEFAULT_QUALITY As Long = 0
+Private Type LOGFONT
+    LFHeight As Long
+    LFWidth As Long
+    LFEscapement As Long
+    LFOrientation As Long
+    LFWeight As Long
+    LFItalic As Byte
+    LFUnderline As Byte
+    LFStrikeOut As Byte
+    LFCharset As Byte
+    LFOutPrecision As Byte
+    LFClipPrecision As Byte
+    LFQuality As Byte
+    LFPitchAndFamily As Byte
+    LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
 
-Private Declare Function CreateFontIndirectT _
-                         Lib "gdi32.dll" _
-                             Alias "CreateFontIndirectA" (lpLogFont As tLOGFONT) As Long
-                             
+Private Const WM_SETFONT As Long = &H30
+Private Const WS_EX_RTLREADING As Long = &H2000
+
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
+Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+
 '  Events
 Public Event Click()
 Attribute Click.VB_Description = "Occurs when the user presses and then releases a mouse button over the button."
@@ -1243,11 +1248,11 @@ Private Sub CreateRegion()
         Case Else
             m_lButtonRgn = CreateRectRgn(0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight)
     End Select
-
-    SetWindowRgn UserControl.hWnd, m_lButtonRgn, True
+    
     'Set Button Region
-    DeleteObject m_lButtonRgn
+    SetWindowRgn UserControl.hWnd, m_lButtonRgn, True
     'Free memory
+    DeleteObject m_lButtonRgn
 End Sub
 
 Private Sub DrawSymbol(ByVal eArrow As enumSymbol)
@@ -1255,35 +1260,50 @@ Private Sub DrawSymbol(ByVal eArrow As enumSymbol)
 Dim hNewFont                            As Long
 Dim sSign                               As String
 
-    hNewFont = BuildSymbolFont(14)
+    hNewFont = BuildSymbolFont(12)
     SelectObject hDC, hNewFont
     sSign = eArrow
-    DrawText hDC, sSign, 1, lpSignRect, DT_WORDBREAK
-    '!!
+    'DrawText hDC, sSign, 1, lpSignRect, DT_WORDBREAK
+    DrawTextW hDC, StrPtr(sSign & vbNullChar), -1, lpSignRect, DT_WORDBREAK
     DeleteObject hNewFont
 End Sub
 
 Private Function BuildSymbolFont(ByVal lFontSize As Long) As Long
-
 Const SYMBOL_CHARSET                    As Integer = 2
-Dim lpFont                              As tLOGFONT
+Dim lpFont                              As StdFont
+Dim BtnLogFont As LOGFONT
 
+    Set lpFont = New StdFont
     With lpFont
-        .LFFaceName = "Marlett" & vbNullChar
-        'Standard Marlett Font
-        .LFHeight = lFontSize
-        'I was using Webdings first,
-        .LFCharset = SYMBOL_CHARSET
-        'but I am not sure whether
+        .Name = "Marlett"
+        .Size = lFontSize
+        .Charset = SYMBOL_CHARSET
     End With
 
-    'LPFONT
+    Call OLEFontToLogFont(lpFont, BtnLogFont)
     'it is installed in every machine!
     'Still Im not sure about Marlet :)
-    BuildSymbolFont = CreateFontIndirectT(lpFont)
-    'I got inspirations from
-    'Light Templer's Project
+    BuildSymbolFont = CreateFontIndirect(BtnLogFont)
 End Function
+
+Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
+Dim FontName As String
+    With LF
+        FontName = Left$(Font.Name, LF_FACESIZE)
+        CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
+        .LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
+        If Font.Bold = True Then
+            .LFWeight = FW_BOLD
+        Else
+            .LFWeight = FW_NORMAL
+        End If
+        .LFItalic = IIf(Font.Italic = True, 1, 0)
+        .LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
+        .LFUnderline = IIf(Font.Underline = True, 1, 0)
+        .LFQuality = DEFAULT_QUALITY
+        .LFCharset = CByte(Font.Charset And &HFF)
+    End With
+End Sub
 
 Private Sub DrawPicwithCaption()
 
@@ -3090,7 +3110,6 @@ Private Sub UserControl_InitProperties()
 'Initialize Properties for User Control
 'Called on designtime everytime a control is added
     m_ButtonStyle = eWindowsTheme
-    'As all the commercial buttons initialize with this them, ;)
     m_bShowFocus = True
     m_bEnabled = True
     m_Caption = Ambient.DisplayName
@@ -3373,9 +3392,9 @@ Const GCL_STYLE                         As Long = (-26)
         End If
 
         If m_bttRTL Then
-            m_lttHwnd = CreateWindowEx(WS_EX_LAYOUTRTL, TOOLTIPS_CLASSA, vbNullString, lWinStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, UserControl.hWnd, 0&, App.hInstance, 0&)
+            m_lttHwnd = CreateWindowEx(WS_EX_LAYOUTRTL, StrPtr(TOOLTIPS_CLASSA), StrPtr(vbNullString), lWinStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, UserControl.hWnd, 0&, App.hInstance, ByVal 0&)
         Else
-            m_lttHwnd = CreateWindowEx(0&, TOOLTIPS_CLASSA, vbNullString, lWinStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, UserControl.hWnd, 0&, App.hInstance, 0&)
+            m_lttHwnd = CreateWindowEx(0&, StrPtr(TOOLTIPS_CLASSA), StrPtr(vbNullString), lWinStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, UserControl.hWnd, 0&, App.hInstance, ByVal 0&)
         End If
 
         SetClassLong m_lttHwnd, GCL_STYLE, GetClassLong(m_lttHwnd, GCL_STYLE) Or CS_DROPSHADOW
@@ -4779,7 +4798,7 @@ Const PATCH_07                          As Long = 121
 Const PATCH_0A                          As Long = 186
 Const FUNC_CWP                          As String = "CallWindowProcA"
 Const FUNC_EBM                          As String = "EbMode"
-Const FUNC_SWL                          As String = "SetWindowLongA"
+Const FUNC_SWL                          As String = "SetWindowLongW"
 Const MOD_USER                          As String = "user32.dll"
 Const MOD_VBA5                          As String = "vba5"
 Const MOD_VBA6                          As String = "vba6"

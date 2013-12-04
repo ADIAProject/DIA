@@ -32,14 +32,6 @@ Begin VB.Form frmAbout
       Width           =   1450
       _ExtentX        =   3201
       _ExtentY        =   661
-      Caption         =   "HomePage"
-      PicturePosition =   0
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -49,6 +41,14 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "HomePage"
+      PicturePosition =   0
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
       TextColor       =   0
       MenuCaption0    =   "#"
       MenuExist       =   -1  'True
@@ -61,10 +61,6 @@ Begin VB.Form frmAbout
       Width           =   1575
       _ExtentX        =   3201
       _ExtentY        =   661
-      Caption         =   "Обсуждение на OsZone.Net"
-      ButtonStyle     =   3
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -74,6 +70,10 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Обсуждение на OsZone.Net"
+      ButtonStyle     =   3
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdLicence 
       Height          =   735
@@ -83,13 +83,6 @@ Begin VB.Form frmAbout
       Width           =   2050
       _ExtentX        =   3625
       _ExtentY        =   1296
-      Caption         =   "Лицензионное соглашение"
-      ButtonStyle     =   3
-      PictureWidth    =   48
-      PictureHeight   =   48
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -99,6 +92,13 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Лицензионное соглашение"
+      ButtonStyle     =   3
+      PictureWidth    =   48
+      PictureHeight   =   48
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
       TextColor       =   0
       MenuCaption0    =   "#"
    End
@@ -110,13 +110,6 @@ Begin VB.Form frmAbout
       Width           =   2150
       _ExtentX        =   3784
       _ExtentY        =   1296
-      Caption         =   "Поддержать проект"
-      ButtonStyle     =   3
-      PictureWidth    =   51
-      PictureHeight   =   28
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -126,6 +119,13 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Поддержать проект"
+      ButtonStyle     =   3
+      PictureWidth    =   51
+      PictureHeight   =   28
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
       TextColor       =   0
       MenuCaption0    =   "#"
    End
@@ -137,13 +137,6 @@ Begin VB.Form frmAbout
       Width           =   1550
       _ExtentX        =   2725
       _ExtentY        =   1296
-      Caption         =   "Закрыть"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -153,6 +146,13 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Закрыть"
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlJCbutton ctlAquaButton1 
       Height          =   1995
@@ -318,8 +318,8 @@ Private strTranslatorName               As String
 Private strTranslatorUrl                As String
 Private strFormName                     As String
 
-Dim creditList() As String
-Dim curCredit As Long
+Private strCreditList() As String
+Private lngCurCredit As Long
 
 Private Sub FontCharsetChange()
 ' Выставляем шрифт
@@ -441,7 +441,6 @@ Private Sub Form_Load()
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
 
-    'Me
     LoadIconImage2Btn cmdExit, "BTN_EXIT", strPathImageMainWork
     LoadIconImage2Btn cmdDonate, "BTN_DONATE", strPathImageMainWork
     LoadIconImage2Btn cmdLicence, "BTN_LICENCE", strPathImageMainWork
@@ -455,6 +454,7 @@ Private Sub Form_Load()
             "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & _
             "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & _
             lblThanks(0).Caption = "Мои благодарности:"
+            '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & lblThanks(0).Caption = "Мои благодарности:"
             '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & "* Также огромное спасибо Александру Дровосекову (apexsun.narod.ru) - в программе использованы, написанных когда-то им, элементы управления (User Control)"
 
         Case Else
@@ -464,6 +464,7 @@ Private Sub Form_Load()
             "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & _
             "* All, who unselfish supports project - morally and financial" & vbNewLine & _
             lblThanks(0).Caption = "My thanks:"
+            '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & lblThanks(0).Caption = "My thanks:"
             '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & "* Also big thank to Alexander Drovosekov (apexsun.narod.ru) - in program are used, written at one time him, elements of control (User Control)"
     End Select
 
@@ -545,29 +546,29 @@ Private Sub LoadTranslator()
 
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdLicence.Caption = LocaliseString(StrPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
-    cmdSoftGetNet.Caption = LocaliseString(StrPathFile, strFormName, "cmdSoftGetNet", cmdSoftGetNet.Caption)
-    cmdOsZoneNet.Caption = LocaliseString(StrPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdLicence.Caption = LocaliseString(strPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
+    cmdSoftGetNet.Caption = LocaliseString(strPathFile, strFormName, "cmdSoftGetNet", cmdSoftGetNet.Caption)
+    cmdOsZoneNet.Caption = LocaliseString(strPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
-    lblMailTo.Caption = LocaliseString(StrPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
-    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblMailTo.Caption = LocaliseString(strPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
+    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
     ' Перевод программы
-    strTranslatorName = LocaliseString(StrPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
-    strTranslatorUrl = LocaliseString(StrPathFile, "Lang", "TranslatorUrl", vbNullString)
+    strTranslatorName = LocaliseString(strPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
+    strTranslatorUrl = LocaliseString(strPathFile, "Lang", "TranslatorUrl", vbNullString)
     LoadTranslator
 
 End Sub
 
 Private Sub LoadThankYou()
-    curCredit = 1
+    lngCurCredit = 1
     GenerateThankyou "SamLab", "http://driveroff.net/"
     GenerateThankyou "OSzone.net forum's users", "http://forum.oszone.net/forum-62.html"
     GenerateThankyou "Krool", "http://www.vbforums.com/showthread.php?698563-CommonControls-(Replacement-of-the-MS-common-controls)"
@@ -590,8 +591,6 @@ Private Sub LoadThankYou()
     GenerateThankyou "Zhu JinYong"
     
     'AnimateForm - Jim Jose
-
-    
 End Sub
 
 'Генерация текста благодарности со ссылкой на страницу
@@ -601,7 +600,7 @@ End Sub
 Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL As String = vbNullString)
     
     'Generate a new label
-    Load lblThanks(curCredit)
+    Load lblThanks(lngCurCredit)
     
     'Because I now have too many people to thank, it's necessary to split the list into multiple columns
     Dim columnLimit As Long
@@ -610,24 +609,24 @@ Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL A
     Dim thxOffset As Long
     thxOffset = 750
     
-    With lblThanks(curCredit)
-        If curCredit = 1 Then
-            .Top = lblThanks(curCredit - 1).Top + lblThanks(curCredit - 1).Height + 300
+    With lblThanks(lngCurCredit)
+        If lngCurCredit = 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300
             .Left = lblThanks(0).Left + 30 + thxOffset
-        ElseIf curCredit < columnLimit Then
-            .Top = lblThanks(curCredit - 1).Top + lblThanks(curCredit - 1).Height + 60
+        ElseIf lngCurCredit < columnLimit Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 30 + thxOffset
-        ElseIf curCredit = columnLimit Then
-            .Top = lblThanks(curCredit - 1).Top + lblThanks(curCredit - 1).Height + 300 - (lblThanks(columnLimit - 1).Top - lblThanks(0).Top)
+        ElseIf lngCurCredit = columnLimit Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit - 1).Top - lblThanks(0).Top)
             .Left = lblThanks(0).Left + 2700 + thxOffset
-        ElseIf curCredit < columnLimit * 2 - 1 Then
-            .Top = lblThanks(curCredit - 1).Top + lblThanks(curCredit - 1).Height + 60
+        ElseIf lngCurCredit < columnLimit * 2 - 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 2700 + thxOffset
-        ElseIf curCredit = columnLimit * 2 - 1 Then
-            .Top = lblThanks(curCredit - 1).Top + lblThanks(curCredit - 1).Height + 300 - (lblThanks(columnLimit * 2 - 2).Top - lblThanks(0).Top)
+        ElseIf lngCurCredit = columnLimit * 2 - 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit * 2 - 2).Top - lblThanks(0).Top)
             .Left = lblThanks(0).Left + 5400 + thxOffset
         Else
-            .Top = lblThanks(curCredit - 1).Top + lblThanks(curCredit - 1).Height + 60
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 5400 + thxOffset
         End If
         
@@ -644,17 +643,17 @@ Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL A
         .Visible = True
     End With
     
-    ReDim Preserve creditList(0 To curCredit) As String
-    creditList(curCredit) = creditURL
+    ReDim Preserve strCreditList(0 To lngCurCredit) As String
+    strCreditList(lngCurCredit) = creditURL
     
-    curCredit = curCredit + 1
+    lngCurCredit = lngCurCredit + 1
 
 End Sub
 
 'When a thank-you credit is clicked, launch the corresponding website
 Private Sub lblThanks_Click(Index As Integer)
-    If LenB(creditList(Index)) Then
-        RunUtilsShell Kavichki & creditList(Index) & Kavichki, False
+    If LenB(strCreditList(Index)) Then
+        RunUtilsShell Kavichki & strCreditList(Index) & Kavichki, False
     End If
 End Sub
 

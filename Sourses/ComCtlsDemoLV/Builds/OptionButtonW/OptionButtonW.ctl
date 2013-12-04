@@ -875,7 +875,7 @@ If OptionButtonTransparentBrush <> 0 Then
     OptionButtonTransparentBrush = 0
 End If
 UserControl.Refresh
-If OptionButtonHandle <> 0 Then RedrawWindow OptionButtonHandle, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
+RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub
 
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long

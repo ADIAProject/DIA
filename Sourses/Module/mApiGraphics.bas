@@ -45,23 +45,20 @@ Public Const IDC_HAND                   As Long = 32649
 Public Const DI_NORMAL                  As Long = &H3
 
 Public Type Size
-    CX                                      As Long
+    CX                                  As Long
     CY                                  As Long
-
 End Type
 
 Public Type RECT
-    Left                                    As Long
+    Left                                As Long
     Top                                 As Long
     Right                               As Long
     Bottom                              As Long
-
 End Type
 
 Public Type POINT
-    X                                       As Long
+    X                                   As Long
     Y                                   As Long
-
 End Type
 
 Public Type RGB
@@ -72,40 +69,36 @@ Public Type RGB
 End Type
 
 Public Type RGBTRIPLE
-    rgbBlue                                 As Byte
+    rgbBlue                             As Byte
     rgbGreen                            As Byte
     rgbRed                              As Byte
-
 End Type
 
 '  RGB Colors structure
 Public Type RGBColor
-    R                                       As Single
+    R                                   As Single
     G                                   As Single
     B                                   As Single
-
 End Type
 
 Public Type RGBQUAD
-    rgbBlue                                 As Byte
+    rgbBlue                             As Byte
     rgbGreen                            As Byte
     rgbRed                              As Byte
     rgbAlpha                            As Byte
-
 End Type
 
 Public Type ICONINFO
-    fIcon                                   As Long
+    fIcon                               As Long
     XHotspot                            As Long
     YHotspot                            As Long
     hBMMask                             As Long
     hBMColor                            As Long
-
 End Type
 
 '  for gradient painting and bitmap tiling
 Public Type BITMAPINFOHEADER
-    biSize                                  As Long
+    biSize                              As Long
     biWidth                             As Long
     biHeight                            As Long
     biPlanes                            As Integer
@@ -116,30 +109,27 @@ Public Type BITMAPINFOHEADER
     biYPelsPerMeter                     As Long
     biClrUsed                           As Long
     biClrImportant                      As Long
-
 End Type
 
 'flicker free drawing
 Public Type BITMAP
-    BMType                                  As Long
+    BMType                              As Long
     BMWidth                             As Long
     BMHeight                            As Long
     BMWidthBytes                        As Long
     BMPlanes                            As Integer
     BMBitsPixel                         As Integer
     BMBits                              As Long
-
 End Type
 
 Public Type BITMAPINFO
-    bmiHeader                               As BITMAPINFOHEADER
+    bmiHeader                           As BITMAPINFOHEADER
     bmiColors                           As RGBTRIPLE
-
 End Type
 
 ''Tooltip Window Types
 Public Type TOOLINFO
-    lSize                                   As Long
+    lSize                               As Long
     lFlags                              As Long
     lhWnd                               As Long
     lID                                 As Long
@@ -147,12 +137,11 @@ Public Type TOOLINFO
     hInstance                           As Long
     lpStr                               As String
     lParam                              As Long
-
 End Type
 
 'Tooltip Window Types [for UNICODE support]
 Public Type TOOLINFOW
-    lSize                                   As Long
+    lSize                               As Long
     lFlags                              As Long
     lhWnd                               As Long
     lID                                 As Long
@@ -160,11 +149,10 @@ Public Type TOOLINFOW
     hInstance                           As Long
     lpStrW                              As Long
     lParam                              As Long
-
 End Type
 
 Public Type BITMAPINFO8
-    bmiHeader                               As BITMAPINFOHEADER
+    bmiHeader                           As BITMAPINFOHEADER
     bmiColors(255)                      As RGBQUAD
 End Type
 
@@ -284,54 +272,17 @@ Public Declare Function CreatePen _
                                           ByVal nWidth As Long, _
                                           ByVal crColor As Long) As Long
 
-Public Declare Function RedrawWindow _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           lprcUpdate As RECT, _
-                                           ByVal hrgnUpdate As Long, _
-                                           ByVal fuRedraw As Long) As Long
 
 Public Declare Function GetWindowRect _
                          Lib "user32.dll" (ByVal hWnd As Long, _
                                            lpRect As RECT) As Long
+                                                      
+Public Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 
-Public Declare Function CreateWindowEx _
-                         Lib "user32.dll" _
-                             Alias "CreateWindowExA" (ByVal dwExStyle As Long, _
-                                                      ByVal lpClassName As String, _
-                                                      ByVal lpWindowName As String, _
-                                                      ByVal dwStyle As Long, _
-                                                      ByVal X As Long, _
-                                                      ByVal Y As Long, _
-                                                      ByVal nWidth As Long, _
-                                                      ByVal nHeight As Long, _
-                                                      ByVal hWndParent As Long, _
-                                                      ByVal hMenu As Long, _
-                                                      ByVal hInstance As Long, _
-                                                      lpParam As Any) As Long
-
-Public Declare Function SetWindowPos _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal hWndInsertAfter As Long, _
-                                           ByVal X As Long, _
-                                           ByVal Y As Long, _
-                                           ByVal CX As Long, _
-                                           ByVal CY As Long, _
-                                           ByVal wFlags As Long) As Long
-
-Public Declare Function DestroyWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
 Public Declare Function SetParent _
                          Lib "user32.dll" (ByVal hWndChild As Long, _
                                            ByVal hWndNewParent As Long) As Long
 
-
-
-Public Declare Function MoveWindow _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal X As Long, _
-                                           ByVal Y As Long, _
-                                           ByVal nWidth As Long, _
-                                           ByVal nHeight As Long, _
-                                           ByVal bRepaint As Long) As Long
 
 Public Declare Function ScreenToClient _
                          Lib "user32.dll" (ByVal hWnd As Long, _

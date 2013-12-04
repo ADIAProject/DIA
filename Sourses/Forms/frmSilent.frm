@@ -261,19 +261,19 @@ End Sub
 '
 'End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     ' Лейблы
-    lblTimerText.Caption = LocaliseString(StrPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
-    lblTimeInSec.Caption = LocaliseString(StrPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
-    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblTimerText.Caption = LocaliseString(strPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
+    lblTimeInSec.Caption = LocaliseString(strPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
+    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 
 End Sub
 

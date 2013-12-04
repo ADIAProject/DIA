@@ -126,7 +126,6 @@ Dim grc                                 As GRADIENT_RECT
 
     End With
 
-    'VERT(0)
     'gradient end colour
     With vert(1)
         .X = Me.ScaleWidth \ twipsx
@@ -138,7 +137,6 @@ Dim grc                                 As GRADIENT_RECT
 
     End With
 
-    'VERT(1)
     grc.UpperLeft = 0
     grc.LowerRight = 1
     GradientFill hDC, vert(0), 2, grc, 1, GRADIENT_FILL_RECT_V
@@ -188,7 +186,6 @@ Dim Bmp                                 As BITMAP
 
     End If
 
-    'img.Type
 End Sub
 
 Private Sub Form_Click()

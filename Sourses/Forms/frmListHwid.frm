@@ -297,11 +297,11 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private MeCaptionView                   As String
-Private MeCaptionInstall                As String
-Private strcmdOKCaption1                As String
-Private strcmdOKCaption2                As String
-Private strcmdOKCaption3                As String
+Private strMeCaptionView                As String
+Private strMeCaptionInstall             As String
+Private strCmdOKCaption1                As String
+Private strCmdOKCaption2                As String
+Private strCmdOKCaption3                As String
 Private mbGrp1                          As Boolean
 Private mbGrp2                          As Boolean
 Private mbGrp3                          As Boolean
@@ -588,21 +588,21 @@ Dim i                                   As Integer
         cmdUnCheckAll.Visible = True
 
         If mbOnlyUnpackDP Then
-            cmdOK.Caption = strcmdOKCaption3
+            cmdOK.Caption = strCmdOKCaption3
         Else
-            cmdOK.Caption = strcmdOKCaption2
+            cmdOK.Caption = strCmdOKCaption2
 
         End If
 
-        Me.Caption = MeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.Caption = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     Else
         miCurrentListCount = LoadList_Folders(CurrentSelButtonIndex, True, CollectModeString)
         cmdExit.Visible = False
-        cmdOK.Caption = strcmdOKCaption2
+        cmdOK.Caption = strCmdOKCaption2
         lblInformation.Visible = False
         cmdCheckAll.Visible = False
         cmdUnCheckAll.Visible = False
-        Me.Caption = MeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.Caption = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     End If
 End Sub
 
@@ -889,10 +889,10 @@ Dim i                                   As Long
         End If
 
         cmdCheckAll_Click
-        Me.Caption = MeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.Caption = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     Else
         miCurrentListCount = LoadList_Folders(CurrentSelButtonIndex, True, CollectModeString)
-        Me.Caption = MeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.Caption = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
 
     End If
 
@@ -901,28 +901,28 @@ Dim i                                   As Long
 
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
 
     ' Название формы
-    MeCaptionView = LocaliseString(StrPathFile, strFormName, "frmListHwidView", Me.Caption)
-    MeCaptionInstall = LocaliseString(StrPathFile, strFormName, "frmListHwidInstall", Me.Caption)
+    strMeCaptionView = LocaliseString(strPathFile, strFormName, "frmListHwidView", Me.Caption)
+    strMeCaptionInstall = LocaliseString(strPathFile, strFormName, "frmListHwidInstall", Me.Caption)
 
-    lblInformation.Caption = LocaliseString(StrPathFile, strFormName, "lblInformation", lblInformation.Caption)
+    lblInformation.Caption = LocaliseString(strPathFile, strFormName, "lblInformation", lblInformation.Caption)
     'Кнопки
-    cmdCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
-    cmdUnCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdUnCheckAll", cmdUnCheckAll.Caption)
-    strcmdOKCaption1 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption1", "Установить")
-    strcmdOKCaption2 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption2", "OK")
-    strcmdOKCaption3 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption3", "Распаковать")
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-    frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
-    chkGrp1.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp1", chkGrp1.Caption)
-    chkGrp2.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
-    chkGrp3.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
-    chkGrp4.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
+    cmdCheckAll.Caption = LocaliseString(strPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
+    cmdUnCheckAll.Caption = LocaliseString(strPathFile, strFormName, "cmdUnCheckAll", cmdUnCheckAll.Caption)
+    strCmdOKCaption1 = LocaliseString(strPathFile, strFormName, "cmdOKCaption1", "Установить")
+    strCmdOKCaption2 = LocaliseString(strPathFile, strFormName, "cmdOKCaption2", "OK")
+    strCmdOKCaption3 = LocaliseString(strPathFile, strFormName, "cmdOKCaption3", "Распаковать")
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
+    chkGrp1.Caption = LocaliseString(strPathFile, strFormName, "chkGrp1", chkGrp1.Caption)
+    chkGrp2.Caption = LocaliseString(strPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
+    chkGrp3.Caption = LocaliseString(strPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
+    chkGrp4.Caption = LocaliseString(strPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
 
 End Sub
 

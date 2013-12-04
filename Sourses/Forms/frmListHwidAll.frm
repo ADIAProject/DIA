@@ -516,7 +516,6 @@ Private lngFormWidthMin                 As Long
 Private lngFormHeightMin                As Long
 
 Private lngDeviceCount                  As Long
-
 Private strFormName                     As String
 
 Private Sub FontCharsetChange()
@@ -632,12 +631,11 @@ End Sub
 '!  Описание    :  Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций
 '! -----------------------------------------------------------
 Public Sub BlockControl(ByVal mbBlock As Boolean)
-'frGroup
+
     optGrp1.Enabled = mbBlock
     optGrp2.Enabled = mbBlock
     optGrp3.Enabled = mbBlock
     optGrp4.Enabled = mbBlock
-    'frFindDrvInternet.Enabled = mbBlock
     cmdBackUpDrivers.Enabled = mbBlock
     cmdOK.Enabled = mbBlock
     cmdReNewHW.Enabled = mbBlock
@@ -686,14 +684,12 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         Unload Me
-
     End If
 
 End Sub
 
 Private Sub Form_Load()
     SetupVisualStyles Me
-
 
     With Me
         strFormName = .Name
@@ -814,7 +810,6 @@ Dim lngLVTop                            As Long
                 txtFindText.Width = .Left - 200
             End With
 
-            'cmdGoSite
             cmdOK.Left = .Width - cmdOK.Width - 200 - miDeltaFrm
             cmdOK.Top = .Height - cmdOK.Height - 550 - miDeltaFrm
             cmdReNewHW.Top = cmdOK.Top
@@ -1087,12 +1082,11 @@ Dim mbOpt4                              As Boolean
     End If
 
     LoadFormCaption
-
     FindCheckCountList
 
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange

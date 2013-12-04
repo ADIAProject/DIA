@@ -34,11 +34,7 @@ Private Declare Sub CopyMemory _
                                                 lpSource As Any, _
                                                 ByVal cBytes&)
 
-Private Declare Function SetWindowLong _
-                          Lib "user32.dll" _
-                              Alias "SetWindowLongW" (ByVal hWnd As Long, _
-                                                      ByVal nIndex As Long, _
-                                                      ByVal dwNewLong As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 
 Private Const AsmMain                   As String = "558BEC83C4FC8D45FC50FF7514FF7510FF750CFF75086800000000B800000000FFD08B45FCC9C21000"
 

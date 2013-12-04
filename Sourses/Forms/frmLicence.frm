@@ -134,12 +134,12 @@ Private lngFormWidthMin                 As Long
 Private lngFormHeightMin                As Long
 Private strFormName                     As String
 
-Private Sub CheckEditLicense(StrPathFile As String)
+Private Sub CheckEditLicense(strPathFile As String)
 
 Dim strMD5TextRtf                       As String
 Dim strEULA_MD5RTF_temp                 As String
 
-    strMD5TextRtf = GetMD5(StrPathFile)
+    strMD5TextRtf = GetMD5(strPathFile)
     DebugMode "LicenceInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -405,17 +405,17 @@ Dim strPathLicence                      As String
 
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     ' Чекбокс
-    chkAgreeLicence.Caption = LocaliseString(StrPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
+    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 
 End Sub
 

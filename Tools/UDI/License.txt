@@ -1,0 +1,43 @@
+License Agreement
+
+Unknown Device Identifier
+Copyright (C) 1996-2013 Huntersoft
+All Rights Reserved
+
+
+Use of Unknown Device Identifier (hereinafter "Software") is contingent on your agreement to the following terms:
+
+ 
+
+1. GRANT OF LICENSE
+Huntersoft (hereinafter "Author") grants you a limited, non-exclusive license to use the Software. The Software is licensed, not sold, to you for use only under the terms of this Agreement. You may install the Software on a single computer for personal and noncommercial use; for commercial use or apply to repair service or related, you must either register a special license according to your usage or delete it from your and/or your customer's computer hard drive. Commercially using this software without registering the software is a violation of the terms of this limited license.
+
+ 
+
+2. SCOPE OF GRANT
+
+You may not decompile, disassemble or otherwise reverse engineer the Software, or engage in any other activities to obtain underlying information that is not visible to the user in connection with normal use of the Software. You may not modify, rent, or resell for profit this software, or create derivative works based upon this software.  You may not publicize or distribute any registration code algorithms, information, or registration codes used by this software without permission from the Author. In no event shall the Author's liability exceed the purchase price of the Software.
+
+ 
+
+3. COPYRIGHT
+
+This Software is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties.
+
+ 
+
+4. DISTRIBUTION
+
+The SOFTWARE may be freely distributed freely on online services, bulletin boards, or other electronic media provided that it is not modified and the original archive remains intact with all accompanying files, and provided that no fee is charged. This software may be distributed on CD-ROM, disk, or other physical media without the permission of the Authorm AS LONG AS Huntersoft driver backup software "My Drivers" is also combined in your intended distribution and is highlighted or at least mentioned.
+
+ 
+
+5. TERMINATION
+
+The license will terminate automatically and the software unregistered if you fail to comply with any of the above terms and conditions. The license may be terminated by either party at any time and without notice.
+
+ 
+
+6. DISCLAIMER OF WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE AUTHOR FURTHER DISCLAIMS ALL WARRANTIES, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.  THE ENTIRE RISK ARISING OUT OF THE USE OR PERFORMANCE OF THE PRODUCT AND DOCUMENTATION REMAINS WITH RECIPIENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CONSEQUENTIAL, INCIDENTAL, DIRECT, INDIRECT, SPECIAL, PUNITIVE, OR OTHER DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING OUT OF THIS AGREEMENT OR THE USE OF OR INABILITY TO USE THE PRODUCT, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.

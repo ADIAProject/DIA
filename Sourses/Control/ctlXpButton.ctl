@@ -62,25 +62,14 @@ Option Explicit
 Private UserScaleW                      As Long
 Private UserScaleH                      As Long
 
-Private Type textparametreleri
-    cbSize                                  As Long
-    iTabLength                          As Long
-    iLeftMargin                         As Long
-    iRightMargin                        As Long
-    uiLengthDrawn                       As Long
-
-End Type
-
 Public Enum XBPicturePosition
     gbTOP = 0
     gbLEFT = 1
     gbRIGHT = 2
     gbBOTTOM = 3
-
 End Enum
 
 #If False Then
-
     Private gbTOP, gbLEFT, gbRIGHT, gbBOTTOM
 #End If
 
@@ -88,11 +77,9 @@ Public Enum XBButtonStyle
     gbStandard = 0
     gbFlat = 1
     gbWinXP = 3
-
 End Enum
 
 #If False Then
-
     Private gbStandard, gbFlat, gbWinXP
 #End If
 
@@ -105,7 +92,7 @@ Private alan                            As RECT
 Private m_Picture                       As Picture
 Private m_PicturePosition               As XBPicturePosition
 Private m_ButtonStyle                   As XBButtonStyle
-Private mvarDrawTextParams              As textparametreleri
+Private mvarDrawTextParams              As DRAWTEXTPARAMS
 Private m_Caption                       As String
 Private m_PictureWidth                  As Long
 Private m_PictureHeight                 As Long
@@ -120,11 +107,72 @@ Private m_MenuExist                     As Boolean
 Private m_CheckExist                    As Boolean
 Private m_XPColor_Pressed               As Long
 Private m_XPColor_Hover                 As Long
-Private m_TextFont                      As Font
 Private m_TextColor                     As OLE_COLOR
 
 Private Const mvarPadding               As Byte = 4
+Dim dtDefTextDrawParams As Long
 
+'*************************************************************
+'   DRAW TEXT
+'*************************************************************
+Private Type DRAWTEXTPARAMS
+   cbSize As Long
+   iTabLength As Long
+   iLeftMargin As Long
+   iRightMargin As Long
+   uiLengthDrawn As Long
+End Type
+                                                   
+Private Declare Function DrawTextExW Lib "user32.dll" (ByVal hDC As Long, ByVal lpsz As Long, ByVal n As Long, ByRef lpRect As RECT, ByVal dwDTFormat As Long, ByRef lpDrawTextParams As DRAWTEXTPARAMS) As Long
+                                                   
+'*************************************************************
+'   FONT PROPERTIES
+'*************************************************************
+Private Const LF_FACESIZE As Long = 32
+Private Const FW_NORMAL As Long = 400
+Private Const FW_BOLD As Long = 700
+Private Const DEFAULT_QUALITY As Long = 0
+Private Type LOGFONT
+    LFHeight As Long
+    LFWidth As Long
+    LFEscapement As Long
+    LFOrientation As Long
+    LFWeight As Long
+    LFItalic As Byte
+    LFUnderline As Byte
+    LFStrikeOut As Byte
+    LFCharset As Byte
+    LFOutPrecision As Byte
+    LFClipPrecision As Byte
+    LFQuality As Byte
+    LFPitchAndFamily As Byte
+    LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
+End Type
+
+Private Const WM_SETFONT As Long = &H30
+Private Const WS_EX_RTLREADING As Long = &H2000
+
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
+Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+
+Private ButtonFontHandle As Long
+Private ButtonLogFont As LOGFONT
+Private WithEvents PropFont As StdFont
+Attribute PropFont.VB_VarHelpID = -1
+
+'*************************************************************
+'   UPDATE WINDOW
+'*************************************************************
+Private Const RDW_UPDATENOW As Long = &H100
+Private Const RDW_INVALIDATE As Long = &H1
+Private Const RDW_ERASE As Long = &H4
+Private Const RDW_ALLCHILDREN As Long = &H80
+Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
+
+'*************************************************************
+'   events
+'*************************************************************
 Public Event ClickMenu(mnuIndex As Integer)
 Public Event Click()
 Public Event KeyDown(KeyCode As Integer, Shift As Integer)
@@ -134,15 +182,6 @@ Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Si
 Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event MouseIn(Shift As Integer)
 Public Event MouseOut(Shift As Integer)
-
-Private Declare Function DrawTextEx _
-                          Lib "user32.dll" _
-                              Alias "DrawTextExA" (ByVal hDC As Long, _
-                                                   ByVal lpsz As String, _
-                                                   ByVal n As Long, _
-                                                   lpRect As RECT, _
-                                                   ByVal un As Long, _
-                                                   lpDrawTextParams As textparametreleri) As Long
 
 Public Sub AddMenu(ByVal sCaption As String)
 
@@ -197,7 +236,6 @@ Dim capHeight                           As Long
         .Top = 0
         .Right = UserScaleW - 1
         .Bottom = UserScaleH - 1
-
     End With
 
     With mvarClientRect
@@ -245,7 +283,6 @@ Dim capHeight                           As Long
 
         If m_Picture Is Nothing Then
             Exit Sub
-
         End If
 
         picWidth = m_PictureWidth
@@ -347,16 +384,22 @@ Private Sub CalculateCaptionRect()
 
 Dim mvarWidth                           As Long
 Dim mvarHeight                          As Long
+Dim dtTextDrawParams As Long
 
     With mvarDrawTextParams
         .iLeftMargin = 1
         .iRightMargin = 1
         .iTabLength = 1
         .cbSize = Len(mvarDrawTextParams)
-
     End With
-
-    DrawTextEx hDC, m_Caption, Len(m_Caption), mvarCaptionRect, 1045, mvarDrawTextParams
+    
+    dtTextDrawParams = dtDefTextDrawParams
+    If Ambient.RightToLeft = True Then
+        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
+    End If
+    
+    'DrawTextEx hDC, m_Caption, Len(m_Caption), mvarCaptionRect, 1045, mvarDrawTextParams
+    DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect, DT_CALCRECT Or dtTextDrawParams, mvarDrawTextParams
 
     With mvarCaptionRect
         mvarWidth = .Right - .Left
@@ -365,7 +408,6 @@ Dim mvarHeight                          As Long
         .Top = mvarClientRect.Top + (((mvarClientRect.Bottom - mvarClientRect.Top) - (.Bottom - .Top)) * 0.5)
         .Right = .Left + mvarWidth
         .Bottom = .Top + mvarHeight
-
     End With
 
 End Sub
@@ -461,6 +503,12 @@ Private Sub DrawCaption()
 
 Dim g_tmpFontColor                      As OLE_COLOR
 Dim mvarCaptionRect_Iki                 As RECT
+Dim dtTextDrawParams As Long
+
+    dtTextDrawParams = dtDefTextDrawParams
+    If Ambient.RightToLeft = True Then
+        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
+    End If
 
     If Enabled Then
         SetTextColor hDC, CColor(m_TextColor)
@@ -479,7 +527,7 @@ Dim mvarCaptionRect_Iki                 As RECT
 
         End If
 
-        DrawTextEx hDC, m_Caption, Len(m_Caption), mvarCaptionRect, 21, mvarDrawTextParams
+        DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect, dtTextDrawParams, mvarDrawTextParams
         mvarCaptionRect = mvarOrgRect
     Else
         g_tmpFontColor = m_TextColor
@@ -490,12 +538,12 @@ Dim mvarCaptionRect_Iki                 As RECT
             .Left = mvarCaptionRect.Left + 1
             .Right = mvarCaptionRect.Right + 1
             .Top = mvarCaptionRect.Top + 1
-
         End With
 
-        DrawTextEx hDC, m_Caption, Len(m_Caption), mvarCaptionRect_Iki, 21, mvarDrawTextParams
+        DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect_Iki, dtTextDrawParams, mvarDrawTextParams
         SetTextColor hDC, CColor(&H80000010)
-        DrawTextEx hDC, m_Caption, Len(m_Caption), mvarCaptionRect, 21, mvarDrawTextParams
+
+        DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect, dtTextDrawParams, mvarDrawTextParams
         SetTextColor hDC, CColor(g_tmpFontColor)
 
     End If
@@ -561,7 +609,6 @@ Dim Firca                               As Long
         FillRect DestHDC, MyRect, Firca
     Else
         FrameRect DestHDC, MyRect, Firca
-
     End If
 
     DeleteObject Firca
@@ -610,7 +657,6 @@ Dim curBackColor                        As Long
                 Intg = COLOR_DarkenColor(Intg, 35)
                 SetPixel hDC, UserScaleW - 4, 3, Intg
                 SetPixel hDC, 3, 3, Intg
-
             End If
 
         Else
@@ -658,77 +704,119 @@ Public Property Let EnabledCtrl(ByVal New_Enabled As Boolean)
 
 End Property
 
-Public Property Get Font() As Font
-    Set Font = m_TextFont
+'Public Property Get Font() As Font
+'    Set Font = m_TextFont
+'
+'End Property
 
+'Public Property Set Font(ByVal New_Font As Font)
+'    Set m_TextFont = New_Font
+'    Set UserControl.Font = New_Font
+'    PropertyChanged "Font"
+'    UserControl_Resize
+'
+'End Property
+
+Public Property Get Font() As StdFont
+Attribute Font.VB_Description = "Returns a Font object."
+Attribute Font.VB_UserMemId = -512
+        Set Font = PropFont
 End Property
 
-Public Property Set Font(ByVal New_Font As Font)
-    Set m_TextFont = New_Font
-    Set UserControl.Font = New_Font
-    PropertyChanged "Font"
-    UserControl_Resize
-
+Public Property Let Font(ByVal NewFont As StdFont)
+    Set Me.Font = NewFont
 End Property
+
+Public Property Set Font(ByVal NewFont As StdFont)
+Dim OldFontHandle As Long
+    Set PropFont = NewFont
+    Call OLEFontToLogFont(NewFont, ButtonLogFont)
+    OldFontHandle = ButtonFontHandle
+    ButtonFontHandle = CreateFontIndirect(ButtonLogFont)
+    If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, ButtonFontHandle, ByVal 1&
+    If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    Me.Refresh
+    UserControl.PropertyChanged "Font"
+End Property
+
+Private Sub PropFont_FontChanged(ByVal PropertyName As String)
+Dim OldFontHandle As Long
+    Call OLEFontToLogFont(PropFont, ButtonLogFont)
+    OldFontHandle = ButtonFontHandle
+    ButtonFontHandle = CreateFontIndirect(ButtonLogFont)
+    If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, ButtonFontHandle, ByVal 1&
+    If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    Me.Refresh
+    UserControl.PropertyChanged "Font"
+End Sub
+
+Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
+Dim FontName As String
+    With LF
+        FontName = Left$(Font.Name, LF_FACESIZE)
+        CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
+        .LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
+        If Font.Bold = True Then
+            .LFWeight = FW_BOLD
+        Else
+            .LFWeight = FW_NORMAL
+        End If
+        .LFItalic = IIf(Font.Italic = True, 1, 0)
+        .LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
+        .LFUnderline = IIf(Font.Underline = True, 1, 0)
+        .LFQuality = DEFAULT_QUALITY
+        .LFCharset = CByte(Font.Charset And &HFF)
+    End With
+End Sub
+
 
 Public Property Get MaskColor() As OLE_COLOR
     MaskColor = m_MaskColor
-
 End Property
 
 Public Property Let MaskColor(ByVal New_MaskColor As OLE_COLOR)
     m_MaskColor = New_MaskColor
     Refresh
-
 End Property
 
 Public Property Get MenuCaption(Index As Integer) As String
     MenuCaption = mnuMenu(Index).Caption
-
 End Property
 
 Public Property Let MenuCaption(Index As Integer, ByVal New_MenuCaption As String)
     mnuMenu(Index).Caption = New_MenuCaption
     PropertyChanged "MenuCaption"
-
 End Property
 
 Public Property Get MenuChecked(Index As Integer) As Boolean
     MenuChecked = mnuMenu(Index).Checked
-
 End Property
 
 Public Property Let MenuChecked(Index As Integer, ByVal New_MenuChecked As Boolean)
     mnuMenu(Index).Checked = New_MenuChecked
     PropertyChanged "MenuChecked"
-
 End Property
 
 Public Function MenuCount() As Long
     MenuCount = mnuMenu.UBound
-
 End Function
 
 Public Property Get MenuEnabled(Index As Integer) As Boolean
     MenuEnabled = mnuMenu(Index).Enabled
-
 End Property
 
 Public Property Let MenuEnabled(Index As Integer, ByVal New_MenuEnabled As Boolean)
     mnuMenu(Index).Enabled = New_MenuEnabled
     PropertyChanged "MenuEnabled"
-
 End Property
 
 Public Property Get MenuExist() As Boolean
     MenuExist = m_MenuExist
-
 End Property
 
 Public Property Let MenuExist(ByVal New_MenuExist As Boolean)
     m_MenuExist = New_MenuExist
     PropertyChanged "MenuExist"
-
 End Property
 
 Public Property Get MenuVisible(Index As Integer) As Boolean
@@ -785,6 +873,8 @@ Public Property Set Picture(ByVal New_Picture As Picture)
 End Property
 
 Private Sub pInitialize()
+    dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
+
     ScaleMode = 3
     PaletteMode = 3
     UserScaleW = UserControl.ScaleWidth
@@ -975,8 +1065,10 @@ Private Sub UserControl_ExitFocus()
 End Sub
 
 Private Sub UserControl_InitProperties()
-    BackColor = vbButtonFace
+    Set PropFont = Ambient.Font
+    Set UserControl.Font = PropFont
 
+    BackColor = vbButtonFace
 End Sub
 
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
@@ -1095,7 +1187,8 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 Dim Index                               As Integer
 
     With PropBag
-        Set Font = .ReadProperty("Font", Ambient.Font)
+        Set PropFont = .ReadProperty("Font", Ambient.Font)
+        Set UserControl.Font = PropFont
         m_Caption = .ReadProperty("Caption", Ambient.DisplayName)
         m_PicturePosition = .ReadProperty("PicturePosition", 1)
         m_ButtonStyle = .ReadProperty("ButtonStyle", 2)
@@ -1136,7 +1229,9 @@ End Sub
 Private Sub UserControl_Terminate()
 
     On Error Resume Next
-
+    'Clean up Font (StdFont)
+    Set PropFont = Nothing
+    'Clean up Picture
     Set m_Picture = Nothing
 
 End Sub
@@ -1146,6 +1241,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 Dim Index                               As Integer
 
     With PropBag
+        .WriteProperty "Font", PropFont, Ambient.Font
         .WriteProperty "Caption", m_Caption, Ambient.DisplayName
         .WriteProperty "PicturePosition", m_PicturePosition, 1
         .WriteProperty "ButtonStyle", m_ButtonStyle, 2
@@ -1159,7 +1255,6 @@ Dim Index                               As Integer
         .WriteProperty "XPDefaultColors", m_XPDefaultColors, 1
         .WriteProperty "MaskColor", m_MaskColor, 0
         .WriteProperty "UseMaskColor", m_UseMaskColor, 0
-        .WriteProperty "Font", m_TextFont, Ambient.Font
         .WriteProperty "TextColor", m_TextColor, Ambient.ForeColor
         .WriteProperty "BackColor", UserControl.BackColor, vbButtonFace
         .WriteProperty "MenuCaption" & Index, mnuMenu(Index).Caption, vbNullString

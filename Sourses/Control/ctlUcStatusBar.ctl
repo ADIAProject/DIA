@@ -455,7 +455,7 @@ Const FUNC_CWP                          As String = "CallWindowProcA"
 Const FUNC_EBM                          As String = "EbMode"
 
     'VBA's EbMode function allows the machine code thunk to know if the IDE has stopped or is on a breakpoint
-Const FUNC_SWL                          As String = "SetWindowLongA"
+Const FUNC_SWL                          As String = "SetWindowLongW"
 
     'SetWindowLongA allows the cSubclasser machine code thunk to unsubclass the subclasser itself if it detects via the EbMode function that the IDE has stopped
 Const MOD_USER                          As String = "user32.dll"
@@ -585,7 +585,8 @@ Dim miLensHex                           As Integer
         'Store the hWnd
         .nAddrSub = GlobalAlloc(GMEM_FIXED, CODE_LEN)
         'Allocate memory for the machine code WndProc
-        .nAddrOrig = SetWindowLongA(.hWnd, GWL_WNDPROC, .nAddrSub)
+        '.nAddrOrig = SetWindowLongA(.hWnd, GWL_WNDPROC, .nAddrSub)
+        .nAddrOrig = SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrSub)
         'Set our WndProc in place
         Call CopyMemory(ByVal .nAddrSub, aBuf(1), CODE_LEN)
         'Copy the machine code from the static byte array to the code array in sc_aSubData
@@ -640,7 +641,8 @@ Private Sub Subclass_Stop(ByVal lng_hWnd As Long)
 'Parameters:
 'lng_hWnd  - The handle of the window to stop being subclassed
     With sc_aSubData(zIdx(lng_hWnd))
-        Call SetWindowLongA(.hWnd, GWL_WNDPROC, .nAddrOrig)
+        'Call SetWindowLongA(.hWnd, GWL_WNDPROC, .nAddrOrig)
+        Call SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrOrig)
         'Restore the original WndProc
         Call zPatchVal(.nAddrSub, PATCH_05, 0)
         'Patch the Table B entry count to ensure no further 'before' callbacks
@@ -923,7 +925,7 @@ Public Function AddPanel(Optional ByVal sText As String, _
 Func_ErrHandlerExit:
     Exit Function
 Func_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.AddPanel", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.AddPanel", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -969,7 +971,7 @@ Dim hPen As Long, hPenOld               As Long
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.APILine", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.APILine", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -984,7 +986,7 @@ Public Property Get BackColor() As OLE_COLOR
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.BackColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1003,7 +1005,7 @@ Public Property Let BackColor(ByVal NewValue As OLE_COLOR)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.BackColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1044,7 +1046,7 @@ Public Sub BoundControl(ByVal Index As Long, _
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.BoundControl", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.BoundControl", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1074,7 +1076,7 @@ Public Sub Clear()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Clear", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Clear", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1089,7 +1091,7 @@ Public Property Get ForeColor() As OLE_COLOR
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.ForeColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1108,7 +1110,7 @@ Public Property Let ForeColor(ByVal NewValue As OLE_COLOR)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.ForeColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1123,7 +1125,7 @@ Public Property Get Font() As StdFont
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Font", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1140,7 +1142,7 @@ Public Property Set Font(ByVal NewFont As StdFont)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Font", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1199,7 +1201,7 @@ Dim lpRect                              As RECT
 Func_ErrHandlerExit:
     Exit Function
 Func_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.GetPanelIndex", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.GetPanelIndex", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -1300,7 +1302,7 @@ Dim OldDIB                              As Long
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.GrayBlt", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.GrayBlt", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1315,7 +1317,7 @@ Public Property Get GripShape() As usbGripEnum
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.GripShape", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1338,7 +1340,7 @@ Public Property Let GripShape(lShape As usbGripEnum)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.GripShape", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1410,7 +1412,7 @@ Dim lColor                              As Long
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PaintGradients", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PaintGradients", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1510,7 +1512,7 @@ Dim AdjHeight                           As Long
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PaintGrip", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PaintGrip", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1690,7 +1692,8 @@ Dim bMinWidth                           As Boolean
 
                         '   If there is enough room, print the text
                         If ((.ItemRect.Left + lIconOffset) <= (ScaleWidth - lGripSize)) Or ((.ItemRect.Right - .ItemRect.Left) > 16) Then
-                            DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
+                            'DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
+                            DrawTextW UserControl.hDC, StrPtr(.Text & vbNullChar), -1, .ItemRect, .Alignment
 
                         End If
 
@@ -1698,7 +1701,8 @@ Dim bMinWidth                           As Boolean
 
                         '   If there is enough room, print the text
                         If (.ItemRect.Left + lIconOffset \ 2) <= (ScaleWidth - lGripSize) Or ((.ItemRect.Right - .ItemRect.Left) > 16) Then
-                            DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
+                            'DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
+                            DrawTextW UserControl.hDC, StrPtr(.Text & vbNullChar), -1, .ItemRect, .Alignment
 
                         End If
 
@@ -1708,7 +1712,8 @@ Dim bMinWidth                           As Boolean
 
                     '   If there is enough room, print the text
                     If (.ItemRect.Left + 2) <= (ScaleWidth - lGripSize) Then
-                        DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
+                        'DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
+                        DrawTextW UserControl.hDC, StrPtr(.Text & vbNullChar), -1, .ItemRect, .Alignment
 
                     End If
 
@@ -1811,7 +1816,7 @@ Dim bMinWidth                           As Boolean
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PaintPanels", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PaintPanels", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1827,7 +1832,7 @@ Public Property Get PanelCount() As Long
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelCount", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelCount", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1857,7 +1862,7 @@ Public Property Get PanelAlignment(ByVal Index As Long) As usbAlignEnum
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelAlignment", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1893,7 +1898,7 @@ Public Property Let PanelAlignment(ByVal Index As Long, ByVal NewValue As usbAli
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelAlignment", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1910,7 +1915,7 @@ Public Property Get PanelAutoSize(ByVal Index As Long) As Boolean
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelAutoSize", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1933,7 +1938,7 @@ Public Property Let PanelAutoSize(ByVal Index As Long, ByVal NewValue As Boolean
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelAutoSize", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1950,7 +1955,7 @@ Public Property Get PanelEditable(ByVal Index As Long) As Boolean
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelEditable", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1973,7 +1978,7 @@ Public Property Let PanelEditable(ByVal Index As Long, ByVal NewValue As Boolean
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelEditable", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1990,7 +1995,7 @@ Public Property Get PanelForeColor(ByVal Index As Long) As OLE_COLOR
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelForeColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2013,7 +2018,7 @@ Public Property Let PanelForeColor(ByVal Index As Long, ByVal NewItem As OLE_COL
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelForeColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2030,7 +2035,7 @@ Public Property Get PanelFont(ByVal Index As Long) As StdFont
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelFont", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2053,7 +2058,7 @@ Public Property Let PanelFont(ByVal Index As Long, ByVal NewItem As StdFont)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelFont", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2070,7 +2075,7 @@ Public Property Get PanelIcon(ByVal Index As Long) As StdPicture
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelIcon", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2093,7 +2098,7 @@ Public Property Set PanelIcon(ByVal Index As Long, ByVal NewItem As StdPicture)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelIcon", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2110,7 +2115,7 @@ Public Property Get PanelText(ByVal Index As Long) As String
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelText", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2133,7 +2138,7 @@ Public Property Let PanelText(ByVal Index As Long, ByVal NewItem As String)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelText", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2150,7 +2155,7 @@ Public Property Get PanelToolTipText(ByVal Index As Long) As String
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelToolTipText", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2173,7 +2178,7 @@ Public Property Let PanelToolTipText(ByVal Index As Long, NewValue As String)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelToolTipText", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2190,7 +2195,7 @@ Public Property Get PanelWidth(ByVal Index As Long) As Long
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelWidth", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2213,7 +2218,7 @@ Public Property Let PanelWidth(ByVal Index As Long, ByVal NewItem As Long)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PanelWidth", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2239,7 +2244,7 @@ Private Function PtInRect(ByRef lpRect As RECT, X As Long, Y As Long) As Boolean
 Func_ErrHandlerExit:
     Exit Function
 Func_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.PtInRect", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.PtInRect", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -2363,7 +2368,7 @@ Dim AutoTheme                           As String
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Refresh", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Refresh", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2400,7 +2405,7 @@ Dim lb                                  As Long
 Func_ErrHandlerExit:
     Exit Function
 Func_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.ShiftColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.ShiftColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -2415,7 +2420,7 @@ Public Property Get Sizable() As Boolean
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Sizable", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2446,7 +2451,7 @@ Public Property Let Sizable(ByVal NewValue As Boolean)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Sizable", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2461,7 +2466,7 @@ Public Property Get Theme() As usbThemeEnum
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Theme", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2478,7 +2483,7 @@ Public Property Let Theme(ByVal NewValue As usbThemeEnum)
 Prop_ErrHandlerExit:
     Exit Property
 Prop_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.Theme", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -2710,7 +2715,7 @@ Dim hTmp                                As Long
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.TransBltEx", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.TransBltEx", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2729,7 +2734,7 @@ Private Function TranslateColor(ByVal lColor As Long) As Long
 Func_ErrHandlerExit:
     Exit Function
 Func_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.TranslateColor", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.TranslateColor", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -2771,7 +2776,7 @@ Private Sub txtEdit_KeyUp(KeyCode As Integer, Shift As Integer)
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.txtEdit_KeyUp", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.txtEdit_KeyUp", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2791,7 +2796,7 @@ Private Sub txtEdit_LostFocus()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.txtEdit_LostFocus", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.txtEdit_LostFocus", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2812,7 +2817,7 @@ Private Sub UserControl_Click()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_Click", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_Click", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2870,7 +2875,7 @@ Private Sub UserControl_DblClick()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_DblClick", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_DblClick", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2895,7 +2900,7 @@ Private Sub UserControl_InitProperties()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_InitProperties", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_InitProperties", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2910,7 +2915,7 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_KeyDown", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_KeyDown", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2925,7 +2930,7 @@ Private Sub UserControl_KeyPress(KeyAscii As Integer)
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_KeyPress", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_KeyPress", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2940,7 +2945,7 @@ Private Sub UserControl_KeyUp(KeyCode As Integer, Shift As Integer)
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_KeyUp", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_KeyUp", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2960,7 +2965,7 @@ Private Sub UserControl_LostFocus()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_LostFocus", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_LostFocus", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2988,7 +2993,7 @@ Private Sub UserControl_MouseDown(Button As Integer, _
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_MouseDown", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_MouseDown", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3014,7 +3019,7 @@ Private Sub UserControl_MouseMove(Button As Integer, _
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_MouseMove", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_MouseMove", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3033,7 +3038,7 @@ Private Sub UserControl_MouseUp(Button As Integer, _
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_MouseUp", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_MouseUp", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3048,7 +3053,7 @@ Private Sub UserControl_Paint()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_Paint", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_Paint", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3113,7 +3118,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_ReadProperties", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_ReadProperties", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3143,7 +3148,7 @@ Private Sub UserControl_Resize()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_Resize", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_Resize", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3158,7 +3163,7 @@ Private Sub UserControl_Show()
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_Show", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_Show", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3214,7 +3219,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 Sub_ErrHandlerExit:
     Exit Sub
 Sub_ErrHandler:
-    err.Raise err.Number, "ucStatusBar.UserControl_WriteProperties", err.Description, err.HelpFile, err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_WriteProperties", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 

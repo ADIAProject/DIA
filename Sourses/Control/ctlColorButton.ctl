@@ -222,11 +222,12 @@ Private Declare Function SetParent _
                           Lib "user32.dll" (ByVal hWndChild As Long, _
                                             ByVal hWndNewParent As Long) As Long
 
-Private Declare Function SetWindowLong _
+'Private Declare Function SetWindowLong _
                           Lib "user32.dll" _
                               Alias "SetWindowLongA" (ByVal hWnd As Long, _
                                                       ByVal nIndex As Long, _
                                                       ByVal dwNewLong As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 
 Private Declare Function ChooseColor _
                           Lib "comdlg32.dll" _

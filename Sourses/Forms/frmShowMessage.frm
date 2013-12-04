@@ -162,7 +162,7 @@ Private Sub Form_Load()
     LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange

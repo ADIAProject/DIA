@@ -332,7 +332,7 @@ End Sub
 '
 'End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange

@@ -644,8 +644,8 @@ Public Function Create(ByVal hParent As Long, _
                        Optional ByVal Border As gbLVBorderStyle) As Long
 
 'Call InitCommonControls
-    hLVParent = CreateWindowEx(cNull, "STATIC", "(c) Team ADIA", WS_VISIBLE Or WS_CHILD, nLeft, nTop, nWidth, nHeight, hParent, 0&, App.hInstance, ByVal 0&)
-    hListView = CreateWindowEx(Border, "SysListView32", vbNullString, WS_VISIBLE Or WS_CHILD Or dwStyle, 0&, 0&, nWidth, nHeight, hLVParent, cNull, App.hInstance, ByVal cNull)
+    hLVParent = CreateWindowEx(cNull, StrPtr("STATIC"), StrPtr("(c) Team ADIA"), WS_VISIBLE Or WS_CHILD, nLeft, nTop, nWidth, nHeight, hParent, 0&, App.hInstance, ByVal 0&)
+    hListView = CreateWindowEx(Border, StrPtr("SysListView32"), StrPtr(vbNullString), WS_VISIBLE Or WS_CHILD Or dwStyle, 0&, 0&, nWidth, nHeight, hLVParent, cNull, App.hInstance, ByVal cNull)
     Create = hListView
 
     If bInitImageList Then Call ImgLst_Init
@@ -1655,7 +1655,7 @@ End Sub
 Public Sub SetFocus()
 
 ' Установка фокуса
-    Call SetFocusApi(hListView)
+    Call SetFocusAPI(hListView)
 End Sub
 
 ' Передвижение/изменение размеров

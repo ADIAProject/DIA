@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" ?>
+  <dpinst>
+
+<!-- The following search and subDirectory elements direct
+     DPInst to search all subdirectories (under the DPInst working directory) to locate driver
+     packages. -->
+    <search>
+      <subDirectory>*</subDirectory>
+    </search>
+
+<!-- The enableNotListedLanguages XML element is an empty element that sets the enableNotListedLanguages
+     flag to ON, which configures DPInst to enable all of the supported languages that are not explicitly
+     enabled by language [ http://msdn.microsoft.com/en-us/library/ms794313.aspx ] XML elements in a DPInst.xml file. -->
+   <enableNotListedLanguages/>
+<!-- End of enableNotListedLanguages-->
+
+<!-- Customizing the Icon and Bitmaps That Appear on the Wizard pages.
+     The following three elements customize, but do not localize,
+     the icon and bitmaps that appear on the DPInst wizard pages. -->
+    <icon>Graphics\Main.ico</icon>
+    <watermarkPath>Graphics\Watermark.bmp</watermarkPath>
+<!-- End of  Customizing the Icon and Bitmaps-->
+
+
+<!--Summary of the DPInst XML Elements http://msdn2.microsoft.com/en-us/library/ms791067(printer).aspx -->
+
+  </dpinst>

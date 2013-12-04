@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram             As String = "02/12/2013"
+Public Const strDateProgram             As String = "04/12/2013"
 
 ' Текущая версия базы данных
 Public Const lngDevDBVersion            As Long = 5
@@ -887,7 +887,7 @@ Dim cnt                                 As Long
         IniWriteStrPrivate "MainForm", "Height", CStr(MainFormHeightDef), strSysIni
         IniWriteStrPrivate "MainForm", "StartMaximazed", "0", strSysIni
         IniWriteStrPrivate "MainForm", "SaveSizeOnExit", "0", strSysIni
-        IniWriteStrPrivate "MainForm", "FontName", "Lucida Console", strSysIni
+        IniWriteStrPrivate "MainForm", "FontName", "Courier New", strSysIni
         IniWriteStrPrivate "MainForm", "FontSize", "8", strSysIni
         IniWriteStrPrivate "MainForm", "HighlightColor", "32896", strSysIni
         'Секция Buttons
@@ -1360,7 +1360,7 @@ Dim numFilter                           As Long
 
     ' получение вида запуска (Секция MainForm)
     mbStartMaximazed = GetIniValueBoolean(strSysIni, "MainForm", "StartMaximazed", 0)
-    strMainForm_FontName = GetIniValueString(strSysIni, "MainForm", "FontName", "Lucida Console")
+    strMainForm_FontName = GetIniValueString(strSysIni, "MainForm", "FontName", "Courier New")
     lngMainForm_FontSize = GetIniValueLong(strSysIni, "MainForm", "FontSize", 8)
     ' Подсветка активного элемента
     glHighlightColor = GetIniValueLong(strSysIni, "MainForm", "HighlightColor", 32896)

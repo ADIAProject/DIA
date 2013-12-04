@@ -695,7 +695,7 @@ If FrameTransparentBrush <> 0 Then
     Set ImageTransparent.Picture = Nothing
 End If
 UserControl.Refresh
-If FrameHandle <> 0 Then RedrawWindow FrameHandle, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
+RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub
 
 Public Property Get ContainedControls() As Object

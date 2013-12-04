@@ -64,7 +64,7 @@ Dim lngCharset                          As Long
             lngCharset = ANSI_CHARSET
 
         Case 1253
-            'RUSSIAN_CHARSET = 204
+            'GREEK_CHARSET = 161
             lngCharset = GREEK_CHARSET
 
         Case 1254
@@ -116,26 +116,6 @@ Dim lngCharset                          As Long
 
 End Function
 
-'Public Const ANSI_CHARSET = 0
-'Public Const DEFAULT_CHARSET = 1
-'Public Const SYMBOL_CHARSET = 2
-'Public Const SHIFTJIS_CHARSET = 128
-'Public Const HANGEUL_CHARSET = 129
-'Public Const HANGUL_CHARSET = 129
-'Public Const GB2312_CHARSET = 134
-'Public Const CHINESEBIG5_CHARSET = 136
-'Public Const OEM_CHARSET = 255
-'Public Const JOHAB_CHARSET = 130
-'Public Const HEBREW_CHARSET = 177
-'Public Const ARABIC_CHARSET = 178
-'Public Const GREEK_CHARSET = 161
-'Public Const TURKISH_CHARSET = 162
-'Public Const VIETNAMESE_CHARSET = 163
-'Public Const THAI_CHARSET = 222
-'Public Const EASTEUROPE_CHARSET = 238
-'Public Const RUSSIAN_CHARSET = 204
-'Public Const MAC_CHARSET = 77
-'Public Const BALTIC_CHARSET = 186
 Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, _
                                   ByVal dwLCType As Long) As String
 
@@ -206,7 +186,6 @@ Dim LngValue                            As Long
 
         If strTemp <> "no_key" Then
             arrLanguage(2, ii + 1) = strTemp
-
         End If
 
         ' Имя переводчика
@@ -266,37 +245,34 @@ Dim LngValue                            As Long
         strPCLangCurrentPath = strAppPathBackSL & "Tools\Lang\English.lng"
         strPCLangCurrentID = "0409"
         lngDialog_Charset = 1
-
     End If
 
-    'arrLanguage
 End Function
 
 'Локализация сообщений программы
-Public Sub LocaliseMessage(StrPathFile As String)
+Public Sub LocaliseMessage(strPathFile As String)
 
 Dim i                                   As Integer
 
-    For i = LBound(strMessages) To UBound(strMessages)
-        strMessages(i) = LocaliseString(StrPathFile, "Messages", "strMessages" & i, "strMessages" & i)
-    Next
+    For i = 1 To UBound(strMessages)
+        strMessages(i) = LocaliseString(strPathFile, "Messages", "strMessages" & i, "strMessages" & i)
+    Next i
 
 End Sub
 
-Public Function LocaliseString(StrPathFile As String, _
-                               strSection As String, _
-                               strParam As String, _
-                               strDefValue As String) As String
+Public Function LocaliseString(ByVal strPathFile As String, _
+                               ByVal strSection As String, _
+                               ByVal strParam As String, _
+                               ByVal strDefValue As String) As String
 
 Dim strTemp                             As String
 
-    strTemp = IniStringPrivate(strSection, strParam, StrPathFile)
+    strTemp = IniStringPrivate(strSection, strParam, strPathFile)
 
     If strTemp <> "no_key" Then
         LocaliseString = ConvertString(Trim$(strTemp))
     Else
         LocaliseString = strDefValue
-
     End If
 
 End Function

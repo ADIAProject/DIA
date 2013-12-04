@@ -4,7 +4,7 @@ Option Explicit
 ' Программные переменные
 Public strOSArchitecture                As String
 Public strOsCurrentVersion              As String
-Public OsCurrVersionStruct           As OSInfoStruct
+Public OsCurrVersionStruct              As OSInfoStruct
 
 'Получение расширенной информации о версии Windows
 Public Type OSVERSIONINFO

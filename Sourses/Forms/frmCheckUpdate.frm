@@ -40,13 +40,6 @@ Begin VB.Form frmCheckUpdate
       Width           =   1935
       _ExtentX        =   3413
       _ExtentY        =   1323
-      Caption         =   "Закрыть"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -56,6 +49,13 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Закрыть"
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdHistory 
       Height          =   750
@@ -65,13 +65,6 @@ Begin VB.Form frmCheckUpdate
       Width           =   2175
       _ExtentX        =   3836
       _ExtentY        =   1323
-      Caption         =   "История изменений"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -81,6 +74,13 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "История изменений"
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdUpdateFull 
       Height          =   750
@@ -90,13 +90,6 @@ Begin VB.Form frmCheckUpdate
       Width           =   2175
       _ExtentX        =   3836
       _ExtentY        =   1323
-      Caption         =   "Скачать дистрибутив"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -106,6 +99,13 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Скачать дистрибутив"
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdUpdate 
       Height          =   750
@@ -115,13 +115,6 @@ Begin VB.Form frmCheckUpdate
       Width           =   2175
       _ExtentX        =   3836
       _ExtentY        =   1323
-      Caption         =   "Скачать обновление"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -131,6 +124,13 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Скачать обновление"
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdDonate 
       Height          =   750
@@ -140,13 +140,6 @@ Begin VB.Form frmCheckUpdate
       Width           =   2220
       _ExtentX        =   3916
       _ExtentY        =   1323
-      Caption         =   "Поддержать проект"
-      ButtonStyle     =   3
-      PictureWidth    =   51
-      PictureHeight   =   28
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -156,6 +149,13 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      Caption         =   "Поддержать проект"
+      ButtonStyle     =   3
+      PictureWidth    =   51
+      PictureHeight   =   28
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
       TextColor       =   0
       MenuCaption0    =   "#"
    End
@@ -579,7 +579,6 @@ Dim strMirrorText                       As String
 
         End With
 
-        'BUTTONNAME
     End If
 
 End Sub
@@ -614,20 +613,20 @@ Dim strDescriptionTemp                  As String
 
 End Sub
 
-Private Sub Localise(StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdUpdate.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
-    cmdUpdateFull.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
-    cmdHistory.Caption = LocaliseString(StrPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
-    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdUpdate.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
+    cmdUpdateFull.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
+    cmdHistory.Caption = LocaliseString(strPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
+    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
-    lblVersion.Caption = LocaliseString(StrPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
+    lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
 
     If InStr(1, strRelease, "beta", vbTextCompare) Then
         lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"
@@ -635,8 +634,8 @@ Private Sub Localise(StrPathFile As String)
 
     End If
 
-    lblVersionList.Caption = LocaliseString(StrPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
-    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
+    lblVersionList.Caption = LocaliseString(strPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
+    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
 
 End Sub
 

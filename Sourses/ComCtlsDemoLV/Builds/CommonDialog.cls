@@ -842,7 +842,6 @@ Else
     PDLGEX.hWndOwner = GetActiveWindow()
 End If
 PDLGEX.Flags = PropFlags
-PDLGEX.Flags = PropFlags
 PDLGEX.nPageRanges = 1
 PDLGEX.nMaxPageRanges = 1
 PPAGERANGE.nFromPage = PropFromPage
