@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram             As String = "04/12/2013"
+Public Const strDateProgram             As String = "10/12/2013"
 
 ' Текущая версия базы данных
 Public Const lngDevDBVersion            As Long = 5
@@ -235,22 +235,11 @@ Public mbLogNotOnCDRoom                 As Boolean
 Public mbHideOtherProcess               As Boolean
 Public mbChangeResolution               As Boolean
 
-' Обработка дубликатов HWID
-'Public mbDelDouble                      As Boolean
-'Public mbDelDoubleSubSys                As Boolean
-'Public mbDelDoubleREV                   As Boolean
-'Public mbDelDoubleMI                    As Boolean
-'Public mbDelDoubleCC                    As Boolean
-
 ' Сравнение версий драйверов по дате
 Public mbCompareDrvVerByDate            As Boolean
 
 ' Грузить\негрузить драйвера для несовместимых ОС
 Public mbLoadUnSupportedOS              As Boolean
-
-'Режим создания БД
-'Public mbDevParserByRegExp                   As Boolean
-'Public mbDevParserSortByHWID            As Boolean
 
 'Маркер перезапуска программы
 Public mbRestartProgram                 As Boolean
@@ -800,13 +789,6 @@ Dim cnt                                 As Long
         IniWriteStrPrivate "DPInst", "ScanHardware", 1, strSysIni
         'Секция Arc
         IniWriteStrPrivate "Arc", "PathExe", "Tools\Arc\7za.exe", strSysIni
-        'Секция DevParser
-        'IniWriteStrPrivate "DevParser", "SortByHWID", "1", strSysIni
-        'IniWriteStrPrivate "DevParser", "DelDouble", "0", strSysIni
-        'IniWriteStrPrivate "DevParser", "DelDouble_SubSys", "1", strSysIni
-        'IniWriteStrPrivate "DevParser", "DelDouble_MI", "1", strSysIni
-        'IniWriteStrPrivate "DevParser", "DelDouble_CC", "1", strSysIni
-        'IniWriteStrPrivate "DevParser", "DelDouble_REV", "1", strSysIni
         'Секция OS
         IniWriteStrPrivate "OS", "OSCount", "4", strSysIni
         IniWriteStrPrivate "OS", "OSCountPerRow", "4", strSysIni
@@ -939,7 +921,6 @@ Dim cnt                                 As Long
         mbCleanHistory = True
         strDebugLogPathTemp = "%SYSTEMDRIVE%"
         strDebugLogNameTemp = "DIA-LOG_%DATE%.txt"
-
 
     End If
 
@@ -1445,18 +1426,6 @@ Dim numFilter                           As Long
     mbAutoInfoAfterDelDRV = GetIniValueBoolean(strSysIni, "Main", "AutoInfoAfterDelDRV", 1)
     ' Стартовый режим
     miStartMode = GetIniValueLong(strSysIni, "Main", "StartMode", 1)
-    '[DevParser]
-    ' Обработка дубликатов
-'    mbDelDouble = GetIniValueBoolean(strSysIni, "DevParser", "DelDouble", 1)
-'    mbDelDoubleSubSys = GetIniValueBoolean(strSysIni, "DevParser", "DelDouble_SubSys", 1)
-'    mbDelDoubleMI = GetIniValueBoolean(strSysIni, "DevParser", "DelDouble_MI", 1)
-'    mbDelDoubleCC = GetIniValueBoolean(strSysIni, "DevParser", "DelDouble_CC", 1)
-'    mbDelDoubleREV = GetIniValueBoolean(strSysIni, "DevParser", "DelDouble_REV", 1)
-    ' Режим создания индексных файлов
-    'mbDevParserByRegExp = GetIniValueBoolean(strSysIni, "DevParser", "DevParserByRegExp", 1)
-    ' Сортировать выходной массив по HWID, иначе будет отсортировано по ини-файлам
-    'mbDevParserSortByHWID = GetIniValueBoolean(strSysIni, "DevParser", "SortByHWID", 1)
-
     '[NotebookVendor]
     NotebookFilterCount = IniLongPrivate("NotebookVendor", "FilterCount", strSysIni)
     If NotebookFilterCount = 0 Or NotebookFilterCount = 9999 Then
@@ -1487,8 +1456,6 @@ Dim strTemp                             As String
 
 Const wbemFlagReturnImmediately = &H10
 Const wbemFlagForwardOnly = &H20
-
-    'Dim objRegExp As Object
 
     ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
     Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
@@ -1538,7 +1505,6 @@ Dim strTemp                             As String
 
 Const wbemFlagReturnImmediately = &H10
 Const wbemFlagForwardOnly = &H20
-
 
     ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
     Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")

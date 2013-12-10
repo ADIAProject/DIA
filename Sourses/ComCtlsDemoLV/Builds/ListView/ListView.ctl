@@ -1359,9 +1359,9 @@ Attribute hWnd.VB_UserMemId = -515
 hWnd = ListViewHandle
 End Property
 
-Public Property Get hWndOwner() As Long
-Attribute hWndOwner.VB_Description = "Returns a handle to a control."
-hWndOwner = UserControl.hWnd
+Public Property Get hWndUserControl() As Long
+Attribute hWndUserControl.VB_Description = "Returns a handle to a control."
+hWndUserControl = UserControl.hWnd
 End Property
 
 Public Property Get hWndHeader() As Long
@@ -4235,7 +4235,7 @@ Select Case dwRefData
     Case 2
         ISubclass_Message = WindowProcLabelEdit(hWnd, wMsg, wParam, lParam)
     Case 3
-        ISubclass_Message = WindowProcOwner(hWnd, wMsg, wParam, lParam)
+        ISubclass_Message = WindowProcUserControl(hWnd, wMsg, wParam, lParam)
     Case 10
         ISubclass_Message = ListItemsSortingFunctionBinary(wParam, lParam)
     Case 11
@@ -4395,7 +4395,7 @@ If wMsg = WM_IME_CHAR Then SendMessage hWnd, WM_CHAR, wParam, ByVal lParam: Exit
 WindowProcLabelEdit = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
-Private Function WindowProcOwner(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
     Case WM_SHOWWINDOW
         If ListViewHandle = 0 Then Call CreateListView
@@ -4433,13 +4433,13 @@ Select Case wMsg
                     Select Case NM.Code
                         Case LVN_BEGINLABELEDIT
                             If PropLabelEdit = LvwLabelEditManual And ListViewStartLabelEdit = False Then
-                                WindowProcOwner = 1
+                                WindowProcUserControl = 1
                             Else
                                 RaiseEvent BeforeLabelEdit(Cancel)
                                 If Cancel = True Then
-                                    WindowProcOwner = 1
+                                    WindowProcUserControl = 1
                                 Else
-                                    WindowProcOwner = 0
+                                    WindowProcUserControl = 0
                                     LabelEditHandle = Me.hWndLabelEdit
                                     If LabelEditHandle <> 0 Then Call ComCtlsSetSubclass(LabelEditHandle, Me, 2)
                                     ListViewLabelInEdit = True
@@ -4458,12 +4458,12 @@ Select Case wMsg
                                     With Me.ListItems(.iItem + 1)
                                     .FInit Me, .Index, .Key, NMLVDI.Item.lParam, NewText, .Icon, .SmallIcon
                                     End With
-                                    WindowProcOwner = 1
+                                    WindowProcUserControl = 1
                                 Else
-                                    WindowProcOwner = 0
+                                    WindowProcUserControl = 0
                                 End If
                             Else
-                                WindowProcOwner = 0
+                                WindowProcUserControl = 0
                             End If
                             End With
                             If LabelEditHandle <> 0 Then
@@ -4527,7 +4527,7 @@ Select Case wMsg
                     CopyMemory NMLVCD, ByVal lParam, LenB(NMLVCD)
                     Select Case NMLVCD.NMCD.dwDrawStage
                         Case CDDS_PREPAINT
-                            WindowProcOwner = CDRF_NOTIFYITEMDRAW
+                            WindowProcUserControl = CDRF_NOTIFYITEMDRAW
                             Exit Function
                         Case CDDS_ITEMPREPAINT
                             FontHandle = ListViewFontHandle
@@ -4556,7 +4556,7 @@ Select Case wMsg
                             End If
                             SelectObject NMLVCD.NMCD.hDC, FontHandle
                             CopyMemory ByVal lParam, NMLVCD, LenB(NMLVCD)
-                            WindowProcOwner = CDRF_NEWFONT Or CDRF_NOTIFYSUBITEMDRAW
+                            WindowProcUserControl = CDRF_NEWFONT Or CDRF_NOTIFYSUBITEMDRAW
                             Exit Function
                         Case (CDDS_ITEMPREPAINT Or CDDS_SUBITEM)
                             FontHandle = ListViewFontHandle
@@ -4607,7 +4607,7 @@ Select Case wMsg
                             End If
                             SelectObject NMLVCD.NMCD.hDC, FontHandle
                             CopyMemory ByVal lParam, NMLVCD, LenB(NMLVCD)
-                            WindowProcOwner = CDRF_NEWFONT
+                            WindowProcUserControl = CDRF_NEWFONT
                             Exit Function
                     End Select
                 Case NM_SETFOCUS, NM_KILLFOCUS
@@ -4672,15 +4672,15 @@ Select Case wMsg
                         CopyMemory NMLVEMU.szMarkup(0), TextB(0), Length
                         If Centered = True Then NMLVEMU.dwFlags = EMF_CENTERED
                         CopyMemory ByVal lParam, NMLVEMU, LenB(NMLVEMU)
-                        WindowProcOwner = 1
+                        WindowProcUserControl = 1
                         Exit Function
                     End If
                 Case LVN_MARQUEEBEGIN
                     RaiseEvent BeginMarqueeSelection(Cancel)
                     If Cancel = True Then
-                        WindowProcOwner = 1
+                        WindowProcUserControl = 1
                     Else
-                        WindowProcOwner = 0
+                        WindowProcUserControl = 0
                     End If
                     Exit Function
             End Select
@@ -4707,10 +4707,10 @@ Select Case wMsg
         If lParam = NF_QUERY Then
             Const NFR_UNICODE As Long = 2
             Const NFR_ANSI As Long = 1
-            WindowProcOwner = NFR_UNICODE
+            WindowProcUserControl = NFR_UNICODE
             Exit Function
         End If
 End Select
-WindowProcOwner = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 If wMsg = WM_SETFOCUS Then SetFocusAPI ListViewHandle
 End Function

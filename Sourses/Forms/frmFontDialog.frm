@@ -226,7 +226,6 @@ Begin VB.Form frmFontDialog
       Width           =   2100
       _ExtentX        =   3704
       _ExtentY        =   1323
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -236,6 +235,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
       PictureAlign    =   0
@@ -253,7 +253,6 @@ Begin VB.Form frmFontDialog
       Width           =   2100
       _ExtentX        =   3704
       _ExtentY        =   1323
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -263,6 +262,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
       PictureAlign    =   0
@@ -424,8 +424,8 @@ Private Sub FontCharsetChange()
         .Charset = lngDialog_Charset
     End With
 
-    SetButtonProperties , cmdExit, True
-    SetButtonProperties , cmdOK, True
+    SetButtonProperties cmdExit
+    SetButtonProperties cmdOK
 
 End Sub
 

@@ -27,73 +27,30 @@ Option Explicit
 ' Web:      www.leandroascierto.com.ar
 ' Fecha:    21 de Marzo de 2010
 ' ------------------------------------------------------
-Private Declare Sub CopyMemory _
-                     Lib "kernel32.dll" _
-                         Alias "RtlMoveMemory" (ByRef Destination As Any, _
-                                                ByRef Source As Any, _
-                                                ByVal Length As Long)
-
-'Private Declare Function SetWindowLong _
-                          Lib "user32.dll" _
-                              Alias "SetWindowLongA" (ByVal hWnd As Long, _
-                                                      ByVal nIndex As Long, _
-                                                      ByVal dwNewLong As Long) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-
-Private Declare Function VirtualAlloc _
-                          Lib "kernel32.dll" (ByRef lpAddress As Long, _
-                                              ByVal dwSize As Long, _
-                                              ByVal flAllocationType As Long, _
-                                              ByVal flProtect As Long) As Long
-
-Private Declare Function VirtualFree _
-                          Lib "kernel32.dll" (ByRef lpAddress As Long, _
-                                              ByVal dwSize As Long, _
-                                              ByVal dwFreeType As Long) As Long
-
-Private Declare Function SetScrollInfo _
-                          Lib "user32.dll" (ByVal hWnd As Long, _
-                                            ByVal n As Long, _
-                                            lpcScrollInfo As SCROLLINFO, _
-                                            ByVal bool As Boolean) As Long
-
-Private Declare Function GetScrollInfo _
-                          Lib "user32.dll" (ByVal hWnd As Long, _
-                                            ByVal n As Long, _
-                                            lpScrollInfo As SCROLLINFO) As Long
-
-Private Declare Function ScrollWindowByNum& _
-                          Lib "user32.dll" _
-                              Alias "ScrollWindow" (ByVal hWnd As Long, _
-                                                    ByVal XAmount As Long, _
-                                                    ByVal YAmount As Long, _
-                                                    ByVal lpRect As Long, _
-                                                    ByVal lpClipRect As Long)
-
+Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function VirtualAlloc Lib "kernel32.dll" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
+Private Declare Function VirtualFree Lib "kernel32.dll" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
+Private Declare Function SetScrollInfo Lib "user32.dll" (ByVal hWnd As Long, ByVal n As Long, lpcScrollInfo As SCROLLINFO, ByVal bool As Boolean) As Long
+Private Declare Function GetScrollInfo Lib "user32.dll" (ByVal hWnd As Long, ByVal n As Long, lpScrollInfo As SCROLLINFO) As Long
+Private Declare Function ScrollWindowByNum Lib "user32.dll" Alias "ScrollWindow" (ByVal hWnd As Long, ByVal XAmount As Long, ByVal YAmount As Long, ByVal lpRect As Long, ByVal lpClipRect As Long) As Long
 Private Declare Function GetWindowDC Lib "user32.dll" (ByVal hWnd As Long) As Long
-Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
-
-Private Declare Function ExcludeClipRect _
-                          Lib "gdi32.dll" (ByVal hDC As Long, _
-                                           ByVal X1 As Long, _
-                                           ByVal Y1 As Long, _
-                                           ByVal X2 As Long, _
-                                           ByVal Y2 As Long) As Long
-
+Private Declare Function GetWindowRect Lib "user32.dll" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
+Private Declare Function ExcludeClipRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Private Declare Function GetFocus Lib "user32.dll" () As Long
 Private Declare Function IsChild Lib "user32.dll" (ByVal hWndParent As Long, ByVal hWnd As Long) As Long
 Private Declare Function ClientToScreen Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINT) As Long
-Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
-Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
-Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
-Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Function SetCursor Lib "user32.dll" (ByVal hCursor As Long) As Long
+Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
+Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
+Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
 Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
-Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcW" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function CallWindowProc Lib "user32.dll" Alias "CallWindowProcW" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function GetParent Lib "user32.dll" (ByVal hWnd As Long) As Long
 
 Private Type RECT
@@ -149,7 +106,6 @@ Private Const SM_CYBORDER               As Long = 6
 Public Enum EnuBorderStyle
     vbBSNone
     vbFixedSingle
-
 End Enum
 
 Private SI                              As SCROLLINFO

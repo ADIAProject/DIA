@@ -31,13 +31,13 @@ Begin VB.Form frmEmulate
       _ExtentX        =   13996
       _ExtentY        =   556
       UseAutoForeColor=   0   'False
-      Color           =   0
       DefaultExt      =   ""
-      DialogType      =   3
+      DialogType      =   1
       Enabled         =   0   'False
       FileFlags       =   2621446
       Filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
-      ToolTipText3    =   "Click Here to Locate File"
+      ToolTipText1    =   "Click Here to Locate File"
+      UseDialogText   =   0   'False
    End
    Begin prjDIADBS.ComboBoxW cmbOS 
       Height          =   330
@@ -68,8 +68,6 @@ Begin VB.Form frmEmulate
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1323
-      ButtonStyle     =   8
-      Enabled         =   0   'False
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -79,6 +77,8 @@ Begin VB.Form frmEmulate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      Enabled         =   0   'False
       BackColor       =   12244692
       Caption         =   "Загрузить файл"
       PictureAlign    =   0
@@ -96,7 +96,6 @@ Begin VB.Form frmEmulate
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1296
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -106,6 +105,7 @@ Begin VB.Form frmEmulate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Отмена"
       PictureAlign    =   0

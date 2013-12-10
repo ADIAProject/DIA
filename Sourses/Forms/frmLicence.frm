@@ -75,7 +75,6 @@ Begin VB.Form frmLicence
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1244
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -85,6 +84,7 @@ Begin VB.Form frmLicence
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "ОК"
       PictureAlign    =   0
@@ -102,7 +102,6 @@ Begin VB.Form frmLicence
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1244
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -112,6 +111,7 @@ Begin VB.Form frmLicence
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Отмена"
       PictureAlign    =   0
@@ -134,12 +134,12 @@ Private lngFormWidthMin                 As Long
 Private lngFormHeightMin                As Long
 Private strFormName                     As String
 
-Private Sub CheckEditLicense(strPathFile As String)
+Private Sub CheckEditLicense(StrPathFile As String)
 
 Dim strMD5TextRtf                       As String
 Dim strEULA_MD5RTF_temp                 As String
 
-    strMD5TextRtf = GetMD5(strPathFile)
+    strMD5TextRtf = GetMD5(StrPathFile)
     DebugMode "LicenceInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -181,8 +181,8 @@ Private Sub FontCharsetChange()
         .Charset = lngDialog_Charset
     End With
 
-    SetButtonProperties , cmdExit, True
-    SetButtonProperties , cmdOK, True
+    SetButtonProperties cmdExit
+    SetButtonProperties cmdOK
 
 End Sub
 
@@ -405,17 +405,17 @@ Dim strPathLicence                      As String
 
 End Sub
 
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Чекбокс
-    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
+    chkAgreeLicence.Caption = LocaliseString(StrPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
 
 End Sub
 

@@ -111,13 +111,11 @@ Begin VB.Form frmOSEdit
          Width           =   5295
          _ExtentX        =   9340
          _ExtentY        =   556
-         Color           =   0
          DefaultExt      =   ""
-         DialogType      =   3
+         DialogType      =   1
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
-         ToolTipText3    =   "Click Here to Locate File"
       End
       Begin prjDIADBS.ctlUcPickBox ucLangPath 
          Height          =   315
@@ -127,13 +125,11 @@ Begin VB.Form frmOSEdit
          Width           =   5295
          _ExtentX        =   9340
          _ExtentY        =   556
-         Color           =   0
          DefaultExt      =   ""
-         DialogType      =   3
+         DialogType      =   1
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
-         ToolTipText3    =   "Click Here to Locate File"
       End
       Begin prjDIADBS.ctlUcPickBox ucRuntimesPath 
          Height          =   315
@@ -143,13 +139,11 @@ Begin VB.Form frmOSEdit
          Width           =   5295
          _ExtentX        =   9340
          _ExtentY        =   556
-         Color           =   0
          DefaultExt      =   ""
-         DialogType      =   3
+         DialogType      =   1
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
-         ToolTipText3    =   "Click Here to Locate File"
       End
       Begin prjDIADBS.LabelW lblRuntimes 
          Height          =   255
@@ -307,12 +301,9 @@ Begin VB.Form frmOSEdit
       _ExtentX        =   9313
       _ExtentY        =   556
       UseAutoForeColor=   0   'False
-      Color           =   0
       DefaultExt      =   ""
-      DialogType      =   1
       Enabled         =   0   'False
       Filters         =   "Supported files|*.*|All Files (*.*)"
-      ToolTipText3    =   "Click Here to Locate File"
    End
    Begin prjDIADBS.ctlUcPickBox ucPathDB 
       Height          =   315
@@ -322,12 +313,9 @@ Begin VB.Form frmOSEdit
       Width           =   5275
       _ExtentX        =   9313
       _ExtentY        =   556
-      Color           =   0
       DefaultExt      =   ""
-      DialogType      =   1
       Enabled         =   0   'False
       Filters         =   "Supported files|*.*|All Files (*.*)"
-      ToolTipText3    =   "Click Here to Locate File"
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   750
@@ -337,7 +325,6 @@ Begin VB.Form frmOSEdit
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1323
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -347,6 +334,7 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
       PictureAlign    =   0
@@ -364,7 +352,6 @@ Begin VB.Form frmOSEdit
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1296
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -374,6 +361,7 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
       PictureAlign    =   0

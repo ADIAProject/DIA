@@ -162,7 +162,6 @@ Begin VB.Form frmAbout
       Width           =   2100
       _ExtentX        =   3704
       _ExtentY        =   3519
-      ButtonStyle     =   10
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -172,6 +171,7 @@ Begin VB.Form frmAbout
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   10
       BackColor       =   16765357
       Caption         =   ""
       PictureNormal   =   "frmAbout.frx":000C
@@ -334,7 +334,6 @@ Private Sub FontCharsetChange()
     SetButtonProperties cmdOsZoneNet
     SetButtonProperties cmdSoftGetNet
     SetButtonProperties cmdExit
-
 End Sub
 
 Private Sub cmdDonate_Click()
@@ -546,23 +545,23 @@ Private Sub LoadTranslator()
 
 End Sub
 
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdLicence.Caption = LocaliseString(strPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
-    cmdSoftGetNet.Caption = LocaliseString(strPathFile, strFormName, "cmdSoftGetNet", cmdSoftGetNet.Caption)
-    cmdOsZoneNet.Caption = LocaliseString(strPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdLicence.Caption = LocaliseString(StrPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
+    cmdSoftGetNet.Caption = LocaliseString(StrPathFile, strFormName, "cmdSoftGetNet", cmdSoftGetNet.Caption)
+    cmdOsZoneNet.Caption = LocaliseString(StrPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
-    lblMailTo.Caption = LocaliseString(strPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
-    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblMailTo.Caption = LocaliseString(StrPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
+    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
     ' Перевод программы
-    strTranslatorName = LocaliseString(strPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
-    strTranslatorUrl = LocaliseString(strPathFile, "Lang", "TranslatorUrl", vbNullString)
+    strTranslatorName = LocaliseString(StrPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
+    strTranslatorUrl = LocaliseString(StrPathFile, "Lang", "TranslatorUrl", vbNullString)
     LoadTranslator
 
 End Sub

@@ -15,7 +15,6 @@ Option Explicit
 Public Enum AnimeEventEnum
     aUnload = 0
     aLoad = 1
-
 End Enum
 
 '[Effect Enum]
@@ -34,7 +33,6 @@ Public Enum AnimeEffectEnum
     eFoldOut = 11
     eCurtonHorizontal = 12
     eCurtonVertical = 13
-
 End Enum
 
 '[Constants]
@@ -418,6 +416,5 @@ End Function
 Public Sub MakeTopMostNoFocus(hWnd As Long)
 'SetWindowPos hwnd, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS
     SetWindowPos hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_FLAGS
-
 End Sub
 

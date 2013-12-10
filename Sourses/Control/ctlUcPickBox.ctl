@@ -102,7 +102,7 @@ Begin VB.UserControl ctlUcPickBox
       ScrollBars      =   1  'Horizontal
       TabIndex        =   0
       TabStop         =   0   'False
-      Text            =   "Locate Color..."
+      Text            =   "Locate Folder..."
       Top             =   0
       Width           =   1455
    End
@@ -336,7 +336,7 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '+  File Description:
-'       ucPickBox - Enhanced File/Color/Font Picker Control
+'       ucPickBox - Enhanced File Picker Control
 '
 '   Product Name:
 '       ucPickBox.ctl
@@ -496,65 +496,17 @@ Attribute VB_Exposed = False
 '                 use in the Open/Save Dailogs
 '       08Aug07 - Fixed Bug in the BFF section which did not correctly Qualify Paths.
 '
+'       Recode Control By Romeo91 for Better Subsclassing and Unicode Support for File And Text
+'       10Dec13 - Repaint Subsclass Code from SelfSub 2.1 Paul Caton - http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=64867&lngWId=1.
+'                 Added Unicode Support for FileOperation Dialog
+'                 Added Unicode Support for Text Properties
+'
 '   Force Declarations
+'   Oroginal Build Date & Time: 8/8/2007 10:22:17 AM
+
 Option Explicit
 
-'
-'   Build Date & Time: 8/8/2007 10:22:17 AM
-Const Major                             As Long = 2
-Const Minor                             As Long = 0
-Const Revision                          As Long = 200
-
-Private Const LF_FACESIZE As Long = 32
-
-'Структура, входящая в состав ChooseFont
-'Здесь указывается форматирование шрифта
-Private Type LOGFONT
-    LFHeight                            As Long
-    LFWidth                             As Long
-    LFEscapement                        As Long
-    LFOrientation                       As Long
-    LFWeight                            As Long
-    LFItalic                            As Byte
-    LFUnderline                         As Byte
-    LFStrikeOut                         As Byte
-    LFCharset                           As Byte
-    LFOutPrecision                      As Byte
-    LFClipPrecision                     As Byte
-    LFQuality                           As Byte
-    LFPitchAndFamily                    As Byte
-    LFFaceName(LF_FACESIZE)             As Byte
-End Type
-
-'Структура с информацией о шрифте для функции ChooseFont и др.
-Private Type ChooseFont
-    lStructSize                         As Long
-    hWndOwner                           As Long           '  caller's window handle
-    hDC                                 As Long                 '  printer DC/IC or NULL
-    lpLogFont                           As Long           '  ptr. to a LOGFONT struct
-    iPointSize                          As Long          '  10 * size in points of selected font
-    Flags                               As Long               '  enum. type flags
-    rgbColors                           As Long           '  returned text color
-    lCustData                           As Long           '  data passed to hook fn.
-    lpfnHook                            As Long            '  ptr. to hook function
-    lpTemplateName                      As String    '  custom template name
-    hInstance                           As Long           '  instance handle of.EXE that
-    lpszStyle                           As String         '  return the style field here
-    nFontType                           As Integer        '  same value reported to the EnumFonts
-    MISSING_ALIGNMENT                   As Integer
-    nSizeMin                            As Long            '  minimum pt size allowed &
-    nSizeMax                            As Long            '  max pt size allowed if
-End Type
-
 '   Private API Declarations
-Private Declare Function ChooseColor _
-                          Lib "comdlg32.dll" _
-                              Alias "ChooseColorA" (pChoosecolor As CHOOSECOLORS) As Long
-
-Private Declare Function ChooseFont _
-                          Lib "comdlg32.dll" _
-                              Alias "ChooseFontA" (pChoosefont As ChooseFont) As Long
-
 Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameW" (ByVal pOpenfilename As Long) As Long
 Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameW" (ByVal pOpenfilename As Long) As Long
 
@@ -565,7 +517,6 @@ Private Const FILE_ATTRIBUTE_DIR = &H10
 Public Enum pbAppearanceConstants
     [Flat] = &H0
     [3D] = &H1
-
 End Enum
 
 Public Enum pbThemeEnum
@@ -574,7 +525,6 @@ Public Enum pbThemeEnum
     [pbBlue] = &H2
     [pbHomeStead] = &H3
     [pbMetallic] = &H4
-
 End Enum
 
 Private Enum pbStateEnum
@@ -582,7 +532,6 @@ Private Enum pbStateEnum
     [pbHover] = &H1
     [pbDown] = &H2
     [pbDisabled] = &H3
-
 End Enum
 
 '   Flat Button API Constants
@@ -595,59 +544,8 @@ Private Const BS_FLAT = &H8000&
 Private Const CB_SHOWDROPDOWN = &H14F
 Private Const CB_GETDROPPEDSTATE = &H157
 
-Public Enum ColorDialogFlags
-    '   ShowColor Flags
-    RGBInit = &H1
-    FullOpen = &H2
-    PreventFullOpen = &H4
-    ShowHelp = &H8
-    EnableHook = &H10
-    EnableTemplate = &H20
-    EnableTemplateHandle = &H40
-    SolidColor = &H80
-    AnyColor = &H100
-    '   Custom Non-Win32 Flags which are a Combinations of Flags
-    ShowColor_Default = FullOpen Or AnyColor Or RGBInit
-
-End Enum
-
-Public Enum FontDialogFlags
-    '   ShowFont Flags
-    ScreenFonts = &H1
-    PrinterFonts = &H2
-    Both = (ScreenFonts Or PrinterFonts)
-    ShowHelp = &H4
-    EnableHook = &H8
-    EnableTemplate = &H10
-    EnableTemplateHandle = &H20
-    InitToLogFontStruct = &H40
-    UseStyle = &H80
-    Effects = &H100
-    Apply = &H200
-    AnsiOnly = &H400
-    ScriptsOnly = AnsiOnly
-    NoVectorFonts = &H800
-    NoOEMFonts = NoVectorFonts
-    NoSimulations = &H1000
-    LimitSize = &H2000
-    FixedPitchOnly = &H4000
-    WYSIWYG = &H8000    '  Must Also Have Screenfonts Printerfonts
-    ForceFontExist = &H10000
-    ScalableOnly = &H20000
-    TTonly = &H40000
-    NoFaceSel = &H80000
-    NoStyleSel = &H100000
-    NoSizeSel = &H200000
-    SelectScript = &H400000
-    NoScriptSel = &H800000
-    NoVertFonts = &H1000000
-    '   Custom Non-Win32 Flags which are a Combinations of Flags
-    ShowFont_Default = Both Or Effects Or ForceFontExist Or InitToLogFontStruct Or LimitSize
-
-End Enum
-
+'   ShowOpen / ShowSave Flags
 Public Enum OpenSaveDialogFlags
-    '   ShowOpen / ShowSave Flags
     ReadOnly = &H1
     OverwritePrompt = &H2
     HideReadOnly = &H4
@@ -673,16 +571,12 @@ Public Enum OpenSaveDialogFlags
     '   Custom Non-Win32 Flags Which Are A Combinations Of Flags
     ShowOpen_Default = Explorer Or LongNames Or Createprompt Or NoDeReferenceLinks Or HideReadOnly
     ShowSave_Default = Explorer Or LongNames Or OverwritePrompt Or HideReadOnly
-
 End Enum
 
 Public Enum ucDialogConstant
-    [ucColor] = &H0
-    [ucFolder] = &H1
-    [ucFont] = &H2
-    [ucOpen] = &H3
-    [ucSave] = &H4
-
+    [ucFolder] = &H0
+    [ucOpen] = &H1
+    [ucSave] = &H2
 End Enum
 
 Private Const OUT_DEFAULT_PRECIS = 0
@@ -691,21 +585,8 @@ Private Const DEFAULT_QUALITY = 0
 Private Const DEFAULT_PITCH = 0
 Private Const MAX_PATH                  As Long = 4096    '260
 
-Private Type CHOOSECOLORS
-    lStructSize                             As Long
-    hWndOwner                           As Long
-    hInstance                           As Long
-    RGBResult                           As Long
-    lpCustColors                        As String
-    Flags                               As Long
-    lCustData                           As Long
-    lpfnHook                            As Long
-    lpTemplateName                      As String
-
-End Type
-
 Private Type OPENFILENAME
-    nStructSize                             As Long
+    nStructSize                         As Long
     hWndOwner                           As Long
     hInstance                           As Long
     sFilter                             As String
@@ -731,48 +612,22 @@ Private Type OPENFILENAME
     FlagsEx                             As Long
 End Type
 
-
-Private Type SelectedColor
-    oSelectedColor                      As OLE_COLOR
-    bCanceled                           As Boolean
-
-End Type
-
 Private Type SelectedFile
-    nFilesSelected                          As Integer
+    nFilesSelected                      As Integer
     sFiles()                            As String
     sLastDirectory                      As String
     bCanceled                           As Boolean
-
-End Type
-
-Private Type SelectedFont
-    sSelectedFont                           As String
-    bCanceled                           As Boolean
-    bBold                               As Boolean
-    BItalic                             As Boolean
-    nSize                               As Integer
-    bUnderline                          As Boolean
-    bStrikeOut                          As Boolean
-    lColor                              As Long
-    sFaceName                           As String
-    nCharset                            As Integer
-
 End Type
 
 '   Private Dialog Structure Definitions
-Private ColorDialog                     As CHOOSECOLORS
 Private FileDialog                      As OPENFILENAME
-Private FontDialog                      As ChooseFont
 
 '   Private UserControl Properties
 Private m_Appearance                    As pbAppearanceConstants
 Private m_UseAutoForeColor              As Boolean
 Private m_BackColor                     As OLE_COLOR
-Private m_Color                         As OLE_COLOR
-Private m_ColorFlags                    As ColorDialogFlags
 Private m_DefaultExt                    As String
-Private m_DialogMsg(5)                  As String
+Private m_DialogMsg(2)                  As String
 Private m_DialogType                    As ucDialogConstant
 Private m_Enabled                       As Boolean
 Private m_FileCount                     As Long
@@ -781,7 +636,6 @@ Private m_Filename()                    As String
 Private m_Filters                       As String
 Private m_Font                          As StdFont
 Private m_FontColor                     As OLE_COLOR
-Private m_FontFlags                     As FontDialogFlags
 Private m_Forecolor                     As OLE_COLOR
 Private m_hWnd                          As Long
 Private m_MultiSelect                   As Boolean
@@ -790,22 +644,18 @@ Private m_Pnt                           As POINT
 Private m_PrevBackColor                 As OLE_COLOR
 Private m_PrevLoc                       As POINT
 Private m_State                         As pbStateEnum
-Private m_ToolTipText(5)                As String
+Private m_ToolTipText(2)                As String
 Private m_Theme                         As pbThemeEnum
 Private m_UseDialogColor                As Boolean
 Private m_UseDialogText                 As Boolean
-Private sPrevColor                      As String
 Private m_Locked                        As Boolean
 Private m_QualifyPaths                  As Boolean
+Private m_bIsWinXpOrLater               As Boolean
 
-'   Custom Colors Dialog Array
-Private CustomColors(0 To (16 * 4 - 1)) As Byte
 
 '   Public UserControl Events
 Public Event Click()
-Public Event ColorChanged(NewColor As Long)
 Public Event DropClick()
-Public Event FontChanged(FontName As String)
 Public Event KeyDown(KeyCode As Integer, Shift As Integer)
 Public Event KeyPress(KeyAscii As Integer)
 Public Event KeyUp(KeyCode As Integer, Shift As Integer)
@@ -813,629 +663,469 @@ Public Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Si
 Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event PathChanged()
+'*************************************************************************************************
+'* ctlUcPickBox - uSelfSub based sample
+'*
+'* Paul_Caton@hotmail.com
+'* Copyright free, use and abuse as you see fit.
+'*
+'* v1.0 Re-write of the SelfSub/WinSubHook-2 submission to Planet Source Code............ 20060322
+'* v1.1 VirtualAlloc memory to prevent Data Execution Prevention faults on Win64......... 20060324
+'* v1.2 Thunk redesigned to handle unsubclassing and memory release...................... 20060325
+'* v1.3 Data array scrapped in favour of property accessors.............................. 20060405
+'* v1.4 Optional IDE protection added
+'*      User-defined callback parameter added
+'*      All user routines that pass in a hWnd get additional validation
+'*      End removed from zError.......................................................... 20060411
+'* v1.5 Added nOrdinal parameter to sc_Subclass
+'*      Switched machine-code array from Currency to Long................................ 20060412
+'* v1.6 Added an optional callback target object
+'*      Added an IsBadCodePtr on the callback address in the thunk prior to callback..... 20060413
+'*************************************************************************************************
 
-'==================================================================================================
-' ucSubclass - A template UserControl for control authors that require self-subclassing without ANY
-'              external dependencies. IDE safe.
-'
-' Paul_Caton@hotmail.com
-' Copyright free, use and abuse as you see fit.
-'
-' v1.0.0000 20040525 First cut.....................................................................
-' v1.1.0000 20040602 Multi-subclassing version.....................................................
-' v1.1.0001 20040604 Optimized the subclass code...................................................
-' v1.1.0002 20040607 Substituted byte arrays for strings for the code buffers......................
-' v1.1.0003 20040618 Re-patch when adding extra hWnds..............................................
-' v1.1.0004 20040619 Optimized to death version....................................................
-' v1.1.0005 20040620 Use allocated memory for code buffers, no need to re-patch....................
-' v1.1.0006 20040628 Better protection in zIdx, improved comments..................................
-' v1.1.0007 20040629 Fixed InIDE patching oops.....................................................
-' v1.1.0008 20040910 Fixed bug in UserControl_Terminate, zSubclass_Proc procedure hidden...........
-'==================================================================================================
-'Subclasser declarations
+'-Selfsub declarations----------------------------------------------------------------------------
+Private Enum eMsgWhen                                                       'When to callback
+  MSG_BEFORE = 1                                                            'Callback before the original WndProc
+  MSG_AFTER = 2                                                             'Callback after the original WndProc
+  MSG_BEFORE_AFTER = MSG_BEFORE Or MSG_AFTER                                'Callback before and after the original WndProc
+End Enum
+
+Private Const ALL_MESSAGES  As Long = -1                                    'All messages callback
+Private Const MSG_ENTRIES   As Long = 32                                    'Number of msg table entries
+Private Const WNDPROC_OFF   As Long = &H38                                  'Thunk offset to the WndProc execution address
+Private Const GWL_WNDPROC   As Long = -4                                    'SetWindowsLong WndProc index
+Private Const IDX_SHUTDOWN  As Long = 1                                     'Thunk data index of the shutdown flag
+Private Const IDX_HWND      As Long = 2                                     'Thunk data index of the subclassed hWnd
+Private Const IDX_WNDPROC   As Long = 9                                     'Thunk data index of the original WndProc
+Private Const IDX_BTABLE    As Long = 11                                    'Thunk data index of the Before table
+Private Const IDX_ATABLE    As Long = 12                                    'Thunk data index of the After table
+Private Const IDX_PARM_USER As Long = 13                                    'Thunk data index of the User-defined callback parameter data index
+
+Private z_ScMem             As Long                                         'Thunk base address
+Private z_Sc(64)            As Long                                         'Thunk machine-code initialised here
+Private z_Funk              As Collection                                   'hWnd/thunk-address collection
+
+Private Declare Function CallWindowProcA Lib "user32" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
+Private Declare Function GetModuleHandleA Lib "kernel32" (ByVal lpModuleName As String) As Long
+Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Private Declare Function IsBadCodePtr Lib "kernel32" (ByVal lpfn As Long) As Long
+Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function SetWindowLongA Lib "user32" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function VirtualAlloc Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
+Private Declare Function VirtualFree Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
+Private Declare Sub RtlMoveMemory Lib "kernel32" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
+'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+'*************************************************************
+'   TRACK MOUSE
+'*************************************************************
 Public Event MouseEnter()
 Public Event MouseLeave()
 
-Private bTrack                          As Boolean
-Private bTrackUser32                    As Boolean
-Private bInCtrl                         As Boolean
-Private bSubClass                       As Boolean
-
-Private Enum eMsgWhen
-MSG_AFTER = 1                                                                   'Message calls back after the original (previous) WndProc
-MSG_BEFORE = 2                                                                  'Message calls back before the original (previous) WndProc
-MSG_BEFORE_AND_AFTER = MSG_AFTER Or MSG_BEFORE                                  'Message calls back before and after the original (previous) WndProc
-
+Private Const WM_MOUSELEAVE              As Long = &H2A3
+Private Const WM_THEMECHANGED            As Long = &H31A
+Private Const WM_SYSCOLORCHANGE          As Long = &H15
+Private Const WM_MOUSEMOVE               As Long = &H200
+Private Const WM_SIZING                  As Long = &H214
+Private Const WM_NCPAINT                 As Long = &H85
+Private Const WM_MOVING       As Long = &H216
+Private Const WM_EXITSIZEMOVE As Long = &H232
+               
+Private Enum TRACKMOUSEEVENT_FLAGS
+    TME_HOVER = &H1&
+    TME_LEAVE = &H2&
+    TME_QUERY = &H40000000
+    TME_CANCEL = &H80000000
 End Enum
 
-Private Type tSubData                                                               'Subclass data type
-hWnd                                    As Long                                      'Handle of the window being subclassed
-nAddrSub                                As Long                                      'The address of our new WndProc (allocated memory).
-nAddrOrig                               As Long                                      'The address of the pre-existing WndProc
-nMsgCntA                                As Long                                      'Msg after table entry count
-nMsgCntB                                As Long                                      'Msg before table entry count
-aMsgTblA()                              As Long                                      'Msg after table array
-aMsgTblB()                              As Long                                      'Msg Before table array
-
+Private Type TRACKMOUSEEVENT_STRUCT
+    cbSize                              As Long
+    dwFlags                             As TRACKMOUSEEVENT_FLAGS
+    hWndTrack                           As Long
+    dwHoverTime                         As Long
 End Type
 
-Private m_bIsWinXpOrLater As Boolean
-Private sc_aSubData()                   As tSubData                                    'Subclass data array
-
-'======================================================================================================
-'Subclass handler - MUST be the first Public routine in this file. That includes public properties also
-Public Sub zSubclass_Proc(ByVal bBefore As Boolean, _
-                          ByRef bHandled As Boolean, _
-                          ByRef lReturn As Long, _
-                          ByRef lng_hWnd As Long, _
-                          ByRef uMsg As Long, _
-                          ByRef wParam As Long, _
-                          ByRef lParam As Long)
-
-'Parameters:
-'bBefore  - Indicates whether the the message is being processed before or after the default handler - only really needed if a message is set to callback both before & after.
-'bHandled - Set this variable to True in a 'before' callback to prevent the message being subsequently processed by the default handler... and if set, an 'after' callback
-'lReturn  - Set this variable as per your intentions and requirements, see the MSDN documentation for each individual message value.
-'hWnd     - The window handle
-'uMsg     - The message number
-'wParam   - Message related data
-'lParam   - Message related data
-'Notes:
-'If you really know what you're doing, it's possible to change the values of the
-'hWnd, uMsg, wParam and lParam parameters in a 'before' callback so that different
-'values get passed to the default handler.. and optionaly, the 'after' callback
-    Select Case uMsg
-
-        Case BFFM_INITIALIZED
-            '   BrowseForFolder Module has Initialized, so set the Starting Path
-            Call SendMessage(lng_hWnd, BFFM_SETSELECTIONA, True, ByVal m_Path)
-
-        Case WM_MOUSEMOVE
-
-            If (lng_hWnd = pbPick.hWnd) Then
-                If m_State <> pbHover Then
-                    m_State = pbHover
-                    Call Refresh(0)
-
-                End If
-
-                Call TrackMouseLeave(lng_hWnd)
-                RaiseEvent MouseEnter
-            ElseIf (lng_hWnd = pbDrop.hWnd) Then
-
-                If m_State <> pbHover Then
-                    m_State = pbHover
-                    Call Refresh(1)
-
-                End If
-
-                Call TrackMouseLeave(lng_hWnd)
-                RaiseEvent MouseEnter
-            Else
-
-                If m_State <> pbNormal Then
-                    m_State = pbNormal
-                    Call Refresh(0)
-                    Call Refresh(1)
-
-                End If
-
-                bInCtrl = False
-
-            End If
-
-        Case WM_MOUSELEAVE
-
-            If (lng_hWnd = pbPick.hWnd) Then
-                m_State = pbNormal
-                Call Refresh(0)
-                bInCtrl = False
-                RaiseEvent MouseLeave
-            ElseIf (lng_hWnd = pbDrop.hWnd) Then
-                m_State = pbNormal
-                Call Refresh(1)
-                bInCtrl = False
-                RaiseEvent MouseLeave
-            Else
-
-                If m_State <> pbNormal Then
-                    m_State = pbNormal
-                    Call Refresh(0)
-                    Call Refresh(1)
-
-                End If
-
-                bInCtrl = False
-                RaiseEvent MouseLeave
-
-            End If
-
-        Case WM_SYSCOLORCHANGE
-            m_State = pbNormal
-            Call Refresh(0)
-            Call Refresh(1)
-
-        Case WM_THEMECHANGED
-            m_State = pbNormal
-            Call Refresh(0)
-            Call Refresh(1)
-
-    End Select
-
-End Sub
-
-'   Determine if the passed function is supported
-Private Function IsFunctionExported(ByVal sFunction As String, _
-                                    ByVal sModule As String) As Boolean
-
-Dim hMod                                As Long
-Dim bLibLoaded                          As Boolean
-Dim lngStrPtr                           As Long
-
-    lngStrPtr = StrPtr(sModule)
-    hMod = GetModuleHandle(lngStrPtr)
-
-    If hMod = 0 Then
-        hMod = LoadLibrary(lngStrPtr)
-
-        If hMod Then
-            bLibLoaded = True
-        End If
-
-    End If
-
-    If hMod Then
-        If GetProcAddress(hMod, sFunction) Then
-            IsFunctionExported = True
-
-        End If
-
-    End If
-
-    If bLibLoaded Then
-        Call FreeLibrary(hMod)
-    End If
-
-End Function
-
-'======================================================================================================
-'Subclass code - The programmer may call any of the following Subclass_??? routines
-'Add a message to the table of those that will invoke a callback. You should Subclass_Subclass first and then add the messages
-Private Sub Subclass_AddMsg(ByVal lng_hWnd As Long, _
-                            ByVal uMsg As Long, _
-                            Optional ByVal When As eMsgWhen = MSG_AFTER)
-
-'Parameters:
-'lng_hWnd  - The handle of the window for which the uMsg is to be added to the callback table
-'uMsg      - The message number that will invoke a callback. NB Can also be ALL_MESSAGES, ie all messages will callback
-'When      - Whether the msg is to callback before, after or both with respect to the the default (previous) handler
-    With sc_aSubData(zIdx(lng_hWnd))
-
-        If When And eMsgWhen.MSG_BEFORE Then
-            Call zAddMsg(uMsg, .aMsgTblB, .nMsgCntB, eMsgWhen.MSG_BEFORE, .nAddrSub)
-
-        End If
-
-        If When And eMsgWhen.MSG_AFTER Then
-            Call zAddMsg(uMsg, .aMsgTblA, .nMsgCntA, eMsgWhen.MSG_AFTER, .nAddrSub)
-
-        End If
-
-    End With
-
-End Sub
-
-'Return whether we're running in the IDE.
-Private Function Subclass_InIDE() As Boolean
-    Debug.Assert zSetTrue(Subclass_InIDE)
-
-End Function
-
-'Start subclassing the passed window handle
-Private Function Subclass_Start(ByVal lng_hWnd As Long) As Long
-
-'Parameters:
-'lng_hWnd  - The handle of the window to be subclassed
-'Returns;
-'The sc_aSubData() index
-'Allow memory to execute without violating XP SP2 Data Execution Prevention
-Const CODE_LEN                          As Long = 200
-
-    'Length of the machine code in bytes
-Const FUNC_CWP                          As String = "CallWindowProcA"
-
-    'We use CallWindowProc to call the original WndProc
-Const FUNC_EBM                          As String = "EbMode"
-
-    'VBA's EbMode function allows the machine code thunk to know if the IDE has stopped or is on a breakpoint
-Const FUNC_SWL                          As String = "SetWindowLongW"
-
-    'SetWindowLongA allows the cSubclasser machine code thunk to unsubclass the subclasser itself if it detects via the EbMode function that the IDE has stopped
-Const MOD_USER                          As String = "user32.dll"
-
-    'Location of the SetWindowLongA & CallWindowProc functions
-Const MOD_VBA5                          As String = "vba5"
-
-    'Location of the EbMode function if running VB5
-Const MOD_VBA6                          As String = "vba6"
-
-    'Location of the EbMode function if running VB6
-Const PATCH_01                          As Long = 18
-
-    'Code buffer offset to the location of the relative address to EbMode
-Const PATCH_02                          As Long = 68
-
-    'Address of the previous WndProc
-Const PATCH_03                          As Long = 78
-
-    'Relative address of SetWindowsLong
-Const PATCH_06                          As Long = 116
-
-    'Address of the previous WndProc
-Const PATCH_07                          As Long = 121
-
-    'Relative address of CallWindowProc
-Const PATCH_0A                          As Long = 186
-
-    'Address of the owner object
-Static aBuf(1 To CODE_LEN)              As Byte
-
-    'Static code buffer byte array
-Static pCWP                             As Long
-
-    'Address of the CallWindowsProc
-Static pEbMode                          As Long
-
-    'Address of the EbMode IDE break/stop/running function
-Static pSWL                             As Long
-
-    'Address of the SetWindowsLong function
-    'Dim i                      As Long
-
-    'Loop index
-Dim j                                   As Long
-
-    'Loop index
-Dim nSubIdx                             As Long
-
-    'Subclass data index
-Dim sHex                                As String
-
-    'Hex code string
-    'If it's the first time through here..
-    If aBuf(1) = 0 Then
-        'The hex pair machine code representation.
-        'sHex = "5589E583C4F85731C08945FC8945F8EB0EE80000000083F802742185C07424E830000000837DF800750AE838000000E84D00" & "00005F8B45FCC9C21000E826000000EBF168000000006AFCFF7508E800000000EBE031D24ABF00000000B900000000E82D00" & "0000C3FF7514FF7510FF750CFF75086800000000E8000000008945FCC331D2BF00000000B900000000E801000000C3E33209" & "C978078B450CF2AF75278D4514508D4510508D450C508D4508508D45FC508D45F85052B800000000508B00FF90A4070000C3"
-        sHex = "5589E583C4F85731C08945FC8945F8EB0EE80000000083F802742185C07424E830000000837DF800750AE838000000E84D0000005F8B45FCC9C21000E826000000EBF168000000006AFCFF7508E800000000EBE031D24ABF00000000B900000000E82D000000C3FF7514FF7510FF750CFF75086800000000E8000000008945FCC331D2BF00000000B900000000E801000000C3E33209C978078B450CF2AF75278D4514508D4510508D450C508D4508508D45FC508D45F85052B800000000508B00FF90A4070000C3"
-        'Convert the string from hex pairs to bytes and store in the static machine code buffer
-        'i = 1
-
-        '        Do While j < CODE_LEN
-        '            j = j + 1
-        '            'aBuf(j) = Val("&H" & Mid$(sHex, i, 2))
-        '            aBuf(j) = CLng("&H" & Mid$(sHex, i, 2))
-        '            'Convert a pair of hex characters to an eight-bit value and store in the static code buffer array
-        '            i = i + 2
-        '        Loop
-        For j = 1 To CODE_LEN
-            'bytBuffer(lngCount) = Val("&H" & Left$(strHex, 2))
-            aBuf(j) = CLng("&H" & Left$(sHex, 2))
-            sHex = Mid$(sHex, 3)
-        Next
-
-        'Next pair of hex characters
-        'Get API function addresses
-        If Subclass_InIDE Then
-            'If we're running in the VB IDE
-            aBuf(16) = &H90
-            'Patch the code buffer to enable the IDE state code
-            aBuf(17) = &H90
-            'Patch the code buffer to enable the IDE state code
-            pEbMode = zAddrFunc(MOD_VBA6, FUNC_EBM)
-
-            'Get the address of EbMode in vba6.dll
-            If pEbMode = 0 Then
-                'Found?
-                pEbMode = zAddrFunc(MOD_VBA5, FUNC_EBM)
-
-                'VB5 perhaps
-            End If
-
-        End If
-
-        pCWP = zAddrFunc(MOD_USER, FUNC_CWP)
-        'Get the address of the CallWindowsProc function
-        pSWL = zAddrFunc(MOD_USER, FUNC_SWL)
-        'Get the address of the SetWindowLongA function
-        ReDim sc_aSubData(0 To 0) As tSubData
-        'Create the first sc_aSubData element
-    Else
-        nSubIdx = zIdx(lng_hWnd, True)
-
-        If nSubIdx = -1 Then
-            'If an sc_aSubData element isn't being re-cycled
-            nSubIdx = UBound(sc_aSubData()) + 1
-            'Calculate the next element
-            ReDim Preserve sc_aSubData(0 To nSubIdx) As tSubData
-
-            'Create a new sc_aSubData element
-        End If
-
-        Subclass_Start = nSubIdx
-
-    End If
-
-    With sc_aSubData(nSubIdx)
-        .hWnd = lng_hWnd
-        'Store the hWnd
-        .nAddrSub = GlobalAlloc(GMEM_FIXED, CODE_LEN)
-        'Allocate memory for the machine code WndProc
-        '        Call VirtualProtect(ByVal .nAddrSub, CODE_LEN, PAGE_EXECUTE_READWRITE, i)   'Mark memory as executable
-        .nAddrOrig = SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrSub)
-        'Set our WndProc in place
-        Call RtlMoveMemory(ByVal .nAddrSub, aBuf(1), CODE_LEN)
-        'Copy the machine code from the static byte array to the code array in sc_aSubData
-        Call zPatchRel(.nAddrSub, PATCH_01, pEbMode)
-        'Patch the relative address to the VBA EbMode api function, whether we need to not.. hardly worth testing
-        Call zPatchVal(.nAddrSub, PATCH_02, .nAddrOrig)
-        'Original WndProc address for CallWindowProc, call the original WndProc
-        Call zPatchRel(.nAddrSub, PATCH_03, pSWL)
-        'Patch the relative address of the SetWindowLongA api function
-        Call zPatchVal(.nAddrSub, PATCH_06, .nAddrOrig)
-        'Original WndProc address for SetWindowLongA, unsubclass on IDE stop
-        Call zPatchRel(.nAddrSub, PATCH_07, pCWP)
-        'Patch the relative address of the CallWindowProc api function
-        Call zPatchVal(.nAddrSub, PATCH_0A, ObjPtr(Me))
-
-        'Patch the address of this object instance into the static machine code buffer
-    End With
-
-End Function
-
-'Stop all subclassing
-Private Sub Subclass_StopAll()
-
-Dim i                                   As Long
-
-    i = UBound(sc_aSubData())
-
-    'Get the upper bound of the subclass data array
-    Do While i >= 0
-
-        'Iterate through each element
-        With sc_aSubData(i)
-
-            If .hWnd <> 0 Then
-                'If not previously Subclass_Stop'd
-                Call Subclass_Stop(.hWnd)
-
-                'Subclass_Stop
-            End If
-
-        End With
-
-        i = i - 1
-        'Next element
-    Loop
-
-End Sub
-
-'Stop subclassing the passed window handle
-Private Sub Subclass_Stop(ByVal lng_hWnd As Long)
-
-'Parameters:
-'lng_hWnd  - The handle of the window to stop being subclassed
-    With sc_aSubData(zIdx(lng_hWnd))
-        Call SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrOrig)
-        'Restore the original WndProc
-        Call zPatchVal(.nAddrSub, PATCH_05, 0)
-        'Patch the Table B entry count to ensure no further 'before' callbacks
-        Call zPatchVal(.nAddrSub, PATCH_09, 0)
-        'Patch the Table A entry count to ensure no further 'after' callbacks
-        Call GlobalFree(.nAddrSub)
-        'Release the machine code memory
-        .hWnd = 0
-        'Mark the sc_aSubData element as available for re-use
-        .nMsgCntB = 0
-        'Clear the before table
-        .nMsgCntA = 0
-        'Clear the after table
-        Erase .aMsgTblB
-        'Erase the before table
-        Erase .aMsgTblA
-
-        'Erase the after table
-    End With
-
-End Sub
+Private Declare Function TrackMouseEvent Lib "user32.dll" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+
+Private bTrack                As Boolean
+Private bTrackUser32          As Boolean
+Private bInCtrl               As Boolean
 
 'Track the mouse leaving the indicated window
 Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
+  Dim TME As TRACKMOUSEEVENT_STRUCT
+  
+  If bTrack Then
+    With TME
+      .cbSize = Len(TME)
+      .dwFlags = TME_LEAVE
+      .hWndTrack = lng_hWnd
+    End With
 
-Dim TME                                 As TRACKMOUSEEVENT_STRUCT
+    If bTrackUser32 Then
+      TrackMouseEvent TME
+    Else
+      TrackMouseEventComCtl TME
+    End If
+  End If
+End Sub
 
-    If bTrack Then
+'-SelfSub code------------------------------------------------------------------------------------
+Private Function sc_Subclass(ByVal lng_hWnd As Long, _
+                    Optional ByVal lParamUser As Long = 0, _
+                    Optional ByVal nOrdinal As Long = 1, _
+                    Optional ByVal oCallback As Object = Nothing, _
+                    Optional ByVal bIdeSafety As Boolean = True) As Boolean 'Subclass the specified window handle
+'*************************************************************************************************
+'* lng_hWnd   - Handle of the window to subclass
+'* lParamUser - Optional, user-defined callback parameter
+'* nOrdinal   - Optional, ordinal index of the callback procedure. 1 = last private method, 2 = second last private method, etc.
+'* oCallback  - Optional, the object that will receive the callback. If undefined, callbacks are sent to this object's instance
+'* bIdeSafety - Optional, enable/disable IDE safety measures. NB: you should really only disable IDE safety in a UserControl for design-time subclassing
+'*************************************************************************************************
+Const CODE_LEN      As Long = 260                                           'Thunk length in bytes
+Const MEM_LEN       As Long = CODE_LEN + (8 * (MSG_ENTRIES + 1))            'Bytes to allocate per thunk, data + code + msg tables
+Const PAGE_RWX      As Long = &H40&                                         'Allocate executable memory
+Const MEM_COMMIT    As Long = &H1000&                                       'Commit allocated memory
+Const MEM_RELEASE   As Long = &H8000&                                       'Release allocated memory flag
+Const IDX_EBMODE    As Long = 3                                             'Thunk data index of the EbMode function address
+Const IDX_CWP       As Long = 4                                             'Thunk data index of the CallWindowProc function address
+Const IDX_SWL       As Long = 5                                             'Thunk data index of the SetWindowsLong function address
+Const IDX_FREE      As Long = 6                                             'Thunk data index of the VirtualFree function address
+Const IDX_BADPTR    As Long = 7                                             'Thunk data index of the IsBadCodePtr function address
+Const IDX_OWNER     As Long = 8                                             'Thunk data index of the Owner object's vTable address
+Const IDX_CALLBACK  As Long = 10                                            'Thunk data index of the callback method address
+Const IDX_EBX       As Long = 16                                            'Thunk code patch index of the thunk data
+Const SUB_NAME      As String = "sc_Subclass"                               'This routine's name
+  Dim nAddr         As Long
+  Dim nID           As Long
+  Dim nMyID         As Long
+  
+  If IsWindow(lng_hWnd) = 0 Then                                            'Ensure the window handle is valid
+    zError SUB_NAME, "Invalid window handle"
+    Exit Function
+  End If
 
-        With TME
-            .cbSize = Len(TME)
-            .dwFlags = TME_LEAVE
-            .hWndTrack = lng_hWnd
+  nMyID = GetCurrentProcessId                                               'Get this process's ID
+  GetWindowThreadProcessId lng_hWnd, nID                                    'Get the process ID associated with the window handle
+  If nID <> nMyID Then                                                      'Ensure that the window handle doesn't belong to another process
+    zError SUB_NAME, "Window handle belongs to another process"
+    Exit Function
+  End If
+  
+  If oCallback Is Nothing Then                                              'If the user hasn't specified the callback owner
+    Set oCallback = Me                                                      'Then it is me
+  End If
+  
+  nAddr = zAddressOf(oCallback, nOrdinal)                                   'Get the address of the specified ordinal method
+  If nAddr = 0 Then                                                         'Ensure that we've found the ordinal method
+    zError SUB_NAME, "Callback method not found"
+    Exit Function
+  End If
+    
+  If z_Funk Is Nothing Then                                                 'If this is the first time through, do the one-time initialization
+    Set z_Funk = New Collection                                             'Create the hWnd/thunk-address collection
+    z_Sc(14) = &HD231C031: z_Sc(15) = &HBBE58960: z_Sc(17) = &H4339F631: z_Sc(18) = &H4A21750C: z_Sc(19) = &HE82C7B8B: z_Sc(20) = &H74&: z_Sc(21) = &H75147539: z_Sc(22) = &H21E80F: z_Sc(23) = &HD2310000: z_Sc(24) = &HE8307B8B: z_Sc(25) = &H60&: z_Sc(26) = &H10C261: z_Sc(27) = &H830C53FF: z_Sc(28) = &HD77401F8: z_Sc(29) = &H2874C085: z_Sc(30) = &H2E8&: z_Sc(31) = &HFFE9EB00: z_Sc(32) = &H75FF3075: z_Sc(33) = &H2875FF2C: z_Sc(34) = &HFF2475FF: z_Sc(35) = &H3FF2473: z_Sc(36) = &H891053FF: z_Sc(37) = &HBFF1C45: z_Sc(38) = &H73396775: z_Sc(39) = &H58627404
+    z_Sc(40) = &H6A2473FF: z_Sc(41) = &H873FFFC: z_Sc(42) = &H891453FF: z_Sc(43) = &H7589285D: z_Sc(44) = &H3045C72C: z_Sc(45) = &H8000&: z_Sc(46) = &H8920458B: z_Sc(47) = &H4589145D: z_Sc(48) = &HC4836124: z_Sc(49) = &H1862FF04: z_Sc(50) = &H35E30F8B: z_Sc(51) = &HA78C985: z_Sc(52) = &H8B04C783: z_Sc(53) = &HAFF22845: z_Sc(54) = &H73FF2775: z_Sc(55) = &H1C53FF28: z_Sc(56) = &H438D1F75: z_Sc(57) = &H144D8D34: z_Sc(58) = &H1C458D50: z_Sc(59) = &HFF3075FF: z_Sc(60) = &H75FF2C75: z_Sc(61) = &H873FF28: z_Sc(62) = &HFF525150: z_Sc(63) = &H53FF2073: z_Sc(64) = &HC328&
 
-        End With
+    z_Sc(IDX_CWP) = zFnAddr("user32", "CallWindowProcA")                    'Store CallWindowProc function address in the thunk data
+    z_Sc(IDX_SWL) = zFnAddr("user32", "SetWindowLongA")                     'Store the SetWindowLong function address in the thunk data
+    z_Sc(IDX_FREE) = zFnAddr("kernel32", "VirtualFree")                     'Store the VirtualFree function address in the thunk data
+    z_Sc(IDX_BADPTR) = zFnAddr("kernel32", "IsBadCodePtr")                  'Store the IsBadCodePtr function address in the thunk data
+  End If
+  
+  z_ScMem = VirtualAlloc(0, MEM_LEN, MEM_COMMIT, PAGE_RWX)                  'Allocate executable memory
 
-        If bTrackUser32 Then
-            Call TrackMouseEvent(TME)
-        Else
-            Call TrackMouseEventComCtl(TME)
+  If z_ScMem <> 0 Then                                                      'Ensure the allocation succeeded
+    On Error GoTo CatchDoubleSub                                            'Catch double subclassing
+      z_Funk.Add z_ScMem, "h" & lng_hWnd                                    'Add the hWnd/thunk-address to the collection
+    On Error GoTo 0
+  
+    If bIdeSafety Then                                                      'If the user wants IDE protection
+      z_Sc(IDX_EBMODE) = zFnAddr("vba6", "EbMode")                          'Store the EbMode function address in the thunk data
+    End If
+    
+    z_Sc(IDX_EBX) = z_ScMem                                                 'Patch the thunk data address
+    z_Sc(IDX_HWND) = lng_hWnd                                               'Store the window handle in the thunk data
+    z_Sc(IDX_BTABLE) = z_ScMem + CODE_LEN                                   'Store the address of the before table in the thunk data
+    z_Sc(IDX_ATABLE) = z_ScMem + CODE_LEN + ((MSG_ENTRIES + 1) * 4)         'Store the address of the after table in the thunk data
+    z_Sc(IDX_OWNER) = ObjPtr(oCallback)                                     'Store the callback owner's object address in the thunk data
+    z_Sc(IDX_CALLBACK) = nAddr                                              'Store the callback address in the thunk data
+    z_Sc(IDX_PARM_USER) = lParamUser                                        'Store the lParamUser callback parameter in the thunk data
+    
+    nAddr = SetWindowLongA(lng_hWnd, GWL_WNDPROC, z_ScMem + WNDPROC_OFF)    'Set the new WndProc, return the address of the original WndProc
+    If nAddr = 0 Then                                                       'Ensure the new WndProc was set correctly
+      zError SUB_NAME, "SetWindowLong failed, error #" & Err.LastDllError
+      GoTo ReleaseMemory
+    End If
+        
+    z_Sc(IDX_WNDPROC) = nAddr                                               'Store the original WndProc address in the thunk data
+    RtlMoveMemory z_ScMem, VarPtr(z_Sc(0)), CODE_LEN                        'Copy the thunk code/data to the allocated memory
+    sc_Subclass = True                                                      'Indicate success
+  Else
+    zError SUB_NAME, "VirtualAlloc failed, error: " & Err.LastDllError
+  End If
+  
+  Exit Function                                                             'Exit sc_Subclass
 
+CatchDoubleSub:
+  zError SUB_NAME, "Window handle is already subclassed"
+  
+ReleaseMemory:
+  VirtualFree z_ScMem, 0, MEM_RELEASE                                       'sc_Subclass has failed after memory allocation, so release the memory
+End Function
+
+'Terminate all subclassing
+Private Sub sc_Terminate()
+  Dim i As Long
+
+  If Not (z_Funk Is Nothing) Then                                           'Ensure that subclassing has been started
+    With z_Funk
+      For i = .Count To 1 Step -1                                           'Loop through the collection of window handles in reverse order
+        z_ScMem = .Item(i)                                                  'Get the thunk address
+        If IsBadCodePtr(z_ScMem) = 0 Then                                   'Ensure that the thunk hasn't already released its memory
+          sc_UnSubclass zData(IDX_HWND)                                     'UnSubclass
         End If
-
-    End If
-
+      Next i                                                                'Next member of the collection
+    End With
+    Set z_Funk = Nothing                                                    'Destroy the hWnd/thunk-address collection
+  End If
 End Sub
 
-'======================================================================================================
-'These z??? routines are exclusively called by the Subclass_??? routines.
-'Worker sub for sc_AddMsg
-Private Sub zAddMsg(ByVal uMsg As Long, _
-                    ByRef aMsgTbl() As Long, _
-                    ByRef nMsgCnt As Long, _
-                    ByVal When As eMsgWhen, _
-                    ByVal nAddr As Long)
-
-Dim nEntry                              As Long
-
-    'Message table entry index
-Dim nOff1                               As Long
-
-    'Machine code buffer offset 1
-Dim nOff2                               As Long
-
-    'Machine code buffer offset 2
-    If uMsg = ALL_MESSAGES Then
-        'If all messages
-        nMsgCnt = ALL_MESSAGES
-        'Indicates that all messages will callback
-    Else
-
-        'Else a specific message number
-        Do While nEntry < nMsgCnt
-            'For each existing entry. NB will skip if nMsgCnt = 0
-            nEntry = nEntry + 1
-
-            If aMsgTbl(nEntry) = 0 Then
-                'This msg table slot is a deleted entry
-                aMsgTbl(nEntry) = uMsg
-                'Re-use this entry
-                Exit Sub
-                'Bail
-            ElseIf aMsgTbl(nEntry) = uMsg Then
-                'The msg is already in the table!
-                Exit Sub
-
-                'Bail
-            End If
-
-        Loop
-        'Next entry
-        nMsgCnt = nMsgCnt + 1
-        'New slot required, bump the table entry count
-        ReDim Preserve aMsgTbl(1 To nMsgCnt) As Long
-        'Bump the size of the table.
-        aMsgTbl(nMsgCnt) = uMsg
-
-        'Store the message number in the table
+'UnSubclass the specified window handle
+Private Sub sc_UnSubclass(ByVal lng_hWnd As Long)
+  If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
+    zError "sc_UnSubclass", "Window handle isn't subclassed"
+  Else
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                           'Ensure that the thunk hasn't already released its memory
+      zData(IDX_SHUTDOWN) = -1                                              'Set the shutdown indicator
+      zDelMsg ALL_MESSAGES, IDX_BTABLE                                      'Delete all before messages
+      zDelMsg ALL_MESSAGES, IDX_ATABLE                                      'Delete all after messages
     End If
-
-    If When = eMsgWhen.MSG_BEFORE Then
-        'If before
-        nOff1 = PATCH_04
-        'Offset to the Before table
-        nOff2 = PATCH_05
-        'Offset to the Before table entry count
-    Else
-        'Else after
-        nOff1 = PATCH_08
-        'Offset to the After table
-        nOff2 = PATCH_09
-
-        'Offset to the After table entry count
-    End If
-
-    If uMsg <> ALL_MESSAGES Then
-        Call zPatchVal(nAddr, nOff1, VarPtr(aMsgTbl(1)))
-
-        'Address of the msg table, has to be re-patched because Redim Preserve will move it in memory.
-    End If
-
-    Call zPatchVal(nAddr, nOff2, nMsgCnt)
-
-    'Patch the appropriate table entry count
+    z_Funk.Remove "h" & lng_hWnd                                            'Remove the specified window handle from the collection
+  End If
 End Sub
 
-'Return the memory address of the passed function in the passed dll
-Private Function zAddrFunc(ByVal sDLL As String, ByVal sProc As String) As Long
-    zAddrFunc = GetProcAddress(GetModuleHandle(StrPtr(sDLL)), sProc)
-    Debug.Assert zAddrFunc
+'Add the message value to the window handle's specified callback table
+Private Sub sc_AddMsg(ByVal lng_hWnd As Long, ByVal uMsg As Long, Optional ByVal When As eMsgWhen = eMsgWhen.MSG_AFTER)
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    If When And MSG_BEFORE Then                                             'If the message is to be added to the before original WndProc table...
+      zAddMsg uMsg, IDX_BTABLE                                              'Add the message to the before table
+    End If
+    If When And MSG_AFTER Then                                              'If message is to be added to the after original WndProc table...
+      zAddMsg uMsg, IDX_ATABLE                                              'Add the message to the after table
+    End If
+  End If
+End Sub
 
-    'You may wish to comment out this line if you're using vb5 else the EbMode GetProcAddress will stop here everytime because we look for vba6.dll first
+'Delete the message value from the window handle's specified callback table
+Private Sub sc_DelMsg(ByVal lng_hWnd As Long, ByVal uMsg As Long, Optional ByVal When As eMsgWhen = eMsgWhen.MSG_AFTER)
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    If When And MSG_BEFORE Then                                             'If the message is to be deleted from the before original WndProc table...
+      zDelMsg uMsg, IDX_BTABLE                                              'Delete the message from the before table
+    End If
+    If When And MSG_AFTER Then                                              'If the message is to be deleted from the after original WndProc table...
+      zDelMsg uMsg, IDX_ATABLE                                              'Delete the message from the after table
+    End If
+  End If
+End Sub
+
+'Call the original WndProc
+Private Function sc_CallOrigWndProc(ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    sc_CallOrigWndProc = _
+        CallWindowProcA(zData(IDX_WNDPROC), lng_hWnd, uMsg, wParam, lParam) 'Call the original WndProc of the passed window handle parameter
+  End If
 End Function
 
-'Get the sc_aSubData() array index of the passed hWnd
-Private Function zIdx(ByVal lng_hWnd As Long, _
-                      Optional ByVal bAdd As Boolean = False) As Long
-'Get the upper bound of sc_aSubData() - If you get an error here, you're probably sc_AddMsg-ing before Subclass_Start
-    zIdx = UBound(sc_aSubData)
+'Get the subclasser lParamUser callback parameter
+Private Property Get sc_lParamUser(ByVal lng_hWnd As Long) As Long
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    sc_lParamUser = zData(IDX_PARM_USER)                                    'Get the lParamUser callback parameter
+  End If
+End Property
 
-    Do While zIdx >= 0
+'Let the subclasser lParamUser callback parameter
+Private Property Let sc_lParamUser(ByVal lng_hWnd As Long, ByVal NewValue As Long)
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    zData(IDX_PARM_USER) = NewValue                                         'Set the lParamUser callback parameter
+  End If
+End Property
 
-        'Iterate through the existing sc_aSubData() elements
-        With sc_aSubData(zIdx)
+'-The following routines are exclusively for the sc_ subclass routines----------------------------
 
-            If .hWnd = lng_hWnd Then
+'Add the message to the specified table of the window handle
+Private Sub zAddMsg(ByVal uMsg As Long, ByVal nTable As Long)
+  Dim nCount As Long                                                        'Table entry count
+  Dim nBase  As Long                                                        'Remember z_ScMem
+  Dim i      As Long                                                        'Loop index
 
-                'If the hWnd of this element is the one we're looking for
-                If Not bAdd Then
-                    'If we're searching not adding
-                    Exit Function
+  nBase = z_ScMem                                                            'Remember z_ScMem so that we can restore its value on exit
+  z_ScMem = zData(nTable)                                                    'Map zData() to the specified table
 
-                    'Found
-                End If
-
-            ElseIf .hWnd = 0 Then
-
-                'If this an element marked for reuse.
-                If bAdd Then
-                    'If we're adding
-                    Exit Function
-
-                    'Re-use it
-                End If
-
-            End If
-
-        End With
-
-        zIdx = zIdx - 1
-        'Decrement the index
-    Loop
-
-    If Not bAdd Then
-        Debug.Assert False
-
-        'hWnd not found, programmer error
+  If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being added to the table...
+    nCount = ALL_MESSAGES                                                   'Set the table entry count to ALL_MESSAGES
+  Else
+    nCount = zData(0)                                                       'Get the current table entry count
+    If nCount >= MSG_ENTRIES Then                                           'Check for message table overflow
+      zError "zAddMsg", "Message table overflow. Either increase the value of Const MSG_ENTRIES or use ALL_MESSAGES instead of specific message values"
+      GoTo Bail
     End If
 
-    'If we exit here, we're returning -1, no freed elements were found
-End Function
+    For i = 1 To nCount                                                     'Loop through the table entries
+      If zData(i) = 0 Then                                                  'If the element is free...
+        zData(i) = uMsg                                                     'Use this element
+        GoTo Bail                                                           'Bail
+      ElseIf zData(i) = uMsg Then                                           'If the message is already in the table...
+        GoTo Bail                                                           'Bail
+      End If
+    Next i                                                                  'Next message table entry
 
-'Patch the machine code buffer at the indicated offset with the relative address to the target address.
-Private Sub zPatchRel(ByVal nAddr As Long, _
-                      ByVal nOffset As Long, _
-                      ByVal nTargetAddr As Long)
-    Call RtlMoveMemory(ByVal nAddr + nOffset, nTargetAddr - nAddr - nOffset - 4, 4)
+    nCount = i                                                              'On drop through: i = nCount + 1, the new table entry count
+    zData(nCount) = uMsg                                                    'Store the message in the appended table entry
+  End If
 
+  zData(0) = nCount                                                         'Store the new table entry count
+Bail:
+  z_ScMem = nBase                                                           'Restore the value of z_ScMem
 End Sub
 
-'Patch the machine code buffer at the indicated offset with the passed value
-Private Sub zPatchVal(ByVal nAddr As Long, ByVal nOffset As Long, ByVal nValue As Long)
-    Call RtlMoveMemory(ByVal nAddr + nOffset, nValue, 4)
+'Delete the message from the specified table of the window handle
+Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long)
+  Dim nCount As Long                                                        'Table entry count
+  Dim nBase  As Long                                                        'Remember z_ScMem
+  Dim i      As Long                                                        'Loop index
 
+  nBase = z_ScMem                                                           'Remember z_ScMem so that we can restore its value on exit
+  z_ScMem = zData(nTable)                                                   'Map zData() to the specified table
+
+  If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being deleted from the table...
+    zData(0) = 0                                                            'Zero the table entry count
+  Else
+    nCount = zData(0)                                                       'Get the table entry count
+    
+    For i = 1 To nCount                                                     'Loop through the table entries
+      If zData(i) = uMsg Then                                               'If the message is found...
+        zData(i) = 0                                                        'Null the msg value -- also frees the element for re-use
+        GoTo Bail                                                           'Bail
+      End If
+    Next i                                                                  'Next message table entry
+    
+    zError "zDelMsg", "Message &H" & Hex$(uMsg) & " not found in table"
+  End If
+  
+Bail:
+  z_ScMem = nBase                                                           'Restore the value of z_ScMem
 End Sub
 
-'Worker function for Subclass_InIDE
-Private Function zSetTrue(ByRef bValue As Boolean) As Boolean
-    zSetTrue = True
-    bValue = True
+'Error handler
+Private Sub zError(ByVal sRoutine As String, ByVal sMsg As String)
+  App.LogEvent TypeName(Me) & "." & sRoutine & ": " & sMsg, vbLogEventTypeError
+  MsgBox sMsg & ".", vbExclamation + vbApplicationModal, "Error in " & TypeName(Me) & "." & sRoutine
+End Sub
 
+'Return the address of the specified DLL/procedure
+Private Function zFnAddr(ByVal sDLL As String, ByVal sProc As String) As Long
+  zFnAddr = GetProcAddress(GetModuleHandleA(sDLL), sProc)                   'Get the specified procedure address
+  Debug.Assert zFnAddr                                                      'In the IDE, validate that the procedure address was located
 End Function
+
+'Map zData() to the thunk address for the specified window handle
+Private Function zMap_hWnd(ByVal lng_hWnd As Long) As Long
+  If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
+    zError "zMap_hWnd", "Subclassing hasn't been started"
+  Else
+    On Error GoTo Catch                                                     'Catch unsubclassed window handles
+    z_ScMem = z_Funk("h" & lng_hWnd)                                        'Get the thunk address
+    zMap_hWnd = z_ScMem
+  End If
+  
+  Exit Function                                                             'Exit returning the thunk address
+
+Catch:
+  zError "zMap_hWnd", "Window handle isn't subclassed"
+End Function
+
+'Return the address of the specified ordinal method on the oCallback object, 1 = last private method, 2 = second last private method, etc
+Private Function zAddressOf(ByVal oCallback As Object, ByVal nOrdinal As Long) As Long
+  Dim bSub  As Byte                                                         'Value we expect to find pointed at by a vTable method entry
+  Dim bVal  As Byte
+  Dim nAddr As Long                                                         'Address of the vTable
+  Dim i     As Long                                                         'Loop index
+  Dim j     As Long                                                         'Loop limit
+  
+  RtlMoveMemory VarPtr(nAddr), ObjPtr(oCallback), 4                         'Get the address of the callback object's instance
+  If Not zProbe(nAddr + &H1C, i, bSub) Then                                 'Probe for a Class method
+    If Not zProbe(nAddr + &H6F8, i, bSub) Then                              'Probe for a Form method
+      If Not zProbe(nAddr + &H7A4, i, bSub) Then                            'Probe for a UserControl method
+        Exit Function                                                       'Bail...
+      End If
+    End If
+  End If
+  
+  i = i + 4                                                                 'Bump to the next entry
+  j = i + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
+  Do While i < j
+    RtlMoveMemory VarPtr(nAddr), i, 4                                       'Get the address stored in this vTable entry
+    
+    If IsBadCodePtr(nAddr) Then                                             'Is the entry an invalid code address?
+      RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
+      Exit Do                                                               'Bad method signature, quit loop
+    End If
+
+    RtlMoveMemory VarPtr(bVal), nAddr, 1                                    'Get the byte pointed to by the vTable entry
+    If bVal <> bSub Then                                                    'If the byte doesn't match the expected value...
+      RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
+      Exit Do                                                               'Bad method signature, quit loop
+    End If
+    
+    i = i + 4                                                             'Next vTable entry
+  Loop
+End Function
+
+'Probe at the specified start address for a method signature
+Private Function zProbe(ByVal nStart As Long, ByRef nMethod As Long, ByRef bSub As Byte) As Boolean
+  Dim bVal    As Byte
+  Dim nAddr   As Long
+  Dim nLimit  As Long
+  Dim nEntry  As Long
+  
+  nAddr = nStart                                                            'Start address
+  nLimit = nAddr + 32                                                       'Probe eight entries
+  Do While nAddr < nLimit                                                   'While we've not reached our probe depth
+    RtlMoveMemory VarPtr(nEntry), nAddr, 4                                  'Get the vTable entry
+    
+    If nEntry <> 0 Then                                                     'If not an implemented interface
+      RtlMoveMemory VarPtr(bVal), nEntry, 1                                 'Get the value pointed at by the vTable entry
+      If bVal = &H33 Or bVal = &HE9 Then                                    'Check for a native or pcode method signature
+        nMethod = nAddr                                                     'Store the vTable entry
+        bSub = bVal                                                         'Store the found method signature
+        zProbe = True                                                       'Indicate success
+        Exit Function                                                       'Return
+      End If
+    End If
+    
+    nAddr = nAddr + 4                                                       'Next vTable entry
+  Loop
+End Function
+
+Private Property Get zData(ByVal nIndex As Long) As Long
+  RtlMoveMemory VarPtr(zData), z_ScMem + (nIndex * 4), 4
+End Property
+
+Private Property Let zData(ByVal nIndex As Long, ByVal nValue As Long)
+  RtlMoveMemory z_ScMem + (nIndex * 4), VarPtr(nValue), 4
+End Property
 
 '======================================================================================================
 '   End SubClass Sections
 '======================================================================================================
+
 Public Property Get Appearance() As pbAppearanceConstants
     Appearance = m_Appearance
-
 End Property
 
 Public Property Let Appearance(lNewValue As pbAppearanceConstants)
@@ -1501,12 +1191,12 @@ Private Function ButtonAppearance(cmdButton As CommandButton, _
 
     If lButtonStyle = [3D] Then
         '   Here is a small function to change button to 3D (Note the Missing "BS_FLAT" flag)
-        SetWindowLong cmdButton.hWnd, GWL_STYLE, WS_CHILD
+        SetWindowLongA cmdButton.hWnd, GWL_STYLE, WS_CHILD
         '   Make the button visible (its automaticly hidden when the SetWindowLong call is executed because we reset the button's Attributes)
         cmdButton.Visible = True
     Else
         '   Here is a small function to change button to flat:-
-        SetWindowLong cmdButton.hWnd, GWL_STYLE, WS_CHILD Or BS_FLAT
+        SetWindowLongA cmdButton.hWnd, GWL_STYLE, WS_CHILD Or BS_FLAT
         '   Make the button visible (its automaticly hidden when the SetWindowLong call is executed because we reset the button's Attributes)
         cmdButton.Visible = True
 
@@ -1608,9 +1298,7 @@ End Sub
 
 Private Sub cmdPick_Click()
 
-Dim psColor                             As SelectedColor
 Dim psFile                              As SelectedFile
-Dim psFont                              As SelectedFont
 Dim i                                   As Long
 Dim sExt                                As String
 Dim sFolder                             As String
@@ -1627,42 +1315,6 @@ Dim AutoTheme                           As String
         '   Which dialog is active?
         Select Case m_DialogType
 
-            Case [ucColor]
-                '   Pick a color from the Color Dialog
-                psColor = ShowColor()
-
-                If psColor.bCanceled = False Then
-                    '   Get the color from the dialog
-                    m_Color = (CLng(psColor.oSelectedColor))
-                    PropertyChanged "Color"
-
-                    If m_UseDialogText Then
-                        '   Convert the color to Hex
-                        .txtResult.Text = pHexColorStr(m_Color)
-                        sPrevColor = pHexColorStr(m_Color)
-
-                    End If
-
-                    If m_UseDialogColor Then
-                        '   Convert the color to Hex
-                        .txtResult.BackColor = pHexColorStr(m_Color)
-
-                        If m_UseAutoForeColor Then
-                            '   This is a "trick" to make the ForeColor Automatically
-                            '   visable even if the background is black (&H0)
-                            .txtResult.ForeColor = (pHexColorStr(m_Color) Xor &HFFFFFF)
-
-                        End If
-
-                    End If
-
-                    '   Set the focus on the color
-                    .txtResult.SetFocus
-
-                End If
-
-                RaiseEvent ColorChanged(m_Color)
-
             Case [ucFolder]
                 sFolder = fBrowseForFolder(hWnd_Owner:=UserControl.Parent.hWnd, WhatBr:=BIF_DEFAULT, InitDir:=PathCollect(txtResult.Text), CenterOnScreen:=True, TopMost:=True)
 
@@ -1678,67 +1330,11 @@ Dim AutoTheme                           As String
                             .txtResult.Text = TrimPathByLen(m_Path, .txtResult.Width - .cmdPick.Width - 40)
                         Else
                             .txtResult.Text = m_Path
-
                         End If
 
                     End If
 
                 End If
-
-            Case [ucFont]
-
-                If m_Font Is Nothing Then
-                    '   Create a Font if Missing
-                    Set m_Font = New StdFont
-
-                    With m_Font
-                        .Bold = False
-                        .Charset = 0
-                        .Italic = False
-                        .Name = "Tahoma"
-                        .Size = 8
-                        .Strikethrough = False
-                        .Underline = False
-                        .Weight = 400
-                        m_FontColor = &H0
-
-                        'Black
-                    End With
-
-                End If
-
-                psFont = ShowFont(m_Font, m_FontColor)
-
-                If (psFont.bCanceled = False) Then
-                    '   Set the Font type
-                    Set m_Font = New StdFont
-
-                    With m_Font
-                        .Bold = psFont.bBold
-                        .Italic = psFont.BItalic
-                        .Name = psFont.sSelectedFont
-                        .Size = psFont.nSize
-                        .Strikethrough = psFont.bStrikeOut
-                        .Underline = psFont.bUnderline
-                        .Charset = psFont.nCharset
-
-                    End With
-
-                    'If m_UseDialogText Then
-                    '   Pass the name to the textbox
-                    .txtResult.Text = psFont.sSelectedFont
-                    'End If
-                    '   Focuc on the parent object
-                    .txtResult.SetFocus
-                    Set .txtResult.Font = m_Font
-                    '   Pass the focus back the Host
-                    Call SetFocusAPI(.Parent.hWnd)
-                Else
-                    Set m_Font = Nothing
-
-                End If
-
-                RaiseEvent FontChanged(.txtResult.Text)
 
             Case [ucOpen], [ucSave]
 
@@ -1932,41 +1528,6 @@ Private Sub cmdPick_MouseUp(Button As Integer, Shift As Integer, X As Single, Y 
 
 End Sub
 
-Public Property Get ColorFlags() As ColorDialogFlags
-    ColorFlags = m_ColorFlags
-
-End Property
-
-Public Property Let ColorFlags(sDialogFlags As ColorDialogFlags)
-    m_ColorFlags = sDialogFlags
-    PropertyChanged "ColorFlags"
-
-End Property
-
-Public Property Get Color() As OLE_COLOR
-'   Get the stored data...
-    Color = pHexColorStr(m_Color)
-
-End Property
-
-Public Property Let Color(ByVal lNewColor As OLE_COLOR)
-
-    With UserControl
-
-        If m_UseDialogText Then
-            '   Translate our color to System Pallete and convert
-            '   to it to a Hex String Value
-            .txtResult.Text = pHexColorStr(TranslateColor(lNewColor))
-
-        End If
-
-    End With
-
-    txtResult_LostFocus
-    RaiseEvent ColorChanged(pHexColorStr(lNewColor))
-
-End Property
-
 Private Function ComboBoxListVisible(cbo As ComboBox) As Boolean
 '   Wrapper funtion to allow us to get the drop
 '   state of the ComboBox.....
@@ -2001,20 +1562,13 @@ Public Property Let DialogMsg(ByVal lType As ucDialogConstant, ByVal sNewValue A
 
 '   Set the Dialog Textbox Message for the Type selected
     If lType < 0 Then lType = 0
-    If lType > 4 Then lType = 4
+    If lType > 2 Then lType = 2
     m_DialogMsg(lType) = sNewValue
 
     '   Store the chnages for later
     Select Case lType
-
-        Case ucColor
-            PropertyChanged "DialogMsg0"
-
         Case ucFolder
             PropertyChanged "DialogMsg1"
-
-        Case ucFont
-            PropertyChanged "DialogMsg2"
 
         Case ucOpen
             PropertyChanged "DialogMsg3"
@@ -2037,7 +1591,7 @@ Public Property Let DialogType(ByVal lType As ucDialogConstant)
 
 '   Mkae sure the numbers are in range...
     If lType < 0 Then lType = 0
-    If lType > 5 Then lType = 5
+    If lType > 2 Then lType = 2
     '   Use our new dialog style...
     m_DialogType = lType
 
@@ -2188,17 +1742,6 @@ Public Property Let FontColor(ByVal lNewColor As OLE_COLOR)
 
 End Property
 
-Public Property Get FontFlags() As FontDialogFlags
-    FontFlags = m_FontFlags
-
-End Property
-
-Public Property Let FontFlags(sDialogFlags As FontDialogFlags)
-    m_FontFlags = sDialogFlags
-    PropertyChanged "FontFlags"
-
-End Property
-
 Public Property Get Font() As StdFont
 '   Get the stored data...
     Set Font = m_Font
@@ -2297,20 +1840,6 @@ Public Property Get hWnd()
     hWnd = UserControl.hWnd
 
 End Property
-
-Private Sub InitCustomColors()
-
-Dim i                                   As Long
-
-    '   Init the Custom Colors Array to White
-    For i = LBound(CustomColors) To UBound(CustomColors)
-        ' Sets all custom colors to white
-        CustomColors(i) = 254
-    Next
-    '   Convert array to Unicode Strings
-    ColorDialog.lpCustColors = StrConv(CustomColors, vbUnicode)
-
-End Sub
 
 Public Function LongToHexColor(ByVal lNewColor As Long) As String
 '   Translate the Color to RGB with Current Palette and pass
@@ -2771,90 +2300,42 @@ Dim AutoTheme                           As String
 
         Select Case m_DialogType
 
-            Case [ucColor]
-                .txtResult.Locked = m_Locked
-
-                '   Update the Color PickBox Values
-                If m_UseDialogText Then
-                    If LenB(sPrevColor) = 0 Then
-                        .txtResult.Text = m_DialogMsg([ucColor])
-                    Else
-                        .txtResult.Text = sPrevColor
-
-                    End If
-
-                Else
-                    sPrevColor = .txtResult.Text
-                    .txtResult.Text = vbNullString
-
-                End If
-
-                '   Update the Color in the Dialog
-                If m_UseDialogColor Then
-                    .txtResult.BackColor = m_Color
-                Else
-                    .txtResult.BackColor = m_BackColor
-
-                End If
-
-                '   Update the ForeColor in the Dialog
-                If m_UseAutoForeColor Then
-                    '   This is a "trick" to make the ForeColor Automatically
-                    '   visable even if the background is black (&H0)
-                    .txtResult.ForeColor = (pHexColorStr(m_Color) Xor &HFFFFFF)
-                Else
-                    .txtResult.ForeColor = m_Forecolor
-
-                End If
-
-                .cmdPick.ToolTipText = m_ToolTipText([ucColor])
-
             Case [ucFolder]
                 '   Update the Folder PickBox Values
-                '.txtResult.Locked = True
                 .txtResult.Locked = m_Locked
 
                 If m_UseDialogText Then
                     .txtResult.Text = m_DialogMsg([ucFolder])
                 Else
-                    .txtResult.Text = vbNullString
-
+                    .txtResult.Text = Path
                 End If
 
                 .cmdPick.ToolTipText = m_ToolTipText([ucFolder])
 
-            Case [ucFont]
-                .txtResult.Locked = m_Locked
-                .cmdPick.ToolTipText = m_ToolTipText([ucFont])
-
             Case [ucOpen]
-
                 '   Update the Open PickBox Values
                 If m_UseDialogText Then
                     If (LenB(m_Path) = 0) Or (Left$(m_Path, 3) <> Left$(.txtResult.Text, 3)) Then
                         .txtResult.Text = m_DialogMsg([ucOpen])
-
                     End If
-
                 Else
-                    .txtResult.Text = vbNullString
-
+                    '.txtResult.Text = vbNullString
+                    .txtResult.Text = Path
                 End If
 
                 .cmdPick.ToolTipText = m_ToolTipText([ucOpen])
 
             Case [ucSave]
-
                 '   Update the Save PickBox Values
                 If m_UseDialogText Then
                     .txtResult.Text = m_DialogMsg([ucSave])
                 Else
-                    .txtResult.Text = vbNullString
-
+                    '.txtResult.Text = vbNullString
+                    .txtResult.Text = Path
                 End If
-
+                
                 .cmdPick.ToolTipText = m_ToolTipText([ucSave])
-
+                
         End Select
 
     End With
@@ -2869,187 +2350,43 @@ Public Sub Reset()
     Appearance = 1
     '[3D]
     BackColor = &HFFFFFF
-    m_ColorFlags = ShowColor_Default
-    m_DialogMsg([ucColor]) = "Locate Color..."
     m_DialogMsg([ucFolder]) = "Locate Folder..."
-    m_DialogMsg([ucFont]) = "Locate Font..."
     m_DialogMsg([ucOpen]) = "Locate File..."
     m_DialogMsg([ucSave]) = "Locate File..."
-    m_DialogType = [ucColor]
     m_Filters = "Supported files|*.*|All Files (*.*)"
     m_FileFlags = IIf(m_DialogType = ucOpen, ShowOpen_Default, ShowSave_Default)
 
     If Not m_Font Is Nothing Then
         m_Font = Nothing
-
     End If
 
-    m_FontFlags = ShowFont_Default
     ForeColor = &H0
     ReDim m_Filename(1 To 1)
     m_Filename(1) = vbNullString
     m_Path = vbNullString
-    m_ToolTipText([ucColor]) = "Click Here to Locate Color."
     m_ToolTipText([ucFolder]) = "Click Here to Locate Folder."
-    m_ToolTipText([ucFont]) = "Click Here to Locate Font."
 
     If m_MultiSelect Then
         m_ToolTipText([ucOpen]) = "Click Here to Locate Files."
     Else
         m_ToolTipText([ucOpen]) = "Click Here to Locate File."
-
     End If
 
     m_ToolTipText([ucSave]) = "Click Here to Locate File"
     m_UseDialogColor = False
     m_UseDialogText = True
     m_Locked = False
-    sPrevColor = vbNullString
-
+    
 End Sub
-
-Private Function ShowColor() As SelectedColor
-
-Dim lRet                                As Long
-
-    '   Color Common Dialog Controls
-    With ColorDialog
-        .hWndOwner = UserControl.Parent.hWnd
-        .lStructSize = Len(ColorDialog)
-
-        If m_ColorFlags <> 0 Then
-            .Flags = m_ColorFlags
-        Else
-            .Flags = ShowColor_Default
-
-        End If
-
-    End With
-
-    lRet = ChooseColor(ColorDialog)
-
-    If lRet Then
-        ShowColor.bCanceled = False
-        ShowColor.oSelectedColor = ColorDialog.RGBResult
-        Exit Function
-    Else
-        ShowColor.bCanceled = True
-        ShowColor.oSelectedColor = &H0&
-        Exit Function
-
-    End If
-
-End Function
 
 Public Sub Show_FolderBrowse()
     DialogType = ucFolder
     cmdPick_Click
-
 End Sub
-
-Public Sub Show_Font()
-    DialogType = ucFont
-    cmdPick_Click
-
-End Sub
-
-Private Function ShowFont(ByVal oFont As StdFont, _
-                          ByVal lFontColor As OLE_COLOR) As SelectedFont
-
-Dim lRet                                As Long
-Dim lfLogFont                           As LOGFONT
-Dim i                                   As Integer
-Dim StartingFontName                    As String
-
-    '   Font Common Dialog Controls
-    '   Note: This has been modified to allow the caller to pass
-    '         previous instance data to the Dialogs (i.e. FontName, PoitSize, Color...)
-    With lfLogFont
-        .LFHeight = 0
-        ' determine default height
-        .LFWidth = 0
-        ' determine default width
-        .LFEscapement = 0
-        ' angle between baseline and escapement vector
-        .LFOrientation = 0
-        ' angle between baseline and orientation vector
-        .LFCharset = oFont.Charset
-        ' use default character set
-        .LFOutPrecision = OUT_DEFAULT_PRECIS
-        ' default precision mapping
-        .LFClipPrecision = CLIP_DEFAULT_PRECIS
-        ' default clipping precision
-        .LFQuality = DEFAULT_QUALITY
-        ' default quality setting
-        .LFPitchAndFamily = DEFAULT_PITCH
-        ' default pitch, proportional with serifs
-        .LFItalic = oFont.Italic
-        .LFStrikeOut = oFont.Strikethrough
-        .LFUnderline = oFont.Underline
-        .LFWeight = oFont.Weight
-
-    End With
-
-    With FontDialog
-
-        If m_FontFlags <> 0 Then
-            .Flags = m_FontFlags
-        Else
-            .Flags = ShowFont_Default
-
-        End If
-
-        .hDC = UserControl.Parent.hDC
-        .hWndOwner = UserControl.Parent.hWnd
-        .iPointSize = oFont.Size * 10
-        '   10pt
-        .lCustData = 0
-        .lpfnHook = 0
-        .lpLogFont = VarPtr(lfLogFont)
-        .lpTemplateName = String$(2048, vbNullChar)
-        .lStructSize = Len(FontDialog)
-        .nFontType = Screen.FontCount
-        .nSizeMax = 72
-        .nSizeMin = 8
-        .rgbColors = lFontColor
-
-    End With
-
-    StartingFontName = oFont.Name
-
-    For i = 0 To Len(StartingFontName) - 1
-        lfLogFont.LFFaceName(i) = Asc(Mid$(StartingFontName, i + 1, 1))
-    Next
-    lRet = ChooseFont(FontDialog)
-
-    If lRet Then
-        ShowFont.bCanceled = False
-        ShowFont.bBold = IIf(lfLogFont.LFWeight > 400, 1, 0)
-        ShowFont.BItalic = lfLogFont.LFItalic
-        ShowFont.bStrikeOut = lfLogFont.LFStrikeOut
-        ShowFont.bUnderline = lfLogFont.LFUnderline
-        ShowFont.lColor = FontDialog.rgbColors
-        ShowFont.nCharset = lfLogFont.LFCharset
-        m_FontColor = FontDialog.rgbColors
-        ShowFont.nSize = FontDialog.iPointSize / 10
-
-        For i = 0 To 31
-            ShowFont.sSelectedFont = ShowFont.sSelectedFont + Chr$(lfLogFont.LFFaceName(i))
-        Next
-        ShowFont.sSelectedFont = TrimNull(ShowFont.sSelectedFont)
-        Exit Function
-    Else
-        ShowFont.bCanceled = True
-        Exit Function
-
-    End If
-
-End Function
 
 Public Sub Show_Open()
     DialogType = ucOpen
     cmdPick_Click
-
 End Sub
 
 Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFile
@@ -3193,7 +2530,6 @@ End Function
 Public Sub Show_Save()
     DialogType = ucSave
     cmdPick_Click
-
 End Sub
 
 Private Function ShowSave(ByVal sFilter As String) As SelectedFile
@@ -3282,20 +2618,14 @@ Public Property Let ToolTipTexts(ByVal lType As ucDialogConstant, ByVal sNewValu
 
     Select Case lType
 
-        Case ucColor
+        Case ucFolder
             PropertyChanged "ToolTipText0"
 
-        Case ucFolder
+        Case ucOpen
             PropertyChanged "ToolTipText1"
 
-        Case ucFont
-            PropertyChanged "ToolTipText2"
-
-        Case ucOpen
-            PropertyChanged "ToolTipText3"
-
         Case ucSave
-            PropertyChanged "ToolTipText4"
+            PropertyChanged "ToolTipText2"
 
     End Select
 
@@ -3688,39 +3018,7 @@ Dim i                                   As Long
 
         Select Case m_DialogType
 
-            Case [ucColor]
-
-                If (LenB(.txtResult.Text) = 0) Or (.txtResult.Text = m_DialogMsg(0)) Then
-                    Exit Sub
-
-                End If
-
-                If (IsNumeric(.txtResult.Text)) Then
-
-                    '   Pass the value to the textbox
-                    If m_UseDialogText Then
-                        .txtResult.Text = pHexColorStr(TranslateColor(CLng(.txtResult.Text)))
-
-                    End If
-
-                    If m_UseDialogColor Then
-                        .txtResult.BackColor = pHexColorStr(TranslateColor(CLng(.txtResult.Text)))
-
-                    End If
-
-                    '   Store this for later..
-                    m_Color = .txtResult.Text
-                Else
-                    MsgBox "The Value Entered is Invalid!", vbExclamation + vbOKOnly, "ucPickBox"
-                    '   Rollback the color...there was an error
-                    .txtResult.Text = pHexColorStr(TranslateColor(m_Color))
-
-                End If
-
             Case [ucFolder]
-
-                '   Nothing...this is locked
-            Case [ucFont]
 
                 '   Nothing...this is locked
             Case [ucOpen], [ucSave]
@@ -3747,13 +3045,6 @@ Dim i                                   As Long
                 '   Handle cases where the file name is not set (i.e. Cancel)
                 If LenB(.txtResult.Text) = 0 Then
                     Exit Sub
-
-                End If
-
-                If (m_DialogType = ucOpen) Then
-                    i = 2
-                Else
-                    i = 3
 
                 End If
 
@@ -3869,7 +3160,6 @@ Private Sub UserControl_GotFocus()
     With UserControl.txtResult
         .SelStart = 0
         .SelLength = Len(.Text)
-
     End With
 
 End Sub
@@ -3879,8 +3169,6 @@ Private Sub UserControl_Initialize()
     m_bIsWinXpOrLater = IsWinXPOrLater
 '   Get Our Handle
     m_hWnd = UserControl.hWnd
-    '   Init the Custom Colors for the Color CommonDialog
-    Call InitCustomColors
     '   Rest the Control to its defaults...
     Call Reset
 
@@ -3890,115 +3178,12 @@ Private Sub UserControl_InitProperties()
 
     m_Appearance = [3D]
     m_BackColor = IIf(m_BackColor = &H0, &HFFFFFF, m_BackColor)
-    m_ColorFlags = ShowColor_Default
     m_Filters = "Supported files|*.*|All Files (*.*)"
     m_FileFlags = IIf(m_DialogType = ucOpen, ShowOpen_Default, ShowSave_Default)
     m_Forecolor = &H0
-    m_FontFlags = ShowFont_Default
     m_Theme = pbAuto
     m_UseAutoForeColor = False
     m_Locked = False
-
-End Sub
-
-Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
-
-    With PropBag
-        m_Appearance = .ReadProperty("Appearance", [3D])
-        m_UseAutoForeColor = .ReadProperty("UseAutoForeColor", True)
-        m_BackColor = .ReadProperty("BackColor", &HFFFFFF)
-        m_Color = .ReadProperty("Color", &HFFFFFF)
-        m_ColorFlags = .ReadProperty("ColorFlags", ShowColor_Default)
-        m_DefaultExt = .ReadProperty("DefaultExt", ".txt")
-        m_DialogMsg([ucColor]) = .ReadProperty("DialogMsg0", "Locate Color...")
-        m_DialogMsg([ucFolder]) = .ReadProperty("DialogMsg1", "Locate Folder...")
-        m_DialogMsg([ucFont]) = .ReadProperty("DialogMsg2", "Locate Font...")
-        m_DialogMsg([ucOpen]) = .ReadProperty("DialogMsg3", "Locate File...")
-        m_DialogMsg([ucSave]) = .ReadProperty("DialogMsg4", "Locate File...")
-        m_DialogType = .ReadProperty("DialogType", [ucColor])
-        m_Enabled = .ReadProperty("Enabled", True)
-        m_FileFlags = .ReadProperty("FileFlags", IIf(m_DialogType = ucOpen, ShowOpen_Default, ShowSave_Default))
-        m_Filters = .ReadProperty("Filters", vbNullString)
-        Set m_Font = .ReadProperty("Font", Nothing)
-        m_FontFlags = .ReadProperty("FontFlags", ShowFont_Default)
-        m_Forecolor = .ReadProperty("ForeColor", &H0)
-        m_MultiSelect = .ReadProperty("MultiSelect", False)
-        m_Path = .ReadProperty("Path", vbNullString)
-        m_Theme = .ReadProperty("Theme", [pbAuto])
-        m_ToolTipText([ucColor]) = .ReadProperty("ToolTipText0", "Click Here to Locate Color.")
-        m_ToolTipText([ucFolder]) = .ReadProperty("ToolTipText1", "Click Here to Locate Folder.")
-        m_ToolTipText([ucFont]) = .ReadProperty("ToolTipText1", "Click Here to Locate Font.")
-        m_ToolTipText([ucOpen]) = .ReadProperty("ToolTipText2", "Click Here to Locate File.")
-        m_ToolTipText([ucSave]) = .ReadProperty("ToolTipText3", "Click Here to Locate File.")
-        m_UseDialogColor = .ReadProperty("UseDialogColor", False)
-        m_UseDialogText = .ReadProperty("UseDialogText", True)
-        m_Locked = .ReadProperty("Locked", False)
-
-    End With
-
-    If (Ambient.UserMode) Then
-        'If we're not in design mode
-        bTrack = True
-        bTrackUser32 = IsFunctionExported("TrackMouseEvent", "user32.dll")
-
-        If Not bTrackUser32 Then
-            If Not IsFunctionExported("_TrackMouseEvent", "comctl32.dll") Then
-                bTrack = False
-
-            End If
-
-        End If
-
-        If bTrack Then
-
-            'Add the messages that we're interested in
-            With UserControl
-                '   Start Subclassing using our Handle
-                Call Subclass_Start(.hWnd)
-                '   Subclass the BrowseForFolder Message
-                Call Subclass_AddMsg(.hWnd, BFFM_INITIALIZED, MSG_BEFORE)
-                '   Subclas the Move and Leave Events of the Control
-                Call Subclass_AddMsg(.hWnd, WM_MOUSEMOVE, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_MOUSELEAVE, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_SYSCOLORCHANGE, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_THEMECHANGED, MSG_AFTER)
-
-                '   Subclass the Ellipse (Pick) Picturebox
-                With .pbPick
-                    Call Subclass_Start(.hWnd)
-                    Call Subclass_AddMsg(.hWnd, WM_MOUSEMOVE, MSG_AFTER)
-                    Call Subclass_AddMsg(.hWnd, WM_MOUSELEAVE, MSG_AFTER)
-
-                End With
-
-                '   Subclass the Dropdown (Drop) Picturebox
-                With .pbDrop
-                    Call Subclass_Start(.hWnd)
-                    Call Subclass_AddMsg(.hWnd, WM_MOUSEMOVE, MSG_AFTER)
-                    Call Subclass_AddMsg(.hWnd, WM_MOUSELEAVE, MSG_AFTER)
-
-                End With
-
-                '   Subclass the Textbox (txtResult) Picturebox
-                With .txtResult
-                    Call Subclass_Start(.hWnd)
-                    Call Subclass_AddMsg(.hWnd, WM_MOUSEMOVE, MSG_AFTER)
-                    Call Subclass_AddMsg(.hWnd, WM_MOUSELEAVE, MSG_AFTER)
-
-                End With
-
-                '   Store our Flag that we are Now Subclassing
-                bSubClass = True
-
-            End With
-
-        End If
-
-    End If
-
-    UserControl_Resize
-    '   Set the focus on the caller
-    Call SetFocusAPI(UserControl.Parent.hWnd)
 
 End Sub
 
@@ -4129,62 +3314,231 @@ Private Sub UserControl_Show()
 
 End Sub
 
-Private Sub UserControl_Terminate()
-
-'On Error GoTo Catch
-    On Error Resume Next
-
-    If bSubClass Then
-        'Stop all subclassing
-        Call Subclass_StopAll
-        '   Set our Flag that were done....
-        bSubClass = False
-
-    End If
-
-Catch:
-
-End Sub
-
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 
     With PropBag
         Call .WriteProperty("Appearance", m_Appearance, [3D])
         Call .WriteProperty("UseAutoForeColor", m_UseAutoForeColor, True)
         Call .WriteProperty("BackColor", m_BackColor, &HFFFFFF)
-        Call .WriteProperty("Color", m_Color, &HFFFFFF)
-        Call .WriteProperty("ColorFlags", m_ColorFlags, ShowColor_Default)
         Call .WriteProperty("DefaultExt", m_DefaultExt, ".txt")
-        Call .WriteProperty("DialogMsg0", m_DialogMsg([ucColor]), "Locate Color...")
-        Call .WriteProperty("DialogMsg1", m_DialogMsg([ucFolder]), "Locate Folder...")
-        Call .WriteProperty("DialogMsg2", m_DialogMsg([ucFont]), "Locate Font...")
-        Call .WriteProperty("DialogMsg3", m_DialogMsg([ucOpen]), "Locate File...")
-        Call .WriteProperty("DialogMsg4", m_DialogMsg([ucSave]), "Locate File...")
-        Call .WriteProperty("DialogType", m_DialogType, [ucColor])
+        Call .WriteProperty("DialogMsg0", m_DialogMsg([ucFolder]), "Locate Folder...")
+        Call .WriteProperty("DialogMsg1", m_DialogMsg([ucOpen]), "Locate File...")
+        Call .WriteProperty("DialogMsg2", m_DialogMsg([ucSave]), "Locate File...")
+        Call .WriteProperty("DialogType", m_DialogType, [ucFolder])
         Call .WriteProperty("Enabled", m_Enabled, True)
         Call .WriteProperty("FileFlags", m_FileFlags, IIf(m_DialogType = ucOpen, ShowOpen_Default, ShowSave_Default))
         Call .WriteProperty("Filters", m_Filters, vbNullString)
         Call .WriteProperty("Font", m_Font, Nothing)
-        Call .WriteProperty("FontFlags", m_FontFlags, ShowFont_Default)
         Call .WriteProperty("ForeColor", m_Forecolor, &H0)
         Call .WriteProperty("MultiSelect", m_MultiSelect, False)
         Call .WriteProperty("Path", m_Path, vbNullString)
         Call .WriteProperty("Theme", m_Theme, [pbAuto])
-        Call .WriteProperty("ToolTipText0", m_ToolTipText([ucColor]), "Click Here to Locate Color.")
-        Call .WriteProperty("ToolTipText1", m_ToolTipText([ucFolder]), "Click Here to Locate Folder.")
-        Call .WriteProperty("ToolTipText1", m_ToolTipText([ucFont]), "Click Here to Locate Font.")
-        Call .WriteProperty("ToolTipText2", m_ToolTipText([ucOpen]), "Click Here to Locate File.")
-        Call .WriteProperty("ToolTipText3", m_ToolTipText([ucSave]), "Click Here to Locate File.")
+        Call .WriteProperty("ToolTipText0", m_ToolTipText([ucFolder]), "Click Here to Locate Folder.")
+        Call .WriteProperty("ToolTipText1", m_ToolTipText([ucOpen]), "Click Here to Locate File.")
+        Call .WriteProperty("ToolTipText2", m_ToolTipText([ucSave]), "Click Here to Locate File.")
         Call .WriteProperty("UseDialogColor", m_UseDialogColor, False)
         Call .WriteProperty("UseDialogText", m_UseDialogText, True)
         Call .WriteProperty("Locked", m_Locked, False)
         Call .WriteProperty("QualifyPaths", m_QualifyPaths, False)
-
     End With
 
 End Sub
 
-Property Get Version() As String
-    Version = Major & "." & Minor & "." & Revision
+'Read the properties from the property bag - also, a good place to start the subclassing (if we're running)
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
-End Property
+    With PropBag
+        m_Appearance = .ReadProperty("Appearance", [3D])
+        m_UseAutoForeColor = .ReadProperty("UseAutoForeColor", True)
+        m_BackColor = .ReadProperty("BackColor", &HFFFFFF)
+        m_DefaultExt = .ReadProperty("DefaultExt", ".txt")
+        m_DialogMsg([ucFolder]) = .ReadProperty("DialogMsg0", "Locate Folder...")
+        m_DialogMsg([ucOpen]) = .ReadProperty("DialogMsg1", "Locate File...")
+        m_DialogMsg([ucSave]) = .ReadProperty("DialogMsg2", "Locate File...")
+        m_DialogType = .ReadProperty("DialogType", [ucFolder])
+        m_Enabled = .ReadProperty("Enabled", True)
+        m_FileFlags = .ReadProperty("FileFlags", IIf(m_DialogType = ucOpen, ShowOpen_Default, ShowSave_Default))
+        m_Filters = .ReadProperty("Filters", vbNullString)
+        Set m_Font = .ReadProperty("Font", Nothing)
+        m_Forecolor = .ReadProperty("ForeColor", &H0)
+        m_MultiSelect = .ReadProperty("MultiSelect", False)
+        m_Path = .ReadProperty("Path", vbNullString)
+        m_Theme = .ReadProperty("Theme", [pbAuto])
+        m_ToolTipText([ucFolder]) = .ReadProperty("ToolTipText0", "Click Here to Locate Folder.")
+        m_ToolTipText([ucOpen]) = .ReadProperty("ToolTipText1", "Click Here to Locate File.")
+        m_ToolTipText([ucSave]) = .ReadProperty("ToolTipText2", "Click Here to Locate File.")
+        m_UseDialogColor = .ReadProperty("UseDialogColor", False)
+        m_UseDialogText = .ReadProperty("UseDialogText", True)
+        m_Locked = .ReadProperty("Locked", False)
+    End With
+
+    'If we're not in design mode
+    If Ambient.UserMode Then
+        bTrack = True
+        bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
+        
+        If Not bTrackUser32 Then
+            If Not APIFunctionPresent("_TrackMouseEvent", "comctl32") Then
+                bTrack = False
+            End If
+        End If
+      
+        If bTrack Then
+            'Add the messages that we're interested in
+            With UserControl
+                '   Start Subclassing using our Handle
+                Call sc_Subclass(.hWnd)
+                '   Subclass the BrowseForFolder Message
+                Call sc_AddMsg(.hWnd, BFFM_INITIALIZED, MSG_BEFORE)
+                '   Subclas the Move and Leave Events of the Control
+                Call sc_AddMsg(.hWnd, WM_MOUSEMOVE)
+                Call sc_AddMsg(.hWnd, WM_MOUSELEAVE)
+                Call sc_AddMsg(.hWnd, WM_SYSCOLORCHANGE)
+                Call sc_AddMsg(.hWnd, WM_THEMECHANGED)
+        
+                '   Subclass the Ellipse (Pick) Picturebox
+                With .pbPick
+                    Call sc_Subclass(.hWnd)
+                    Call sc_AddMsg(.hWnd, WM_MOUSEMOVE)
+                    Call sc_AddMsg(.hWnd, WM_MOUSELEAVE)
+                End With
+        
+                '   Subclass the Dropdown (Drop) Picturebox
+                With .pbDrop
+                    Call sc_Subclass(.hWnd)
+                    Call sc_AddMsg(.hWnd, WM_MOUSEMOVE)
+                    Call sc_AddMsg(.hWnd, WM_MOUSELEAVE)
+                End With
+        
+                '   Subclass the Textbox (txtResult) Picturebox
+                With .txtResult
+                    Call sc_Subclass(.hWnd)
+                    Call sc_AddMsg(.hWnd, WM_MOUSEMOVE)
+                    Call sc_AddMsg(.hWnd, WM_MOUSELEAVE)
+                End With
+                
+            End With
+        
+        End If
+    
+    End If
+    
+    UserControl_Resize
+    '   Set the focus on the caller
+    Call SetFocusAPI(UserControl.Parent.hWnd)
+End Sub
+
+'The control is terminating - a good place to stop the subclasser
+Private Sub UserControl_Terminate()
+'Terminate all subclassing
+  sc_Terminate
+End Sub
+
+'======================================================================================================
+'-Subclass callback, usually ordinal #1, the last method in this source file----------------------
+Private Sub zWndProc1(ByVal bBefore As Boolean, _
+                      ByRef bHandled As Boolean, _
+                      ByRef lReturn As Long, _
+                      ByVal lng_hWnd As Long, _
+                      ByVal uMsg As Long, _
+                      ByVal wParam As Long, _
+                      ByVal lParam As Long, _
+                      ByRef lParamUser As Long)
+'*************************************************************************************************
+'* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
+'*              you will know unless the callback for the uMsg value is specified as
+'*              MSG_BEFORE_AFTER (both before and after the original WndProc).
+'* bHandled   - In a before original WndProc callback, setting bHandled to True will prevent the
+'*              message being passed to the original WndProc and (if set to do so) the after
+'*              original WndProc callback.
+'* lReturn    - WndProc return value. Set as per the MSDN documentation for the message value,
+'*              and/or, in an after the original WndProc callback, act on the return value as set
+'*              by the original WndProc.
+'* lng_hWnd   - Window handle.
+'* uMsg       - Message value.
+'* wParam     - Message related data.
+'* lParam     - Message related data.
+'* lParamUser - User-defined callback parameter
+'*************************************************************************************************
+  Select Case uMsg
+        Case WM_MOUSEMOVE
+
+            If (lng_hWnd = pbPick.hWnd) Then
+                If m_State <> pbHover Then
+                    m_State = pbHover
+                    Call Refresh(0)
+                End If
+
+                If Not bInCtrl Then
+                    bInCtrl = True
+                    TrackMouseLeave lng_hWnd
+                    RaiseEvent MouseEnter
+                End If
+                
+            ElseIf (lng_hWnd = pbDrop.hWnd) Then
+
+                If m_State <> pbHover Then
+                    m_State = pbHover
+                    Call Refresh(1)
+
+                End If
+
+                If Not bInCtrl Then
+                    bInCtrl = True
+                    TrackMouseLeave lng_hWnd
+                    RaiseEvent MouseEnter
+                End If
+            Else
+
+                If m_State <> pbNormal Then
+                    m_State = pbNormal
+                    Call Refresh(0)
+                    Call Refresh(1)
+
+                End If
+
+                bInCtrl = False
+
+            End If
+
+        Case WM_MOUSELEAVE
+
+            If (lng_hWnd = pbPick.hWnd) Then
+                m_State = pbNormal
+                Call Refresh(0)
+                bInCtrl = False
+                RaiseEvent MouseLeave
+            ElseIf (lng_hWnd = pbDrop.hWnd) Then
+                m_State = pbNormal
+                Call Refresh(1)
+                bInCtrl = False
+                RaiseEvent MouseLeave
+            Else
+
+                If m_State <> pbNormal Then
+                    m_State = pbNormal
+                    Call Refresh(0)
+                    Call Refresh(1)
+                End If
+
+                bInCtrl = False
+                RaiseEvent MouseLeave
+
+            End If
+          
+        Case WM_SYSCOLORCHANGE
+            m_State = pbNormal
+            Call Refresh(0)
+            Call Refresh(1)
+
+        Case WM_THEMECHANGED
+            m_State = pbNormal
+            Call Refresh(0)
+            Call Refresh(1)
+            
+        Case BFFM_INITIALIZED
+            '   BrowseForFolder Module has Initialized, so set the Starting Path
+            Call SendMessage(lng_hWnd, BFFM_SETSELECTIONA, True, ByVal m_Path)
+  End Select
+End Sub
+

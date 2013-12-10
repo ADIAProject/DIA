@@ -238,7 +238,7 @@ Private Const UDM_GETUNICODEFORMAT As Long = CCM_GETUNICODEFORMAT
 Implements ISubclass
 Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IPerPropertyBrowsingVB
-Private SpinBoxHandle As Long, SpinBoxEditHandle As Long
+Private SpinBoxUpDownHandle As Long, SpinBoxEditHandle As Long
 Private SpinBoxFontHandle As Long
 Private SpinBoxLogFont As LOGFONT
 Private DispIDMousePointer As Long
@@ -467,11 +467,11 @@ UserControl.OLEDrag
 End Sub
 
 Private Sub UserControl_Resize()
-If SpinBoxHandle = 0 Or SpinBoxEditHandle = 0 Then Exit Sub
+If SpinBoxUpDownHandle = 0 Or SpinBoxEditHandle = 0 Then Exit Sub
 With UserControl
 MoveWindow SpinBoxEditHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
 End With
-SendMessage SpinBoxHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
+SendMessage SpinBoxUpDownHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
 End Sub
 
 Private Sub UserControl_Terminate()
@@ -521,12 +521,12 @@ End Property
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_Description = "Returns a handle to a control."
 Attribute hWnd.VB_UserMemId = -515
-hWnd = SpinBoxHandle
+hWnd = SpinBoxUpDownHandle
 End Property
 
-Public Property Get hWndOwner() As Long
-Attribute hWndOwner.VB_Description = "Returns a handle to a control."
-hWndOwner = UserControl.hWnd
+Public Property Get hWndUserControl() As Long
+Attribute hWndUserControl.VB_Description = "Returns a handle to a control."
+hWndUserControl = UserControl.hWnd
 End Property
 
 Public Property Get hWndEdit() As Long
@@ -560,7 +560,7 @@ Dim OldFontHandle As Long
 Call OLEFontToLogFont(PropFont, SpinBoxLogFont)
 OldFontHandle = SpinBoxFontHandle
 SpinBoxFontHandle = CreateFontIndirect(SpinBoxLogFont)
-If SpinBoxHandle <> 0 Then SendMessage SpinBoxHandle, WM_SETFONT, SpinBoxFontHandle, ByVal 1&
+If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, WM_SETFONT, SpinBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
 End Sub
@@ -587,13 +587,13 @@ End Property
 
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
-If SpinBoxHandle <> 0 And SpinBoxEditHandle <> 0 And EnabledVisualStyles() = True Then
+If SpinBoxUpDownHandle <> 0 And SpinBoxEditHandle <> 0 And EnabledVisualStyles() = True Then
     Select Case PropVisualStyles
         Case True
-            ActivateVisualStyles SpinBoxHandle
+            ActivateVisualStyles SpinBoxUpDownHandle
             ActivateVisualStyles SpinBoxEditHandle
         Case False
-            RemoveVisualStyles SpinBoxHandle
+            RemoveVisualStyles SpinBoxUpDownHandle
             RemoveVisualStyles SpinBoxEditHandle
     End Select
     Me.Refresh
@@ -633,8 +633,8 @@ End Property
 
 Public Property Let Enabled(ByVal Value As Boolean)
 UserControl.Enabled = Value
-If SpinBoxHandle <> 0 Then
-    EnableWindow SpinBoxHandle, IIf(Value = True, 1, 0)
+If SpinBoxUpDownHandle <> 0 Then
+    EnableWindow SpinBoxUpDownHandle, IIf(Value = True, 1, 0)
     If SpinBoxEditHandle <> 0 Then EnableWindow SpinBoxEditHandle, IIf(Value = True, 1, 0)
     Me.Refresh
 End If
@@ -700,8 +700,8 @@ End Property
 
 Public Property Get Min() As Long
 Attribute Min.VB_Description = "Returns/sets the minimum value."
-If SpinBoxHandle <> 0 Then
-    SendMessageSpecial SpinBoxHandle, UDM_GETRANGE32, Min, 0
+If SpinBoxUpDownHandle <> 0 Then
+    SendMessageSpecial SpinBoxUpDownHandle, UDM_GETRANGE32, Min, 0
 Else
     Min = PropMin
 End If
@@ -712,15 +712,15 @@ PropMin = Value
 If PropMax < PropMin Then PropMax = PropMin
 If Me.Value < PropMin Then Me.Value = PropMin
 If Me.Value > PropMax Then Me.Value = PropMax
-If SpinBoxHandle <> 0 Then SendMessage SpinBoxHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
+If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
 Me.Refresh
 UserControl.PropertyChanged "Min"
 End Property
 
 Public Property Get Max() As Long
 Attribute Max.VB_Description = "Returns/sets the maximum value."
-If SpinBoxHandle <> 0 Then
-    SendMessageSpecial SpinBoxHandle, UDM_GETRANGE32, 0, Max
+If SpinBoxUpDownHandle <> 0 Then
+    SendMessageSpecial SpinBoxUpDownHandle, UDM_GETRANGE32, 0, Max
 Else
     Max = PropMax
 End If
@@ -731,7 +731,7 @@ PropMax = Value
 If PropMin > PropMax Then PropMin = PropMax
 If Me.Value < PropMin Then Me.Value = PropMin
 If Me.Value > PropMax Then Me.Value = PropMax
-If SpinBoxHandle <> 0 Then SendMessage SpinBoxHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
+If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
 Me.Refresh
 UserControl.PropertyChanged "Max"
 End Property
@@ -739,8 +739,8 @@ End Property
 Public Property Get Value() As Long
 Attribute Value.VB_Description = "Returns/sets the current position."
 Attribute Value.VB_UserMemId = 0
-If SpinBoxHandle <> 0 Then
-    Value = SendMessage(SpinBoxHandle, UDM_GETPOS32, 0, ByVal 0&)
+If SpinBoxUpDownHandle <> 0 Then
+    Value = SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&)
 Else
     Value = PropValue
 End If
@@ -761,15 +761,15 @@ Else
         PropValue = Me.Min
     End If
 End If
-If SpinBoxHandle <> 0 Then SendMessage SpinBoxHandle, UDM_SETPOS32, 0, ByVal PropValue
+If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETPOS32, 0, ByVal PropValue
 UserControl.PropertyChanged "Value"
 End Property
 
 Public Property Get Increment() As Long
 Attribute Increment.VB_Description = "Returns/sets the position change increment."
-If SpinBoxHandle <> 0 Then
+If SpinBoxUpDownHandle <> 0 Then
     Dim Accel As UDACCEL
-    SendMessage SpinBoxHandle, UDM_GETACCEL, 1, Accel
+    SendMessage SpinBoxUpDownHandle, UDM_GETACCEL, 1, Accel
     Increment = Accel.nInc
 Else
     Increment = PropIncrement
@@ -778,11 +778,11 @@ End Property
 
 Public Property Let Increment(ByVal Value As Long)
 PropIncrement = Value
-If SpinBoxHandle <> 0 Then
+If SpinBoxUpDownHandle <> 0 Then
     Dim Accel As UDACCEL
     Accel.nSec = 0
     Accel.nInc = PropIncrement
-    SendMessage SpinBoxHandle, UDM_SETACCEL, 1, Accel
+    SendMessage SpinBoxUpDownHandle, UDM_SETACCEL, 1, Accel
 End If
 UserControl.PropertyChanged "Increment"
 End Property
@@ -794,7 +794,7 @@ End Property
 
 Public Property Let Wrap(ByVal Value As Boolean)
 PropWrap = Value
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "Wrap"
 End Property
 
@@ -805,7 +805,7 @@ End Property
 
 Public Property Let HotTrack(ByVal Value As Boolean)
 PropHotTrack = Value
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "HotTrack"
 End Property
 
@@ -821,7 +821,7 @@ Select Case Value
     Case Else
         Err.Raise 380
 End Select
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "Orientation"
 End Property
 
@@ -837,7 +837,7 @@ Select Case Value
     Case Else
         Err.Raise 380
 End Select
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "Alignment"
 End Property
 
@@ -848,7 +848,7 @@ End Property
 
 Public Property Let ThousandsSeparator(ByVal Value As Boolean)
 PropThousandsSeparator = Value
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "ThousandsSeparator"
 End Property
 
@@ -864,12 +864,12 @@ Select Case Value
     Case Else
         Err.Raise 380
 End Select
-If SpinBoxHandle <> 0 Then
+If SpinBoxUpDownHandle <> 0 Then
     Select Case PropNumberStyle
         Case SpbNumberStyleDecimal
-            SendMessage SpinBoxHandle, UDM_SETBASE, 10, ByVal 0&
+            SendMessage SpinBoxUpDownHandle, UDM_SETBASE, 10, ByVal 0&
         Case SpbNumberStyleHexadecimal
-            SendMessage SpinBoxHandle, UDM_SETBASE, 16, ByVal 0&
+            SendMessage SpinBoxUpDownHandle, UDM_SETBASE, 16, ByVal 0&
     End Select
 End If
 UserControl.PropertyChanged "NumberStyle"
@@ -882,7 +882,7 @@ End Property
 
 Public Property Let ArrowKeysChange(ByVal Value As Boolean)
 PropArrowKeysChange = Value
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "ArrowKeysChange"
 End Property
 
@@ -960,12 +960,12 @@ End Property
 
 Public Property Let HideSelection(ByVal Value As Boolean)
 PropHideSelection = Value
-If SpinBoxHandle <> 0 Then Call ReCreateSpinBox
+If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "HideSelection"
 End Property
 
 Private Sub CreateSpinBox()
-If SpinBoxHandle <> 0 Or SpinBoxEditHandle <> 0 Then Exit Sub
+If SpinBoxUpDownHandle <> 0 Or SpinBoxEditHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwStyleEdit As Long, dwExStyleEdit As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or UDS_SETBUDDYINT
 If PropWrap = True Then dwStyle = dwStyle Or UDS_WRAP
@@ -995,11 +995,11 @@ dwExStyleEdit = WS_EX_CLIENTEDGE
 If Ambient.RightToLeft = True Then dwExStyleEdit = dwExStyleEdit Or WS_EX_RTLREADING
 SpinBoxEditHandle = CreateWindowEx(dwExStyleEdit, StrPtr("Edit"), 0, dwStyleEdit, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If SpinBoxEditHandle <> 0 Then
-    SpinBoxHandle = CreateWindowEx(0, StrPtr("msctls_updown32"), StrPtr("Up Down"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
-    If SpinBoxHandle <> 0 Then
-        SendMessage SpinBoxHandle, UDM_SETUNICODEFORMAT, 1, ByVal 0&
-        SendMessage SpinBoxHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
-        If PropNumberStyle = SpbNumberStyleHexadecimal Then SendMessage SpinBoxHandle, UDM_SETBASE, 16, ByVal 0&
+    SpinBoxUpDownHandle = CreateWindowEx(0, StrPtr("msctls_updown32"), StrPtr("Up Down"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
+    If SpinBoxUpDownHandle <> 0 Then
+        SendMessage SpinBoxUpDownHandle, UDM_SETUNICODEFORMAT, 1, ByVal 0&
+        SendMessage SpinBoxUpDownHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
+        If PropNumberStyle = SpbNumberStyleHexadecimal Then SendMessage SpinBoxUpDownHandle, UDM_SETBASE, 16, ByVal 0&
     End If
 End If
 Set Me.Font = PropFont
@@ -1010,7 +1010,7 @@ Me.Max = PropMax
 Me.Value = PropValue
 Me.Increment = PropIncrement
 If Ambient.UserMode = True Then
-    If SpinBoxHandle <> 0 Then Call ComCtlsSetSubclass(SpinBoxHandle, Me, 1)
+    If SpinBoxUpDownHandle <> 0 Then Call ComCtlsSetSubclass(SpinBoxUpDownHandle, Me, 1)
     If SpinBoxEditHandle <> 0 Then Call ComCtlsSetSubclass(SpinBoxEditHandle, Me, 2)
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 3)
 End If
@@ -1041,18 +1041,18 @@ End If
 End Sub
 
 Private Sub DestroySpinBox()
-If SpinBoxHandle = 0 Or SpinBoxEditHandle = 0 Then Exit Sub
-Call ComCtlsRemoveSubclass(SpinBoxHandle)
+If SpinBoxUpDownHandle = 0 Or SpinBoxEditHandle = 0 Then Exit Sub
+Call ComCtlsRemoveSubclass(SpinBoxUpDownHandle)
 Call ComCtlsRemoveSubclass(SpinBoxEditHandle)
 Call ComCtlsRemoveSubclass(UserControl.hWnd)
-ShowWindow SpinBoxHandle, SW_HIDE
+ShowWindow SpinBoxUpDownHandle, SW_HIDE
 ShowWindow SpinBoxEditHandle, SW_HIDE
-SendMessage SpinBoxHandle, UDM_SETBUDDY, 0, ByVal 0&
-SetParent SpinBoxHandle, 0
+SendMessage SpinBoxUpDownHandle, UDM_SETBUDDY, 0, ByVal 0&
+SetParent SpinBoxUpDownHandle, 0
 SetParent SpinBoxEditHandle, 0
-DestroyWindow SpinBoxHandle
+DestroyWindow SpinBoxUpDownHandle
 DestroyWindow SpinBoxEditHandle
-SpinBoxHandle = 0
+SpinBoxUpDownHandle = 0
 SpinBoxEditHandle = 0
 End Sub
 
@@ -1065,7 +1065,7 @@ End Sub
 
 Public Sub SetAcceleration(ByVal Delays As Variant, ByVal Increments As Variant)
 Attribute SetAcceleration.VB_Description = "Method to set an acceleration. The delays array specify the amount of time to elapse (in seconds) before the position change increment specified in the increments array is used."
-If SpinBoxHandle <> 0 Then
+If SpinBoxUpDownHandle <> 0 Then
     If IsArray(Delays) And IsArray(Increments) Then
         Dim Ptr(0 To 1) As Long
         CopyMemory Ptr(0), ByVal UnsignedAdd(VarPtr(Delays), 8), 4
@@ -1094,7 +1094,7 @@ If SpinBoxHandle <> 0 Then
                             End Select
                         Next i
                         If Count > 0 Then
-                            SendMessage SpinBoxHandle, UDM_SETACCEL, Count, ByVal VarPtr(AccelArr(0))
+                            SendMessage SpinBoxUpDownHandle, UDM_SETACCEL, Count, ByVal VarPtr(AccelArr(0))
                         Else
                             Me.Increment = PropIncrement
                         End If
@@ -1120,11 +1120,11 @@ End Sub
 
 Public Sub ValidateText()
 Attribute ValidateText.VB_Description = "Method that validates and updates the text displayed in the spin box."
-If SpinBoxHandle <> 0 Then
+If SpinBoxUpDownHandle <> 0 Then
     Dim Text As String, Value As Long
     Text = String(SendMessage(SpinBoxEditHandle, WM_GETTEXTLENGTH, 0, ByVal 0&), vbNullChar)
     SendMessage SpinBoxEditHandle, WM_GETTEXT, Len(Text) + 1, ByVal StrPtr(Text)
-    Value = SendMessage(SpinBoxHandle, UDM_GETPOS32, 0, ByVal 0&)
+    Value = SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&)
     If Not Text = CStr(Value) Then
         Text = CStr(Value)
         SendMessage SpinBoxEditHandle, WM_SETTEXT, 0, ByVal StrPtr(Text)
@@ -1206,7 +1206,7 @@ Select Case dwRefData
     Case 2
         ISubclass_Message = WindowProcEdit(hWnd, wMsg, wParam, lParam)
     Case 3
-        ISubclass_Message = WindowProcOwner(hWnd, wMsg, wParam, lParam)
+        ISubclass_Message = WindowProcUserControl(hWnd, wMsg, wParam, lParam)
 End Select
 End Function
 
@@ -1267,7 +1267,7 @@ Select Case wMsg
         End If
     Case WM_MOUSEACTIVATE
         Static InProc As Boolean
-        If GetFocus() <> SpinBoxHandle And GetFocus() <> SpinBoxEditHandle Then
+        If GetFocus() <> SpinBoxUpDownHandle And GetFocus() <> SpinBoxEditHandle Then
             If InProc = True Or LoWord(lParam) = HTBORDER Then WindowProcEdit = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
                 Case WM_MBUTTONDOWN
@@ -1356,19 +1356,19 @@ End Select
 WindowProcEdit = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
-Private Function WindowProcOwner(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
     Case WM_NOTIFY
         Dim NMH As NMHDR
         CopyMemory NMH, ByVal lParam, Len(NMH)
-        If NMH.hWndFrom = SpinBoxHandle Then
+        If NMH.hWndFrom = SpinBoxUpDownHandle Then
             If NMH.Code = UDN_DELTAPOS Then
                 Dim NMUD As NMUPDOWN
                 CopyMemory NMUD, ByVal lParam, LenB(NMUD)
                 RaiseEvent BeforeChange(NMUD.iPos, NMUD.iDelta)
                 Select Case NMUD.iDelta
                     Case 0
-                        WindowProcOwner = 1
+                        WindowProcUserControl = 1
                         Exit Function
                     Case Is < 0
                         RaiseEvent DownClick
@@ -1407,22 +1407,22 @@ Select Case wMsg
             Case EN_CHANGE
                 If BlockChange = False Then
                     RaiseEvent TextChange
-                    If SpinBoxHandle <> 0 Then PostMessage SpinBoxHandle, UM_CHECKVALUECHANGED, SendMessage(SpinBoxHandle, UDM_GETPOS32, 0, ByVal 0&), ByVal 0&
+                    If SpinBoxUpDownHandle <> 0 Then PostMessage SpinBoxUpDownHandle, UM_CHECKVALUECHANGED, SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&), ByVal 0&
                 Else
                     BlockChange = False
                     Exit Function
                 End If
         End Select
     Case WM_VSCROLL, WM_HSCROLL
-        If lParam = SpinBoxHandle Then
+        If lParam = SpinBoxUpDownHandle Then
             Dim NewValue As Long
-            NewValue = SendMessage(SpinBoxHandle, UDM_GETPOS32, 0, ByVal 0&)
+            NewValue = SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&)
             If PropValue <> NewValue Then
                 PropValue = NewValue
                 RaiseEvent Change
             End If
         End If
 End Select
-WindowProcOwner = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 If wMsg = WM_SETFOCUS Then SetFocusAPI SpinBoxEditHandle
 End Function

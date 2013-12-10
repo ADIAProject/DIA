@@ -62,7 +62,6 @@ Dim hIconSmall                          As Long
 
     If (bSetAsAppIcon) Then
         SendMessageLong lhWndTop, WM_SETICON, ICON_BIG, hIconLarge
-
     End If
 
     SendMessageLong hWnd, WM_SETICON, ICON_BIG, hIconLarge
@@ -72,7 +71,6 @@ Dim hIconSmall                          As Long
 
     If (bSetAsAppIcon) Then
         SendMessageLong lhWndTop, WM_SETICON, ICON_SMALL, hIconSmall
-
     End If
 
     SendMessageLong hWnd, WM_SETICON, ICON_SMALL, hIconSmall

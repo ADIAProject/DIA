@@ -199,7 +199,7 @@ Private Declare Function RegSetValueEx _
                                                       lpData As Any, _
                                                       ByVal cbData As Long) As Long
 
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 'Private Declare Function SetWindowLong _
                           Lib "user32.dll" _
                               Alias "SetWindowLongA" (ByVal hWnd As Long, _

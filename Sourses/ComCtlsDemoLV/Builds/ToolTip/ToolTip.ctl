@@ -332,10 +332,9 @@ Attribute Parent.VB_Description = "Returns the object on which this object is lo
 Set Parent = UserControl.Parent
 End Property
 
-Public Property Get hWnd() As Long
-Attribute hWnd.VB_Description = "Returns a handle to a control."
-Attribute hWnd.VB_UserMemId = -515
-hWnd = ToolTipHandle
+Public Property Get hToolTip() As Long
+Attribute hToolTip.VB_Description = "Returns a handle to an tool tip control."
+hToolTip = ToolTipHandle
 End Property
 
 Public Property Get Font() As StdFont
@@ -675,10 +674,8 @@ If PropBalloon = True Then dwStyle = dwStyle Or TTS_BALLOON
 If PropCloseButton = True Then dwStyle = dwStyle Or TTS_CLOSE
 If PropFadeAnimation = False Then dwStyle = dwStyle Or TTS_NOFADE
 ToolTipParentHandle = UserControl.Parent.hWnd
-'dwExStyle = WS_EX_TOOLWINDOW
-dwExStyle = WS_EX_TOPMOST
+dwExStyle = WS_EX_TOOLWINDOW
 If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
-'ToolTipHandle = CreateWindowEx(WS_EX_TOOLWINDOW, StrPtr("tooltips_class32"), StrPtr("Tool Tip"), dwStyle, 0, 0, 0, 0, ToolTipParentHandle, 0, App.hInstance, ByVal 0&)
 ToolTipHandle = CreateWindowEx(dwExStyle, StrPtr("tooltips_class32"), StrPtr("Tool Tip"), dwStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, ToolTipParentHandle, 0, App.hInstance, ByVal 0&)
 Set Me.Font = PropFont
 Me.BackColor = PropBackColor
@@ -739,12 +736,12 @@ End Sub
 
 Public Sub Activate()
 Attribute Activate.VB_Description = "Activates the tool tip control."
-If ToolTipHandle <> 0 Then SendMessage Me.hWnd, TTM_ACTIVATE, 1, ByVal 0&
+If ToolTipHandle <> 0 Then SendMessage ToolTipHandle, TTM_ACTIVATE, 1, ByVal 0&
 End Sub
 
 Public Sub Deactivate()
 Attribute Deactivate.VB_Description = "Deactivates the tool tip control."
-If ToolTipHandle <> 0 Then SendMessage Me.hWnd, TTM_ACTIVATE, 0, ByVal 0&
+If ToolTipHandle <> 0 Then SendMessage ToolTipHandle, TTM_ACTIVATE, 0, ByVal 0&
 End Sub
 
 Private Function GetToolInfo(ByVal ID As Long, ByRef TI As TOOLINFO, Optional ByRef Text As String) As Boolean

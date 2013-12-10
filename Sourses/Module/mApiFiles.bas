@@ -21,13 +21,11 @@ Public Type SECURITY_ATTRIBUTES
     nLength                             As Long
     lpSecurityDescriptor                As Long
     bInheritHandle                      As Long
-
 End Type
 
 Public Type FILETIME
-    dwLowDateTime                           As Long
+    dwLowDateTime                       As Long
     dwHighDateTime                      As Long
-
 End Type
 
 Public Type WIN32_FIND_DATA
@@ -53,94 +51,38 @@ Public Type FILE_PARAMS
 End Type
 
 Public Type FOLDER_PARAMS
-    bRecurse                                As Boolean
+    bRecurse                            As Boolean
     sFileNameExt                        As String
     sFileRoot                           As String
 End Type
 
 Public Declare Function PathFileExistsW Lib "shlwapi.dll" (ByVal pszPath As Long) As Long
-
-Public Declare Function CopyFile _
-                         Lib "kernel32.dll" _
-                             Alias "CopyFileA" (ByVal lpExistingFileName As String, _
-                                                ByVal lpNewFileName As String, _
-                                                ByVal bFailIfExists As Long) As Long
-
+Public Declare Function CopyFile                          Lib "kernel32.dll"                              Alias "CopyFileA" (ByVal lpExistingFileName As String,                                                 ByVal lpNewFileName As String,                                                 ByVal bFailIfExists As Long) As Long
 Public Declare Function DeleteFileW Lib "kernel32.dll" (ByVal lpFileName As Long) As Long
-
-Public Declare Function CreateDirectory _
-                         Lib "kernel32.dll" _
-                             Alias "CreateDirectoryA" (ByVal lpPathName As String, _
-                                                       lpSecurityAttributes As SECURITY_ATTRIBUTES) As Long
-
-Public Declare Function RemoveDirectory _
-                         Lib "kernel32.dll" _
-                             Alias "RemoveDirectoryA" (ByVal lpPathName As String) As Long
-
+Public Declare Function CreateDirectory                          Lib "kernel32.dll"                              Alias "CreateDirectoryA" (ByVal lpPathName As String,                                                        lpSecurityAttributes As SECURITY_ATTRIBUTES) As Long
+Public Declare Function RemoveDirectory                          Lib "kernel32.dll"                              Alias "RemoveDirectoryA" (ByVal lpPathName As String) As Long
 Public Declare Function PathIsDirectory Lib "shlwapi.dll" Alias "PathIsDirectoryW" (ByVal pszPath As Long) As Long
-
-Public Declare Function PathAddBackslash _
-                         Lib "shlwapi.dll" _
-                             Alias "PathAddBackslashA" (ByVal Path As String) As Long
-
-Public Declare Function PathRemoveBackslash _
-                         Lib "shlwapi.dll" _
-                             Alias "PathRemoveBackslashA" (ByVal Path As String) As Long
-
-Public Declare Function MoveFile _
-                         Lib "kernel32.dll" _
-                             Alias "MoveFileA" (ByVal lpExistingFileName As String, _
-                                                ByVal lpNewFileName As String) As Long
-
+Public Declare Function PathAddBackslash                          Lib "shlwapi.dll"                              Alias "PathAddBackslashA" (ByVal Path As String) As Long
+Public Declare Function PathRemoveBackslash                          Lib "shlwapi.dll"                              Alias "PathRemoveBackslashA" (ByVal Path As String) As Long
+Public Declare Function MoveFile                          Lib "kernel32.dll"                              Alias "MoveFileA" (ByVal lpExistingFileName As String,                                                 ByVal lpNewFileName As String) As Long
 Public Declare Function CreateFile Lib "kernel32.dll" Alias "CreateFileW" (ByVal lpFileName As Long, ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, ByVal lpSecurityAttributes As Long, ByVal dwCreationDisposition As Long, ByVal dwFlagsAndAttributes As Long, ByVal hTemplateFile As Long) As Long
-
-Public Declare Function ReadFile _
-                         Lib "kernel32.dll" (ByVal hFile As Long, _
-                                             lpBuffer As Any, _
-                                             ByVal nNumberOfBytesToRead As Long, _
-                                             lpNumberOfBytesRead As Long, _
-                                             ByVal lpOverlapped As Any) As Long
-
-Public Declare Function GetFileSize _
-                         Lib "kernel32.dll" (ByVal hFile As Long, _
-                                             lpFileSizeHigh As Long) As Long
-
-Public Declare Function StrFormatByteSize Lib "shlwapi.dll" _
-                                          Alias "StrFormatByteSizeA" _
-                                          (ByVal dw As Long, _
-                                           ByVal pszBuf As String, _
-                                           ByVal cchBuf As Long) As Long
-
-Public Declare Function StrFormatByteSizeW _
-                         Lib "shlwapi.dll" (ByVal qdwLow As Long, _
-                                            ByVal qdwHigh As Long, _
-                                            pwszBuf As Any, _
-                                            ByVal cchBuf As Long) As Long
-
+Public Declare Function ReadFile                          Lib "kernel32.dll" (ByVal hFile As Long,                                              lpBuffer As Any,                                              ByVal nNumberOfBytesToRead As Long,                                              lpNumberOfBytesRead As Long,                                              ByVal lpOverlapped As Any) As Long
+Public Declare Function GetFileSize                          Lib "kernel32.dll" (ByVal hFile As Long,                                              lpFileSizeHigh As Long) As Long
+Public Declare Function StrFormatByteSize Lib "shlwapi.dll"                                           Alias "StrFormatByteSizeA"                                           (ByVal dw As Long,                                            ByVal pszBuf As String,                                            ByVal cchBuf As Long) As Long
+Public Declare Function StrFormatByteSizeW                          Lib "shlwapi.dll" (ByVal qdwLow As Long,                                             ByVal qdwHigh As Long,                                             pwszBuf As Any,                                             ByVal cchBuf As Long) As Long
 Public Declare Function FindClose Lib "kernel32.dll" (ByVal hFindFile As Long) As Long
-
 Public Declare Function FindFirstFile Lib "kernel32.dll" Alias "FindFirstFileW" (ByVal lpFileName As Long, lpFindFileData As WIN32_FIND_DATA) As Long
 Public Declare Function FindNextFile Lib "kernel32.dll" Alias "FindNextFileW" (ByVal hFindFile As Long, lpFindFileData As WIN32_FIND_DATA) As Long
-
-Public Declare Function PathMatchSpec _
-                         Lib "shlwapi.dll" _
-                             Alias "PathMatchSpecW" (ByVal pszFileParam As Long, _
-                                                     ByVal pszSpec As Long) As Long
-
-Public Declare Function GetTempFileName _
-                         Lib "kernel32.dll" _
-                             Alias "GetTempFileNameA" (ByVal lpszPath As String, _
-                                                       ByVal lpPrefixString As String, _
-                                                       ByVal wUnique As Long, _
-                                                       ByVal lpTempFileName As String) As Long
-
-Public Declare Function PathIsUNC _
-                         Lib "shlwapi.dll" _
-                             Alias "PathIsUNCA" (ByVal pszPath As String) As Long
+Public Declare Function PathMatchSpec                          Lib "shlwapi.dll"                              Alias "PathMatchSpecW" (ByVal pszFileParam As Long,                                                      ByVal pszSpec As Long) As Long
+Public Declare Function GetTempFileName                          Lib "kernel32.dll"                              Alias "GetTempFileNameA" (ByVal lpszPath As String,                                                        ByVal lpPrefixString As String,                                                        ByVal wUnique As Long,                                                        ByVal lpTempFileName As String) As Long
+Public Declare Function PathIsUNC                          Lib "shlwapi.dll"                              Alias "PathIsUNCA" (ByVal pszPath As String) As Long
+Public Declare Function SHFileOperation Lib "shell32"                                         Alias "SHFileOperationA"                                         (lpFileOp As SHFILEOPSTRUCT) As Long
+Public Declare Function PathCombineW Lib "shlwapi.dll" (ByVal lpszDest As Long, ByVal lpszDir As Long, ByVal lpszFile As Long) As Boolean
+Public Declare Function PathIsUNCServerShare Lib "shlwapi.dll" Alias "PathIsUNCServerShareA" (ByVal pszPath As String) As Long
 
 ' Копирование файлов посредством shell
 Public Type SHFILEOPSTRUCT
-    hWnd                                    As Long
+    hWnd                                As Long
     wFunc                               As Long
     pFrom                               As String
     pTo                                 As String
@@ -160,12 +102,4 @@ Public Const FOF_RENAMEONCOLLISION      As Long = &H8
 Public Const FOF_NOCONFIRMATION         As Long = &H10
 Public Const FOF_SIMPLEPROGRESS         As Long = &H100
 Public Const FOF_ALLOWUNDO              As Long = &H40
-
-Public Declare Function SHFileOperation Lib "shell32" _
-                                        Alias "SHFileOperationA" _
-                                        (lpFileOp As SHFILEOPSTRUCT) As Long
-
-Public Declare Function PathCombineW Lib "shlwapi.dll" (ByVal lpszDest As Long, ByVal lpszDir As Long, ByVal lpszFile As Long) As Boolean
-Public Declare Function PathIsUNCServerShare Lib "shlwapi.dll" Alias "PathIsUNCServerShareA" (ByVal pszPath As String) As Long
-'Public Declare Function PathIsUNC Lib "shlwapi.dll" Alias "PathIsUNCA" (ByVal pszPath As String) As Long
 

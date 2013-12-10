@@ -166,7 +166,6 @@ Begin VB.Form frmListHwid
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1323
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -176,6 +175,7 @@ Begin VB.Form frmListHwid
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "ОК"
       PictureAlign    =   0
@@ -193,7 +193,6 @@ Begin VB.Form frmListHwid
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1296
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -203,6 +202,7 @@ Begin VB.Form frmListHwid
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выход"
       PictureAlign    =   0
@@ -221,7 +221,6 @@ Begin VB.Form frmListHwid
       Width           =   2055
       _ExtentX        =   3625
       _ExtentY        =   635
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -231,6 +230,7 @@ Begin VB.Form frmListHwid
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выделить всё"
       PictureAlign    =   0
@@ -249,7 +249,6 @@ Begin VB.Form frmListHwid
       Width           =   2055
       _ExtentX        =   3625
       _ExtentY        =   635
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -259,6 +258,7 @@ Begin VB.Form frmListHwid
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Снять выделение"
       PictureAlign    =   0
@@ -324,10 +324,10 @@ Private Sub FontCharsetChange()
 
     frGroup.Font.Charset = lngDialog_Charset
 
-    SetButtonProperties , cmdExit, True
-    SetButtonProperties , cmdOK, True
-    SetButtonProperties , cmdCheckAll, True
-    SetButtonProperties , cmdUnCheckAll, True
+    SetButtonProperties cmdExit
+    SetButtonProperties cmdOK
+    SetButtonProperties cmdCheckAll
+    SetButtonProperties cmdUnCheckAll
 End Sub
 
 Private Sub chkGrp1_Click()
@@ -901,28 +901,28 @@ Dim i                                   As Long
 
 End Sub
 
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
 
 ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
 
     ' Название формы
-    strMeCaptionView = LocaliseString(strPathFile, strFormName, "frmListHwidView", Me.Caption)
-    strMeCaptionInstall = LocaliseString(strPathFile, strFormName, "frmListHwidInstall", Me.Caption)
+    strMeCaptionView = LocaliseString(StrPathFile, strFormName, "frmListHwidView", Me.Caption)
+    strMeCaptionInstall = LocaliseString(StrPathFile, strFormName, "frmListHwidInstall", Me.Caption)
 
-    lblInformation.Caption = LocaliseString(strPathFile, strFormName, "lblInformation", lblInformation.Caption)
+    lblInformation.Caption = LocaliseString(StrPathFile, strFormName, "lblInformation", lblInformation.Caption)
     'Кнопки
-    cmdCheckAll.Caption = LocaliseString(strPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
-    cmdUnCheckAll.Caption = LocaliseString(strPathFile, strFormName, "cmdUnCheckAll", cmdUnCheckAll.Caption)
-    strCmdOKCaption1 = LocaliseString(strPathFile, strFormName, "cmdOKCaption1", "Установить")
-    strCmdOKCaption2 = LocaliseString(strPathFile, strFormName, "cmdOKCaption2", "OK")
-    strCmdOKCaption3 = LocaliseString(strPathFile, strFormName, "cmdOKCaption3", "Распаковать")
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
-    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
-    chkGrp1.Caption = LocaliseString(strPathFile, strFormName, "chkGrp1", chkGrp1.Caption)
-    chkGrp2.Caption = LocaliseString(strPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
-    chkGrp3.Caption = LocaliseString(strPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
-    chkGrp4.Caption = LocaliseString(strPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
+    cmdCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
+    cmdUnCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdUnCheckAll", cmdUnCheckAll.Caption)
+    strCmdOKCaption1 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption1", "Установить")
+    strCmdOKCaption2 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption2", "OK")
+    strCmdOKCaption3 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption3", "Распаковать")
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
+    chkGrp1.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp1", chkGrp1.Caption)
+    chkGrp2.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
+    chkGrp3.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
+    chkGrp4.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
 
 End Sub
 

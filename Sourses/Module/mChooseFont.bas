@@ -32,66 +32,8 @@ Public mbDialogTab2_Bold                As Boolean
 Public lngDialogTab2_Color              As Long
 Public lngDialogTab2_Language           As Long
 
-Public Sub GetButtonProperties(ByVal ButtonName As ctlXpButton)
-
-    With ButtonName
-        'Сохранение визуально заданых свойств шрифтов в переменных
-        strDialog_FontName = .Font.Name
-        miDialog_FontSize = .Font.Size
-        mbDialog_Underline = .Font.Underline
-        mbDialog_Strikethru = .Font.Strikethrough
-        mbDialog_Bold = .Font.Bold
-        mbDialog_Italic = .Font.Italic
-        lngDialog_Color = .TextColor
-        lngDialog_Language = .Font.Charset
-    End With
-
-End Sub
-
-Public Sub GetButtonPropertiesJC(ByVal ButtonName As ctlJCbutton)
-
-    With ButtonName
-        'Сохранение визуально заданых свойств шрифтов в переменных
-        strDialog_FontName = .Font.Name
-        miDialog_FontSize = .Font.Size
-        mbDialog_Underline = .Font.Underline
-        mbDialog_Strikethru = .Font.Strikethrough
-        mbDialog_Bold = .Font.Bold
-        mbDialog_Italic = .Font.Italic
-        lngDialog_Color = .ForeColor
-    End With
-
-End Sub
-
-Public Sub GetTabProperties(ButtonName As ctlXpButton)
-
-    With ButtonName
-        'Сохранение визуально заданых свойств шрифтов в переменных
-        strDialogTab_FontName = .Font.Name
-        miDialogTab_FontSize = .Font.Size
-        mbDialogTab_Underline = .Font.Underline
-        mbDialogTab_Strikethru = .Font.Strikethrough
-        mbDialogTab_Bold = .Font.Bold
-        mbDialogTab_Italic = .Font.Italic
-        lngDialogTab_Color = .TextColor
-
-    End With
-
-End Sub
-
-Public Sub SetButtonProperties(Optional ByVal ButtonName As ctlXpButton, _
-                               Optional ByVal ButtonNameJC As ctlJCbutton, _
-                               Optional ByVal IsJCButton As Boolean = False)
-
-Dim ctlObject                           As Object
-
-    'Сохранение визуально заданых свойств шрифтов в переменных
-    If IsJCButton Then
-        Set ctlObject = ButtonNameJC
-    Else
-        Set ctlObject = ButtonName
-    End If
-
+' Установка свойст шрифта для Объекта (кнопки)
+Public Sub SetButtonProperties(ctlObject As Object)
     With ctlObject
         .Font.Name = strDialog_FontName
         .Font.Size = miDialog_FontSize
@@ -101,5 +43,4 @@ Dim ctlObject                           As Object
         .Font.Italic = mbDialog_Italic
         .Font.Charset = lngDialog_Charset
     End With
-
 End Sub

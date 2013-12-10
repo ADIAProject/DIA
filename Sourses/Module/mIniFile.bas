@@ -29,7 +29,7 @@ Private Declare Function GetPrivateProfileString _
                                                                 ByVal nSize As Long, _
                                                                 ByVal lpFileName As String) As Long
 Private Declare Function GetPrivateProfileStringW _
-                            Lib "kernel32" (ByVal lpApplicationName As Long, _
+                            Lib "kernel32.dll" (ByVal lpApplicationName As Long, _
                                             ByVal lpKeyName As Long, _
                                             ByVal lpDefault As Long, _
                                             ByVal lpReturnedString As Long, _

@@ -67,7 +67,6 @@ Public Const GW_OWNER = 4
 'Tooltip Window Constants
 Public Const TTS_NOPREFIX               As Long = &H2
 Public Const TTF_TRANSPARENT            As Long = &H100
-
 Public Const TTF_IDISHWND               As Long = &H1
 Public Const TTF_CENTERTIP              As Long = &H2
 Public Const TTM_ADDTOOLA               As Long = (WM_USER + 4)
@@ -79,7 +78,6 @@ Public Const TTM_SETTIPBKCOLOR          As Long = (WM_USER + 19)
 Public Const TTM_SETTIPTEXTCOLOR        As Long = (WM_USER + 20)
 Public Const TTM_SETTITLE               As Long = (WM_USER + 32)
 Public Const TTM_SETTITLEW              As Long = (WM_USER + 33)
-
 Public Const TTS_BALLOON                As Long = &H40
 Public Const TTS_ALWAYSTIP              As Long = &H1
 Public Const TTF_SUBCLASS               As Long = &H10
@@ -104,159 +102,34 @@ Public Type Resize
     yMax                                As Single
 End Type
 
-Public Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-
-Public Declare Sub CopyMemoryToMinMaxInfo _
-                    Lib "kernel32.dll" _
-                        Alias "RtlMoveMemory" (hpvDest As MINMAXINFO, _
-                                               ByVal hpvSource As Long, _
-                                               ByVal cbCopy As Long)
-
-Public Declare Sub CopyMemoryFromMinMaxInfo _
-                    Lib "kernel32.dll" _
-                        Alias "RtlMoveMemory" (ByVal hpvDest As Long, _
-                                               hpvSource As MINMAXINFO, _
-                                               ByVal cbCopy As Long)
-
-' ДезАктивация окна
-Public Declare Function EnableWindow _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal fEnable As Long) As Long
-
-Public Declare Function GetWindow _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal wCmd As Long) As Long
-
-Public Declare Function RedrawWindow _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           lprcUpdate As RECT, _
-                                           ByVal hrgnUpdate As Long, _
-                                           ByVal fuRedraw As Long) As Long
-Public Declare Function SetWindowPos _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal hWndInsertAfter As Long, _
-                                           ByVal X As Long, _
-                                           ByVal Y As Long, _
-                                           ByVal CX As Long, _
-                                           ByVal CY As Long, _
-                                           ByVal wFlags As Long) As Long
-
+Public Declare Sub CopyMemoryToMinMaxInfo Lib "kernel32.dll" Alias "RtlMoveMemory" (hpvDest As MINMAXINFO, ByVal hpvSource As Long, ByVal cbCopy As Long)
+Public Declare Sub CopyMemoryFromMinMaxInfo Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal hpvDest As Long, hpvSource As MINMAXINFO, ByVal cbCopy As Long)
+Public Declare Function DefWindowProc Lib "user32.dll" Alias "DefWindowProcW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function EnableWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
+Public Declare Function GetWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
+Public Declare Function RedrawWindow Lib "user32.dll" (ByVal hWnd As Long, lprcUpdate As RECT, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
+Public Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
 Public Declare Function DestroyWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
-
-Public Declare Function MoveWindow _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal X As Long, _
-                                           ByVal Y As Long, _
-                                           ByVal nWidth As Long, _
-                                           ByVal nHeight As Long, _
-                                           ByVal bRepaint As Long) As Long
-
-Public Declare Function SendMessage _
-                         Lib "user32.dll" _
-                             Alias "SendMessageA" (ByVal hWnd As Long, _
-                                                   ByVal wMsg As Long, _
-                                                   ByVal wParam As Long, _
-                                                   lParam As Any) As Long
-
-Public Declare Function SendMessageW _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal wMsg As Long, _
-                                           ByVal wParam As Long, _
-                                           lParam As Any) As Long
-
-Public Declare Function SendMessageLong _
-                         Lib "user32.dll" _
-                             Alias "SendMessageA" (ByVal hWnd As Long, _
-                                                   ByVal wMsg As Long, _
-                                                   ByVal wParam As Long, _
-                                                   ByVal lParam As Long) As Long
-
-Public Declare Function SendMessageLongW _
-                         Lib "user32.dll" _
-                             Alias "SendMessageW" (ByVal hWnd As Long, _
-                                                   ByVal wMsg As Long, _
-                                                   ByVal wParam As Long, _
-                                                   ByVal lParam As Long) As Long
-
-Public Declare Function GetWindowLong _
-                         Lib "user32.dll" _
-                             Alias "GetWindowLongA" (ByVal hWnd As Long, _
-                                                     ByVal nIndex As Long) As Long
-
-'Public Declare Function SetWindowLong _
-                         Lib "user32.dll" _
-                             Alias "SetWindowLongA" (ByVal hWnd As Long, _
-                                                     ByVal nIndex As Long, _
-                                                     ByVal dwNewLong As Long) As Long
-Public Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-
-Public Declare Function SetWindowLongA _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal nIndex As Long, _
-                                           ByVal dwNewLong As Long) As Long
-
-Public Declare Function PostMessageLong _
-                         Lib "user32.dll" _
-                             Alias "PostMessageA" (ByVal hWnd As Long, _
-                                                   ByVal Msg As Long, _
-                                                   ByVal wParam As Long, _
-                                                   ByVal lParam As Long) As Long
+Public Declare Function MoveWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+Public Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Public Declare Function SendMessageW Lib "user32.dll" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Public Declare Function SendMessageLong Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function GetWindowLong Lib "user32.dll" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Public Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function SetWindowLongA Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function PostMessageLong Lib "user32.dll" Alias "PostMessageA" (ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 Public Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hwndLock As Long) As Long
-
-Public Declare Function SetFocusAPI _
-                         Lib "user32.dll" _
-                             Alias "SetFocus" (ByVal hWnd As Long) As Long
-
+Public Declare Function SetFocusAPI Lib "user32.dll" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Public Declare Function GetFocus Lib "user32.dll" () As Long
-
 Public Declare Function UpdateWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
-
-Public Declare Function FindWindowEx _
-                         Lib "user32.dll" _
-                             Alias "FindWindowExA" (ByVal hWnd1 As Long, _
-                                                    ByVal hWnd2 As Long, _
-                                                    ByVal lpsz1 As String, _
-                                                    ByVal lpsz2 As String) As Long
-
-Public Declare Function EnumThreadWindows _
-                         Lib "user32.dll" (ByVal dwThreadId As Long, _
-                                           ByVal lpfn As Long, _
-                                           ByVal lParam As Long) As Long
-
-Public Declare Function GetWindowThreadProcessId _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           lpdwProcessId As Long) As Long
-
-Public Declare Function SetWindowText _
-                         Lib "user32.dll" _
-                             Alias "SetWindowTextA" (ByVal hWnd As Long, _
-                                                     ByVal lpString As String) As Long
-
-Public Declare Function GetWindowText _
-                         Lib "user32.dll" _
-                             Alias "GetWindowTextA" (ByVal hWnd As Long, _
-                                                     ByVal lpString As String, _
-                                                     ByVal cch As Long) As Long
-
-Public Declare Function EnumChildWindows _
-                         Lib "user32.dll" (ByVal hWndParent As Long, _
-                                           ByVal lpEnumFunc As Long, _
-                                           ByVal lParam As Long) As Long
-
-Public Declare Function GetClassLong _
-                         Lib "user32.dll" _
-                             Alias "GetClassLongA" (ByVal hWnd As Long, _
-                                                    ByVal nIndex As Long) As Long
-
-Public Declare Function SetClassLong _
-                         Lib "user32.dll" _
-                             Alias "SetClassLongA" (ByVal hWnd As Long, _
-                                                    ByVal nIndex As Long, _
-                                                    ByVal dwNewLong As Long) As Long
-
-Public Declare Function ReleaseDC _
-                         Lib "user32.dll" (ByVal hWnd As Long, _
-                                           ByVal hDC As Long) As Long
-
+Public Declare Function FindWindowEx Lib "user32.dll" Alias "FindWindowExA" (ByVal hWnd1 As Long, ByVal hWnd2 As Long, ByVal lpsz1 As String, ByVal lpsz2 As String) As Long
+Public Declare Function EnumThreadWindows Lib "user32.dll" (ByVal dwThreadId As Long, ByVal lpfn As Long, ByVal lParam As Long) As Long
+Public Declare Function GetWindowThreadProcessId Lib "user32.dll" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Public Declare Function SetWindowText Lib "user32.dll" Alias "SetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String) As Long
+Public Declare Function GetWindowText Lib "user32.dll" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
+Public Declare Function EnumChildWindows Lib "user32.dll" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
+Public Declare Function GetClassLong Lib "user32.dll" Alias "GetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Public Declare Function SetClassLong Lib "user32.dll" Alias "SetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 

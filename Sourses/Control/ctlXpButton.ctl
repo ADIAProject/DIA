@@ -1,11 +1,9 @@
 VERSION 5.00
 Begin VB.UserControl ctlXpButton 
-   AutoRedraw      =   -1  'True
    ClientHeight    =   1665
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   4290
-   ClipControls    =   0   'False
    DefaultCancel   =   -1  'True
    BeginProperty Font 
       Name            =   "Tahoma"
@@ -17,6 +15,7 @@ Begin VB.UserControl ctlXpButton
       Strikethrough   =   0   'False
    EndProperty
    ForeColor       =   &H80000015&
+   HasDC           =   0   'False
    MousePointer    =   99  'Custom
    ScaleHeight     =   111
    ScaleMode       =   3  'Pixel
@@ -112,9 +111,49 @@ Private m_TextColor                     As OLE_COLOR
 Private Const mvarPadding               As Byte = 4
 Dim dtDefTextDrawParams As Long
 
+Private Type RGB
+    Red                                 As Byte
+    Green                               As Byte
+    Blue                                As Byte
+End Type
+
+Private Type RECT
+    Left                                As Long
+    Top                                 As Long
+    Right                               As Long
+    Bottom                              As Long
+End Type
+
+Private Type POINT
+    X                                   As Long
+    Y                                   As Long
+End Type
+
+Private Declare Function DrawFocusRect Lib "user32.dll" (ByVal hDC As Long, ByRef lpRect As RECT) As Long
+Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
+Private Declare Function TransparentBlt Lib "msimg32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal nSrcWidth As Long, ByVal nSrcHeight As Long, ByVal crTransparent As Long) As Boolean
+Private Declare Function FillRect Lib "user32.dll" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal hBrush As Long) As Long
+Private Declare Function FrameRect Lib "user32.dll" (ByVal hDC As Long, lpRect As RECT, ByVal hBrush As Long) As Long
+Private Declare Function GetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
+Private Declare Function GetSysColor Lib "user32.dll" (ByVal nIndex As Long) As Long
+Private Declare Function SetTextColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
+Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINT) As Long
+Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
+Private Declare Function SetCapture Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function WindowFromPoint Lib "user32.dll" (ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+
 '*************************************************************
 '   DRAW TEXT
 '*************************************************************
+Private Const DT_WORDBREAK               As Long = &H10
+Private Const DT_CENTER                  As Long = &H1
+Private Const DT_VCENTER                 As Long = &H4
+Private Const DT_CALCRECT                As Long = &H400
+Private Const DT_RTLREADING              As Long = &H20000
+
 Private Type DRAWTEXTPARAMS
    cbSize As Long
    iTabLength As Long
@@ -152,9 +191,9 @@ End Type
 Private Const WM_SETFONT As Long = &H30
 Private Const WS_EX_RTLREADING As Long = &H2000
 
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
+Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 
 Private ButtonFontHandle As Long
 Private ButtonLogFont As LOGFONT
@@ -168,13 +207,13 @@ Private Const RDW_UPDATENOW As Long = &H100
 Private Const RDW_INVALIDATE As Long = &H1
 Private Const RDW_ERASE As Long = &H4
 Private Const RDW_ALLCHILDREN As Long = &H80
-Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
+Private Declare Function RedrawWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 
 '*************************************************************
 '   events
 '*************************************************************
-Public Event ClickMenu(mnuIndex As Integer)
 Public Event Click()
+Public Event ClickMenu(mnuIndex As Integer)
 Public Event KeyDown(KeyCode As Integer, Shift As Integer)
 Public Event KeyUp(KeyCode As Integer, Shift As Integer)
 Public Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -253,7 +292,6 @@ Dim capHeight                           As Long
             .Top = (((mvarClientRect.Bottom - mvarClientRect.Top) - m_PictureHeight) * 0.5) + mvarClientRect.Top
             .Right = .Left + m_PictureWidth
             .Bottom = .Top + m_PictureHeight
-
         End With
 
     Else
@@ -304,7 +342,6 @@ Dim capHeight                           As Long
                     .Left = 18
                 Else
                     .Left = 3
-
                 End If
 
                 .Bottom = .Top + picHeight
@@ -394,11 +431,10 @@ Dim dtTextDrawParams As Long
     End With
     
     dtTextDrawParams = dtDefTextDrawParams
-    If Ambient.RightToLeft = True Then
-        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
-    End If
+'    If Ambient.RightToLeft = True Then
+'        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
+'    End If
     
-    'DrawTextEx hDC, m_Caption, Len(m_Caption), mvarCaptionRect, 1045, mvarDrawTextParams
     DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect, DT_CALCRECT Or dtTextDrawParams, mvarDrawTextParams
 
     With mvarCaptionRect
@@ -506,9 +542,9 @@ Dim mvarCaptionRect_Iki                 As RECT
 Dim dtTextDrawParams As Long
 
     dtTextDrawParams = dtDefTextDrawParams
-    If Ambient.RightToLeft = True Then
-        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
-    End If
+'    If Ambient.RightToLeft = True Then
+'        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
+'    End If
 
     If Enabled Then
         SetTextColor hDC, CColor(m_TextColor)
@@ -830,9 +866,8 @@ Public Property Let MenuVisible(Index As Integer, ByVal New_MenuVisible As Boole
 
 End Property
 
-Public Property Get mhwnd() As Long
-    mhwnd = UserControl.hWnd
-
+Public Property Get hWnd() As Long
+    hWnd = UserControl.hWnd
 End Property
 
 Private Sub mnuMenu_Click(Index As Integer)

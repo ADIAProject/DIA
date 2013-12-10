@@ -3,7 +3,7 @@ Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.Ocx"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "Помощник установки драйверов (Drivers Installer Assistant)"
-   ClientHeight    =   10935
+   ClientHeight    =   10575
    ClientLeft      =   3540
    ClientTop       =   4215
    ClientWidth     =   11265
@@ -20,14 +20,14 @@ Begin VB.Form frmMain
    Icon            =   "frmMain.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   10935
+   ScaleHeight     =   10575
    ScaleWidth      =   11265
    Begin prjDIADBS.ctlUcStatusBar ctlUcStatusBar1 
       Align           =   2  'Align Bottom
       Height          =   705
       Left            =   0
       TabIndex        =   18
-      Top             =   10230
+      Top             =   9870
       Width           =   11265
       _ExtentX        =   19870
       _ExtentY        =   1244
@@ -61,9 +61,20 @@ Begin VB.Form frmMain
       ScaleWidth      =   11265
       TabIndex        =   0
       TabStop         =   0   'False
-      Top             =   9705
+      Top             =   9345
       Visible         =   0   'False
       Width           =   11265
+      Begin prjDIADBS.ProgressBar ctlProgressBar1 
+         Height          =   375
+         Left            =   120
+         Top             =   60
+         Width           =   3315
+         _ExtentX        =   5847
+         _ExtentY        =   661
+         Max             =   1000
+         Value           =   100
+         Step            =   10
+      End
       Begin prjDIADBS.ctlJCbutton cmdBreakUpdateDB 
          Height          =   385
          Left            =   4200
@@ -73,7 +84,6 @@ Begin VB.Form frmMain
          Width           =   3015
          _ExtentX        =   5318
          _ExtentY        =   688
-         ButtonStyle     =   8
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -83,6 +93,7 @@ Begin VB.Form frmMain
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         ButtonStyle     =   8
          BackColor       =   12244692
          Caption         =   "Прервать выполнения задания"
          PictureAlign    =   0
@@ -91,15 +102,6 @@ Begin VB.Form frmMain
          CaptionEffects  =   0
          TooltipBackColor=   0
          ColorScheme     =   3
-      End
-      Begin prjDIADBS.ctlProgressBar ctlProgressBar1 
-         Height          =   255
-         Left            =   240
-         Top             =   120
-         Width           =   2775
-         _ExtentX        =   4895
-         _ExtentY        =   450
-         Appearance      =   1
       End
    End
    Begin prjDIADBS.ctlJCFrames frMainPanel 
@@ -524,7 +526,7 @@ Begin VB.Form frmMain
                Top             =   480
                Width           =   3075
                _ExtentX        =   5424
-               _ExtentY        =   582
+               _ExtentY        =   556
                BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                   Name            =   "Tahoma"
                   Size            =   8.25
@@ -546,7 +548,6 @@ Begin VB.Form frmMain
                Width           =   3075
                _ExtentX        =   5424
                _ExtentY        =   688
-               ButtonStyle     =   8
                BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                   Name            =   "Tahoma"
                   Size            =   8.25
@@ -556,6 +557,7 @@ Begin VB.Form frmMain
                   Italic          =   0   'False
                   Strikethrough   =   0   'False
                EndProperty
+               ButtonStyle     =   8
                BackColor       =   12244692
                Caption         =   "Выделить"
                PictureAlign    =   0
@@ -574,7 +576,6 @@ Begin VB.Form frmMain
             Width           =   3120
             _ExtentX        =   4524
             _ExtentY        =   1191
-            ButtonStyle     =   8
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -584,6 +585,7 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
+            ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Выполнить задание для выбранных пакетов драйверов"
             PictureAlign    =   0
@@ -624,7 +626,6 @@ Begin VB.Form frmMain
             Width           =   7575
             _ExtentX        =   13361
             _ExtentY        =   900
-            ButtonStyle     =   8
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -634,6 +635,7 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
+            ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Список всех устройств вашего компьютера + Поиск драйвера в интернете по HWID"
             PictureAlign    =   0
@@ -651,7 +653,6 @@ Begin VB.Form frmMain
             Width           =   2415
             _ExtentX        =   4260
             _ExtentY        =   900
-            ButtonStyle     =   8
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -661,6 +662,7 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
+            ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Установка (Совместимые драйвера)"
             Mode            =   2
@@ -680,7 +682,6 @@ Begin VB.Form frmMain
             Width           =   2415
             _ExtentX        =   4260
             _ExtentY        =   900
-            ButtonStyle     =   8
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -690,6 +691,7 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
+            ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Создание или обновление базы драйверов"
             Mode            =   2
@@ -708,7 +710,6 @@ Begin VB.Form frmMain
             Width           =   2535
             _ExtentX        =   4471
             _ExtentY        =   900
-            ButtonStyle     =   8
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -718,6 +719,7 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
+            ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Установка (Полная - весь пакет)"
             Mode            =   2
@@ -1330,9 +1332,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private WithEvents TaskBar              As cITaskBarList3
-Attribute TaskBar.VB_VarHelpID = -1
-
 Private lngCntBtn                       As Long
 Private mbNextTab                       As Boolean
 Private strCurSelButtonPath             As String
@@ -1413,7 +1412,7 @@ Dim ReadExitCodeString                  As String
         'Если пакет драйверов реальный, то....
         If LenB(strPackFileName) > 0 Then
 
-            FlatBorderButton acmdPackFiles(Index).mhwnd
+            FlatBorderButton acmdPackFiles(Index).hWnd
             acmdPackFiles(Index).Refresh
 
             strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
@@ -1499,7 +1498,7 @@ Dim ReadExitCodeString                  As String
                     ' если на форме нажали отмену или закрыли ее, то завершаем обработку
                     If Not mbCheckDRVOk Then
                         mbDevParserRun = False
-                        UnFlatBorderButton acmdPackFiles(Index).mhwnd
+                        FlatBorderButton acmdPackFiles(Index).hWnd, False
                         acmdPackFiles(Index).Refresh
                         BlockControl True
                         ChangeStatusTextAndDebug strMessages(65) & " " & strPackFileName
@@ -1566,7 +1565,7 @@ Dim ReadExitCodeString                  As String
 
             mbDevParserRun = False
             BlockControl True
-            UnFlatBorderButton acmdPackFiles(Index).mhwnd
+            FlatBorderButton acmdPackFiles(Index).hWnd, False
 
             If Not optRezim_Upd.Value Then
                 ' Удаление временных файлов
@@ -1721,6 +1720,7 @@ Dim lngNumButtOnTab                     As Long
     TimeScriptRun = GetTickCount
     ButtIndex = acmdPackFiles.UBound
     ButtCount = acmdPackFiles.Count
+    
     ' Отображаем ProgressBar
     CreateProgressNew
 
@@ -1785,11 +1785,13 @@ Dim lngNumButtOnTab                     As Long
             If miPbNext > 1000 Then
                 miPbNext = 1000
             End If
-
-            ctlProgressBar1.Value = miPbNext
+            
+            With ctlProgressBar1
+                .Value = miPbNext
+                .SetTaskBarProgressValue miPbNext, 1000
+            End With
+            
             ChangeFrmMainCaption miPbNext
-
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
         Next
     Else
 
@@ -1825,10 +1827,10 @@ Dim lngNumButtOnTab                     As Long
         End If
     End If
 
-    pbProgressBar.Visible = False
     ChangeFrmMainCaption
-
-    If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NOPROGRESS
+    pbProgressBar.Visible = False
+    ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
+    
     cmdBreakUpdateDB.Visible = False
     BlockControl True
     
@@ -1842,8 +1844,7 @@ TheEnd:
 End Sub
 
 '! -----------------------------------------------------------
-'!  Функция     :  FRMStateSave
-'!  Переменные  :
+'!  Функция     :  BlockControl
 '!  Описание    :  Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций
 '! -----------------------------------------------------------
 Public Sub BlockControl(ByVal mbBlock As Boolean)
@@ -1870,6 +1871,11 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     SSTab1.Enabled = mbBlock
 End Sub
 
+'! -----------------------------------------------------------
+'!  Функция     :  BlockControlEx
+'!  Переменные  :  ByVal mbBlock As Boolean
+'!  Описание    :  Блокировка(Разблокировка) элементов
+'! -----------------------------------------------------------
 Private Sub BlockControlEx(ByVal mbBlock As Boolean)
     mnuRunSilentMode.Enabled = mbBlock
     optRezim_Ust.Enabled = mbBlock
@@ -1877,6 +1883,11 @@ Private Sub BlockControlEx(ByVal mbBlock As Boolean)
     optRezim_Upd.Enabled = mbBlock
 End Sub
 
+'! -----------------------------------------------------------
+'!  Функция     :  BlockControlInNoDP
+'!  Переменные  :  ByVal mbBlock As Boolean
+'!  Описание    :  Блокировка(Разблокировка) элементов если нет пакетов драйверов
+'! -----------------------------------------------------------
 Private Sub BlockControlInNoDP(ByVal mbBlock As Boolean)
     mnuRezimBaseDrvUpdateALL.Enabled = mbBlock
     mnuRezimBaseDrvUpdateNew.Enabled = mbBlock
@@ -1894,7 +1905,11 @@ Private Sub BlockControlInNoDP(ByVal mbBlock As Boolean)
     mnuReCollectHWID.Enabled = mbBlock
     mnuReCollectHWIDTab.Enabled = mbBlock
 End Sub
-' Подсчитываем кол-во неизвестных драйверов
+
+'! -----------------------------------------------------------
+'!  Функция     :  CalculateUnknownDrivers
+'!  Описание    :  Подсчитываем кол-во неизвестных драйверов
+'! -----------------------------------------------------------
 Private Function CalculateUnknownDrivers() As Long
 
 Dim ii                                  As Long
@@ -1919,6 +1934,11 @@ Dim lngCountUnknown                     As Long
 
 End Function
 
+'! -----------------------------------------------------------
+'!  Функция     :  ChangeFrmMainCaption
+'!  Переменные  :  Optional ByVal lngPercentage As Long
+'!  Описание    :  Изменение Caption Формы
+'! -----------------------------------------------------------
 Private Sub ChangeFrmMainCaption(Optional ByVal lngPercentage As Long)
 
 Dim strProgressValue                    As String
@@ -2127,6 +2147,11 @@ Dim mbUnSuppOS                          As Boolean
 
 End Function
 
+'! -----------------------------------------------------------
+'!  Функция     :  CheckAllButton
+'!  Переменные  :  ByVal mbCheckAll As Boolean
+'!  Описание    :  Выделение всех кнопок
+'! -----------------------------------------------------------
 Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
 
 Dim i                                   As Long
@@ -2148,7 +2173,7 @@ End Sub
 '!  Функция     :  CheckExistDB
 '!  Переменные  :  ByRef DevDBPath As String, ByRef strPackFileName As String
 '!  Возвр. знач.:  As Boolean
-'!  Описание    :  Проверяет есть ли txt файл для данного архива
+'!  Описание    :  Проверяет есть ли txt/hwid файл для данного архива
 '! -----------------------------------------------------------
 Private Function CheckExistDB(ByVal strDevDBPath As String, _
                               ByVal strPackFileName As String) As Boolean
@@ -3007,8 +3032,13 @@ Dim lngProgressDeltaTemp                As Single
                 If mbTabHide Then
                     SSTab1.TabVisible(tabN) = False
                 End If
-
-                ctlProgressBar1.Value = ctlProgressBar1.Value + lngProgressDelta
+                
+                With ctlProgressBar1
+                    .Value = .Value + lngProgressDelta
+                    .SetTaskBarProgressValue .Value, 1000
+                    ChangeFrmMainCaption .Value
+                End With
+                
                 Exit Sub
             End If
         End If
@@ -3118,7 +3148,6 @@ Dim lngProgressDeltaTemp                As Single
 
             'Считываем подменяемое имя пакета из файла
             EditOrReadDPName lngCntBtn, True
-            pbProgressBar.Refresh
 
             ' массив HWID для будущего использования для каждой кнопки
             ReDim Preserve arrDevIDs(acmdPackFiles.UBound) As String
@@ -3127,11 +3156,13 @@ Dim lngProgressDeltaTemp                As Single
             lngCntBtn = lngCntBtn + 1
 NextFiles:
             lngProgressDeltaTemp = (lngProgressDelta / lngFileCount)
-            lngProgressDeltaTemp = CLng(lngProgressDeltaTemp)
-            ctlProgressBar1.Value = ctlProgressBar1.Value + lngProgressDeltaTemp
-            ChangeFrmMainCaption ctlProgressBar1.Value
-
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            
+            With ctlProgressBar1
+                lngProgressDeltaTemp = .Value + lngProgressDeltaTemp
+                .Value = lngProgressDeltaTemp
+                .SetTaskBarProgressValue lngProgressDeltaTemp, 1000
+            End With
+            ChangeFrmMainCaption lngProgressDeltaTemp
             pbProgressBar.Refresh
         Next
     End If
@@ -3380,13 +3411,13 @@ Public Sub CreateProgressNew()
         .Top = 0
         .Width = pbProgressBar.Width
         .Height = pbProgressBar.Height
+        .SetTaskBarProgressState PrbTaskBarStateInProgress
+        .SetTaskBarProgressValue .Value, 1000
     End With
 
     pbProgressBar.Visible = True
     pbProgressBar.Refresh
     DoEvents
-
-    If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NORMAL
 
 End Sub
 
@@ -4465,17 +4496,15 @@ Dim cntFindUnHideTab                    As Integer
 
         ' Создаем элемент ProgressBar
         CreateProgressNew
-        If Me.WindowState = vbMaximized Then
-            pbProgressBar.Visible = True
-        End If
-        If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
-        pbProgressBar.Refresh
 
         Sleep 300
         DoEvents
         ' поиск устройств при запуске
-        ctlProgressBar1.Value = 100
-        If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+        With ctlProgressBar1
+            .Value = 100
+            .SetTaskBarProgressValue .Value, 1000
+        End With
+        ChangeFrmMainCaption 100
 
         If mbSearchOnStart Then
             RunDevconRescan lngPauseAfterSearch
@@ -4485,8 +4514,11 @@ Dim cntFindUnHideTab                    As Integer
 
         ' сбор данных о компе
         If RunDevcon Then
-            ctlProgressBar1.Value = 150
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            With ctlProgressBar1
+                .Value = 150
+                .SetTaskBarProgressValue 150, 1000
+            End With
+            ChangeFrmMainCaption 150
 
             DevParserLocalHwids2
             'Get the start time
@@ -4498,9 +4530,13 @@ Dim cntFindUnHideTab                    As Integer
             'Get the end time
             lEnd = GetTickCount
             DebugMode "Time to Collect INFO from Reestr: =" & CalculateTime(lStart, lEnd, True)
-            ctlProgressBar1.Value = 250
 
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            With ctlProgressBar1
+                .Value = 250
+                .SetTaskBarProgressValue 250, 1000
+            End With
+            ChangeFrmMainCaption 250
+            
             ChangeStatusTextAndDebug strMessages(80)
         Else
             ChangeStatusTextAndDebug strMessages(57) & vbNewLine & strMessages(4)
@@ -4710,7 +4746,6 @@ Dim ii                                  As Long
         ' изменяем иконки формы и приложения
         ' Icon for Exe-file
         SetIcon .hWnd, "APPICON", True
-    
         SetIcon .hWnd, "FRMMAIN", False
         ' Смена заголовка формы
         strFormName = .Name
@@ -4721,15 +4756,8 @@ Dim ii                                  As Long
         ' Центрируем форму на экране
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-
-        'If TaskBar.isAccessible Then
-        'Icon32x32x32 = ExtractIcon(App.hInstance, AppPath & App.EXEName & ".exe", 0)
-        'SendMessage hwnd, WM_SETICON, ICON_BIG, ByVal Icon32x32x32
-        'SetIcon Me.hwnd, "APPICON", True
-        'End If
     End With
 
-    Set TaskBar = New cITaskBarList3
 
     LoadIconImage
 
@@ -4795,11 +4823,11 @@ Dim ii                                  As Long
     SetTabProperties
     SetTabPropertiesTabDrivers
     ' Свойства скороллформы
-    'ctlScrollControl1(0).BorderStyle = vbBSNone
-    'ctlScrollControlTab1(0).BorderStyle = vbBSNone
-    'ctlScrollControlTab2(0).BorderStyle = vbBSNone
-    'ctlScrollControlTab3(0).BorderStyle = vbBSNone
-    'ctlScrollControlTab4(0).BorderStyle = vbBSNone
+    ctlScrollControl1(0).BorderStyle = vbBSNone
+    ctlScrollControlTab1(0).BorderStyle = vbBSNone
+    ctlScrollControlTab2(0).BorderStyle = vbBSNone
+    ctlScrollControlTab3(0).BorderStyle = vbBSNone
+    ctlScrollControlTab4(0).BorderStyle = vbBSNone
 
     If lngOSCount <> 9999 Then
         If lngOSCount <> 0 Then
@@ -4979,11 +5007,9 @@ Dim cntFindUnHideTab                    As Integer
                 ctlUcStatusBar1.Refresh
             End If
         End If
-        'pbProgressBar.AutoSize = False
         pbProgressBar.Align = 0
         pbProgressBar.Width = Me.Width
         pbProgressBar.Align = 2
-        'pbProgressBar.AutoSize = True
         pbProgressBar.Refresh
         ctlProgressBar1.Width = pbProgressBar.Width
         ctlProgressBar1.Refresh
@@ -5130,12 +5156,9 @@ Private Sub Form_Unload(Cancel As Integer)
         End If
     End If
 
-    'Unload Me
     ' Выгружаем из памяти другие компоненты
-    Set TaskBar = Nothing
-    
-    Unload Me
-    Set frmMain = Nothing
+    'Unload Me
+    'Set frmMain = Nothing
     
 End Sub
 
@@ -5352,7 +5375,7 @@ Dim lngFindCheckCountTemp               As Long
         For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
 
             With acmdPackFiles(arrCheckDP(0, i))
-                FlatBorderButton .mhwnd
+                FlatBorderButton .hWnd
                 .Refresh
 
                 ' Прерываем процесс распаковки
@@ -5374,20 +5397,21 @@ Dim lngFindCheckCountTemp               As Long
                     chkPackFiles(arrCheckDP(0, i)).Value = False
                 End If
 
-                UnFlatBorderButton .mhwnd
+                FlatBorderButton .hWnd, False
                 .Refresh
             End With
 
             miPbNext = miPbNext + miPbInterval
-
             If miPbNext > 1000 Then
                 miPbNext = 1000
             End If
 
-            ctlProgressBar1.Value = miPbNext
+            With ctlProgressBar1
+                .Value = miPbNext
+                .SetTaskBarProgressValue miPbNext, 1000
+            End With
+        
             ChangeFrmMainCaption miPbNext
-
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
         Next
 
         If mbBreakUpdateDBAll Then
@@ -5408,14 +5432,16 @@ Dim lngFindCheckCountTemp               As Long
             End If
 
             miPbNext = miPbNext + 100
-
             If miPbNext > 1000 Then
                 miPbNext = 1000
             End If
 
-            ctlProgressBar1.Value = miPbNext
-
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            With ctlProgressBar1
+                .Value = miPbNext
+                .SetTaskBarProgressValue miPbNext, 1000
+            End With
+            ChangeFrmMainCaption miPbNext
+            
             If mbBreakUpdateDBAll Then
                 MsgBox strMessages(27) & vbNewLine & strLangPath, vbInformation, strProductName
                 GoTo BreakUnpack
@@ -5428,14 +5454,16 @@ Dim lngFindCheckCountTemp               As Long
             End If
 
             miPbNext = miPbNext + 100
-
             If miPbNext > 1000 Then
                 miPbNext = 1000
             End If
 
-            ctlProgressBar1.Value = miPbNext
-
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            With ctlProgressBar1
+                .Value = miPbNext
+                .SetTaskBarProgressValue miPbNext, 1000
+            End With
+            ChangeFrmMainCaption miPbNext
+            
             If mbBreakUpdateDBAll Then
                 MsgBox strMessages(27) & vbNewLine & strRuntimes, vbInformation, strProductName
                 GoTo BreakUnpack
@@ -5449,24 +5477,25 @@ Dim lngFindCheckCountTemp               As Long
         End If
 
         miPbNext = 1000
-        ctlProgressBar1.Value = miPbNext
+        With ctlProgressBar1
+            .Value = miPbNext
+            .SetTaskBarProgressValue miPbNext, 1000
+        End With
+        
         ChangeFrmMainCaption
-
-        If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
 
 BreakUnpack:
 
         If mbBreakUpdateDBAll Then
             cmdBreakUpdateDB.Visible = False
             ChangeStatusTextAndDebug strMessages(82)
-            pbProgressBar.Visible = False
             GoTo EndedSub
         Else
-            pbProgressBar.Visible = False
             cmdBreakUpdateDB.Visible = False
         End If
-
-        If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NORMAL
+        
+        pbProgressBar.Visible = False
+        ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
 
         ' Если не выставлена опция только распаковка, то делаем установку
         If Not mbOnlyUnpackDP Then
@@ -5512,7 +5541,7 @@ BreakUnpack:
             End If
 
         Else
-            If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NOPROGRESS
+            ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
             ChangeStatusTextAndDebug strMessages(125) & " " & ArchTempPath
 
             If MsgBox(strMessages(125) & str2vbNewLine & strMessages(133), vbYesNo, strProductName) = vbYes Then
@@ -5536,9 +5565,10 @@ EndedSub:
     DebugMode "GroupInstallDP-End"
     FindCheckCount False
     mbBreakUpdateDBAll = False
+    
     ChangeFrmMainCaption
-
-    If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NOPROGRESS
+    pbProgressBar.Visible = False
+    ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
 
 End Sub
 
@@ -5676,12 +5706,12 @@ Dim strPathFolderDB                     As String
     frTabPanel.Visible = False
     lngCntBtn = 0
     cnt = UBound(arrOSList)
-    pbStart = ctlProgressBar1.Value
-
-    If TaskBar.isAccessible Then
-        TaskBar.SetProgressState hWnd, TBPF_NORMAL
-        TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
-    End If
+    
+    With ctlProgressBar1
+        pbStart = .Value
+        .SetTaskBarProgressState PrbTaskBarStateInProgress
+        .SetTaskBarProgressValue pbStart, 1000
+    End With
 
     If cnt > 0 Then
         pbDelta = (1000 - pbStart) / (cnt + 1)
@@ -5721,7 +5751,6 @@ Dim strPathFolderDB                     As String
                 Set SSTab2(i).Container = SSTab1
                 Load ctlScrollControl1(i)
                 Set ctlScrollControl1(i).Container = SSTab2(i)
-                'ctlScrollControl1(i).Visible = False
                 SSTab2(i).Visible = False
             End If
         End If
@@ -5729,12 +5758,15 @@ Dim strPathFolderDB                     As String
         mbNextTab = True
         pbProgressBar.Refresh
     Next
-
-    ctlProgressBar1.Value = 1000
+    
+    With ctlProgressBar1
+        .Value = 1000
+        .SetTaskBarProgressValue 1000, 1000
+        .SetTaskBarProgressState PrbTaskBarStateNone
+    End With
+    pbProgressBar.Visible = False
+    
     ChangeFrmMainCaption
-
-    If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
-    pbProgressBar.Refresh
 
     If optRezim_Upd.Value Then
         optRezim_Upd_Click
@@ -5751,11 +5783,7 @@ Dim strPathFolderDB                     As String
 
         SSTab1.Enabled = False
     End If
-
-    pbProgressBar.Visible = False
-    ChangeFrmMainCaption
-
-    If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NOPROGRESS
+    
     DebugMode "LoadButton-End"
 
 End Sub
@@ -7442,7 +7470,7 @@ Dim TimeScriptFinish                    As Long
             End If
         End If
 
-        TT.Tools.Add acmdPackFiles(Index).mhwnd, , strTTipText, True
+        TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
 
         TimeScriptFinish = GetTickCount
         DebugMode str2VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
@@ -8700,14 +8728,14 @@ Dim lngNumButtOnTab                     As Long
                 If Not mbReloadTT Then
                     ' Кнопка выглядит нажатой
                     Set .Picture = imgUpdBD.Picture
-                    FlatBorderButton .mhwnd
+                    FlatBorderButton .hWnd
                     .Refresh
                     strPackFileName = .Tag
                     ChangeStatusTextAndDebug "(" & i + 1 & " " & strMessages(124) & " " & ButtCount & "): " & strMessages(89) & " " & strPackFileName
                     ' Обновление подсказки
                     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                     ' Кнопка выглядит отжатой
-                    UnFlatBorderButton .mhwnd
+                    FlatBorderButton .hWnd, False
                     .Refresh
                 Else
                     strPackFileName = .Tag
@@ -8717,22 +8745,22 @@ Dim lngNumButtOnTab                     As Long
             End With
 
             miPbNext = miPbNext + miPbInterval
-
             If miPbNext > 1000 Then
                 miPbNext = 1000
             End If
 
-            ctlProgressBar1.Value = miPbNext
+            With ctlProgressBar1
+                .Value = miPbNext
+                .SetTaskBarProgressValue miPbNext, 1000
+            End With
             ChangeFrmMainCaption miPbNext
-
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            
         Next
     Else
         If Not mbReloadTT Then
             acmdPackFiles_Click 0
         End If
         mbDpNoDBExist = True
-        If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
     End If
 
     ' подсчет времни выполнения и формирования сообщения в статусе
@@ -8746,12 +8774,9 @@ Dim lngNumButtOnTab                     As Long
     End If
 
     pbProgressBar.Visible = False
+    ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
+    
     ChangeFrmMainCaption
-
-    If TaskBar.isAccessible Then
-        TaskBar.SetProgressState hWnd, TBPF_NOPROGRESS
-    End If
-
     BlockControl True
     
 TheEnd:
@@ -8827,27 +8852,28 @@ Dim lngSummBtn                          As Long
             With acmdPackFiles(i)
                 ' Кнопка выглядит нажатой
                 Set .Picture = imgUpdBD.Picture
-                FlatBorderButton .mhwnd
+                FlatBorderButton .hWnd
                 .Refresh
                 strPackFileName = .Tag
                 ChangeStatusTextAndDebug "(" & lngCurrBtn & " " & strMessages(124) & " " & lngSummBtn & "): " & strMessages(89) & " " & strPackFileName
                 ' Обновление подсказки
                 ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                 ' Кнопка выглядит отжатой
-                UnFlatBorderButton .mhwnd
+                FlatBorderButton .hWnd, False
                 .Refresh
             End With
 
             miPbNext = miPbNext + miPbInterval
-
             If miPbNext > 1000 Then
                 miPbNext = 1000
             End If
 
-            ctlProgressBar1.Value = miPbNext
-            ChangeFrmMainCaption miPbNext
+            With ctlProgressBar1
+                .Value = miPbNext
+                .SetTaskBarProgressValue miPbNext, 1000
+            End With
 
-            If TaskBar.isAccessible Then TaskBar.SetProgressValue hWnd, ctlProgressBar1.Value, ctlProgressBar1.Max
+            ChangeFrmMainCaption miPbNext
         Next
     Else
         mbDpNoDBExist = True
@@ -8863,10 +8889,10 @@ Dim lngSummBtn                          As Long
         ChangeStatusTextAndDebug strMessages(68)
     End If
 
-    pbProgressBar.Visible = False
     ChangeFrmMainCaption
-
-    If TaskBar.isAccessible Then TaskBar.SetProgressState hWnd, TBPF_NOPROGRESS
+    pbProgressBar.Visible = False
+    ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
+    
     BlockControl True
 TheEnd:
     DebugMode "UpdateStatusButtonTAB-End"
@@ -9265,22 +9291,22 @@ Private Sub FontCharsetChange()
     frRezim.Font.Charset = lngDialog_Charset
     frRunChecked.Font.Charset = lngDialog_Charset
     frTabPanel.Font.Charset = lngDialog_Charset
-
     ctlUcStatusBar1.Font.Charset = lngDialog_Charset
-    'SetButtonProperties cmdRunTask
-    SetButtonProperties , cmdRunTask, True
-    SetButtonProperties , cmdBreakUpdateDB, True
+    
+    SetButtonProperties cmdRunTask
+    SetButtonProperties cmdBreakUpdateDB
 
 End Sub
 
 Private Function IsFormLoaded(FormName As String) As Boolean
 Dim i                                   As Integer
+    
     For i = 0 To Forms.Count - 1
         If Forms(i).Name = FormName Then
             IsFormLoaded = True
             Exit Function
         End If
-    Next
+    Next i
     IsFormLoaded = False
 End Function
 

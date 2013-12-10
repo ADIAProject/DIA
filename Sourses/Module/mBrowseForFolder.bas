@@ -94,11 +94,8 @@ Private Declare Function SHBrowseForFolder _
                               Alias "SHBrowseForFolderW" (lpBrowseInfo As BROWSEINFO) As Long
 
 'Private Declare Function SHGetPathFromIDList Lib "shell32" Alias "SHGetPathFromIDListW" (ByVal pidList As Long, ByRef lpBuffer As Byte) As Long
-
-Private Declare Function SHGetPathFromIDList _
-                          Lib "shell32" _
-                              Alias "SHGetPathFromIDListW" (ByVal pIDList As Long, _
-                                                            ByVal lpBuffer As Long) As Long
+Private Declare Function PostMessage Lib "user32" Alias "PostMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function SHGetPathFromIDList Lib "shell32" Alias "SHGetPathFromIDListW" (ByVal pIDList As Long, ByVal lpBuffer As Long) As Long
 
 Public Function BrowseCallbackProc(ByVal hWnd As Long, _
                                    ByVal uMsg As Long, _
@@ -138,7 +135,7 @@ Dim szPath()                            As Byte
                 Fhwnd = FindWindowEx(hWnd, ByVal 0&, "Edit", vbNullString)
                 szPath = BackslashAdd2Path(TrimNull(sBuffer)) & vbNullChar
                 'DebugMode "Show Open Dialog: Func - 'BrowseCallbackProc:WM_SETTEXT'", 2
-                SendMessageLongW Fhwnd, WM_SETTEXT, 0, VarPtr(szPath(0))
+                SendMessageLong Fhwnd, WM_SETTEXT, 0, VarPtr(szPath(0))
                 'DebugMode "Show Open Dialog: Func - 'BrowseCallbackProc:EM_SETREADONLY'", 2
                 SendMessage Fhwnd, EM_SETREADONLY, True, 0&
                 'DebugMode "Show Open Dialog: Func - 'BrowseCallbackProc:WM_KILLFOCUS'", 2
@@ -253,19 +250,18 @@ End Function
 
 '   Used to enable or disable the dialog's OK button from the BFF callback
 Private Sub BFFEnableOKButton(ByVal hWndDialog As Long, ByVal Enable As Boolean)
-    SendMessageLongW hWndDialog, BFFM_ENABLEOK, 0, ByVal Abs(Enable)
+    SendMessageLong hWndDialog, BFFM_ENABLEOK, 0, ByVal Abs(Enable)
 
 End Sub
 
 Private Sub BFFSetPath(ByVal hWndDialog As Long, _
                        lpData As Long, _
                        ByVal UseStrPath As Boolean)
-    'Call SendMessageLongW(hWndDialog, BFFM_SETSELECTION, Abs(UseStrPath), ByVal lpData)
-    SendMessageLongW hWndDialog, BFFM_SETSELECTION, Abs(UseStrPath), ByVal lpData
+    SendMessageLong hWndDialog, BFFM_SETSELECTION, Abs(UseStrPath), ByVal lpData
     'If IsWin7 Then 'если этого не делать, то скроллинг на Win7 не гарантирован
     'http://connect.microsoft.com/VisualStudio/feedback/details/518103/bffm-setselection-does-not-work-with-shbrowseforfolder-on-windows-7
     Sleep 200
-    PostMessageLong hWndDialog, BFFM_SETEXPANDED, Abs(UseStrPath), ByVal lpData
+    PostMessage hWndDialog, BFFM_SETEXPANDED, Abs(UseStrPath), ByVal lpData
 
     'End If
 End Sub

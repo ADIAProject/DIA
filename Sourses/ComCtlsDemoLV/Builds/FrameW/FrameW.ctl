@@ -143,7 +143,7 @@ Private Const BS_GROUPBOX As Long = &H7
 Private Const BS_FLAT As Long = &H8000&
 Implements ISubclass
 Implements OLEGuids.IPerPropertyBrowsingVB
-Private FrameHandle As Long
+Private FrameGroupBoxHandle As Long
 Private FrameTransparentBrush As Long
 Private FrameFontHandle As Long
 Private FrameLogFont As LOGFONT
@@ -243,7 +243,7 @@ Call CreateFrame
 End Sub
 
 Private Sub UserControl_Paint()
-If FrameHandle <> 0 Then RedrawWindow FrameHandle, 0, 0, RDW_INVALIDATE
+If FrameGroupBoxHandle <> 0 Then RedrawWindow FrameGroupBoxHandle, 0, 0, RDW_INVALIDATE
 End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
@@ -354,7 +354,7 @@ End Sub
 
 Private Sub UserControl_Resize()
 With UserControl
-If FrameHandle <> 0 Then MoveWindow FrameHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
+If FrameGroupBoxHandle <> 0 Then MoveWindow FrameGroupBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
 End With
 End Sub
 
@@ -407,9 +407,9 @@ Attribute hWnd.VB_UserMemId = -515
 hWnd = UserControl.hWnd
 End Property
 
-Public Property Get hWndBorder() As Long
-Attribute hWndBorder.VB_Description = "Returns a handle to a control."
-hWndBorder = FrameHandle
+Public Property Get hWndGroupBox() As Long
+Attribute hWndGroupBox.VB_Description = "Returns a handle to a control."
+hWndGroupBox = FrameGroupBoxHandle
 End Property
 
 Public Property Get Font() As StdFont
@@ -428,7 +428,7 @@ Set PropFont = NewFont
 Call OLEFontToLogFont(NewFont, FrameLogFont)
 OldFontHandle = FrameFontHandle
 FrameFontHandle = CreateFontIndirect(FrameLogFont)
-If FrameHandle <> 0 Then SendMessage FrameHandle, WM_SETFONT, FrameFontHandle, ByVal 1&
+If FrameGroupBoxHandle <> 0 Then SendMessage FrameGroupBoxHandle, WM_SETFONT, FrameFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 Me.Refresh
 UserControl.PropertyChanged "Font"
@@ -439,7 +439,7 @@ Dim OldFontHandle As Long
 Call OLEFontToLogFont(PropFont, FrameLogFont)
 OldFontHandle = FrameFontHandle
 FrameFontHandle = CreateFontIndirect(FrameLogFont)
-If FrameHandle <> 0 Then SendMessage FrameHandle, WM_SETFONT, FrameFontHandle, ByVal 1&
+If FrameGroupBoxHandle <> 0 Then SendMessage FrameGroupBoxHandle, WM_SETFONT, FrameFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 Me.Refresh
 UserControl.PropertyChanged "Font"
@@ -467,12 +467,12 @@ End Property
 
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
-If FrameHandle <> 0 And EnabledVisualStyles() = True Then
+If FrameGroupBoxHandle <> 0 And EnabledVisualStyles() = True Then
     Select Case PropVisualStyles
         Case True
-            ActivateVisualStyles FrameHandle
+            ActivateVisualStyles FrameGroupBoxHandle
         Case False
-            RemoveVisualStyles FrameHandle
+            RemoveVisualStyles FrameGroupBoxHandle
     End Select
     Me.Refresh
 End If
@@ -512,7 +512,7 @@ End Property
 Public Property Let Enabled(ByVal Value As Boolean)
 PropEnabled = Value
 If Ambient.UserMode = True Then UserControl.Enabled = PropEnabled
-If FrameHandle <> 0 Then EnableWindow FrameHandle, IIf(PropEnabled = True, 1, 0)
+If FrameGroupBoxHandle <> 0 Then EnableWindow FrameGroupBoxHandle, IIf(PropEnabled = True, 1, 0)
 UserControl.PropertyChanged "Enabled"
 End Property
 
@@ -594,7 +594,7 @@ End Property
 
 Public Property Let Border(ByVal Value As Boolean)
 PropBorder = Value
-If FrameHandle <> 0 Then ShowWindow FrameHandle, IIf(PropBorder = True, SW_SHOW, SW_HIDE)
+If FrameGroupBoxHandle <> 0 Then ShowWindow FrameGroupBoxHandle, IIf(PropBorder = True, SW_SHOW, SW_HIDE)
 UserControl.PropertyChanged "Border"
 End Property
 
@@ -613,15 +613,15 @@ Select Case Value
 End Select
 UserControl.Appearance = PropAppearance
 UserControl.ForeColor = IIf(PropAppearance = CCAppearanceFlat, vbWindowText, vbButtonText)
-If FrameHandle <> 0 Then
+If FrameGroupBoxHandle <> 0 Then
     Dim dwStyle As Long
-    dwStyle = GetWindowLong(FrameHandle, GWL_STYLE)
+    dwStyle = GetWindowLong(FrameGroupBoxHandle, GWL_STYLE)
     If PropAppearance = CCAppearanceFlat Then
         If Not (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle Or BS_FLAT
     Else
         If (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle And Not BS_FLAT
     End If
-    SetWindowLong FrameHandle, GWL_STYLE, dwStyle
+    SetWindowLong FrameGroupBoxHandle, GWL_STYLE, dwStyle
 End If
 Me.Refresh
 UserControl.PropertyChanged "Appearance"
@@ -630,9 +630,9 @@ End Property
 Public Property Get Caption() As String
 Attribute Caption.VB_Description = "Returns/sets the text displayed in an object's title bar or below an object's icon."
 Attribute Caption.VB_UserMemId = -518
-If FrameHandle <> 0 Then
-    Caption = String(SendMessage(FrameHandle, WM_GETTEXTLENGTH, 0, ByVal 0&), vbNullChar)
-    SendMessage FrameHandle, WM_GETTEXT, Len(Caption) + 1, ByVal StrPtr(Caption)
+If FrameGroupBoxHandle <> 0 Then
+    Caption = String(SendMessage(FrameGroupBoxHandle, WM_GETTEXTLENGTH, 0, ByVal 0&), vbNullChar)
+    SendMessage FrameGroupBoxHandle, WM_GETTEXT, Len(Caption) + 1, ByVal StrPtr(Caption)
 Else
     Caption = PropCaption
 End If
@@ -640,7 +640,7 @@ End Property
 
 Public Property Let Caption(ByVal Value As String)
 PropCaption = Value
-If FrameHandle <> 0 Then SendMessage FrameHandle, WM_SETTEXT, 0, ByVal StrPtr(PropCaption)
+If FrameGroupBoxHandle <> 0 Then SendMessage FrameGroupBoxHandle, WM_SETTEXT, 0, ByVal StrPtr(PropCaption)
 Me.Refresh
 UserControl.PropertyChanged "Caption"
 End Property
@@ -657,13 +657,13 @@ UserControl.PropertyChanged "Transparent"
 End Property
 
 Private Sub CreateFrame()
-If FrameHandle <> 0 Then Exit Sub
+If FrameGroupBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or WS_CLIPSIBLINGS Or BS_TEXT Or BS_GROUPBOX
 If PropAppearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
 dwExStyle = WS_EX_TRANSPARENT
 If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
-FrameHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
+FrameGroupBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = PropEnabled
@@ -673,12 +673,12 @@ If Ambient.UserMode = True Then Call ComCtlsSetSubclass(UserControl.hWnd, Me, 0)
 End Sub
 
 Private Sub DestroyFrame()
-If FrameHandle = 0 Then Exit Sub
+If FrameGroupBoxHandle = 0 Then Exit Sub
 Call ComCtlsRemoveSubclass(UserControl.hWnd)
-ShowWindow FrameHandle, SW_HIDE
-SetParent FrameHandle, 0
-DestroyWindow FrameHandle
-FrameHandle = 0
+ShowWindow FrameGroupBoxHandle, SW_HIDE
+SetParent FrameGroupBoxHandle, 0
+DestroyWindow FrameGroupBoxHandle
+FrameGroupBoxHandle = 0
 If FrameTransparentBrush <> 0 Then
     DeleteObject FrameTransparentBrush
     FrameTransparentBrush = 0
@@ -704,13 +704,13 @@ Set ContainedControls = UserControl.ContainedControls
 End Property
 
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
-ISubclass_Message = WindowProcOwner(hWnd, wMsg, wParam, lParam)
+ISubclass_Message = WindowProcUserControl(hWnd, wMsg, wParam, lParam)
 End Function
 
-Private Function WindowProcOwner(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
     Case WM_CTLCOLORSTATIC
-        WindowProcOwner = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+        WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
         If PropTransparent = True Then
             SetBkMode wParam, 1
             Dim hDCScreen As Long, hDCBmp As Long
@@ -744,7 +744,7 @@ Select Case wMsg
                                 End If
                             End If
                             Set ImageTransparent.Picture = ImageHandleToPicture(hBmp2, vbPicTypeBitmap)
-                            If FrameHandle <> 0 Then RedrawWindow FrameHandle, 0, 0, RDW_INVALIDATE
+                            If FrameGroupBoxHandle <> 0 Then RedrawWindow FrameGroupBoxHandle, 0, 0, RDW_INVALIDATE
                             SelectObject hDCBmp, hBmpOld
                             DeleteObject hBmp
                         End If
@@ -753,13 +753,13 @@ Select Case wMsg
                     ReleaseDC 0, hDCScreen
                 End If
             End If
-            If FrameTransparentBrush <> 0 Then WindowProcOwner = FrameTransparentBrush
+            If FrameTransparentBrush <> 0 Then WindowProcUserControl = FrameTransparentBrush
             End With
         End If
         Exit Function
 End Select
-WindowProcOwner = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 If wMsg = WM_PAINT And wParam <> 0 Then
-    If FrameHandle <> 0 Then SendMessage FrameHandle, WM_PAINT, wParam, ByVal 0&
+    If FrameGroupBoxHandle <> 0 Then SendMessage FrameGroupBoxHandle, WM_PAINT, wParam, ByVal 0&
 End If
 End Function

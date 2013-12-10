@@ -99,24 +99,157 @@ Attribute VB_Exposed = False
 '       08Aug07 - Fixed Minor Redraw bug in the Refresh method which did not allow all panels
 '                 to repaint correctly when updated.
 '
-'   Build Date & Time: 8/3/2007 11:43:17 AM
-Const Major                             As Long = 1
-Const Minor                             As Long = 0
-Const Revision                          As Long = 60
-Const DateTime                          As String = "8/3/2007 11:43:17 AM "
-
+'       Recode Control By Romeo91 for Better Subsclassing and Unicode Support for File And Text
+'       10Dec13 - Repaint Subsclass Code from SelfSub 2.1 Paul Caton - http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=64867&lngWId=1.
+'                 Added Unicode Support for FileOperation Dialog
+'                 Added Unicode Support for Text Properties
+'                 Added Unicode Support for Font Properties - Thanks Krool (http://www.vbforums.com/showthread.php?698563-CommonControls-%28Replacement-of-the-MS-common-controls%29)
 '
+'   Oroginal Build Date & Time: 8/3/2007 11:43:17 AM
+
 '   Force Declarations
 Option Explicit
 
-'   MouseDown Message Constants for Corner Drag
-Private Const HTBOTTOMRIGHT = 17
-Private Const WM_NCLBUTTONDOWN = &HA1
+'*************************************************************
+'   API DECLARATION
+'*************************************************************
+Private Type RGBQUAD
+    Blue                                As Byte
+    Green                               As Byte
+    Red                                 As Byte
+    Alpha                               As Byte
+End Type
 
+Private Type RECT
+    Left                                As Long
+    Top                                 As Long
+    Right                               As Long
+    Bottom                              As Long
+End Type
+
+Private Type POINT
+    X                                   As Long
+    Y                                   As Long
+End Type
+
+'  for gradient painting and bitmap tiling
+Private Type BITMAPINFOHEADER
+    biSize                              As Long
+    biWidth                             As Long
+    biHeight                            As Long
+    biPlanes                            As Integer
+    biBitCount                          As Integer
+    biCompression                       As Long
+    biSizeImage                         As Long
+    biXPelsPerMeter                     As Long
+    biYPelsPerMeter                     As Long
+    biClrUsed                           As Long
+    biClrImportant                      As Long
+End Type
+
+Private Type BITMAPINFO8
+    bmiHeader                           As BITMAPINFOHEADER
+    bmiColors(255)                      As RGBQUAD
+End Type
+
+'   DrawEdge Message Constants
+Private Const BDR_SUNKENOUTER            As Long = &H2
+Private Const BDR_SUNKENINNER            As Long = &H8
+Private Const EDGE_SUNKEN = (BDR_SUNKENOUTER Or BDR_SUNKENINNER)
+Private Const BF_LEFT                    As Long = &H1
+Private Const BF_TOP                     As Long = &H2
+Private Const BF_RIGHT                   As Long = &H4
+Private Const BF_BOTTOM                  As Long = &H8
+Private Const BF_RECT                    As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
+
+Private Declare Sub ReleaseCapture Lib "user32.dll" ()
+Private Declare Sub CopyMemoryLong Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
+Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColorByRef Lib "oleaut32.dll" Alias "OleTranslateColor" (ByVal lOleColor As Long, ByVal lHPalette As Long, ByVal lColorRef As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
+Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
+Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINT) As Long
+Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
+Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
+Private Declare Function SetPixelV Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function CreateCompatibleDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
+Private Declare Function CreateCompatibleBitmap Lib "gdi32.dll" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
+Private Declare Function DrawIconEx Lib "user32.dll" (ByVal hDC As Long, ByVal XLeft As Long, ByVal YTop As Long, ByVal hIcon As Long, ByVal CXWidth As Long, ByVal CYWidth As Long, ByVal istepIfAniCur As Long, ByVal hbrFlickerFreeDraw As Long, ByVal diFlags As Long) As Long
+Private Declare Function BitBlt Lib "gdi32.dll" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal dwRop As Long) As Long
+Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
+Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
+Private Declare Function GetCurrentThemeName Lib "uxtheme.dll" (ByVal pszThemeFileName As Long, ByVal dwMaxNameChars As Long, ByVal pszColorBuff As Long, ByVal cchMaxColorChars As Long, ByVal pszSizeBuff As Long, ByVal cchMaxSizeChars As Long) As Long
+Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
+Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINT) As Long
+Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, ByRef qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
+Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function FillRect Lib "user32.dll" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal hBrush As Long) As Long
+Private Declare Function InflateRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
+Private Declare Function GetParent Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function SetParent Lib "user32.dll" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
+Private Declare Function ScreenToClient Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINT) As Long
+Private Declare Function CreateDIBSection8 Lib "gdi32.dll" Alias "CreateDIBSection" (ByVal hDC As Long, pBitmapInfo As BITMAPINFO8, ByVal un As Long, ByVal lplpVoid As Long, ByVal Handle As Long, ByVal dw As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hDC As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetBkMode Lib "gdi32.dll" (ByVal hDC As Long, ByVal nBkMode As Long) As Long
+Private Declare Function SetBkColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
+Private Declare Function CreateBitmap Lib "gdi32.dll" (ByVal nWidth As Long, ByVal nHeight As Long, ByVal nPlanes As Long, ByVal nBitCount As Long, lpBits As Any) As Long
+                                            
+'*************************************************************
+'   DRAW TEXT
+'*************************************************************
+' --Formatting Text Consts
+Private Const DT_LEFT                    As Long = &H0
+Private Const DT_CENTER                  As Long = &H1
+Private Const DT_RIGHT                   As Long = &H2
+Private Const DT_WORDBREAK               As Long = &H10
+Private Const DT_RTLREADING              As Long = &H20000
+Private Const DT_VCENTER                 As Long = &H4
+Private Const DT_WORD_ELLIPSIS           As Long = &H40000
 '   Private Local StatusBar Text Alignment Constants
 Private Const DT_SB_LEFT = (DT_VCENTER Or DT_LEFT Or DT_WORD_ELLIPSIS Or DT_WORDBREAK)
 Private Const DT_SB_CENTER = (DT_VCENTER Or DT_CENTER Or DT_WORD_ELLIPSIS Or DT_WORDBREAK)
 Private Const DT_SB_RIGHT = (DT_VCENTER Or DT_RIGHT Or DT_WORD_ELLIPSIS Or DT_WORDBREAK)
+                            
+Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
+                            
+'*************************************************************
+'   FONT PROPERTIES
+'*************************************************************
+Private Const LF_FACESIZE As Long = 32
+Private Const FW_NORMAL As Long = 400
+Private Const FW_BOLD As Long = 700
+Private Const DEFAULT_QUALITY As Long = 0
+Private Type LOGFONT
+    LFHeight As Long
+    LFWidth As Long
+    LFEscapement As Long
+    LFOrientation As Long
+    LFWeight As Long
+    LFItalic As Byte
+    LFUnderline As Byte
+    LFStrikeOut As Byte
+    LFCharset As Byte
+    LFOutPrecision As Byte
+    LFClipPrecision As Byte
+    LFQuality As Byte
+    LFPitchAndFamily As Byte
+    LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
+End Type
+
+Private Const WM_SETFONT As Long = &H30
+Private Const WS_EX_RTLREADING As Long = &H2000
+
+Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
+Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+
+'   MouseDown Message Constants for Corner Drag
+Private Const HTBOTTOMRIGHT = 17
+Private Const WM_NCLBUTTONDOWN = &HA1
 
 '   Constants used by new transparent support in NT.
 Private Const CAPS1 = 94                 '  other caps
@@ -126,60 +259,51 @@ Private Const NEWTRANSPARENT = 3         '  use with SetBkMode()
 '   Ternary raster operations
 Private Const SRCCOPY = &HCC0020         ' (DWORD) dest = source
 
+'*************************************************************
+'   CONTROL PROPERTIES
+'*************************************************************
 Public Enum usbAlignEnum
     usbLeft = &H0
     usbCenter = &H1
     usbRight = &H2
-
 End Enum
 
 #If False Then
-
     Const usbLeft = &H0
     Const usbCenter = &H1
     Const usbRight = &H2
-
 #End If
 
 Public Enum usbGripEnum
     usbNone = &H0
     usbSquare = &H1
     usbBars = &H2
-
 End Enum
 
 #If False Then
-
     Const usbNone = &H0
     Const usbSquare = &H1
     Const usbBars = &H2
-
 #End If
 
 Public Enum usbSizeEnum
     usbNoSize = &H0
     usbAutoSize = &H1
-
 End Enum
 
 #If False Then
-
     Const usbNoSize = &H0
     Const usbAutoSize = &H1
-
 #End If
 
 Public Enum usbStateEnum
     usbEnabled = &H0
     usbDisabled = &H1
-
 End Enum
 
 #If False Then
-
     Const usbEnabled = &H0
     Const usbDisabled = &H1
-
 #End If
 
 Public Enum usbThemeEnum
@@ -188,22 +312,19 @@ Public Enum usbThemeEnum
     usbBlue = &H2
     usbHomeStead = &H3
     usbMetallic = &H4
-
 End Enum
 
 #If False Then
-
     Const usbAuto = &H0
     Const usbClassic = &H1
     Const usbBlue = &H2
     Const usbHomeStead = &H3
     Const usbMetallic = &H4
-
 #End If
 
 '   Private StatusBar Item Type
 Private Type PanelItem
-    Alignment                               As Long
+    Alignment                           As Long
     AutoSize                            As Boolean
     BoundObject                         As Object
     BoundParent                         As Long
@@ -219,7 +340,6 @@ Private Type PanelItem
     ToolTipText                         As String
     UseMaskColor                        As Boolean
     Width                               As Long
-
 End Type
 
 Private m_ActivePanel                   As Long             'Current Active Panel
@@ -233,6 +353,7 @@ Private m_PanelCount                    As Long             'Panel Count
 Private m_PanelItems()                  As PanelItem        'Panel Items
 Private m_Theme                         As usbThemeEnum     'Theme Set by the User
 Private m_iTheme                        As usbThemeEnum     'Theme Stored internally for determination of named themes + auto equivelant
+Private m_bIsWinXpOrLater               As Boolean
 
 Public Event Click()
 Public Event DblClick()
@@ -244,611 +365,473 @@ Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Si
 Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event PanelClick(Index As Long)
 Public Event PanelDblClick(Index As Long)
-Public Event PanelMouseDown(Index As Long, _
-                            Button As Integer, _
-                            Shift As Integer, _
-                            X As Single, _
-                            Y As Single)
+Public Event PanelMouseDown(Index As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Public Event PanelMouseMove(Index As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Public Event PanelMouseUp(Index As Long, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Public Event PanelMouseMove(Index As Long, _
-                            Button As Integer, _
-                            Shift As Integer, _
-                            X As Single, _
-                            Y As Single)
+'*************************************************************************************************
+'* ctlUcPickBox - uSelfSub based sample
+'*
+'* Paul_Caton@hotmail.com
+'* Copyright free, use and abuse as you see fit.
+'*
+'* v1.0 Re-write of the SelfSub/WinSubHook-2 submission to Planet Source Code............ 20060322
+'* v1.1 VirtualAlloc memory to prevent Data Execution Prevention faults on Win64......... 20060324
+'* v1.2 Thunk redesigned to handle unsubclassing and memory release...................... 20060325
+'* v1.3 Data array scrapped in favour of property accessors.............................. 20060405
+'* v1.4 Optional IDE protection added
+'*      User-defined callback parameter added
+'*      All user routines that pass in a hWnd get additional validation
+'*      End removed from zError.......................................................... 20060411
+'* v1.5 Added nOrdinal parameter to sc_Subclass
+'*      Switched machine-code array from Currency to Long................................ 20060412
+'* v1.6 Added an optional callback target object
+'*      Added an IsBadCodePtr on the callback address in the thunk prior to callback..... 20060413
+'*************************************************************************************************
 
-Public Event PanelMouseUp(Index As Long, _
-                          Button As Integer, _
-                          Shift As Integer, _
-                          X As Single, _
-                          Y As Single)
+'-Selfsub declarations----------------------------------------------------------------------------
+Private Enum eMsgWhen                                                       'When to callback
+  MSG_BEFORE = 1                                                            'Callback before the original WndProc
+  MSG_AFTER = 2                                                             'Callback after the original WndProc
+  MSG_BEFORE_AFTER = MSG_BEFORE Or MSG_AFTER                                'Callback before and after the original WndProc
+End Enum
 
-'==================================================================================================
-' ucSubclass - A template UserControl for control authors that require self-subclassing without ANY
-'              external dependencies. IDE safe.
-'
-' Paul_Caton@hotmail.com
-' Copyright free, use and abuse as you see fit.
-'
-' v1.0.0000 20040525 First cut.....................................................................
-' v1.1.0000 20040602 Multi-subclassing version.....................................................
-' v1.1.0001 20040604 Optimized the subclass code...................................................
-' v1.1.0002 20040607 Substituted byte arrays for strings for the code buffers......................
-' v1.1.0003 20040618 Re-patch when adding extra hWnds..............................................
-' v1.1.0004 20040619 Optimized to death version....................................................
-' v1.1.0005 20040620 Use allocated memory for code buffers, no need to re-patch....................
-' v1.1.0006 20040628 Better protection in zIdx, improved comments..................................
-' v1.1.0007 20040629 Fixed InIDE patching oops.....................................................
-' v1.1.0008 20040910 Fixed bug in UserControl_Terminate, zSubclass_Proc procedure hidden...........
-'==================================================================================================
-'Subclasser declarations
+Private Const ALL_MESSAGES  As Long = -1                                    'All messages callback
+Private Const MSG_ENTRIES   As Long = 32                                    'Number of msg table entries
+Private Const WNDPROC_OFF   As Long = &H38                                  'Thunk offset to the WndProc execution address
+Private Const GWL_WNDPROC   As Long = -4                                    'SetWindowsLong WndProc index
+Private Const IDX_SHUTDOWN  As Long = 1                                     'Thunk data index of the shutdown flag
+Private Const IDX_HWND      As Long = 2                                     'Thunk data index of the subclassed hWnd
+Private Const IDX_WNDPROC   As Long = 9                                     'Thunk data index of the original WndProc
+Private Const IDX_BTABLE    As Long = 11                                    'Thunk data index of the Before table
+Private Const IDX_ATABLE    As Long = 12                                    'Thunk data index of the After table
+Private Const IDX_PARM_USER As Long = 13                                    'Thunk data index of the User-defined callback parameter data index
+
+Private z_ScMem             As Long                                         'Thunk base address
+Private z_Sc(64)            As Long                                         'Thunk machine-code initialised here
+Private z_Funk              As Collection                                   'hWnd/thunk-address collection
+
+Private Declare Function CallWindowProcA Lib "user32" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
+Private Declare Function GetModuleHandleA Lib "kernel32" (ByVal lpModuleName As String) As Long
+Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Private Declare Function IsBadCodePtr Lib "kernel32" (ByVal lpfn As Long) As Long
+Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function SetWindowLongA Lib "user32" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function VirtualAlloc Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
+Private Declare Function VirtualFree Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
+Private Declare Sub RtlMoveMemory Lib "kernel32" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
+'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+'*************************************************************
+'   TRACK MOUSE
+'*************************************************************
 Public Event MouseEnter()
 Public Event MouseLeave()
 
-Private bTrack                          As Boolean
-Private bTrackUser32                    As Boolean
-Private bInCtrl                         As Boolean
-Private bSubClass                       As Boolean
-
-Private Enum eMsgWhen
-MSG_AFTER = 1                                                                   'Message calls back after the original (previous) WndProc
-MSG_BEFORE = 2                                                                  'Message calls back before the original (previous) WndProc
-MSG_BEFORE_AND_AFTER = MSG_AFTER Or MSG_BEFORE                                  'Message calls back before and after the original (previous) WndProc
-
+Private Const WM_MOUSELEAVE              As Long = &H2A3
+Private Const WM_THEMECHANGED            As Long = &H31A
+Private Const WM_SYSCOLORCHANGE          As Long = &H15
+Private Const WM_MOUSEMOVE               As Long = &H200
+Private Const WM_SIZING                  As Long = &H214
+Private Const WM_NCPAINT                 As Long = &H85
+Private Const WM_MOVING       As Long = &H216
+Private Const WM_EXITSIZEMOVE As Long = &H232
+               
+Private Enum TRACKMOUSEEVENT_FLAGS
+    TME_HOVER = &H1&
+    TME_LEAVE = &H2&
+    TME_QUERY = &H40000000
+    TME_CANCEL = &H80000000
 End Enum
 
-#If False Then
-
-    Const MSG_AFTER = 1                                                                   'Message calls back after the original (previous) WndProc
-    Const MSG_BEFORE = 2                                                                  'Message calls back before the original (previous) WndProc
-    Const MSG_BEFORE_AND_AFTER = MSG_AFTER Or MSG_BEFORE                                  'Message calls back before and after the original (previous) WndProc
-
-#End If
-
-Private Type tSubData                                                               'Subclass data type
-hWnd                                    As Long                                      'Handle of the window being subclassed
-nAddrSub                                As Long                                      'The address of our new WndProc (allocated memory).
-nAddrOrig                               As Long                                      'The address of the pre-existing WndProc
-nMsgCntA                                As Long                                      'Msg after table entry count
-nMsgCntB                                As Long                                      'Msg before table entry count
-aMsgTblA()                              As Long                                      'Msg after table array
-aMsgTblB()                              As Long                                      'Msg Before table array
-
+Private Type TRACKMOUSEEVENT_STRUCT
+    cbSize                              As Long
+    dwFlags                             As TRACKMOUSEEVENT_FLAGS
+    hWndTrack                           As Long
+    dwHoverTime                         As Long
 End Type
 
-Private m_bIsWinXpOrLater As Boolean
-Private sc_aSubData()                   As tSubData                                    'Subclass data array
-
-'======================================================================================================
-'Subclass handler - MUST be the first Public routine in this file. That includes public properties also
-Public Sub zSubclass_Proc(ByVal bBefore As Boolean, _
-                          ByRef bHandled As Boolean, _
-                          ByRef lReturn As Long, _
-                          ByRef lng_hWnd As Long, _
-                          ByRef uMsg As Long, _
-                          ByRef wParam As Long, _
-                          ByRef lParam As Long)
-
-'Parameters:
-'bBefore  - Indicates whether the the message is being processed before or after the default handler - only really needed if a message is set to callback both before & after.
-'bHandled - Set this variable to True in a 'before' callback to prevent the message being subsequently processed by the default handler... and if set, an 'after' callback
-'lReturn  - Set this variable as per your intentions and requirements, see the MSDN documentation for each individual message value.
-'hWnd     - The window handle
-'uMsg     - The message number
-'wParam   - Message related data
-'lParam   - Message related data
-'Notes:
-'If you really know what you're doing, it's possible to change the values of the
-'hWnd, uMsg, wParam and lParam parameters in a 'before' callback so that different
-'values get passed to the default handler.. and optionaly, the 'after' callback
-    Select Case uMsg
-
-        Case WM_MOUSEMOVE
-
-            If Not bInCtrl Then
-                bInCtrl = True
-                Call TrackMouseLeave(lng_hWnd)
-                RaiseEvent MouseEnter
-
-            End If
-
-        Case WM_MOUSELEAVE
-            bInCtrl = False
-            RaiseEvent MouseLeave
-
-        Case WM_NCPAINT
-            Refresh
-
-        Case WM_SIZING
-            Refresh
-
-        Case WM_SYSCOLORCHANGE
-            Refresh
-
-        Case WM_THEMECHANGED
-            Refresh
-
-    End Select
-
-End Sub
-
-'======================================================================================================
-'Subclass code - The programmer may call any of the following Subclass_??? routines
-'Add a message to the table of those that will invoke a callback. You should Subclass_Subclass first and then add the messages
-Private Sub Subclass_AddMsg(ByVal lng_hWnd As Long, _
-                            ByVal uMsg As Long, _
-                            Optional ByVal When As eMsgWhen = MSG_AFTER)
-
-'Parameters:
-'lng_hWnd  - The handle of the window for which the uMsg is to be added to the callback table
-'uMsg      - The message number that will invoke a callback. NB Can also be ALL_MESSAGES, ie all messages will callback
-'When      - Whether the msg is to callback before, after or both with respect to the the default (previous) handler
-    With sc_aSubData(zIdx(lng_hWnd))
-
-        If When And eMsgWhen.MSG_BEFORE Then
-            Call zAddMsg(uMsg, .aMsgTblB, .nMsgCntB, eMsgWhen.MSG_BEFORE, .nAddrSub)
-
-        End If
-
-        If When And eMsgWhen.MSG_AFTER Then
-            Call zAddMsg(uMsg, .aMsgTblA, .nMsgCntA, eMsgWhen.MSG_AFTER, .nAddrSub)
-
-        End If
-
-    End With
-
-End Sub
-
-Private Function IsFunctionExported(ByVal sFunction As String, _
-                                    ByVal sModule As String) As Boolean
-
-Dim hMod                            As Long
-Dim bLibLoaded                      As Boolean
-Dim lngStrPtr                       As Long
-
-    lngStrPtr = StrPtr(sModule)
-    hMod = GetModuleHandle(lngStrPtr)
-
-    If hMod = 0 Then
-        hMod = LoadLibrary(lngStrPtr)
-
-        If hMod Then
-            bLibLoaded = True
-
-        End If
-
-    End If
-
-    If hMod Then
-        If GetProcAddress(hMod, sFunction) Then
-            IsFunctionExported = True
-
-        End If
-
-    End If
-
-    If bLibLoaded Then
-        Call FreeLibrary(hMod)
-
-    End If
-
-End Function
-
-'Return whether we're running in the IDE.
-Private Function Subclass_InIDE() As Boolean
-    Debug.Assert zSetTrue(Subclass_InIDE)
-
-End Function
-
-'Start subclassing the passed window handle
-Private Function Subclass_Start(ByVal lng_hWnd As Long) As Long
-
-'Parameters:
-'lng_hWnd  - The handle of the window to be subclassed
-'Returns;
-'The sc_aSubData() index
-Const CODE_LEN                          As Long = 200
-
-    'Length of the machine code in bytes
-Const FUNC_CWP                          As String = "CallWindowProcA"
-
-    'We use CallWindowProc to call the original WndProc
-Const FUNC_EBM                          As String = "EbMode"
-
-    'VBA's EbMode function allows the machine code thunk to know if the IDE has stopped or is on a breakpoint
-Const FUNC_SWL                          As String = "SetWindowLongW"
-
-    'SetWindowLongA allows the cSubclasser machine code thunk to unsubclass the subclasser itself if it detects via the EbMode function that the IDE has stopped
-Const MOD_USER                          As String = "user32.dll"
-
-    'Location of the SetWindowLongA & CallWindowProc functions
-Const MOD_VBA5                          As String = "vba5"
-
-    'Location of the EbMode function if running VB5
-Const MOD_VBA6                          As String = "vba6"
-
-    'Location of the EbMode function if running VB6
-Const PATCH_01                          As Long = 18
-
-    'Code buffer offset to the location of the relative address to EbMode
-Const PATCH_02                          As Long = 68
-
-    'Address of the previous WndProc
-Const PATCH_03                          As Long = 78
-
-    'Relative address of SetWindowsLong
-Const PATCH_06                          As Long = 116
-
-    'Address of the previous WndProc
-Const PATCH_07                          As Long = 121
-
-    'Relative address of CallWindowProc
-Const PATCH_0A                          As Long = 186
-
-    'Address of the owner object
-Static aBuf(1 To CODE_LEN)              As Byte
-
-    'Static code buffer byte array
-Static pCWP                             As Long
-
-    'Address of the CallWindowsProc
-Static pEbMode                          As Long
-
-    'Address of the EbMode IDE break/stop/running function
-Static pSWL                             As Long
-
-    'Address of the SetWindowsLong function
-Dim i                                   As Long
-
-    'Loop index
-Dim j                                   As Long
-
-    'Loop index
-Dim nSubIdx                             As Long
-
-    'Subclass data index
-Dim sHex                                As String
-Dim miLensHex                           As Integer
-
-    'Hex code string
-    'If it's the first time through here..
-    If aBuf(1) = 0 Then
-        'The hex pair machine code representation.
-        'sHex = "5589E583C4F85731C08945FC8945F8EB0EE80000000083F802742185C07424E830000000837DF800750AE838000000E84D00" & "00005F8B45FCC9C21000E826000000EBF168000000006AFCFF7508E800000000EBE031D24ABF00000000B900000000E82D00" & "0000C3FF7514FF7510FF750CFF75086800000000E8000000008945FCC331D2BF00000000B900000000E801000000C3E33209" & "C978078B450CF2AF75278D4514508D4510508D450C508D4508508D45FC508D45F85052B800000000508B00FF90A4070000C3"
-        sHex = "5589E583C4F85731C08945FC8945F8EB0EE80000000083F802742185C07424E830000000837DF800750AE838000000E84D0000005F8B45FCC9C21000E826000000EBF168000000006AFCFF7508E800000000EBE031D24ABF00000000B900000000E82D000000C3FF7514FF7510FF750CFF75086800000000E8000000008945FCC331D2BF00000000B900000000E801000000C3E33209C978078B450CF2AF75278D4514508D4510508D450C508D4508508D45FC508D45F85052B800000000508B00FF90A4070000C3"
-        'Convert the string from hex pairs to bytes and store in the static machine code buffer
-        i = 1
-
-        '        miLensHex = Len(sHex)
-        '        Do While j < CODE_LEN
-        '            j = j + 1
-        '            If i < miLensHex Then
-        '                'aBuf(j) = Val("&H" & Mid$(sHex, i, 2))
-        '                aBuf(j) = CLng("&H" & Mid$(sHex, i, 2))
-        '            Else
-        '                aBuf(j) = 0
-        '            End If
-        '
-        '            'Convert a pair of hex characters to an eight-bit value and store in the static code buffer array
-        '            i = i + 2
-        '        Loop
-
-        For j = 1 To CODE_LEN
-            'bytBuffer(lngCount) = Val("&H" & Left$(strHex, 2))
-            aBuf(j) = CLng("&H" & Left$(sHex, 2))
-            sHex = Mid$(sHex, 3)
-        Next
-
-        'Next pair of hex characters
-        'Get API function addresses
-        If Subclass_InIDE Then
-            'If we're running in the VB IDE
-            aBuf(16) = &H90
-            'Patch the code buffer to enable the IDE state code
-            aBuf(17) = &H90
-            'Patch the code buffer to enable the IDE state code
-            pEbMode = zAddrFunc(MOD_VBA6, FUNC_EBM)
-
-            'Get the address of EbMode in vba6.dll
-            If pEbMode = 0 Then
-                'Found?
-                pEbMode = zAddrFunc(MOD_VBA5, FUNC_EBM)
-
-                'VB5 perhaps
-            End If
-
-        End If
-
-        pCWP = zAddrFunc(MOD_USER, FUNC_CWP)
-        'Get the address of the CallWindowsProc function
-        pSWL = zAddrFunc(MOD_USER, FUNC_SWL)
-        'Get the address of the SetWindowLongA function
-        ReDim sc_aSubData(0 To 0) As tSubData
-        'Create the first sc_aSubData element
-    Else
-        nSubIdx = zIdx(lng_hWnd, True)
-
-        If nSubIdx = -1 Then
-            'If an sc_aSubData element isn't being re-cycled
-            nSubIdx = UBound(sc_aSubData()) + 1
-            'Calculate the next element
-            ReDim Preserve sc_aSubData(0 To nSubIdx) As tSubData
-
-            'Create a new sc_aSubData element
-        End If
-
-        Subclass_Start = nSubIdx
-
-    End If
-
-    With sc_aSubData(nSubIdx)
-        .hWnd = lng_hWnd
-        'Store the hWnd
-        .nAddrSub = GlobalAlloc(GMEM_FIXED, CODE_LEN)
-        'Allocate memory for the machine code WndProc
-        '.nAddrOrig = SetWindowLongA(.hWnd, GWL_WNDPROC, .nAddrSub)
-        .nAddrOrig = SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrSub)
-        'Set our WndProc in place
-        Call CopyMemory(ByVal .nAddrSub, aBuf(1), CODE_LEN)
-        'Copy the machine code from the static byte array to the code array in sc_aSubData
-        Call zPatchRel(.nAddrSub, PATCH_01, pEbMode)
-        'Patch the relative address to the VBA EbMode api function, whether we need to not.. hardly worth testing
-        Call zPatchVal(.nAddrSub, PATCH_02, .nAddrOrig)
-        'Original WndProc address for CallWindowProc, call the original WndProc
-        Call zPatchRel(.nAddrSub, PATCH_03, pSWL)
-        'Patch the relative address of the SetWindowLongA api function
-        Call zPatchVal(.nAddrSub, PATCH_06, .nAddrOrig)
-        'Original WndProc address for SetWindowLongA, unsubclass on IDE stop
-        Call zPatchRel(.nAddrSub, PATCH_07, pCWP)
-        'Patch the relative address of the CallWindowProc api function
-        Call zPatchVal(.nAddrSub, PATCH_0A, ObjPtr(Me))
-
-        'Patch the address of this object instance into the static machine code buffer
-    End With
-
-End Function
-
-'Stop all subclassing
-Private Sub Subclass_StopAll()
-
-Dim i                                   As Long
-
-    i = UBound(sc_aSubData())
-
-    'Get the upper bound of the subclass data array
-    Do While i >= 0
-
-        'Iterate through each element
-        With sc_aSubData(i)
-
-            If .hWnd <> 0 Then
-                'If not previously Subclass_Stop'd
-                Call Subclass_Stop(.hWnd)
-
-                'Subclass_Stop
-            End If
-
-        End With
-
-        i = i - 1
-        'Next element
-    Loop
-
-End Sub
-
-'Stop subclassing the passed window handle
-Private Sub Subclass_Stop(ByVal lng_hWnd As Long)
-
-'Parameters:
-'lng_hWnd  - The handle of the window to stop being subclassed
-    With sc_aSubData(zIdx(lng_hWnd))
-        'Call SetWindowLongA(.hWnd, GWL_WNDPROC, .nAddrOrig)
-        Call SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrOrig)
-        'Restore the original WndProc
-        Call zPatchVal(.nAddrSub, PATCH_05, 0)
-        'Patch the Table B entry count to ensure no further 'before' callbacks
-        Call zPatchVal(.nAddrSub, PATCH_09, 0)
-        'Patch the Table A entry count to ensure no further 'after' callbacks
-        Call GlobalFree(.nAddrSub)
-        'Release the machine code memory
-        .hWnd = 0
-        'Mark the sc_aSubData element as available for re-use
-        .nMsgCntB = 0
-        'Clear the before table
-        .nMsgCntA = 0
-        'Clear the after table
-        Erase .aMsgTblB
-        'Erase the before table
-        Erase .aMsgTblA
-
-        'Erase the after table
-    End With
-
-End Sub
+Private Declare Function TrackMouseEvent Lib "user32.dll" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+
+Private bTrack                As Boolean
+Private bTrackUser32          As Boolean
+Private bInCtrl               As Boolean
 
 'Track the mouse leaving the indicated window
 Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
+  Dim TME As TRACKMOUSEEVENT_STRUCT
+  
+  If bTrack Then
+    With TME
+      .cbSize = Len(TME)
+      .dwFlags = TME_LEAVE
+      .hWndTrack = lng_hWnd
+    End With
 
-Dim TME                                 As TRACKMOUSEEVENT_STRUCT
+    If bTrackUser32 Then
+      TrackMouseEvent TME
+    Else
+      TrackMouseEventComCtl TME
+    End If
+  End If
+End Sub
 
-    If bTrack Then
 
-        With TME
-            .cbSize = Len(TME)
-            .dwFlags = TME_LEAVE
-            .hWndTrack = lng_hWnd
+'-SelfSub code------------------------------------------------------------------------------------
+Private Function sc_Subclass(ByVal lng_hWnd As Long, _
+                    Optional ByVal lParamUser As Long = 0, _
+                    Optional ByVal nOrdinal As Long = 1, _
+                    Optional ByVal oCallback As Object = Nothing, _
+                    Optional ByVal bIdeSafety As Boolean = True) As Boolean 'Subclass the specified window handle
+'*************************************************************************************************
+'* lng_hWnd   - Handle of the window to subclass
+'* lParamUser - Optional, user-defined callback parameter
+'* nOrdinal   - Optional, ordinal index of the callback procedure. 1 = last private method, 2 = second last private method, etc.
+'* oCallback  - Optional, the object that will receive the callback. If undefined, callbacks are sent to this object's instance
+'* bIdeSafety - Optional, enable/disable IDE safety measures. NB: you should really only disable IDE safety in a UserControl for design-time subclassing
+'*************************************************************************************************
+Const CODE_LEN      As Long = 260                                           'Thunk length in bytes
+Const MEM_LEN       As Long = CODE_LEN + (8 * (MSG_ENTRIES + 1))            'Bytes to allocate per thunk, data + code + msg tables
+Const PAGE_RWX      As Long = &H40&                                         'Allocate executable memory
+Const MEM_COMMIT    As Long = &H1000&                                       'Commit allocated memory
+Const MEM_RELEASE   As Long = &H8000&                                       'Release allocated memory flag
+Const IDX_EBMODE    As Long = 3                                             'Thunk data index of the EbMode function address
+Const IDX_CWP       As Long = 4                                             'Thunk data index of the CallWindowProc function address
+Const IDX_SWL       As Long = 5                                             'Thunk data index of the SetWindowsLong function address
+Const IDX_FREE      As Long = 6                                             'Thunk data index of the VirtualFree function address
+Const IDX_BADPTR    As Long = 7                                             'Thunk data index of the IsBadCodePtr function address
+Const IDX_OWNER     As Long = 8                                             'Thunk data index of the Owner object's vTable address
+Const IDX_CALLBACK  As Long = 10                                            'Thunk data index of the callback method address
+Const IDX_EBX       As Long = 16                                            'Thunk code patch index of the thunk data
+Const SUB_NAME      As String = "sc_Subclass"                               'This routine's name
+  Dim nAddr         As Long
+  Dim nID           As Long
+  Dim nMyID         As Long
+  
+  If IsWindow(lng_hWnd) = 0 Then                                            'Ensure the window handle is valid
+    zError SUB_NAME, "Invalid window handle"
+    Exit Function
+  End If
 
-        End With
+  nMyID = GetCurrentProcessId                                               'Get this process's ID
+  GetWindowThreadProcessId lng_hWnd, nID                                    'Get the process ID associated with the window handle
+  If nID <> nMyID Then                                                      'Ensure that the window handle doesn't belong to another process
+    zError SUB_NAME, "Window handle belongs to another process"
+    Exit Function
+  End If
+  
+  If oCallback Is Nothing Then                                              'If the user hasn't specified the callback owner
+    Set oCallback = Me                                                      'Then it is me
+  End If
+  
+  nAddr = zAddressOf(oCallback, nOrdinal)                                   'Get the address of the specified ordinal method
+  If nAddr = 0 Then                                                         'Ensure that we've found the ordinal method
+    zError SUB_NAME, "Callback method not found"
+    Exit Function
+  End If
+    
+  If z_Funk Is Nothing Then                                                 'If this is the first time through, do the one-time initialization
+    Set z_Funk = New Collection                                             'Create the hWnd/thunk-address collection
+    z_Sc(14) = &HD231C031: z_Sc(15) = &HBBE58960: z_Sc(17) = &H4339F631: z_Sc(18) = &H4A21750C: z_Sc(19) = &HE82C7B8B: z_Sc(20) = &H74&: z_Sc(21) = &H75147539: z_Sc(22) = &H21E80F: z_Sc(23) = &HD2310000: z_Sc(24) = &HE8307B8B: z_Sc(25) = &H60&: z_Sc(26) = &H10C261: z_Sc(27) = &H830C53FF: z_Sc(28) = &HD77401F8: z_Sc(29) = &H2874C085: z_Sc(30) = &H2E8&: z_Sc(31) = &HFFE9EB00: z_Sc(32) = &H75FF3075: z_Sc(33) = &H2875FF2C: z_Sc(34) = &HFF2475FF: z_Sc(35) = &H3FF2473: z_Sc(36) = &H891053FF: z_Sc(37) = &HBFF1C45: z_Sc(38) = &H73396775: z_Sc(39) = &H58627404
+    z_Sc(40) = &H6A2473FF: z_Sc(41) = &H873FFFC: z_Sc(42) = &H891453FF: z_Sc(43) = &H7589285D: z_Sc(44) = &H3045C72C: z_Sc(45) = &H8000&: z_Sc(46) = &H8920458B: z_Sc(47) = &H4589145D: z_Sc(48) = &HC4836124: z_Sc(49) = &H1862FF04: z_Sc(50) = &H35E30F8B: z_Sc(51) = &HA78C985: z_Sc(52) = &H8B04C783: z_Sc(53) = &HAFF22845: z_Sc(54) = &H73FF2775: z_Sc(55) = &H1C53FF28: z_Sc(56) = &H438D1F75: z_Sc(57) = &H144D8D34: z_Sc(58) = &H1C458D50: z_Sc(59) = &HFF3075FF: z_Sc(60) = &H75FF2C75: z_Sc(61) = &H873FF28: z_Sc(62) = &HFF525150: z_Sc(63) = &H53FF2073: z_Sc(64) = &HC328&
 
-        If bTrackUser32 Then
-            Call TrackMouseEvent(TME)
-        Else
-            Call TrackMouseEventComCtl(TME)
+    z_Sc(IDX_CWP) = zFnAddr("user32", "CallWindowProcA")                    'Store CallWindowProc function address in the thunk data
+    z_Sc(IDX_SWL) = zFnAddr("user32", "SetWindowLongA")                     'Store the SetWindowLong function address in the thunk data
+    z_Sc(IDX_FREE) = zFnAddr("kernel32", "VirtualFree")                     'Store the VirtualFree function address in the thunk data
+    z_Sc(IDX_BADPTR) = zFnAddr("kernel32", "IsBadCodePtr")                  'Store the IsBadCodePtr function address in the thunk data
+  End If
+  
+  z_ScMem = VirtualAlloc(0, MEM_LEN, MEM_COMMIT, PAGE_RWX)                  'Allocate executable memory
 
+  If z_ScMem <> 0 Then                                                      'Ensure the allocation succeeded
+    On Error GoTo CatchDoubleSub                                            'Catch double subclassing
+      z_Funk.Add z_ScMem, "h" & lng_hWnd                                    'Add the hWnd/thunk-address to the collection
+    On Error GoTo 0
+  
+    If bIdeSafety Then                                                      'If the user wants IDE protection
+      z_Sc(IDX_EBMODE) = zFnAddr("vba6", "EbMode")                          'Store the EbMode function address in the thunk data
+    End If
+    
+    z_Sc(IDX_EBX) = z_ScMem                                                 'Patch the thunk data address
+    z_Sc(IDX_HWND) = lng_hWnd                                               'Store the window handle in the thunk data
+    z_Sc(IDX_BTABLE) = z_ScMem + CODE_LEN                                   'Store the address of the before table in the thunk data
+    z_Sc(IDX_ATABLE) = z_ScMem + CODE_LEN + ((MSG_ENTRIES + 1) * 4)         'Store the address of the after table in the thunk data
+    z_Sc(IDX_OWNER) = ObjPtr(oCallback)                                     'Store the callback owner's object address in the thunk data
+    z_Sc(IDX_CALLBACK) = nAddr                                              'Store the callback address in the thunk data
+    z_Sc(IDX_PARM_USER) = lParamUser                                        'Store the lParamUser callback parameter in the thunk data
+    
+    nAddr = SetWindowLongA(lng_hWnd, GWL_WNDPROC, z_ScMem + WNDPROC_OFF)    'Set the new WndProc, return the address of the original WndProc
+    If nAddr = 0 Then                                                       'Ensure the new WndProc was set correctly
+      zError SUB_NAME, "SetWindowLong failed, error #" & Err.LastDllError
+      GoTo ReleaseMemory
+    End If
+        
+    z_Sc(IDX_WNDPROC) = nAddr                                               'Store the original WndProc address in the thunk data
+    RtlMoveMemory z_ScMem, VarPtr(z_Sc(0)), CODE_LEN                        'Copy the thunk code/data to the allocated memory
+    sc_Subclass = True                                                      'Indicate success
+  Else
+    zError SUB_NAME, "VirtualAlloc failed, error: " & Err.LastDllError
+  End If
+  
+  Exit Function                                                             'Exit sc_Subclass
+
+CatchDoubleSub:
+  zError SUB_NAME, "Window handle is already subclassed"
+  
+ReleaseMemory:
+  VirtualFree z_ScMem, 0, MEM_RELEASE                                       'sc_Subclass has failed after memory allocation, so release the memory
+End Function
+
+'Terminate all subclassing
+Private Sub sc_Terminate()
+  Dim i As Long
+
+  If Not (z_Funk Is Nothing) Then                                           'Ensure that subclassing has been started
+    With z_Funk
+      For i = .Count To 1 Step -1                                           'Loop through the collection of window handles in reverse order
+        z_ScMem = .Item(i)                                                  'Get the thunk address
+        If IsBadCodePtr(z_ScMem) = 0 Then                                   'Ensure that the thunk hasn't already released its memory
+          sc_UnSubclass zData(IDX_HWND)                                     'UnSubclass
         End If
-
-    End If
-
+      Next i                                                                'Next member of the collection
+    End With
+    Set z_Funk = Nothing                                                    'Destroy the hWnd/thunk-address collection
+  End If
 End Sub
 
-'======================================================================================================
-'These z??? routines are exclusively called by the Subclass_??? routines.
-'Worker sub for sc_AddMsg
-Private Sub zAddMsg(ByVal uMsg As Long, _
-                    ByRef aMsgTbl() As Long, _
-                    ByRef nMsgCnt As Long, _
-                    ByVal When As eMsgWhen, _
-                    ByVal nAddr As Long)
-
-Dim nEntry                              As Long
-
-    'Message table entry index
-Dim nOff1                               As Long
-
-    'Machine code buffer offset 1
-Dim nOff2                               As Long
-
-    'Machine code buffer offset 2
-    If uMsg = ALL_MESSAGES Then
-        'If all messages
-        nMsgCnt = ALL_MESSAGES
-        'Indicates that all messages will callback
-    Else
-
-        'Else a specific message number
-        Do While nEntry < nMsgCnt
-            'For each existing entry. NB will skip if nMsgCnt = 0
-            nEntry = nEntry + 1
-
-            If aMsgTbl(nEntry) = 0 Then
-                'This msg table slot is a deleted entry
-                aMsgTbl(nEntry) = uMsg
-                'Re-use this entry
-                Exit Sub
-                'Bail
-            ElseIf aMsgTbl(nEntry) = uMsg Then
-                'The msg is already in the table!
-                Exit Sub
-
-                'Bail
-            End If
-
-        Loop
-        'Next entry
-        nMsgCnt = nMsgCnt + 1
-        'New slot required, bump the table entry count
-        ReDim Preserve aMsgTbl(1 To nMsgCnt) As Long
-        'Bump the size of the table.
-        aMsgTbl(nMsgCnt) = uMsg
-
-        'Store the message number in the table
+'UnSubclass the specified window handle
+Private Sub sc_UnSubclass(ByVal lng_hWnd As Long)
+  If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
+    zError "sc_UnSubclass", "Window handle isn't subclassed"
+  Else
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                           'Ensure that the thunk hasn't already released its memory
+      zData(IDX_SHUTDOWN) = -1                                              'Set the shutdown indicator
+      zDelMsg ALL_MESSAGES, IDX_BTABLE                                      'Delete all before messages
+      zDelMsg ALL_MESSAGES, IDX_ATABLE                                      'Delete all after messages
     End If
-
-    If When = eMsgWhen.MSG_BEFORE Then
-        'If before
-        nOff1 = PATCH_04
-        'Offset to the Before table
-        nOff2 = PATCH_05
-        'Offset to the Before table entry count
-    Else
-        'Else after
-        nOff1 = PATCH_08
-        'Offset to the After table
-        nOff2 = PATCH_09
-
-        'Offset to the After table entry count
-    End If
-
-    If uMsg <> ALL_MESSAGES Then
-        Call zPatchVal(nAddr, nOff1, VarPtr(aMsgTbl(1)))
-
-        'Address of the msg table, has to be re-patched because Redim Preserve will move it in memory.
-    End If
-
-    Call zPatchVal(nAddr, nOff2, nMsgCnt)
-
-    'Patch the appropriate table entry count
+    z_Funk.Remove "h" & lng_hWnd                                            'Remove the specified window handle from the collection
+  End If
 End Sub
 
-'Return the memory address of the passed function in the passed dll
-Private Function zAddrFunc(ByVal sDLL As String, ByVal sProc As String) As Long
-    zAddrFunc = GetProcAddress(GetModuleHandle(StrPtr(sDLL)), sProc)
-    Debug.Assert zAddrFunc
+'Add the message value to the window handle's specified callback table
+Private Sub sc_AddMsg(ByVal lng_hWnd As Long, ByVal uMsg As Long, Optional ByVal When As eMsgWhen = eMsgWhen.MSG_AFTER)
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    If When And MSG_BEFORE Then                                             'If the message is to be added to the before original WndProc table...
+      zAddMsg uMsg, IDX_BTABLE                                              'Add the message to the before table
+    End If
+    If When And MSG_AFTER Then                                              'If message is to be added to the after original WndProc table...
+      zAddMsg uMsg, IDX_ATABLE                                              'Add the message to the after table
+    End If
+  End If
+End Sub
 
-    'You may wish to comment out this line if you're using vb5 else the EbMode GetProcAddress will stop here everytime because we look for vba6.dll first
+'Delete the message value from the window handle's specified callback table
+Private Sub sc_DelMsg(ByVal lng_hWnd As Long, ByVal uMsg As Long, Optional ByVal When As eMsgWhen = eMsgWhen.MSG_AFTER)
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    If When And MSG_BEFORE Then                                             'If the message is to be deleted from the before original WndProc table...
+      zDelMsg uMsg, IDX_BTABLE                                              'Delete the message from the before table
+    End If
+    If When And MSG_AFTER Then                                              'If the message is to be deleted from the after original WndProc table...
+      zDelMsg uMsg, IDX_ATABLE                                              'Delete the message from the after table
+    End If
+  End If
+End Sub
+
+'Call the original WndProc
+Private Function sc_CallOrigWndProc(ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    sc_CallOrigWndProc = _
+        CallWindowProcA(zData(IDX_WNDPROC), lng_hWnd, uMsg, wParam, lParam) 'Call the original WndProc of the passed window handle parameter
+  End If
 End Function
 
-'Get the sc_aSubData() array index of the passed hWnd
-Private Function zIdx(ByVal lng_hWnd As Long, _
-                      Optional ByVal bAdd As Boolean = False) As Long
-'Get the upper bound of sc_aSubData() - If you get an error here, you're probably sc_AddMsg-ing before Subclass_Start
-    zIdx = UBound(sc_aSubData)
+'Get the subclasser lParamUser callback parameter
+Private Property Get sc_lParamUser(ByVal lng_hWnd As Long) As Long
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    sc_lParamUser = zData(IDX_PARM_USER)                                    'Get the lParamUser callback parameter
+  End If
+End Property
 
-    Do While zIdx >= 0
+'Let the subclasser lParamUser callback parameter
+Private Property Let sc_lParamUser(ByVal lng_hWnd As Long, ByVal NewValue As Long)
+  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+    zData(IDX_PARM_USER) = NewValue                                         'Set the lParamUser callback parameter
+  End If
+End Property
 
-        'Iterate through the existing sc_aSubData() elements
-        With sc_aSubData(zIdx)
+'-The following routines are exclusively for the sc_ subclass routines----------------------------
 
-            If .hWnd = lng_hWnd Then
+'Add the message to the specified table of the window handle
+Private Sub zAddMsg(ByVal uMsg As Long, ByVal nTable As Long)
+  Dim nCount As Long                                                        'Table entry count
+  Dim nBase  As Long                                                        'Remember z_ScMem
+  Dim i      As Long                                                        'Loop index
 
-                'If the hWnd of this element is the one we're looking for
-                If Not bAdd Then
-                    'If we're searching not adding
-                    Exit Function
+  nBase = z_ScMem                                                            'Remember z_ScMem so that we can restore its value on exit
+  z_ScMem = zData(nTable)                                                    'Map zData() to the specified table
 
-                    'Found
-                End If
-
-            ElseIf .hWnd = 0 Then
-
-                'If this an element marked for reuse.
-                If bAdd Then
-                    'If we're adding
-                    Exit Function
-
-                    'Re-use it
-                End If
-
-            End If
-
-        End With
-
-        zIdx = zIdx - 1
-        'Decrement the index
-    Loop
-
-    If Not bAdd Then
-        Debug.Assert False
-
-        'hWnd not found, programmer error
+  If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being added to the table...
+    nCount = ALL_MESSAGES                                                   'Set the table entry count to ALL_MESSAGES
+  Else
+    nCount = zData(0)                                                       'Get the current table entry count
+    If nCount >= MSG_ENTRIES Then                                           'Check for message table overflow
+      zError "zAddMsg", "Message table overflow. Either increase the value of Const MSG_ENTRIES or use ALL_MESSAGES instead of specific message values"
+      GoTo Bail
     End If
 
-    'If we exit here, we're returning -1, no freed elements were found
-End Function
+    For i = 1 To nCount                                                     'Loop through the table entries
+      If zData(i) = 0 Then                                                  'If the element is free...
+        zData(i) = uMsg                                                     'Use this element
+        GoTo Bail                                                           'Bail
+      ElseIf zData(i) = uMsg Then                                           'If the message is already in the table...
+        GoTo Bail                                                           'Bail
+      End If
+    Next i                                                                  'Next message table entry
 
-'Patch the machine code buffer at the indicated offset with the relative address to the target address.
-Private Sub zPatchRel(ByVal nAddr As Long, _
-                      ByVal nOffset As Long, _
-                      ByVal nTargetAddr As Long)
-    Call CopyMemory(ByVal nAddr + nOffset, nTargetAddr - nAddr - nOffset - 4, 4)
+    nCount = i                                                              'On drop through: i = nCount + 1, the new table entry count
+    zData(nCount) = uMsg                                                    'Store the message in the appended table entry
+  End If
 
+  zData(0) = nCount                                                         'Store the new table entry count
+Bail:
+  z_ScMem = nBase                                                           'Restore the value of z_ScMem
 End Sub
 
-'Patch the machine code buffer at the indicated offset with the passed value
-Private Sub zPatchVal(ByVal nAddr As Long, ByVal nOffset As Long, ByVal nValue As Long)
-    Call CopyMemory(ByVal nAddr + nOffset, nValue, 4)
+'Delete the message from the specified table of the window handle
+Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long)
+  Dim nCount As Long                                                        'Table entry count
+  Dim nBase  As Long                                                        'Remember z_ScMem
+  Dim i      As Long                                                        'Loop index
 
+  nBase = z_ScMem                                                           'Remember z_ScMem so that we can restore its value on exit
+  z_ScMem = zData(nTable)                                                   'Map zData() to the specified table
+
+  If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being deleted from the table...
+    zData(0) = 0                                                            'Zero the table entry count
+  Else
+    nCount = zData(0)                                                       'Get the table entry count
+    
+    For i = 1 To nCount                                                     'Loop through the table entries
+      If zData(i) = uMsg Then                                               'If the message is found...
+        zData(i) = 0                                                        'Null the msg value -- also frees the element for re-use
+        GoTo Bail                                                           'Bail
+      End If
+    Next i                                                                  'Next message table entry
+    
+    zError "zDelMsg", "Message &H" & Hex$(uMsg) & " not found in table"
+  End If
+  
+Bail:
+  z_ScMem = nBase                                                           'Restore the value of z_ScMem
 End Sub
 
-'Worker function for Subclass_InIDE
-Private Function zSetTrue(ByRef bValue As Boolean) As Boolean
-    zSetTrue = True
-    bValue = True
+'Error handler
+Private Sub zError(ByVal sRoutine As String, ByVal sMsg As String)
+  App.LogEvent TypeName(Me) & "." & sRoutine & ": " & sMsg, vbLogEventTypeError
+  MsgBox sMsg & ".", vbExclamation + vbApplicationModal, "Error in " & TypeName(Me) & "." & sRoutine
+End Sub
 
+'Return the address of the specified DLL/procedure
+Private Function zFnAddr(ByVal sDLL As String, ByVal sProc As String) As Long
+  zFnAddr = GetProcAddress(GetModuleHandleA(sDLL), sProc)                   'Get the specified procedure address
+  Debug.Assert zFnAddr                                                      'In the IDE, validate that the procedure address was located
 End Function
+
+'Map zData() to the thunk address for the specified window handle
+Private Function zMap_hWnd(ByVal lng_hWnd As Long) As Long
+  If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
+    zError "zMap_hWnd", "Subclassing hasn't been started"
+  Else
+    On Error GoTo Catch                                                     'Catch unsubclassed window handles
+    z_ScMem = z_Funk("h" & lng_hWnd)                                        'Get the thunk address
+    zMap_hWnd = z_ScMem
+  End If
+  
+  Exit Function                                                             'Exit returning the thunk address
+
+Catch:
+  zError "zMap_hWnd", "Window handle isn't subclassed"
+End Function
+
+'Return the address of the specified ordinal method on the oCallback object, 1 = last private method, 2 = second last private method, etc
+Private Function zAddressOf(ByVal oCallback As Object, ByVal nOrdinal As Long) As Long
+  Dim bSub  As Byte                                                         'Value we expect to find pointed at by a vTable method entry
+  Dim bVal  As Byte
+  Dim nAddr As Long                                                         'Address of the vTable
+  Dim i     As Long                                                         'Loop index
+  Dim j     As Long                                                         'Loop limit
+  
+  RtlMoveMemory VarPtr(nAddr), ObjPtr(oCallback), 4                         'Get the address of the callback object's instance
+  If Not zProbe(nAddr + &H1C, i, bSub) Then                                 'Probe for a Class method
+    If Not zProbe(nAddr + &H6F8, i, bSub) Then                              'Probe for a Form method
+      If Not zProbe(nAddr + &H7A4, i, bSub) Then                            'Probe for a UserControl method
+        Exit Function                                                       'Bail...
+      End If
+    End If
+  End If
+  
+  i = i + 4                                                                 'Bump to the next entry
+  j = i + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
+  Do While i < j
+    RtlMoveMemory VarPtr(nAddr), i, 4                                       'Get the address stored in this vTable entry
+    
+    If IsBadCodePtr(nAddr) Then                                             'Is the entry an invalid code address?
+      RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
+      Exit Do                                                               'Bad method signature, quit loop
+    End If
+
+    RtlMoveMemory VarPtr(bVal), nAddr, 1                                    'Get the byte pointed to by the vTable entry
+    If bVal <> bSub Then                                                    'If the byte doesn't match the expected value...
+      RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
+      Exit Do                                                               'Bad method signature, quit loop
+    End If
+    
+    i = i + 4                                                             'Next vTable entry
+  Loop
+End Function
+
+'Probe at the specified start address for a method signature
+Private Function zProbe(ByVal nStart As Long, ByRef nMethod As Long, ByRef bSub As Byte) As Boolean
+  Dim bVal    As Byte
+  Dim nAddr   As Long
+  Dim nLimit  As Long
+  Dim nEntry  As Long
+  
+  nAddr = nStart                                                            'Start address
+  nLimit = nAddr + 32                                                       'Probe eight entries
+  Do While nAddr < nLimit                                                   'While we've not reached our probe depth
+    RtlMoveMemory VarPtr(nEntry), nAddr, 4                                  'Get the vTable entry
+    
+    If nEntry <> 0 Then                                                     'If not an implemented interface
+      RtlMoveMemory VarPtr(bVal), nEntry, 1                                 'Get the value pointed at by the vTable entry
+      If bVal = &H33 Or bVal = &HE9 Then                                    'Check for a native or pcode method signature
+        nMethod = nAddr                                                     'Store the vTable entry
+        bSub = bVal                                                         'Store the found method signature
+        zProbe = True                                                       'Indicate success
+        Exit Function                                                       'Return
+      End If
+    End If
+
+'Next vTable entry
+    nAddr = nAddr + 4
+  Loop
+End Function
+
+Private Property Get zData(ByVal nIndex As Long) As Long
+  RtlMoveMemory VarPtr(zData), z_ScMem + (nIndex * 4), 4
+End Property
+
+Private Property Let zData(ByVal nIndex As Long, ByVal nValue As Long)
+  RtlMoveMemory z_ScMem + (nIndex * 4), VarPtr(nValue), 4
+End Property
 
 '======================================================================================================
 '   End SubClass Sections
 '======================================================================================================
+
 Public Function AddPanel(Optional ByVal sText As String, _
                          Optional ByVal uTextAlign As usbAlignEnum = usbLeft, _
                          Optional ByVal bAutoSize As Boolean = True, _
@@ -942,10 +925,9 @@ Dim iBackColor                          As RGBQUAD
     OleTranslateColorByRef SecondColor, 0, VarPtr(iBackColor)
 
     With iForeColor
-        .rgbRed = (.rgbRed * AlphaValue + iBackColor.rgbRed * (255 - AlphaValue)) / 255
-        .rgbGreen = (.rgbGreen * AlphaValue + iBackColor.rgbGreen * (255 - AlphaValue)) / 255
-        .rgbBlue = (.rgbBlue * AlphaValue + iBackColor.rgbBlue * (255 - AlphaValue)) / 255
-
+        .Red = (.Red * AlphaValue + iBackColor.Red * (255 - AlphaValue)) / 255
+        .Green = (.Green * AlphaValue + iBackColor.Green * (255 - AlphaValue)) / 255
+        .Blue = (.Blue * AlphaValue + iBackColor.Blue * (255 - AlphaValue)) / 255
     End With
 
     CopyMemoryLong VarPtr(AlphaBlend), VarPtr(iForeColor), 4
@@ -1266,17 +1248,15 @@ Dim OldDIB                              As Long
             .biClrUsed = 256
             .biClrImportant = 256
             .biSize = Len(DIBInf.bmiHeader)
-
         End With
 
         ' Palette is Greyscale
         For MakePal = 0 To 255
 
             With .bmiColors(MakePal)
-                .rgbRed = MakePal
-                .rgbGreen = MakePal
-                .rgbBlue = MakePal
-
+                .Red = MakePal
+                .Green = MakePal
+                .Blue = MakePal
             End With
 
         Next
@@ -1722,7 +1702,7 @@ Dim bMinWidth                           As Boolean
             Else
 
                 '   Set the Bound Object onto the Control
-                '
+        
                 '   Handle errors quietly in this section as we are late bound
                 '   so it is hard to predict if all controls will support certain
                 '   object interfaces....
@@ -2522,18 +2502,14 @@ Public Sub TransBltEx(ByVal hDestDC As Long, _
 '   xSrc, ySrc:  Upper-left source coordinates (pixels)
 '   TransColor:  RGB value for transparent pixels, typically &HC0C0C0.
 '***********************************************************************
-'
+' Holds original background color
 Dim OrigColor                           As Long
-
-    ' Holds original background color
+' Holds original background drawing mode
 Dim OrigMode                            As Long
-
-    ' Holds original background drawing mode
 Dim hSrcDC                              As Long
 Dim tObj                                As Long
+'Handle to the Brush we are using for MaskColor
 Dim hBrush                              As Long
-
-    'Handle to the Brush we are using for MaskColor
 Dim hTmp                                As Long
 
     '   Handle Any Errors
@@ -2564,142 +2540,113 @@ Dim hTmp                                As Long
     End If
 
     If (GetDeviceCaps(hDestDC, CAPS1) And C1_TRANSPARENT) Then
-        '
+
         ' Some NT machines support this *super* simple method!
         ' Save original settings, Blt, restore settings.
-        '
+
         OrigMode = SetBkMode(hDestDC, NEWTRANSPARENT)
         OrigColor = SetBkColor(hDestDC, TransColor)
 
-        '
+
         '   Check to see if this is a GreyScale Image, if so then GrayBlt it
         '   to the DC it is located on...
-        '
+
         If Disabled Then
             GrayBlt hSrcDC, hSrcDC, nWidth, nHeight
-
         End If
 
         Call BitBlt(hDestDC, X, Y, nWidth, nHeight, hSrcDC, XSrc, YSrc, SRCCOPY)
         Call SetBkColor(hDestDC, OrigColor)
         Call SetBkMode(hDestDC, OrigMode)
     Else
-
-        Dim saveDC                      As Long
-
         ' Backup copy of source bitmap
-        Dim maskDC                      As Long
-
+        Dim saveDC                      As Long
         ' Mask bitmap (monochrome)
-        Dim invDC                       As Long
-
+        Dim maskDC                      As Long
         ' Inverse of mask bitmap (monochrome)
-        Dim resultDC                    As Long
-
+        Dim invDC                       As Long
         ' Combination of source bitmap & background
-        Dim hSaveBmp                    As Long
-
+        Dim resultDC                    As Long
         ' Bitmap stores backup copy of source bitmap
-        Dim hMaskBmp                    As Long
-
+        Dim hSaveBmp                    As Long
         ' Bitmap stores mask (monochrome)
-        Dim hInvBmp                     As Long
-
+        Dim hMaskBmp                    As Long
         ' Bitmap holds inverse of mask (monochrome)
-        Dim hResultBmp                  As Long
-
+        Dim hInvBmp                     As Long
         ' Bitmap combination of source & background
-        Dim hSavePrevBmp                As Long
-
+        Dim hResultBmp                  As Long
         ' Holds previous bitmap in saved DC
-        Dim hMaskPrevBmp                As Long
-
+        Dim hSavePrevBmp                As Long
         ' Holds previous bitmap in the mask DC
-        Dim hInvPrevBmp                 As Long
-
+        Dim hMaskPrevBmp                As Long
         ' Holds previous bitmap in inverted mask DC
+        Dim hInvPrevBmp                 As Long
+        ' Holds previous bitmap in destination DC
         Dim hDestPrevBmp                As Long
 
-        ' Holds previous bitmap in destination DC
-        '
         ' Create DCs to hold various stages of transformation.
-        '
         saveDC = CreateCompatibleDC(hDestDC)
         maskDC = CreateCompatibleDC(hDestDC)
         invDC = CreateCompatibleDC(hDestDC)
         resultDC = CreateCompatibleDC(hDestDC)
-        '
+
         ' Create monochrome bitmaps for the mask-related bitmaps.
-        '
         hMaskBmp = CreateBitmap(nWidth, nHeight, 1, 1, ByVal 0&)
         hInvBmp = CreateBitmap(nWidth, nHeight, 1, 1, ByVal 0&)
-        '
+
         ' Create color bitmaps for final result & stored copy of source.
-        '
+
         hResultBmp = CreateCompatibleBitmap(hDestDC, nWidth, nHeight)
         hSaveBmp = CreateCompatibleBitmap(hDestDC, nWidth, nHeight)
-        '
+
         ' Select bitmaps into DCs.
-        '
         hSavePrevBmp = SelectObject(saveDC, hSaveBmp)
         hMaskPrevBmp = SelectObject(maskDC, hMaskBmp)
         hInvPrevBmp = SelectObject(invDC, hInvBmp)
         hDestPrevBmp = SelectObject(resultDC, hResultBmp)
-        '
+
         ' Create mask: set background color of source to transparent color.
-        '
         OrigColor = SetBkColor(hSrcDC, TransColor)
         Call BitBlt(maskDC, 0, 0, nWidth, nHeight, hSrcDC, XSrc, YSrc, vbSrcCopy)
         TransColor = SetBkColor(hSrcDC, OrigColor)
-        '
+
         ' Create inverse of mask to AND w/ source & combine w/ background.
-        '
         Call BitBlt(invDC, 0, 0, nWidth, nHeight, maskDC, 0, 0, vbNotSrcCopy)
-        '
+
         ' Copy background bitmap to result.
-        '
         Call BitBlt(resultDC, 0, 0, nWidth, nHeight, hDestDC, X, Y, vbSrcCopy)
-        '
+
         ' AND mask bitmap w/ result DC to punch hole in the background by
         ' painting black area for non-transparent portion of source bitmap.
-        '
         Call BitBlt(resultDC, 0, 0, nWidth, nHeight, maskDC, 0, 0, vbSrcAnd)
 
-        '
+
         '   Check to see if this is a GreyScale Image, if so then GrayBlt it
         '   to the DC it is located on...
-        '
         If Disabled Then
             GrayBlt hSrcDC, hSrcDC, nWidth, nHeight
 
         End If
 
-        '
         ' get overlapper
-        '
         Call BitBlt(saveDC, 0, 0, nWidth, nHeight, hSrcDC, XSrc, YSrc, vbSrcCopy)
-        '
+
         ' AND with inverse monochrome mask
-        '
         Call BitBlt(saveDC, 0, 0, nWidth, nHeight, invDC, 0, 0, vbSrcAnd)
-        '
+
         ' XOR these two
-        '
         Call BitBlt(resultDC, 0, 0, nWidth, nHeight, saveDC, 0, 0, vbSrcInvert)
-        '
+
         ' Display transparent bitmap on background.
-        '
         Call BitBlt(hDestDC, X, Y, nWidth, nHeight, resultDC, 0, 0, vbSrcCopy)
-        '
+
         ' Select original objects back.
-        '
         Call SelectObject(saveDC, hSavePrevBmp)
         Call SelectObject(resultDC, hDestPrevBmp)
         Call SelectObject(maskDC, hMaskPrevBmp)
         Call SelectObject(invDC, hInvPrevBmp)
-        '
+      
         ' Deallocate system resources.
-        '
         Call DeleteObject(hSaveBmp)
         Call DeleteObject(hMaskBmp)
         Call DeleteObject(hInvBmp)
@@ -2728,7 +2675,6 @@ Private Function TranslateColor(ByVal lColor As Long) As Long
 
     If OleTranslateColor(lColor, 0, TranslateColor) Then
         TranslateColor = -1
-
     End If
 
 Func_ErrHandlerExit:
@@ -2759,7 +2705,6 @@ Private Sub txtEdit_KeyUp(KeyCode As Integer, Shift As Integer)
 
             If txtEdit.Visible = True Then
                 txtEdit.Visible = False
-
             End If
 
         Case vbKeyReturn
@@ -2959,7 +2904,6 @@ Private Sub UserControl_LostFocus()
     If txtEdit.Visible = True Then
         m_PanelItems(m_ActivePanel).Text = txtEdit.Text
         txtEdit.Visible = False
-
     End If
 
 Sub_ErrHandlerExit:
@@ -3059,71 +3003,6 @@ Sub_ErrHandler:
 
 End Sub
 
-Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
-
-'   Handle Any Errors
-    On Error GoTo Sub_ErrHandler
-
-    With PropBag
-        m_BackColor = .ReadProperty("BackColor", Ambient.BackColor)
-        m_Forecolor = .ReadProperty("ForeColor", Ambient.ForeColor)
-        Set m_Font = .ReadProperty("Font", Ambient.Font)
-        m_GripShape = .ReadProperty("GripShape", usbSquare)
-        m_PanelCount = .ReadProperty("PanelCount", 0)
-        m_Sizable = .ReadProperty("Sizable", True)
-        Theme = .ReadProperty("Theme", usbAuto)
-
-    End With
-
-    UserControl.BackColor = m_BackColor
-    UserControl.ForeColor = m_Forecolor
-    Set UserControl.Font = m_Font
-    UserControl.Extender.Align = vbAlignBottom
-    m_iTheme = m_Theme
-
-    If Ambient.UserMode Then
-        'If we're not in design mode
-        bTrack = True
-        bTrackUser32 = IsFunctionExported("TrackMouseEvent", "user32.dll")
-
-        If Not bTrackUser32 Then
-            If Not IsFunctionExported("_TrackMouseEvent", "Comctl32") Then
-                bTrack = False
-
-            End If
-
-        End If
-
-        If bTrack Then
-
-            'OS supports mouse leave so subclass for it
-            With UserControl
-                'Start subclassing the UserControl
-                Call Subclass_Start(.hWnd)
-                Call Subclass_AddMsg(.hWnd, WM_MOUSEMOVE, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_MOUSELEAVE, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_NCPAINT, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_THEMECHANGED, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_SIZING, MSG_AFTER)
-                Call Subclass_AddMsg(.hWnd, WM_SYSCOLORCHANGE, MSG_AFTER)
-
-            End With
-
-            bSubClass = True
-
-        End If
-
-    End If
-
-Sub_ErrHandlerExit:
-    Exit Sub
-Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_ReadProperties", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Sub_ErrHandlerExit:
-
-End Sub
-
 Private Sub UserControl_Resize()
 
 '   Handle Any Errors
@@ -3132,7 +3011,6 @@ Private Sub UserControl_Resize()
     With UserControl
         '.Height = 360
         .Height = 700
-
     End With
 
     With m_GripRect
@@ -3140,7 +3018,6 @@ Private Sub UserControl_Resize()
         .Top = ScaleHeight - 15
         .Right = .Left + 15
         .Bottom = .Top + 15
-
     End With
 
     UserControl.Refresh
@@ -3169,12 +3046,70 @@ Sub_ErrHandler:
 
 End Sub
 
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+
+'   Handle Any Errors
+    On Error GoTo Sub_ErrHandler
+
+    With PropBag
+        m_BackColor = .ReadProperty("BackColor", Ambient.BackColor)
+        m_Forecolor = .ReadProperty("ForeColor", Ambient.ForeColor)
+        Set m_Font = .ReadProperty("Font", Ambient.Font)
+        m_GripShape = .ReadProperty("GripShape", usbSquare)
+        m_PanelCount = .ReadProperty("PanelCount", 0)
+        m_Sizable = .ReadProperty("Sizable", True)
+        Theme = .ReadProperty("Theme", usbAuto)
+    End With
+
+    UserControl.BackColor = m_BackColor
+    UserControl.ForeColor = m_Forecolor
+    Set UserControl.Font = m_Font
+    UserControl.Extender.Align = vbAlignBottom
+    m_iTheme = m_Theme
+
+    'If we're not in design mode
+    If Ambient.UserMode Then
+        bTrack = True
+        bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
+
+        If Not bTrackUser32 Then
+            If Not APIFunctionPresent("_TrackMouseEvent", "comctl32") Then
+                bTrack = False
+            End If
+        End If
+
+        If bTrack Then
+
+            'Add the messages that we're interested in
+            With UserControl
+                'Start subclassing the UserControl
+                Call sc_Subclass(.hWnd)
+                Call sc_AddMsg(.hWnd, WM_MOUSEMOVE)
+                Call sc_AddMsg(.hWnd, WM_MOUSELEAVE)
+                Call sc_AddMsg(.hWnd, WM_NCPAINT)
+                Call sc_AddMsg(.hWnd, WM_THEMECHANGED)
+                Call sc_AddMsg(.hWnd, WM_SIZING)
+                Call sc_AddMsg(.hWnd, WM_SYSCOLORCHANGE)
+            End With
+
+        End If
+
+    End If
+
+Sub_ErrHandlerExit:
+    Exit Sub
+Sub_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.UserControl_ReadProperties", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Sub_ErrHandlerExit:
+
+End Sub
+
 Private Sub UserControl_Terminate()
 
 Dim i                                   As Long
 
     'The control is terminating - a good place to stop the subclasser
-    'On Error GoTo Catch
     On Error Resume Next
 
     '   Set the Parents of the Object Back....
@@ -3184,19 +3119,13 @@ Dim i                                   As Long
 
             If Not .BoundObject Is Nothing Then
                 SetParent .BoundObject.hWnd, .BoundParent
-
             End If
 
         End With
 
     Next
 
-    If bSubClass Then
-        Call Subclass_StopAll
-        bSubClass = False
-    End If
-
-Catch:
+sc_Terminate
 
 End Sub
 
@@ -3213,7 +3142,6 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
         Call .WriteProperty("PanelCount", m_PanelCount, 0)
         Call .WriteProperty("Sizable", m_Sizable, True)
         Call .WriteProperty("Theme", m_Theme, usbAuto)
-
     End With
 
 Sub_ErrHandlerExit:
@@ -3223,4 +3151,57 @@ Sub_ErrHandler:
 
     Resume Sub_ErrHandlerExit:
 
+End Sub
+
+'======================================================================================================
+'-Subclass callback, usually ordinal #1, the last method in this source file----------------------
+Private Sub zWndProc1(ByVal bBefore As Boolean, _
+                      ByRef bHandled As Boolean, _
+                      ByRef lReturn As Long, _
+                      ByVal lng_hWnd As Long, _
+                      ByVal uMsg As Long, _
+                      ByVal wParam As Long, _
+                      ByVal lParam As Long, _
+                      ByRef lParamUser As Long)
+'*************************************************************************************************
+'* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
+'*              you will know unless the callback for the uMsg value is specified as
+'*              MSG_BEFORE_AFTER (both before and after the original WndProc).
+'* bHandled   - In a before original WndProc callback, setting bHandled to True will prevent the
+'*              message being passed to the original WndProc and (if set to do so) the after
+'*              original WndProc callback.
+'* lReturn    - WndProc return value. Set as per the MSDN documentation for the message value,
+'*              and/or, in an after the original WndProc callback, act on the return value as set
+'*              by the original WndProc.
+'* lng_hWnd   - Window handle.
+'* uMsg       - Message value.
+'* wParam     - Message related data.
+'* lParam     - Message related data.
+'* lParamUser - User-defined callback parameter
+'*************************************************************************************************
+  Select Case uMsg
+        Case WM_MOUSEMOVE
+
+            If Not bInCtrl Then
+                bInCtrl = True
+                Call TrackMouseLeave(lng_hWnd)
+                RaiseEvent MouseEnter
+            End If
+
+        Case WM_MOUSELEAVE
+            bInCtrl = False
+            RaiseEvent MouseLeave
+
+        Case WM_NCPAINT
+            Refresh
+
+        Case WM_SIZING
+            Refresh
+
+        Case WM_SYSCOLORCHANGE
+            Refresh
+
+        Case WM_THEMECHANGED
+            Refresh
+  End Select
 End Sub

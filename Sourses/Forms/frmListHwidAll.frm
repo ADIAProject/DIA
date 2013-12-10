@@ -29,7 +29,6 @@ Begin VB.Form frmListHwidAll
       Width           =   2505
       _ExtentX        =   4419
       _ExtentY        =   1323
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -39,6 +38,7 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выход"
       PictureAlign    =   0
@@ -56,7 +56,6 @@ Begin VB.Form frmListHwidAll
       Width           =   2505
       _ExtentX        =   4419
       _ExtentY        =   1323
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -66,6 +65,7 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Обновить конфигурацию оборудования"
       PictureAlign    =   0
@@ -83,7 +83,6 @@ Begin VB.Form frmListHwidAll
       Width           =   2500
       _ExtentX        =   4419
       _ExtentY        =   1323
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -93,6 +92,7 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Создать резервную копию драйверов"
       PictureAlign    =   0
@@ -111,7 +111,6 @@ Begin VB.Form frmListHwidAll
       Width           =   2055
       _ExtentX        =   3625
       _ExtentY        =   529
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -121,6 +120,7 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выделить всё"
       PictureAlign    =   0
@@ -139,7 +139,6 @@ Begin VB.Form frmListHwidAll
       Width           =   2055
       _ExtentX        =   3625
       _ExtentY        =   529
-      ButtonStyle     =   8
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -149,6 +148,7 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Снять выделение"
       PictureAlign    =   0
@@ -398,7 +398,6 @@ Begin VB.Form frmListHwidAll
          Width           =   1905
          _ExtentX        =   5318
          _ExtentY        =   688
-         ButtonStyle     =   8
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -408,6 +407,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         ButtonStyle     =   8
          BackColor       =   12244692
          Caption         =   "Выделить"
          PictureAlign    =   0
@@ -529,12 +529,12 @@ Private Sub FontCharsetChange()
     frGroup.Font.Charset = lngDialog_Charset
     frFindDrvInternet.Font.Charset = lngDialog_Charset
 
-    SetButtonProperties , cmdReNewHW, True
-    SetButtonProperties , cmdBackUpDrivers, True
-    SetButtonProperties , cmdOK, True
-    SetButtonProperties , cmdCheckAll, True
-    SetButtonProperties , cmdUnCheckAll, True
-    SetButtonProperties , cmdGoSite, True
+    SetButtonProperties cmdReNewHW
+    SetButtonProperties cmdBackUpDrivers
+    SetButtonProperties cmdOK
+    SetButtonProperties cmdCheckAll
+    SetButtonProperties cmdUnCheckAll
+    SetButtonProperties cmdGoSite
 End Sub
 
 Private Sub cmdBackUpDrivers_Click()

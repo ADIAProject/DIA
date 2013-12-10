@@ -113,25 +113,9 @@ Attribute VB_Exposed = False
 '============================================================================================
 Option Explicit
 
-'Mover o form
-Private Declare Sub ReleaseCapture Lib "user32.dll" ()
-
 'Mudar a borda para mudar tamanho
 Private WithEvents frm                  As Form
 Attribute frm.VB_VarHelpID = -1
-
-Private Const GWL_STYLE                 As Long = -16
-Private Const WS_CAPTION                As Long = &HC00000
-
-'FORM TRANSPARENTE
-Private Declare Function SetLayeredWindowAttributes _
-                          Lib "user32.dll" (ByVal hWnd As Long, _
-                                            ByVal crKey As Long, _
-                                            ByVal bAlpha As Byte, _
-                                            ByVal dwFlags As Long) As Long
-
-Private Const WS_EX_LAYERED = &H80000
-Private Const LWA_ALPHA = &H2
 
 '*************************************************************
 '   Required Type Definitions
@@ -215,7 +199,6 @@ End Enum
 Public Enum IconAlignConst
     vbLeftAligment = 0
     vbRightAligment = 1
-
 End Enum
 
 #If False Then
@@ -227,13 +210,12 @@ Enum m_PanelArea
     xPanel = 1
 End Enum
 
+Private useMask                         As Boolean
+Private useGrey                         As Boolean
 
 '*************************************************************
 '   Required API Declarations
 '*************************************************************
-Private useMask                         As Boolean
-Private useGrey                         As Boolean
-
 Private Type RECT
     Left                                As Long
     Top                                 As Long
@@ -246,22 +228,75 @@ Private Type POINT
     Y                                   As Long
 End Type
 
+Private Type RGB
+    Red                                 As Byte
+    Green                               As Byte
+    Blue                                As Byte
+End Type
+
+'  for gradient painting and bitmap tiling
+Private Type BITMAPINFOHEADER
+    biSize                              As Long
+    biWidth                             As Long
+    biHeight                            As Long
+    biPlanes                            As Integer
+    biBitCount                          As Integer
+    biCompression                       As Long
+    biSizeImage                         As Long
+    biXPelsPerMeter                     As Long
+    biYPelsPerMeter                     As Long
+    biClrUsed                           As Long
+    biClrImportant                      As Long
+End Type
+
+Private Type BITMAPINFO
+    bmiHeader                           As BITMAPINFOHEADER
+    bmiColors                           As RGB
+End Type
+
+Private Declare Sub ReleaseCapture Lib "user32.dll" ()
 Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function CopyRect Lib "user32.dll" (lpDestRect As RECT, lpSourceRect As RECT) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long
-Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function SetWindowRgn Lib "user32.dll" (ByVal hWnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
 Private Declare Function SetRect Lib "user32.dll" (lpRect As RECT, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Private Declare Function RoundRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal Left As Long, ByVal Top As Long, ByVal Right As Long, ByVal Bottom As Long, ByVal EllipseWidth As Long, ByVal EllipseHeight As Long) As Long
 Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINT) As Long
 Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
-Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
-Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32.dll" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function CreatePolygonRgn Lib "gdi32.dll" (lpPoint As Any, ByVal nCount As Long, ByVal nPolyFillMode As Long) As Long
+Private Declare Function CombineRgn Lib "gdi32.dll" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
+Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
+Private Declare Function FillRgn Lib "gdi32.dll" (ByVal hDC As Long, ByVal hRgn As Long, ByVal hBrush As Long) As Long
+Private Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function CreateCompatibleDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
+Private Declare Function CreateCompatibleBitmap Lib "gdi32.dll" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
+Private Declare Function DrawIconEx Lib "user32.dll" (ByVal hDC As Long, ByVal XLeft As Long, ByVal YTop As Long, ByVal hIcon As Long, ByVal CXWidth As Long, ByVal CYWidth As Long, ByVal istepIfAniCur As Long, ByVal hbrFlickerFreeDraw As Long, ByVal diFlags As Long) As Long
+Private Declare Function BitBlt Lib "gdi32.dll" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal dwRop As Long) As Long
+Private Declare Function GetDIBits Lib "gdi32.dll" (ByVal aHDC As Long, ByVal hBitmap As Long, ByVal nStartScan As Long, ByVal nNumScans As Long, lpBits As Any, lpBI As BITMAPINFO, ByVal wUsage As Long) As Long
+Private Declare Function SetDIBitsToDevice Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal srcX As Long, ByVal srcY As Long, ByVal Scan As Long, ByVal NumScans As Long, Bits As Any, BitsInfo As BITMAPINFO, ByVal wUsage As Long) As Long
+Private Declare Function GetNearestColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
+                                          
+'FORM TRANSPARENTE
+Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+Private Const WS_EX_LAYERED = &H80000
+Private Const LWA_ALPHA = &H2
 
+Private Const TransColor                 As Long = &H8000000F
+Private Const GWL_STYLE                  As Long = -16
+Private Const GWL_EXSTYLE                As Long = (-20)
+Private Const WS_CAPTION                 As Long = &HC00000
+
+'*************************************************************
+'   DRAW TEXT
+'*************************************************************
 ' --Formatting Text Consts
 Private Const DT_LEFT                    As Long = &H0
 Private Const DT_CENTER                  As Long = &H1
@@ -275,11 +310,63 @@ Private Const DT_TOP                     As Long = &H0
 Private Const DT_BOTTOM                  As Long = &H8
 Private Const DT_VCENTER                 As Long = &H4
 Private Const DT_SINGLELINE              As Long = &H20
-Private Const DT_WORD_ELLIPSIS = &H40000
-Private Const TransColor                 As Long = &H8000000F
+Private Const DT_WORD_ELLIPSIS           As Long = &H40000
 
-                                             
-                                             
+Private Type DRAWTEXTPARAMS
+   cbSize As Long
+   iTabLength As Long
+   iLeftMargin As Long
+   iRightMargin As Long
+   uiLengthDrawn As Long
+End Type
+                                                   
+Private Declare Function DrawTextExW Lib "user32.dll" (ByVal hDC As Long, ByVal lpsz As Long, ByVal n As Long, ByRef lpRect As RECT, ByVal dwDTFormat As Long, ByRef lpDrawTextParams As DRAWTEXTPARAMS) As Long
+                                                   
+'*************************************************************
+'   FONT PROPERTIES
+'*************************************************************
+Private Const LF_FACESIZE As Long = 32
+Private Const FW_NORMAL As Long = 400
+Private Const FW_BOLD As Long = 700
+Private Const DEFAULT_QUALITY As Long = 0
+Private Type LOGFONT
+    LFHeight As Long
+    LFWidth As Long
+    LFEscapement As Long
+    LFOrientation As Long
+    LFWeight As Long
+    LFItalic As Byte
+    LFUnderline As Byte
+    LFStrikeOut As Byte
+    LFCharset As Byte
+    LFOutPrecision As Byte
+    LFClipPrecision As Byte
+    LFQuality As Byte
+    LFPitchAndFamily As Byte
+    LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
+End Type
+
+Private Const WM_SETFONT As Long = &H30
+Private Const WS_EX_RTLREADING As Long = &H2000
+
+Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
+Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+
+Private FrameFontHandle As Long
+Private FrameLogFont As LOGFONT
+Private WithEvents PropFont As StdFont
+Attribute PropFont.VB_VarHelpID = -1
+
+'*************************************************************
+'   UPDATE WINDOW
+'*************************************************************
+Private Const RDW_UPDATENOW As Long = &H100
+Private Const RDW_INVALIDATE As Long = &H1
+Private Const RDW_ERASE As Long = &H4
+Private Const RDW_ALLCHILDREN As Long = &H80
+Private Declare Function RedrawWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
+
 '*************************************************************
 '   Members
 '*************************************************************
@@ -362,64 +449,6 @@ Private m_Collapsado                        As Boolean
 Private m_bIsWinXpOrLater               As Boolean
 
 '*************************************************************
-'   DRAW TEXT
-'*************************************************************
-Private Type DRAWTEXTPARAMS
-   cbSize As Long
-   iTabLength As Long
-   iLeftMargin As Long
-   iRightMargin As Long
-   uiLengthDrawn As Long
-End Type
-                                                   
-Private Declare Function DrawTextExW Lib "user32.dll" (ByVal hDC As Long, ByVal lpsz As Long, ByVal n As Long, ByRef lpRect As RECT, ByVal dwDTFormat As Long, ByRef lpDrawTextParams As DRAWTEXTPARAMS) As Long
-                                                   
-'*************************************************************
-'   FONT PROPERTIES
-'*************************************************************
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
-Private Const DEFAULT_QUALITY As Long = 0
-Private Type LOGFONT
-    LFHeight As Long
-    LFWidth As Long
-    LFEscapement As Long
-    LFOrientation As Long
-    LFWeight As Long
-    LFItalic As Byte
-    LFUnderline As Byte
-    LFStrikeOut As Byte
-    LFCharset As Byte
-    LFOutPrecision As Byte
-    LFClipPrecision As Byte
-    LFQuality As Byte
-    LFPitchAndFamily As Byte
-    LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
-End Type
-
-Private Const WM_SETFONT As Long = &H30
-Private Const WS_EX_RTLREADING As Long = &H2000
-
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
-
-Private FrameFontHandle As Long
-Private FrameLogFont As LOGFONT
-Private WithEvents PropFont As StdFont
-Attribute PropFont.VB_VarHelpID = -1
-
-'*************************************************************
-'   UPDATE WINDOW
-'*************************************************************
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
-Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
-
-'*************************************************************
 '   events
 '*************************************************************
 Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -439,7 +468,6 @@ Event CollapseClick(Button As Integer)
 
 Public Property Get Alignment() As AlignmentConstants
     Alignment = m_Alignment
-
 End Property
 
 Public Property Let Alignment(ByRef new_Alignment As AlignmentConstants)
@@ -447,7 +475,6 @@ Public Property Let Alignment(ByRef new_Alignment As AlignmentConstants)
     SetjcTextDrawParams
     PropertyChanged "Alignment"
     PaintFrame
-
 End Property
 
 '==========================================================================
@@ -472,7 +499,6 @@ Dim hPenOld                             As Long
     LineTo lhdcEx, X2, Y2
     SelectObject lhdcEx, hPenOld
     DeleteObject hPen
-
 End Sub
 
 Private Function APIRectangle(ByVal lngHDc As Long, _
@@ -644,7 +670,6 @@ Dim hRgn                                As Long
 
     If hRgn Then
         FillRgn UserControl.hDC, hRgn, hBrush
-
     End If
 
     'draw frame borders
@@ -1625,14 +1650,8 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
 
     End Select
 
-    '    If m_Collapsar Then
-    '        Label.Visible = True
-    '    Else
-    '        Label.Visible = False
-    '    End If
     Label.Move UserControl.ScaleWidth - 30, CInt(ScaleY((ScaleY(m_TextBoxHeight, vbPixels, vbTwips) - Label.Height) / 2, vbTwips, vbPixels)) - iY
     Set UserControl.Picture = UserControl.Image
-    'Set Me.Font = PropFont
 End Sub
 
 Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Long)
@@ -2220,10 +2239,10 @@ Dim TmpObj                              As Long
 Dim Sr2DC                               As Long
 Dim Sr2Bmp                              As Long
 Dim Sr2Obj                              As Long
-Dim Data1()                             As RGBTRIPLE
-Dim Data2()                             As RGBTRIPLE
+Dim Data1()                             As RGB
+Dim Data2()                             As RGB
 Dim Info                                As BITMAPINFO
-Dim BrushRGB                            As RGBTRIPLE
+Dim BrushRGB                            As RGB
 Dim gCol                                As Long
 Dim SrcDC                               As Long
 Dim tObj                                As Long
@@ -2260,8 +2279,8 @@ Dim hBrush                              As Long
         Sr2Bmp = CreateCompatibleBitmap(DstDC, DstW, DstH)
         TmpObj = SelectObject(TmpDC, TmpBmp)
         Sr2Obj = SelectObject(Sr2DC, Sr2Bmp)
-        ReDim Data1(DstW * DstH * 3 - 1) As RGBTRIPLE
-        ReDim Data2(UBound(Data1)) As RGBTRIPLE
+        ReDim Data1(DstW * DstH * 3 - 1) As RGB
+        ReDim Data2(UBound(Data1)) As RGB
 
         With Info.bmiHeader
             .biSize = Len(Info.bmiHeader)
@@ -2281,10 +2300,9 @@ Dim hBrush                              As Long
         If BrushColor > 0 Then
 
             With BrushRGB
-                .rgbBlue = (BrushColor \ &H10000) Mod &H100
-                .rgbGreen = (BrushColor \ &H100) Mod &H100
-                .rgbRed = BrushColor And &HFF
-
+                .Blue = (BrushColor \ &H10000) Mod &H100
+                .Green = (BrushColor \ &H100) Mod &H100
+                .Red = BrushColor And &HFF
             End With
 
         End If
@@ -2304,13 +2322,13 @@ Dim hBrush                              As Long
             For B = 0 To newW
                 i = F + B
 
-                If GetNearestColor(hDC, CLng(Data2(i).rgbRed) + 256& * Data2(i).rgbGreen + 65536 * Data2(i).rgbBlue) <> TransColor Then
+                If GetNearestColor(hDC, CLng(Data2(i).Red) + 256& * Data2(i).Green + 65536 * Data2(i).Blue) <> TransColor Then
 
                     With Data1(i)
 
                         If BrushColor > -1 Then
                             If MonoMask Then
-                                If (CLng(Data2(i).rgbRed) + Data2(i).rgbGreen + Data2(i).rgbBlue) <= 384 Then
+                                If (CLng(Data2(i).Red) + Data2(i).Green + Data2(i).Blue) <= 384 Then
                                     Data1(i) = BrushRGB
 
                                 End If
@@ -2323,16 +2341,16 @@ Dim hBrush                              As Long
                         Else
 
                             If isGreyscale Then
-                                gCol = CLng(Data2(i).rgbRed * 0.3) + Data2(i).rgbGreen * 0.59 + Data2(i).rgbBlue * 0.11
-                                .rgbRed = gCol
-                                .rgbGreen = gCol
-                                .rgbBlue = gCol
+                                gCol = CLng(Data2(i).Red * 0.3) + Data2(i).Green * 0.59 + Data2(i).Blue * 0.11
+                                .Red = gCol
+                                .Green = gCol
+                                .Blue = gCol
                             Else
 
                                 If XPBlend Then
-                                    .rgbRed = (CLng(.rgbRed) + Data2(i).rgbRed * 2) \ 3
-                                    .rgbGreen = (CLng(.rgbGreen) + Data2(i).rgbGreen * 2) \ 3
-                                    .rgbBlue = (CLng(.rgbBlue) + Data2(i).rgbBlue * 2) \ 3
+                                    .Red = (CLng(.Red) + Data2(i).Red * 2) \ 3
+                                    .Green = (CLng(.Green) + Data2(i).Green * 2) \ 3
+                                    .Blue = (CLng(.Blue) + Data2(i).Blue * 2) \ 3
                                 Else
                                     Data1(i) = Data2(i)
 
@@ -2344,7 +2362,6 @@ Dim hBrush                              As Long
 
                     End With
 
-                    'DATA1(I)
                 End If
 
             Next
@@ -2418,8 +2435,6 @@ End Property
 Private Sub UserControl_Initialize()
     m_bIsWinXpOrLater = IsWinXPOrLater
     
-    'Set m_Font = New StdFont
-    'Set UserControl.Font = m_Font
     m_IconSize = 16
     m_ColorFrom = 10395391
     m_ColorTo = 15790335
@@ -2570,15 +2585,10 @@ End Sub
 
 Private Sub UserControl_Terminate()
 
-'On Error GoTo Crash:
     On Error Resume Next
 
     'Clean up Font (StdFont)
     Set PropFont = Nothing
-    Exit Sub
-Crash:
-
-    'MsgBox "Crash JCFrames:" & Err.Number & "-" & Err.Description
 End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
@@ -2710,6 +2720,6 @@ End Sub
 Public Sub Refresh()
 Attribute Refresh.VB_Description = "Forces a complete repaint of a object."
 Attribute Refresh.VB_UserMemId = -550
-UserControl.Refresh
-If UserControl.hDC <> 0 Then RedrawWindow UserControl.hDC, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
+    UserControl.Refresh
+    If UserControl.hDC <> 0 Then RedrawWindow UserControl.hDC, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub

@@ -439,9 +439,9 @@ Attribute hWnd.VB_UserMemId = -515
 hWnd = OptionButtonHandle
 End Property
 
-Public Property Get hWndOwner() As Long
-Attribute hWndOwner.VB_Description = "Returns a handle to a control."
-hWndOwner = UserControl.hWnd
+Public Property Get hWndUserControl() As Long
+Attribute hWndUserControl.VB_Description = "Returns a handle to a control."
+hWndUserControl = UserControl.hWnd
 End Property
 
 Public Property Get Font() As StdFont
@@ -883,7 +883,7 @@ Select Case dwRefData
     Case 1
         ISubclass_Message = WindowProcControl(hWnd, wMsg, wParam, lParam)
     Case 2
-        ISubclass_Message = WindowProcOwner(hWnd, wMsg, wParam, lParam)
+        ISubclass_Message = WindowProcUserControl(hWnd, wMsg, wParam, lParam)
 End Select
 End Function
 
@@ -981,7 +981,7 @@ End Select
 WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
-Private Function WindowProcOwner(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
     Case WM_COMMAND
         If lParam = OptionButtonHandle Then
@@ -998,7 +998,7 @@ Select Case wMsg
             End Select
         End If
     Case WM_CTLCOLORSTATIC, WM_CTLCOLORBTN
-        WindowProcOwner = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+        WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
         If PropTransparent = True Then
             SetBkMode wParam, 1
             Dim hDCScreen As Long, hDCBmp As Long
@@ -1028,10 +1028,10 @@ Select Case wMsg
                 End If
             End If
             End With
-            If OptionButtonTransparentBrush <> 0 Then WindowProcOwner = OptionButtonTransparentBrush
+            If OptionButtonTransparentBrush <> 0 Then WindowProcUserControl = OptionButtonTransparentBrush
         End If
         Exit Function
 End Select
-WindowProcOwner = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 If wMsg = WM_SETFOCUS Then SetFocusAPI OptionButtonHandle
 End Function
