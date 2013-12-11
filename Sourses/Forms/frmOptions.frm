@@ -125,7 +125,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   23
-         Top             =   2880
+         Top             =   3600
          Width           =   7920
          _ExtentX        =   8281
          _ExtentY        =   370
@@ -145,7 +145,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   24
-         Top             =   795
+         Top             =   800
          Width           =   3240
          _ExtentX        =   5715
          _ExtentY        =   370
@@ -165,7 +165,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   32
-         Top             =   1545
+         Top             =   1850
          Width           =   7920
          _ExtentX        =   11430
          _ExtentY        =   370
@@ -185,7 +185,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   33
-         Top             =   1305
+         Top             =   1500
          Width           =   7920
          _ExtentX        =   13758
          _ExtentY        =   370
@@ -205,7 +205,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   54
-         Top             =   2055
+         Top             =   2550
          Width           =   7920
          _ExtentX        =   6350
          _ExtentY        =   370
@@ -225,7 +225,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   55
-         Top             =   2595
+         Top             =   3250
          Width           =   3255
          _ExtentX        =   5741
          _ExtentY        =   370
@@ -245,7 +245,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   3780
          TabIndex        =   58
-         Top             =   825
+         Top             =   800
          Width           =   4560
          _ExtentX        =   8043
          _ExtentY        =   370
@@ -265,7 +265,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   19
-         Top             =   1065
+         Top             =   1150
          Width           =   7920
          _ExtentX        =   13970
          _ExtentY        =   370
@@ -285,7 +285,7 @@ Begin VB.Form frmOptions
          Height          =   210
          Left            =   435
          TabIndex        =   20
-         Top             =   1800
+         Top             =   2200
          Width           =   5280
          _ExtentX        =   9313
          _ExtentY        =   370
@@ -305,7 +305,7 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   7710
          TabIndex        =   21
-         Top             =   1800
+         Top             =   2200
          Width           =   660
          _ExtentX        =   1164
          _ExtentY        =   450
@@ -324,7 +324,7 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   3780
          TabIndex        =   1
-         Top             =   2565
+         Top             =   3200
          Width           =   4575
          _ExtentX        =   8070
          _ExtentY        =   556
@@ -337,7 +337,7 @@ Begin VB.Form frmOptions
          Height          =   510
          Left            =   420
          TabIndex        =   59
-         Top             =   3480
+         Top             =   4300
          Width           =   2505
          _ExtentX        =   4419
          _ExtentY        =   900
@@ -365,7 +365,7 @@ Begin VB.Form frmOptions
          Height          =   510
          Left            =   5700
          TabIndex        =   60
-         Top             =   3480
+         Top             =   4300
          Width           =   2505
          _ExtentX        =   4419
          _ExtentY        =   900
@@ -393,7 +393,7 @@ Begin VB.Form frmOptions
          Height          =   510
          Left            =   3060
          TabIndex        =   61
-         Top             =   3480
+         Top             =   4300
          Width           =   2505
          _ExtentX        =   4419
          _ExtentY        =   900
@@ -421,7 +421,7 @@ Begin VB.Form frmOptions
          Height          =   225
          Left            =   5400
          TabIndex        =   91
-         Top             =   1800
+         Top             =   2200
          Width           =   2265
          _ExtentX        =   3995
          _ExtentY        =   397
@@ -442,7 +442,7 @@ Begin VB.Form frmOptions
          Height          =   270
          Left            =   180
          TabIndex        =   92
-         Top             =   2325
+         Top             =   2900
          Width           =   8295
          _ExtentX        =   14631
          _ExtentY        =   450
@@ -484,7 +484,7 @@ Begin VB.Form frmOptions
          Height          =   270
          Left            =   180
          TabIndex        =   94
-         Top             =   3165
+         Top             =   3950
          Width           =   8295
          _ExtentX        =   14631
          _ExtentY        =   450
@@ -530,14 +530,14 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   300
          TabIndex        =   88
-         Top             =   1425
+         Top             =   1550
          Width           =   255
       End
       Begin prjDIADBS.OptionButtonW optCompareByVersion 
          Height          =   255
          Left            =   300
          TabIndex        =   63
-         Top             =   1995
+         Top             =   2250
          Width           =   8100
          _ExtentX        =   14288
          _ExtentY        =   450
@@ -558,7 +558,7 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   300
          TabIndex        =   62
-         Top             =   1710
+         Top             =   1900
          Width           =   8100
          _ExtentX        =   14288
          _ExtentY        =   450
@@ -574,26 +574,37 @@ Begin VB.Form frmOptions
          Caption         =   "frmOptions.frx":0A6A
          Transparent     =   -1  'True
       End
-      Begin VB.TextBox txtCompareVersionDRV 
-         Appearance      =   0  'Flat
-         BackColor       =   &H8000000F&
-         BorderStyle     =   0  'None
-         ForeColor       =   &H000000FF&
+      Begin prjDIADBS.TextBoxW txtCompareVersionDRV 
          Height          =   1005
          Left            =   300
+         TabIndex        =   22
+         Top             =   2600
+         Width           =   8100
+         _ExtentX        =   0
+         _ExtentY        =   0
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   -2147483633
+         ForeColor       =   255
+         BorderStyle     =   0
+         Text            =   "frmOptions.frx":0B18
          Locked          =   -1  'True
          MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   22
-         Text            =   "frmOptions.frx":0B18
-         Top             =   2310
-         Width           =   8100
+         ScrollBars      =   2
+         CueBanner       =   "frmOptions.frx":0D0C
       End
       Begin prjDIADBS.CheckBoxW chkDateFormatRus 
          Height          =   210
          Left            =   300
          TabIndex        =   2
-         Top             =   825
+         Top             =   850
          Width           =   8100
          _ExtentX        =   14288
          _ExtentY        =   370
@@ -606,14 +617,14 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0C01
+         Caption         =   "frmOptions.frx":0D2C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkCreateRP 
          Height          =   210
          Left            =   300
          TabIndex        =   25
-         Top             =   525
+         Top             =   500
          Width           =   8100
          _ExtentX        =   14288
          _ExtentY        =   370
@@ -626,14 +637,14 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0C7B
+         Caption         =   "frmOptions.frx":0DA6
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkCompatiblesHWID 
          Height          =   210
          Left            =   300
          TabIndex        =   26
-         Top             =   1110
+         Top             =   1200
          Width           =   8100
          _ExtentX        =   14288
          _ExtentY        =   370
@@ -646,14 +657,14 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0D03
+         Caption         =   "frmOptions.frx":0E2E
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblCompareVersionDRV 
          Height          =   225
          Left            =   600
          TabIndex        =   95
-         Top             =   1425
+         Top             =   1550
          Width           =   7800
          _ExtentX        =   13758
          _ExtentY        =   397
@@ -698,9 +709,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   27
-         Top             =   465
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   450
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          UseAutoForeColor=   0   'False
          DefaultExt      =   ""
@@ -713,9 +724,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   29
-         Top             =   840
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   850
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -727,9 +738,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   3
-         Top             =   1215
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   1250
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -741,9 +752,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   4
-         Top             =   1605
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   1650
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -755,9 +766,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   5
-         Top             =   1980
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   2050
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -769,9 +780,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   6
-         Top             =   2355
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   2450
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -783,9 +794,9 @@ Begin VB.Form frmOptions
          Height          =   315
          Left            =   2520
          TabIndex        =   8
-         Top             =   2745
-         Width           =   5895
-         _ExtentX        =   10398
+         Top             =   2850
+         Width           =   6000
+         _ExtentX        =   10583
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -795,9 +806,9 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlJCbutton cmdPathDefault 
          Height          =   495
-         Left            =   4800
+         Left            =   4900
          TabIndex        =   64
-         Top             =   3240
+         Top             =   3300
          Width           =   3615
          _ExtentX        =   6376
          _ExtentY        =   873
@@ -821,12 +832,12 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.LabelW lblDevCon64 
          Height          =   315
-         Left            =   120
+         Left            =   100
          TabIndex        =   96
-         Top             =   855
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   875
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -836,17 +847,19 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "DevCon.exe (64-bit)"
+         WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDevCon86w2k 
          Height          =   315
-         Left            =   120
+         Left            =   100
          TabIndex        =   97
-         Top             =   1230
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   1275
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -856,17 +869,19 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "DevCon.exe (for Windows 2k)"
+         WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblCmdDevconPath 
          Height          =   315
-         Left            =   135
+         Left            =   100
          TabIndex        =   98
-         Top             =   2760
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   2875
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -876,17 +891,19 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "devcon_c.cmd"
+         WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblArc 
          Height          =   315
-         Left            =   135
+         Left            =   100
          TabIndex        =   99
-         Top             =   2370
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   2475
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -896,17 +913,19 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "7za"
+         WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDPInst64 
          Height          =   315
-         Left            =   135
+         Left            =   100
          TabIndex        =   100
-         Top             =   1995
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   2075
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -916,17 +935,19 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "DPInst.exe (64-bit)"
+         WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDPInst86 
          Height          =   315
-         Left            =   135
+         Left            =   100
          TabIndex        =   101
-         Top             =   1620
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   1675
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -936,17 +957,19 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "DPInst.exe (32-bit)"
+         WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDevCon86 
          Height          =   315
-         Left            =   135
+         Left            =   100
          TabIndex        =   102
-         Top             =   480
-         Width           =   2280
-         _ExtentX        =   0
-         _ExtentY        =   0
+         Top             =   475
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -956,8 +979,10 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         Alignment       =   1
          BackStyle       =   0
          Caption         =   "DevCon.exe (32-bit)"
+         WordWrap        =   0   'False
       End
    End
    Begin prjDIADBS.ctlJCFrames frOtherTools 
@@ -1000,9 +1025,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Icons           =   "frmOptions.frx":0D7D
-         SmallIcons      =   "frmOptions.frx":0DA9
-         ColumnHeaderIcons=   "frmOptions.frx":0DD5
+         Icons           =   "frmOptions.frx":0EA8
+         SmallIcons      =   "frmOptions.frx":0ED4
+         ColumnHeaderIcons=   "frmOptions.frx":0F00
          View            =   3
          Arrange         =   1
          AllowColumnReorder=   -1  'True
@@ -1135,9 +1160,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Icons           =   "frmOptions.frx":0E01
-         SmallIcons      =   "frmOptions.frx":0E2D
-         ColumnHeaderIcons=   "frmOptions.frx":0E59
+         Icons           =   "frmOptions.frx":0F2C
+         SmallIcons      =   "frmOptions.frx":0F58
+         ColumnHeaderIcons=   "frmOptions.frx":0F84
          View            =   3
          Arrange         =   1
          AllowColumnReorder=   -1  'True
@@ -1168,10 +1193,10 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":0E85
+         Text            =   "frmOptions.frx":0FB0
          MultiLine       =   -1  'True
          ScrollBars      =   2
-         CueBanner       =   "frmOptions.frx":0EA5
+         CueBanner       =   "frmOptions.frx":0FD0
       End
       Begin prjDIADBS.CheckBoxW chkLoadFinishFile 
          Height          =   345
@@ -1190,7 +1215,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0EC5
+         Caption         =   "frmOptions.frx":0FF0
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkRecursion 
@@ -1210,7 +1235,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0F91
+         Caption         =   "frmOptions.frx":10BC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdAddOS 
@@ -1369,27 +1394,27 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1029
+         Caption         =   "frmOptions.frx":1154
          Transparent     =   -1  'True
       End
       Begin VB.ComboBox cmbImageMain 
          Height          =   315
-         ItemData        =   "frmOptions.frx":1049
+         ItemData        =   "frmOptions.frx":1174
          Left            =   615
-         List            =   "frmOptions.frx":1056
+         List            =   "frmOptions.frx":1181
          Sorted          =   -1  'True
          TabIndex        =   52
-         Top             =   4545
+         Top             =   4605
          Width           =   3000
       End
       Begin VB.ComboBox cmbImageStatus 
          Height          =   315
-         ItemData        =   "frmOptions.frx":108E
+         ItemData        =   "frmOptions.frx":11B9
          Left            =   3960
-         List            =   "frmOptions.frx":109B
+         List            =   "frmOptions.frx":11C6
          Sorted          =   -1  'True
          TabIndex        =   34
-         Top             =   4545
+         Top             =   4605
          Width           =   3000
       End
       Begin prjDIADBS.CheckBoxW chkButtonTextUpCase 
@@ -1409,7 +1434,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":10D3
+         Caption         =   "frmOptions.frx":11FE
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkFormMaximaze 
@@ -1430,7 +1455,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1147
+         Caption         =   "frmOptions.frx":1272
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtButtonHeight 
@@ -1611,7 +1636,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":11AD
+         Caption         =   "frmOptions.frx":12D8
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorButton 
@@ -1657,7 +1682,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1211
+         Caption         =   "frmOptions.frx":133C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlXpButton cmdFutureButton 
@@ -1712,7 +1737,7 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   3960
          TabIndex        =   105
-         Top             =   4245
+         Top             =   4305
          Width           =   3000
          _ExtentX        =   0
          _ExtentY        =   0
@@ -1732,7 +1757,7 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   615
          TabIndex        =   106
-         Top             =   4245
+         Top             =   4305
          Width           =   3000
          _ExtentX        =   0
          _ExtentY        =   0
@@ -1987,8 +2012,8 @@ Begin VB.Form frmOptions
          Left            =   3330
          TabIndex        =   28
          Top             =   795
-         Width           =   855
-         _ExtentX        =   1508
+         Width           =   675
+         _ExtentX        =   1191
          _ExtentY        =   450
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -2002,6 +2027,7 @@ Begin VB.Form frmOptions
          Min             =   2
          Max             =   20
          Value           =   2
+         TextAlignment   =   1
       End
       Begin prjDIADBS.CheckBoxW chkTabBlock 
          Height          =   210
@@ -2020,15 +2046,15 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1287
+         Caption         =   "frmOptions.frx":13B2
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkTabHide 
          Height          =   210
          Left            =   390
          TabIndex        =   36
-         Top             =   1380
-         Width           =   8000
+         Top             =   1440
+         Width           =   7995
          _ExtentX        =   14102
          _ExtentY        =   370
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -2040,15 +2066,15 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1349
+         Caption         =   "frmOptions.frx":1474
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkLoadUnSupportedOS 
          Height          =   210
          Left            =   390
          TabIndex        =   53
-         Top             =   1635
-         Width           =   8000
+         Top             =   1755
+         Width           =   7995
          _ExtentX        =   14102
          _ExtentY        =   370
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -2060,14 +2086,14 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":13F7
+         Caption         =   "frmOptions.frx":1522
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabOS 
-         Height          =   800
+         Height          =   795
          Left            =   390
          TabIndex        =   71
-         Top             =   1950
+         Top             =   2070
          Width           =   2850
          _ExtentX        =   5027
          _ExtentY        =   1402
@@ -2090,10 +2116,10 @@ Begin VB.Form frmOptions
          TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabDrivers 
-         Height          =   800
+         Height          =   795
          Left            =   390
          TabIndex        =   72
-         Top             =   3240
+         Top             =   3360
          Width           =   2850
          _ExtentX        =   5027
          _ExtentY        =   1402
@@ -2161,8 +2187,8 @@ Begin VB.Form frmOptions
          Height          =   225
          Left            =   120
          TabIndex        =   119
-         Top             =   2880
-         Width           =   8200
+         Top             =   3000
+         Width           =   8205
          _ExtentX        =   14473
          _ExtentY        =   397
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -2282,9 +2308,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1473
+         Text            =   "frmOptions.frx":159E
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1493
+         CueBanner       =   "frmOptions.frx":15BE
       End
       Begin prjDIADBS.CheckBoxW chkLegacyMode 
          Height          =   210
@@ -2303,7 +2329,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":14B3
+         Caption         =   "frmOptions.frx":15DE
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkPromptIfDriverIsNotBetter 
@@ -2323,7 +2349,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":14E7
+         Caption         =   "frmOptions.frx":1612
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkForceIfDriverIsNotBetter 
@@ -2343,7 +2369,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1539
+         Caption         =   "frmOptions.frx":1664
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSuppressAddRemovePrograms 
@@ -2364,7 +2390,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1589
+         Caption         =   "frmOptions.frx":16B4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSuppressWizard 
@@ -2384,7 +2410,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":15DB
+         Caption         =   "frmOptions.frx":1706
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkQuietInstall 
@@ -2404,7 +2430,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1617
+         Caption         =   "frmOptions.frx":1742
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkScanHardware 
@@ -2424,7 +2450,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":164F
+         Caption         =   "frmOptions.frx":177A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblCmdStringDPInst 
@@ -2627,36 +2653,13 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          BackStyle       =   0
-         Caption         =   $"frmOptions.frx":1687
+         Caption         =   $"frmOptions.frx":17B2
       End
-   End
-   Begin prjDIADBS.ctlJCFrames frOther 
-      Height          =   5295
-      Left            =   4650
-      Top             =   2475
-      Width           =   8655
-      _ExtentX        =   15266
-      _ExtentY        =   9340
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   14016736
-      FillColor       =   14016736
-      RoundedCorner   =   0   'False
-      TextBoxHeight   =   18
-      ThemeColor      =   2
-      HeaderStyle     =   1
    End
    Begin prjDIADBS.ctlJCFrames frDebug 
       Height          =   5295
-      Left            =   4920
-      Top             =   2760
+      Left            =   4620
+      Top             =   2460
       Width           =   8655
       _ExtentX        =   15266
       _ExtentY        =   9340
@@ -2693,8 +2696,8 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1785
-         CueBanner       =   "frmOptions.frx":17C9
+         Text            =   "frmOptions.frx":18B0
+         CueBanner       =   "frmOptions.frx":18F4
       End
       Begin prjDIADBS.TextBoxW txtMacrosDate 
          Height          =   255
@@ -2713,9 +2716,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":17E9
+         Text            =   "frmOptions.frx":1914
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1815
+         CueBanner       =   "frmOptions.frx":1940
       End
       Begin prjDIADBS.TextBoxW txtMacrosOSBIT 
          Height          =   255
@@ -2734,9 +2737,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1835
+         Text            =   "frmOptions.frx":1960
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1863
+         CueBanner       =   "frmOptions.frx":198E
       End
       Begin prjDIADBS.TextBoxW txtMacrosOSVER 
          Height          =   255
@@ -2755,9 +2758,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1883
+         Text            =   "frmOptions.frx":19AE
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":18B1
+         CueBanner       =   "frmOptions.frx":19DC
       End
       Begin prjDIADBS.TextBoxW txtMacrosPCModel 
          Height          =   255
@@ -2776,9 +2779,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":18D1
+         Text            =   "frmOptions.frx":19FC
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1903
+         CueBanner       =   "frmOptions.frx":1A2E
       End
       Begin prjDIADBS.TextBoxW txtMacrosPCName 
          Height          =   255
@@ -2797,9 +2800,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1923
+         Text            =   "frmOptions.frx":1A4E
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1953
+         CueBanner       =   "frmOptions.frx":1A7E
       End
       Begin prjDIADBS.CheckBoxW chkDebug 
          Height          =   210
@@ -2818,7 +2821,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1973
+         Caption         =   "frmOptions.frx":1A9E
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDebugLogPath 
@@ -2851,7 +2854,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":19C3
+         Caption         =   "frmOptions.frx":1AEE
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkDebugTime2File 
@@ -2871,7 +2874,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1A43
+         Caption         =   "frmOptions.frx":1B6E
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblMacrosDate 
@@ -3098,6 +3101,29 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Каталог для создания log-файлов:"
       End
+   End
+   Begin prjDIADBS.ctlJCFrames frOther 
+      Height          =   5295
+      Left            =   4830
+      Top             =   2775
+      Width           =   8655
+      _ExtentX        =   15266
+      _ExtentY        =   9340
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackColor       =   14016736
+      FillColor       =   14016736
+      RoundedCorner   =   0   'False
+      TextBoxHeight   =   18
+      ThemeColor      =   2
+      HeaderStyle     =   1
    End
 End
 Attribute VB_Name = "frmOptions"

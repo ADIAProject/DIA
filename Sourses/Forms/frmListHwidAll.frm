@@ -183,13 +183,13 @@ Begin VB.Form frmListHwidAll
       Alignment       =   0
       HeaderStyle     =   1
       Begin prjDIADBS.OptionButtonW optGrp4 
-         Height          =   345
+         Height          =   405
          Left            =   1860
          TabIndex        =   8
          Top             =   780
          Width           =   2175
          _ExtentX        =   3836
-         _ExtentY        =   609
+         _ExtentY        =   714
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -224,13 +224,13 @@ Begin VB.Form frmListHwidAll
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW optGrp1 
-         Height          =   345
+         Height          =   405
          Left            =   120
          TabIndex        =   5
          Top             =   360
          Width           =   1695
          _ExtentX        =   2990
-         _ExtentY        =   609
+         _ExtentY        =   714
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -244,13 +244,13 @@ Begin VB.Form frmListHwidAll
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW optGrp2 
-         Height          =   345
+         Height          =   405
          Left            =   120
          TabIndex        =   6
          Top             =   780
          Width           =   1695
          _ExtentX        =   2990
-         _ExtentY        =   609
+         _ExtentY        =   714
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25

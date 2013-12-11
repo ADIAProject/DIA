@@ -30,7 +30,6 @@ Module=mWorkWithFiles; Sourses\Module\mWorkWithFiles.bas
 Module=mXPStyle; Sourses\Module\mXPStyle.bas
 Module=mMain; Sourses\Module\mMain.bas
 Module=mDebug; Sourses\Module\mDebug.bas
-Module=mBrowseForFolder; Sourses\Module\mBrowseForFolder.bas
 Module=mExecFile; Sourses\Module\mExecFile.bas
 Module=mMultiLanguages; Sourses\Module\mMultiLanguages.bas
 Module=mRegLibrary; Sourses\Module\mRegLibrary.bas

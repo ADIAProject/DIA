@@ -510,7 +510,7 @@ Option Explicit
 Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameW" (ByVal pOpenfilename As Long) As Long
 Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameW" (ByVal pOpenfilename As Long) As Long
 
-Private Const BFFM_SETSELECTIONA        As Long = (WM_USER + 102)
+'Private Const BFFM_SETSELECTIONA        As Long = (WM_USER + 102)
 Private Const FILE_ATTRIBUTE_DIR = &H10
 
 '   Appearance Costants
@@ -652,7 +652,6 @@ Private m_Locked                        As Boolean
 Private m_QualifyPaths                  As Boolean
 Private m_bIsWinXpOrLater               As Boolean
 
-
 '   Public UserControl Events
 Public Event Click()
 Public Event DropClick()
@@ -663,8 +662,9 @@ Public Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Si
 Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event PathChanged()
+
 '*************************************************************************************************
-'* ctlUcPickBox - uSelfSub based sample
+'* uSample - uSelfSub based sample
 '*
 '* Paul_Caton@hotmail.com
 '* Copyright free, use and abuse as you see fit.
@@ -1316,9 +1316,16 @@ Dim AutoTheme                           As String
         Select Case m_DialogType
 
             Case [ucFolder]
-                sFolder = fBrowseForFolder(hWnd_Owner:=UserControl.Parent.hWnd, WhatBr:=BIF_DEFAULT, InitDir:=PathCollect(txtResult.Text), CenterOnScreen:=True, TopMost:=True)
-
+    
                 'ShowFolder_Default
+                With New CommonDialog
+                    .InitDir = PathCollect(txtResult.Text)
+                    
+                    If .ShowFolder = True Then
+                        sFolder = .FileName
+                    End If
+                End With
+
                 If LenB(sFolder) > 0 Then
                     m_Path = QualifyPath(sFolder)
                     PropertyChanged "Path"
@@ -1343,7 +1350,6 @@ Dim AutoTheme                           As String
                     psFile = ShowOpen(m_Filters, PathCollect(txtResult.Text))
                 Else
                     psFile = ShowSave(m_Filters)
-
                 End If
 
                 If (psFile.bCanceled = False) Then
@@ -1355,7 +1361,6 @@ Dim AutoTheme                           As String
                                 .cmdDrop.Visible = m_MultiSelect
                             Else
                                 .pbDrop.Visible = m_MultiSelect
-
                             End If
 
                             '   Concatinate the filename and path
@@ -2415,14 +2420,12 @@ Dim tempFiles(1 To 200)                 As String
             .sInitDir = sInitPath
         Else
             .sInitDir = strAppPath
-
         End If
 
         If m_FileFlags <> 0 Then
             .Flags = m_FileFlags
         Else
             .Flags = ShowOpen_Default
-
         End If
 
         If m_MultiSelect Then
@@ -2485,7 +2488,6 @@ GoAgain:
                 If InStr(NewCharacter + 1, FileDialog.sFile, vbNullChar) = InStr(NewCharacter + 1, FileDialog.sFile, str2vbNullChar) Then
                     tempFiles(Count) = Mid$(FileDialog.sFile, NewCharacter + 1, InStr(NewCharacter + 1, FileDialog.sFile, str2vbNullChar) - NewCharacter - 1)
                     ShowOpen.nFilesSelected = Count
-
                 End If
 
                 LastCharacter = NewCharacter
@@ -2550,7 +2552,6 @@ Dim sFileName                           As String
             .Flags = m_FileFlags
         Else
             .Flags = ShowSave_Default
-
         End If
 
         '   Process the Filter string to replace the
@@ -2577,7 +2578,6 @@ Dim sFileName                           As String
 
         If Right$(sFileName, 4) <> m_DefaultExt Then
             sFileName = sFileName & m_DefaultExt
-
         End If
 
         ShowSave.sFiles(1) = sFileName
@@ -2764,7 +2764,6 @@ Dim OldFont As String, OldFontSize As Integer, OldScaleMode As ScaleModeConstant
                 If Right$(sInput$, 1) <> "/" Then
                     bAddedTrailSlash = True
                     sInput$ = sInput$ & "/"
-
                 End If
 
                 'throw path into an array
@@ -2818,7 +2817,6 @@ Dim OldFont As String, OldFontSize As Integer, OldScaleMode As ScaleModeConstant
                 If Right$(sInput$, 1) <> "/" Then
                     bAddedTrailSlash = True
                     sInput$ = sInput$ & "/"
-
                 End If
 
                 'throw path into an array
@@ -2851,7 +2849,6 @@ Dim OldFont As String, OldFontSize As Integer, OldScaleMode As ScaleModeConstant
                                 'if the total outputed string is too big then stop
                                 TrimPathByLen$ = sBeginning$ & sReplaceString$ & Mid$(sEnd$, Len(aBuffer(iIndex%)) + 2)
                                 Exit For
-
                             End If
 
                             DoEvents
@@ -2867,9 +2864,6 @@ Dim OldFont As String, OldFontSize As Integer, OldScaleMode As ScaleModeConstant
 
             End If
 
-        Else
-
-            'um, yeah.
         End If
 
     Else
@@ -3388,8 +3382,6 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
             With UserControl
                 '   Start Subclassing using our Handle
                 Call sc_Subclass(.hWnd)
-                '   Subclass the BrowseForFolder Message
-                Call sc_AddMsg(.hWnd, BFFM_INITIALIZED, MSG_BEFORE)
                 '   Subclas the Move and Leave Events of the Control
                 Call sc_AddMsg(.hWnd, WM_MOUSEMOVE)
                 Call sc_AddMsg(.hWnd, WM_MOUSELEAVE)
@@ -3536,9 +3528,6 @@ Private Sub zWndProc1(ByVal bBefore As Boolean, _
             Call Refresh(0)
             Call Refresh(1)
             
-        Case BFFM_INITIALIZED
-            '   BrowseForFolder Module has Initialized, so set the Starting Path
-            Call SendMessage(lng_hWnd, BFFM_SETSELECTIONA, True, ByVal m_Path)
   End Select
 End Sub
 
