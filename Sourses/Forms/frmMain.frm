@@ -3434,12 +3434,12 @@ Dim ii                                  As Integer
 Dim strPathDRP                          As String
 Dim strPathDevDB                        As String
 Dim strFileListTXT_x()                  As String
-    'Dim strFileListTXT_x_AllTab()     As String
 Dim strFileListDRP_x()                  As String
 Dim strFileListDBExists                 As String
 Dim strFileListDBNotExists              As String
 Dim strDRPFilename                      As String
 Dim strFileNameDB                       As String
+Dim strFileNameDBHwid                   As String
 Dim strFileNameDBIni                    As String
 Dim lngFileDBVerIniSize                 As Long
 Dim strFileDBVerIniPath                 As String
@@ -3464,7 +3464,7 @@ Dim strFileName2Del                     As String
                 strFileListDRP_x = SearchFoldersInRoot(strPathDRP, "DP*", False, False)
             End If
             'Построение списка txt и ini файлов в каталоге БД
-            strFileListTXT_x = SearchFilesInRoot(strPathDevDB, "DP*.txt;DP*.ini;DP*.hwid", False, False)
+            strFileListTXT_x = SearchFilesInRoot(strPathDevDB, "*DP*.txt;*DP*.ini;*DP*.hwid;*DevDBVersions*.ini", False, False)
 
             ' Проверка на существование БД
             For ii = LBound(strFileListDRP_x, 2) To UBound(strFileListDRP_x, 2)
@@ -3477,8 +3477,9 @@ Dim strFileName2Del                     As String
                     If InStr(1, strDRPFilename, ".7z", vbTextCompare) Then
                         strFileNameDB = strPathDevDB & Replace$(strDRPFilename, ".7z", ".txt", , , vbTextCompare)
                     End If
+                    strFileNameDBHwid = Replace$(strFileNameDB, ".txt", ".hwid", , , vbTextCompare)
                     strFileNameDBIni = Replace$(strFileNameDB, ".txt", ".ini", , , vbTextCompare)
-                    strFileListDBExists = AppendStr(strFileListDBExists, strFileNameDB, vbTab)
+                    strFileListDBExists = AppendStr(strFileListDBExists, strFileNameDB & vbTab & strFileNameDBHwid, vbTab)
 
                     If PathFileExists(strFileNameDBIni) = 1 Then
                         strFileListDBExists = IIf(LenB(strFileListDBExists) > 0, strFileListDBExists & vbTab, vbNullString) & strFileNameDBIni
@@ -3494,7 +3495,6 @@ Dim strFileName2Del                     As String
 
                 If InStr(1, strFileListDBExists, strFileListTXT_x(0, ii), vbTextCompare) = 0 Then
                     If PathFileExists(strFileListTXT_x(0, ii)) = 1 Then
-                        'DeleteFiles strFileListTXT_x(0, ii)
                         strFileListDBNotExists = IIf(LenB(strFileListDBNotExists) > 0, strFileListDBNotExists & vbNewLine, vbNullString) & Replace$(strFileListTXT_x(0, ii), strAppPath, vbNullString, , , vbTextCompare)
 
                         'Удаление секции о данном пакете из ini-файла
