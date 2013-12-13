@@ -1061,8 +1061,9 @@ End Property
 Public Sub AddItem(ByVal Item As String, Optional ByVal Index As Variant)
 Attribute AddItem.VB_Description = "Adds an item to the combo box."
 If ComboBoxHandle <> 0 Then
+    Dim RetVal As Long
     If IsMissing(Index) = True Then
-        ComboBoxNewIndex = SendMessage(ComboBoxHandle, CB_ADDSTRING, 0, ByVal StrPtr(Item))
+        RetVal = SendMessage(ComboBoxHandle, CB_ADDSTRING, 0, ByVal StrPtr(Item))
     Else
         Dim IndexLong As Long
         Select Case VarType(Index)
@@ -1078,7 +1079,12 @@ If ComboBoxHandle <> 0 Then
             Case Else
                 Err.Raise 13
         End Select
-        ComboBoxNewIndex = SendMessage(ComboBoxHandle, CB_INSERTSTRING, IndexLong, ByVal StrPtr(Item))
+        RetVal = SendMessage(ComboBoxHandle, CB_INSERTSTRING, IndexLong, ByVal StrPtr(Item))
+    End If
+    If Not RetVal = CB_ERR Then
+        ComboBoxNewIndex = RetVal
+    Else
+        Err.Raise 5
     End If
     Call SetDropListHeight(False)
 End If
@@ -1088,8 +1094,11 @@ Public Sub RemoveItem(ByVal Index As Long)
 Attribute RemoveItem.VB_Description = "Removes an item from the combo box."
 If ComboBoxHandle <> 0 Then
     If Index >= 0 Then
-        If SendMessage(ComboBoxHandle, CB_DELETESTRING, Index, ByVal 0&) = CB_ERR Then Err.Raise 5
-        ComboBoxNewIndex = -1
+        If Not SendMessage(ComboBoxHandle, CB_DELETESTRING, Index, ByVal 0&) = CB_ERR Then
+            ComboBoxNewIndex = -1
+        Else
+            Err.Raise 5
+        End If
     Else
         Err.Raise 5
     End If
@@ -1127,11 +1136,13 @@ End Property
 Public Property Let List(ByVal Index As Long, ByVal Value As String)
 If ComboBoxHandle <> 0 Then
     If Index > -1 Then
-        Dim SelIndex As Long
+        Dim SelIndex As Long, ItemData As Long
         SelIndex = SendMessage(ComboBoxHandle, CB_GETCURSEL, 0, ByVal 0&)
+        ItemData = SendMessage(ComboBoxHandle, CB_GETITEMDATA, Index, ByVal 0&)
         If Not SendMessage(ComboBoxHandle, CB_DELETESTRING, Index, ByVal 0&) = CB_ERR Then
             SendMessage ComboBoxHandle, CB_INSERTSTRING, Index, ByVal StrPtr(Value)
             SendMessage ComboBoxHandle, CB_SETCURSEL, SelIndex, ByVal 0&
+            SendMessage ComboBoxHandle, CB_SETITEMDATA, Index, ByVal ItemData
         Else
             Err.Raise 5
         End If

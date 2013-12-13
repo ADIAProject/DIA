@@ -548,7 +548,7 @@ Private Const ES_PASSWORD As Long = &H20
 Private Const ES_WANTRETURN As Long = &H1000
 Private Const ES_DISABLENOSCROLL As Long = &H2000
 Private Const ES_SUNKEN As Long = &H4000
-Private Const ES_SAVESEL As Long = &H8000&
+Private Const ES_SAVESEL As Long = &H8000& ' Malfunction
 Private Const ES_SELECTIONBAR As Long = &H1000000
 Private Const ES_VERTICAL As Long = &H400000
 Private Const EC_LEFTMARGIN As Long = &H1
@@ -1571,7 +1571,7 @@ End Property
 Private Sub CreateRichTextBox()
 If RichTextBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
-dwStyle = WS_CHILD Or WS_VISIBLE Or ES_SAVESEL
+dwStyle = WS_CHILD Or WS_VISIBLE
 If PropOLEDragDrop = False Then dwStyle = dwStyle Or ES_NOOLEDRAGDROP
 If PropBorder = True Then
     dwStyle = dwStyle Or ES_SUNKEN
