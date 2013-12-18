@@ -43,7 +43,7 @@ Private Sub LoadIconImageFromFile(imgName As PictureBox, PicturePath As String)
     DebugMode "LoadIconImageFromFile-Start", 2
     DebugMode vbTab & "LoadIconImageFromFile: PicturePath=" & PicturePath, 2
 
-    If PathFileExists(PicturePath) = 1 Then
+    If PathExists(PicturePath) Then
         Set imgName.Picture = Nothing
         imgName.Picture = stdole.LoadPicture(PicturePath, lngIMG_SIZE, lngIMG_SIZE, Color)
         'imgName.Picture = LoadPicture(PicturePath, lngIMG_SIZE, Color)
@@ -65,7 +65,7 @@ Private Sub LoadIconImageFromFileBtn(ByVal imgName As ctlXpButton, _
     DebugMode vbTab & "LoadIconImageFromFileBtn-Start", 2
     DebugMode str2VbTab & "LoadIconImageFromFileBtn: PicturePath=" & PicturePath, 2
 
-    If PathFileExists(PicturePath) = 1 Then
+    If PathExists(PicturePath) Then
 
         With imgName
 
@@ -107,7 +107,7 @@ Private Sub LoadIconImageFromFileBtnJC(ByVal btnName As ctlJCbutton, _
     DebugMode vbTab & "LoadIconImageFromFileBtnJC-Start", 2
     DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: PicturePath=" & PicturePath, 2
 
-    If PathFileExists(PicturePath) = 1 Then
+    If PathExists(PicturePath) Then
 
         On Error GoTo PictureNotAllowFormat
 
@@ -143,9 +143,9 @@ ExitFromSub:
     Exit Sub
 PictureNotAllowFormat:
 
-    If err.Number = 481 Then
-        MsgBox "Error ¹: " & err.Number & vbNewLine & "Description: " & err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
-    ElseIf err.Number <> 0 Then
+    If Err.Number = 481 Then
+        MsgBox "Error ¹: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
+    ElseIf Err.Number <> 0 Then
         GoTo ExitFromSub
 
     End If
@@ -157,7 +157,7 @@ Private Sub LoadIconImageFromFileJC(ByVal imgName As ctlJCFrames, _
     DebugMode vbTab & "LoadIconImageFromFileJC-Start", 2
     DebugMode str2VbTab & "LoadIconImageFromFileJC: PicturePath=" & PicturePath, 2
 
-    If PathFileExists(PicturePath) = 1 Then
+    If PathExists(PicturePath) Then
         'imgName.Picture = stdole.LoadPicture(PicturePath, lngIMG_SIZE, lngIMG_SIZE, Color)
         Set imgName.Picture = Nothing
         Set imgName.Picture = stdole.LoadPicture(PicturePath)
@@ -179,7 +179,7 @@ Dim strPicturePath                      As String
     strPicturePath = SearchFilesInRoot(strPathImageDir, strPictureName & ".*", False, True)
     DebugMode vbTab & "LoadIconImageFromPath: PicturePath=" & strPicturePath, 2
 
-    If PathFileExists(strPicturePath) = 1 Then
+    If PathExists(strPicturePath) Then
         'Set LoadIconImageFromPath = LoadPicture(strPicturePath)
         Set LoadIconImageFromPath = stdole.LoadPicture(strPicturePath)
     Else
@@ -201,7 +201,7 @@ Public Sub LoadIconImagePath()
     strPathImageStatusButtonWork = strPathImageStatusButton & strImageStatusButtonName
 
     'strPathImageMenuWork = strPathImageMenu & strImageMenuName
-    If PathFileExists(strPathImageMainWork) = 0 Then
+    If PathExists(strPathImageMainWork) = False Then
         If Not mbSilentRun Then
             MsgBox strMessages(15), vbCritical, strProductName
 
@@ -211,7 +211,7 @@ Public Sub LoadIconImagePath()
 
     End If
 
-    If PathFileExists(strPathImageStatusButtonWork) = 0 Then
+    If PathExists(strPathImageStatusButtonWork) = False Then
         If Not mbSilentRun Then
             MsgBox strMessages(15), vbCritical, strProductName
 
@@ -221,7 +221,7 @@ Public Sub LoadIconImagePath()
 
     End If
 
-    'If PathFileExists(strPathImageMenuWork) = 0 Then
+    'If PathExists(strPathImageMenuWork) = False Then
     'If Not mbSilentRun Then
     'MsgBox strMessages(15), vbCritical, strProductName
     'End If

@@ -138,7 +138,7 @@ Dim ii As Long
     'Если рабочий каталог уже есть, то удаляем его
     DoEvents
 
-    If PathFileExists(strWorkDir) = 1 Then
+    If PathExists(strWorkDir) Then
         ChangeStatusTextAndDebug strMessages(81)
         DelRecursiveFolder (strWorkDir)
         DoEvents
@@ -147,7 +147,7 @@ Dim ii As Long
     ' Каталог для распаковки inf файлов
     strInfPathTemp = strWorkTempBackSL & strPackFileName_woExt
 
-    If PathFileExists(strInfPathTemp) = 0 Then
+    If PathExists(strInfPathTemp) = False Then
         CreateNewDirectory strInfPathTemp
     End If
 
@@ -343,7 +343,7 @@ Dim ii As Long
             ' Чтение списка содержимого архива *.Cat
             strArchCatFileListContent = vbNullString
 
-            If PathFileExists(strArchCatFileList) = 1 Then
+            If PathExists(strArchCatFileList) Then
                 If GetFileSizeByPath(strArchCatFileList) > 0 Then
                     Set objCatFile = objFSO.OpenTextFile(strArchCatFileList, ForReading, False, TristateUseDefault)
                     strArchCatFileListContent = objCatFile.ReadAll()
@@ -706,7 +706,7 @@ Dim ii As Long
 
         '---------------------------------------------
         '---------------Выводим итог в файл-----
-        If PathFileExists(strPathDevDB) = 0 Then
+        If PathExists(strPathDevDB) = False Then
             CreateNewDirectory strPathDevDB
         End If
 
@@ -741,9 +741,9 @@ Dim ii As Long
                 strRezultTxt = SearchFilesInRoot(strInfPathTemp, "DriverPack*.ini", False, True)
     
                 ' Копируем DriverPack*.ini в каталог базы данных
-                If PathFileExists(strRezultTxt) = 1 Then
+                If PathExists(strRezultTxt) Then
     
-                    If PathFileExists(strRezultTxtTo) = 1 Then
+                    If PathExists(strRezultTxtTo) Then
                         strRezultTxtTo = Replace$(strRezultTxtTo, ".txt", ".ini", , , vbTextCompare)
     
                         If CopyFileTo(strRezultTxt, strRezultTxtTo) = False Then

@@ -55,8 +55,8 @@ Dim strStatus                           As String
 
     DebugMode "DevParserLocalHwids2-Start"
 
-    If PathFileExists(strHwidsTxtPath) = 1 Then
-        If Not IsPathAFolder(strHwidsTxtPath) Then
+    If PathExists(strHwidsTxtPath) Then
+        If Not PathIsAFolder(strHwidsTxtPath) Then
             Set objInfFile = objFSO.OpenTextFile(strHwidsTxtPath, ForReading, False, TristateUseDefault)
             str = objInfFile.ReadAll
             Set MatchesDevcon = RegExpDevcon.Execute(str)
@@ -89,9 +89,9 @@ Dim strStatus                           As String
                 ' разбиваем по "\"
                 strIDOrig = strID
 
-                If InStr(strID, "\") Then
-                    strID_x = Split(strID, "\")
-                    strID = strID_x(0) & "\" & strID_x(1)
+                If InStr(strID, vbBackslash) Then
+                    strID_x = Split(strID, vbBackslash)
+                    strID = strID_x(0) & vbBackslash & strID_x(1)
                 End If
 
                 strIDCutting = ParseDoubleHwid(strID)
@@ -198,11 +198,11 @@ Dim miCC                                As Long
     If LenB(strValuer) > 0 Then
 
         ' разбиваем по "\" - оставляем только xxx\yyy
-        If InStr(strValuer, "\") Then
-            strValuer_x = Split(strValuer, "\")
+        If InStr(strValuer, vbBackslash) Then
+            strValuer_x = Split(strValuer, vbBackslash)
 
             If UBound(strValuer_x) >= 1 Then
-                strValuer = strValuer_x(0) & "\" & strValuer_x(1)
+                strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
             Else
                 strValuer = strValuer_x(0)
             End If

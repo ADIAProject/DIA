@@ -30,6 +30,9 @@ Public Const WM_THEMECHANGED            As Long = &H31A
 Public Const WM_PAINT                   As Long = &HF
 Public Const WM_NCPAINT                 As Long = &H85
 Public Const WM_CLOSE                   As Long = &H10
+Public Const WM_DESTROY                 As Long = &H2
+Public Const WM_NCDESTROY               As Long = &H82
+Public Const WM_QUIT                    As Long = &H12
 Public Const WM_COMMAND                 As Long = &H111
 Public Const WM_NOTIFY                  As Long = &H4E
 Public Const WM_NCACTIVATE              As Long = &H86
@@ -117,8 +120,8 @@ Public Declare Function SendMessageLong Lib "user32.dll" Alias "SendMessageW" (B
 Public Declare Function GetWindowLong Lib "user32.dll" Alias "GetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Public Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function SetWindowLongA Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function PostMessage Lib "user32" Alias "PostMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Public Declare Function PostMessageLong Lib "user32.dll" Alias "PostMessageA" (ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-
 Public Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hwndLock As Long) As Long
 Public Declare Function SetFocusAPI Lib "user32.dll" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Public Declare Function GetFocus Lib "user32.dll" () As Long
@@ -133,3 +136,10 @@ Public Declare Function GetClassLong Lib "user32.dll" Alias "GetClassLongA" (ByV
 Public Declare Function SetClassLong Lib "user32.dll" Alias "SetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 
+
+
+'Public Declare Function GetActiveWindow Lib "user32" () As Long
+'Public Declare Function GetForegroundWindow Lib "user32" () As Long
+'Public Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long
+'Public Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+'Public Declare Function FindWindow Lib "user32" Alias "FindWindowW" (ByVal lpClassName As Long, ByVal lpWindowName As Long) As Long

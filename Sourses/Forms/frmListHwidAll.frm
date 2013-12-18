@@ -581,7 +581,7 @@ Dim cmdString                           As String
 Dim nRetShellEx                         As Boolean
 
     strDevID = txtFindText.Text
-    strDevID = Replace$(strDevID, "\", "%5C", , , vbTextCompare)
+    strDevID = Replace$(strDevID, vbBackslash, "%5C", , , vbTextCompare)
     strDevID = Replace$(strDevID, "&", "%26", , , vbTextCompare)
 
     If optDevID.Value Then
@@ -1201,9 +1201,9 @@ Dim miCC                                As Long
     If chkParseHwid.Value Then
 
         ' разбиваем по "\"
-        If InStr(strValuer, "\") Then
-            strValuer_x = Split(strValuer, "\")
-            strValuer = strValuer_x(0) & "\" & strValuer_x(1)
+        If InStr(strValuer, vbBackslash) Then
+            strValuer_x = Split(strValuer, vbBackslash)
+            strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
         
             miSubSys = InStr(strValuer, "&SUBSYS")
     

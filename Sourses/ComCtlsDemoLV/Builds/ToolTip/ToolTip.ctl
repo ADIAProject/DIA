@@ -219,7 +219,6 @@ Private PropTitle As String
 Private PropIcon As TipIconConstants
 Private PropBalloon As Boolean, PropCloseButton As Boolean
 Private PropFadeAnimation As Boolean
-Private Const CW_USEDEFAULT = &H80000000
 
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
@@ -676,7 +675,7 @@ If PropFadeAnimation = False Then dwStyle = dwStyle Or TTS_NOFADE
 ToolTipParentHandle = UserControl.Parent.hWnd
 dwExStyle = WS_EX_TOOLWINDOW
 If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
-ToolTipHandle = CreateWindowEx(dwExStyle, StrPtr("tooltips_class32"), StrPtr("Tool Tip"), dwStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, ToolTipParentHandle, 0, App.hInstance, ByVal 0&)
+ToolTipHandle = CreateWindowEx(WS_EX_TOOLWINDOW, StrPtr("tooltips_class32"), StrPtr("Tool Tip"), dwStyle, 0, 0, 0, 0, ToolTipParentHandle, 0, App.hInstance, ByVal 0&)
 Set Me.Font = PropFont
 Me.BackColor = PropBackColor
 Me.ForeColor = PropForeColor

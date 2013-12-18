@@ -23,7 +23,7 @@ Dim objStream                           As New ADODB.Stream
 
     'Для строки
     '.Hash UStr2BStr(strText)
-    If PathFileExists(StrPathFile) = 1 Then
+    If PathExists(StrPathFile) Then
 
         With objStream
             .Type = adTypeBinary

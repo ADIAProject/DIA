@@ -20,28 +20,12 @@ Private m_lhHook                        As Long
 Private bTimedOut                       As Boolean
 Private sMsgText                        As String
 
-Private Declare Function GetClassName Lib "user32.dll" _
-                              Alias "GetClassNameA" (ByVal hWnd As Long, _
-                                                     ByVal lpClassName As String, _
-                                                     ByVal nMaxCount As Long) As Long
-
-Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, _
-                                            ByVal nIDEvent As Long, _
-                                            ByVal uElapse As Long, _
-                                            ByVal lpTimerFunc As Long) As Long
-
-Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, _
-                                            ByVal nIDEvent As Long) As Long
-
+Private Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameA" (ByVal hWnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
+Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Long) As Long
+Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
 Private Declare Function GetCurrentThreadId Lib "kernel32.dll" () As Long
 Private Declare Function UnhookWindowsHookEx Lib "user32.dll" (ByVal hHook As Long) As Long
-
-Private Declare Function SetWindowsHookEx Lib "user32.dll" _
-                              Alias "SetWindowsHookExA" (ByVal idHook As Long, _
-                                                         ByVal lpfn As Long, _
-                                                         ByVal hMod As Long, _
-                                                         ByVal dwThreadId As Long) As Long
-
+Private Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExA" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
 Private Declare Function GetDlgCtrlID Lib "user32.dll" (ByVal hWnd As Long) As Long
 
 Private Function EnumChildWindowsProc(ByVal lngHWnd As Long, ByVal lParam As Long) As Long
@@ -103,12 +87,9 @@ Dim lButtonCommand                      As Integer
     End If
 
     m_lMsgHandle = 0
-    ' Set handle to ZERO
     m_lNoHandle = 0
-    ' Set handle to ZERO
     bTimedOut = True
-
-    ' Set flag to True
+    
 End Sub
 
 ' *********************************************************************************************************

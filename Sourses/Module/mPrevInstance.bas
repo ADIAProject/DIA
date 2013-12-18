@@ -2,6 +2,10 @@ Attribute VB_Name = "mPrevInstance"
 'Активация ранее запущенной этой же программы
 Option Explicit
 
+Private Declare Function FindWindow Lib "user32" Alias "FindWindowW" (ByVal lpClassName As Long, ByVal lpWindowName As Long) As Long
+Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+Private Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long
+
 Private Declare Function OpenIcon Lib "user32.dll" (ByVal hWnd As Long) As Long
 
 '! -----------------------------------------------------------

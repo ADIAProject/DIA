@@ -98,7 +98,12 @@ Private Const notify_mode_hide          As Integer = 3
 Private notify_mode                     As Long
 
 Private Const SW_SHOWNA                 As Integer = 8
+Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+
 Private strFormName                     As String
+
+
+
 
 Private Sub FontCharsetChange()
 ' Выставляем шрифт

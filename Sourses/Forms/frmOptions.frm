@@ -3320,7 +3320,7 @@ End Sub
 
 Private Sub cmbImageMain_Click()
 
-    If PathFileExists(strPathImageMain & cmbImageMain.Text) = 0 Then
+    If PathExists(strPathImageMain & cmbImageMain.Text) = False Then
         cmbImageMain.BackColor = vbRed
     Else
         cmbImageMain.BackColor = &H80000005
@@ -3335,7 +3335,7 @@ End Sub
 
 Private Sub cmbImageMain_LostFocus()
 
-    If PathFileExists(strPathImageMain & cmbImageMain.Text) = 0 Then
+    If PathExists(strPathImageMain & cmbImageMain.Text) = False Then
         cmbImageMain.BackColor = vbRed
     Else
         cmbImageMain.BackColor = &H80000005
@@ -3348,7 +3348,7 @@ Private Sub cmbImageStatus_Click()
 
 Dim strPathImageStatusButtonWorkTemp    As String
 
-    If PathFileExists(strPathImageStatusButton & cmbImageStatus.Text) = 0 Then
+    If PathExists(strPathImageStatusButton & cmbImageStatus.Text) = False Then
         cmbImageStatus.BackColor = vbRed
     Else
         cmbImageStatus.BackColor = &H80000005
@@ -3368,7 +3368,7 @@ End Sub
 
 Private Sub cmbImageStatus_LostFocus()
 
-    If PathFileExists(strPathImageStatusButton & cmbImageStatus.Text) = 0 Then
+    If PathExists(strPathImageStatusButton & cmbImageStatus.Text) = False Then
         cmbImageStatus.BackColor = vbRed
     Else
         cmbImageStatus.BackColor = &H80000005

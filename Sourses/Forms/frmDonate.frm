@@ -365,7 +365,7 @@ Dim strPathDonate                       As String
 
     End Select
 
-    If PathFileExists(strPathDonate) = 1 Then
+    If PathExists(strPathDonate) Then
         DonateRTF.LoadFile strPathDonate
     Else
         MsgBox strMessages(41), vbInformation, strProductName

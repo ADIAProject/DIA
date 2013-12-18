@@ -69,7 +69,7 @@ Dim xDrv                                As Drive
     strDriveName = Left$(strDebugLogPath, 2)
 
     ' ѕровер€ем на запуск из сети
-    If InStr(strDriveName, "\\") = 0 Then
+    If InStr(strDriveName, vbBackslash) = 0 Then
         'получаем тип диска
         Set xDrv = objFSO.GetDrive(strDriveName)
 
@@ -111,8 +111,8 @@ Public Sub PrintFileInDebugLog(ByVal strFilePath As String)
 Dim objTxtFile                          As TextStream
 Dim strTxtFileAll                       As String
 
-    If PathFileExists(strFilePath) = 1 Then
-        If Not IsPathAFolder(strFilePath) Then
+    If PathExists(strFilePath) Then
+        If Not PathIsAFolder(strFilePath) Then
             If GetFileSizeByPath(strFilePath) > 0 Then
                 Set objTxtFile = objFSO.OpenTextFile(strFilePath, ForReading, False, TristateUseDefault)
                 strTxtFileAll = objTxtFile.ReadAll

@@ -11,8 +11,9 @@ Option Explicit
 '               online service, or distribute as source
 '               on any media without express permission.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Private Const vbDot                     As Integer = 46
 Private fp                              As FILE_PARAMS    'holds search parameters
-Private fp2                             As FOLDER_PARAMS    'holds search parameters
+Private fp2                             As FOLDER_PARAMS  'holds search parameters
 Private sResultFileList()               As String
 Private sResultFileListCount            As Long
 Private sResultFolderList()             As String
@@ -24,7 +25,7 @@ Dim wfd                                 As WIN32_FIND_DATA
 Dim hFile                               As Long
 Dim sSize                               As String
 
-    If PathIsUNC(sSource) = 0 Then
+    If PathIsValidUNC(sSource) = False Then
         hFile = FindFirstFile(StrPtr("\\?\" & sSource & vbNullChar), wfd)
     Else
         '\\?\UNC\
@@ -72,7 +73,7 @@ Dim lngNumFilesFromFolder               As Long
     sDestination = BackslashAdd2Path(sDestination)
 
     'Create the target directory if it doesn't exist
-    If PathFileExists(sDestination) = 0 Then
+    If PathExists(sDestination) = False Then
         Call CreateDirectory(sDestination, sA)
 
     End If
@@ -80,7 +81,7 @@ Dim lngNumFilesFromFolder               As Long
     'Start searching for files in the Target directory.
     'hFile = FindFirstFile(sSourcePath & sFiles, wfd)
     'hFile = FindFirstFile(StrPtr("\\?\" & sSourcePath & sFiles & vbNullChar), wfd)
-    If PathIsUNC(sSourcePath) = 0 Then
+    If PathIsValidUNC(sSourcePath) = False Then
         hFile = FindFirstFile(StrPtr("\\?\" & sSourcePath & sFiles & vbNullChar), wfd)
     Else
         '\\?\UNC\
@@ -102,7 +103,7 @@ Dim lngNumFilesFromFolder               As Long
             If Asc(wfd.cFileName) <> vbDot Then
                 currSourcePath = sSourcePath & currFile
 
-                If Not IsPathAFolder(currSourcePath) Then
+                If Not PathIsAFolder(currSourcePath) Then
                     If MatchSpec(currFile, sFiles) Then
                         'copy the file to the destination directory & increment the count
                         Call CopyFileTo(currSourcePath, sDestination & currFile)
@@ -204,10 +205,7 @@ Dim hFile                               As Long
 Dim sSize                               As String
 Dim strFileName                         As String
 
-    'hFile = FindFirstFile(sRoot & ALL_FILES, wfd)
-
-    'hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
-    If PathIsUNC(sRoot) = 0 Then
+    If PathIsValidUNC(sRoot) = False Then
         hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
     Else
         '\\?\UNC\
@@ -270,7 +268,7 @@ Dim strFileName                         As String
 
         Loop While FindNextFile(hFile, wfd)
 
-0   End If
+    End If
 
     FindClose hFile
 
@@ -281,11 +279,8 @@ Dim strFileName                         As String
                 ReDim Preserve sResultFileList(1, sResultFileListCount - 1)
             Else
                 ReDim Preserve sResultFileList(1, sResultFileListCount)
-
             End If
-
         End If
-
     End If
 
 End Sub
@@ -298,10 +293,7 @@ Dim wfd                                 As WIN32_FIND_DATA
 Dim hFile                               As Long
 Dim strFindData                         As String
 
-    'hFile = FindFirstFile(sRoot & ALL_FILES, wfd)
-    'hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
-
-    If PathIsUNC(sRoot) = 0 Then
+    If PathIsValidUNC(sRoot) = False Then
         hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
     Else
         '\\?\UNC\
@@ -376,7 +368,7 @@ Dim hFile                               As Long
     If LenB(sRoot) > 0 Then
         sRoot = BackslashAdd2Path(sRoot)
 
-        If PathIsUNC(sRoot) = 0 Then
+        If PathIsValidUNC(sRoot) = False Then
             hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
         Else
             '\\?\UNC\
@@ -417,7 +409,7 @@ Dim hFile                               As Long
     If LenB(sRoot) > 0 Then
         sRoot = BackslashAdd2Path(sRoot)
 
-        If PathIsUNC(sRoot) = 0 Then
+        If PathIsValidUNC(sRoot) = False Then
             hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
         Else
             '\\?\UNC\
@@ -451,7 +443,7 @@ Private Sub GetDirectorySize(sRoot As String, fp As FILE_PARAMS)
 Dim wfd                                 As WIN32_FIND_DATA
 Dim hFile                               As Long
 
-    If PathIsUNC(sRoot) = 0 Then
+    If PathIsValidUNC(sRoot) = False Then
         hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES & vbNullChar), wfd)
     Else
         '\\?\UNC\
@@ -466,7 +458,7 @@ Dim hFile                               As Long
                 If (wfd.dwFileAttributes And vbDirectory) Then
 
                     If fp.bRecurse Then
-                        GetDirectorySize sRoot & TrimNull(wfd.cFileName) & "\", fp
+                        GetDirectorySize sRoot & TrimNull(wfd.cFileName) & vbBackslash, fp
                     End If
                 Else
                     fp.nFileCount = fp.nFileCount + 1

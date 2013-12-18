@@ -1649,7 +1649,7 @@ Public Function ExtractFilename(ByVal sFileName) As String
 '   Extract the Path from the full filename...
 Dim lStrCnt                             As Long
 
-    lStrCnt = InStrRev(sFileName, "\")
+    lStrCnt = InStrRev(sFileName, vbBackslash)
 
     If lStrCnt > 0 Then
         ExtractFilename = Mid$(sFileName, lStrCnt + 1)
@@ -1663,7 +1663,7 @@ Public Function ExtractPath(ByVal sFileName) As String
 '   Extract the Path from the full filename...
 Dim lStrCnt                             As Long
 
-    lStrCnt = InStrRev(sFileName, "\")
+    lStrCnt = InStrRev(sFileName, vbBackslash)
 
     If lStrCnt > 0 Then
         ExtractPath = Left$(sFileName, lStrCnt - 1)
@@ -1689,7 +1689,7 @@ Public Function FileExists(ByVal sFileName As String) As Boolean
 Dim lpFindFileData                      As WIN32_FIND_DATA
 Dim hFindFirst                          As Long
 
-    If PathIsUNC(sFileName) = 0 Then
+    If PathIsValidUNC(sFileName) = False Then
         hFindFirst = FindFirstFile(StrPtr("\\?\" & sFileName & vbNullChar), lpFindFileData)
     Else
         '\\?\UNC\
@@ -2270,10 +2270,10 @@ Dim lStr2Cnt                            As Long
     If m_QualifyPaths Then
         If Not FileExists(sPath) Then
             '   Look for the PathSep
-            lStrCnt = InStrRev(sPath, "\")
+            lStrCnt = InStrRev(sPath, vbBackslash)
             lStr2Cnt = InStrRev(sPath, ":")
 
-            If ((lStrCnt <> Len(sPath)) Or Right$(sPath, 1) <> "\") And lStrCnt > 1 And lStr2Cnt > 2 Then
+            If ((lStrCnt <> Len(sPath)) Or Right$(sPath, 1) <> vbBackslash) And lStrCnt > 1 And lStr2Cnt > 2 Then
                 '   None, so add it...
                 QualifyPath = BackslashAdd2Path(sPath)
             Else
@@ -2697,28 +2697,28 @@ Dim OldFont As String, OldFontSize As Integer, OldScaleMode As ScaleModeConstant
 
         'now that we know how much to trim, we need to
         'determine the path type: local, network, or URL
-        If InStr(sInput$, "\") Then
+        If InStr(sInput$, vbBackslash) Then
 
             'LOCAL
             'add trailing slash if there is none
             If Right$(sInput$, 1) <> vbBackslash Then
                 bAddedTrailSlash = True
-                sInput$ = sInput$ & "\"
+                sInput$ = sInput$ & vbBackslash
 
             End If
 
             'throw path into an array
-            aBuffer() = Split(sInput$, "\")
+            aBuffer() = Split(sInput$, vbBackslash)
 
             If UBound(aBuffer()) > LBound(aBuffer()) Then
                 iArrayCount% = UBound(aBuffer()) - 1
                 'the last element is blank
-                sBeginning$ = aBuffer(0) & vbBackslash & aBuffer(1) & "\"
+                sBeginning$ = aBuffer(0) & vbBackslash & aBuffer(1) & vbBackslash
                 sEnd$ = vbBackslash & aBuffer(iArrayCount%)
 
                 If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                     'if the total outputed string is too big then stop
-                    sBeginning$ = aBuffer(0) & "\"
+                    sBeginning$ = aBuffer(0) & vbBackslash
 
                     If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                         TrimPathByLen$ = sReplaceString$ & sEnd$

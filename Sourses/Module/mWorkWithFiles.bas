@@ -4,6 +4,11 @@ Option Explicit
 ' Переменные для работы с файловой системой
 Public objFSO                           As Scripting.FileSystemObject
 
+'Константы для FSO
+Public Const ForWriting                 As Long = 2
+Public Const ForAppending               As Long = 8
+Public Const ForReading                 As Long = 1
+
 Private Root                            As String
 Private xFOL                            As Folder
 Private xFile                           As File
@@ -32,12 +37,12 @@ Dim strDataSHAFirst                     As String
 Dim strDataSHASecond                    As String
 Dim lngResult                           As Long
 
-    If PathFileExists(strFirstFile) = 1 Then
+    If PathExists(strFirstFile) Then
         strDataSHAFirst = CalcHashFile(strFirstFile, CAPICOM_HASH_ALGORITHM_SHA1)
 
     End If
 
-    If PathFileExists(strSecondFile) = 1 Then
+    If PathExists(strSecondFile) Then
         strDataSHASecond = CalcHashFile(strSecondFile, CAPICOM_HASH_ALGORITHM_SHA1)
 
     End If
@@ -63,7 +68,7 @@ Public Function CopyFileTo(ByVal PathFrom As String, ByVal PathTo As String) As 
 
 Dim ret                                 As Long
 
-    If PathFileExists(PathFrom) = 1 Then
+    If PathExists(PathFrom) Then
         ' Для всех файлов, сброс атрибута только для чтения, и системный если есть
         ResetReadOnly4File PathTo
         ' Собственно копирование
@@ -101,8 +106,8 @@ Dim retLasrErr                          As Long
     sPath = BackslashAdd2Path(NewDirectory)
     iCounter = 1
 
-    Do Until InStr(iCounter, sPath, "\") = 0
-        iCounter = InStr(iCounter, sPath, "\")
+    Do Until InStr(iCounter, sPath, vbBackslash) = 0
+        iCounter = InStr(iCounter, sPath, vbBackslash)
         sTempDir = Left$(sPath, iCounter)
         iCounter = iCounter + 1
 
@@ -119,7 +124,7 @@ Dim retLasrErr                          As Long
         If ret = 0 Then
             retLasrErr = Err.LastDllError
 
-            If PathFileExists(sTempDir) = 0 Then
+            If PathExists(sTempDir) = False Then
                 DebugMode vbTab & "CreateDirectory: False : " & sTempDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
 
             End If
@@ -133,20 +138,18 @@ End Sub
 Public Function DeleteFiles(ByVal PathFile As String) As Boolean
 
 Dim ret                                 As Long
-Dim retDllerr                           As Long
 
-    'ret = DeleteFile(PathFile)
-    If PathIsUNC(PathFile) = 0 Then
-        ret = DeleteFileW(StrPtr("\\?\" & PathFile & vbNullChar))
+    If PathIsValidUNC(PathFile) = False Then
+        ret = DeleteFile(StrPtr("\\?\" & PathFile & vbNullChar))
     Else
         '\\?\UNC\
-        ret = DeleteFileW(StrPtr("\\?\UNC\" & Right$(PathFile, Len(PathFile) - 2) & vbNullChar))
+        ret = DeleteFile(StrPtr("\\?\UNC\" & Right$(PathFile, Len(PathFile) - 2) & vbNullChar))
     End If
 
     DeleteFiles = CBool(ret)
 
     If ret = 0 Then
-        If PathFileExists(PathFile) = 1 Then
+        If PathExists(PathFile) Then
 
             On Error GoTo errhandler
 
@@ -154,20 +157,17 @@ Dim retDllerr                           As Long
 
         End If
 
-        retDllerr = Err.LastDllError
-
-        If PathFileExists(PathFile) = 1 Then
-            DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & retDllerr & " - " & ApiErrorText(retDllerr)
-
+        If PathExists(PathFile) Then
+            DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
 
     End If
 
     Exit Function
+    
 errhandler:
-    retDllerr = Err.LastDllError
     DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description
-    DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & retDllerr & " - " & ApiErrorText(retDllerr)
+    DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
     Err.Clear
 
     Resume Next
@@ -187,12 +187,12 @@ Dim ret                                 As Long
 
     DebugMode "DelFolder-Start: " & strFolderPath
 
-    If PathFileExists(strFolderPath) = 1 Then
+    If PathExists(strFolderPath) Then
         DelRecursiveFolder strFolderPath
 
     End If
 
-    If PathFileExists(strFolderPath) = 1 Then
+    If PathExists(strFolderPath) Then
         ret = RemoveDirectory(strFolderPath)
 
         If ret = 0 Then
@@ -221,7 +221,7 @@ Dim retStrMsg                           As String
     Root = BacklashDelFromPath(Folder)
     DebugMode vbTab & "DeleteFolder: " & Root
 
-    If PathFileExists(Root) = 1 Then
+    If PathExists(Root) Then
         SearchFilesInRoot Root, ALL_FILES, True, False, True
         Set xFOL = objFSO.GetFolder(Root)
 
@@ -235,12 +235,12 @@ Dim retStrMsg                           As String
         End If
 
         ' Получение списка каталогов подлежащих удалению
-        If PathFileExists(Root) = 1 Then
+        If PathExists(Root) Then
             GetAllFolderInRoot Root, True
 
         End If
 
-        If PathFileExists(Root) = 1 Then
+        If PathExists(Root) Then
             GetAllFolderInRoot Root, True
             retDelete = DelTree(Root)
 
@@ -280,11 +280,11 @@ Public Sub DelTemp()
 
     DebugMode "DelTemp-Start"
 
-    If PathFileExists(strWorkTemp) = 1 Then
+    If PathExists(strWorkTemp) Then
         DelRecursiveFolder strWorkTemp
     End If
 
-    If PathFileExists(strWorkTemp) = 1 Then
+    If PathExists(strWorkTemp) Then
         RemoveDirectory strWorkTemp
     End If
 
@@ -314,7 +314,7 @@ Dim retLasrErr                          As Long
             strDir = Left$(strDir, Len(strDir) - 1)
         End If
 
-        If InStr(strDir, "\") Then
+        If InStr(strDir, vbBackslash) Then
             intAttr = GetAttr(strDir)
 
             If (intAttr And vbDirectory) Then
@@ -378,7 +378,7 @@ Dim retLasrErr                          As Long
                 If ret = 0 Then
                     retLasrErr = Err.LastDllError
 
-                    If PathFileExists(strDir) = 0 Then
+                    If PathExists(strDir) = False Then
                         DebugMode vbTab & "RemoveDirectory: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
 
                     End If
@@ -474,7 +474,7 @@ Dim intLastSeparator                    As Long
     FileNameFromPath = FilePath
 
     If LenB(FilePath) > 0 Then
-        intLastSeparator = InStrRev(FilePath, "\")
+        intLastSeparator = InStrRev(FilePath, vbBackslash)
 
         If intLastSeparator >= 0 Then
             FileNameFromPath = Right$(FilePath, Len(FilePath) - intLastSeparator)
@@ -504,7 +504,7 @@ Dim i                                   As Long
 
     DebugMode str2VbTab & "GetAllFileInFolder-Start: " & xFolder, 2
 
-    If Not PathFileExists(xFolder) = 0 Then
+    If Not PathExists(xFolder) = False Then
         Set xFOL = objFSO.GetFolder(xFolder)
         strExtFile_x = Split(ExtFile, ";")
 
@@ -586,6 +586,7 @@ Dim i                                   As Long
 
     DebugMode str2VbTab & "GetAllFileInFolder-End", 2
     Exit Sub
+    
 errhandler:
     DebugMode vbTab & "GetAllFileInFolder: False : " & xFolder & " Error: №" & Err.Number & ": " & Err.Description
     Err.Clear
@@ -606,7 +607,7 @@ Dim strListFolder                       As String
 
     DebugMode str2VbTab & "GetAllFolderInFolder-Start: "
 
-    If PathFileExists(RootFolder) = 1 Then
+    If PathExists(RootFolder) Then
         Set xFOL = objFSO.GetFolder(RootFolder)
 
         If xFOL.SubFolders.Count > 0 Then
@@ -635,7 +636,7 @@ Private Sub GetAllFolderInRoot(ByVal RootFolder As String, _
 
 Dim xFolder                             As Folder
 
-    If PathFileExists(RootFolder) = 1 Then
+    If PathExists(RootFolder) Then
         Set xFOL = objFSO.GetFolder(RootFolder)
 
         If xFOL.SubFolders.Count > 0 Then
@@ -728,7 +729,7 @@ Dim xDrv                                As Drive
     strDriveName = Left$(strAppPath, 2)
 
     ' Проверяем на запуск из сети
-    If InStr(strDriveName, "\\") = 0 Then
+    If InStr(strDriveName, vbBackslash) = 0 Then
         'получаем тип диска
         Set xDrv = objFSO.GetDrive(strDriveName)
 
@@ -741,7 +742,7 @@ Dim xDrv                                As Drive
 
 End Function
 
-Public Function IsPathAFolder(ByVal sPath As String) As Boolean
+Public Function PathIsAFolder(ByVal sPath As String) As Boolean
 
 'Verifies that a path is a valid
 'directory, and returns True (1) if
@@ -756,8 +757,7 @@ Public Function IsPathAFolder(ByVal sPath As String) As Boolean
 'If it is neither PathIsDirectory returns 0.
 Dim Result                              As Long
 
-    Result = PathIsDirectory(StrPtr(sPath & vbNullChar))
-    IsPathAFolder = (Result = vbDirectory) Or (Result = 1)
+    PathIsAFolder = PathIsDirectory(StrPtr(sPath & vbNullChar))
 
 End Function
 
@@ -772,7 +772,7 @@ Public Function MoveFileTo(PathFrom As String, PathTo As String) As Boolean
 Dim ret                                 As Long
 
     If StrComp(PathFrom, PathTo, vbTextCompare) <> 0 Then
-        If PathFileExists(PathFrom) = 1 Then
+        If PathExists(PathFrom) Then
             ' Для всех файлов, сброс атрибута только для чтения, и системный если есть
             ResetReadOnly4File PathTo
             ' Собственно копирование
@@ -926,7 +926,7 @@ End Function
 Public Function PathNameFromPath(FilePath As String) As String
 
 Dim intLastSeparator                    As Long
-    intLastSeparator = InStrRev(FilePath, "\")
+    intLastSeparator = InStrRev(FilePath, vbBackslash)
     If intLastSeparator > 0 Then
         If intLastSeparator < Len(FilePath) Then
             PathNameFromPath = Left$(FilePath, intLastSeparator)
@@ -941,7 +941,7 @@ End Function
 
 Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
 
-    If PathFileExists(StrPathFile) = 1 Then
+    If PathExists(StrPathFile) Then
         If FileisReadOnly(StrPathFile) Then
             SetAttr StrPathFile, vbNormal
 
@@ -962,7 +962,7 @@ Public Function SafeDir(ByVal str As String) As String
 Dim R                                   As String
 
     R = str
-    R = Replace$(R, "\", "_")
+    R = Replace$(R, vbBackslash, "_")
     R = Replace$(R, "/", "-")
     R = Replace$(R, "*", "_")
     R = Replace$(R, ":", "_")
@@ -1292,7 +1292,7 @@ Public Function PathCollect(Path As String) As String
 
     If InStr(Path, ":") = 2 Then
         PathCollect = Path
-    ElseIf Left$(Path, 2) = "\\" And IsUNCPathValid(Path) Then
+    ElseIf Left$(Path, 2) = vbBackslash And PathIsValidUNC(Path) Then
         PathCollect = Path
     Else
 
@@ -1300,7 +1300,7 @@ Public Function PathCollect(Path As String) As String
             PathCollect = PathCombine(strAppPath, Path)
         Else
 
-            If InStr(Path, "\") = 1 Then
+            If InStr(Path, vbBackslash) = 1 Then
                 PathCollect = strAppPath & Path
             Else
 
@@ -1335,13 +1335,13 @@ Public Function PathCollect(Path As String) As String
 
     End If
 
-    If InStr(PathCollect, "\\") Then
-        If Left$(strAppPath, 2) <> "\\" Then
-            PathCollect = Replace$(PathCollect, "\\", "\")
+    If InStr(PathCollect, vbBackslash) Then
+        If Left$(strAppPath, 2) <> vbBackslash Then
+            PathCollect = Replace$(PathCollect, vbBackslash, vbBackslash)
         End If
     End If
 
-    If IsPathAFolder(PathCollect) Then
+    If PathIsAFolder(PathCollect) Then
         PathCollect = BackslashAdd2Path(PathCollect)
     End If
 
@@ -1363,7 +1363,7 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
             PathCollect4Dest = strDest & Mid$(Path, 2, Len(Path) - 1)
         Else
 
-            If InStr(Path, "\") = 1 Then
+            If InStr(Path, vbBackslash) = 1 Then
                 PathCollect4Dest = strDest & Path
             Else
 
@@ -1398,14 +1398,14 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
 
     End If
 
-    If InStr(PathCollect4Dest, "\\") Then
-        PathCollect4Dest = Replace$(PathCollect4Dest, "\\", "\")
+    If InStr(PathCollect4Dest, vbBackslash) Then
+        PathCollect4Dest = Replace$(PathCollect4Dest, vbBackslash, vbBackslash)
 
-        If Left$(strDest, 2) = "\\" Then
-            If InStr(PathCollect4Dest, "\") = 1 Then
+        If Left$(strDest, 2) = vbBackslash Then
+            If InStr(PathCollect4Dest, vbBackslash) = 1 Then
                 PathCollect4Dest = vbBackslash & PathCollect4Dest
             Else
-                PathCollect4Dest = "\\" & PathCollect4Dest
+                PathCollect4Dest = vbBackslash & PathCollect4Dest
 
             End If
 
@@ -1417,13 +1417,9 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
 
 End Function
 
-Public Function IsUNCPathValid(ByVal sPath As String) As Boolean
-'Determines if the string is a valid UNC
-'(universal naming convention) for a server
-'and share path. Returns True (1) if the string
-'is a valid UNC path, or False otherwise.
-    IsUNCPathValid = PathIsUNC(sPath) = 1
-
+Public Function PathIsValidUNC(ByVal sPath As String) As Boolean
+  ' Returns True if the string is a valid UNC path.
+  PathIsValidUNC = PathIsUNC(StrPtr(sPath))
 End Function
 
 ' Расширить имя файла - использование переменных %%
@@ -1467,9 +1463,9 @@ End Function
 Public Function CreateIfNotExistPath(strFolderPath As String) As Boolean
     If LenB(strFolderPath) > 0 Then
         ' Если нет, то создаем каталог
-        If PathFileExists(strFolderPath) = 0 Then
+        If PathExists(strFolderPath) = False Then
             CreateNewDirectory strFolderPath
-            CreateIfNotExistPath = IsPathAFolder(strFolderPath)
+            CreateIfNotExistPath = PathIsAFolder(strFolderPath)
         End If
     End If
 End Function
@@ -1481,7 +1477,7 @@ Dim SHFileOp                            As SHFILEOPSTRUCT
 
     'terminate the folder string with a pair of nulls
     sSource = BacklashDelFromPath(sSource) & str2vbNullChar
-    If PathFileExists(sDestination) = 0 Then
+    If PathExists(sDestination) = False Then
         CreateIfNotExistPath sDestination
     End If
     sDestination = BacklashDelFromPath(sDestination) & str2vbNullChar
@@ -1512,8 +1508,8 @@ Dim strBuffer                           As String
     End If
 End Function
 
-Public Function PathFileExists(ByVal strPath As String) As Long
-    PathFileExists = PathFileExistsW(StrPtr(strPath & vbNullChar))
+Public Function PathExists(ByVal strPath As String) As Boolean
+    PathExists = PathFileExists(StrPtr(strPath & vbNullChar))
 End Function
 
 Public Function GetFileSizeByPath(ByVal strPath As String) As Long

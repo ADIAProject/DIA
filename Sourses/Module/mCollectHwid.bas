@@ -29,7 +29,7 @@ Dim strCompatibleIDs                    As String
     For i = LBound(arrHwidsLocal) To UBound(arrHwidsLocal)
         strID = arrHwidsLocal(i).HWIDOrig
         ' Получаем данные об устройстве
-        regNameEnum = "SYSTEM\CurrentControlSet\Enum\" & strID & "\"
+        regNameEnum = "SYSTEM\CurrentControlSet\Enum\" & strID & vbBackslash
         ' список ID оборудования
         strCompatID = UCase$(GetKeyValue(HKEY_LOCAL_MACHINE, regNameEnum, "HardwareID", True))
         strCompatibleIDs = UCase$(GetKeyValue(HKEY_LOCAL_MACHINE, regNameEnum, "CompatibleIDs", True))
@@ -54,7 +54,7 @@ Dim strCompatibleIDs                    As String
 
         ' Получаем данные о драйвере
         If LenB(regDriverClass) > 0 Then
-            regNameClass = "SYSTEM\CurrentControlSet\Control\Class\" & regDriverClass & "\"
+            regNameClass = "SYSTEM\CurrentControlSet\Control\Class\" & regDriverClass & vbBackslash
             'SYSTEM\CurrentControlSet\Control\Class\"+pos+"\\"
             ' Получаем данные о драйвере
             strProviderName = GetKeyValue(HKEY_LOCAL_MACHINE, regNameClass, "ProviderName", True)

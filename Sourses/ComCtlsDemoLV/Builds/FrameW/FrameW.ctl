@@ -549,7 +549,7 @@ If Ambient.UserMode = True Then
             If PropMousePointer = vbCustom Then
                 Set UserControl.MouseIcon = PropMouseIcon
             Else
-                Set UserControl.MouseIcon = ImageHandleToPicture(LoadCursor(0, MousePointerID(PropMousePointer)), vbPicTypeIcon)
+                Set UserControl.MouseIcon = PictureFromImageHandle(LoadCursor(0, MousePointerID(PropMousePointer)), vbPicTypeIcon)
             End If
             UserControl.MousePointer = vbCustom
         Case Else
@@ -743,7 +743,7 @@ Select Case wMsg
                                     DeleteDC hDCBmp2
                                 End If
                             End If
-                            Set ImageTransparent.Picture = ImageHandleToPicture(hBmp2, vbPicTypeBitmap)
+                            Set ImageTransparent.Picture = PictureFromImageHandle(hBmp2, vbPicTypeBitmap)
                             If FrameGroupBoxHandle <> 0 Then RedrawWindow FrameGroupBoxHandle, 0, 0, RDW_INVALIDATE
                             SelectObject hDCBmp, hBmpOld
                             DeleteObject hBmp

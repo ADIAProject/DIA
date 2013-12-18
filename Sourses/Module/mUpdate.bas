@@ -40,8 +40,8 @@ Dim tmstart, tmcurr, iTimeTaken
         tmstart = Now
 
         With XMLHTTP
-            '.Open "GET", Replace$(URL, "\", "/"), "False"
-            .Open "GET", Replace$(URL, "\", "/"), "True"
+            '.Open "GET", Replace$(URL, vbBackslash, "/"), "False"
+            .Open "GET", Replace$(URL, vbBackslash, "/"), "True"
             .sEnd ""
             Do
                 tmcurr = Now
@@ -69,11 +69,11 @@ Dim tmstart, tmcurr, iTimeTaken
     Exit Function
 
 ErrCode:
-    errNum = err.Number
-    Debug.Print err.Number & " " & err.Description & " " & err.LastDllError
+    errNum = Err.Number
+    Debug.Print Err.Number & " " & Err.Description & " " & Err.LastDllError
     If errNum <> 0 Then
-        DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
-        DebugMode str5VbTab & "CheckConnection2Server: Err.Number: " & err.Number & " Err.Description: " & err.Description
+        DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        DebugMode str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
     End If
 End Function
 

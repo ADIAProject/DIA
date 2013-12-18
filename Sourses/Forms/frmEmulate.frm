@@ -331,8 +331,8 @@ End Sub
 
 ' Активизация кнопки OK
 Private Sub EnablerCmdOK()
-    If Not IsPathAFolder(ucFilePath.Path) Then
-        If PathFileExists(ucFilePath.Path) = 1 Then
+    If Not PathIsAFolder(ucFilePath.Path) Then
+        If PathExists(ucFilePath.Path) Then
             If cmbOS.ListIndex >= 0 Then
                 cmdOK.Enabled = True
             End If

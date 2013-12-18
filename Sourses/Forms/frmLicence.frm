@@ -386,7 +386,7 @@ Dim strPathLicence                      As String
 
     End Select
 
-    If PathFileExists(strPathLicence) = 1 Then
+    If PathExists(strPathLicence) Then
         LicenceRTF.LoadFile strPathLicence
     Else
 

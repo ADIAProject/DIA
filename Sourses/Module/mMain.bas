@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram             As String = "11/12/2013"
+Public Const strDateProgram             As String = "18/12/2013"
 
 ' Текущая версия базы данных
 Public Const lngDevDBVersion            As Long = 5
@@ -421,7 +421,7 @@ Dim strSysIniTMP                        As String
     End If
 
     ' Если временный каталог windows  (%windir%\temp)недоступен
-    If PathFileExists(strWinTemp) = 0 Then
+    If PathExists(strWinTemp) = False Then
         MsgBox "Windows TempPath not Exist or Environ %TMP% undefined. Program is exit!!!", vbInformation, strProductName
         End
     End If
@@ -444,7 +444,7 @@ Dim strSysIniTMP                        As String
 
   
     ' Если каталог tools недоступен
-    If PathFileExists(strAppPathBackSL & "Tools\") = 0 Then
+    If PathExists(strAppPathBackSL & "Tools\") = False Then
         MsgBox "Not found the main program subfolder '.\Tools'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
         End
     End If
@@ -454,7 +454,7 @@ Dim strSysIniTMP                        As String
     strWorkTempBackSL = BackslashAdd2Path(strWorkTemp)
 
     ' Создаем временный рабочий каталог
-    If PathFileExists(strAppPathBackSL & "DriversInstaller.ini") = 0 Then
+    If PathExists(strAppPathBackSL & "DriversInstaller.ini") = False Then
         strSysIni = strAppPathBackSL & "Tools\DriversInstaller.ini"
     Else
         strSysIni = strAppPathBackSL & "DriversInstaller.ini"
@@ -468,7 +468,7 @@ Dim strSysIniTMP                        As String
     LoadLanguageOS
 
     'загружаем языковые файлы
-    If PathFileExists(strAppPathBackSL & "Tools\Lang") = 1 Then
+    If PathExists(strAppPathBackSL & "Tools\Lang") Then
         mbMultiLanguage = LoadLanguageList
     End If
 
@@ -488,7 +488,7 @@ Dim strSysIniTMP                        As String
             strSysIniTMP = GetSetting(App.ProductName, "Settings", "LOAD_INI_TMP_PATH", vbNullString)
 
             If LenB(strSysIniTMP) > 0 Then
-                If PathFileExists(strSysIniTMP) = 1 Then
+                If PathExists(strSysIniTMP) Then
                     strSysIni = strSysIniTMP
                     ' Собственно перезагрузка настроек
                     GetMainIniParam
@@ -497,12 +497,12 @@ Dim strSysIniTMP                        As String
         End If
     End If
 
-    If PathFileExists(strWorkTemp) = 0 Then
+    If PathExists(strWorkTemp) = False Then
         CreateNewDirectory strWorkTemp
     End If
 
     'Перегружаем языковые файлы
-    If PathFileExists(strAppPathBackSL & "Tools\Lang") = 1 Then
+    If PathExists(strAppPathBackSL & "Tools\Lang") Then
         mbMultiLanguage = LoadLanguageList
     End If
 
@@ -740,7 +740,7 @@ End Function
 Private Sub CreateIni()
 Dim cnt                                 As Long
 
-    If PathFileExists(strSysIni) = 0 Then
+    If PathExists(strSysIni) = False Then
         If mbIsDriveCDRoom Then
             strSysIni = strWorkTempBackSL & "DriversInstaller.ini"
             MsgBox "File DriversInstaller.ini is not Exist!" & vbNewLine & "This program works from CD\DVD, so we create temporary DriversInstaller.ini-file" & vbNewLine & strSysIni, vbInformation + vbApplicationModal, strProductName
@@ -997,7 +997,7 @@ Dim numFilter                           As Long
         If mbDebugEnable Then
             strDebugLogPathFolder = strDebugLogPath
 
-            If PathFileExists(strDebugLogPathFolder) = 0 Then
+            If PathExists(strDebugLogPathFolder) = False Then
                 CreateNewDirectory strDebugLogPathFolder
             End If
         End If
@@ -1008,7 +1008,7 @@ Dim numFilter                           As Long
 
         If Not LogNotOnCDRoom Then
             If mbDebugEnable Then
-                If PathFileExists(strAppPathBackSL & "logs\") = 0 Then
+                If PathExists(strAppPathBackSL & "logs\") = False Then
                     CreateNewDirectory strAppPathBackSL & "logs\"
 
                 End If
@@ -1055,12 +1055,12 @@ Dim numFilter                           As Long
         strAlternativeTempPath = PathCollect(strAlternativeTempPath)
         DebugMode "AlternativeTempPath: " & strAlternativeTempPath
 
-        If PathFileExists(strAlternativeTempPath) = 1 Then
+        If PathExists(strAlternativeTempPath) Then
             strWinTemp = strAlternativeTempPath
             strWorkTemp = strWinTemp & "DriversInstaller"
 
             ' Если нет, то создаем временный рабочий каталог
-            If PathFileExists(strWorkTemp) = 0 Then
+            If PathExists(strWorkTemp) = False Then
                 CreateNewDirectory strWorkTemp
             End If
 
@@ -1103,7 +1103,7 @@ Dim numFilter                           As Long
 
             If arrOSList(i).drpFolder <> "no_key" Then
                 arrOSList(i).drpFolderFull = PathCollect(arrOSList(i).drpFolder)
-                If PathFileExists(arrOSList(i).drpFolderFull) = 0 Then
+                If PathExists(arrOSList(i).drpFolderFull) = False Then
                     DebugMode "Not find folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & str2vbNewLine & "Folder is not Exist: " & vbNewLine & arrOSList(i).drpFolderFull
                     arrOSList(i).DPFolderNotExist = True
                     mbAllFolderDRVNotExistCount = mbAllFolderDRVNotExistCount + 1
@@ -1198,10 +1198,10 @@ Dim numFilter                           As Long
     strDevconCmdPath = IniStringPrivate("DevCon", "CollectHwidsCmd", strSysIni)
     strDevconCmdPath = PathCollect(strDevconCmdPath)
 
-    If PathFileExists(strDevconCmdPath) = 0 Then
+    If PathExists(strDevconCmdPath) = False Then
         strDevconCmdPath = strAppPathBackSL & "Tools\Devcon\devcon_c.cmd"
 
-        If PathFileExists(strDevconCmdPath) = 0 Then
+        If PathExists(strDevconCmdPath) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevconCmdPath, vbInformation, strProductName
         End If
     End If
@@ -1215,10 +1215,10 @@ Dim numFilter                           As Long
 
     strDevConExePath = PathCollect(strDevConExePath)
 
-    If PathFileExists(strDevConExePath) = 0 Then
+    If PathExists(strDevConExePath) = False Then
         strDevConExePath = strAppPathBackSL & "Tools\Devcon\devcon.exe"
 
-        If PathFileExists(strDevConExePath) = 0 Then
+        If PathExists(strDevConExePath) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevConExePath, vbInformation, strProductName
         End If
     End If
@@ -1232,10 +1232,10 @@ Dim numFilter                           As Long
 
     strDevConExePath64 = PathCollect(strDevConExePath64)
 
-    If PathFileExists(strDevConExePath64) = 0 Then
+    If PathExists(strDevConExePath64) = False Then
         strDevConExePath64 = strAppPathBackSL & "Tools\Devcon\devcon64.exe"
 
-        If PathFileExists(strDevConExePath64) = 0 Then
+        If PathExists(strDevConExePath64) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevConExePath64, vbInformation, strProductName
         End If
     End If
@@ -1249,10 +1249,10 @@ Dim numFilter                           As Long
 
     strDevConExePathW2k = PathCollect(strDevConExePathW2k)
 
-    If PathFileExists(strDevConExePathW2k) = 0 Then
+    If PathExists(strDevConExePathW2k) = False Then
         strDevConExePathW2k = strAppPathBackSL & "Tools\Devcon\devconw2k.exe"
 
-        If PathFileExists(strDevConExePathW2k) = 0 Then
+        If PathExists(strDevConExePathW2k) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevConExePathW2k, vbInformation, strProductName
         End If
     End If
@@ -1267,10 +1267,10 @@ Dim numFilter                           As Long
 
     strDPInstExePath86 = PathCollect(strDPInstExePath86)
 
-    If PathFileExists(strDPInstExePath86) = 0 Then
+    If PathExists(strDPInstExePath86) = False Then
         strDPInstExePath86 = strAppPathBackSL & "Tools\DPInst\DPInst.exe"
 
-        If PathFileExists(strDPInstExePath86) = 0 Then
+        If PathExists(strDPInstExePath86) = False Then
             MsgBox strMessages(7) & vbNewLine & strDPInstExePath86, vbInformation, strProductName
         End If
     End If
@@ -1285,10 +1285,10 @@ Dim numFilter                           As Long
 
     strDPInstExePath64 = PathCollect(strDPInstExePath64)
 
-    If PathFileExists(strDPInstExePath64) = 0 Then
+    If PathExists(strDPInstExePath64) = False Then
         strDPInstExePath64 = strAppPathBackSL & "Tools\DPInst\DPInst64.exe"
 
-        If PathFileExists(strDPInstExePath64) = 0 Then
+        If PathExists(strDPInstExePath64) = False Then
             MsgBox strMessages(7) & vbNewLine & strDPInstExePath64, vbInformation, strProductName
         End If
     End If
@@ -1311,10 +1311,10 @@ Dim numFilter                           As Long
 
     strArh7zExePATH = PathCollect(strArh7zExePATH)
 
-    If PathFileExists(strArh7zExePATH) = 0 Then
+    If PathExists(strArh7zExePATH) = False Then
         strArh7zExePATH = strAppPathBackSL & "Tools\Arc\7za.exe"
 
-        If PathFileExists(strArh7zExePATH) = 0 Then
+        If PathExists(strArh7zExePATH) = False Then
             MsgBox strMessages(7) & vbNewLine & strArh7zExePATH, vbInformation, strProductName
         End If
 
@@ -1746,7 +1746,7 @@ Dim strPathTo                           As String
 
     ' Проверяем существоание каталога
     If LenB(strPathToTemp) > 0 Then
-        If PathFileExists(strPathToTemp) = 0 Then
+        If PathExists(strPathToTemp) = False Then
             CreateNewDirectory strPathToTemp
         End If
 

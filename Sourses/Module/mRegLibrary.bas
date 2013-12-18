@@ -190,9 +190,9 @@ Dim lngMsgRet                           As Integer
         regParam = Replace$(regParam, "vbscript.dll\3", "vbscript.dll")
     End If
 
-    If PathFileExists(regParam) = 0 Then
+    If PathExists(regParam) = False Then
         If InStr(regParam, "vbscript.dll\3") = 0 Then
-            If PathFileExists(strPathOcxSystem) = 0 Or LenB(regParam) = 0 Then
+            If PathExists(strPathOcxSystem) = False Or LenB(regParam) = 0 Then
 StartRegOCXForce:
 
                 If GetBinaryFileFromResource(strPathOcx, "OCX_" & FileName_woExt(strOCXFileName), "CUSTOM") Then
@@ -207,7 +207,7 @@ StartRegOCXForce:
 
                     'Копируем новый файл с заменой в системный кеш
                     If StrComp(ExtFromFileName(strPathOcx), "dll", vbTextCompare) = 0 Then
-                        If PathFileExists(strPathOcxSystemSPFiles) = 1 Then
+                        If PathExists(strPathOcxSystemSPFiles) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemSPFiles) = False Then
                                 RegOCX = False
                                 DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: False: " & strPathOcxSystemSPFiles
@@ -219,7 +219,7 @@ StartRegOCXForce:
 
                         End If
 
-                        If PathFileExists(strPathOcxSystemCache) = 1 Then
+                        If PathExists(strPathOcxSystemCache) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemCache) = False Then
                                 RegOCX = False
                                 DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: False: " & strPathOcxSystemCache
@@ -259,7 +259,7 @@ StartRegOCXForce:
             RegOCX = True
             regParam = Replace$(regParam, "vbscript.dll\3", "vbscript.dll")
 
-            If PathFileExists(regParam) = 1 Then
+            If PathExists(regParam) Then
                 ' Сравниваем версии библиотек
                 strVersionFile = objFSO.GetFileVersion(regParam)
 
@@ -310,7 +310,7 @@ StartRegOCXForce:
     Else
         RegOCX = True
 
-        If PathFileExists(regParam) = 1 Then
+        If PathExists(regParam) Then
             If LenB(regParam) > 0 Then
                 ' Сравниваем версии библиотек
                 strVersionFile = objFSO.GetFileVersion(regParam)

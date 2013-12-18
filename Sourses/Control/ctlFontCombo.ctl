@@ -1908,7 +1908,7 @@ Dim fI                                  As Integer
     ReDim mRecent(mRecentMax)
 
     For i = 0 To mRecentMax - 1
-        fN = ReadValue(MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & i + 1, "")
+        fN = ReadValue(MyHkey, MyGroup & vbBackslash & MySection & vbBackslash & myKey, "RecentFontName" & i + 1, "")
         fI = FontExist(fN)
 
         If fI > -1 Then
@@ -1930,7 +1930,7 @@ Public Sub SaveRecentFonts(MyHkey As HkeyLoc2, _
 Dim i                                   As Integer
 
     For i = 0 To mRecentCount - 1
-        SetValue MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & i + 1, mRecent(i).fName
+        SetValue MyHkey, MyGroup & vbBackslash & MySection & vbBackslash & myKey, "RecentFontName" & i + 1, mRecent(i).fName
     Next
 
 End Sub
