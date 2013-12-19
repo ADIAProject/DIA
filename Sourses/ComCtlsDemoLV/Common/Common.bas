@@ -49,6 +49,13 @@ Private Declare Function GetForegroundWindow Lib "user32" () As Long
 Private Declare Function GetFileAttributes Lib "kernel32" Alias "GetFileAttributesW" (ByVal lpFileName As Long) As Long
 Private Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal VKey As Long) As Integer
+Private Declare Function GetObjectAPI Lib "gdi32" Alias "GetObjectW" (ByVal hObject As Long, ByVal nCount As Long, ByRef lpObject As Any) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal dwRop As Long) As Long
 Private Declare Function DrawIconEx Lib "user32" (ByVal hDC As Long, ByVal XLeft As Long, ByVal YTop As Long, ByVal hIcon As Long, ByVal CXWidth As Long, ByVal CYWidth As Long, ByVal istepIfAniCur As Long, ByVal hbrFlickerFreeDraw As Long, ByVal diFlags As Long) As Long
 Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As Long
@@ -59,15 +66,6 @@ Private Declare Function CreateIconIndirect Lib "user32" (ByRef pIconInfo As ICO
 Private Declare Function OleTranslateColor Lib "oleaut32" (ByVal Color As Long, ByVal hPal As Long, ByRef ColorRef As Long) As Long
 Private Declare Function OleLoadPicturePath Lib "oleaut32" (ByVal lpszPath As Long, ByVal pUnkCaller As Long, ByVal dwReserved As Long, ByVal ClrReserved As OLE_COLOR, ByRef riid As CLSID, ByRef pIPicture As IPicture) As Long
 Private Declare Function OleCreatePictureIndirect Lib "olepro32" (ByRef pPictDesc As PICTDESC, ByRef riid As Any, ByVal fPictureOwnsHandle As Long, ByRef pIPicture As IPicture) As Long
-Private Declare Function CreateStreamOnHGlobal Lib "ole32" (ByVal hGlobal As Long, ByVal fDeleteOnRelease As Long, ByRef ppstm As Any) As Long
-Private Declare Function CreateDCAsNull Lib "gdi32" Alias "CreateDCW" (ByVal lpDriverName As Long, ByRef lpDeviceName As Any, ByRef lpOutput As Any, ByRef lpInitData As Any) As Long
-Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function GetObjectAPI Lib "gdi32" Alias "GetObjectW" (ByVal hObject As Long, ByVal nCount As Long, ByRef lpObject As Any) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
-Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
-Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 
 ' (VB-Overwrite)
 Public Function MsgBox(ByVal Prompt As String, Optional ByVal Buttons As VbMsgBoxStyle = vbOKOnly, Optional ByVal Title As String) As VbMsgBoxResult
@@ -419,10 +417,6 @@ Public Function B(ByVal Color As Long) As Byte
 CopyMemory B, ByVal VarPtr(WinColor(Color)) + 2, 1
 End Function
 
-Public Function GrayColor(ByVal Color As Long) As Long
-GrayColor = ((77& * (Color And &HFF&) + 152& * (Color And &HFF00&) \ &H100& + 28& * (Color \ &H10000)) \ 256&) * &H10101
-End Function
-
 Public Function PictureFromPath(ByVal PathName As String) As IPictureDisp
 Dim IID As CLSID, NewPicture As IPicture
 With IID
@@ -439,13 +433,13 @@ End With
 If OleLoadPicturePath(StrPtr(PathName), 0, 0, 0, IID, NewPicture) = 0 Then Set PictureFromPath = NewPicture
 End Function
 
-Public Function PictureFromImageHandle(ByVal hImage As Long, ByVal PicType As VBRUN.PictureTypeConstants) As IPictureDisp
-If hImage = 0 Then Exit Function
+Public Function PictureFromHandle(ByVal Handle As Long, ByVal PicType As VBRUN.PictureTypeConstants) As IPictureDisp
+If Handle = 0 Then Exit Function
 Dim PICD As PICTDESC, IID As CLSID, NewPicture As IPicture
 With PICD
 .cbSizeOfStruct = LenB(PICD)
 .PicType = PicType
-.hImage = hImage
+.hImage = Handle
 End With
 With IID
 .Data1 = &H7BF80980
@@ -453,19 +447,17 @@ With IID
 .Data3 = &H101A
 .Data4(0) = &H8B
 .Data4(1) = &HBB
-.Data4(2) = &H0
 .Data4(3) = &HAA
-.Data4(4) = &H0
 .Data4(5) = &H30
 .Data4(6) = &HC
 .Data4(7) = &HAB
 End With
-If OleCreatePictureIndirect(PICD, IID, 1, NewPicture) = 0 Then Set PictureFromImageHandle = NewPicture
+If OleCreatePictureIndirect(PICD, IID, 1, NewPicture) = 0 Then Set PictureFromHandle = NewPicture
 End Function
 
 Public Function BitmapHandleFromPicture(ByVal Picture As IPictureDisp, Optional ByVal BackColor As OLE_COLOR) As Long
 If Picture Is Nothing Then Exit Function
-Dim hDCDesktop As Long, hBmp As Long
+Dim hDCScreen As Long, hBmp As Long
 Dim hDC1 As Long, hBmpOld1 As Long
 Dim hDC2 As Long, hBmpOld2 As Long
 Dim Bmp As BITMAP, hImage As Long
@@ -478,15 +470,15 @@ Else
 End If
 If hImage <> 0 Then
     GetObjectAPI hImage, LenB(Bmp), Bmp
-    hDCDesktop = CreateDCAsNull(StrPtr("DISPLAY"), ByVal 0&, ByVal 0&, ByVal 0&)
-    If hDCDesktop <> 0 Then
+    hDCScreen = GetDC(0)
+    If hDCScreen <> 0 Then
         If Not Picture.Type = vbPicTypeIcon Then
-            hDC1 = CreateCompatibleDC(hDCDesktop)
+            hDC1 = CreateCompatibleDC(hDCScreen)
             If hDC1 <> 0 Then
                 hBmpOld1 = SelectObject(hDC1, hImage)
-                hDC2 = CreateCompatibleDC(hDCDesktop)
+                hDC2 = CreateCompatibleDC(hDCScreen)
                 If hDC2 <> 0 Then
-                    hBmp = CreateCompatibleBitmap(hDCDesktop, Bmp.BMWidth, Bmp.BMHeight)
+                    hBmp = CreateCompatibleBitmap(hDCScreen, Bmp.BMWidth, Bmp.BMHeight)
                     If hBmp <> 0 Then
                         hBmpOld2 = SelectObject(hDC2, hBmp)
                         BitBlt hDC2, 0, 0, Bmp.BMWidth, Bmp.BMHeight, hDC1, 0, 0, vbSrcCopy
@@ -499,9 +491,9 @@ If hImage <> 0 Then
                 DeleteDC hDC1
             End If
         Else
-            hDC1 = CreateCompatibleDC(hDCDesktop)
+            hDC1 = CreateCompatibleDC(hDCScreen)
             If hDC1 <> 0 Then
-                hBmp = CreateCompatibleBitmap(hDCDesktop, Bmp.BMWidth, Bmp.BMHeight)
+                hBmp = CreateCompatibleBitmap(hDCScreen, Bmp.BMWidth, Bmp.BMHeight)
                 If hBmp <> 0 Then
                     hBmpOld1 = SelectObject(hDC1, hBmp)
                     Dim Brush As Long
@@ -515,7 +507,7 @@ If hImage <> 0 Then
                 DeleteDC hDC1
             End If
         End If
-        DeleteDC hDCDesktop
+        ReleaseDC 0, hDCScreen
     End If
 End If
 End Function

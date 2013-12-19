@@ -1487,23 +1487,26 @@ Select Case wMsg
         Static InProc As Boolean
         If GetFocus() <> ComboBoxHandle And (GetFocus() <> ComboBoxEditHandle Or ComboBoxEditHandle = 0) Then
             If InProc = True Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
-            On Error Resume Next
-            If Extender.CausesValidation = True Then
-                InProc = True
-                Screen.ActiveForm.ValidateControls
-                InProc = False
-                If Err.Number = 380 Then
-                    WindowProcControl = MA_NOACTIVATEANDEAT
-                Else
-                    SetFocusAPI UserControl.hWnd
-                    WindowProcControl = MA_NOACTIVATE
-                End If
-            Else
-                SetFocusAPI UserControl.hWnd
-                WindowProcControl = MA_NOACTIVATE
-            End If
-            On Error GoTo 0
-            Exit Function
+            Select Case HiWord(lParam)
+                Case WM_LBUTTONDOWN
+                    On Error Resume Next
+                    If Extender.CausesValidation = True Then
+                        InProc = True
+                        Screen.ActiveForm.ValidateControls
+                        InProc = False
+                        If Err.Number = 380 Then
+                            WindowProcControl = MA_NOACTIVATEANDEAT
+                        Else
+                            SetFocusAPI UserControl.hWnd
+                            WindowProcControl = MA_NOACTIVATE
+                        End If
+                    Else
+                        SetFocusAPI UserControl.hWnd
+                        WindowProcControl = MA_NOACTIVATE
+                    End If
+                    On Error GoTo 0
+                    Exit Function
+            End Select
         End If
     Case WM_SETCURSOR
         If LoWord(lParam) = HTCLIENT Then
@@ -1578,6 +1581,8 @@ End Function
 
 Private Function WindowProcEdit(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
+    Case WM_SETFOCUS
+        If wParam <> ComboBoxHandle Then SetFocusAPI UserControl.hWnd: Exit Function
     Case WM_SETCURSOR
         If LoWord(lParam) = HTCLIENT Then
             If PropOLEDragMode = vbOLEDragAutomatic Then

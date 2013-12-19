@@ -484,7 +484,7 @@ If Ambient.UserMode = True Then
             If PropMousePointer = vbCustom Then
                 Set UserControl.MouseIcon = PropMouseIcon
             Else
-                Set UserControl.MouseIcon = PictureFromImageHandle(LoadCursor(0, MousePointerID(PropMousePointer)), vbPicTypeIcon)
+                Set UserControl.MouseIcon = PictureFromHandle(LoadCursor(0, MousePointerID(PropMousePointer)), vbPicTypeIcon)
             End If
             UserControl.MousePointer = vbCustom
         Case Else

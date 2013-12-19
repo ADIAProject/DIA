@@ -4260,23 +4260,26 @@ Select Case wMsg
         LabelEditHandle = Me.hWndLabelEdit
         If GetFocus() <> ListViewHandle And (GetFocus() <> LabelEditHandle Or LabelEditHandle = 0) Then
             If InProc = True Or LoWord(lParam) = HTBORDER Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
-            On Error Resume Next
-            If Extender.CausesValidation = True Then
-                InProc = True
-                Screen.ActiveForm.ValidateControls
-                InProc = False
-                If Err.Number = 380 Then
-                    WindowProcControl = MA_NOACTIVATEANDEAT
-                Else
-                    SetFocusAPI UserControl.hWnd
-                    WindowProcControl = MA_NOACTIVATE
-                End If
-            Else
-                SetFocusAPI UserControl.hWnd
-                WindowProcControl = MA_NOACTIVATE
-            End If
-            On Error GoTo 0
-            Exit Function
+            Select Case HiWord(lParam)
+                Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN
+                    On Error Resume Next
+                    If Extender.CausesValidation = True Then
+                        InProc = True
+                        Screen.ActiveForm.ValidateControls
+                        InProc = False
+                        If Err.Number = 380 Then
+                            WindowProcControl = MA_NOACTIVATEANDEAT
+                        Else
+                            SetFocusAPI UserControl.hWnd
+                            WindowProcControl = MA_NOACTIVATE
+                        End If
+                    Else
+                        SetFocusAPI UserControl.hWnd
+                        WindowProcControl = MA_NOACTIVATE
+                    End If
+                    On Error GoTo 0
+                    Exit Function
+            End Select
         End If
     Case WM_SETCURSOR
         If LoWord(lParam) = HTCLIENT Then

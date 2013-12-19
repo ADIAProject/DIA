@@ -913,9 +913,7 @@ Select Case wMsg
         If GetFocus() <> OptionButtonHandle Then
             If InProc = True Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
-                Case WM_MBUTTONDOWN, WM_RBUTTONDOWN
-                    WindowProcControl = MA_NOACTIVATE
-                Case Else
+                Case WM_LBUTTONDOWN
                     On Error Resume Next
                     If Extender.CausesValidation = True Then
                         InProc = True
@@ -936,8 +934,8 @@ Select Case wMsg
                         WindowProcControl = MA_NOACTIVATE
                     End If
                     On Error GoTo 0
+                    Exit Function
             End Select
-            Exit Function
         End If
     Case WM_SETCURSOR
         If LoWord(lParam) = HTCLIENT Then

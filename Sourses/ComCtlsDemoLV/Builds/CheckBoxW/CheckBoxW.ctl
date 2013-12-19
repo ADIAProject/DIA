@@ -22,7 +22,7 @@ Private Type TagInitCommonControlsEx
 dwSize As Long
 dwICC As Long
 End Type
-Private Type TagAccel
+Private Type TACCEL
 FVirt As Byte
 Key As Integer
 Cmd As Integer
@@ -95,7 +95,7 @@ Attribute OLESetData.VB_Description = "Occurs at the OLE drag/drop source contro
 Public Event OLEStartDrag(Data As DataObject, AllowedEffects As Long)
 Attribute OLEStartDrag.VB_Description = "Occurs when an OLE drag/drop operation is initiated either manually or automatically."
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function CreateAcceleratorTable Lib "user32" Alias "CreateAcceleratorTableW" (ByRef lpaccl As TagAccel, ByVal cEntries As Long) As Long
+Private Declare Function CreateAcceleratorTable Lib "user32" Alias "CreateAcceleratorTableW" (ByVal lpAccel As Long, ByVal cEntries As Long) As Long
 Private Declare Function DestroyAcceleratorTable Lib "user32" (ByVal hAccel As Long) As Long
 Private Declare Function VkKeyScan Lib "user32" Alias "VkKeyScanW" (ByVal cChar As Integer) As Integer
 Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
@@ -233,9 +233,12 @@ End Sub
 
 Private Sub IOleControlVB_GetControlInfo(ByRef Handled As Boolean, ByRef AccelCount As Integer, ByRef AccelTable As Long, ByRef Flags As Long)
 Static CmdID As Integer
-If CheckBoxAcceleratorHandle <> 0 Then DestroyAcceleratorTable CheckBoxAcceleratorHandle
+If CheckBoxAcceleratorHandle <> 0 Then
+    DestroyAcceleratorTable CheckBoxAcceleratorHandle
+    CheckBoxAcceleratorHandle = 0
+End If
 If CheckBoxHandle <> 0 Then
-    Dim Accel As Integer, AccelArray() As TagAccel, AccelRefCount As Long
+    Dim Accel As Integer, AccelArray() As TACCEL, AccelRefCount As Long
     Accel = AccelCharCode(Me.Caption)
     If Accel <> 0 Then
         ReDim Preserve AccelArray(0 To AccelRefCount)
@@ -250,7 +253,7 @@ If CheckBoxHandle <> 0 Then
     End If
     If AccelRefCount > 0 Then
         AccelCount = AccelRefCount
-        CheckBoxAcceleratorHandle = CreateAcceleratorTable(AccelArray(0), AccelCount)
+        CheckBoxAcceleratorHandle = CreateAcceleratorTable(VarPtr(AccelArray(0)), AccelCount)
         AccelTable = CheckBoxAcceleratorHandle
         Flags = 0
         Handled = True
@@ -950,6 +953,10 @@ ShowWindow CheckBoxHandle, SW_HIDE
 SetParent CheckBoxHandle, 0
 DestroyWindow CheckBoxHandle
 CheckBoxHandle = 0
+If CheckBoxAcceleratorHandle <> 0 Then
+    DestroyAcceleratorTable CheckBoxAcceleratorHandle
+    CheckBoxAcceleratorHandle = 0
+End If
 If CheckBoxTransparentBrush <> 0 Then
     DeleteObject CheckBoxTransparentBrush
     CheckBoxTransparentBrush = 0
@@ -1002,9 +1009,7 @@ Select Case wMsg
         If GetFocus() <> CheckBoxHandle Then
             If InProc = True Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
-                Case WM_MBUTTONDOWN, WM_RBUTTONDOWN
-                    WindowProcControl = MA_NOACTIVATE
-                Case Else
+                Case WM_LBUTTONDOWN
                     On Error Resume Next
                     If Extender.CausesValidation = True Then
                         InProc = True
@@ -1021,8 +1026,8 @@ Select Case wMsg
                         WindowProcControl = MA_NOACTIVATE
                     End If
                     On Error GoTo 0
+                    Exit Function
             End Select
-            Exit Function
         End If
     Case WM_SETCURSOR
         If LoWord(lParam) = HTCLIENT Then

@@ -1270,9 +1270,7 @@ Select Case wMsg
         If GetFocus() <> SpinBoxUpDownHandle And GetFocus() <> SpinBoxEditHandle Then
             If InProc = True Or LoWord(lParam) = HTBORDER Then WindowProcEdit = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
-                Case WM_MBUTTONDOWN
-                    WindowProcEdit = MA_NOACTIVATE
-                Case Else
+                Case WM_LBUTTONDOWN
                     On Error Resume Next
                     If Extender.CausesValidation = True Then
                         InProc = True
@@ -1289,8 +1287,8 @@ Select Case wMsg
                         WindowProcEdit = MA_NOACTIVATE
                     End If
                     On Error GoTo 0
+                    Exit Function
             End Select
-            Exit Function
         End If
     Case WM_KEYDOWN, WM_KEYUP
         Dim KeyCode As Integer
