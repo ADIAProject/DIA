@@ -297,25 +297,30 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strMeCaptionView                As String
-Private strMeCaptionInstall             As String
-Private strCmdOKCaption1                As String
-Private strCmdOKCaption2                As String
-Private strCmdOKCaption3                As String
-Private mbGrp1                          As Boolean
-Private mbGrp2                          As Boolean
-Private mbGrp3                          As Boolean
-Private mbGrp4                          As Boolean
-Private miCurrentListCount              As Long
+Private strMeCaptionView    As String
+Private strMeCaptionInstall As String
+Private strCmdOKCaption1    As String
+Private strCmdOKCaption2    As String
+Private strCmdOKCaption3    As String
+Private mbGrp1              As Boolean
+Private mbGrp2              As Boolean
+Private mbGrp3              As Boolean
+Private mbGrp4              As Boolean
+Private miCurrentListCount  As Long
 
 ' Минимальные размеры формы
-Private lngFormWidthMin                 As Long
-Private lngFormHeightMin                As Long
+Private lngFormWidthMin     As Long
+Private lngFormHeightMin    As Long
+Private strFormName         As String
 
-Private strFormName                     As String
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -323,44 +328,64 @@ Private Sub FontCharsetChange()
     End With
 
     frGroup.Font.Charset = lngDialog_Charset
-
     SetButtonProperties cmdExit
     SetButtonProperties cmdOK
     SetButtonProperties cmdCheckAll
     SetButtonProperties cmdUnCheckAll
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp1_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkGrp1_Click()
     mbGrp1 = chkGrp1.Value
     miCurrentListCount = 0
     LoadListbyMode
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp2_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkGrp2_Click()
     mbGrp2 = chkGrp2.Value
     miCurrentListCount = 0
     LoadListbyMode
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp3_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkGrp3_Click()
     mbGrp3 = chkGrp3.Value
     miCurrentListCount = 0
     LoadListbyMode
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp4_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkGrp4_Click()
     mbGrp4 = chkGrp4.Value
     miCurrentListCount = 0
     LoadListbyMode
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdCheckAll_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdCheckAll_Click()
 
-Dim i                                   As Integer
+    Dim i As Integer
 
     With lvFolders.ListItems
 
@@ -368,7 +393,6 @@ Dim i                                   As Integer
 
             If Not .Item(i).Checked Then
                 .Item(i).Checked = True
-
             End If
 
         Next
@@ -377,14 +401,23 @@ Dim i                                   As Integer
 
     'LVFOLDERS
     FindCheckCountList
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     mbooSelectInstall = False
     Me.Hide
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
 
     If mbooSelectInstall Then
@@ -392,27 +425,27 @@ Private Sub cmdOK_Click()
             If mbooSelectInstall Then
                 strPathDRPList = GetPathList
                 mbCheckDRVOk = True
-
             End If
 
         Else
 
             If mbooSelectInstall Then
                 MsgBox "Not Selected. Window will be closed...", vbInformation + vbApplicationModal, strProductName
-
             End If
-
         End If
-
     End If
 
     Unload Me
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUnCheckAll_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdUnCheckAll_Click()
 
-Dim i                                   As Integer
+    Dim i As Integer
 
     With lvFolders.ListItems
 
@@ -420,7 +453,6 @@ Dim i                                   As Integer
 
             If .Item(i).Checked Then
                 .Item(i).Checked = False
-
             End If
 
         Next
@@ -429,12 +461,16 @@ Dim i                                   As Integer
 
     'LVFOLDERS
     FindCheckCountList
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CollectModeString
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function CollectModeString() As String
 
-Dim strCmdStringDPInstTemp              As String
+    Dim strCmdStringDPInstTemp As String
 
     If mbGrp1 Then
         strCmdStringDPInstTemp = strCmdStringDPInstTemp & "0"
@@ -454,19 +490,22 @@ Dim strCmdStringDPInstTemp              As String
 
     ' Результирующая строка
     CollectModeString = strCmdStringDPInstTemp
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FindCheckCountList
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function FindCheckCountList() As Long
 
-Dim i                                   As Integer
-Dim miCount                             As Integer
+    Dim i       As Integer
+    Dim miCount As Integer
 
     For i = 1 To lvFolders.ListItems.Count
 
         If lvFolders.ListItems.Item(i).Checked Then
             miCount = miCount + 1
-
         End If
 
     Next
@@ -477,7 +516,6 @@ Dim miCount                             As Integer
 
             If Not .Enabled Then
                 .Enabled = True
-
                 '.Refresh
             End If
 
@@ -491,10 +529,8 @@ Dim miCount                             As Integer
             If mbooSelectInstall Then
                 If .Enabled Then
                     .Enabled = False
-
                     '.Refresh
                 End If
-
             End If
 
         End With
@@ -503,22 +539,29 @@ Dim miCount                             As Integer
     End If
 
     FindCheckCountList = miCount
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         cmdExit_Click
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
-
 
     With Me
         strFormName = .Name
@@ -533,36 +576,46 @@ Private Sub Form_Load()
     LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
     LoadIconImage2BtnJC cmdCheckAll, "BTN_CHECKMARK", strPathImageMainWork
     LoadIconImage2BtnJC cmdUnCheckAll, "BTN_UNCHECKMARK", strPathImageMainWork
-
     ' все остальные процедуры
     FormLoadAction
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadDefaultParam
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub FormLoadDefaultParam()
     miCurrentListCount = 0
+
     If Not (lvFolders Is Nothing) Then
         lvFolders.ColumnHeaders.Clear
         lvFolders.ListItems.Clear
     End If
+
     chkGrp1.Value = Checked
     chkGrp2.Value = Checked
     chkGrp3.Value = Unchecked
     chkGrp4.Value = Checked
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadAction
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
-Dim i                                   As Integer
+    Dim i As Integer
 
     miCurrentListCount = 0
+
     ' Локализациz приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
     mbGrp1 = chkGrp1.Value
@@ -577,9 +630,9 @@ Dim i                                   As Integer
             For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
                 miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, i)), False, CollectModeString)
             Next
+
         Else
             miCurrentListCount = LoadList_Folders(CurrentSelButtonIndex, False, CollectModeString)
-
         End If
 
         cmdCheckAll_Click
@@ -591,7 +644,6 @@ Dim i                                   As Integer
             cmdOK.Caption = strCmdOKCaption3
         Else
             cmdOK.Caption = strCmdOKCaption2
-
         End If
 
         Me.Caption = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
@@ -604,15 +656,21 @@ Dim i                                   As Integer
         cmdUnCheckAll.Visible = False
         Me.Caption = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     End If
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetPathList
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function GetPathList() As String
 
-Dim i                                   As Integer
-Dim ii                                  As Integer
-Dim strDevPathList                      As String
-Dim strDevPathShort                     As String
-Dim strDevDPName                        As String
+    Dim i               As Integer
+    Dim ii              As Integer
+    Dim strDevPathList  As String
+    Dim strDevPathShort As String
+    Dim strDevDPName    As String
 
     strDevPathList = vbNullString
 
@@ -633,22 +691,18 @@ Dim strDevDPName                        As String
                         If StrComp(strDevDPName, frmMain.acmdPackFiles(arrCheckDP(0, ii)).Tag, vbTextCompare) = 0 Then
                             If InStr(1, strDevPathList, strDevPathShort, vbTextCompare) = 0 Then
                                 strDevPathList = AppendStr(strDevPathList, strDevPathShort, " ")
-
                             End If
-
                         End If
 
                         arrCheckDP(1, ii) = strDevPathList
                     Next
+
                 Else
 
                     If InStr(1, strDevPathList, strDevPathShort, vbTextCompare) = 0 Then
                         strDevPathList = AppendStr(strDevPathList, strDevPathShort, " ")
-
                     End If
-
                 End If
-
             End If
 
         Next
@@ -657,7 +711,6 @@ Dim strDevDPName                        As String
 
     'LVFOLDERS
     GetPathList = strDevPathList
-
 End Function
 
 '! -----------------------------------------------------------
@@ -665,30 +718,35 @@ End Function
 '!  Переменные  :
 '!  Описание    :  Построение спиcка ОС
 '! -----------------------------------------------------------
-Private Function LoadList_Folders(lngButtIndex As Long, _
-                                  Optional ByVal mbViewed As Boolean = True, _
-                                  Optional ByVal strMode As String = vbNullString) As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function LoadList_Folders
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lngButtIndex (Long)
+'                              mbViewed (Boolean = True)
+'                              strMode (String = vbNullString)
+'!--------------------------------------------------------------------------------
+Private Function LoadList_Folders(lngButtIndex As Long, Optional ByVal mbViewed As Boolean = True, Optional ByVal strMode As String = vbNullString) As Long
 
-'Dim ii                                  As Long
-'Dim objRegExp                           As RegExp
-'Dim objMatch                            As Match
-'Dim objMatches                          As MatchCollection
-'Dim strTemp                             As String
-Dim strDevHwid                          As String
-Dim strDevFolder                        As String
-Dim strDevInf                           As String
-Dim strDevDriverDB                      As String
-Dim strDevDriverPrizn                   As String
-Dim strDevDriverLocal                   As String
-Dim strDevStatus                        As String
-Dim strDevName                          As String
-Dim strSection                          As String
-Dim miPreviousListCount                 As Long
-Dim miThisListCount                     As Long
-Dim lngLVTop                            As Long
-Dim lngLVHeight                         As Long
-Dim lngLVWidht                          As Long
-Dim lngNumRow                           As Long
+    'Dim ii                                  As Long
+    'Dim objRegExp                           As RegExp
+    'Dim objMatch                            As Match
+    'Dim objMatches                          As MatchCollection
+    'Dim strTemp                             As String
+    Dim strDevHwid          As String
+    Dim strDevFolder        As String
+    Dim strDevInf           As String
+    Dim strDevDriverDB      As String
+    Dim strDevDriverPrizn   As String
+    Dim strDevDriverLocal   As String
+    Dim strDevStatus        As String
+    Dim strDevName          As String
+    Dim strSection          As String
+    Dim miPreviousListCount As Long
+    Dim miThisListCount     As Long
+    Dim lngLVTop            As Long
+    Dim lngLVHeight         As Long
+    Dim lngLVWidht          As Long
+    Dim lngNumRow           As Long
 
     With lvFolders
         .Redraw = False
@@ -718,21 +776,19 @@ Dim lngNumRow                           As Long
 
     lngNumRow = lvFolders.ListItems.Count
     miPreviousListCount = lvFolders.ListItems.Count
-        
-    Dim strTemp_x() As String
+
+    Dim strTemp_x()     As String
     Dim strTempLine_x() As String
-    Dim i_arr As Long
-    
+    Dim i_arr           As Long
+
     Debug.Print arrTTip(lngButtIndex)
-    
     strTemp_x = Split(arrTTip(lngButtIndex), vbNewLine)
-    
+
     For i_arr = LBound(strTemp_x) To UBound(strTemp_x)
         strTempLine_x = Split(strTemp_x(i_arr), " | ")
-        
+
         If LenB(Trim$(strTemp_x(i_arr))) Then
             miThisListCount = miThisListCount + 1
-
             strDevHwid = Trim$(strTempLine_x(0))
             strDevFolder = Trim$(strTempLine_x(1))
             strDevInf = Trim$(strTempLine_x(2))
@@ -753,9 +809,11 @@ Dim lngNumRow                           As Long
                     .SubItems(5) = strDevDriverLocal
                     .SubItems(6) = strDevStatus
                     .SubItems(7) = strDevName
+
                     If mbGroupTask Then
                         .SubItems(8) = frmMain.acmdPackFiles(lngButtIndex).Tag
                     End If
+
                 End With
 
                 lngNumRow = lngNumRow + 1
@@ -773,15 +831,16 @@ Dim lngNumRow                           As Long
                             .SubItems(5) = strDevDriverLocal
                             .SubItems(6) = strDevStatus
                             .SubItems(7) = strDevName
+
                             If mbGroupTask Then
                                 .SubItems(8) = frmMain.acmdPackFiles(lngButtIndex).Tag
                             End If
+
                         End With
+
                         lngNumRow = lngNumRow + 1
                         GoTo NextListElement
-
                     End If
-
                 End If
 
                 '0 - неустановленные
@@ -796,16 +855,16 @@ Dim lngNumRow                           As Long
                             .SubItems(5) = strDevDriverLocal
                             .SubItems(6) = strDevStatus
                             .SubItems(7) = strDevName
+
                             If mbGroupTask Then
                                 .SubItems(8) = frmMain.acmdPackFiles(lngButtIndex).Tag
                             End If
+
                         End With
 
                         lngNumRow = lngNumRow + 1
                         GoTo NextListElement
-
                     End If
-
                 End If
 
                 '=? - установленные
@@ -820,15 +879,16 @@ Dim lngNumRow                           As Long
                             .SubItems(5) = strDevDriverLocal
                             .SubItems(6) = strDevStatus
                             .SubItems(7) = strDevName
+
                             If mbGroupTask Then
                                 .SubItems(8) = frmMain.acmdPackFiles(lngButtIndex).Tag
                             End If
+
                         End With
+
                         lngNumRow = lngNumRow + 1
                         GoTo NextListElement
-
                     End If
-
                 End If
 
                 '< - старее
@@ -843,33 +903,37 @@ Dim lngNumRow                           As Long
                             .SubItems(5) = strDevDriverLocal
                             .SubItems(6) = strDevStatus
                             .SubItems(7) = strDevName
+
                             If mbGroupTask Then
                                 .SubItems(8) = frmMain.acmdPackFiles(lngButtIndex).Tag
                             End If
+
                         End With
+
                         lngNumRow = lngNumRow + 1
-
                     End If
-
                 End If
-
             End If
 
 NextListElement:
             '*************************************************************
         End If
+
     Next i_arr
 
     lvFolders.Sorted = True
     lvFolders.Redraw = True
-
     LoadList_Folders = miThisListCount
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadListbyMode
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadListbyMode()
 
-Dim i                                   As Long
+    Dim i As Long
 
     If Not (lvFolders Is Nothing) Then
         lvFolders.ListItems.Clear
@@ -883,9 +947,9 @@ Dim i                                   As Long
             For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
                 miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, i)), False, CollectModeString)
             Next
+
         Else
             miCurrentListCount = LoadList_Folders(CurrentSelButtonIndex, False, CollectModeString)
-
         End If
 
         cmdCheckAll_Click
@@ -893,23 +957,23 @@ Dim i                                   As Long
     Else
         miCurrentListCount = LoadList_Folders(CurrentSelButtonIndex, True, CollectModeString)
         Me.Caption = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
-
     End If
 
     FindCheckCountList
     lvFolders.Visible = True
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
-
     ' Название формы
     strMeCaptionView = LocaliseString(StrPathFile, strFormName, "frmListHwidView", Me.Caption)
     strMeCaptionInstall = LocaliseString(StrPathFile, strFormName, "frmListHwidInstall", Me.Caption)
-
     lblInformation.Caption = LocaliseString(StrPathFile, strFormName, "lblInformation", lblInformation.Caption)
     'Кнопки
     cmdCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
@@ -923,25 +987,37 @@ Private Sub Localise(ByVal StrPathFile As String)
     chkGrp2.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
     chkGrp3.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
     chkGrp4.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_QueryUnload
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Cancel (Integer)
+'                              UnloadMode (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-' Выгружаем из памяти форму и другие компоненты
+
+    ' Выгружаем из памяти форму и другие компоненты
     If UnloadMode = vbFormControlMenu Then
         Cancel = 1
         Me.Hide
     Else
         Set frmListHwid = Nothing
     End If
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
 
-Dim miDeltaFrm                          As Long
-Dim lngLVHeight                         As Long
-Dim lngLVWidht                          As Long
-Dim lngLVTop                            As Long
+    Dim miDeltaFrm  As Long
+    Dim lngLVHeight As Long
+    Dim lngLVWidht  As Long
+    Dim lngLVTop    As Long
 
     On Error Resume Next
 
@@ -957,21 +1033,24 @@ Dim lngLVTop                            As Long
                 Else
                     miDeltaFrm = 0
                 End If
-
             End If
 
             If .Width < lngFormWidthMin Then
                 .Width = lngFormWidthMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             If .Height < lngFormHeightMin Then
                 .Height = lngFormHeightMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             cmdOK.Left = .Width - cmdOK.Width - 200 - miDeltaFrm
@@ -993,25 +1072,36 @@ Dim lngLVTop                            As Long
             cmdUnCheckAll.Left = cmdCheckAll.Left
             lblInformation.Top = cmdExit.Top
             lblInformation.Width = cmdExit.Left - cmdCheckAll.Left - cmdCheckAll.Width - 200
-
         End If
 
     End With
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvFolders_ColumnClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ColumnHeader (LvwColumnHeader)
+'!--------------------------------------------------------------------------------
 Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
-Dim i                                   As Long
+
+    Dim i As Long
+
     lvFolders.Sorted = False
     lvFolders.SortKey = ColumnHeader.Index - 1
+
     If ComCtlsSupportLevel() >= 1 Then
+
         For i = 1 To lvFolders.ColumnHeaders.Count
+
             If i <> ColumnHeader.Index Then
                 lvFolders.ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
             Else
+
                 If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
                     ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown
                 Else
+
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown Then
                         ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp
                     ElseIf ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp Then
@@ -1019,22 +1109,31 @@ Dim i                                   As Long
                     End If
                 End If
             End If
+
         Next i
+
         Select Case ColumnHeader.SortArrow
+
             Case LvwColumnHeaderSortArrowDown, LvwColumnHeaderSortArrowNone
                 lvFolders.SortOrder = LvwSortOrderAscending
+
             Case LvwColumnHeaderSortArrowUp
                 lvFolders.SortOrder = LvwSortOrderDescending
         End Select
+
         lvFolders.SelectedColumn = ColumnHeader
     Else
+
         For i = 1 To lvFolders.ColumnHeaders.Count
+
             If i <> ColumnHeader.Index Then
                 lvFolders.ColumnHeaders(i).Icon = 0
             Else
+
                 If ColumnHeader.Icon = 0 Then
                     ColumnHeader.Icon = 1
                 Else
+
                     If ColumnHeader.Icon = 2 Then
                         ColumnHeader.Icon = 1
                     ElseIf ColumnHeader.Icon = 1 Then
@@ -1042,21 +1141,34 @@ Dim i                                   As Long
                     End If
                 End If
             End If
+
         Next i
+
         Select Case ColumnHeader.Icon
+
             Case 1, 0
                 lvFolders.SortOrder = LvwSortOrderAscending
+
             Case 2
                 lvFolders.SortOrder = LvwSortOrderDescending
         End Select
+
     End If
+
     lvFolders.Sorted = True
+
     If Not lvFolders.SelectedItem Is Nothing Then lvFolders.SelectedItem.EnsureVisible
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvFolders_ItemCheck
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Item (LvwListItem)
+'                              Checked (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Boolean)
 
-Dim i                                   As Integer
+    Dim i As Integer
 
     If mbooSelectInstall Then
 
@@ -1068,10 +1180,10 @@ Dim i                                   As Integer
 
                     If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
                         .Item(i).Checked = True
-
                     End If
 
                 Next
+
             Else
 
                 For i = 1 To .Count
@@ -1089,6 +1201,4 @@ Dim i                                   As Integer
     End If
 
     FindCheckCountList
-
 End Sub
-

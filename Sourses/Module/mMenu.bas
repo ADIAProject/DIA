@@ -3,28 +3,11 @@ Option Explicit
 
 '--- для контекстного меню
 Private Declare Function GetMenu Lib "user32.dll" (ByVal hWnd As Long) As Long
-Private Declare Function GetSubMenu _
-                          Lib "user32.dll" (ByVal hMenu As Long, _
-                                            ByVal nPos As Long) As Long
-
-Private Declare Function GetMenuItemID _
-                          Lib "user32.dll" (ByVal hMenu As Long, _
-                                            ByVal nPos As Long) As Long
-
-Private Declare Function SetMenuItemBitmaps _
-                          Lib "user32.dll" (ByVal hMenu As Long, _
-                                            ByVal nPosition As Long, _
-                                            ByVal wFlags As Long, _
-                                            ByVal hBitmapUnchecked As Long, _
-                                            ByVal hBitmapChecked As Long) As Long
-
+Private Declare Function GetSubMenu Lib "user32.dll" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Private Declare Function GetMenuItemID Lib "user32.dll" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Private Declare Function SetMenuItemBitmaps Lib "user32.dll" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long, ByVal hBitmapUnchecked As Long, ByVal hBitmapChecked As Long) As Long
 Private Declare Function GetMenuItemCount Lib "user32.dll" (ByVal hMenu As Long) As Long
-Private Declare Function GetMenuItemInfo _
-                          Lib "user32.dll" _
-                              Alias "GetMenuItemInfoA" (ByVal hMenu As Long, _
-                                                        ByVal un As Long, _
-                                                        ByVal B As Boolean, _
-                                                        lpMenuItemInfo As MENUITEMINFO) As Boolean
+Private Declare Function GetMenuItemInfo Lib "user32.dll" Alias "GetMenuItemInfoA" (ByVal hMenu As Long, ByVal un As Long, ByVal B As Boolean, lpMenuItemInfo As MENUITEMINFO) As Boolean
 
 Private Type MENUITEMINFO
     cbSize                                  As Long
@@ -38,7 +21,6 @@ Private Type MENUITEMINFO
     dwItemData                          As Long
     dwTypeData                          As String
     cch                                 As Long
-
 End Type
 
 '! -----------------------------------------------------------
@@ -46,17 +28,30 @@ End Type
 '!  Переменные  :  FormName As Form, MenuName As Menu
 '!  Описание    :  вызов контекстного меню
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub OpenContextMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FormName (Form)
+'                              MenuName (Menu)
+'!--------------------------------------------------------------------------------
 Public Sub OpenContextMenu(FormName As Form, MenuName As Menu)
-' Говорит системе, что пользователь щелкнул правой кнопкой мыши на форме
-'SendMessage FormName.hWnd, WM_RBUTTONDOWN, 0, 0&
-' Показывает контекстное меню
+    ' Говорит системе, что пользователь щелкнул правой кнопкой мыши на форме
+    'SendMessage FormName.hWnd, WM_RBUTTONDOWN, 0, 0&
+    ' Показывает контекстное меню
     FormName.PopupMenu MenuName
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetMenuIcon
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'                              MenuIndex (Long)
+'                              SubIndex (Long)
+'                              Pic (Picture)
+'!--------------------------------------------------------------------------------
 Public Sub SetMenuIcon(hWnd As Long, MenuIndex As Long, SubIndex As Long, Pic As Picture)
 
-Dim hMenu As Long, hSubMenu As Long, hID As Long
+    Dim hMenu As Long, hSubMenu As Long, hID As Long
 
     'Get the menuhandle of the form
     hMenu = GetMenu(hWnd)
@@ -64,7 +59,6 @@ Dim hMenu As Long, hSubMenu As Long, hID As Long
     hSubMenu = GetSubMenu(hMenu, MenuIndex)
     'Get the menuId of the first entry
     hID = GetMenuItemID(hSubMenu, SubIndex)
-
     'Add the bitmap
     'SetMenuItemBitmaps hMenu, hID, MF_BITMAP, Pic, Pic
 End Sub

@@ -1,22 +1,23 @@
 Attribute VB_Name = "mApiFiles"
 Option Explicit
 
+Public Const MAX_PATH              As Long = 260
+Public Const MAX_PATH_UNICODE      As Long = 2 * MAX_PATH - 1
+Public Const MAX_PATH_B            As Long = 4000 * 2 - 1
+Public Const MAXDWORD              As Long = &HFFFFFFFF
 
-Public Const MAX_PATH                   As Long = 260
-Public Const MAX_PATH_UNICODE           As Long = 2 * MAX_PATH - 1
-Public Const MAX_PATH_B                 As Long = 4000 * 2 - 1
-Public Const MAXDWORD                   As Long = &HFFFFFFFF
 'Константы для CreateFile
-Public Const INVALID_HANDLE_VALUE       As Integer = -1
-Public Const FILE_ATTRIBUTE_NORMAL      As Long = &H80
-Public Const GENERIC_WRITE              As Long = &H40000000
-Public Const GENERIC_READ               As Long = &H80000000
-Public Const OPEN_EXISTING              As Long = 3
+Public Const INVALID_HANDLE_VALUE  As Integer = -1
+Public Const FILE_ATTRIBUTE_NORMAL As Long = &H80
+Public Const GENERIC_WRITE         As Long = &H40000000
+Public Const GENERIC_READ          As Long = &H80000000
+Public Const OPEN_EXISTING         As Long = 3
+
 'Строковые константы частоиспользуемых функций
-Public Const vbBackslash                As String = "\"
-Public Const vbBackslashUNC             As String = "\\"
-Public Const vbBackslashDouble          As String = "\\"
-Public Const ALL_FILES                  As String = "*.*"
+Public Const vbBackslash           As String = "\"
+Public Const vbBackslashUNC        As String = "\\"
+Public Const vbBackslashDouble     As String = "\\"
+Public Const ALL_FILES             As String = "*.*"
 
 Public Type SECURITY_ATTRIBUTES
     nLength                             As Long
@@ -94,13 +95,12 @@ Public Type SHFILEOPSTRUCT
 End Type
 
 ' Константы для копирования файлов посредством shell
-Public Const FO_MOVE                    As Long = &H1
-Public Const FO_COPY                    As Long = &H2
-Public Const FO_DELETE                  As Long = &H3
-Public Const FO_RENAME                  As Long = &H4
-Public Const FOF_SILENT                 As Long = &H4
-Public Const FOF_RENAMEONCOLLISION      As Long = &H8
-Public Const FOF_NOCONFIRMATION         As Long = &H10
-Public Const FOF_SIMPLEPROGRESS         As Long = &H100
-Public Const FOF_ALLOWUNDO              As Long = &H40
-
+Public Const FO_MOVE               As Long = &H1
+Public Const FO_COPY               As Long = &H2
+Public Const FO_DELETE             As Long = &H3
+Public Const FO_RENAME             As Long = &H4
+Public Const FOF_SILENT            As Long = &H4
+Public Const FOF_RENAMEONCOLLISION As Long = &H8
+Public Const FOF_NOCONFIRMATION    As Long = &H10
+Public Const FOF_SIMPLEPROGRESS    As Long = &H100
+Public Const FOF_ALLOWUNDO         As Long = &H40

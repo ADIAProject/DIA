@@ -58,8 +58,8 @@ Option Explicit
 ' Copyright © 2003 Alexander Drovosekov (apexsun@narod.ru) '
 ' Visit apexsun.narod.ru                                   '
 ' ==========================================================
-Private UserScaleW                      As Long
-Private UserScaleH                      As Long
+Private UserScaleW As Long
+Private UserScaleH As Long
 
 Public Enum XBPicturePosition
     gbTOP = 0
@@ -69,6 +69,7 @@ Public Enum XBPicturePosition
 End Enum
 
 #If False Then
+
     Private gbTOP, gbLEFT, gbRIGHT, gbBOTTOM
 #End If
 
@@ -79,37 +80,39 @@ Public Enum XBButtonStyle
 End Enum
 
 #If False Then
+
     Private gbStandard, gbFlat, gbWinXP
 #End If
 
-Private mvarClientRect                  As RECT
-Private mvarPictureRect                 As RECT
-Private mvarCaptionRect                 As RECT
-Private mvarOrgRect                     As RECT
-Private g_FocusRect                     As RECT
-Private alan                            As RECT
-Private m_Picture                       As Picture
-Private m_PicturePosition               As XBPicturePosition
-Private m_ButtonStyle                   As XBButtonStyle
-Private mvarDrawTextParams              As DRAWTEXTPARAMS
-Private m_Caption                       As String
-Private m_PictureWidth                  As Long
-Private m_PictureHeight                 As Long
-Private g_HasFocus                      As Byte
-Private g_MouseDown                     As Byte
-Private g_MouseIn                       As Byte
-Private m_ShowFocusRect                 As Boolean
-Private m_MaskColor                     As Long
-Private m_UseMaskColor                  As Long
-Private m_XPDefaultColors               As Boolean
-Private m_MenuExist                     As Boolean
-Private m_CheckExist                    As Boolean
-Private m_XPColor_Pressed               As Long
-Private m_XPColor_Hover                 As Long
-Private m_TextColor                     As OLE_COLOR
+Private mvarClientRect     As RECT
+Private mvarPictureRect    As RECT
+Private mvarCaptionRect    As RECT
+Private mvarOrgRect        As RECT
+Private g_FocusRect        As RECT
+Private alan               As RECT
+Private m_Picture          As Picture
+Private m_PicturePosition  As XBPicturePosition
+Private m_ButtonStyle      As XBButtonStyle
+Private mvarDrawTextParams As DRAWTEXTPARAMS
+Private m_Caption          As String
+Private m_PictureWidth     As Long
+Private m_PictureHeight    As Long
+Private g_HasFocus         As Byte
+Private g_MouseDown        As Byte
+Private g_MouseIn          As Byte
+Private m_ShowFocusRect    As Boolean
+Private m_MaskColor        As Long
+Private m_UseMaskColor     As Long
+Private m_XPDefaultColors  As Boolean
+Private m_MenuExist        As Boolean
+Private m_CheckExist       As Boolean
+Private m_XPColor_Pressed  As Long
+Private m_XPColor_Hover    As Long
+Private m_TextColor        As OLE_COLOR
 
-Private Const mvarPadding               As Byte = 4
-Dim dtDefTextDrawParams As Long
+Private Const mvarPadding  As Byte = 4
+
+Dim dtDefTextDrawParams    As Long
 
 Private Type RGB
     Red                                 As Byte
@@ -148,29 +151,30 @@ Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVa
 '*************************************************************
 '   DRAW TEXT
 '*************************************************************
-Private Const DT_WORDBREAK               As Long = &H10
-Private Const DT_CENTER                  As Long = &H1
-Private Const DT_VCENTER                 As Long = &H4
-Private Const DT_CALCRECT                As Long = &H400
-Private Const DT_RTLREADING              As Long = &H20000
+Private Const DT_WORDBREAK  As Long = &H10
+Private Const DT_CENTER     As Long = &H1
+Private Const DT_VCENTER    As Long = &H4
+Private Const DT_CALCRECT   As Long = &H400
+Private Const DT_RTLREADING As Long = &H20000
 
 Private Type DRAWTEXTPARAMS
-   cbSize As Long
-   iTabLength As Long
-   iLeftMargin As Long
-   iRightMargin As Long
-   uiLengthDrawn As Long
+    cbSize As Long
+    iTabLength As Long
+    iLeftMargin As Long
+    iRightMargin As Long
+    uiLengthDrawn As Long
 End Type
-                                                   
+
 Private Declare Function DrawTextExW Lib "user32.dll" (ByVal hDC As Long, ByVal lpsz As Long, ByVal n As Long, ByRef lpRect As RECT, ByVal dwDTFormat As Long, ByRef lpDrawTextParams As DRAWTEXTPARAMS) As Long
-                                                   
+
 '*************************************************************
 '   FONT PROPERTIES
 '*************************************************************
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
+Private Const LF_FACESIZE     As Long = 32
+Private Const FW_NORMAL       As Long = 400
+Private Const FW_BOLD         As Long = 700
 Private Const DEFAULT_QUALITY As Long = 0
+
 Private Type LOGFONT
     LFHeight As Long
     LFWidth As Long
@@ -188,25 +192,25 @@ Private Type LOGFONT
     LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
 
-Private Const WM_SETFONT As Long = &H30
+Private Const WM_SETFONT       As Long = &H30
 Private Const WS_EX_RTLREADING As Long = &H2000
 
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
-
-Private ButtonFontHandle As Long
-Private ButtonLogFont As LOGFONT
-Private WithEvents PropFont As StdFont
+Private ButtonFontHandle      As Long
+Private ButtonLogFont         As LOGFONT
+Private WithEvents PropFont   As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 
 '*************************************************************
 '   UPDATE WINDOW
 '*************************************************************
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
+Private Const RDW_UPDATENOW   As Long = &H100
+Private Const RDW_INVALIDATE  As Long = &H1
+Private Const RDW_ERASE       As Long = &H4
 Private Const RDW_ALLCHILDREN As Long = &H80
+
 Private Declare Function RedrawWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 
 '*************************************************************
@@ -222,9 +226,14 @@ Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Sing
 Public Event MouseIn(Shift As Integer)
 Public Event MouseOut(Shift As Integer)
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub AddMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sCaption (String)
+'!--------------------------------------------------------------------------------
 Public Sub AddMenu(ByVal sCaption As String)
 
-Dim iCount                              As Integer
+    Dim iCount As Integer
 
     On Error Resume Next
 
@@ -241,34 +250,55 @@ Dim iCount                              As Integer
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
     BackColor = UserControl.BackColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_BackColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let BackColor(ByVal new_BackColor As OLE_COLOR)
     UserControl.BackColor = new_BackColor
     PropertyChanged "BackColor"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ButtonStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get ButtonStyle() As XBButtonStyle
     ButtonStyle = m_ButtonStyle
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ButtonStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_ButtonStyle (XBButtonStyle)
+'!--------------------------------------------------------------------------------
 Public Property Let ButtonStyle(ByVal New_ButtonStyle As XBButtonStyle)
     m_ButtonStyle = New_ButtonStyle
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CalcRECTs
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub CalcRECTs()
 
-Dim picWidth                            As Long
-Dim picHeight                           As Long
-Dim capWidth                            As Long
-Dim capHeight                           As Long
+    Dim picWidth  As Long
+    Dim picHeight As Long
+    Dim capWidth  As Long
+    Dim capHeight As Long
 
     With alan
         .Left = 0
@@ -282,7 +312,6 @@ Dim capHeight                           As Long
         .Top = alan.Top + mvarPadding
         .Right = alan.Right - mvarPadding + 1
         .Bottom = alan.Bottom - mvarPadding + 1
-
     End With
 
     If LenB(m_Caption) = 0 Then
@@ -308,19 +337,18 @@ Dim capHeight                           As Long
                     .Right = mvarClientRect.Right - m_PictureWidth - 13
                 Else
                     .Right = mvarClientRect.Right - m_PictureWidth
-
                 End If
-
             End If
 
             .Bottom = mvarClientRect.Bottom
-
         End With
 
         CalculateCaptionRect
 
         If m_Picture Is Nothing Then
+
             Exit Sub
+
         End If
 
         picWidth = m_PictureWidth
@@ -329,7 +357,6 @@ Dim capHeight                           As Long
         With mvarCaptionRect
             capWidth = .Right - .Left
             capHeight = .Bottom - .Top
-
         End With
 
         If m_PicturePosition = gbLEFT Then
@@ -346,7 +373,6 @@ Dim capHeight                           As Long
 
                 .Bottom = .Top + picHeight
                 .Right = .Left + picWidth
-
             End With
 
             With mvarCaptionRect
@@ -354,7 +380,6 @@ Dim capHeight                           As Long
                 .Left = mvarPictureRect.Right + mvarPadding
                 .Bottom = .Top + capHeight
                 .Right = .Left + capWidth
-
             End With
 
         ElseIf m_PicturePosition = gbRIGHT Then
@@ -364,7 +389,6 @@ Dim capHeight                           As Long
                 .Left = (((mvarClientRect.Right - mvarClientRect.Left) - (picWidth + mvarPadding + capWidth)) * 0.5) + mvarClientRect.Left
                 .Bottom = .Top + capHeight
                 .Right = .Left + capWidth
-
             End With
 
             With mvarPictureRect
@@ -372,7 +396,6 @@ Dim capHeight                           As Long
                 .Left = mvarCaptionRect.Right + mvarPadding
                 .Bottom = .Top + picHeight
                 .Right = .Left + picWidth
-
             End With
 
         ElseIf m_PicturePosition = gbTOP Then
@@ -382,7 +405,6 @@ Dim capHeight                           As Long
                 .Left = (((mvarClientRect.Right - mvarClientRect.Left) - picWidth) * 0.5) + mvarClientRect.Left
                 .Bottom = .Top + picHeight
                 .Right = .Left + picWidth
-
             End With
 
             With mvarCaptionRect
@@ -390,7 +412,6 @@ Dim capHeight                           As Long
                 .Left = (((mvarClientRect.Right - mvarClientRect.Left) - capWidth) * 0.5) + mvarClientRect.Left
                 .Bottom = .Top + capHeight
                 .Right = .Left + capWidth
-
             End With
 
         ElseIf m_PicturePosition = gbBOTTOM Then
@@ -400,7 +421,6 @@ Dim capHeight                           As Long
                 .Left = (((mvarClientRect.Right - mvarClientRect.Left) - capWidth) * 0.5) + mvarClientRect.Left
                 .Bottom = .Top + capHeight
                 .Right = .Left + capWidth
-
             End With
 
             With mvarPictureRect
@@ -408,20 +428,23 @@ Dim capHeight                           As Long
                 .Left = (((mvarClientRect.Right - mvarClientRect.Left) - picWidth) * 0.5) + mvarClientRect.Left
                 .Bottom = .Top + picHeight
                 .Right = .Left + picWidth
-
             End With
 
         End If
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CalculateCaptionRect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub CalculateCaptionRect()
 
-Dim mvarWidth                           As Long
-Dim mvarHeight                          As Long
-Dim dtTextDrawParams As Long
+    Dim mvarWidth        As Long
+    Dim mvarHeight       As Long
+    Dim dtTextDrawParams As Long
 
     With mvarDrawTextParams
         .iLeftMargin = 1
@@ -429,12 +452,11 @@ Dim dtTextDrawParams As Long
         .iTabLength = 1
         .cbSize = Len(mvarDrawTextParams)
     End With
-    
+
     dtTextDrawParams = dtDefTextDrawParams
-'    If Ambient.RightToLeft = True Then
-'        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
-'    End If
-    
+    '    If Ambient.RightToLeft = True Then
+    '        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
+    '    End If
     DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect, DT_CALCRECT Or dtTextDrawParams, mvarDrawTextParams
 
     With mvarCaptionRect
@@ -448,49 +470,75 @@ Dim dtTextDrawParams As Long
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Caption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Caption() As String
     Caption = m_Caption
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Caption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Caption (String)
+'!--------------------------------------------------------------------------------
 Public Property Let Caption(ByVal New_Caption As String)
 Attribute Caption.VB_UserMemId = -518
     m_Caption = New_Caption
     SetAccessKeys
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   clr (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Private Function CColor(ByVal clr As OLE_COLOR) As Long
 
-' If it's a system color, get the RGB value.
+    ' If it's a system color, get the RGB value.
     If clr And &H80000000 Then
         CColor = GetSysColor(clr And (Not &H80000000))
     Else
         CColor = clr
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property CheckExist
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get CheckExist() As Boolean
     CheckExist = m_MenuExist
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property CheckExist
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_CheckExist (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let CheckExist(ByVal New_CheckExist As Boolean)
     m_CheckExist = New_CheckExist
     PropertyChanged "CheckExist"
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function COLOR_DarkenColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Color (Long)
+'                              Value (Long)
+'!--------------------------------------------------------------------------------
 Private Function COLOR_DarkenColor(ByVal Color As Long, ByVal Value As Long) As Long
 
-Dim cc                                  As RGB
-Dim R                                   As Integer
-Dim G                                   As Integer
-Dim B                                   As Integer
+    Dim cc As RGB
+    Dim R  As Integer
+    Dim G  As Integer
+    Dim B  As Integer
 
     CopyMemory ByVal VarPtr(cc), ByVal VarPtr(Color), 3
 
@@ -498,54 +546,51 @@ Dim B                                   As Integer
         B = .Blue + Value
         G = .Green + Value
         R = .Red + Value
-
     End With
 
     If R < 0 Then
         R = 0
-
     End If
 
     If R > 255 Then
         R = 255
-
     End If
 
     If G < 0 Then
         G = 0
-
     End If
 
     If G > 255 Then
         G = 255
-
     End If
 
     If B < 0 Then
         B = 0
-
     End If
 
     If B > 255 Then
         B = 255
-
     End If
 
     COLOR_DarkenColor = RGB(R, G, B)
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawCaption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub DrawCaption()
 
-Dim g_tmpFontColor                      As OLE_COLOR
-Dim mvarCaptionRect_Iki                 As RECT
-Dim dtTextDrawParams As Long
+    Dim g_tmpFontColor      As OLE_COLOR
+    Dim mvarCaptionRect_Iki As RECT
+    Dim dtTextDrawParams    As Long
 
     dtTextDrawParams = dtDefTextDrawParams
-'    If Ambient.RightToLeft = True Then
-'        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
-'    End If
 
+    '    If Ambient.RightToLeft = True Then
+    '        dtTextDrawParams = dtTextDrawParams Or WS_EX_RTLREADING
+    '    End If
     If Enabled Then
         SetTextColor hDC, CColor(m_TextColor)
         'CColor(&H80000012)
@@ -558,7 +603,6 @@ Dim dtTextDrawParams As Long
                 .Top = .Top + 1
                 .Right = .Right + 1
                 .Bottom = .Bottom + 1
-
             End With
 
         End If
@@ -578,14 +622,17 @@ Dim dtTextDrawParams As Long
 
         DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect_Iki, dtTextDrawParams, mvarDrawTextParams
         SetTextColor hDC, CColor(&H80000010)
-
         DrawTextExW hDC, StrPtr(m_Caption & vbNullChar), -1, mvarCaptionRect, dtTextDrawParams, mvarDrawTextParams
         SetTextColor hDC, CColor(g_tmpFontColor)
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawPicture
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub DrawPicture()
     mvarOrgRect = mvarPictureRect
 
@@ -602,7 +649,6 @@ Private Sub DrawPicture()
 
             If Not m_UseMaskColor Then
                 m_MaskColor = CColor(GetPixel(Picture1.hDC, 0, 0))
-
             End If
 
             DoEvents
@@ -611,25 +657,28 @@ Private Sub DrawPicture()
             Picture1.AutoRedraw = False
         ElseIf m_Picture.Type = 3 Then
             UserControl.PaintPicture m_Picture, .Left, .Top, .Right - .Left, .Bottom - .Top, 0, 0, m_PictureWidth, m_PictureHeight
-
         End If
 
     End With
 
     mvarPictureRect = mvarOrgRect
-
 End Sub
 
-Private Sub DrawRect(DestHDC As Long, _
-                     ByVal RectLEFT As Long, _
-                     ByVal RectTOP As Long, _
-                     ByVal RectRIGHT As Long, _
-                     ByVal RectBOTTOM As Long, _
-                     ByVal MyColor As Long, _
-                     Optional ByVal FillRectWithColor As Byte = 0)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawRect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   DestHDC (Long)
+'                              RectLEFT (Long)
+'                              RectTOP (Long)
+'                              RectRIGHT (Long)
+'                              RectBOTTOM (Long)
+'                              MyColor (Long)
+'                              FillRectWithColor (Byte = 0)
+'!--------------------------------------------------------------------------------
+Private Sub DrawRect(DestHDC As Long, ByVal RectLEFT As Long, ByVal RectTOP As Long, ByVal RectRIGHT As Long, ByVal RectBOTTOM As Long, ByVal MyColor As Long, Optional ByVal FillRectWithColor As Byte = 0)
 
-Dim MyRect                              As RECT
-Dim Firca                               As Long
+    Dim MyRect As RECT
+    Dim Firca  As Long
 
     Firca = CreateSolidBrush(CColor(MyColor))
 
@@ -638,7 +687,6 @@ Dim Firca                               As Long
         .Top = RectTOP
         .Right = RectRIGHT
         .Bottom = RectBOTTOM
-
     End With
 
     If FillRectWithColor = 1 Then
@@ -648,14 +696,19 @@ Dim Firca                               As Long
     End If
 
     DeleteObject Firca
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawWinXPButton
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Press (Byte)
+'                              HOVERING (Byte)
+'!--------------------------------------------------------------------------------
 Private Sub DrawWinXPButton(ByVal Press As Byte, Optional HOVERING As Byte)
 
-Dim X                                   As Long
-Dim Intg                                As Single
-Dim curBackColor                        As Long
+    Dim X            As Long
+    Dim Intg         As Single
+    Dim curBackColor As Long
 
     curBackColor = COLOR_DarkenColor(CColor(&H8000000F), 48)
 
@@ -663,10 +716,10 @@ Dim curBackColor                        As Long
         If m_XPDefaultColors Then
             m_XPColor_Pressed = RGB(140, 170, 230)
             m_XPColor_Hover = RGB(225, 153, 71)
-
         End If
 
         If UserScaleH = 0 Then
+
             Exit Sub
 
         End If
@@ -677,6 +730,7 @@ Dim curBackColor                        As Long
             For X = 1 To UserScaleH
                 Line (0, X)-(UserScaleW, X), COLOR_DarkenColor(vbWhite, -Intg * X)
             Next
+
             DrawRect hDC, 0, 0, UserScaleW, UserScaleH, &H80000015
 
             If HOVERING = 1 Or g_HasFocus = 1 Then
@@ -702,8 +756,8 @@ Dim curBackColor                        As Long
             For X = 1 To UserScaleH
                 Line (0, UserScaleH - X)-(UserScaleW, UserScaleH - X), COLOR_DarkenColor(curBackColor, -Intg * X)
             Next
-            DrawRect hDC, 0, 0, UserScaleW, UserScaleH, &H80000015
 
+            DrawRect hDC, 0, 0, UserScaleW, UserScaleH, &H80000015
         End If
 
         Intg = &H80000015
@@ -711,7 +765,6 @@ Dim curBackColor                        As Long
         DrawRect hDC, 0, 0, UserScaleW, UserScaleH, COLOR_DarkenColor(curBackColor, -24), 1
         DrawRect hDC, 0, 0, UserScaleW, UserScaleH, COLOR_DarkenColor(curBackColor, -84)
         Intg = COLOR_DarkenColor(curBackColor, -72)
-
     End If
 
     curBackColor = CColor(&H8000000F)
@@ -723,28 +776,34 @@ Dim curBackColor                        As Long
     SetPixel hDC, UserScaleW - 2, 1, Intg
     Line (UserScaleW - 2, UserScaleH - 2)-(UserScaleW, UserScaleH), curBackColor, BF
     SetPixel hDC, UserScaleW - 2, UserScaleH - 2, Intg
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property EnabledCtrl
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get EnabledCtrl() As Boolean
     EnabledCtrl = Enabled
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property EnabledCtrl
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Enabled (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let EnabledCtrl(ByVal New_Enabled As Boolean)
     Enabled = New_Enabled
     g_HasFocus = 0
     g_MouseDown = 0
     g_MouseIn = 0
     Refresh
-
 End Property
 
 'Public Property Get Font() As Font
 '    Set Font = m_TextFont
 '
 'End Property
-
 'Public Property Set Font(ByVal New_Font As Font)
 '    Set m_TextFont = New_Font
 '    Set UserControl.Font = New_Font
@@ -752,145 +811,273 @@ End Property
 '    UserControl_Resize
 '
 'End Property
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Font() As StdFont
 Attribute Font.VB_Description = "Returns a Font object."
 Attribute Font.VB_UserMemId = -512
-        Set Font = PropFont
+    Set Font = PropFont
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFont (StdFont)
+'!--------------------------------------------------------------------------------
 Public Property Let Font(ByVal NewFont As StdFont)
     Set Me.Font = NewFont
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFont (StdFont)
+'!--------------------------------------------------------------------------------
 Public Property Set Font(ByVal NewFont As StdFont)
-Dim OldFontHandle As Long
+
+    Dim OldFontHandle As Long
+
     Set PropFont = NewFont
     Call OLEFontToLogFont(NewFont, ButtonLogFont)
     OldFontHandle = ButtonFontHandle
     ButtonFontHandle = CreateFontIndirect(ButtonLogFont)
+
     If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, ButtonFontHandle, ByVal 1&
     If OldFontHandle <> 0 Then DeleteObject OldFontHandle
     Me.Refresh
     UserControl.PropertyChanged "Font"
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PropFont_FontChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropertyName (String)
+'!--------------------------------------------------------------------------------
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
-Dim OldFontHandle As Long
+
+    Dim OldFontHandle As Long
+
     Call OLEFontToLogFont(PropFont, ButtonLogFont)
     OldFontHandle = ButtonFontHandle
     ButtonFontHandle = CreateFontIndirect(ButtonLogFont)
+
     If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, ButtonFontHandle, ByVal 1&
     If OldFontHandle <> 0 Then DeleteObject OldFontHandle
     Me.Refresh
     UserControl.PropertyChanged "Font"
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub OLEFontToLogFont
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Font (StdFont)
+'                              LF (LOGFONT)
+'!--------------------------------------------------------------------------------
 Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
-Dim FontName As String
+
+    Dim FontName As String
+
     With LF
         FontName = Left$(Font.Name, LF_FACESIZE)
         CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
         .LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
+
         If Font.Bold = True Then
             .LFWeight = FW_BOLD
         Else
             .LFWeight = FW_NORMAL
         End If
+
         .LFItalic = IIf(Font.Italic = True, 1, 0)
         .LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
         .LFUnderline = IIf(Font.Underline = True, 1, 0)
         .LFQuality = DEFAULT_QUALITY
         .LFCharset = CByte(Font.Charset And &HFF)
     End With
+
 End Sub
 
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MaskColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get MaskColor() As OLE_COLOR
     MaskColor = m_MaskColor
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MaskColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_MaskColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let MaskColor(ByVal New_MaskColor As OLE_COLOR)
     m_MaskColor = New_MaskColor
     Refresh
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuCaption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
 Public Property Get MenuCaption(Index As Integer) As String
     MenuCaption = mnuMenu(Index).Caption
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuCaption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'                              New_MenuCaption (String)
+'!--------------------------------------------------------------------------------
 Public Property Let MenuCaption(Index As Integer, ByVal New_MenuCaption As String)
     mnuMenu(Index).Caption = New_MenuCaption
     PropertyChanged "MenuCaption"
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuChecked
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
 Public Property Get MenuChecked(Index As Integer) As Boolean
     MenuChecked = mnuMenu(Index).Checked
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuChecked
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'                              New_MenuChecked (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let MenuChecked(Index As Integer, ByVal New_MenuChecked As Boolean)
     mnuMenu(Index).Checked = New_MenuChecked
     PropertyChanged "MenuChecked"
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function MenuCount
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function MenuCount() As Long
     MenuCount = mnuMenu.UBound
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuEnabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
 Public Property Get MenuEnabled(Index As Integer) As Boolean
     MenuEnabled = mnuMenu(Index).Enabled
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuEnabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'                              New_MenuEnabled (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let MenuEnabled(Index As Integer, ByVal New_MenuEnabled As Boolean)
     mnuMenu(Index).Enabled = New_MenuEnabled
     PropertyChanged "MenuEnabled"
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuExist
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get MenuExist() As Boolean
     MenuExist = m_MenuExist
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuExist
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_MenuExist (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let MenuExist(ByVal New_MenuExist As Boolean)
     m_MenuExist = New_MenuExist
     PropertyChanged "MenuExist"
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuVisible
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
 Public Property Get MenuVisible(Index As Integer) As Boolean
     MenuVisible = mnuMenu(Index).Visible
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MenuVisible
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'                              New_MenuVisible (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let MenuVisible(Index As Integer, ByVal New_MenuVisible As Boolean)
     mnuMenu(Index).Visible = New_MenuVisible
     PropertyChanged "MenuVisible"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property hWnd
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get hWnd() As Long
     hWnd = UserControl.hWnd
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuMenu_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub mnuMenu_Click(Index As Integer)
     RaiseEvent ClickMenu(Index)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Picture
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Picture() As Picture
     Set Picture = m_Picture
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PicturePosition
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get PicturePosition() As XBPicturePosition
     PicturePosition = m_PicturePosition
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PicturePosition
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_PicturePosition (XBPicturePosition)
+'!--------------------------------------------------------------------------------
 Public Property Let PicturePosition(ByVal New_PicturePosition As XBPicturePosition)
     m_PicturePosition = New_PicturePosition
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Picture
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Picture (Picture)
+'!--------------------------------------------------------------------------------
 Public Property Set Picture(ByVal New_Picture As Picture)
     Set m_Picture = New_Picture
 
@@ -904,12 +1091,15 @@ Public Property Set Picture(ByVal New_Picture As Picture)
     End With
 
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub pInitialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub pInitialize()
     dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
-
     ScaleMode = 3
     PaletteMode = 3
     UserScaleW = UserControl.ScaleWidth
@@ -917,12 +1107,10 @@ Private Sub pInitialize()
 
     If UserScaleW < 10 Then
         UserControl.Width = 150
-
     End If
 
     If UserScaleH < 10 Then
         UserControl.Height = 150
-
     End If
 
     With g_FocusRect
@@ -930,13 +1118,16 @@ Private Sub pInitialize()
         .Right = UserScaleW - 4
         .Top = 4
         .Bottom = UserScaleH - 4
-
     End With
 
     Refresh
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Refresh
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Refresh()
     AutoRedraw = True
     UserControl.Cls
@@ -951,42 +1142,39 @@ Public Sub Refresh()
         ElseIf g_MouseIn = 1 Or m_ButtonStyle = gbStandard Then
             DrawRect hDC, 0, 0, UserScaleW, UserScaleH, 0
             DrawRect hDC, 0, 0, UserScaleW + 1, UserScaleH + 1, &H80000014
-
         End If
-
     End If
 
     CalcRECTs
 
     If LenB(m_Caption) > 0 Then
         DrawCaption
-
     End If
 
     If m_Picture Is Nothing = False Then
         DrawPicture
-
     End If
 
     If g_HasFocus = 1 Then
         If m_ShowFocusRect Then
             If m_ButtonStyle <> gbWinXP Then
                 DrawFocusRect hDC, g_FocusRect
-
             End If
-
         End If
-
     End If
 
     UserControl.Refresh
     AutoRedraw = False
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetAccessKeys
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SetAccessKeys()
 
-Dim ampersandPos                        As Long
+    Dim ampersandPos As Long
 
     With UserControl
 
@@ -1004,61 +1192,85 @@ Dim ampersandPos                        As Long
                             .AccessKeys = LCase$(Mid$(m_Caption, ampersandPos + 1, 1))
                         Else
                             .AccessKeys = vbNullString
-
                         End If
-
                     End If
-
                 End If
 
             Else
                 .AccessKeys = vbNullString
-
             End If
 
         Else
             .AccessKeys = vbNullString
-
         End If
 
     End With
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ShowFocusRect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get ShowFocusRect() As Boolean
     ShowFocusRect = m_ShowFocusRect
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ShowFocusRect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_ShowFocusRect (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let ShowFocusRect(ByVal New_ShowFocusRect As Boolean)
     m_ShowFocusRect = New_ShowFocusRect
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get TextColor() As OLE_COLOR
     TextColor = m_TextColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_TextColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let TextColor(ByVal new_TextColor As OLE_COLOR)
     m_TextColor = new_TextColor
     PropertyChanged "TextColor"
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property UseMaskColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get UseMaskColor() As Boolean
     UseMaskColor = m_UseMaskColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property UseMaskColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_V (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let UseMaskColor(ByVal New_V As Boolean)
     m_UseMaskColor = New_V
     Refresh
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_AccessKeyPress
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyAscii (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_AccessKeyPress(KeyAscii As Integer)
 
     If Enabled Then
@@ -1067,45 +1279,64 @@ Private Sub UserControl_AccessKeyPress(KeyAscii As Integer)
                 PopupMenu mnuGeneral, 2, ScaleLeft, ScaleHeight + ScaleTop
             Else
                 RaiseEvent Click
-
             End If
 
         Else
             RaiseEvent Click
-
         End If
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_AmbientChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropertyName (String)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_AmbientChanged(PropertyName As String)
     pInitialize
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_EnterFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_EnterFocus()
     g_MouseIn = 0
     g_HasFocus = 1
     Refresh
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_ExitFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_ExitFocus()
     g_HasFocus = 0
     g_MouseDown = 0
     g_MouseIn = 0
     Refresh
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_InitProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_InitProperties()
     Set PropFont = Ambient.Font
     Set UserControl.Font = PropFont
-
     BackColor = vbButtonFace
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If g_MouseDown = 0 Then
@@ -1113,15 +1344,18 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
             g_MouseDown = 1
             g_MouseIn = 1
             Refresh
-
         End If
-
     End If
 
     RaiseEvent KeyDown(KeyCode, Shift)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_KeyUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_KeyUp(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = 32 Then
@@ -1129,34 +1363,40 @@ Private Sub UserControl_KeyUp(KeyCode As Integer, Shift As Integer)
         g_MouseIn = 0
         Refresh
         UserControl_MouseUp 1, Shift, 0, 0
-
     End If
 
     RaiseEvent KeyUp(KeyCode, Shift)
-
 End Sub
 
-Private Sub UserControl_MouseDown(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If Button < 2 Then
         g_MouseDown = 1
         Refresh
-
     End If
 
     RaiseEvent MouseDown(Button, Shift, X, Y)
-
 End Sub
 
-Private Sub UserControl_MouseMove(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Dim P                                   As POINT
+    Dim P As POINT
 
     GetCursorPos P
 
@@ -1173,19 +1413,22 @@ Dim P                                   As POINT
         g_MouseDown = 0
         RaiseEvent MouseOut(Shift)
         Refresh
-
     End If
 
     RaiseEvent MouseMove(Button, Shift, X, Y)
-
 End Sub
 
-Private Sub UserControl_MouseUp(Button As Integer, _
-                                Shift As Integer, _
-                                X As Single, _
-                                Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Dim P                                   As POINT
+    Dim P As POINT
 
     ReleaseCapture
 
@@ -1198,28 +1441,28 @@ Dim P                                   As POINT
                     PopupMenu mnuGeneral, 2, ScaleLeft, ScaleHeight + ScaleTop
                 Else
                     RaiseEvent Click
-
                 End If
 
             Else
                 RaiseEvent Click
-
             End If
-
         End If
-
     End If
 
     RaiseEvent MouseUp(Button, Shift, X, Y)
     g_MouseDown = 0
     g_MouseIn = 0
     Refresh
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_ReadProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
-Dim Index                               As Integer
+    Dim Index As Integer
 
     With PropBag
         Set PropFont = .ReadProperty("Font", Ambient.Font)
@@ -1245,35 +1488,47 @@ Dim Index                               As Integer
         mnuMenu(Index).Visible = .ReadProperty("MenuVisible" & Index, True)
         m_MenuExist = .ReadProperty("MenuExist", False)
         m_CheckExist = .ReadProperty("CheckExist", False)
-
     End With
 
     SetAccessKeys
     pInitialize
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Resize()
 
     On Error Resume Next
 
     pInitialize
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
 
     On Error Resume Next
+
     'Clean up Font (StdFont)
     Set PropFont = Nothing
     'Clean up Picture
     Set m_Picture = Nothing
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 
-Dim Index                               As Integer
+    Dim Index As Integer
 
     With PropBag
         .WriteProperty "Font", PropFont, Ambient.Font
@@ -1298,37 +1553,60 @@ Dim Index                               As Integer
         .WriteProperty "MenuVisible" & Index, mnuMenu(Index).Visible, True
         .WriteProperty "MenuExist", m_MenuExist, False
         .WriteProperty "CheckExist", m_CheckExist, False
-
     End With
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property XPColor_Hover
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get XPColor_Hover() As OLE_COLOR
     XPColor_Hover = m_XPColor_Hover
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property XPColor_Hover
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_XPColor_Hover (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let XPColor_Hover(ByVal New_XPColor_Hover As OLE_COLOR)
     m_XPColor_Hover = New_XPColor_Hover
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property XPColor_Pressed
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get XPColor_Pressed() As OLE_COLOR
     XPColor_Pressed = m_XPColor_Pressed
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property XPColor_Pressed
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_XPColor_Pressed (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let XPColor_Pressed(ByVal New_XPColor_Pressed As OLE_COLOR)
     m_XPColor_Pressed = New_XPColor_Pressed
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property XPDefaultColors
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get XPDefaultColors() As Boolean
     XPDefaultColors = m_XPDefaultColors
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property XPDefaultColors
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_XPDefaultColors (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let XPDefaultColors(ByVal New_XPDefaultColors As Boolean)
     m_XPDefaultColors = New_XPDefaultColors
-
 End Property

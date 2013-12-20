@@ -128,7 +128,6 @@ Begin VB.Form frmLegendIco
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1244
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -138,6 +137,7 @@ Begin VB.Form frmLegendIco
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "ОК"
       PictureAlign    =   0
@@ -372,12 +372,23 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strFormName                     As String
+Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     Unload Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
@@ -386,8 +397,14 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -396,9 +413,14 @@ Private Sub FontCharsetChange()
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
 
-Dim i                                   As Long
+    Dim i As Long
 
     SetupVisualStyles Me
 
@@ -414,7 +436,7 @@ Dim i                                   As Long
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -423,7 +445,7 @@ Dim i                                   As Long
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
 
@@ -433,7 +455,6 @@ Dim i                                   As Long
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
     LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
@@ -444,13 +465,16 @@ Dim i                                   As Long
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-
 End Sub

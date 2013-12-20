@@ -1,59 +1,70 @@
 Attribute VB_Name = "mUpdate"
 Option Explicit
 
-Public strLink()                        As String
-Public strLinkFull()                    As String
-Public strLinkHistory                   As String
-Public strLinkHistory_en                As String
-Public strVersion                       As String
-Public strDateProg                      As String
-Public strDescription                   As String
-Public strDescription_en                As String
-Public strRelease                       As String
-Public strUpdVersions()                 As String
-Public strUpdDescription()              As String
+Public strLink()                As String
+Public strLinkFull()            As String
+Public strLinkHistory           As String
+Public strLinkHistory_en        As String
+Public strVersion               As String
+Public strDateProg              As String
+Public strDescription           As String
+Public strDescription_en        As String
+Public strRelease               As String
+Public strUpdVersions()         As String
+Public strUpdDescription()      As String
 
-Private XMLHTTP                         As MSXML2.XMLHTTP30
-Private Const iTimeOutInSecs            As Integer = 5
-Private Const strXMLMainSection         As String = "//driversinstaller"
-Private Const Url_Request               As String = "http://www.adia-project.net/Project/dia_update2.xml"
-Private Const Url_Test_WWW              As String = "http://ya.ru/"
-Private Const Url_Test_Site             As String = "http://adia-project.net/test.txt"
+Private XMLHTTP                 As MSXML2.XMLHTTP30
+
+Private Const iTimeOutInSecs    As Integer = 5
+Private Const strXMLMainSection As String = "//driversinstaller"
+Private Const Url_Request       As String = "http://www.adia-project.net/Project/dia_update2.xml"
+Private Const Url_Test_WWW      As String = "http://ya.ru/"
+Private Const Url_Test_Site     As String = "http://adia-project.net/test.txt"
 
 Private Declare Function InternetGetConnectedStateEx Lib "wininet.dll" (ByRef lpdwFlags As Long, ByVal lpszConnectionName As String, ByVal dwNameLen As Integer, ByVal dwReserved As Long) As Long
 
 ' Проверка существования файла на сервере
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CheckConnection2Server
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   URL (String)
+'!--------------------------------------------------------------------------------
 Function CheckConnection2Server(ByVal URL As String) As String
 
-' Функция скачивает файл по ссылке URL$
-' и сохраняет его под именем LocalPath$
-Dim strResultText                       As String
-Dim strResultCode                       As String
-Dim errNum                              As Long
-Dim tmstart, tmcurr, iTimeTaken
+    ' Функция скачивает файл по ссылке URL$
+    ' и сохраняет его под именем LocalPath$
+    Dim strResultText As String
+    Dim strResultCode As String
+    Dim errNum        As Long
+    Dim tmstart, tmcurr, iTimeTaken
 
     On Error GoTo ErrCode
 
     If CheckInternetConnection Then
         Set XMLHTTP = New MSXML2.XMLHTTP30
-
         tmstart = Now
 
         With XMLHTTP
             '.Open "GET", Replace$(URL, vbBackslash, "/"), "False"
             .Open "GET", Replace$(URL, vbBackslash, "/"), "True"
             .sEnd ""
+
             Do
                 tmcurr = Now
                 iTimeTaken = CInt(DateDiff("s", tmstart, tmcurr))
+
                 ' Если таймаут, то выходим
                 If iTimeTaken > iTimeOutInSecs Then
                     .abort
+
                     Exit Do
+
                 End If
+
                 Sleep 50
                 DoEvents
             Loop While .readyState <> 4
+
             strResultText = .statusText
             strResultCode = .Status
         End With
@@ -63,7 +74,6 @@ Dim tmstart, tmcurr, iTimeTaken
         Else
             CheckConnection2Server = "Error:" & strResultCode & " - " & strResultText & " - " & XMLHTTP.responseText
         End If
-
     End If
 
     Exit Function
@@ -71,21 +81,32 @@ Dim tmstart, tmcurr, iTimeTaken
 ErrCode:
     errNum = Err.Number
     Debug.Print Err.Number & " " & Err.Description & " " & Err.LastDllError
+
     If errNum <> 0 Then
         DebugMode str5VbTab & "CheckConnection2Server: " & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         DebugMode str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
     End If
+
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CheckInternetConnection
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function CheckInternetConnection() As Boolean
-Dim aux                                 As String * 255
-Dim R                                   As Long
+
+    Dim aux As String * 255
+    Dim R   As Long
+
     R = InternetGetConnectedStateEx(R, aux, 254, 0)
+
     If R = 1 Then
         CheckInternetConnection = True
     Else
         CheckInternetConnection = False
     End If
+
 End Function
 
 '! -----------------------------------------------------------
@@ -93,14 +114,19 @@ End Function
 '!  Переменные  :  Optional start As Boolean
 '!  Описание    :  Проверка новых версий программы с использованием MSXML
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CheckUpd
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Start (Boolean = True)
+'!--------------------------------------------------------------------------------
 Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 
-Dim TextNodeName                        As String
-Dim NodeIndex                           As Integer
-Dim strVerTemp                          As String
-Dim strResultCompare                    As String
-Dim Url_Test_Result_WWW                 As String
-Dim Url_Test_Result_Site                As String
+    Dim TextNodeName         As String
+    Dim NodeIndex            As Integer
+    Dim strVerTemp           As String
+    Dim strResultCompare     As String
+    Dim Url_Test_Result_WWW  As String
+    Dim Url_Test_Result_Site As String
 
     DebugMode "CheckUpd-Start"
     mbCheckUpdNotEnd = True
@@ -120,10 +146,10 @@ Dim Url_Test_Result_Site                As String
 
         If StrComp(Url_Test_Result_Site, "OK", vbTextCompare) = 0 Then
 
-            Dim xmlDoc                  As DOMDocument30
-            Dim nodeList                As IXMLDOMNodeList
-            Dim xmlNode                 As IXMLDOMNode
-            Dim propertyNode            As IXMLDOMElement
+            Dim xmlDoc       As DOMDocument30
+            Dim nodeList     As IXMLDOMNodeList
+            Dim xmlNode      As IXMLDOMNode
+            Dim propertyNode As IXMLDOMElement
 
             Set xmlDoc = New DOMDocument
             xmlDoc.async = False
@@ -131,6 +157,7 @@ Dim Url_Test_Result_Site                As String
             ' загружаем файл
             If Not xmlDoc.Load(Url_Request) Then
                 ChangeStatusTextAndDebug strMessages(126)
+
                 If Not Start Then
                     MsgBox strMessages(126), vbInformation, strMessages(54)
                 End If
@@ -165,13 +192,14 @@ Dim Url_Test_Result_Site                As String
 
                         Case "linkHistory_en"
                             strLinkHistory_en = xmlNode.childNodes(NodeIndex).Text
-
                     End Select
 
                     NodeIndex = NodeIndex + 1
                 Next
+
                 '**** Сравнение версий программ
                 strResultCompare = CompareByVersion(strVersion, strVerTemp)
+
                 ' Анализ итога сравнения и показ окна
                 Select Case strResultCompare
 
@@ -180,12 +208,13 @@ Dim Url_Test_Result_Site                As String
                         If StrComp(strRelease, "beta", vbTextCompare) = 0 Then
                             If Not mbUpdateCheckBeta Then
                                 DebugMode vbTab & "The version on the site is Beta. In options check for beta are disable. Break function!!!"
-
                                 ChangeStatusTextAndDebug strMessages(56)
+
                                 If Not Start Then
                                     If MsgBox(strMessages(56) & strMessages(144), vbQuestion + vbYesNo, strProductName) = vbYes Then
                                         frmCheckUpdate.Show vbModal, frmMain
                                     Else
+
                                         Exit Sub
 
                                     End If
@@ -196,17 +225,15 @@ Dim Url_Test_Result_Site                As String
 
                             Else
                                 frmCheckUpdate.Show vbModal, frmMain
-
                             End If
 
                         Else
                             frmCheckUpdate.Show vbModal, frmMain
-
                         End If
 
                     Case "="
-
                         ChangeStatusTextAndDebug strMessages(56)
+
                         If Not Start Then
                             If MsgBox(strMessages(56) & strMessages(144), vbQuestion + vbYesNo, strProductName) = vbYes Then
                                 frmCheckUpdate.Show vbModal, frmMain
@@ -215,6 +242,7 @@ Dim Url_Test_Result_Site                As String
 
                     Case "<"
                         ChangeStatusTextAndDebug strMessages(55)
+
                         If Not Start Then
                             If MsgBox(strMessages(55) & strMessages(144), vbQuestion + vbYesNo, strProductName) = vbYes Then
                                 frmCheckUpdate.Show vbModal, frmMain
@@ -222,8 +250,8 @@ Dim Url_Test_Result_Site                As String
                         End If
 
                     Case Else
-
                         ChangeStatusTextAndDebug strMessages(102)
+
                         If Not Start Then
                             MsgBox strMessages(102), vbInformation, strProductName
                         End If
@@ -232,58 +260,63 @@ Dim Url_Test_Result_Site                As String
 
                 Set xmlNode = Nothing
                 Set nodeList = Nothing
-
             End If
 
         Else
             DebugMode vbTab & "CheckUPD-Site: " & strMessages(53) & vbNewLine & "Error: " & Url_Test_Result_Site
-
             ChangeStatusTextAndDebug strMessages(143)
+
             If Not Start Then
                 MsgBox strMessages(143) & vbNewLine & "Error: " & Url_Test_Result_Site, vbInformation, strMessages(54)
             End If
-
         End If
+
     Else
         DebugMode vbTab & "CheckUPD-Inet: " & strMessages(53) & vbNewLine & "Error: " & Url_Test_Result_WWW
         ChangeStatusTextAndDebug strMessages(53)
+
         If Not Start Then
             MsgBox strMessages(53) & vbNewLine & "Error: " & Url_Test_Result_WWW, vbInformation, strMessages(54)
         End If
     End If
 
-
     Set xmlDoc = Nothing
-
     mbCheckUpdNotEnd = False
 
     On Error GoTo 0
 
     DebugMode "CheckUpd-End"
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DeltaDay
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function DeltaDay() As Integer
 
-Dim CurrentDate                         As Date
-Dim BuildDate                           As Date
-Dim DeltaTemp                           As Integer
+    Dim CurrentDate As Date
+    Dim BuildDate   As Date
+    Dim DeltaTemp   As Integer
 
     CurrentDate = Date
     BuildDate = CDate(strDateProgram)
     DeltaTemp = CInt(CurrentDate - BuildDate)
     DeltaDay = DeltaTemp
-
 End Function
 
-Private Function DeltaDayNew(ByVal dtFirstDate As Date, _
-                             ByVal dtSecondDate As Date) As Integer
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DeltaDayNew
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   dtFirstDate (Date)
+'                              dtSecondDate (Date)
+'!--------------------------------------------------------------------------------
+Private Function DeltaDayNew(ByVal dtFirstDate As Date, ByVal dtSecondDate As Date) As Integer
 
-Dim DeltaTemp                           As Integer
+    Dim DeltaTemp As Integer
 
     DeltaTemp = CInt(dtFirstDate - dtSecondDate)
     DeltaDayNew = DeltaTemp
-
 End Function
 
 '! -----------------------------------------------------------
@@ -291,17 +324,22 @@ End Function
 '!  Переменные  :  Optional start As Boolean
 '!  Описание    :  Проверка новых версий программы с использованием MSXML
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadUpdateData
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub LoadUpdateData()
 
-Dim xmlDoc                              As DOMDocument
-Dim nodeList                            As IXMLDOMNodeList
-Dim xmlNode                             As IXMLDOMNode
-Dim propertyNode                        As IXMLDOMElement
-Dim Url_Request                         As String
-Dim TextNodeName                        As String
-Dim NodeIndex                           As Integer
-Dim strVersionsTemp                     As String
-Dim i                                   As Long
+    Dim xmlDoc          As DOMDocument
+    Dim nodeList        As IXMLDOMNodeList
+    Dim xmlNode         As IXMLDOMNode
+    Dim propertyNode    As IXMLDOMElement
+    Dim Url_Request     As String
+    Dim TextNodeName    As String
+    Dim NodeIndex       As Integer
+    Dim strVersionsTemp As String
+    Dim i               As Long
 
     On Error Resume Next
 
@@ -330,6 +368,7 @@ Dim i                                   As Long
                 Case "versions"
                     strVersionsTemp = xmlNode.childNodes(NodeIndex).Text
                     strUpdVersions = Split(strVersionsTemp, ";")
+
                     ReDim strUpdDescription(UBound(strUpdVersions), 2) As String
                     ReDim strLink(UBound(strUpdVersions), 6) As String
                     ReDim strLinkFull(UBound(strUpdVersions), 6) As String
@@ -344,9 +383,9 @@ Dim i                                   As Long
 
             NodeIndex = NodeIndex + 1
         Next
+
         Set xmlNode = Nothing
         Set nodeList = Nothing
-
     End If
 
     Set xmlDoc = Nothing
@@ -355,15 +394,21 @@ Dim i                                   As Long
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadUpdDescription
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strVer (String)
+'                              lngIndexVer (Long)
+'!--------------------------------------------------------------------------------
 Public Sub LoadUpdDescription(ByVal strVer As String, ByVal lngIndexVer As Long)
 
-Dim xmlDocVers                          As DOMDocument
-Dim nodeListVers                        As IXMLDOMNodeList
-Dim xmlNodeVers                         As IXMLDOMNode
-Dim propertyNodeVers                    As IXMLDOMElement
-Dim Url_Request                         As String
-Dim TextNodeName                        As String
-Dim NodeIndex                           As Integer
+    Dim xmlDocVers       As DOMDocument
+    Dim nodeListVers     As IXMLDOMNodeList
+    Dim xmlNodeVers      As IXMLDOMNode
+    Dim propertyNodeVers As IXMLDOMElement
+    Dim Url_Request      As String
+    Dim TextNodeName     As String
+    Dim NodeIndex        As Integer
 
     Set xmlDocVers = New DOMDocument
     xmlDocVers.async = False
@@ -429,7 +474,6 @@ Dim NodeIndex                           As Integer
 
                 Case "linkFull_header2"
                     strLinkFull(lngIndexVer, 5) = xmlNodeVers.childNodes(NodeIndex).Text
-
             End Select
 
             NodeIndex = NodeIndex + 1
@@ -440,12 +484,17 @@ Dim NodeIndex                           As Integer
 End Sub
 
 ' Показ напоминания об обновлении
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ShowUpdateToolTip
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub ShowUpdateToolTip()
 
-Dim mbShowToolTip                       As Boolean
-Dim intDeltaDay                         As Integer
-Dim dtToolTipDate                       As Date
-Dim strTTipDate                         As String
+    Dim mbShowToolTip As Boolean
+    Dim intDeltaDay   As Integer
+    Dim dtToolTipDate As Date
+    Dim strTTipDate   As String
 
     If DeltaDay > 180 Then
         If mbUpdateToolTip Then
@@ -459,19 +508,15 @@ Dim strTTipDate                         As String
 
                 If intDeltaDay >= 5 Then
                     mbShowToolTip = True
-
                 End If
-
             End If
 
         Else
             mbShowToolTip = False
-
         End If
 
     Else
         mbShowToolTip = False
-
     End If
 
     ' Если все условия выполнены, то показываем сообщение
@@ -481,4 +526,3 @@ Dim strTTipDate                         As String
     End If
 
 End Sub
-

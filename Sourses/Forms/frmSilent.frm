@@ -37,7 +37,6 @@ Begin VB.Form frmSilent
       Width           =   2205
       _ExtentX        =   3889
       _ExtentY        =   1323
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -47,6 +46,7 @@ Begin VB.Form frmSilent
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
       PictureAlign    =   0
@@ -64,7 +64,6 @@ Begin VB.Form frmSilent
       Width           =   2200
       _ExtentX        =   3889
       _ExtentY        =   1296
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -74,6 +73,7 @@ Begin VB.Form frmSilent
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
       PictureAlign    =   0
@@ -171,12 +171,17 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private miTimerSecond                   As Integer
+Private miTimerSecond As Integer
+Private strFormName   As String
 
-Private strFormName                     As String
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -185,15 +190,24 @@ Private Sub FontCharsetChange()
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     tmrSilent.Enabled = False
     ChangeStatusTextAndDebug strMessages(101), "Silent mode break by User"
     tmrSilent.Interval = 0
     mbSilentRun = False
     Unload Me
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     tmrSilent.Enabled = False
     tmrSilent.Interval = 0
@@ -201,7 +215,6 @@ Private Sub cmdOK_Click()
     mbSilentRun = True
     ' выгрузка формы
     Unload Me
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -209,17 +222,26 @@ End Sub
 '!  Переменные  :  KeyCode As Integer, Shift As Integer
 '!  Описание    :  обработка нажатий клавиш клавиатуры
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         cmdExit_Click
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
 
     With Me
@@ -228,7 +250,6 @@ Private Sub Form_Load()
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
-
 
     'Me
     LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
@@ -240,14 +261,12 @@ Private Sub Form_Load()
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
     miTimerSecond = miSilentRunTimer
     lblTimer.Caption = miTimerSecond
     tmrSilent.Enabled = True
     tmrSilent.Interval = 1000
-
 End Sub
 
 'Private Sub Form_Terminate()
@@ -260,23 +279,30 @@ End Sub
 '    End If
 '
 'End Sub
-
-Private Sub Localise(ByVal strPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal StrPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Лейблы
-    lblTimerText.Caption = LocaliseString(strPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
-    lblTimeInSec.Caption = LocaliseString(strPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
-    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblTimerText.Caption = LocaliseString(StrPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
+    lblTimeInSec.Caption = LocaliseString(StrPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
+    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
+    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub tmrSilent_Timer
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub tmrSilent_Timer()
 
     If miTimerSecond = 0 Then
@@ -284,11 +310,9 @@ Private Sub tmrSilent_Timer()
         tmrSilent.Interval = 0
         mbSilentRun = True
         Unload Me
-
     End If
 
     miTimerSecond = miTimerSecond - 1
     lblTimer.Caption = miTimerSecond
-
     'lblTimer.Refresh
 End Sub

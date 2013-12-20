@@ -8,18 +8,17 @@ Option Explicit
 ' warranty or guaranty of any kind.  In other words, use at your own risk.
 ' Please send me you comments or suggestions at anirudhav@yahoo.com
 ' Thanks in advance.
-Private Const WH_CBT                    As Integer = 5
-Private Const HCBT_ACTIVATE             As Integer = 5
-Private Const BN_CLICKED                As Integer = 0
+Private Const WH_CBT        As Integer = 5
+Private Const HCBT_ACTIVATE As Integer = 5
+Private Const BN_CLICKED    As Integer = 0
 
 ' Used for storing information
-Private m_lMsgHandle                    As Long
-Private m_TimeMsgBox                    As Long
-Private m_lNoHandle                     As Long
-Private m_lhHook                        As Long
-Private bTimedOut                       As Boolean
-Private sMsgText                        As String
-
+Private m_lMsgHandle        As Long
+Private m_TimeMsgBox        As Long
+Private m_lNoHandle         As Long
+Private m_lhHook            As Long
+Private bTimedOut           As Boolean
+Private sMsgText            As String
 Private Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameA" (ByVal hWnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
 Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Long) As Long
 Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
@@ -28,10 +27,16 @@ Private Declare Function UnhookWindowsHookEx Lib "user32.dll" (ByVal hHook As Lo
 Private Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExA" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
 Private Declare Function GetDlgCtrlID Lib "user32.dll" (ByVal hWnd As Long) As Long
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function EnumChildWindowsProc
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lngHWnd (Long)
+'                              lParam (Long)
+'!--------------------------------------------------------------------------------
 Private Function EnumChildWindowsProc(ByVal lngHWnd As Long, ByVal lParam As Long) As Long
 
-Dim lRet                                As Long
-Dim sClassName                          As String
+    Dim lRet       As Long
+    Dim sClassName As String
 
     sClassName = String$(100, vbNullChar)
     lRet = GetClassName(lngHWnd, sClassName, Len(sClassName))
@@ -48,9 +53,14 @@ End Function
 
 ' *********************************************************************************************************
 ' THIS IS CALLBACK procedure. Will called by Hook procedure
-Private Function GetMessageBoxHandle(ByVal lMsg As Long, _
-                                     ByVal wParam As Long, _
-                                     ByVal lParam As Long) As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetMessageBoxHandle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lMsg (Long)
+'                              wParam (Long)
+'                              lParam (Long)
+'!--------------------------------------------------------------------------------
+Private Function GetMessageBoxHandle(ByVal lMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 
     If lMsg = HCBT_ACTIVATE Then
         'Release the CBT hook
@@ -63,19 +73,22 @@ Private Function GetMessageBoxHandle(ByVal lMsg As Long, _
         ' this avoids the Microsoft error in the message box
         ' Added by Daniels, Michael A (KPMG Group)
         EnumChildWindows m_lMsgHandle, AddressOf EnumChildWindowsProc, 0
-
     End If
 
     GetMessageBoxHandle = False
-
 End Function
 
 ' *********************************************************************************************************
 ' THIS IS CALLBACK procedure. Will called by timer procedure
 ' This function is called when time out occurs by the timer
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub MessageBoxTimerEvent
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub MessageBoxTimerEvent()
 
-Dim lButtonCommand                      As Integer
+    Dim lButtonCommand As Integer
 
     If m_lNoHandle = 0 Then
         SendMessage m_lMsgHandle, WM_CLOSE, 0, 0
@@ -83,22 +96,25 @@ Dim lButtonCommand                      As Integer
         lButtonCommand = (BN_CLICKED * (2 ^ 16)) And &HFFFF
         lButtonCommand = lButtonCommand Or GetDlgCtrlID(m_lNoHandle)
         SendMessage m_lMsgHandle, WM_COMMAND, lButtonCommand, m_lNoHandle
-
     End If
 
     m_lMsgHandle = 0
     m_lNoHandle = 0
     bTimedOut = True
-    
 End Sub
 
 ' *********************************************************************************************************
 ' THIS IS CALLBACK procedure. Will called by timer procedure
 ' This function is called when time out occurs by the timer
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub MessageBoxTimerUpdateEvent
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub MessageBoxTimerUpdateEvent()
 
-Dim lRet                                As Long
-Dim sStr                                As String
+    Dim lRet As Long
+    Dim sStr As String
 
     If Not (m_lMsgHandle = 0) Then
         m_TimeMsgBox = m_TimeMsgBox - 1
@@ -108,24 +124,27 @@ Dim sStr                                As String
             lRet = GetWindowText(m_lMsgHandle, sStr, 255)
             sStr = Left$(sStr, lRet)
             sMsgText = sStr
-
         End If
 
         sStr = sMsgText & " (Time left: " & m_TimeMsgBox & " seconds)"
         SetWindowText m_lMsgHandle, sStr
-
     End If
 
 End Sub
 
 ' *********************************************************************************************************
-Public Function MsgBoxEx(sMsgText As String, _
-                         dwWait As Long, _
-                         Optional Buttons As VbMsgBoxStyle = vbOKOnly, _
-                         Optional sTitle As String = "Timed MessageBox Demo") As VbMsgBoxResult
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function MsgBoxEx
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sMsgText (String)
+'                              dwWait (Long)
+'                              Buttons (VbMsgBoxStyle = vbOKOnly)
+'                              sTitle (String = "Timed MessageBox Demo")
+'!--------------------------------------------------------------------------------
+Public Function MsgBoxEx(sMsgText As String, dwWait As Long, Optional Buttons As VbMsgBoxStyle = vbOKOnly, Optional sTitle As String = "Timed MessageBox Demo") As VbMsgBoxResult
 
-Dim lTimer                              As Long
-Dim lTimerUpdate                        As Long
+    Dim lTimer       As Long
+    Dim lTimerUpdate As Long
 
     m_TimeMsgBox = dwWait
     ' SET CBT hook
@@ -148,7 +167,6 @@ Dim lTimerUpdate                        As Long
 
     If bTimedOut Then
         MsgBoxEx = 0
-
     End If
 
 End Function

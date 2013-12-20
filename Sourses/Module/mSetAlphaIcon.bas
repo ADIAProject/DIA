@@ -19,25 +19,23 @@ Private Const WM_SETICON = &H80
 Private Const ICON_SMALL = 0
 Private Const ICON_BIG = 1
 
-Private Declare Function LoadImageAsString _
-                          Lib "user32.dll" _
-                              Alias "LoadImageA" (ByVal hInst As Long, _
-                                                  ByVal lpsz As String, _
-                                                  ByVal uType As Long, _
-                                                  ByVal cxDesired As Long, _
-                                                  ByVal cyDesired As Long, _
-                                                  ByVal fuLoad As Long) As Long
+Private Declare Function LoadImageAsString Lib "user32.dll" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal uType As Long, ByVal cxDesired As Long, ByVal cyDesired As Long, ByVal fuLoad As Long) As Long
 
-Public Sub SetIcon(ByVal hWnd As Long, _
-                   ByVal sIconResName As String, _
-                   Optional ByVal bSetAsAppIcon As Boolean = True)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetIcon
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'                              sIconResName (String)
+'                              bSetAsAppIcon (Boolean = True)
+'!--------------------------------------------------------------------------------
+Public Sub SetIcon(ByVal hWnd As Long, ByVal sIconResName As String, Optional ByVal bSetAsAppIcon As Boolean = True)
 
-Dim lhWndTop                            As Long
-Dim lhWnd                               As Long
-Dim CX                                  As Long
-Dim CY                                  As Long
-Dim hIconLarge                          As Long
-Dim hIconSmall                          As Long
+    Dim lhWndTop   As Long
+    Dim lhWnd      As Long
+    Dim CX         As Long
+    Dim CY         As Long
+    Dim hIconLarge As Long
+    Dim hIconSmall As Long
 
     If (bSetAsAppIcon) Then
         ' Find VB's hidden parent window:
@@ -49,7 +47,6 @@ Dim hIconSmall                          As Long
 
             If Not (lhWnd = 0) Then
                 lhWndTop = lhWnd
-
             End If
 
         Loop
@@ -74,5 +71,4 @@ Dim hIconSmall                          As Long
     End If
 
     SendMessageLong hWnd, WM_SETICON, ICON_SMALL, hIconSmall
-
 End Sub

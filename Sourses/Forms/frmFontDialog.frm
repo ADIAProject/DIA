@@ -320,42 +320,71 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strFormName                     As String
+Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkBold_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkBold_Click()
     ctlFontCombo.ComboFontBold = chkBold.Value = 1
     txtFont.Font.Bold = chkBold.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkItalic_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkItalic_Click()
     ctlFontCombo.ComboFontItalic = chkItalic.Value = 1
     txtFont.Font.Italic = chkItalic.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlFontColor_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ctlFontColor_Click()
     txtFont.ForeColor = ctlFontColor.BackColor
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkUnderline_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkUnderline_Click()
     txtFont.Font.Underline = chkUnderline.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlFontCombo_FontNotFound
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FontName (String)
+'!--------------------------------------------------------------------------------
 Private Sub ctlFontCombo_FontNotFound(FontName As String)
     MsgBox "Cant find this font: " & FontName
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlFontCombo_SelectedFontChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFontName (String)
+'!--------------------------------------------------------------------------------
 Private Sub ctlFontCombo_SelectedFontChanged(NewFontName As String)
     txtFont.Font.Name = NewFontName
     ctlFontCombo.ClearUsedList
     ctlFontCombo.AddToUsedList NewFontName
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
     ctlFontCombo.SelectedFont = txtFont.Font.Name
     txtFontSize.Value = txtFont.Font.Size
@@ -364,13 +393,15 @@ Private Sub Form_Activate()
     chkBold.Value = txtFont.Font.Bold
     chkItalic.Value = txtFont.Font.Italic
     chkUnderline.Value = txtFont.Font.Underline
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
-
 
     With Me
         strFormName = .Name
@@ -378,7 +409,6 @@ Private Sub Form_Load()
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
-
 
     ' Устанавливаем картинки кнопок и убираем описание кнопок
     LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
@@ -390,16 +420,18 @@ Private Sub Form_Load()
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
     txtFontSize.Min = 6
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -413,11 +445,16 @@ Private Sub Localise(ByVal StrPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -426,9 +463,13 @@ Private Sub FontCharsetChange()
 
     SetButtonProperties cmdExit
     SetButtonProperties cmdOK
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtFont_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtFont_Change()
     ctlFontCombo.PreviewText = txtFont.Text
 End Sub
@@ -438,9 +479,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -448,6 +493,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     SaveOptions
     Unload Me
@@ -458,6 +508,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveOptions
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
     With txtFont
@@ -470,7 +525,6 @@ Private Sub SaveOptions()
             mbDialogTab_Bold = .Font.Bold
             mbDialogTab_Italic = .Font.Italic
             lngDialogTab_Color = .ForeColor
-
         ElseIf opt2.Value Then
             strDialogTab2_FontName = .Font.Name
             miDialogTab2_FontSize = .Font.Size
@@ -495,10 +549,20 @@ Private Sub SaveOptions()
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtFontSize_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtFontSize_Change()
     txtFont.Font.Size = txtFontSize.Value
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtFontSize_TextChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtFontSize_TextChange()
     txtFont.Font.Size = txtFontSize.Value
 End Sub

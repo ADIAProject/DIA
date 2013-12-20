@@ -4,24 +4,29 @@ Option Explicit
 Private Const wbemFlagReturnImmediately As Long = &H10
 Private Const wbemFlagForwardOnly       As Long = &H20
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CollectHwidFromReestr
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub CollectHwidFromReestr()
 
-Dim strDateDRV                          As String
-Dim strVersionDRV                       As String
-Dim strID                               As String
-Dim RecCountArr                         As Long
-Dim strInfName                          As String
-Dim strProviderName                     As String
-Dim strCompatID                         As String
-Dim strMatchesID                        As String
-Dim strStrDescription                   As String
-Dim i                                   As Long
-Dim regNameEnum                         As String
-Dim regDriverClass                      As String
-Dim regNameClass                        As String
-Dim strDeviceDesc                       As String
-Dim strMfg                              As String
-Dim strCompatibleIDs                    As String
+    Dim strDateDRV        As String
+    Dim strVersionDRV     As String
+    Dim strID             As String
+    Dim RecCountArr       As Long
+    Dim strInfName        As String
+    Dim strProviderName   As String
+    Dim strCompatID       As String
+    Dim strMatchesID      As String
+    Dim strStrDescription As String
+    Dim i                 As Long
+    Dim regNameEnum       As String
+    Dim regDriverClass    As String
+    Dim regNameClass      As String
+    Dim strDeviceDesc     As String
+    Dim strMfg            As String
+    Dim strCompatibleIDs  As String
 
     DebugMode vbTab & "CollectHwidFromReestr-Start"
 
@@ -69,7 +74,6 @@ Dim strCompatibleIDs                    As String
             strVersionDRV = vbNullString
             strStrDescription = vbNullString
             strInfName = vbNullString
-
         End If
 
         ' Если нет данных о драйвере, то подменяем их данными об устройстве
@@ -129,6 +133,7 @@ Dim strCompatibleIDs                    As String
         Else
             arrHwidsLocal(i).InfName = "unknown"
         End If
+
     Next
 
     '0 - strDevHwid
@@ -146,16 +151,19 @@ Dim strCompatibleIDs                    As String
     '12 - strInfName
     '13 - Есть драйвера или нет
     '14 - Список пакетов где обнуружены драйвера
-    
     DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & i
     DebugMode vbTab & "CollectHwidFromReestr-End"
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsCorrectShortDateFormat
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function IsCorrectShortDateFormat() As Boolean
 
-Dim intMMPos                            As Long
-Dim intDDPos                            As Long
+    Dim intMMPos As Long
+    Dim intDDPos As Long
 
     regParam = GetKeyValue(HKEY_CURRENT_USER, "Control Panel\International", "sShortDate")
 
@@ -165,16 +173,19 @@ Dim intDDPos                            As Long
         intMMPos = InStr(1, regParam, "m", vbTextCompare)
         intDDPos = InStr(1, regParam, "d", vbTextCompare)
         IsCorrectShortDateFormat = Not (intDDPos < intMMPos)
-
         ' значит формат  похож на dd/mm/yyyy, а нам нужен mm/dd/yyyy
     End If
 
     DebugMode "ShortDateFormat: " & regParam
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ReCollectHWID
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub ReCollectHWID()
-'Поиск новых устройств
+    'Поиск новых устройств
     RunDevconRescan
     ' Сбор сведений о PC
     ChangeStatusTextAndDebug strMessages(94)
@@ -184,11 +195,17 @@ Public Sub ReCollectHWID()
     ' Обновляем данные из реестра
     CollectHwidFromReestr
     ChangeStatusTextAndDebug strMessages(114)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveHWIDs2File
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub SaveHWIDs2File()
+
     If SaveHwidsArray2File(strResultHwidsExtTxtPath, arrHwidsLocal) = False Then
         MsgBox strMessages(45) & vbNewLine & strResultHwidsExtTxtPath, vbCritical + vbInformation, strProductName
     End If
+
 End Sub

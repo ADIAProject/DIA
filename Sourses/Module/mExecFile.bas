@@ -20,7 +20,6 @@ Private Type STARTUPINFO
     hStdInput                           As Long
     hStdOutput                          As Long
     hStdError                           As Long
-
 End Type
 
 Private Type PROCESS_INFORMATION
@@ -28,17 +27,16 @@ Private Type PROCESS_INFORMATION
     hThread                             As Long
     dwProcessId                         As Long
     dwThreadId                          As Long
-
 End Type
 
-Private Const STARTF_USESHOWWINDOW      As Long = &H1
-Private Const INFINITE                  As Long = -1&
+Private Const STARTF_USESHOWWINDOW  As Long = &H1
+Private Const INFINITE              As Long = -1&
 
-Public Const SW_SHOWNORMAL              As Long = 1
+Public Const SW_SHOWNORMAL          As Long = 1
 
-Private Const NORMAL_PRIORITY_CLASS     As Long = &H20
+Private Const NORMAL_PRIORITY_CLASS As Long = &H20
 
-Public lngExitProc                      As Long
+Public lngExitProc                  As Long
 
 'Декларация функции для запуска файла.
 Public Enum EShellShowConstants
@@ -62,60 +60,28 @@ End Enum
     Private essSW_SHOWNA, essSW_SHOWMINNOACTIVE, essSW_SHOWDEFAULT, essSW_RESTORE, essSW_SHOW
 #End If
 
-Private Const ERROR_FILE_NOT_FOUND      As Long = 2
-Private Const ERROR_PATH_NOT_FOUND      As Long = 3
-Private Const ERROR_BAD_FORMAT          As Long = 11
-Private Const SE_ERR_ACCESSDENIED       As Integer = 5    ' access denied
-Private Const SE_ERR_ASSOCINCOMPLETE    As Integer = 27
-Private Const SE_ERR_DDEBUSY            As Integer = 30
-Private Const SE_ERR_DDEFAIL            As Integer = 29
-Private Const SE_ERR_DDETIMEOUT         As Integer = 28
-Private Const SE_ERR_DLLNOTFOUND        As Integer = 32
-Private Const SE_ERR_FNF                As Integer = 2    ' file not found
-Private Const SE_ERR_NOASSOC            As Integer = 31
-Private Const SE_ERR_PNF                As Integer = 3    ' path not found
-Private Const SE_ERR_OOM                As Integer = 8    ' out of memory
-Private Const SE_ERR_SHARE              As Integer = 26
+Private Const ERROR_FILE_NOT_FOUND   As Long = 2
+Private Const ERROR_PATH_NOT_FOUND   As Long = 3
+Private Const ERROR_BAD_FORMAT       As Long = 11
+Private Const SE_ERR_ACCESSDENIED    As Integer = 5    ' access denied
+Private Const SE_ERR_ASSOCINCOMPLETE As Integer = 27
+Private Const SE_ERR_DDEBUSY         As Integer = 30
+Private Const SE_ERR_DDEFAIL         As Integer = 29
+Private Const SE_ERR_DDETIMEOUT      As Integer = 28
+Private Const SE_ERR_DLLNOTFOUND     As Integer = 32
+Private Const SE_ERR_FNF             As Integer = 2    ' file not found
+Private Const SE_ERR_NOASSOC         As Integer = 31
+Private Const SE_ERR_PNF             As Integer = 3    ' path not found
+Private Const SE_ERR_OOM             As Integer = 8    ' out of memory
+Private Const SE_ERR_SHARE           As Integer = 26
 
-Private Declare Function CreateProcess _
-                          Lib "kernel32.dll" _
-                              Alias "CreateProcessA" (ByVal lpApplicationName As String, _
-                                                      ByVal lpCommandLine As String, _
-                                                      ByVal lpProcessAttributes As Long, _
-                                                      ByVal lpThreadAttributes As Long, _
-                                                      ByVal bInheritHandles As Long, _
-                                                      ByVal dwCreationFlags As Long, _
-                                                      ByVal lpEnvironment As Long, _
-                                                      ByVal lpCurrentDirectory As String, _
-                                                      lpStartupInfo As STARTUPINFO, _
-                                                      lpProcessInformation As PROCESS_INFORMATION) As Long
+Private Declare Function CreateProcess Lib "kernel32.dll" Alias "CreateProcessA" (ByVal lpApplicationName As String, ByVal lpCommandLine As String, ByVal lpProcessAttributes As Long, ByVal lpThreadAttributes As Long, ByVal bInheritHandles As Long, ByVal dwCreationFlags As Long, ByVal lpEnvironment As Long, ByVal lpCurrentDirectory As String, lpStartupInfo As STARTUPINFO, lpProcessInformation As PROCESS_INFORMATION) As Long
+Private Declare Function GetExitCodeProcess Lib "kernel32.dll" (ByVal hProcess As Long, lpExitCode As Long) As Long
 
-Private Declare Function GetExitCodeProcess _
-                          Lib "kernel32.dll" (ByVal hProcess As Long, _
-                                              lpExitCode As Long) As Long
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
-Public Declare Function ShellExecute _
-                         Lib "shell32.dll" _
-                             Alias "ShellExecuteA" (ByVal hWnd As Long, _
-                                                    ByVal lpOperation As String, _
-                                                    ByVal lpFile As String, _
-                                                    ByVal lpParameters As String, _
-                                                    ByVal lpDirectory As String, _
-                                                    ByVal nShowCmd As Long) As Long
-
-Private Declare Function WaitForSingleObject _
-                          Lib "kernel32.dll" (ByVal hHandle As Long, _
-                                              ByVal dwMilliseconds As Long) As Long
-
-Private Declare Function ShellExecuteForExplore _
-                          Lib "shell32.dll" _
-                              Alias "ShellExecuteA" (ByVal hWnd As Long, _
-                                                     ByVal lpOperation As String, _
-                                                     ByVal lpFile As String, _
-                                                     lpParameters As Any, _
-                                                     lpDirectory As Any, _
-                                                     ByVal nShowCmd As Long) As Long
-
+Private Declare Function WaitForSingleObject Lib "kernel32.dll" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
+Private Declare Function ShellExecuteForExplore Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, lpParameters As Any, lpDirectory As Any, ByVal nShowCmd As Long) As Long
 
 '! -----------------------------------------------------------
 '!  Функция     :  RunAndWaitNewNew
@@ -123,13 +89,18 @@ Private Declare Function ShellExecuteForExplore _
 '!  Возвр. знач.:  As Boolean
 '!  Описание    :  'запустить приложение с ожиданием завершения.
 '! -----------------------------------------------------------
-Public Function RunAndWaitNew(ComLine As String, _
-                              DefaultDir As String, _
-                              ShowFlag As VbAppWinStyle) As Boolean
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function RunAndWaitNew
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ComLine (String)
+'                              DefaultDir (String)
+'                              ShowFlag (VbAppWinStyle)
+'!--------------------------------------------------------------------------------
+Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle) As Boolean
 
-Dim SI                                  As STARTUPINFO
-Dim PI                                  As PROCESS_INFORMATION
-Dim nRet                                As Long
+    Dim SI   As STARTUPINFO
+    Dim PI   As PROCESS_INFORMATION
+    Dim nRet As Long
 
     DebugMode vbTab & "RunAndWait-Start"
     DoEvents
@@ -138,9 +109,7 @@ Dim nRet                                As Long
     If ShowFlag = vbHide Then
         If Not mbHideOtherProcess Then
             ShowFlag = vbNormalFocus
-
         End If
-
     End If
 
     DebugMode str2VbTab & "RunString: " & ComLine
@@ -148,13 +117,12 @@ Dim nRet                                As Long
     nRet = ShellW(ComLine, ShowFlag, INFINITE)
     'WaitForSingleObject PI.hProcess, INFINITE
     'GetExitCodeProcess PI.hProcess, nRet
-    DebugMode str2VbTab & "ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(err.LastDllError)
+    DebugMode str2VbTab & "ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
     'CloseHandle PI.hProcess
     lngExitProc = nRet
     RunAndWaitNew = True
     DebugMode vbTab & "RunAndWaitNew-End"
     DoEvents
-
 End Function
 
 '! -----------------------------------------------------------
@@ -163,13 +131,18 @@ End Function
 '!  Возвр. знач.:  As Boolean
 '!  Описание    :  'запустить приложение с ожиданием завершения.
 '! -----------------------------------------------------------
-Public Function RunAndWait(ComLine As String, _
-                           DefaultDir As String, _
-                           ShowFlag As VbAppWinStyle) As Boolean
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function RunAndWait
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ComLine (String)
+'                              DefaultDir (String)
+'                              ShowFlag (VbAppWinStyle)
+'!--------------------------------------------------------------------------------
+Public Function RunAndWait(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle) As Boolean
 
-Dim SI                                  As STARTUPINFO
-Dim PI                                  As PROCESS_INFORMATION
-Dim nRet                                As Long
+    Dim SI   As STARTUPINFO
+    Dim PI   As PROCESS_INFORMATION
+    Dim nRet As Long
 
     DebugMode vbTab & "RunAndWait-Start"
     DoEvents
@@ -178,9 +151,7 @@ Dim nRet                                As Long
     If ShowFlag = vbHide Then
         If Not mbHideOtherProcess Then
             ShowFlag = vbNormalFocus
-
         End If
-
     End If
 
     SI.wShowWindow = ShowFlag
@@ -190,34 +161,36 @@ Dim nRet                                As Long
     nRet = CreateProcess(vbNullString, ComLine, 0&, 0&, 1&, NORMAL_PRIORITY_CLASS, 0&, DefaultDir, SI, PI)
     WaitForSingleObject PI.hProcess, INFINITE
     GetExitCodeProcess PI.hProcess, nRet
-    DebugMode str2VbTab & "ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(err.LastDllError)
+    DebugMode str2VbTab & "ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
     CloseHandle PI.hProcess
     lngExitProc = nRet
     RunAndWait = True
     DebugMode vbTab & "RunAndWait-End"
     DoEvents
-
 End Function
 
-Public Sub RunUtilsShell(ByVal strPathUtils As String, _
-                         Optional ByVal mbCollectPath As Boolean = True, _
-                         Optional ByVal mbStartPathAsPathExe As Boolean = False)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub RunUtilsShell
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPathUtils (String)
+'                              mbCollectPath (Boolean = True)
+'                              mbStartPathAsPathExe (Boolean = False)
+'!--------------------------------------------------------------------------------
+Public Sub RunUtilsShell(ByVal strPathUtils As String, Optional ByVal mbCollectPath As Boolean = True, Optional ByVal mbStartPathAsPathExe As Boolean = False)
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
-Dim strStartPath                        As String
+    Dim nRetShellEx  As Boolean
+    Dim cmdString    As String
+    Dim strStartPath As String
 
     If mbCollectPath Then
         cmdString = PathCollect(strPathUtils)
 
         If mbStartPathAsPathExe Then
             strStartPath = PathNameFromPath(cmdString)
-
         End If
 
     Else
         cmdString = strPathUtils
-
     End If
 
     DebugMode "cmdString: " & cmdString
@@ -226,23 +199,27 @@ Dim strStartPath                        As String
         nRetShellEx = ShellEx(cmdString, essSW_SHOWDEFAULT, vbNullString, strStartPath, "open")
     Else
         nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-
     End If
 
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
-Public Function ShellEx(ByVal sFile As String, _
-                        Optional ByVal eShowCmd As EShellShowConstants = essSW_SHOWDEFAULT, _
-                        Optional ByVal sParameters As String = vbNullString, _
-                        Optional ByVal sDefaultDir As String = vbNullString, _
-                        Optional sOperation As String = "open", _
-                        Optional Owner As Long = 0) As Boolean
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ShellEx
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sFile (String)
+'                              eShowCmd (EShellShowConstants = essSW_SHOWDEFAULT)
+'                              sParameters (String = vbNullString)
+'                              sDefaultDir (String = vbNullString)
+'                              sOperation (String = "open")
+'                              Owner (Long = 0)
+'!--------------------------------------------------------------------------------
+Public Function ShellEx(ByVal sFile As String, Optional ByVal eShowCmd As EShellShowConstants = essSW_SHOWDEFAULT, Optional ByVal sParameters As String = vbNullString, Optional ByVal sDefaultDir As String = vbNullString, Optional sOperation As _
+                            String = "open", Optional Owner As Long = 0) As Boolean
 
-Dim lR                                  As Long
-Dim lErr                                As Long
-Dim sErr                                As String
+    Dim lR   As Long
+    Dim lErr As Long
+    Dim sErr As String
 
     If InStr(1, sFile, ".exe", vbTextCompare) Then
         eShowCmd = 0
@@ -255,12 +232,10 @@ Dim sErr                                As String
             lR = ShellExecuteForExplore(Owner, sOperation, sFile, 0, 0, essSW_SHOWNORMAL)
         Else
             lR = ShellExecute(Owner, sOperation, sFile, sParameters, sDefaultDir, eShowCmd)
-
         End If
 
     Else
         lR = ShellExecute(Owner, sOperation, sFile, sParameters, sDefaultDir, eShowCmd)
-
     End If
 
     If (lR < 0) Or (lR > 32) Then
@@ -331,78 +306,72 @@ Dim sErr                                As String
 
             Case Else
                 sErr = "An error occurred occurred whilst trying to open or print the selected file."
-
         End Select
 
         DebugMode "ShellExecute: " & lErr & " - " & sErr & " - ErrAPI: " & ApiErrorText(lR)
         ShellEx = False
-
     End If
 
     On Error GoTo 0
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub RestartProgram
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Sub RestartProgram()
 
-Dim S_A                                 As SECURITY_ATTRIBUTES
+    Dim S_A        As SECURITY_ATTRIBUTES
+
     ' атрибуты защиты описателя и наследования
-Dim SI                                  As STARTUPINFO
+    Dim SI         As STARTUPINFO
+
     ' доп информация для запуска
-Dim PI                                  As PROCESS_INFORMATION
+    Dim PI         As PROCESS_INFORMATION
+
     ' информация о процессе
-Dim strError                            As String
-Dim strExecute                          As String
-Dim strCaption                          As String
-Dim Flags                               As Long
-Dim Directory                           As String
-Dim lngResult                           As Long
+    Dim strError   As String
+    Dim strExecute As String
+    Dim strCaption As String
+    Dim Flags      As Long
+    Dim Directory  As String
+    Dim lngResult  As Long
 
     ' Задаем флаг приоритета
     Flags = NORMAL_PRIORITY_CLASS
-
     'формируем строку пути
-
     strExecute = Kavichki & App.EXEName & ".exe" & Kavichki
     MsgBox Kavichki & App.EXEName & ".exe" & Kavichki
-
     'формируем строку папки
     Directory = Space$(Len(App.Path))
     Directory = App.Path
-
     'инициализация структуры желательна
     S_A.bInheritHandle = 0&
     S_A.lpSecurityDescriptor = 0&
     S_A.nLength = Len(S_A)
     'особенно этого параметра
-
     SI.cb = Len(SI)
     'и этого
-
-
     lngResult = CreateProcess(vbNullString, strExecute, 0&, 0&, 0&, NORMAL_PRIORITY_CLASS, 0&, Directory, SI, PI)
     'nRet = CreateProcess(vbNullString, ComLine, 0&, 0&, 1&, NORMAL_PRIORITY_CLASS, 0&, DefaultDir, SI, PI)
-    strError = ApiErrorText(err.LastDllError)
+    strError = ApiErrorText(Err.LastDllError)
+
     If lngResult <> 0 Then
         CloseHandle PI.hThread
         'этот описатель не понадобится
-
         'hProcess = PI.hProcess              'для последующего завершения
         'lProcess = PI.dwProcessId
-
     Else
         'hProcess = 0
         'lProcess = 0
-
         strExecute = Space$(32)
         strCaption = Space$(32)
-
-        strExecute = "Ошибка запуска процесса: " & App.EXEName & " Код ошибки: " & err.LastDllError
+        strExecute = "Ошибка запуска процесса: " & App.EXEName & " Код ошибки: " & Err.LastDllError
         strCaption = "Error"
         Call MessageBox(frmMain.hWnd, ByVal strExecute, ByVal strCaption, 16)
-
         'Label1 = "Ошибка: " & Error
     End If
 
 End Sub
-

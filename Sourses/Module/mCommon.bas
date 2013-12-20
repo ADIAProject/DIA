@@ -4,20 +4,20 @@ Option Explicit
 ' ***************************************************************************
 ' Module Constants
 ' ***************************************************************************
-Private Const MODULE_NAME               As String = "mCommonHash"
-Private Const KB_32                     As Long = 32768
+Private Const MODULE_NAME    As String = "mCommonHash"
+Private Const KB_32          As Long = 32768
 
 ' ***************************************************************************
 ' Global constants
 ' ***************************************************************************
-Private Const IDOK                      As Long = 1       ' one button return value
+Private Const IDOK           As Long = 1       ' one button return value
 
 ' ***************************************************************************
 ' Module Constants
 ' ***************************************************************************
-Private Const MB_OK                     As Long = &H0&    ' one button
-Private Const MB_YESNO                  As Long = &H4&    ' two buttons
-Private Const MB_YESNOCANCEL            As Long = &H3&    ' three buttons
+Private Const MB_OK          As Long = &H0&    ' one button
+Private Const MB_YESNO       As Long = &H4&    ' two buttons
+Private Const MB_YESNOCANCEL As Long = &H3&    ' three buttons
 
 ' ***************************************************************************
 ' Type structures
@@ -39,7 +39,7 @@ End Type
 '                    |______________ Global level designator
 '
 ' ***************************************************************************
-Public gblnStopProcessing               As Boolean
+Public gblnStopProcessing As Boolean
 
 ' **************************************************************************
 ' Routine:       CalcProgress
@@ -58,13 +58,18 @@ Public gblnStopProcessing               As Boolean
 ' 28-Jan-2010  Kenneth Ives  kenaso@tx.rr.com
 '              Routine created
 ' ***************************************************************************
-Public Function CalcProgress(ByVal curCurrAmt As Currency, _
-                             ByVal curMaxAmount As Currency) As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CalcProgress
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   curCurrAmt (Currency)
+'                              curMaxAmount (Currency)
+'!--------------------------------------------------------------------------------
+Public Function CalcProgress(ByVal curCurrAmt As Currency, ByVal curMaxAmount As Currency) As Long
 
-Dim lngPercent                          As Long
-Dim curAmtLeft                          As Currency
+    Dim lngPercent    As Long
+    Dim curAmtLeft    As Currency
 
-Const MAX_PERCENT                       As Long = 100
+    Const MAX_PERCENT As Long = 100
 
     ' percentage to be calcuated
     ' difference between current and max amount
@@ -73,6 +78,7 @@ Const MAX_PERCENT                       As Long = 100
 
     If (curCurrAmt <= 0@) Or (curMaxAmount <= 0@) Then
         CalcProgress = 0
+
         Exit Function
 
     End If
@@ -81,7 +87,6 @@ Const MAX_PERCENT                       As Long = 100
     ' not exceed maximum value
     If curCurrAmt >= curMaxAmount Then
         curCurrAmt = curMaxAmount
-
     End If
 
     ' Calculate percentage based on current
@@ -103,11 +108,9 @@ Const MAX_PERCENT                       As Long = 100
 
         Case Is > MAX_PERCENT
             lngPercent = MAX_PERCENT
-
     End Select
 
     CalcProgress = lngPercent
-
     ' Return calculated percent
 End Function
 
@@ -130,32 +133,34 @@ End Function
 ' 18-Sep-2002  Kenneth Ives  kenaso@tx.rr.com
 '              Wrote routine
 ' ***************************************************************************
-Public Sub ErrorMsg(ByVal strModule As String, _
-                    ByVal strRoutine As String, _
-                    ByVal strMsg As String, _
-                    Optional ByVal strCaption As String = vbNullString)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ErrorMsg
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strModule (String)
+'                              strRoutine (String)
+'                              strMsg (String)
+'                              strCaption (String = vbNullString)
+'!--------------------------------------------------------------------------------
+Public Sub ErrorMsg(ByVal strModule As String, ByVal strRoutine As String, ByVal strMsg As String, Optional ByVal strCaption As String = vbNullString)
 
-Dim strNewCaption                       As String
-Dim strFullMsg                          As String
+    Dim strNewCaption As String
+    Dim strFullMsg    As String
 
     ' Formatted MsgBox caption
     ' Formatted message
     ' Make sure strModule is populated
     If LenB(Trim$(strModule)) = 0 Then
         strModule = "Unknown"
-
     End If
 
     ' Make sure strRoutine is populated
     If LenB(Trim$(strRoutine)) = 0 Then
         strRoutine = "Unknown"
-
     End If
 
     ' Make sure strMsg is populated
     If LenB(Trim$(strMsg)) = 0 Then
         strMsg = "Unknown"
-
     End If
 
     ' Format the MsgBox caption
@@ -164,7 +169,6 @@ Dim strFullMsg                          As String
     strFullMsg = "Module: " & vbTab & strModule & vbCr & "Routine:" & vbTab & strRoutine & vbCr & "Error:  " & vbTab & strMsg
     ' the MsgBox routine
     MsgBox strFullMsg, vbCritical Or vbOKOnly, strNewCaption
-
 End Sub
 
 ' **************************************************************************
@@ -179,9 +183,14 @@ End Sub
 ' Returns:       New record size as a long integer
 '
 ' ***************************************************************************
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetBlockSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   curAmtLeft (Currency)
+'!--------------------------------------------------------------------------------
 Public Function GetBlockSize(ByVal curAmtLeft As Currency) As Long
 
-' Determine the amount of data to process
+    ' Determine the amount of data to process
     Select Case curAmtLeft
 
         Case Is >= KB_32
@@ -189,7 +198,6 @@ Public Function GetBlockSize(ByVal curAmtLeft As Currency) As Long
 
         Case Else
             GetBlockSize = CLng(curAmtLeft)
-
     End Select
 
 End Function
@@ -215,17 +223,21 @@ End Function
 ' 18-Sep-2002  Kenneth Ives  kenaso@tx.rr.com
 '              Wrote routine
 ' ***************************************************************************
-Public Sub InfoMsg(ByVal strMsg As String, _
-                   Optional ByVal strCaption As String = vbNullString)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub InfoMsg
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strMsg (String)
+'                              strCaption (String = vbNullString)
+'!--------------------------------------------------------------------------------
+Public Sub InfoMsg(ByVal strMsg As String, Optional ByVal strCaption As String = vbNullString)
 
-Dim strNewCaption                       As String
+    Dim strNewCaption As String
 
     ' Formatted MsgBox caption
     ' Format the MsgBox caption
     strNewCaption = strFormatCaption(strCaption)
     ' the MsgBox routine
     MsgBox strMsg, vbInformation Or vbOKOnly, strNewCaption
-
 End Sub
 
 ' ***************************************************************************
@@ -246,10 +258,15 @@ End Sub
 ' 18-Sep-2002  Kenneth Ives  kenaso@tx.rr.com
 '              Wrote routine
 ' ***************************************************************************
-Private Function strFormatCaption(ByVal strCaption As String, _
-                                  Optional ByVal bError As Boolean = False) As String
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function strFormatCaption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strCaption (String)
+'                              bError (Boolean = False)
+'!--------------------------------------------------------------------------------
+Private Function strFormatCaption(ByVal strCaption As String, Optional ByVal bError As Boolean = False) As String
 
-Dim strNewCaption                       As String
+    Dim strNewCaption As String
 
     ' The formatted caption
     ' Set the caption to either input parm or the application name
@@ -258,16 +275,13 @@ Dim strNewCaption                       As String
     Else
         ' Set the caption default
         strNewCaption = App.EXEName & " v" & App.Major & "." & App.Minor & "." & App.Revision
-
     End If
 
     ' Optionally, add error text
     If bError Then
         strNewCaption = strNewCaption & " Error"
-
     End If
 
     ' Return the new caption
     strFormatCaption = strNewCaption
-
 End Function

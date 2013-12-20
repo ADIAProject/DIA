@@ -2,47 +2,47 @@ Attribute VB_Name = "mApiGraphics"
 Option Explicit
 
 ' --Formatting Text Consts
-Public Const DT_LEFT                    As Long = &H0
-Public Const DT_CENTER                  As Long = &H1
-Public Const DT_RIGHT                   As Long = &H2
-Public Const DT_NOCLIP                  As Long = &H100
-Public Const DT_WORDBREAK               As Long = &H10
-Public Const DT_CALCRECT                As Long = &H400
-Public Const DT_RTLREADING              As Long = &H20000
-Public Const DT_DRAWFLAG                As Long = DT_CENTER Or DT_WORDBREAK
-Public Const DT_TOP                     As Long = &H0
-Public Const DT_BOTTOM                  As Long = &H8
-Public Const DT_VCENTER                 As Long = &H4
-Public Const DT_SINGLELINE              As Long = &H20
+Public Const DT_LEFT       As Long = &H0
+Public Const DT_CENTER     As Long = &H1
+Public Const DT_RIGHT      As Long = &H2
+Public Const DT_NOCLIP     As Long = &H100
+Public Const DT_WORDBREAK  As Long = &H10
+Public Const DT_CALCRECT   As Long = &H400
+Public Const DT_RTLREADING As Long = &H20000
+Public Const DT_DRAWFLAG   As Long = DT_CENTER Or DT_WORDBREAK
+Public Const DT_TOP        As Long = &H0
+Public Const DT_BOTTOM     As Long = &H8
+Public Const DT_VCENTER    As Long = &H4
+Public Const DT_SINGLELINE As Long = &H20
 Public Const DT_WORD_ELLIPSIS = &H40000
-Public Const TransColor                 As Long = &H8000000F
+Public Const TransColor      As Long = &H8000000F
 
 '   DrawEdge Message Constants
-Public Const BDR_RAISEDOUTER            As Long = &H1
-Public Const BDR_SUNKENOUTER            As Long = &H2
-Public Const BDR_RAISEDINNER            As Long = &H4
-Public Const BDR_SUNKENINNER            As Long = &H8
+Public Const BDR_RAISEDOUTER As Long = &H1
+Public Const BDR_SUNKENOUTER As Long = &H2
+Public Const BDR_RAISEDINNER As Long = &H4
+Public Const BDR_SUNKENINNER As Long = &H8
 Public Const EDGE_RAISED = (BDR_RAISEDOUTER Or BDR_RAISEDINNER)
 Public Const EDGE_SUNKEN = (BDR_SUNKENOUTER Or BDR_SUNKENINNER)
-Public Const BF_LEFT                    As Long = &H1
-Public Const BF_TOP                     As Long = &H2
-Public Const BF_RIGHT                   As Long = &H4
-Public Const BF_BOTTOM                  As Long = &H8
-Public Const BF_RECT                    As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
-Public Const BDR_SUNKEN95               As Long = &HA
-Public Const BDR_RAISED95               As Long = &H5
+Public Const BF_LEFT      As Long = &H1
+Public Const BF_TOP       As Long = &H2
+Public Const BF_RIGHT     As Long = &H4
+Public Const BF_BOTTOM    As Long = &H8
+Public Const BF_RECT      As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
+Public Const BDR_SUNKEN95 As Long = &HA
+Public Const BDR_RAISED95 As Long = &H5
 
 ' §§§§§§§§§§§§§§§§§§§§§§§§§§ ImageList §§§§§§§§§§§§§§§§§§§§§§§§§§
-Public Const SM_CXICON                  As Long = 11
-Public Const SM_CYICON                  As Long = 12
-Public Const SM_CYSMICON                As Long = 50
-Public Const SM_CXSMICON                As Long = 49
+Public Const SM_CXICON    As Long = 11
+Public Const SM_CYICON    As Long = 12
+Public Const SM_CYSMICON  As Long = 50
+Public Const SM_CXSMICON  As Long = 49
 
 ' --System Hand Pointer
-Public Const IDC_HAND                   As Long = 32649
+Public Const IDC_HAND     As Long = 32649
 
 ' --drawing Icon Constants
-Public Const DI_NORMAL                  As Long = &H3
+Public Const DI_NORMAL    As Long = &H3
 
 Public Type Size
     CX                                  As Long
@@ -229,27 +229,31 @@ Public Type GRADIENT_RECT
     LowerRight                          As Long
 End Type
 
-Public Const GRADIENT_FILL_RECT_V       As Long = &H1
-
+Public Const GRADIENT_FILL_RECT_V As Long = &H1
 
 '! -----------------------------------------------------------
 '!  Ôóíêöèÿ     :  FlatBorder
 '!  Ïåðåìåííûå  :  ByVal hwnd as long
 '!  Îïèñàíèå    :  Äåëàåò êíîïêó íàæàòîé/íîðìàëüíîé
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Ôóíêöèÿ)   :   Sub FlatBorderButton
+'! Description (Îïèñàíèå)  :   [type_description_here]
+'! Parameters  (Ïåðåìåííûå):   lngHWnd (Long)
+'                              mbFlat (Boolean = True)
+'!--------------------------------------------------------------------------------
 Public Sub FlatBorderButton(ByVal lngHWnd As Long, Optional mbFlat As Boolean = True)
 
-Dim TFlat                               As Long
+    Dim TFlat As Long
 
     TFlat = GetWindowLong(lngHWnd, GWL_EXSTYLE)
+
     If mbFlat Then
         TFlat = TFlat And Not WS_EX_CLIENTEDGE Or WS_EX_STATICEDGE
     Else
         TFlat = TFlat And WS_EX_CLIENTEDGE
     End If
+
     SetWindowLong lngHWnd, GWL_EXSTYLE, TFlat
     SetWindowPos lngHWnd, 0, 0, 0, 0, 0, SWP_NOACTIVATE Or SWP_NOZORDER Or SWP_FRAMECHANGED Or SWP_NOSIZE Or SWP_NOMOVE
-
 End Sub
-
-

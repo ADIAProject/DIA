@@ -4,21 +4,25 @@ Option Explicit
 Public Declare Function GetTickCount Lib "kernel32.dll" () As Long
 
 ' Функция расчета времени, исходя из полученных значений в миллисекундах функции GetTickCount
-Public Function CalculateTime(ByVal lngStartTime As Long, _
-                              ByVal lngEndTime As Long, _
-                              Optional ByVal mbmSec As Boolean = False) As String
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CalculateTime
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lngStartTime (Long)
+'                              lngEndTime (Long)
+'                              mbmSec (Boolean = False)
+'!--------------------------------------------------------------------------------
+Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Long, Optional ByVal mbmSec As Boolean = False) As String
 
-Dim lngWorkTimeTemp                     As Single
-Dim lngWorkTimeSecound                  As Long
-Dim lngWorkTimeMinutes                  As Long
-Dim lngWorkTimeHours                    As Long
-Dim lngWorkTimeMilliSecound             As Long
-Dim strWorkTimeSecound                  As String
-Dim strWorkTimeMinutes                  As String
-Dim strWorkTimeHours                    As String
-Dim strWorkTimeMilliSecound             As String
+    Dim lngWorkTimeTemp         As Single
+    Dim lngWorkTimeSecound      As Long
+    Dim lngWorkTimeMinutes      As Long
+    Dim lngWorkTimeHours        As Long
+    Dim lngWorkTimeMilliSecound As Long
+    Dim strWorkTimeSecound      As String
+    Dim strWorkTimeMinutes      As String
+    Dim strWorkTimeHours        As String
+    Dim strWorkTimeMilliSecound As String
 
-    
     If lngEndTime > lngStartTime Then
         lngWorkTimeTemp = (lngEndTime - lngStartTime) / 1000
 
@@ -29,7 +33,7 @@ Dim strWorkTimeMilliSecound             As String
         Else
             lngWorkTimeTemp = Fix(lngWorkTimeTemp)
         End If
-        
+
         Select Case lngWorkTimeTemp
 
             Case 0 To 3599
@@ -70,7 +74,6 @@ Dim strWorkTimeMilliSecound             As String
         strWorkTimeMinutes = CStr(lngWorkTimeMinutes)
     Else
         strWorkTimeMinutes = "00"
-
     End If
 
     ' Секунды
@@ -80,7 +83,6 @@ Dim strWorkTimeMilliSecound             As String
         strWorkTimeSecound = CStr(lngWorkTimeSecound)
     Else
         strWorkTimeSecound = "00"
-
     End If
 
     ' МилиСекунды
@@ -104,5 +106,3 @@ Dim strWorkTimeMilliSecound             As String
     End If
 
 End Function
-
-

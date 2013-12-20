@@ -3,14 +3,13 @@ Option Explicit
 
 ' необходимо для регистрации компонента
 Public Const DONT_RESOLVE_DLL_REFERENCES As Long = &H1
-Public Const GMEM_FIXED                 As Long = 0    'Fixed memory GlobalAlloc flag
+Public Const GMEM_FIXED                  As Long = 0    'Fixed memory GlobalAlloc flag
 
 Public Declare Sub RtlMoveMemory Lib "kernel32.dll" (Destination As Any, Source As Any, ByVal Length As Long)
 Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 Public Declare Sub CopyMemoryLong Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
 Public Declare Sub ExitProcess Lib "kernel32.dll" (ByVal uExitCode As Long)
 Public Declare Sub CoTaskMemFree Lib "ole32.dll" (ByVal hMem As Long)
-
 Public Declare Function GlobalAlloc Lib "kernel32.dll" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
 Public Declare Function GlobalFree Lib "kernel32.dll" (ByVal hMem As Long) As Long
 Public Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long

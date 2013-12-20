@@ -114,7 +114,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'Mudar a borda para mudar tamanho
-Private WithEvents frm                  As Form
+Private WithEvents frm As Form
 Attribute frm.VB_VarHelpID = -1
 
 '*************************************************************
@@ -133,6 +133,7 @@ Public Enum jcStyleConst
 End Enum
 
 #If False Then
+
     Private XPDefault, jcGradient, TextBox, Windows, Messenger, InnerWedge, OuterWedge, Header, Panel
 #End If
 
@@ -172,6 +173,7 @@ Public Enum jcGradConst
 End Enum
 
 #If False Then
+
     Private VerticalGradient, HorizontalGradient, VCilinderGradient, HCilinderGradient
 #End If
 
@@ -182,6 +184,7 @@ Public Enum jcHeaderConst
 End Enum
 
 #If False Then
+
     Private TxtBoxColor, Gradient
 #End If
 
@@ -192,6 +195,7 @@ Public Enum jcShadowConst
 End Enum
 
 #If False Then
+
     Private Shadow
 #End If
 
@@ -202,6 +206,7 @@ Public Enum IconAlignConst
 End Enum
 
 #If False Then
+
     Private vbLeftAligment, vbRightAligment
 #End If
 
@@ -210,8 +215,8 @@ Enum m_PanelArea
     xPanel = 1
 End Enum
 
-Private useMask                         As Boolean
-Private useGrey                         As Boolean
+Private useMask As Boolean
+Private useGrey As Boolean
 
 '*************************************************************
 '   Required API Declarations
@@ -283,52 +288,53 @@ Private Declare Function GetDIBits Lib "gdi32.dll" (ByVal aHDC As Long, ByVal hB
 Private Declare Function SetDIBitsToDevice Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal srcX As Long, ByVal srcY As Long, ByVal Scan As Long, ByVal NumScans As Long, Bits As Any, BitsInfo As BITMAPINFO, ByVal wUsage As Long) As Long
 Private Declare Function GetNearestColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
-                                          
+
 'FORM TRANSPARENTE
 Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hWnd As Long, ByVal crKey As Long, ByVal bAlpha As Byte, ByVal dwFlags As Long) As Long
+
 Private Const WS_EX_LAYERED = &H80000
 Private Const LWA_ALPHA = &H2
-
-Private Const TransColor                 As Long = &H8000000F
-Private Const GWL_STYLE                  As Long = -16
-Private Const GWL_EXSTYLE                As Long = (-20)
-Private Const WS_CAPTION                 As Long = &HC00000
+Private Const TransColor       As Long = &H8000000F
+Private Const GWL_STYLE        As Long = -16
+Private Const GWL_EXSTYLE      As Long = (-20)
+Private Const WS_CAPTION       As Long = &HC00000
 
 '*************************************************************
 '   DRAW TEXT
 '*************************************************************
 ' --Formatting Text Consts
-Private Const DT_LEFT                    As Long = &H0
-Private Const DT_CENTER                  As Long = &H1
-Private Const DT_RIGHT                   As Long = &H2
-Private Const DT_NOCLIP                  As Long = &H100
-Private Const DT_WORDBREAK               As Long = &H10
-Private Const DT_CALCRECT                As Long = &H400
-Private Const DT_RTLREADING              As Long = &H20000
-Private Const DT_DRAWFLAG                As Long = DT_CENTER Or DT_WORDBREAK
-Private Const DT_TOP                     As Long = &H0
-Private Const DT_BOTTOM                  As Long = &H8
-Private Const DT_VCENTER                 As Long = &H4
-Private Const DT_SINGLELINE              As Long = &H20
-Private Const DT_WORD_ELLIPSIS           As Long = &H40000
+Private Const DT_LEFT          As Long = &H0
+Private Const DT_CENTER        As Long = &H1
+Private Const DT_RIGHT         As Long = &H2
+Private Const DT_NOCLIP        As Long = &H100
+Private Const DT_WORDBREAK     As Long = &H10
+Private Const DT_CALCRECT      As Long = &H400
+Private Const DT_RTLREADING    As Long = &H20000
+Private Const DT_DRAWFLAG      As Long = DT_CENTER Or DT_WORDBREAK
+Private Const DT_TOP           As Long = &H0
+Private Const DT_BOTTOM        As Long = &H8
+Private Const DT_VCENTER       As Long = &H4
+Private Const DT_SINGLELINE    As Long = &H20
+Private Const DT_WORD_ELLIPSIS As Long = &H40000
 
 Private Type DRAWTEXTPARAMS
-   cbSize As Long
-   iTabLength As Long
-   iLeftMargin As Long
-   iRightMargin As Long
-   uiLengthDrawn As Long
+    cbSize As Long
+    iTabLength As Long
+    iLeftMargin As Long
+    iRightMargin As Long
+    uiLengthDrawn As Long
 End Type
-                                                   
+
 Private Declare Function DrawTextExW Lib "user32.dll" (ByVal hDC As Long, ByVal lpsz As Long, ByVal n As Long, ByRef lpRect As RECT, ByVal dwDTFormat As Long, ByRef lpDrawTextParams As DRAWTEXTPARAMS) As Long
-                                                   
+
 '*************************************************************
 '   FONT PROPERTIES
 '*************************************************************
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
+Private Const LF_FACESIZE     As Long = 32
+Private Const FW_NORMAL       As Long = 400
+Private Const FW_BOLD         As Long = 700
 Private Const DEFAULT_QUALITY As Long = 0
+
 Private Type LOGFONT
     LFHeight As Long
     LFWidth As Long
@@ -346,107 +352,106 @@ Private Type LOGFONT
     LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
 
-Private Const WM_SETFONT As Long = &H30
+Private Const WM_SETFONT       As Long = &H30
 Private Const WS_EX_RTLREADING As Long = &H2000
 
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
-
-Private FrameFontHandle As Long
-Private FrameLogFont As LOGFONT
-Private WithEvents PropFont As StdFont
+Private FrameFontHandle       As Long
+Private FrameLogFont          As LOGFONT
+Private WithEvents PropFont   As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 
 '*************************************************************
 '   UPDATE WINDOW
 '*************************************************************
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
+Private Const RDW_UPDATENOW   As Long = &H100
+Private Const RDW_INVALIDATE  As Long = &H1
+Private Const RDW_ERASE       As Long = &H4
 Private Const RDW_ALLCHILDREN As Long = &H80
+
 Private Declare Function RedrawWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 
 '*************************************************************
 '   Members
 '*************************************************************
-Private m_FrameColor                    As OLE_COLOR
-Private m_TextBoxColor                  As OLE_COLOR
-Private m_BackColor                     As OLE_COLOR
-Private m_FillColor                     As OLE_COLOR
-Private m_FrameColorDis                 As OLE_COLOR
-Private m_TextBoxColorDis               As OLE_COLOR
-Private m_FillColorDis                  As OLE_COLOR
-Private jcColorToDis                    As OLE_COLOR
-Private jcColorFromDis                  As OLE_COLOR
-Private jcColorBorderPicDis             As OLE_COLOR
-Private m_FrameColorIni                 As OLE_COLOR
-Private m_TextBoxColorIni               As OLE_COLOR
-Private m_FillColorIni                  As OLE_COLOR
-Private jcColorToIni                    As OLE_COLOR
-Private jcColorFromIni                  As OLE_COLOR
-Private jcColorBorderPicIni             As OLE_COLOR
-Private m_Caption                       As String
-Private m_Enabled                       As Boolean
-Private m_TextBoxHeight                 As Long
-Private m_TextHeight                    As Long
-Private m_TextWidth                     As Long
-Private m_Height                        As Long
-Private m_TextColor                     As Long
-Private m_Alignment                     As Long
-Private m_RoundedCorner                 As Boolean
-Private m_RoundedCornerTxtBox           As Boolean
-Private m_Style                         As jcStyleConst
-Private m_HeaderStyle                   As jcHeaderConst
-Private m_GradientHeaderStyle           As jcGradConst
-Private m_Icon                          As StdPicture
-Private m_IconSize                      As Integer
-Private m_IconAlignment                 As IconAlignConst
-Private m_ThemeColor                    As jcThemeConst
-Private m_ColorTo                       As OLE_COLOR
-Private m_ColorFrom                     As OLE_COLOR
-Private m_Indentation                   As Integer
-Private m_Space                         As Integer
-Private m_TxtBoxShadow                  As jcShadowConst
-Private jcTextBoxCenter                 As Long
-Private jcTextDrawParams                As Long
-Private jcColorTo                       As OLE_COLOR
-Private jcColorFrom                     As OLE_COLOR
-Private jcColorBorderPic                As OLE_COLOR
-Private jcLpp                           As POINT
+Private m_FrameColor             As OLE_COLOR
+Private m_TextBoxColor           As OLE_COLOR
+Private m_BackColor              As OLE_COLOR
+Private m_FillColor              As OLE_COLOR
+Private m_FrameColorDis          As OLE_COLOR
+Private m_TextBoxColorDis        As OLE_COLOR
+Private m_FillColorDis           As OLE_COLOR
+Private jcColorToDis             As OLE_COLOR
+Private jcColorFromDis           As OLE_COLOR
+Private jcColorBorderPicDis      As OLE_COLOR
+Private m_FrameColorIni          As OLE_COLOR
+Private m_TextBoxColorIni        As OLE_COLOR
+Private m_FillColorIni           As OLE_COLOR
+Private jcColorToIni             As OLE_COLOR
+Private jcColorFromIni           As OLE_COLOR
+Private jcColorBorderPicIni      As OLE_COLOR
+Private m_Caption                As String
+Private m_Enabled                As Boolean
+Private m_TextBoxHeight          As Long
+Private m_TextHeight             As Long
+Private m_TextWidth              As Long
+Private m_Height                 As Long
+Private m_TextColor              As Long
+Private m_Alignment              As Long
+Private m_RoundedCorner          As Boolean
+Private m_RoundedCornerTxtBox    As Boolean
+Private m_Style                  As jcStyleConst
+Private m_HeaderStyle            As jcHeaderConst
+Private m_GradientHeaderStyle    As jcGradConst
+Private m_Icon                   As StdPicture
+Private m_IconSize               As Integer
+Private m_IconAlignment          As IconAlignConst
+Private m_ThemeColor             As jcThemeConst
+Private m_ColorTo                As OLE_COLOR
+Private m_ColorFrom              As OLE_COLOR
+Private m_Indentation            As Integer
+Private m_Space                  As Integer
+Private m_TxtBoxShadow           As jcShadowConst
+Private jcTextBoxCenter          As Long
+Private jcTextDrawParams         As Long
+Private jcColorTo                As OLE_COLOR
+Private jcColorFrom              As OLE_COLOR
+Private jcColorBorderPic         As OLE_COLOR
+Private jcLpp                    As POINT
 
-Private Const TEXT_INACTIVE             As Long = &H80000011    '&H6A6A6A
-Private Const m_Border_Inactive         As Long = &H8000000B
-Private Const m_BtnFace_Inactive        As Long = &H8000000F
-Private Const m_BtnFace                 As Long = &H80000016    '&H8000000F '&H80000016&
+Private Const TEXT_INACTIVE      As Long = &H80000011    '&H6A6A6A
+Private Const m_Border_Inactive  As Long = &H8000000B
+Private Const m_BtnFace_Inactive As Long = &H8000000F
+Private Const m_BtnFace          As Long = &H80000016    '&H8000000F '&H80000016&
 
 '*************************************************************
 '   Constants
 '*************************************************************
-Private Const ALTERNATE                 As Integer = 1    ' ALTERNATE and WINDING are
-Private Const WINDING                   As Integer = 2    ' constants for FillMode.
-Private Const BLACKBRUSH                As Integer = 4    ' Constant for brush type.
-Private Const WHITE_BRUSH               As Integer = 0    ' Constant for brush type.
-Private Const RGN_AND                   As Integer = 1
-Private Const RGN_COPY                  As Integer = 5
-Private Const RGN_OR                    As Integer = 2
-Private Const RGN_XOR                   As Integer = 3
-Private Const RGN_DIFF                  As Integer = 4
+Private Const ALTERNATE          As Integer = 1    ' ALTERNATE and WINDING are
+Private Const WINDING            As Integer = 2    ' constants for FillMode.
+Private Const BLACKBRUSH         As Integer = 4    ' Constant for brush type.
+Private Const WHITE_BRUSH        As Integer = 0    ' Constant for brush type.
+Private Const RGN_AND            As Integer = 1
+Private Const RGN_COPY           As Integer = 5
+Private Const RGN_OR             As Integer = 2
+Private Const RGN_XOR            As Integer = 3
+Private Const RGN_DIFF           As Integer = 4
 Private Const m_def_Responsavel = 0
 Private Const m_def_AllowDraging = 0
 Private Const m_def_AtivarResizeDoForm = False
 Private Const m_def_Collapsar = False
 
-Dim temp_height                         As Integer
+Dim temp_height              As Integer
 
-Private m_Responsavel                       As jcResp
-Private m_AllowDraging                      As Boolean
-Private m_AllowParentDraging                As Boolean
-Private m_AtivarResizeDoForm                As Boolean
-Private m_Collapsar                         As Boolean
-Private m_Collapsado                        As Boolean
-
-Private m_bIsWinXpOrLater               As Boolean
+Private m_Responsavel        As jcResp
+Private m_AllowDraging       As Boolean
+Private m_AllowParentDraging As Boolean
+Private m_AtivarResizeDoForm As Boolean
+Private m_Collapsar          As Boolean
+Private m_Collapsado         As Boolean
+Private m_bIsWinXpOrLater    As Boolean
 
 '*************************************************************
 '   events
@@ -454,22 +459,24 @@ Private m_bIsWinXpOrLater               As Boolean
 Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Event TileClick()
 Event PanelClick()
-Event MouseDown(Button As Integer, _
-                Shift As Integer, _
-                X As Single, _
-                Y As Single, _
-                PanelArea As m_PanelArea)
-Event MouseUp(Button As Integer, _
-              Shift As Integer, _
-              X As Single, _
-              Y As Single, _
-              PanelArea As m_PanelArea)
+Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single, PanelArea As m_PanelArea)
+Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single, PanelArea As m_PanelArea)
 Event CollapseClick(Button As Integer)
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Alignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Alignment() As AlignmentConstants
     Alignment = m_Alignment
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Alignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_Alignment (AlignmentConstants)
+'!--------------------------------------------------------------------------------
 Public Property Let Alignment(ByRef new_Alignment As AlignmentConstants)
     m_Alignment = new_Alignment
     SetjcTextDrawParams
@@ -481,17 +488,22 @@ End Property
 ' API Functions and subroutines
 '==========================================================================
 ' full version of APILine
-Private Sub APILineEx(lhdcEx As Long, _
-                      X1 As Long, _
-                      Y1 As Long, _
-                      X2 As Long, _
-                      Y2 As Long, _
-                      lColor As Long)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub APILineEx
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lhdcEx (Long)
+'                              X1 (Long)
+'                              Y1 (Long)
+'                              X2 (Long)
+'                              Y2 (Long)
+'                              lColor (Long)
+'!--------------------------------------------------------------------------------
+Private Sub APILineEx(lhdcEx As Long, X1 As Long, Y1 As Long, X2 As Long, Y2 As Long, lColor As Long)
 
-'Use the API LineTo for Fast Drawing
-Dim PT                                  As POINT
-Dim hPen                                As Long
-Dim hPenOld                             As Long
+    'Use the API LineTo for Fast Drawing
+    Dim PT      As POINT
+    Dim hPen    As Long
+    Dim hPenOld As Long
 
     hPen = CreatePen(0, 1, lColor)
     hPenOld = SelectObject(lhdcEx, hPen)
@@ -501,17 +513,22 @@ Dim hPenOld                             As Long
     DeleteObject hPen
 End Sub
 
-Private Function APIRectangle(ByVal lngHDc As Long, _
-                              ByVal X As Long, _
-                              ByVal Y As Long, _
-                              ByVal W As Long, _
-                              ByVal H As Long, _
-                              Optional lColor As OLE_COLOR = -1) As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function APIRectangle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lngHDc (Long)
+'                              X (Long)
+'                              Y (Long)
+'                              W (Long)
+'                              H (Long)
+'                              lColor (OLE_COLOR = -1)
+'!--------------------------------------------------------------------------------
+Private Function APIRectangle(ByVal lngHDc As Long, ByVal X As Long, ByVal Y As Long, ByVal W As Long, ByVal H As Long, Optional lColor As OLE_COLOR = -1) As Long
 
-'Draw an api rectangle
-Dim hPen                                As Long
-Dim hPenOld                             As Long
-Dim PT                                  As POINT
+    'Draw an api rectangle
+    Dim hPen    As Long
+    Dim hPenOld As Long
+    Dim PT      As POINT
 
     hPen = CreatePen(0, 1, lColor)
     hPenOld = SelectObject(lngHDc, hPen)
@@ -522,14 +539,22 @@ Dim PT                                  As POINT
     LineTo lngHDc, X, Y
     SelectObject lngHDc, hPenOld
     DeleteObject hPen
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
     BackColor = m_BackColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_BackColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let BackColor(ByRef new_BackColor As OLE_COLOR)
     m_BackColor = TranslateColor(new_BackColor)
     UserControl.BackColor = m_BackColor
@@ -538,23 +563,49 @@ Public Property Let BackColor(ByRef new_BackColor As OLE_COLOR)
 End Property
 
 'Blend two colors
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function BlendColors
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lColor1 (Long)
+'                              lColor2 (Long)
+'!--------------------------------------------------------------------------------
 Private Function BlendColors(ByVal lColor1 As Long, ByVal lColor2 As Long) As Single
     BlendColors = RGB(((lColor1 And &HFF) + (lColor2 And &HFF)) / 2, (((lColor1 \ &H100) And &HFF) + ((lColor2 \ &H100) And &HFF)) / 2, (((lColor1 \ &H10000) And &HFF) + ((lColor2 \ &H10000) And &HFF)) / 2)
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Caption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Caption() As String
     Caption = m_Caption
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Caption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Caption (String)
+'!--------------------------------------------------------------------------------
 Public Property Let Caption(ByRef New_Caption As String)
     m_Caption = New_Caption
     PaintFrame
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ColorFrom
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get ColorFrom() As OLE_COLOR
     ColorFrom = m_ColorFrom
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ColorFrom
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_ColorFrom (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let ColorFrom(ByRef new_ColorFrom As OLE_COLOR)
 Attribute ColorFrom.VB_Description = "Returns/Sets the Start color for gradient"
     m_ColorFrom = TranslateColor(new_ColorFrom)
@@ -565,31 +616,42 @@ Attribute ColorFrom.VB_Description = "Returns/Sets the Start color for gradient"
 
     PropertyChanged "ColorFrom"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ColorTo
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get ColorTo() As OLE_COLOR
     ColorTo = m_ColorTo
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ColorTo
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_ColorTo (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let ColorTo(ByRef new_ColorTo As OLE_COLOR)
 Attribute ColorTo.VB_Description = "Returns/Sets the End color for gradient"
     m_ColorTo = TranslateColor(new_ColorTo)
 
     If m_ThemeColor = Custom Then
         jcColorToIni = m_ColorTo
-
     End If
 
     PropertyChanged "ColorTo"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Header
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_Header(R_Caption As RECT)
 
-Dim p_left                              As Long
+    Dim p_left As Long
 
     APILineEx UserControl.hDC, 0&, jcTextBoxCenter, UserControl.ScaleWidth, jcTextBoxCenter, IIf(m_Enabled, TranslateColor(&H80000015), TranslateColor(TEXT_INACTIVE))
     'TranslateColor(&H80000015)&H808080
@@ -602,7 +664,6 @@ Dim p_left                              As Long
             p_left = UserControl.ScaleWidth - m_TextWidth - m_Space
         Else
             p_left = (UserControl.ScaleWidth - m_TextWidth) / 2
-
         End If
 
         'Draw a line
@@ -612,29 +673,32 @@ Dim p_left                              As Long
         'TranslateColor(Ambient.BackColor)
         'set caption rect
         SetRect R_Caption, p_left + m_Space / 2, 0, m_TextWidth + p_left + m_Space / 2, m_TextHeight
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_InnerWedge
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_InnerWedge(R_Caption As RECT)
 
-Dim txtWidth                            As Integer
-Dim txtHeight                           As Integer
-Dim R                                   As RECT
-Dim m_roundedRadius                     As Long
-Dim hFRgn                               As Long
-Dim poly(1 To 4)                        As POINT
-Dim NumCoords                           As Long
-Dim hBrush                              As Long
-Dim hRgn                                As Long
+    Dim txtWidth        As Integer
+    Dim txtHeight       As Integer
+    Dim R               As RECT
+    Dim m_roundedRadius As Long
+    Dim hFRgn           As Long
+    Dim poly(1 To 4)    As POINT
+    Dim NumCoords       As Long
+    Dim hBrush          As Long
+    Dim hRgn            As Long
 
     m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 10&)
     txtWidth = m_TextWidth + 10
 
     If txtWidth < 100 Then
         txtWidth = 100
-
     End If
 
     txtHeight = m_TextHeight + 5
@@ -643,7 +707,6 @@ Dim hRgn                                As Long
 
     If (txtWidth + R.Left + txtHeight / 2) >= R.Right - m_Indentation Then
         txtWidth = R.Right - txtHeight / 2 - R.Left - m_Indentation - 1
-
     End If
 
     'Assign values to points.
@@ -684,12 +747,17 @@ Dim hRgn                                As Long
     '    'set icon coordinates
     '   iY = (txtHeight - m_IconSize) / 2
     UserControl.FillStyle = 0
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_jcGradient
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_jcGradient(R_Caption As RECT, iY As Integer)
 
-Dim R                                   As RECT
+    Dim R As RECT
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
@@ -705,7 +773,6 @@ Dim R                                   As RECT
     Else
         SetRect R, 0, m_Height, UserControl.ScaleWidth - 1, m_TextBoxHeight + m_Height + 2
         DrawAPIRoundRect False, 0&, m_FillColor, m_FrameColor, R
-
     End If
 
     With UserControl
@@ -715,17 +782,21 @@ Dim R                                   As RECT
         DrawGradientInRectangle .hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), R, VerticalGradient, False, m_TextBoxColor
         'set caption rect
         SetRect R_Caption, m_Space, m_Height + 1, .ScaleWidth - 2 - m_Space, m_TextBoxHeight + 2
-
         'set icon Y coordinate
     End With
 
     iY = (m_Height * 2 + m_TextBoxHeight - m_IconSize) / 2
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Messenger
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_Messenger(R_Caption As RECT, iY As Integer)
 
-Dim R                                   As RECT
+    Dim R As RECT
 
     jcTextBoxCenter = 0
     'Draw border rectangle
@@ -742,7 +813,6 @@ Dim R                                   As RECT
     Else
         SetRect R, 0, m_Height * 2 + m_TextBoxHeight + 1, UserControl.ScaleWidth - 2, m_Height * 2 + m_TextBoxHeight + 1
         APILineEx UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, jcColorBorderPic
-
         'vbBlack
     End If
 
@@ -752,27 +822,30 @@ Dim R                                   As RECT
     SetRect R_Caption, m_Space, m_Height * 2 + 2, UserControl.ScaleWidth - 1 - m_Space, m_TextBoxHeight + 6
     'set icon coordinates
     iY = m_Height * 2 + (m_TextBoxHeight - m_IconSize) / 2
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_OuterWedge
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_OuterWedge(R_Caption As RECT)
 
-Dim txtWidth                            As Integer
-Dim txtHeight                           As Integer
-Dim R                                   As RECT
-Dim r1                                  As RECT
-Dim m_roundedRadius                     As Long
-Dim poly(1 To 4)                        As POINT
-Dim NumCoords                           As Long
-Dim hBrush                              As Long
-Dim hRgn                                As Long
+    Dim txtWidth        As Integer
+    Dim txtHeight       As Integer
+    Dim R               As RECT
+    Dim r1              As RECT
+    Dim m_roundedRadius As Long
+    Dim poly(1 To 4)    As POINT
+    Dim NumCoords       As Long
+    Dim hBrush          As Long
+    Dim hRgn            As Long
 
     m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 10&)
     txtWidth = m_TextWidth + 10
 
     If txtWidth < 100 Then
         txtWidth = 100
-
     End If
 
     txtHeight = m_TextHeight + 5
@@ -781,7 +854,6 @@ Dim hRgn                                As Long
 
     If (txtWidth + R.Left + txtHeight / 2) >= R.Right - m_Indentation Then
         txtWidth = R.Right - txtHeight / 2 - R.Left - m_Indentation - 1
-
     End If
 
     'Assign values to points.
@@ -800,7 +872,6 @@ Dim hRgn                                As Long
 
     If hRgn Then
         FillRgn UserControl.hDC, hRgn, hBrush
-
     End If
 
     'fill frame
@@ -820,7 +891,6 @@ Dim hRgn                                As Long
         RoundRect .hDC, R.Left, R.Top + txtHeight, R.Left + 10, R.Top + txtHeight + 10, 0, 0
         .ForeColor = m_FillColor
         RoundRect .hDC, R.Left + 1, R.Top + txtHeight + 1, R.Left + 10, R.Top + txtHeight + 10, 0, 0
-
         'delete created region
     End With
 
@@ -828,15 +898,20 @@ Dim hRgn                                As Long
     DeleteObject hBrush
     'set caption rectangle
     SetRect R_Caption, poly(1).X + m_Indentation / 2 - 6, poly(1).Y, txtWidth + poly(1).X - 6, txtHeight + poly(1).Y + 2
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Panel
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_Panel(R_Caption As RECT, iY As Integer)
 
-Dim R                                   As RECT
-Dim m_roundedRadius                     As Long
-Dim hFRgn                               As Long
-Dim hRgn                                As Long
+    Dim R               As RECT
+    Dim m_roundedRadius As Long
+    Dim hFRgn           As Long
+    Dim hRgn            As Long
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
@@ -846,7 +921,6 @@ Dim hRgn                                As Long
         UserControl.ForeColor = m_FrameColor
     Else
         UserControl.ForeColor = jcColorBorderPic
-
     End If
 
     'If m_Enabled = False Then UserControl.ForeColor = m_Border_Inactive
@@ -855,7 +929,6 @@ Dim hRgn                                As Long
 
     If m_HeaderStyle = Gradient Then
         DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, R, m_GradientHeaderStyle, False, UserControl.ForeColor, 2.03
-
     End If
 
     'Creates first region to fill with color.
@@ -873,19 +946,24 @@ Dim hRgn                                As Long
         RoundRect UserControl.hDC, R.Left, R.Top, R.Right - 1, R.Bottom - 1, m_roundedRadius, m_roundedRadius
         UserControl.FillStyle = 0
         DrawCorners UserControl.ForeColor
-
     End If
 
     'set caption rect
     SetRect R_Caption, m_Space, 0&, UserControl.ScaleWidth - m_Space, UserControl.ScaleHeight - 2
     'set icon coordinates
     iY = (UserControl.ScaleHeight - m_IconSize) / 2
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_TextBox
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iX (Integer)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_TextBox(R_Caption As RECT, iX As Integer, iY As Integer)
 
-Dim R                                   As RECT
+    Dim R As RECT
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
@@ -898,7 +976,6 @@ Dim R                                   As RECT
             SetRect R, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
             OffsetRect R, 2, 2
             DrawAPIRoundRect False, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), R
-
         End If
 
         SetRect R, m_Indentation, 0, UserControl.ScaleWidth - 2 - 2 * m_Indentation, m_TextBoxHeight - 1
@@ -911,11 +988,9 @@ Dim R                                   As RECT
             OffsetRect R, 2, 2
             DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), R
             OffsetRect R, -2, -2
-
         End If
 
         DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, m_TextBoxColor, m_FrameColor, R
-
     End If
 
     'set caption rect
@@ -923,12 +998,17 @@ Dim R                                   As RECT
     'set icon coordinates
     iX = m_Indentation + m_Space * 2
     iY = (m_TextBoxHeight - m_IconSize) / 2
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Windows
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_Windows(R_Caption As RECT, iY As Integer)
 
-Dim R                                   As RECT
+    Dim R As RECT
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
@@ -943,7 +1023,6 @@ Dim R                                   As RECT
     Else
         SetRect R, 0&, 0&, UserControl.ScaleWidth - 1, m_TextBoxHeight
         DrawAPIRoundRect m_RoundedCornerTxtBox, 10&, m_TextBoxColor, m_FrameColor, R
-
     End If
 
     'set caption rect
@@ -951,13 +1030,17 @@ Dim R                                   As RECT
     '- 1
     'set icon coordinates
     iY = (m_TextBoxHeight - m_IconSize) / 2
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_XPDefault
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
 Private Sub Draw_XPDefault(R_Caption As RECT)
 
-Dim p_left                              As Long
-Dim R                                   As RECT
+    Dim p_left As Long
+    Dim R      As RECT
 
     'Draw border rectangle
     SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
@@ -970,26 +1053,29 @@ Dim R                                   As RECT
             p_left = UserControl.ScaleWidth - m_TextWidth - m_Indentation - m_Space - 1
         Else
             p_left = (UserControl.ScaleWidth - 1 - m_TextWidth) / 2
-
         End If
 
         'Draw a line
         APILineEx UserControl.hDC, p_left, jcTextBoxCenter, p_left + m_TextWidth + m_Space, jcTextBoxCenter, m_FillColor
         'set caption rect
         SetRect R_Caption, p_left + m_Space / 2, 0, m_TextWidth + p_left + m_Space / 2, m_TextHeight
-
     End If
 
 End Sub
 
-Private Sub DrawAPIRoundRect(ByVal blnRounded As Boolean, _
-                             ByVal LngRoundValue As Long, _
-                             ByVal MyFillColor As Long, _
-                             ByVal MyBorderColor As Long, _
-                             R As RECT, _
-                             Optional ByVal blnTransparent As Boolean = False)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawAPIRoundRect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   blnRounded (Boolean)
+'                              LngRoundValue (Long)
+'                              MyFillColor (Long)
+'                              MyBorderColor (Long)
+'                              R (RECT)
+'                              blnTransparent (Boolean = False)
+'!--------------------------------------------------------------------------------
+Private Sub DrawAPIRoundRect(ByVal blnRounded As Boolean, ByVal LngRoundValue As Long, ByVal MyFillColor As Long, ByVal MyBorderColor As Long, R As RECT, Optional ByVal blnTransparent As Boolean = False)
 
-Dim m_roundedRadius                     As Long
+    Dim m_roundedRadius As Long
 
     With UserControl
         .FillColor = MyFillColor
@@ -1000,9 +1086,13 @@ Dim m_roundedRadius                     As Long
     m_roundedRadius = IIf(blnRounded = False, 0&, LngRoundValue)
     RoundRect UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, m_roundedRadius, m_roundedRadius
     UserControl.FillStyle = 0
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawCorners
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PenColor (Long)
+'!--------------------------------------------------------------------------------
 Private Sub DrawCorners(PenColor As Long)
 
     With UserControl
@@ -1018,21 +1108,24 @@ Private Sub DrawCorners(PenColor As Long)
         'right bottom corner
         SetPixel .hDC, .ScaleWidth - 5, .ScaleHeight - 1, PenColor
         SetPixel .hDC, .ScaleWidth - 1, .ScaleHeight - 5, PenColor
-
     End With
 
 End Sub
 
-Private Sub DrawGradCilinder(lhdcEx As Long, _
-                             lStartColor As Long, _
-                             lEndColor As Long, _
-                             R As RECT, _
-                             Optional ByVal blnVertical As Boolean = True, _
-                             Optional ByVal LightCenter As Double = 2.01)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawGradCilinder
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lhdcEx (Long)
+'                              lStartColor (Long)
+'                              lEndColor (Long)
+'                              R (RECT)
+'                              blnVertical (Boolean = True)
+'                              LightCenter (Double = 2.01)
+'!--------------------------------------------------------------------------------
+Private Sub DrawGradCilinder(lhdcEx As Long, lStartColor As Long, lEndColor As Long, R As RECT, Optional ByVal blnVertical As Boolean = True, Optional ByVal LightCenter As Double = 2.01)
 
     If LightCenter <= 1# Then
         LightCenter = 1.01
-
     End If
 
     If blnVertical Then
@@ -1041,33 +1134,37 @@ Private Sub DrawGradCilinder(lhdcEx As Long, _
     Else
         DrawGradientEx lhdcEx, lStartColor, lEndColor, R.Left, R.Top, R.Right / LightCenter, R.Bottom + R.Top, False
         DrawGradientEx lhdcEx, lEndColor, lStartColor, R.Left + R.Right / LightCenter - 1, R.Top, (LightCenter - 1) * R.Right / LightCenter + 1, R.Bottom + R.Top, False
-
     End If
 
 End Sub
 
-Private Sub DrawGradientEx(lhdcEx As Long, _
-                           ByVal lEndColor As Long, _
-                           ByVal lStartColor As Long, _
-                           ByVal X As Long, _
-                           ByVal Y As Long, _
-                           ByVal X2 As Long, _
-                           ByVal Y2 As Long, _
-                           Optional blnVertical = True)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawGradientEx
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lhdcEx (Long)
+'                              lEndColor (Long)
+'                              lStartColor (Long)
+'                              X (Long)
+'                              Y (Long)
+'                              X2 (Long)
+'                              Y2 (Long)
+'                              blnVertical (Long)
+'!--------------------------------------------------------------------------------
+Private Sub DrawGradientEx(lhdcEx As Long, ByVal lEndColor As Long, ByVal lStartColor As Long, ByVal X As Long, ByVal Y As Long, ByVal X2 As Long, ByVal Y2 As Long, Optional blnVertical = True)
 
     On Error Resume Next
 
     'Draw a Vertical or horizontal Gradient in the current HDC
-    Dim dR                              As Single
-    Dim dG                              As Single
-    Dim dB                              As Single
-    Dim sR                              As Single
-    Dim sG                              As Single
-    Dim sB                              As Single
-    Dim er                              As Single
-    Dim eG                              As Single
-    Dim eB                              As Single
-    Dim ni                              As Long
+    Dim dR As Single
+    Dim dG As Single
+    Dim dB As Single
+    Dim sR As Single
+    Dim sG As Single
+    Dim sB As Single
+    Dim er As Single
+    Dim eG As Single
+    Dim eB As Single
+    Dim ni As Long
 
     sR = (lStartColor And &HFF)
     sG = (lStartColor \ &H100) And &HFF
@@ -1084,6 +1181,7 @@ Private Sub DrawGradientEx(lhdcEx As Long, _
         For ni = 1 To Y2 - 1
             APILineEx lhdcEx, X, Y + ni, X2, Y + ni, RGB(er + (ni * dR), eG + (ni * dG), eB + (ni * dB))
         Next
+
     Else
         dR = (sR - er) / X2
         dG = (sG - eG) / X2
@@ -1097,14 +1195,20 @@ Private Sub DrawGradientEx(lhdcEx As Long, _
 
 End Sub
 
-Private Sub DrawGradientInRectangle(lhdcEx As Long, _
-                                    lStartColor As Long, _
-                                    lEndColor As Long, _
-                                    R As RECT, _
-                                    GradientType As jcGradConst, _
-                                    Optional ByVal blnDrawBorder As Boolean = False, _
-                                    Optional lBorderColor As Long = vbBlack, _
-                                    Optional LightCenter As Double = 2.01)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawGradientInRectangle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lhdcEx (Long)
+'                              lStartColor (Long)
+'                              lEndColor (Long)
+'                              R (RECT)
+'                              GradientType (jcGradConst)
+'                              blnDrawBorder (Boolean = False)
+'                              lBorderColor (Long = vbBlack)
+'                              LightCenter (Double = 2.01)
+'!--------------------------------------------------------------------------------
+Private Sub DrawGradientInRectangle(lhdcEx As Long, lStartColor As Long, lEndColor As Long, R As RECT, GradientType As jcGradConst, Optional ByVal blnDrawBorder As Boolean = False, Optional lBorderColor As Long = vbBlack, Optional LightCenter As _
+                            Double = 2.01)
 
     Select Case GradientType
 
@@ -1119,32 +1223,43 @@ Private Sub DrawGradientInRectangle(lhdcEx As Long, _
 
         Case HCilinderGradient
             DrawGradCilinder lhdcEx, lStartColor, lEndColor, R, False, LightCenter
-
     End Select
 
     If blnDrawBorder Then
         APIRectangle lhdcEx, R.Left, R.Top, R.Right, R.Bottom, lBorderColor
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Enabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Enabled() As Boolean
     Enabled = m_Enabled
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Enabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Enabled (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let Enabled(ByRef New_Enabled As Boolean)
     m_Enabled = New_Enabled
     PropertyChanged "Enabled"
     PaintFrame
     FrameEnabled m_Enabled
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub EraseRegion
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub EraseRegion()
 
-Dim hRgn                                As Long
+    Dim hRgn As Long
 
     'Creates second region to fill with color.
     hRgn = CreateRoundRectRgn(0&, 0&, UserControl.ScaleWidth, UserControl.ScaleHeight, 0&, 0&)
@@ -1152,38 +1267,63 @@ Dim hRgn                                As Long
     'delete our elliptical region
     DeleteObject hRgn
     UserControl.FillStyle = 0
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property FillColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get FillColor() As OLE_COLOR
     FillColor = m_FillColorIni
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property FillColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_FillColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let FillColor(ByRef new_FillColor As OLE_COLOR)
 Attribute FillColor.VB_Description = "Returns/Sets the Fill color for TextBox and Windows style"
     m_FillColorIni = TranslateColor(new_FillColor)
     PropertyChanged "FillColor"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Font() As StdFont
 Attribute Font.VB_Description = "Returns a Font object."
 Attribute Font.VB_UserMemId = -512
     Set Font = PropFont
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFont (StdFont)
+'!--------------------------------------------------------------------------------
 Public Property Let Font(ByVal NewFont As StdFont)
     Set Me.Font = NewFont
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFont (StdFont)
+'!--------------------------------------------------------------------------------
 Public Property Set Font(ByVal NewFont As StdFont)
-Dim OldFontHandle As Long
+
+    Dim OldFontHandle As Long
+
     Set PropFont = NewFont
     Call OLEFontToLogFont(NewFont, FrameLogFont)
     OldFontHandle = FrameFontHandle
     FrameFontHandle = CreateFontIndirect(FrameLogFont)
+
     If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
     If OldFontHandle <> 0 Then DeleteObject OldFontHandle
     Me.Refresh
@@ -1191,11 +1331,19 @@ Dim OldFontHandle As Long
     UserControl.PropertyChanged "Font"
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PropFont_FontChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropertyName (String)
+'!--------------------------------------------------------------------------------
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
-Dim OldFontHandle As Long
+
+    Dim OldFontHandle As Long
+
     Call OLEFontToLogFont(PropFont, FrameLogFont)
     OldFontHandle = FrameFontHandle
     FrameFontHandle = CreateFontIndirect(FrameLogFont)
+
     If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
     If OldFontHandle <> 0 Then DeleteObject OldFontHandle
     Me.Refresh
@@ -1203,45 +1351,69 @@ Dim OldFontHandle As Long
     'PaintFrame
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub OLEFontToLogFont
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Font (StdFont)
+'                              LF (LOGFONT)
+'!--------------------------------------------------------------------------------
 Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
-Dim FontName As String
+
+    Dim FontName As String
+
     With LF
         FontName = Left$(Font.Name, LF_FACESIZE)
         CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
         .LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
+
         If Font.Bold = True Then
             .LFWeight = FW_BOLD
         Else
             .LFWeight = FW_NORMAL
         End If
+
         .LFItalic = IIf(Font.Italic = True, 1, 0)
         .LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
         .LFUnderline = IIf(Font.Underline = True, 1, 0)
         .LFQuality = DEFAULT_QUALITY
         .LFCharset = CByte(Font.Charset And &HFF)
     End With
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property FrameColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get FrameColor() As OLE_COLOR
     FrameColor = m_FrameColorIni
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property FrameColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_FrameColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let FrameColor(ByRef new_FrameColor As OLE_COLOR)
     m_FrameColorIni = TranslateColor(new_FrameColor)
 
     If m_ThemeColor = Custom Then
         jcColorBorderPic = m_FrameColor
-
     End If
 
     PropertyChanged "FrameColor"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FrameEnabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   blnValor (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub FrameEnabled(ByVal blnValor As Boolean)
 
-Dim C                                   As Control
+    Dim C As Control
 
     On Error Resume Next
 
@@ -1254,69 +1426,118 @@ Dim C                                   As Control
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property GradientHeaderStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get GradientHeaderStyle() As jcGradConst
     GradientHeaderStyle = m_GradientHeaderStyle
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property GradientHeaderStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_GradientHeaderStyle (jcGradConst)
+'!--------------------------------------------------------------------------------
 Public Property Let GradientHeaderStyle(ByRef new_GradientHeaderStyle As jcGradConst)
     m_GradientHeaderStyle = new_GradientHeaderStyle
     PropertyChanged "GradientHeaderStyle"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property AtivarResizeDoForm
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get AtivarResizeDoForm() As Boolean
     AtivarResizeDoForm = m_AtivarResizeDoForm
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property AtivarResizeDoForm
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_AtivarResizeDoForm (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let AtivarResizeDoForm(ByVal New_AtivarResizeDoForm As Boolean)
     m_AtivarResizeDoForm = New_AtivarResizeDoForm
     PropertyChanged "AtivarResizeDoForm"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MoverResponsavel
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get MoverResponsavel() As jcResp
     MoverResponsavel = m_Responsavel
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MoverResponsavel
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Responsavel (jcResp)
+'!--------------------------------------------------------------------------------
 Public Property Let MoverResponsavel(ByVal New_Responsavel As jcResp)
     m_Responsavel = New_Responsavel
     PropertyChanged "MoverResponsavel"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MoverControle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get MoverControle() As Boolean
     MoverControle = m_AllowDraging
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MoverControle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_AllowDraging (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let MoverControle(ByVal New_AllowDraging As Boolean)
     m_AllowDraging = New_AllowDraging
     PropertyChanged "MoverControle"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MoverForm
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get MoverForm() As Boolean
     MoverForm = m_AllowParentDraging
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property MoverForm
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Drag (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let MoverForm(ByVal New_Drag As Boolean)
     m_AllowParentDraging = New_Drag
     PropertyChanged "MoverForm"
     Call PaintFrame
-
 End Property
 
 'Faz o form aumentar e diminuir o seu tamanho (Collapsar)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Collapsar
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Collapsar() As Boolean
     Collapsar = m_Collapsar
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Collapsar
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Drag (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let Collapsar(ByVal New_Drag As Boolean)
 
     Select Case m_Style
@@ -1326,27 +1547,33 @@ Public Property Let Collapsar(ByVal New_Drag As Boolean)
 
         Case Else
             m_Collapsar = New_Drag
-
     End Select
 
     If m_Collapsar Then
         Label.Visible = True
     Else
         Label.Visible = False
-
     End If
 
     'PaintFrame
     PropertyChanged "Collapsar"
-
 End Property
 
 'Faz o form aumentar e diminuir o seu tamanho (Collapsar)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Collapsado
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Collapsado() As Boolean
     Collapsado = m_Collapsado
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Collapsado
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Drag (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let Collapsado(ByVal New_Drag As Boolean)
 
     If m_Collapsar Then
@@ -1359,7 +1586,7 @@ Public Property Let Collapsado(ByVal New_Drag As Boolean)
             Case Else:
                 m_Collapsado = New_Drag
 
-                Dim iY                  As Integer
+                Dim iY As Integer
 
                 Select Case m_Style
 
@@ -1380,7 +1607,6 @@ Public Property Let Collapsado(ByVal New_Drag As Boolean)
 
                     Case Windows
                         iY = 1
-
                 End Select
 
                 If New_Drag Then
@@ -1390,72 +1616,102 @@ Public Property Let Collapsado(ByVal New_Drag As Boolean)
                     Label.Caption = "5"
                     temp_height = UserControl.Height
                     UserControl.Height = ScaleY(m_TextBoxHeight + iY, vbPixels, vbTwips)
-
                 End If
 
         End Select
 
     Else
         m_Collapsado = False
-
     End If
 
     PropertyChanged "Collapsado"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property HeaderStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get HeaderStyle() As jcHeaderConst
     HeaderStyle = m_HeaderStyle
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property HeaderStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_HeaderStyle (jcHeaderConst)
+'!--------------------------------------------------------------------------------
 Public Property Let HeaderStyle(ByRef new_HeaderStyle As jcHeaderConst)
     m_HeaderStyle = new_HeaderStyle
     PropertyChanged "HeaderStyle"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property hWnd
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get hWnd() As Long
     hWnd = UserControl.hWnd
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property IconAlignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get IconAlignment() As IconAlignConst
     IconAlignment = m_IconAlignment
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property IconAlignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_IconAlignment (IconAlignConst)
+'!--------------------------------------------------------------------------------
 Public Property Let IconAlignment(ByRef new_IconAlignment As IconAlignConst)
     m_IconAlignment = new_IconAlignment
     PropertyChanged "IconAlignment"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property IconSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get IconSize() As Integer
     IconSize = m_IconSize
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property IconSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Value (Integer)
+'!--------------------------------------------------------------------------------
 Public Property Let IconSize(ByVal New_Value As Integer)
     m_IconSize = New_Value
     PropertyChanged "IconSize"
     PaintFrame
-
 End Property
 
 '==================
 ' Main drawing sub
 '==================
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PaintFrame
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub PaintFrame()
 
-Dim R_Caption                           As RECT
-Dim RC                                  As RECT
-Dim iX                                  As Integer
-Dim iY                                  As Integer
-Dim m_caption_aux                       As String
-Dim lpDrawTextParams As DRAWTEXTPARAMS
+    Dim R_Caption        As RECT
+    Dim RC               As RECT
+    Dim iX               As Integer
+    Dim iY               As Integer
+    Dim m_caption_aux    As String
+    Dim lpDrawTextParams As DRAWTEXTPARAMS
 
     m_Height = 3
     m_Indentation = 15
@@ -1471,7 +1727,6 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
         jcTextBoxCenter = m_TextHeight / 2
     Else
         jcTextBoxCenter = 0
-
     End If
 
     'Select colors according to enabled property
@@ -1489,7 +1744,6 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
         jcColorTo = jcColorToIni
         jcColorFrom = jcColorFromIni
         jcColorBorderPic = jcColorBorderPicIni
-
     End If
 
     'select frame style
@@ -1524,7 +1778,6 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
 
         Case Else
             Draw_jcGradient R_Caption, iY
-
     End Select
 
     'caption and icon alignments
@@ -1537,14 +1790,12 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
             Else
                 R_Caption.Left = R_Caption.Left + m_Space + m_IconSize
                 R_Caption.Right = R_Caption.Right - (m_Space + m_IconSize)
-
             End If
 
             If m_Style = TextBox Then
                 iX = m_Indentation + m_Space * 2
             Else
                 iX = m_Space
-
             End If
 
         ElseIf m_IconAlignment = vbRightAligment Then
@@ -1556,18 +1807,14 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
             Else
                 R_Caption.Left = R_Caption.Left + m_Space + m_IconSize
                 R_Caption.Right = R_Caption.Right - (m_Space + m_IconSize)
-
             End If
 
             If m_Style = TextBox Then
                 iX = UserControl.ScaleWidth - m_Space * 2 - m_IconSize - m_Indentation
             Else
                 iX = UserControl.ScaleWidth - m_Space - m_IconSize
-
             End If
-
         End If
-
     End If
 
     'Draw caption
@@ -1578,7 +1825,7 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
         UserControl.ForeColor = IIf(m_Enabled, m_TextColor, TranslateColor(TEXT_INACTIVE))
         'Set Me.Font = PropFont
         lpDrawTextParams.cbSize = Len(lpDrawTextParams)
-        
+
         If m_Style = Panel Then
             CopyRect RC, R_Caption
             'DrawTextEx UserControl.hDC, m_Caption, Len(m_Caption), RC, DT_CALCRECT Or DT_WORDBREAK, ByVal 0&
@@ -1589,9 +1836,7 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
         Else
             'DrawTextEx UserControl.hDC, m_caption_aux, Len(m_caption_aux), R_Caption, jcTextDrawParams, ByVal 0&
             DrawTextExW UserControl.hDC, StrPtr(m_caption_aux & vbNullChar), -1, R_Caption, jcTextDrawParams, lpDrawTextParams
-
         End If
-
     End If
 
     'draw picture
@@ -1599,23 +1844,19 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
         If m_Style = Messenger Then
             If iY < m_Height * 2 + 2 Then
                 iY = m_Height * 2 + 2
-
             End If
 
         ElseIf m_Style = jcGradient Then
 
             If iY < m_Height + 2 Then
                 iY = m_Height + 2
-
             End If
 
         Else
 
             If iY < 0 Then
                 iY = m_Space / 2
-
             End If
-
         End If
 
         If m_Enabled Then
@@ -1623,9 +1864,7 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
             'TransBlt UserControl.hDC,iX,iY, m_IconSize, m_IconSize, m_Icon, vbBlack, , , False, False
         Else
             TransBlt UserControl.hDC, iX, iY, m_IconSize, m_IconSize, m_Icon, vbBlack, , , True, False
-
         End If
-
     End If
 
     Select Case m_Style
@@ -1647,23 +1886,29 @@ Dim lpDrawTextParams As DRAWTEXTPARAMS
 
         Case Windows
             iY = 11
-
     End Select
 
     Label.Move UserControl.ScaleWidth - 30, CInt(ScaleY((ScaleY(m_TextBoxHeight, vbPixels, vbTwips) - Label.Height) / 2, vbTwips, vbPixels)) - iY
     Set UserControl.Picture = UserControl.Image
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PaintShpInBar
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   iColorA (Long)
+'                              iColorB (Long)
+'                              m_Height (Long)
+'!--------------------------------------------------------------------------------
 Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Long)
 
-Dim i                                   As Integer
-Dim x_left                              As Integer
-Dim y_top                               As Integer
-Dim SpaceBtwnShp                        As Integer
-Dim NumShp                              As Integer
-Dim RectHeight                          As Long
-Dim RectWidth                           As Long
-Dim R                                   As RECT
+    Dim i            As Integer
+    Dim x_left       As Integer
+    Dim y_top        As Integer
+    Dim SpaceBtwnShp As Integer
+    Dim NumShp       As Integer
+    Dim RectHeight   As Long
+    Dim RectWidth    As Long
+    Dim R            As RECT
 
     SpaceBtwnShp = 2
     'space between shapes
@@ -1686,42 +1931,71 @@ Dim R                                   As RECT
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Picture
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Picture() As StdPicture
     Set Picture = m_Icon
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Picture
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Picture (StdPicture)
+'!--------------------------------------------------------------------------------
 Public Property Set Picture(ByVal New_Picture As StdPicture)
     Set m_Icon = New_Picture
     PropertyChanged "Picture"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property RoundedCorner
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get RoundedCorner() As Boolean
     RoundedCorner = m_RoundedCorner
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property RoundedCorner
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_RoundedCorner (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let RoundedCorner(ByRef new_RoundedCorner As Boolean)
     m_RoundedCorner = new_RoundedCorner
     PropertyChanged "RoundedCorner"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property RoundedCornerTxtBox
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get RoundedCornerTxtBox() As Boolean
     RoundedCornerTxtBox = m_RoundedCornerTxtBox
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property RoundedCornerTxtBox
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_RoundedCornerTxtBox (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let RoundedCornerTxtBox(ByRef new_RoundedCornerTxtBox As Boolean)
     m_RoundedCornerTxtBox = new_RoundedCornerTxtBox
     PropertyChanged "RoundedCornerTxtBox"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetDefault
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SetDefault()
 
     Select Case m_Style
@@ -1815,7 +2089,6 @@ Private Sub SetDefault()
             m_GradientHeaderStyle = VCilinderGradient
             m_HeaderStyle = Gradient
             SetjcTextDrawParams
-
     End Select
 
 End Sub
@@ -1823,6 +2096,11 @@ End Sub
 '==========================================================================
 ' Functions and subroutines
 '==========================================================================
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetDefaultThemeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ThemeType (Long)
+'!--------------------------------------------------------------------------------
 Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
 
     Select Case ThemeType
@@ -1837,7 +2115,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_TextColor = RGB(0, 0, 0)
                 m_BackColor = RGB(192, 212, 240)
                 m_FillColorIni = RGB(192, 212, 240)
-
             End If
 
         Case 1
@@ -1850,7 +2127,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_TextColor = RGB(0, 0, 0)
                 m_BackColor = RGB(204, 203, 218)
                 m_FillColorIni = RGB(204, 203, 218)
-
             End If
 
         Case 2
@@ -1863,7 +2139,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_TextColor = RGB(0, 0, 0)
                 m_BackColor = RGB(224, 224, 213)
                 m_FillColorIni = RGB(224, 224, 213)
-
             End If
 
         Case 3
@@ -1876,7 +2151,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_TextColor = RGB(0, 0, 0)
                 m_BackColor = RGB(224, 224, 213)
                 m_FillColorIni = RGB(224, 224, 213)
-
             End If
 
         Case 4
@@ -1889,7 +2163,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_TextColor = RGB(0, 0, 0)
                 m_BackColor = RGB(236, 214, 128)
                 m_FillColorIni = RGB(236, 214, 128)
-
             End If
 
         Case 5
@@ -1910,7 +2183,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(142, 179, 231)
                 '=
                 m_BackColor = RGB(142, 179, 231)
-
                 '=
             End If
 
@@ -1927,7 +2199,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(233, 244, 207)
                 '=
                 m_BackColor = RGB(233, 244, 207)
-
                 '=
             End If
 
@@ -1944,7 +2215,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(253, 250, 255)
                 '=
                 m_BackColor = RGB(253, 250, 255)
-
                 '=
             End If
 
@@ -1961,7 +2231,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(232, 232, 232)
                 '=
                 m_BackColor = RGB(232, 232, 232)
-
                 '=
             End If
 
@@ -1978,7 +2247,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(255, 222, 173)
                 '=
                 m_BackColor = RGB(255, 222, 173)
-
                 '=
             End If
 
@@ -1995,7 +2263,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(224, 255, 255)
                 '=
                 m_BackColor = RGB(224, 255, 255)
-
                 '=
             End If
 
@@ -2012,7 +2279,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(235, 235, 235)
                 '=
                 m_BackColor = RGB(235, 235, 235)
-
                 '=
             End If
 
@@ -2029,7 +2295,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(142, 179, 231)
                 '=
                 m_BackColor = RGB(142, 179, 231)
-
                 '=
             End If
 
@@ -2046,7 +2311,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(112, 112, 112)
                 '=
                 m_BackColor = RGB(112, 112, 112)
-
                 '=
             End If
 
@@ -2063,7 +2327,6 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
                 m_FillColorIni = RGB(255, 255, 255)
                 '=
                 m_BackColor = RGB(255, 255, 255)
-
                 '=
             End If
 
@@ -2071,21 +2334,27 @@ Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
             jcColorFromIni = RGB(153, 151, 180)
             jcColorToIni = RGB(244, 244, 251)
             jcColorBorderPicIni = RGB(75, 75, 111)
-
     End Select
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property dBlendColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   oColorFrom (OLE_COLOR)
+'                              oColorTo (OLE_COLOR)
+'                              Alpha (Long = 128)
+'!--------------------------------------------------------------------------------
 Public Property Get dBlendColor(ByVal oColorFrom As OLE_COLOR, ByVal oColorTo As OLE_COLOR, Optional ByVal Alpha As Long = 128) As Long
 
-Dim lSrcR                               As Long
-Dim lSrcG                               As Long
-Dim lSrcB                               As Long
-Dim lDstR                               As Long
-Dim lDstG                               As Long
-Dim lDstB                               As Long
-Dim lCFrom                              As Long
-Dim lCTo                                As Long
+    Dim lSrcR  As Long
+    Dim lSrcG  As Long
+    Dim lSrcB  As Long
+    Dim lDstR  As Long
+    Dim lDstG  As Long
+    Dim lDstB  As Long
+    Dim lCFrom As Long
+    Dim lCTo   As Long
 
     lCFrom = TranslateColor(oColorFrom)
     lCTo = TranslateColor(oColorTo)
@@ -2096,9 +2365,13 @@ Dim lCTo                                As Long
     lDstG = (lCTo And &HFF00&) \ &H100&
     lDstB = (lCTo And &HFF0000) \ &H10000
     dBlendColor = RGB(((lSrcR * Alpha) / 255) + ((lDstR * (255 - Alpha)) / 255), ((lSrcG * Alpha) / 255) + ((lDstG * (255 - Alpha)) / 255), ((lSrcB * Alpha) / 255) + ((lDstB * (255 - Alpha)) / 255))
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetDisabledColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SetDisabledColor()
     m_FrameColorDis = TranslateColor(m_Border_Inactive)
     m_TextBoxColorDis = TranslateColor(m_BtnFace)
@@ -2107,12 +2380,16 @@ Private Sub SetDisabledColor()
     jcColorToDis = TranslateColor(m_BtnFace_Inactive)
     jcColorFromDis = TranslateColor(m_BtnFace_Inactive)
     jcColorBorderPicDis = TranslateColor(m_Border_Inactive)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetjcTextDrawParams
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SetjcTextDrawParams()
 
-'Set text draw params using m_Alignment
+    'Set text draw params using m_Alignment
     If m_Style = Panel Then
         If m_Alignment = vbLeftJustify Then
             jcTextDrawParams = DT_LEFT Or DT_WORDBREAK Or DT_VCENTER
@@ -2130,27 +2407,32 @@ Private Sub SetjcTextDrawParams()
             jcTextDrawParams = DT_RIGHT Or DT_SINGLELINE Or DT_VCENTER
         Else
             jcTextDrawParams = DT_CENTER Or DT_SINGLELINE Or DT_VCENTER
-
         End If
-
     End If
 
     If Ambient.RightToLeft = True Then jcTextDrawParams = jcTextDrawParams Or WS_EX_RTLREADING
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Style
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Style() As jcStyleConst
 
     If (m_Style = Header) Or (m_Style = Panel) Or (m_Style = TextBox) Then
         m_Collapsar = False
         Label.Visible = False
-
     End If
 
     Style = m_Style
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Style
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_Style (jcStyleConst)
+'!--------------------------------------------------------------------------------
 Public Property Let Style(ByRef new_Style As jcStyleConst)
     m_Style = new_Style
     PropertyChanged "Style"
@@ -2160,50 +2442,82 @@ Public Property Let Style(ByRef new_Style As jcStyleConst)
     SetDefault
     ' m_ThemeColor
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextBoxColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get TextBoxColor() As OLE_COLOR
     TextBoxColor = m_TextBoxColorIni
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextBoxColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_TextBoxColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let TextBoxColor(ByRef new_TextBoxColor As OLE_COLOR)
     m_TextBoxColorIni = TranslateColor(new_TextBoxColor)
     PropertyChanged "TextBoxColor"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextBoxHeight
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get TextBoxHeight() As Long
     TextBoxHeight = m_TextBoxHeight
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextBoxHeight
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_TextBoxHeight (Long)
+'!--------------------------------------------------------------------------------
 Public Property Let TextBoxHeight(ByRef new_TextBoxHeight As Long)
     m_TextBoxHeight = new_TextBoxHeight
     PropertyChanged "TextBoxHeight"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get TextColor() As OLE_COLOR
     TextColor = m_TextColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TextColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_TextColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let TextColor(ByRef new_TextColor As OLE_COLOR)
     m_TextColor = TranslateColor(new_TextColor)
     PropertyChanged "TextColor"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ThemeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get ThemeColor() As jcThemeConst
     ThemeColor = m_ThemeColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ThemeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vData (jcThemeConst)
+'!--------------------------------------------------------------------------------
 Public Property Let ThemeColor(ByVal vData As jcThemeConst)
 
     If m_ThemeColor <> vData Then
@@ -2211,54 +2525,57 @@ Public Property Let ThemeColor(ByVal vData As jcThemeConst)
         SetDefaultThemeColor m_ThemeColor
         PaintFrame
         PropertyChanged "ThemeColor"
-
     End If
 
 End Property
 
-Private Sub TransBlt(ByVal DstDC As Long, _
-                     ByVal DstX As Long, _
-                     ByVal DstY As Long, _
-                     ByVal DstW As Long, _
-                     ByVal DstH As Long, _
-                     ByVal SrcPic As StdPicture, _
-                     Optional ByVal TransColor As Long = -1, _
-                     Optional ByVal BrushColor As Long = -1, _
-                     Optional ByVal MonoMask As Boolean = False, _
-                     Optional ByVal isGreyscale As Boolean = False, _
-                     Optional ByVal XPBlend As Boolean = False)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TransBlt
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   DstDC (Long)
+'                              DstX (Long)
+'                              DstY (Long)
+'                              DstW (Long)
+'                              DstH (Long)
+'                              SrcPic (StdPicture)
+'                              TransColor (Long = -1)
+'                              BrushColor (Long = -1)
+'                              MonoMask (Boolean = False)
+'                              isGreyscale (Boolean = False)
+'                              XPBlend (Boolean = False)
+'!--------------------------------------------------------------------------------
+Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal TransColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
+                            MonoMask As Boolean = False, Optional ByVal isGreyscale As Boolean = False, Optional ByVal XPBlend As Boolean = False)
 
-Dim B                                   As Long
-Dim H                                   As Long
-Dim F                                   As Long
-Dim i                                   As Long
-Dim newW                                As Long
-Dim TmpDC                               As Long
-Dim TmpBmp                              As Long
-Dim TmpObj                              As Long
-Dim Sr2DC                               As Long
-Dim Sr2Bmp                              As Long
-Dim Sr2Obj                              As Long
-Dim Data1()                             As RGB
-Dim Data2()                             As RGB
-Dim Info                                As BITMAPINFO
-Dim BrushRGB                            As RGB
-Dim gCol                                As Long
-Dim SrcDC                               As Long
-Dim tObj                                As Long
-Dim hBrush                              As Long
+    Dim B        As Long
+    Dim H        As Long
+    Dim F        As Long
+    Dim i        As Long
+    Dim newW     As Long
+    Dim TmpDC    As Long
+    Dim TmpBmp   As Long
+    Dim TmpObj   As Long
+    Dim Sr2DC    As Long
+    Dim Sr2Bmp   As Long
+    Dim Sr2Obj   As Long
+    Dim Data1()  As RGB
+    Dim Data2()  As RGB
+    Dim Info     As BITMAPINFO
+    Dim BrushRGB As RGB
+    Dim gCol     As Long
+    Dim SrcDC    As Long
+    Dim tObj     As Long
+    Dim hBrush   As Long
 
     If Not DstW = 0 Or DstH = 0 Then
         SrcDC = CreateCompatibleDC(hDC)
 
         If DstW < 0 Then
             DstW = UserControl.ScaleX(SrcPic.Width, 8, UserControl.ScaleMode)
-
         End If
 
         If DstH < 0 Then
             DstH = UserControl.ScaleY(SrcPic.Height, 8, UserControl.ScaleMode)
-
         End If
 
         If SrcPic.Type = 1 Then
@@ -2270,7 +2587,6 @@ Dim hBrush                              As Long
             'MaskColor)
             DrawIconEx SrcDC, 0, 0, SrcPic.Handle, DstW, DstH, 0, hBrush, &H1 Or &H2
             DeleteObject hBrush
-
         End If
 
         TmpDC = CreateCompatibleDC(SrcDC)
@@ -2279,6 +2595,7 @@ Dim hBrush                              As Long
         Sr2Bmp = CreateCompatibleBitmap(DstDC, DstW, DstH)
         TmpObj = SelectObject(TmpDC, TmpBmp)
         Sr2Obj = SelectObject(Sr2DC, Sr2Bmp)
+
         ReDim Data1(DstW * DstH * 3 - 1) As RGB
         ReDim Data2(UBound(Data1)) As RGB
 
@@ -2288,7 +2605,6 @@ Dim hBrush                              As Long
             .biHeight = DstH
             .biPlanes = 1
             .biBitCount = 24
-
         End With
 
         'INFO.BMIHEADER
@@ -2311,7 +2627,6 @@ Dim hBrush                              As Long
 
         If Not useMask Then
             TransColor = -1
-
         End If
 
         newW = DstW - 1
@@ -2330,12 +2645,10 @@ Dim hBrush                              As Long
                             If MonoMask Then
                                 If (CLng(Data2(i).Red) + Data2(i).Green + Data2(i).Blue) <= 384 Then
                                     Data1(i) = BrushRGB
-
                                 End If
 
                             Else
                                 Data1(i) = BrushRGB
-
                             End If
 
                         Else
@@ -2353,11 +2666,8 @@ Dim hBrush                              As Long
                                     .Blue = (CLng(.Blue) + Data2(i).Blue * 2) \ 3
                                 Else
                                     Data1(i) = Data2(i)
-
                                 End If
-
                             End If
-
                         End If
 
                     End With
@@ -2366,6 +2676,7 @@ Dim hBrush                              As Long
 
             Next
         Next
+
         SetDIBitsToDevice DstDC, DstX, DstY, DstW, DstH, 0, 0, 0, DstH, Data1(0), Info, 0
         Erase Data1, Data2
         DeleteObject SelectObject(TmpDC, TmpObj)
@@ -2373,31 +2684,39 @@ Dim hBrush                              As Long
 
         If SrcPic.Type = 3 Then
             DeleteObject SelectObject(SrcDC, tObj)
-
         End If
 
         DeleteDC TmpDC
         DeleteDC Sr2DC
         DeleteObject tObj
         DeleteDC SrcDC
-
     End If
 
 End Sub
 
 'System color code to long rgb
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function TranslateColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lColor (Long)
+'!--------------------------------------------------------------------------------
 Private Function TranslateColor(ByVal lColor As Long) As Long
 
     If OleTranslateColor(lColor, 0, TranslateColor) Then
         TranslateColor = -1
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function TrimWord
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strCaption (String)
+'                              lngWidth (Long)
+'!--------------------------------------------------------------------------------
 Private Function TrimWord(strCaption As String, lngWidth As Long) As String
 
-Dim lngLenOfText                        As Long
+    Dim lngLenOfText As Long
 
     TrimWord = strCaption
 
@@ -2413,28 +2732,38 @@ Dim lngLenOfText                        As Long
             TrimWord = Empty
         Else
             TrimWord = TrimWord & "..."
-
         End If
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TxtBoxShadow
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get TxtBoxShadow() As jcShadowConst
     TxtBoxShadow = m_TxtBoxShadow
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property TxtBoxShadow
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   new_TxtBoxShadow (jcShadowConst)
+'!--------------------------------------------------------------------------------
 Public Property Let TxtBoxShadow(ByRef new_TxtBoxShadow As jcShadowConst)
     m_TxtBoxShadow = new_TxtBoxShadow
     PropertyChanged "TxtBoxShadow"
     PaintFrame
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Initialize()
     m_bIsWinXpOrLater = IsWinXPOrLater
-    
     m_IconSize = 16
     m_ColorFrom = 10395391
     m_ColorTo = 15790335
@@ -2445,12 +2774,16 @@ Private Sub UserControl_Initialize()
     m_TextBoxHeight = 22
     m_Alignment = vbCenter
     m_IconAlignment = vbLeftAligment
-
 End Sub
 
 '==========================================================================
 ' Init, Initialize, Read & Write UserControl
 '==========================================================================
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_InitProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_InitProperties()
 
     With Ambient
@@ -2460,7 +2793,7 @@ Private Sub UserControl_InitProperties()
         m_BackColor = TranslateColor(.BackColor)
         m_FillColorIni = TranslateColor(.BackColor)
     End With
-    
+
     m_Responsavel = m_def_Responsavel
     m_AllowDraging = m_def_AllowDraging
     m_AtivarResizeDoForm = m_def_AtivarResizeDoForm
@@ -2479,24 +2812,31 @@ Private Sub UserControl_InitProperties()
     m_HeaderStyle = Gradient
     m_GradientHeaderStyle = VerticalGradient
     SetjcTextDrawParams
-
 End Sub
 
 '==========================================================================
 ' Usercontrol events
 '==========================================================================
-Private Sub UserControl_MouseMove(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     RaiseEvent MouseMove(Button, Shift, X, Y)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_ReadProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
     With PropBag
-        
         Set PropFont = .ReadProperty("Font", Ambient.Font)
         Set UserControl.Font = PropFont
         m_FillColorIni = .ReadProperty("FillColor", Ambient.BackColor)
@@ -2529,7 +2869,6 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         UserControl.BackColor = TranslateColor(m_BackColor)
         SetjcTextDrawParams
         m_BackColor = .ReadProperty("BackColor", Ambient.BackColor)
-
     End With
 
     If m_Collapsar Then
@@ -2541,7 +2880,6 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
             Case Else
                 Label.Visible = True
-
         End Select
 
     End If
@@ -2555,13 +2893,16 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         If Ambient.UserMode Then
             Set frm = Parent
             SetWindowLong frm.hWnd, GWL_STYLE, GetWindowLong(frm.hWnd, GWL_STYLE) And Not (WS_CAPTION)
-
         End If
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Resize()
 
     On Error Resume Next
@@ -2569,20 +2910,21 @@ Private Sub UserControl_Resize()
     If (m_Collapsar = False) Then
         If UserControl.Width < 700 Then
             UserControl.Width = 700
-
         End If
 
         If UserControl.Height < 400 Then
             UserControl.Height = 400
-
         End If
-
     End If
 
     PaintFrame
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
 
     On Error Resume Next
@@ -2591,6 +2933,11 @@ Private Sub UserControl_Terminate()
     Set PropFont = Nothing
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 
     With PropBag
@@ -2622,45 +2969,60 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
         .WriteProperty "ColorTo", m_ColorTo, 15790335
         .WriteProperty "HeaderStyle", m_HeaderStyle, TxtBoxColor
         .WriteProperty "GradientHeaderStyle", m_GradientHeaderStyle, VerticalGradient
-
     End With
 
 End Sub
 
 'Eventos
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PanelOrTitle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Y (Single)
+'!--------------------------------------------------------------------------------
 Function PanelOrTitle(Y As Single) As m_PanelArea
 
     If (Y <= 0) Or (Y < m_TextBoxHeight) Then
         PanelOrTitle = xTitle
     Else
         PanelOrTitle = xPanel
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Label_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
 Private Sub Label_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     RaiseEvent CollapseClick(Button)
 
     If (Button = 1) Then
         If m_Collapsar Then
             Collapsado = Not m_Collapsado
-
         End If
 
         PaintFrame
-
     End If
 
 End Sub
 
-Private Sub UserControl_MouseDown(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     RaiseEvent MouseDown(Button, Shift, X, Y, PanelOrTitle(Y))
 
     If (Button <> vbLeftButton) Then
+
         Exit Sub
 
     End If
@@ -2672,42 +3034,47 @@ Private Sub UserControl_MouseDown(Button As Integer, _
 
         Case xPanel
             RaiseEvent PanelClick
-
     End Select
 
-    Dim iHwnd                           As Long
+    Dim iHwnd As Long
 
     If m_AllowDraging Then
         If m_AllowParentDraging Then
             If (m_Responsavel = jcAmbos) Or (m_Responsavel = PanelOrTitle(Y)) Then
                 iHwnd = UserControl.Parent.hWnd
                 jcTransp 70
-
             End If
 
         Else
             iHwnd = UserControl.hWnd
-
         End If
 
         Call ReleaseCapture
         Call SendMessage(iHwnd, &HA1, 2, 0&)
 
         If m_AllowParentDraging Then jcTransp 255
-
     End If
 
 End Sub
 
-Private Sub UserControl_MouseUp(Button As Integer, _
-                                Shift As Integer, _
-                                X As Single, _
-                                Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     RaiseEvent MouseUp(Button, Shift, X, Y, PanelOrTitle(Y))
-
 End Sub
 
 'FORM TRANSPARENTE
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub jcTransp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   TranslucenceLevel (Byte)
+'!--------------------------------------------------------------------------------
 Private Sub jcTransp(TranslucenceLevel As Byte)
 
     If m_bIsWinXpOrLater Then
@@ -2717,9 +3084,15 @@ Private Sub jcTransp(TranslucenceLevel As Byte)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Refresh
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Refresh()
 Attribute Refresh.VB_Description = "Forces a complete repaint of a object."
 Attribute Refresh.VB_UserMemId = -550
     UserControl.Refresh
+
     If UserControl.hDC <> 0 Then RedrawWindow UserControl.hDC, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub

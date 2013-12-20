@@ -1,7 +1,7 @@
 Attribute VB_Name = "mHighlight"
 Option Explicit
 
-Public glHighlightColor                 As Long
+Public glHighlightColor As Long
 
 '---------------------------------------------------------------------------------------
 ' Procedure   : HighlightActiveControl
@@ -12,17 +12,22 @@ Public glHighlightColor                 As Long
 ' Comments    :
 ' Returns     :
 '---------------------------------------------------------------------------------------
-Public Sub HighlightActiveControl(ByRef frm As Form, _
-                                  ByVal ctrl As Control, _
-                                  ByVal bState As Boolean)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub HighlightActiveControl
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   frm (Form)
+'                              ctrl (Control)
+'                              bState (Boolean)
+'!--------------------------------------------------------------------------------
+Public Sub HighlightActiveControl(ByRef frm As Form, ByVal ctrl As Control, ByVal bState As Boolean)
 
-Dim l                                   As Long
+    Dim l As Long
 
     l = 45
 
     On Error Resume Next
-    If bState Then
 
+    If bState Then
         frm.Controls.Add "VB.Shape", "ShapeHL", ctrl.Container
 
         With frm!ShapeHL
@@ -34,12 +39,10 @@ Dim l                                   As Long
             .Move ctrl.Left - l, ctrl.Top - l, ctrl.Width + l * 2, ctrl.Height + l * 2
             .ZOrder
             .Visible = True
-
         End With
 
     Else
         frm.Controls.Remove "ShapeHL"
-
     End If
 
 End Sub

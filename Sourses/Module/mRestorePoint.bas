@@ -1,13 +1,19 @@
 Attribute VB_Name = "mRestorePoint"
 Option Explicit
 
-Private Const DEVICE_DRIVER_INSTALL     As Integer = 10
-Private Const BEGIN_SYSTEM_CHANGE       As Integer = 100
+Private Const DEVICE_DRIVER_INSTALL As Integer = 10
+Private Const BEGIN_SYSTEM_CHANGE   As Integer = 100
 
 ' Проверка реестра на опцию SystemRestore - включена или нет
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CheckRestorePoint
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function CheckRestorePoint() As Boolean
 
-    If OsCurrVersionStruct.VerFull <> "5.0" And OsCurrVersionStruct.VerFull <> "5.2" Or (OsCurrVersionStruct.VerFull <> "6.2" And OsCurrVersionStruct.ClientOrServer) Or (OsCurrVersionStruct.VerFull <> "6.3" And OsCurrVersionStruct.ClientOrServer) Then
+    If OsCurrVersionStruct.VerFull <> "5.0" And OsCurrVersionStruct.VerFull <> "5.2" Or (OsCurrVersionStruct.VerFull <> "6.2" And OsCurrVersionStruct.ClientOrServer) Or (OsCurrVersionStruct.VerFull <> "6.3" And OsCurrVersionStruct.ClientOrServer) _
+                                Then
         regParam = GetKeyValue(HKEY_LOCAL_MACHINE, "Software\Microsoft\Windows NT\CurrentVersion\SystemRestore", "DisableSR")
 
         'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SystemRestore\\DisableSR
@@ -17,25 +23,27 @@ Public Function CheckRestorePoint() As Boolean
         Else
             CheckRestorePoint = regParam = "0"
             DebugMode "CheckRestorePoint: Enable in Operation System: " & CheckRestorePoint
-
         End If
 
     Else
         DebugMode "CheckRestorePoint: Not Supported by Operation System"
         CheckRestorePoint = False
-
     End If
 
     DebugMode "CheckRestorePoint: " & regParam & "(" & CheckRestorePoint & ")"
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CreateRestorePoint
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub CreateRestorePoint()
 
-Dim strComputer                         As String
-Dim objWMIService                       As Object
-Dim objRP                               As Object
-Dim errResults                          As Long
+    Dim strComputer   As String
+    Dim objWMIService As Object
+    Dim objRP         As Object
+    Dim errResults    As Long
 
     DebugMode vbTab & "CreateRestorePoint-Start"
     ChangeStatusTextAndDebug strMessages(118)
@@ -58,7 +66,6 @@ Dim errResults                          As Long
 
             If Not mbSilentRun Then
                 MsgBox strMessages(119) & " " & strProductName & " v" & strProductVersion, vbInformation, strProductName
-
             End If
 
         Else
@@ -67,9 +74,7 @@ Dim errResults                          As Long
 
             If Not mbSilentRun Then
                 MsgBox strMessages(117), vbCritical, strProductName
-
             End If
-
         End If
 
     Else
@@ -77,9 +82,7 @@ Dim errResults                          As Long
 
         If Not mbSilentRun Then
             MsgBox strMessages(116), vbInformation, strProductName
-
         End If
-
     End If
 
     Set objWMIService = Nothing
@@ -87,20 +90,20 @@ Dim errResults                          As Long
     ' РазБлокируем форму при создании точки восстановления
     frmMain.BlockControl True
 ExitFromSub:
+
     Exit Sub
+
 HandErr:
-    DebugMode "CreateRestorePoint:  Err.Number: " & err.Number & " Err.Description: " & err.Description
+    DebugMode "CreateRestorePoint:  Err.Number: " & Err.Number & " Err.Description: " & Err.Description
 
-    If err.Number = -2147217389 Then
-        MsgBox "Error №: " & err.Number & vbNewLine & "Description: " & err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
-    ElseIf err.Number = -2147217406 Then
-        MsgBox "Error №: " & err.Number & vbNewLine & "Description: " & err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Maybe this Function not Supported this operation system.", vbCritical, strProductName
-    ElseIf err.Number <> 0 Then
+    If Err.Number = -2147217389 Then
+        MsgBox "Error №: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
+    ElseIf Err.Number = -2147217406 Then
+        MsgBox "Error №: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Maybe this Function not Supported this operation system.", vbCritical, strProductName
+    ElseIf Err.Number <> 0 Then
         GoTo ExitFromSub
-
     End If
 
     ' РазБлокируем форму при создании точки восстановления
     frmMain.BlockControl True
-
 End Sub

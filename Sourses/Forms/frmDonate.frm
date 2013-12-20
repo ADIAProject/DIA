@@ -167,14 +167,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' Минимальные размеры формы
-Private lngFormWidthMin                 As Long
-Private lngFormHeightMin                As Long
-Private strFormName                     As String
+Private lngFormWidthMin  As Long
+Private lngFormHeightMin As Long
+Private strFormName      As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CheckEditDonate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub CheckEditDonate(StrPathFile As String)
 
-Dim strMD5TextRtf                       As String
-Dim strDONATE_MD5RTF_temp               As String
+    Dim strMD5TextRtf         As String
+    Dim strDONATE_MD5RTF_temp As String
 
     strMD5TextRtf = GetMD5(StrPathFile)
     DebugMode "DonateInfo: " & strMD5TextRtf
@@ -186,40 +191,51 @@ Dim strDONATE_MD5RTF_temp               As String
 
         Case Else
             strDONATE_MD5RTF_temp = strDONATE_MD5RTF_Eng
-
     End Select
 
     If InStr(1, strMD5TextRtf, strDONATE_MD5RTF_temp, vbTextCompare) = 0 Then
         DebugMode "DonateInfo: NotValid"
         MsgBox strMessages(40), vbInformation, strProductName
         Unload Me
-
     End If
 
     DonateRTF.Visible = True
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdPayPal_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdPayPal_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10349042"
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdSMSCoin_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdSMSCoin_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     Select Case strPCLangCurrentID
 
@@ -228,29 +244,37 @@ Dim nRetShellEx                         As Boolean
 
         Case Else
             cmdString = "http://donate.smscoin.com/js/smsdonate/index_en.html?sid=403169"
-
     End Select
 
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdYandexMoney_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdYandexMoney_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = "https://money.yandex.ru/embed/shop.xml?uid=41001626648736&amp;writer=seller&amp;targets=donate+to+adia-project&amp;default-sum=50&amp;button-text=04&amp;comment=on&amp;hint=%22Please,%20write%20your%20comments%22"
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -260,10 +284,21 @@ Private Sub FontCharsetChange()
     SetButtonProperties cmdExit
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
     LoadDonate
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
@@ -272,6 +307,11 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
     SetupVisualStyles Me
 
@@ -294,20 +334,31 @@ Private Sub Form_Load()
         ' Выставляем шрифт
         FontCharsetChange
     End If
-    
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_QueryUnload
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Cancel (Integer)
+'                              UnloadMode (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     Set frmDonate = Nothing
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
 
     On Error Resume Next
 
     With Me
 
-        Dim miDeltaFrm                  As Long
+        Dim miDeltaFrm As Long
 
         If OsCurrVersionStruct.VerFull >= "6.0" Then
             miDeltaFrm = 125
@@ -321,19 +372,22 @@ Private Sub Form_Resize()
         End If
 
         If .WindowState <> vbMinimized Then
-
             If .Width < lngFormWidthMin Then
                 .Width = lngFormWidthMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             If .Height < lngFormHeightMin Then
                 .Height = lngFormHeightMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             cmdExit.Left = .Width - cmdExit.Width - 200 - miDeltaFrm
@@ -348,12 +402,17 @@ Private Sub Form_Resize()
         End If
 
     End With
-    
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadDonate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadDonate()
 
-Dim strPathDonate                       As String
+    Dim strPathDonate As String
 
     Select Case strPCLangCurrentID
 
@@ -362,7 +421,6 @@ Dim strPathDonate                       As String
 
         Case Else
             strPathDonate = PathCollect("Tools\Docs\0409\donate.rtf")
-
     End Select
 
     If PathExists(strPathDonate) Then
@@ -370,21 +428,22 @@ Dim strPathDonate                       As String
     Else
         MsgBox strMessages(41), vbInformation, strProductName
         Unload Me
-
     End If
 
     ' Проверка файла Donate на неправомерное изменение
     CheckEditDonate strPathDonate
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
 End Sub

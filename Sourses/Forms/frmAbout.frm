@@ -30,28 +30,20 @@ Begin VB.Form frmAbout
       TabIndex        =   1
       Top             =   5500
       Width           =   1450
-      _ExtentX        =   3201
-      _ExtentY        =   661
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Caption         =   "HomePage"
-      PicturePosition =   0
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
-      TextColor       =   0
-      MenuCaption0    =   "#"
-      MenuExist       =   -1  'True
+      _extentx        =   3201
+      _extenty        =   661
+      font            =   "frmAbout.frx":000C
+      caption         =   "HomePage"
+      pictureposition =   0
+      buttonstyle     =   3
+      picturewidth    =   0
+      pictureheight   =   0
+      xpcolor_pressed =   15116940
+      xpcolor_hover   =   4692449
+      showfocusrect   =   0
+      textcolor       =   0
+      menucaption0    =   "#"
+      menuexist       =   -1
    End
    Begin prjDIADBS.ctlXpButton cmdOsZoneNet 
       Height          =   735
@@ -59,21 +51,13 @@ Begin VB.Form frmAbout
       TabIndex        =   2
       Top             =   5500
       Width           =   1575
-      _ExtentX        =   3201
-      _ExtentY        =   661
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Caption         =   "Обсуждение на OsZone.Net"
-      ButtonStyle     =   3
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      _extentx        =   3201
+      _extenty        =   661
+      font            =   "frmAbout.frx":0034
+      caption         =   "Обсуждение на OsZone.Net"
+      buttonstyle     =   3
+      xpcolor_pressed =   15116940
+      xpcolor_hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdLicence 
       Height          =   735
@@ -81,26 +65,18 @@ Begin VB.Form frmAbout
       TabIndex        =   3
       Top             =   5500
       Width           =   2050
-      _ExtentX        =   3625
-      _ExtentY        =   1296
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Caption         =   "Лицензионное соглашение"
-      ButtonStyle     =   3
-      PictureWidth    =   48
-      PictureHeight   =   48
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
-      TextColor       =   0
-      MenuCaption0    =   "#"
+      _extentx        =   3625
+      _extenty        =   1296
+      font            =   "frmAbout.frx":005C
+      caption         =   "Лицензионное соглашение"
+      buttonstyle     =   3
+      picturewidth    =   48
+      pictureheight   =   48
+      xpcolor_pressed =   15116940
+      xpcolor_hover   =   4692449
+      showfocusrect   =   0
+      textcolor       =   0
+      menucaption0    =   "#"
    End
    Begin prjDIADBS.ctlXpButton cmdDonate 
       Height          =   735
@@ -108,26 +84,18 @@ Begin VB.Form frmAbout
       TabIndex        =   5
       Top             =   5500
       Width           =   2150
-      _ExtentX        =   3784
-      _ExtentY        =   1296
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Caption         =   "Поддержать проект"
-      ButtonStyle     =   3
-      PictureWidth    =   51
-      PictureHeight   =   28
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
-      TextColor       =   0
-      MenuCaption0    =   "#"
+      _extentx        =   3784
+      _extenty        =   1296
+      font            =   "frmAbout.frx":0084
+      caption         =   "Поддержать проект"
+      buttonstyle     =   3
+      picturewidth    =   51
+      pictureheight   =   28
+      xpcolor_pressed =   15116940
+      xpcolor_hover   =   4692449
+      showfocusrect   =   0
+      textcolor       =   0
+      menucaption0    =   "#"
    End
    Begin prjDIADBS.ctlXpButton cmdExit 
       Height          =   735
@@ -135,24 +103,16 @@ Begin VB.Form frmAbout
       TabIndex        =   0
       Top             =   5500
       Width           =   1550
-      _ExtentX        =   2725
-      _ExtentY        =   1296
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Caption         =   "Закрыть"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      _extentx        =   2725
+      _extenty        =   1296
+      font            =   "frmAbout.frx":00AC
+      caption         =   "Закрыть"
+      buttonstyle     =   3
+      picturewidth    =   0
+      pictureheight   =   0
+      xpcolor_pressed =   15116940
+      xpcolor_hover   =   4692449
+      showfocusrect   =   0
    End
    Begin prjDIADBS.ctlJCbutton ctlAquaButton1 
       Height          =   1995
@@ -160,24 +120,16 @@ Begin VB.Form frmAbout
       TabIndex        =   4
       Top             =   120
       Width           =   2100
-      _ExtentX        =   3704
-      _ExtentY        =   3519
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   10
-      BackColor       =   16765357
-      Caption         =   ""
-      PictureNormal   =   "frmAbout.frx":000C
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
+      _extentx        =   3704
+      _extenty        =   3519
+      font            =   "frmAbout.frx":00D4
+      buttonstyle     =   10
+      backcolor       =   16765357
+      caption         =   ""
+      picturenormal   =   "frmAbout.frx":00FC
+      pictureshadow   =   -1
+      captioneffects  =   0
+      tooltipbackcolor=   0
    End
    Begin prjDIADBS.LabelW lblTranslator 
       Height          =   255
@@ -185,20 +137,12 @@ Begin VB.Form frmAbout
       TabIndex        =   6
       Top             =   3175
       Width           =   9255
-      _ExtentX        =   0
-      _ExtentY        =   0
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   9.75
-         Charset         =   204
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      MousePointer    =   4
-      BackStyle       =   0
-      Caption         =   "Перевод программы: Головеев Роман"
+      _extentx        =   0
+      _extenty        =   0
+      font            =   "frmAbout.frx":4D56
+      mousepointer    =   4
+      backstyle       =   0
+      caption         =   "Перевод программы: Головеев Роман"
    End
    Begin prjDIADBS.LabelW lblThanks 
       Height          =   195
@@ -207,21 +151,13 @@ Begin VB.Form frmAbout
       TabIndex        =   7
       Top             =   3480
       Width           =   2500
-      _ExtentX        =   4419
-      _ExtentY        =   344
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackStyle       =   0
-      Caption         =   "Благодарности:"
-      AutoSize        =   -1  'True
-      WordWrap        =   0   'False
+      _extentx        =   4419
+      _extenty        =   344
+      font            =   "frmAbout.frx":4D7E
+      backstyle       =   0
+      caption         =   "Благодарности:"
+      autosize        =   -1
+      wordwrap        =   0
    End
    Begin prjDIADBS.LabelW lblAuthor 
       Height          =   255
@@ -229,19 +165,11 @@ Begin VB.Form frmAbout
       TabIndex        =   8
       Top             =   2880
       Width           =   9255
-      _ExtentX        =   0
-      _ExtentY        =   0
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   9.75
-         Charset         =   204
-         Weight          =   400
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackStyle       =   0
-      Caption         =   "Автор программы: Головеев Роман"
+      _extentx        =   0
+      _extenty        =   0
+      font            =   "frmAbout.frx":4DA6
+      backstyle       =   0
+      caption         =   "Автор программы: Головеев Роман"
    End
    Begin prjDIADBS.LabelW lblInfo 
       Height          =   1335
@@ -249,19 +177,11 @@ Begin VB.Form frmAbout
       TabIndex        =   9
       Top             =   1560
       Width           =   7155
-      _ExtentX        =   0
-      _ExtentY        =   0
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   9
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackStyle       =   0
-      Caption         =   "Описание программы"
+      _extentx        =   0
+      _extenty        =   0
+      font            =   "frmAbout.frx":4DCE
+      backstyle       =   0
+      caption         =   "Описание программы"
    End
    Begin prjDIADBS.LabelW lblNameProg 
       Height          =   1575
@@ -269,20 +189,12 @@ Begin VB.Form frmAbout
       TabIndex        =   10
       Top             =   45
       Width           =   7155
-      _ExtentX        =   12621
-      _ExtentY        =   2778
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   18
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Alignment       =   2
-      BackStyle       =   0
-      Caption         =   "Label1"
+      _extentx        =   12621
+      _extenty        =   2778
+      font            =   "frmAbout.frx":4DF6
+      alignment       =   2
+      backstyle       =   0
+      caption         =   "Label1"
    End
    Begin prjDIADBS.LabelW lblMailTo 
       Height          =   255
@@ -290,21 +202,13 @@ Begin VB.Form frmAbout
       TabIndex        =   11
       Top             =   5160
       Width           =   9255
-      _ExtentX        =   16325
-      _ExtentY        =   450
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   9.75
-         Charset         =   204
-         Weight          =   700
-         Underline       =   -1  'True
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   12582912
-      MousePointer    =   4
-      BackStyle       =   0
-      Caption         =   "Написать E-mail автору программу"
+      _extentx        =   16325
+      _extenty        =   450
+      font            =   "frmAbout.frx":4E1E
+      forecolor       =   12582912
+      mousepointer    =   4
+      backstyle       =   0
+      caption         =   "Написать E-mail автору программу"
    End
 End
 Attribute VB_Name = "frmAbout"
@@ -314,15 +218,20 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strTranslatorName               As String
-Private strTranslatorUrl                As String
-Private strFormName                     As String
+Private strTranslatorName As String
+Private strTranslatorUrl  As String
+Private strFormName       As String
+Private strCreditList()   As String
+Private lngCurCredit      As Long
 
-Private strCreditList() As String
-Private lngCurCredit As Long
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -336,51 +245,74 @@ Private Sub FontCharsetChange()
     SetButtonProperties cmdExit
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdDonate_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdDonate_Click()
     frmDonate.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdExit_Click
-'!  Переменные  :
-'!  Описание    :  Выход из формы
-'! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [Выход из формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdLicence_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdLicence_Click()
     frmLicence.Show vbModal, Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOsZoneNet_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOsZoneNet_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://forum.oszone.net/thread-139908.html" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdSoftGetNet_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdSoftGetNet_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://www.adia-project.net" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdSoftGetNet_ClickMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mnuIndex (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub cmdSoftGetNet_ClickMenu(mnuIndex As Integer)
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
+    Dim nRetShellEx As Boolean
+    Dim cmdString   As String
 
     Select Case mnuIndex
 
@@ -389,48 +321,49 @@ Dim cmdString                           As String
 
         Case 2
             cmdString = Kavichki & "http://www.adia-project.net/forum/index.php" & Kavichki
-
     End Select
 
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlAquaButton1_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ctlAquaButton1_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://www.adia-project.net" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_KeyDown
-'!  Переменные  :  KeyCode As Integer, Shift As Integer
-'!  Описание    :  обработка нажатий клавиш клавиатуры
-'! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         Unload Me
-
     End If
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Load
-'!  Переменные  :
-'!  Описание    :  События при  загрузке формы
-'! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [События при  загрузке формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
 
     With Me
@@ -446,28 +379,22 @@ Private Sub Form_Load()
     lblNameProg.Caption = strFrmMainCaptionTemp & vbNewLine & " v." & strProductVersion & vbNewLine & strFrmMainCaptionTempDate & strDateProgram & ")"
 
     Select Case strPCLangCurrentID
+
         Case "0419"
             lblAuthor.Caption = "Автор программы: Головеев Роман aka Romeo91"
-            lblThanks(0).Caption = "Мои благодарности:" '& vbNewLine & _
-            "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & _
-            "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & _
-            "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & _
-            lblThanks(0).Caption = "Мои благодарности:"
+            lblThanks(0).Caption = "Мои благодарности:" '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & lblThanks(0).Caption = "Мои благодарности:"
+
             '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & lblThanks(0).Caption = "Мои благодарности:"
             '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & "* Также огромное спасибо Александру Дровосекову (apexsun.narod.ru) - в программе использованы, написанных когда-то им, элементы управления (User Control)"
-
         Case Else
             lblAuthor.Caption = "Author of the program: Goloveev Roman (Romeo91)"
-            lblThanks(0).Caption = "My thanks:" '& vbNewLine & _
-            "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & _
-            "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & _
-            "* All, who unselfish supports project - morally and financial" & vbNewLine & _
-            lblThanks(0).Caption = "My thanks:"
+            lblThanks(0).Caption = "My thanks:" '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & lblThanks(0).Caption = "My thanks:"
             '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & lblThanks(0).Caption = "My thanks:"
             '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & "* Also big thank to Alexander Drovosekov (apexsun.narod.ru) - in program are used, written at one time him, elements of control (User Control)"
     End Select
 
     With cmdSoftGetNet
+
         If .MenuExist Then
             If .MenuCount = 0 Then
                 .AddMenu "Site"
@@ -475,6 +402,7 @@ Private Sub Form_Load()
                 .AddMenu "Forum"
             End If
         End If
+
     End With
 
     ' Локализациz приложения
@@ -484,20 +412,19 @@ Private Sub Form_Load()
         ' Выставляем шрифт
         FontCharsetChange
     End If
-    
+
     LoadThankYou
-    
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  lblMailTo_MouseDown
-'!  Переменные  :  Button As Integer, Shift As Integer,X As Single, Y As Single
-'!  Описание    :  Нажатие мышкой на "Связаться с разработчиком"
-'! -----------------------------------------------------------
-Private Sub lblMailTo_MouseDown(Button As Integer, _
-                                Shift As Integer, _
-                                X As Single, _
-                                Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lblMailTo_MouseDown
+'! Description (Описание)  :   [Нажатие мышкой на "Связаться с разработчиком"]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub lblMailTo_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If Button = vbLeftButton Then
         ShellExecute Me.hWnd, vbNullString, "mailto:Romeo91<roman-novosib@ngs.ru>?Subject=My%20wish%20for%20update%20program%20(Drivers%20Installer%20Assistant)", vbNullString, "c:\", 1
@@ -505,24 +432,32 @@ Private Sub lblMailTo_MouseDown(Button As Integer, _
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lblTranslator_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub lblTranslator_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Private Sub lblTranslator_MouseDown(Button As Integer, _
-                                    Shift As Integer, _
-                                    X As Single, _
-                                    Y As Single)
-
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     If LenB(strTranslatorUrl) > 0 Then
         If Button = vbLeftButton Then
             RunUtilsShell Kavichki & strTranslatorUrl, False
         End If
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadTranslator
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadTranslator()
 
     Select Case strPCLangCurrentID
@@ -532,21 +467,27 @@ Private Sub LoadTranslator()
 
         Case Else
             lblTranslator.Caption = "Translation of the program: " & strTranslatorName
-
     End Select
 
     If LenB(strTranslatorUrl) > 0 Then
+
         With lblTranslator
             .MouseIcon = lblMailTo.MouseIcon
             .MousePointer = lblMailTo.MousePointer
             .ForeColor = lblMailTo.ForeColor
         End With
+
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -563,9 +504,13 @@ Private Sub Localise(ByVal StrPathFile As String)
     strTranslatorName = LocaliseString(StrPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
     strTranslatorUrl = LocaliseString(StrPathFile, "Lang", "TranslatorUrl", vbNullString)
     LoadTranslator
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadThankYou
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadThankYou()
     lngCurCredit = 1
     GenerateThankyou "SamLab", "http://driveroff.net/"
@@ -583,32 +528,38 @@ Private Sub LoadThankYou()
     '[VB6] Function Wait (non-freezing & non-CPU-intensive)
     GenerateThankyou "Bonnie West", "http://www.vbforums.com/showthread.php?700373-VB6-Shell-amp-Wait"
     'Team HomeWork
-     ' Timed MessageBox
+    ' Timed MessageBox
     GenerateThankyou "Anirudha Vengurlekar"
-     ' SortDMArray
+    ' SortDMArray
     GenerateThankyou "Ellis Dee"
     GenerateThankyou "Zhu JinYong"
-    
     'AnimateForm - Jim Jose
 End Sub
 
-'Генерация текста благодарности со ссылкой на страницу
-'Idea from
-'Copyright ©2001-2013 by Tanner Helland
-'http://www.tannerhelland.com/photodemon
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GenerateThankyou
+'! Description (Описание)  :   [Генерация текста благодарности со ссылкой на страницу]
+'!                              Idea from
+'!                              Copyright ©2001-2013 by Tanner Helland
+'!                              http://www.tannerhelland.com/photodemon
+'! Parameters  (Переменные):   thxText (String)
+'                              creditURL (String = vbNullString)
+'!--------------------------------------------------------------------------------
 Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL As String = vbNullString)
-    
     'Generate a new label
     Load lblThanks(lngCurCredit)
-    
+
     'Because I now have too many people to thank, it's necessary to split the list into multiple columns
     Dim columnLimit As Long
+
     columnLimit = 5
-    
+
     Dim thxOffset As Long
+
     thxOffset = 750
-    
+
     With lblThanks(lngCurCredit)
+
         If lngCurCredit = 1 Then
             .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300
             .Left = lblThanks(0).Left + 30 + thxOffset
@@ -628,8 +579,9 @@ Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL A
             .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 5400 + thxOffset
         End If
-        
+
         .Caption = thxText
+
         If LenB(creditURL) = 0 Then
             .MousePointer = vbDefault
         Else
@@ -639,20 +591,25 @@ Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL A
             .ForeColor = lblMailTo.ForeColor
             .ToolTipText = creditURL
         End If
+
         .Visible = True
     End With
-    
-    ReDim Preserve strCreditList(0 To lngCurCredit) As String
-    strCreditList(lngCurCredit) = creditURL
-    
-    lngCurCredit = lngCurCredit + 1
 
+    ReDim Preserve strCreditList(0 To lngCurCredit) As String
+
+    strCreditList(lngCurCredit) = creditURL
+    lngCurCredit = lngCurCredit + 1
 End Sub
 
-'When a thank-you credit is clicked, launch the corresponding website
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lblThanks_Click
+'! Description (Описание)  :   [When a thank-you credit is clicked, launch the corresponding website]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub lblThanks_Click(Index As Integer)
+
     If LenB(strCreditList(Index)) Then
         RunUtilsShell Kavichki & strCreditList(Index) & Kavichki, False
     End If
-End Sub
 
+End Sub

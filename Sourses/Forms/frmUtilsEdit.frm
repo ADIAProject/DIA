@@ -236,10 +236,16 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strFormName                     As String
+Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -253,6 +259,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  нажали выход
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
@@ -262,12 +273,21 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  нажали ок
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     SaveOptions
     Unload Me
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
     txtUtilName_Change
     'txtUtilName.SetFocus
@@ -278,11 +298,16 @@ End Sub
 '!  Переменные  :  KeyCode As Integer, Shift As Integer
 '!  Описание    :  обработка нажатий клавиш клавиатуры
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         Unload Me
-
     End If
 
 End Sub
@@ -292,9 +317,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  обработка при загрузке формы
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
     SetupVisualStyles Me
-
 
     With Me
         strFormName = .Name
@@ -312,7 +341,6 @@ Private Sub Form_Load()
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
 End Sub
@@ -327,10 +355,13 @@ End Sub
 '    End If
 '
 'End Sub
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -342,7 +373,6 @@ Private Sub Localise(ByVal StrPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -350,9 +380,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Сохранение настроек
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveOptions
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-Dim i                                   As Long
+    Dim i As Long
 
     If mbAddInList Then
         i = LastIdUtil + 1
@@ -377,8 +412,8 @@ Dim i                                   As Long
                 .ListItems.Item(i).SubItems(3) = txtParamUtil
             Else
                 .ListItems.Item(i).SubItems(3) = vbNullString
-
             End If
+
         End With
 
     End If
@@ -386,34 +421,67 @@ Dim i                                   As Long
     LastIdUtil = frmOptions.lvUtils.ListItems.Count
     frmOptions.lvUtils.Refresh
     mbAddInList = False
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtParamUtil_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtParamUtil_GotFocus()
     HighlightActiveControl Me, txtParamUtil, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtParamUtil_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtParamUtil_LostFocus()
     HighlightActiveControl Me, txtParamUtil, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtUtilName_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtUtilName_Change()
     cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtUtilName_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtUtilName_GotFocus()
     HighlightActiveControl Me, txtUtilName, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtUtilName_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtUtilName_LostFocus()
     HighlightActiveControl Me, txtUtilName, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil_GotFocus()
     HighlightActiveControl Me, ucPathUtil, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil_LostFocus()
     HighlightActiveControl Me, ucPathUtil, False
 End Sub
@@ -423,38 +491,54 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil64_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil64_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucPathUtil64.FileCount > 0 Then
         strTempPath = ucPathUtil64.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucPathUtil64.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil64_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil64_GotFocus()
     HighlightActiveControl Me, ucPathUtil64, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil64_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil64_LostFocus()
     HighlightActiveControl Me, ucPathUtil64, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil64_PathChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil64_PathChanged()
     cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -462,28 +546,34 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucPathUtil.FileCount > 0 Then
         strTempPath = ucPathUtil.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucPathUtil.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil_PathChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathUtil_PathChanged()
     cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
-
 End Sub

@@ -51,7 +51,6 @@ Begin VB.Form frmShowMessage
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1323
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -61,6 +60,7 @@ Begin VB.Form frmShowMessage
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "ОК"
       PictureAlign    =   0
@@ -78,7 +78,6 @@ Begin VB.Form frmShowMessage
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1296
-      ButtonStyle     =   13
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -88,6 +87,7 @@ Begin VB.Form frmShowMessage
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Отмена"
       PictureAlign    =   0
@@ -105,40 +105,65 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private lngFormWidthMin                 As Long
-Private lngFormHeightMin                As Long
-Private strFormName                     As String
+Private lngFormWidthMin  As Long
+Private lngFormHeightMin As Long
+Private strFormName      As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
         .Charset = lngDialog_Charset
     End With
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     lngShowMessageResult = vbYes
     Unload Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         cmdExit_Click
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
 
     With Me
@@ -162,16 +187,24 @@ Private Sub Form_Load()
     LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
 End Sub
 
-Private Sub Localise(ByVal strPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal StrPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
 
-Dim miDeltaFrm                          As Long
+    Dim miDeltaFrm As Long
 
     On Error Resume Next
 
@@ -193,16 +226,20 @@ Dim miDeltaFrm                          As Long
                 .Width = lngFormWidthMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             If .Height < lngFormHeightMin Then
                 .Height = lngFormHeightMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
-            
+
             cmdExit.Left = .Width - cmdExit.Width - 200 - miDeltaFrm
             cmdExit.Top = .Height - cmdExit.Height - 600 - miDeltaFrm
             txtMessageText.Height = cmdExit.Top - 100
@@ -211,7 +248,6 @@ Dim miDeltaFrm                          As Long
             txtMessageText.Width = .Width - miDeltaFrm - 200
             cmdOK.Left = cmdExit.Left - cmdOK.Width - 110
             cmdOK.Top = cmdExit.Top
-
         End If
 
     End With

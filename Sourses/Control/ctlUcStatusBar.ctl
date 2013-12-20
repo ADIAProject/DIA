@@ -28,7 +28,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-
 '+  File Description:
 '       ucStatusBar - A Selfsubclassed Theme Aware ucStatusBar Control which Provides Dynamic Properties
 '
@@ -106,7 +105,6 @@ Attribute VB_Exposed = False
 '                 Added Unicode Support for Font Properties - Thanks Krool (http://www.vbforums.com/showthread.php?698563-CommonControls-%28Replacement-of-the-MS-common-controls%29)
 '
 '   Oroginal Build Date & Time: 8/3/2007 11:43:17 AM
-
 '   Force Declarations
 Option Explicit
 
@@ -153,14 +151,14 @@ Private Type BITMAPINFO8
 End Type
 
 '   DrawEdge Message Constants
-Private Const BDR_SUNKENOUTER            As Long = &H2
-Private Const BDR_SUNKENINNER            As Long = &H8
+Private Const BDR_SUNKENOUTER As Long = &H2
+Private Const BDR_SUNKENINNER As Long = &H8
 Private Const EDGE_SUNKEN = (BDR_SUNKENOUTER Or BDR_SUNKENINNER)
-Private Const BF_LEFT                    As Long = &H1
-Private Const BF_TOP                     As Long = &H2
-Private Const BF_RIGHT                   As Long = &H4
-Private Const BF_BOTTOM                  As Long = &H8
-Private Const BF_RECT                    As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
+Private Const BF_LEFT   As Long = &H1
+Private Const BF_TOP    As Long = &H2
+Private Const BF_RIGHT  As Long = &H4
+Private Const BF_BOTTOM As Long = &H8
+Private Const BF_RECT   As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
 Private Declare Sub CopyMemoryLong Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
@@ -197,32 +195,34 @@ Private Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hDC As Long, ByVal
 Private Declare Function SetBkMode Lib "gdi32.dll" (ByVal hDC As Long, ByVal nBkMode As Long) As Long
 Private Declare Function SetBkColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Private Declare Function CreateBitmap Lib "gdi32.dll" (ByVal nWidth As Long, ByVal nHeight As Long, ByVal nPlanes As Long, ByVal nBitCount As Long, lpBits As Any) As Long
-                                            
+
 '*************************************************************
 '   DRAW TEXT
 '*************************************************************
 ' --Formatting Text Consts
-Private Const DT_LEFT                    As Long = &H0
-Private Const DT_CENTER                  As Long = &H1
-Private Const DT_RIGHT                   As Long = &H2
-Private Const DT_WORDBREAK               As Long = &H10
-Private Const DT_RTLREADING              As Long = &H20000
-Private Const DT_VCENTER                 As Long = &H4
-Private Const DT_WORD_ELLIPSIS           As Long = &H40000
+Private Const DT_LEFT          As Long = &H0
+Private Const DT_CENTER        As Long = &H1
+Private Const DT_RIGHT         As Long = &H2
+Private Const DT_WORDBREAK     As Long = &H10
+Private Const DT_RTLREADING    As Long = &H20000
+Private Const DT_VCENTER       As Long = &H4
+Private Const DT_WORD_ELLIPSIS As Long = &H40000
+
 '   Private Local StatusBar Text Alignment Constants
 Private Const DT_SB_LEFT = (DT_VCENTER Or DT_LEFT Or DT_WORD_ELLIPSIS Or DT_WORDBREAK)
 Private Const DT_SB_CENTER = (DT_VCENTER Or DT_CENTER Or DT_WORD_ELLIPSIS Or DT_WORDBREAK)
 Private Const DT_SB_RIGHT = (DT_VCENTER Or DT_RIGHT Or DT_WORD_ELLIPSIS Or DT_WORDBREAK)
-                            
+
 Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
-                            
+
 '*************************************************************
 '   FONT PROPERTIES
 '*************************************************************
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
+Private Const LF_FACESIZE     As Long = 32
+Private Const FW_NORMAL       As Long = 400
+Private Const FW_BOLD         As Long = 700
 Private Const DEFAULT_QUALITY As Long = 0
+
 Private Type LOGFONT
     LFHeight As Long
     LFWidth As Long
@@ -240,7 +240,7 @@ Private Type LOGFONT
     LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
 
-Private Const WM_SETFONT As Long = &H30
+Private Const WM_SETFONT       As Long = &H30
 Private Const WS_EX_RTLREADING As Long = &H2000
 
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
@@ -269,9 +269,11 @@ Public Enum usbAlignEnum
 End Enum
 
 #If False Then
+
     Const usbLeft = &H0
     Const usbCenter = &H1
     Const usbRight = &H2
+
 #End If
 
 Public Enum usbGripEnum
@@ -281,9 +283,11 @@ Public Enum usbGripEnum
 End Enum
 
 #If False Then
+
     Const usbNone = &H0
     Const usbSquare = &H1
     Const usbBars = &H2
+
 #End If
 
 Public Enum usbSizeEnum
@@ -292,8 +296,10 @@ Public Enum usbSizeEnum
 End Enum
 
 #If False Then
+
     Const usbNoSize = &H0
     Const usbAutoSize = &H1
+
 #End If
 
 Public Enum usbStateEnum
@@ -302,8 +308,10 @@ Public Enum usbStateEnum
 End Enum
 
 #If False Then
+
     Const usbEnabled = &H0
     Const usbDisabled = &H1
+
 #End If
 
 Public Enum usbThemeEnum
@@ -315,11 +323,13 @@ Public Enum usbThemeEnum
 End Enum
 
 #If False Then
+
     Const usbAuto = &H0
     Const usbClassic = &H1
     Const usbBlue = &H2
     Const usbHomeStead = &H3
     Const usbMetallic = &H4
+
 #End If
 
 '   Private StatusBar Item Type
@@ -342,18 +352,18 @@ Private Type PanelItem
     Width                               As Long
 End Type
 
-Private m_ActivePanel                   As Long             'Current Active Panel
-Private m_BackColor                     As OLE_COLOR        'UserControl BackColor
-Private m_Forecolor                     As OLE_COLOR        'UserControl ForeColor
-Private m_Font                          As StdFont          'UserControl Font
-Private m_GripRect                      As RECT             'Grip Retangle
-Private m_GripShape                     As usbGripEnum      'Grip Shape...Auto Set when Theme is Set
-Private m_Sizable                       As Boolean          'Resizable
-Private m_PanelCount                    As Long             'Panel Count
-Private m_PanelItems()                  As PanelItem        'Panel Items
-Private m_Theme                         As usbThemeEnum     'Theme Set by the User
-Private m_iTheme                        As usbThemeEnum     'Theme Stored internally for determination of named themes + auto equivelant
-Private m_bIsWinXpOrLater               As Boolean
+Private m_ActivePanel     As Long             'Current Active Panel
+Private m_BackColor       As OLE_COLOR        'UserControl BackColor
+Private m_Forecolor       As OLE_COLOR        'UserControl ForeColor
+Private m_Font            As StdFont          'UserControl Font
+Private m_GripRect        As RECT             'Grip Retangle
+Private m_GripShape       As usbGripEnum      'Grip Shape...Auto Set when Theme is Set
+Private m_Sizable         As Boolean          'Resizable
+Private m_PanelCount      As Long             'Panel Count
+Private m_PanelItems()    As PanelItem        'Panel Items
+Private m_Theme           As usbThemeEnum     'Theme Set by the User
+Private m_iTheme          As usbThemeEnum     'Theme Stored internally for determination of named themes + auto equivelant
+Private m_bIsWinXpOrLater As Boolean
 
 Public Event Click()
 Public Event DblClick()
@@ -388,12 +398,11 @@ Public Event PanelMouseUp(Index As Long, Button As Integer, Shift As Integer, X 
 '* v1.6 Added an optional callback target object
 '*      Added an IsBadCodePtr on the callback address in the thunk prior to callback..... 20060413
 '*************************************************************************************************
-
 '-Selfsub declarations----------------------------------------------------------------------------
 Private Enum eMsgWhen                                                       'When to callback
-  MSG_BEFORE = 1                                                            'Callback before the original WndProc
-  MSG_AFTER = 2                                                             'Callback after the original WndProc
-  MSG_BEFORE_AFTER = MSG_BEFORE Or MSG_AFTER                                'Callback before and after the original WndProc
+    MSG_BEFORE = 1                                                            'Callback before the original WndProc
+    MSG_AFTER = 2                                                             'Callback after the original WndProc
+    MSG_BEFORE_AFTER = MSG_BEFORE Or MSG_AFTER                                'Callback before and after the original WndProc
 End Enum
 
 Private Const ALL_MESSAGES  As Long = -1                                    'All messages callback
@@ -410,7 +419,6 @@ Private Const IDX_PARM_USER As Long = 13                                    'Thu
 Private z_ScMem             As Long                                         'Thunk base address
 Private z_Sc(64)            As Long                                         'Thunk machine-code initialised here
 Private z_Funk              As Collection                                   'hWnd/thunk-address collection
-
 Private Declare Function CallWindowProcA Lib "user32" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
 Private Declare Function GetModuleHandleA Lib "kernel32" (ByVal lpModuleName As String) As Long
@@ -422,23 +430,23 @@ Private Declare Function SetWindowLongA Lib "user32" (ByVal hWnd As Long, ByVal 
 Private Declare Function VirtualAlloc Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
 Private Declare Function VirtualFree Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
 Private Declare Sub RtlMoveMemory Lib "kernel32" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
-'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 '*************************************************************
 '   TRACK MOUSE
 '*************************************************************
 Public Event MouseEnter()
 Public Event MouseLeave()
 
-Private Const WM_MOUSELEAVE              As Long = &H2A3
-Private Const WM_THEMECHANGED            As Long = &H31A
-Private Const WM_SYSCOLORCHANGE          As Long = &H15
-Private Const WM_MOUSEMOVE               As Long = &H200
-Private Const WM_SIZING                  As Long = &H214
-Private Const WM_NCPAINT                 As Long = &H85
-Private Const WM_MOVING       As Long = &H216
-Private Const WM_EXITSIZEMOVE As Long = &H232
-               
+Private Const WM_MOUSELEAVE     As Long = &H2A3
+Private Const WM_THEMECHANGED   As Long = &H31A
+Private Const WM_SYSCOLORCHANGE As Long = &H15
+Private Const WM_MOUSEMOVE      As Long = &H200
+Private Const WM_SIZING         As Long = &H214
+Private Const WM_NCPAINT        As Long = &H85
+Private Const WM_MOVING         As Long = &H216
+Private Const WM_EXITSIZEMOVE   As Long = &H232
+
 Private Enum TRACKMOUSEEVENT_FLAGS
     TME_HOVER = &H1&
     TME_LEAVE = &H2&
@@ -455,400 +463,622 @@ End Type
 
 Private Declare Function TrackMouseEvent Lib "user32.dll" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-
-Private bTrack                As Boolean
-Private bTrackUser32          As Boolean
-Private bInCtrl               As Boolean
+Private bTrack       As Boolean
+Private bTrackUser32 As Boolean
+Private bInCtrl      As Boolean
 
 'Track the mouse leaving the indicated window
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TrackMouseLeave
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'!--------------------------------------------------------------------------------
 Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
-  Dim TME As TRACKMOUSEEVENT_STRUCT
-  
-  If bTrack Then
-    With TME
-      .cbSize = Len(TME)
-      .dwFlags = TME_LEAVE
-      .hWndTrack = lng_hWnd
-    End With
 
-    If bTrackUser32 Then
-      TrackMouseEvent TME
-    Else
-      TrackMouseEventComCtl TME
+    Dim TME As TRACKMOUSEEVENT_STRUCT
+
+    If bTrack Then
+
+        With TME
+            .cbSize = Len(TME)
+            .dwFlags = TME_LEAVE
+            .hWndTrack = lng_hWnd
+        End With
+
+        If bTrackUser32 Then
+            TrackMouseEvent TME
+        Else
+            TrackMouseEventComCtl TME
+        End If
     End If
-  End If
+
 End Sub
 
-
 '-SelfSub code------------------------------------------------------------------------------------
-Private Function sc_Subclass(ByVal lng_hWnd As Long, _
-                    Optional ByVal lParamUser As Long = 0, _
-                    Optional ByVal nOrdinal As Long = 1, _
-                    Optional ByVal oCallback As Object = Nothing, _
-                    Optional ByVal bIdeSafety As Boolean = True) As Boolean 'Subclass the specified window handle
-'*************************************************************************************************
-'* lng_hWnd   - Handle of the window to subclass
-'* lParamUser - Optional, user-defined callback parameter
-'* nOrdinal   - Optional, ordinal index of the callback procedure. 1 = last private method, 2 = second last private method, etc.
-'* oCallback  - Optional, the object that will receive the callback. If undefined, callbacks are sent to this object's instance
-'* bIdeSafety - Optional, enable/disable IDE safety measures. NB: you should really only disable IDE safety in a UserControl for design-time subclassing
-'*************************************************************************************************
-Const CODE_LEN      As Long = 260                                           'Thunk length in bytes
-Const MEM_LEN       As Long = CODE_LEN + (8 * (MSG_ENTRIES + 1))            'Bytes to allocate per thunk, data + code + msg tables
-Const PAGE_RWX      As Long = &H40&                                         'Allocate executable memory
-Const MEM_COMMIT    As Long = &H1000&                                       'Commit allocated memory
-Const MEM_RELEASE   As Long = &H8000&                                       'Release allocated memory flag
-Const IDX_EBMODE    As Long = 3                                             'Thunk data index of the EbMode function address
-Const IDX_CWP       As Long = 4                                             'Thunk data index of the CallWindowProc function address
-Const IDX_SWL       As Long = 5                                             'Thunk data index of the SetWindowsLong function address
-Const IDX_FREE      As Long = 6                                             'Thunk data index of the VirtualFree function address
-Const IDX_BADPTR    As Long = 7                                             'Thunk data index of the IsBadCodePtr function address
-Const IDX_OWNER     As Long = 8                                             'Thunk data index of the Owner object's vTable address
-Const IDX_CALLBACK  As Long = 10                                            'Thunk data index of the callback method address
-Const IDX_EBX       As Long = 16                                            'Thunk code patch index of the thunk data
-Const SUB_NAME      As String = "sc_Subclass"                               'This routine's name
-  Dim nAddr         As Long
-  Dim nID           As Long
-  Dim nMyID         As Long
-  
-  If IsWindow(lng_hWnd) = 0 Then                                            'Ensure the window handle is valid
-    zError SUB_NAME, "Invalid window handle"
-    Exit Function
-  End If
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function sc_Subclass
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'                              lParamUser (Long = 0)
+'                              nOrdinal (Long = 1)
+'                              oCallback (Object = Nothing)
+'                              bIdeSafety (Boolean = True)
+'!--------------------------------------------------------------------------------
+Private Function sc_Subclass(ByVal lng_hWnd As Long, Optional ByVal lParamUser As Long = 0, Optional ByVal nOrdinal As Long = 1, Optional ByVal oCallback As Object = Nothing, Optional ByVal bIdeSafety As Boolean = True) As Boolean 'Subclass the specified window handle
 
-  nMyID = GetCurrentProcessId                                               'Get this process's ID
-  GetWindowThreadProcessId lng_hWnd, nID                                    'Get the process ID associated with the window handle
-  If nID <> nMyID Then                                                      'Ensure that the window handle doesn't belong to another process
-    zError SUB_NAME, "Window handle belongs to another process"
-    Exit Function
-  End If
-  
-  If oCallback Is Nothing Then                                              'If the user hasn't specified the callback owner
-    Set oCallback = Me                                                      'Then it is me
-  End If
-  
-  nAddr = zAddressOf(oCallback, nOrdinal)                                   'Get the address of the specified ordinal method
-  If nAddr = 0 Then                                                         'Ensure that we've found the ordinal method
-    zError SUB_NAME, "Callback method not found"
-    Exit Function
-  End If
-    
-  If z_Funk Is Nothing Then                                                 'If this is the first time through, do the one-time initialization
-    Set z_Funk = New Collection                                             'Create the hWnd/thunk-address collection
-    z_Sc(14) = &HD231C031: z_Sc(15) = &HBBE58960: z_Sc(17) = &H4339F631: z_Sc(18) = &H4A21750C: z_Sc(19) = &HE82C7B8B: z_Sc(20) = &H74&: z_Sc(21) = &H75147539: z_Sc(22) = &H21E80F: z_Sc(23) = &HD2310000: z_Sc(24) = &HE8307B8B: z_Sc(25) = &H60&: z_Sc(26) = &H10C261: z_Sc(27) = &H830C53FF: z_Sc(28) = &HD77401F8: z_Sc(29) = &H2874C085: z_Sc(30) = &H2E8&: z_Sc(31) = &HFFE9EB00: z_Sc(32) = &H75FF3075: z_Sc(33) = &H2875FF2C: z_Sc(34) = &HFF2475FF: z_Sc(35) = &H3FF2473: z_Sc(36) = &H891053FF: z_Sc(37) = &HBFF1C45: z_Sc(38) = &H73396775: z_Sc(39) = &H58627404
-    z_Sc(40) = &H6A2473FF: z_Sc(41) = &H873FFFC: z_Sc(42) = &H891453FF: z_Sc(43) = &H7589285D: z_Sc(44) = &H3045C72C: z_Sc(45) = &H8000&: z_Sc(46) = &H8920458B: z_Sc(47) = &H4589145D: z_Sc(48) = &HC4836124: z_Sc(49) = &H1862FF04: z_Sc(50) = &H35E30F8B: z_Sc(51) = &HA78C985: z_Sc(52) = &H8B04C783: z_Sc(53) = &HAFF22845: z_Sc(54) = &H73FF2775: z_Sc(55) = &H1C53FF28: z_Sc(56) = &H438D1F75: z_Sc(57) = &H144D8D34: z_Sc(58) = &H1C458D50: z_Sc(59) = &HFF3075FF: z_Sc(60) = &H75FF2C75: z_Sc(61) = &H873FF28: z_Sc(62) = &HFF525150: z_Sc(63) = &H53FF2073: z_Sc(64) = &HC328&
+    '*************************************************************************************************
+    '* lng_hWnd   - Handle of the window to subclass
+    '* lParamUser - Optional, user-defined callback parameter
+    '* nOrdinal   - Optional, ordinal index of the callback procedure. 1 = last private method, 2 = second last private method, etc.
+    '* oCallback  - Optional, the object that will receive the callback. If undefined, callbacks are sent to this object's instance
+    '* bIdeSafety - Optional, enable/disable IDE safety measures. NB: you should really only disable IDE safety in a UserControl for design-time subclassing
+    '*************************************************************************************************
+    Const CODE_LEN     As Long = 260                                           'Thunk length in bytes
+    Const MEM_LEN      As Long = CODE_LEN + (8 * (MSG_ENTRIES + 1))            'Bytes to allocate per thunk, data + code + msg tables
+    Const PAGE_RWX     As Long = &H40&                                         'Allocate executable memory
+    Const MEM_COMMIT   As Long = &H1000&                                       'Commit allocated memory
+    Const MEM_RELEASE  As Long = &H8000&                                       'Release allocated memory flag
+    Const IDX_EBMODE   As Long = 3                                             'Thunk data index of the EbMode function address
+    Const IDX_CWP      As Long = 4                                             'Thunk data index of the CallWindowProc function address
+    Const IDX_SWL      As Long = 5                                             'Thunk data index of the SetWindowsLong function address
+    Const IDX_FREE     As Long = 6                                             'Thunk data index of the VirtualFree function address
+    Const IDX_BADPTR   As Long = 7                                             'Thunk data index of the IsBadCodePtr function address
+    Const IDX_OWNER    As Long = 8                                             'Thunk data index of the Owner object's vTable address
+    Const IDX_CALLBACK As Long = 10                                            'Thunk data index of the callback method address
+    Const IDX_EBX      As Long = 16                                            'Thunk code patch index of the thunk data
+    Const SUB_NAME     As String = "sc_Subclass"                               'This routine's name
 
-    z_Sc(IDX_CWP) = zFnAddr("user32", "CallWindowProcA")                    'Store CallWindowProc function address in the thunk data
-    z_Sc(IDX_SWL) = zFnAddr("user32", "SetWindowLongA")                     'Store the SetWindowLong function address in the thunk data
-    z_Sc(IDX_FREE) = zFnAddr("kernel32", "VirtualFree")                     'Store the VirtualFree function address in the thunk data
-    z_Sc(IDX_BADPTR) = zFnAddr("kernel32", "IsBadCodePtr")                  'Store the IsBadCodePtr function address in the thunk data
-  End If
-  
-  z_ScMem = VirtualAlloc(0, MEM_LEN, MEM_COMMIT, PAGE_RWX)                  'Allocate executable memory
+    Dim nAddr          As Long
+    Dim nID            As Long
+    Dim nMyID          As Long
 
-  If z_ScMem <> 0 Then                                                      'Ensure the allocation succeeded
-    On Error GoTo CatchDoubleSub                                            'Catch double subclassing
-      z_Funk.Add z_ScMem, "h" & lng_hWnd                                    'Add the hWnd/thunk-address to the collection
-    On Error GoTo 0
-  
-    If bIdeSafety Then                                                      'If the user wants IDE protection
-      z_Sc(IDX_EBMODE) = zFnAddr("vba6", "EbMode")                          'Store the EbMode function address in the thunk data
+    If IsWindow(lng_hWnd) = 0 Then                                            'Ensure the window handle is valid
+        zError SUB_NAME, "Invalid window handle"
+
+        Exit Function
+
     End If
-    
-    z_Sc(IDX_EBX) = z_ScMem                                                 'Patch the thunk data address
-    z_Sc(IDX_HWND) = lng_hWnd                                               'Store the window handle in the thunk data
-    z_Sc(IDX_BTABLE) = z_ScMem + CODE_LEN                                   'Store the address of the before table in the thunk data
-    z_Sc(IDX_ATABLE) = z_ScMem + CODE_LEN + ((MSG_ENTRIES + 1) * 4)         'Store the address of the after table in the thunk data
-    z_Sc(IDX_OWNER) = ObjPtr(oCallback)                                     'Store the callback owner's object address in the thunk data
-    z_Sc(IDX_CALLBACK) = nAddr                                              'Store the callback address in the thunk data
-    z_Sc(IDX_PARM_USER) = lParamUser                                        'Store the lParamUser callback parameter in the thunk data
-    
-    nAddr = SetWindowLongA(lng_hWnd, GWL_WNDPROC, z_ScMem + WNDPROC_OFF)    'Set the new WndProc, return the address of the original WndProc
-    If nAddr = 0 Then                                                       'Ensure the new WndProc was set correctly
-      zError SUB_NAME, "SetWindowLong failed, error #" & Err.LastDllError
-      GoTo ReleaseMemory
+
+    nMyID = GetCurrentProcessId                                               'Get this process's ID
+    GetWindowThreadProcessId lng_hWnd, nID                                    'Get the process ID associated with the window handle
+
+    If nID <> nMyID Then                                                      'Ensure that the window handle doesn't belong to another process
+        zError SUB_NAME, "Window handle belongs to another process"
+
+        Exit Function
+
     End If
-        
-    z_Sc(IDX_WNDPROC) = nAddr                                               'Store the original WndProc address in the thunk data
-    RtlMoveMemory z_ScMem, VarPtr(z_Sc(0)), CODE_LEN                        'Copy the thunk code/data to the allocated memory
-    sc_Subclass = True                                                      'Indicate success
-  Else
-    zError SUB_NAME, "VirtualAlloc failed, error: " & Err.LastDllError
-  End If
-  
-  Exit Function                                                             'Exit sc_Subclass
+
+    If oCallback Is Nothing Then                                              'If the user hasn't specified the callback owner
+        Set oCallback = Me                                                      'Then it is me
+    End If
+
+    nAddr = zAddressOf(oCallback, nOrdinal)                                   'Get the address of the specified ordinal method
+
+    If nAddr = 0 Then                                                         'Ensure that we've found the ordinal method
+        zError SUB_NAME, "Callback method not found"
+
+        Exit Function
+
+    End If
+
+    If z_Funk Is Nothing Then                                                 'If this is the first time through, do the one-time initialization
+        Set z_Funk = New Collection                                             'Create the hWnd/thunk-address collection
+        z_Sc(14) = &HD231C031
+        z_Sc(15) = &HBBE58960
+        z_Sc(17) = &H4339F631
+        z_Sc(18) = &H4A21750C
+        z_Sc(19) = &HE82C7B8B
+        z_Sc(20) = &H74&
+        z_Sc(21) = &H75147539
+        z_Sc(22) = &H21E80F
+        z_Sc(23) = &HD2310000
+        z_Sc(24) = &HE8307B8B
+        z_Sc(25) = &H60&
+        z_Sc(26) = &H10C261
+        z_Sc(27) = &H830C53FF
+        z_Sc(28) = &HD77401F8
+        z_Sc(29) = &H2874C085
+        z_Sc(30) = &H2E8&
+        z_Sc(31) = &HFFE9EB00
+        z_Sc(32) = &H75FF3075
+        z_Sc(33) = &H2875FF2C
+        z_Sc(34) = &HFF2475FF
+        z_Sc(35) = &H3FF2473
+        z_Sc(36) = &H891053FF
+        z_Sc(37) = &HBFF1C45
+        z_Sc(38) = &H73396775
+        z_Sc(39) = &H58627404
+        z_Sc(40) = &H6A2473FF
+        z_Sc(41) = &H873FFFC
+        z_Sc(42) = &H891453FF
+        z_Sc(43) = &H7589285D
+        z_Sc(44) = &H3045C72C
+        z_Sc(45) = &H8000&
+        z_Sc(46) = &H8920458B
+        z_Sc(47) = &H4589145D
+        z_Sc(48) = &HC4836124
+        z_Sc(49) = &H1862FF04
+        z_Sc(50) = &H35E30F8B
+        z_Sc(51) = &HA78C985
+        z_Sc(52) = &H8B04C783
+        z_Sc(53) = &HAFF22845
+        z_Sc(54) = &H73FF2775
+        z_Sc(55) = &H1C53FF28
+        z_Sc(56) = &H438D1F75
+        z_Sc(57) = &H144D8D34
+        z_Sc(58) = &H1C458D50
+        z_Sc(59) = &HFF3075FF
+        z_Sc(60) = &H75FF2C75
+        z_Sc(61) = &H873FF28
+        z_Sc(62) = &HFF525150
+        z_Sc(63) = &H53FF2073
+        z_Sc(64) = &HC328&
+        z_Sc(IDX_CWP) = zFnAddr("user32", "CallWindowProcA")                    'Store CallWindowProc function address in the thunk data
+        z_Sc(IDX_SWL) = zFnAddr("user32", "SetWindowLongA")                     'Store the SetWindowLong function address in the thunk data
+        z_Sc(IDX_FREE) = zFnAddr("kernel32", "VirtualFree")                     'Store the VirtualFree function address in the thunk data
+        z_Sc(IDX_BADPTR) = zFnAddr("kernel32", "IsBadCodePtr")                  'Store the IsBadCodePtr function address in the thunk data
+    End If
+
+    z_ScMem = VirtualAlloc(0, MEM_LEN, MEM_COMMIT, PAGE_RWX)                  'Allocate executable memory
+
+    If z_ScMem <> 0 Then                                                      'Ensure the allocation succeeded
+
+        On Error GoTo CatchDoubleSub                                            'Catch double subclassing
+
+        z_Funk.Add z_ScMem, "h" & lng_hWnd                                    'Add the hWnd/thunk-address to the collection
+
+        On Error GoTo 0
+
+        If bIdeSafety Then                                                      'If the user wants IDE protection
+            z_Sc(IDX_EBMODE) = zFnAddr("vba6", "EbMode")                          'Store the EbMode function address in the thunk data
+        End If
+
+        z_Sc(IDX_EBX) = z_ScMem                                                 'Patch the thunk data address
+        z_Sc(IDX_HWND) = lng_hWnd                                               'Store the window handle in the thunk data
+        z_Sc(IDX_BTABLE) = z_ScMem + CODE_LEN                                   'Store the address of the before table in the thunk data
+        z_Sc(IDX_ATABLE) = z_ScMem + CODE_LEN + ((MSG_ENTRIES + 1) * 4)         'Store the address of the after table in the thunk data
+        z_Sc(IDX_OWNER) = ObjPtr(oCallback)                                     'Store the callback owner's object address in the thunk data
+        z_Sc(IDX_CALLBACK) = nAddr                                              'Store the callback address in the thunk data
+        z_Sc(IDX_PARM_USER) = lParamUser                                        'Store the lParamUser callback parameter in the thunk data
+        nAddr = SetWindowLongA(lng_hWnd, GWL_WNDPROC, z_ScMem + WNDPROC_OFF)    'Set the new WndProc, return the address of the original WndProc
+
+        If nAddr = 0 Then                                                       'Ensure the new WndProc was set correctly
+            zError SUB_NAME, "SetWindowLong failed, error #" & Err.LastDllError
+            GoTo ReleaseMemory
+        End If
+
+        z_Sc(IDX_WNDPROC) = nAddr                                               'Store the original WndProc address in the thunk data
+        RtlMoveMemory z_ScMem, VarPtr(z_Sc(0)), CODE_LEN                        'Copy the thunk code/data to the allocated memory
+        sc_Subclass = True                                                      'Indicate success
+    Else
+        zError SUB_NAME, "VirtualAlloc failed, error: " & Err.LastDllError
+    End If
+
+    Exit Function                                                             'Exit sc_Subclass
 
 CatchDoubleSub:
-  zError SUB_NAME, "Window handle is already subclassed"
-  
+    zError SUB_NAME, "Window handle is already subclassed"
 ReleaseMemory:
-  VirtualFree z_ScMem, 0, MEM_RELEASE                                       'sc_Subclass has failed after memory allocation, so release the memory
+    VirtualFree z_ScMem, 0, MEM_RELEASE                                       'sc_Subclass has failed after memory allocation, so release the memory
 End Function
 
 'Terminate all subclassing
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub sc_Terminate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub sc_Terminate()
-  Dim i As Long
 
-  If Not (z_Funk Is Nothing) Then                                           'Ensure that subclassing has been started
-    With z_Funk
-      For i = .Count To 1 Step -1                                           'Loop through the collection of window handles in reverse order
-        z_ScMem = .Item(i)                                                  'Get the thunk address
-        If IsBadCodePtr(z_ScMem) = 0 Then                                   'Ensure that the thunk hasn't already released its memory
-          sc_UnSubclass zData(IDX_HWND)                                     'UnSubclass
-        End If
-      Next i                                                                'Next member of the collection
-    End With
-    Set z_Funk = Nothing                                                    'Destroy the hWnd/thunk-address collection
-  End If
+    Dim i As Long
+
+    If Not (z_Funk Is Nothing) Then                                           'Ensure that subclassing has been started
+
+        With z_Funk
+
+            For i = .Count To 1 Step -1                                           'Loop through the collection of window handles in reverse order
+                z_ScMem = .Item(i)                                                  'Get the thunk address
+
+                If IsBadCodePtr(z_ScMem) = 0 Then                                   'Ensure that the thunk hasn't already released its memory
+                    sc_UnSubclass zData(IDX_HWND)                                     'UnSubclass
+                End If
+
+            Next i                                                                'Next member of the collection
+
+        End With
+
+        Set z_Funk = Nothing                                                    'Destroy the hWnd/thunk-address collection
+    End If
+
 End Sub
 
 'UnSubclass the specified window handle
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub sc_UnSubclass
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'!--------------------------------------------------------------------------------
 Private Sub sc_UnSubclass(ByVal lng_hWnd As Long)
-  If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
-    zError "sc_UnSubclass", "Window handle isn't subclassed"
-  Else
-    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                           'Ensure that the thunk hasn't already released its memory
-      zData(IDX_SHUTDOWN) = -1                                              'Set the shutdown indicator
-      zDelMsg ALL_MESSAGES, IDX_BTABLE                                      'Delete all before messages
-      zDelMsg ALL_MESSAGES, IDX_ATABLE                                      'Delete all after messages
+
+    If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
+        zError "sc_UnSubclass", "Window handle isn't subclassed"
+    Else
+
+        If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                           'Ensure that the thunk hasn't already released its memory
+            zData(IDX_SHUTDOWN) = -1                                              'Set the shutdown indicator
+            zDelMsg ALL_MESSAGES, IDX_BTABLE                                      'Delete all before messages
+            zDelMsg ALL_MESSAGES, IDX_ATABLE                                      'Delete all after messages
+        End If
+
+        z_Funk.Remove "h" & lng_hWnd                                            'Remove the specified window handle from the collection
     End If
-    z_Funk.Remove "h" & lng_hWnd                                            'Remove the specified window handle from the collection
-  End If
+
 End Sub
 
 'Add the message value to the window handle's specified callback table
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub sc_AddMsg
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'                              uMsg (Long)
+'                              When (eMsgWhen = eMsgWhen.MSG_AFTER)
+'!--------------------------------------------------------------------------------
 Private Sub sc_AddMsg(ByVal lng_hWnd As Long, ByVal uMsg As Long, Optional ByVal When As eMsgWhen = eMsgWhen.MSG_AFTER)
-  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
-    If When And MSG_BEFORE Then                                             'If the message is to be added to the before original WndProc table...
-      zAddMsg uMsg, IDX_BTABLE                                              'Add the message to the before table
+
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+        If When And MSG_BEFORE Then                                             'If the message is to be added to the before original WndProc table...
+            zAddMsg uMsg, IDX_BTABLE                                              'Add the message to the before table
+        End If
+
+        If When And MSG_AFTER Then                                              'If message is to be added to the after original WndProc table...
+            zAddMsg uMsg, IDX_ATABLE                                              'Add the message to the after table
+        End If
     End If
-    If When And MSG_AFTER Then                                              'If message is to be added to the after original WndProc table...
-      zAddMsg uMsg, IDX_ATABLE                                              'Add the message to the after table
-    End If
-  End If
+
 End Sub
 
 'Delete the message value from the window handle's specified callback table
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub sc_DelMsg
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'                              uMsg (Long)
+'                              When (eMsgWhen = eMsgWhen.MSG_AFTER)
+'!--------------------------------------------------------------------------------
 Private Sub sc_DelMsg(ByVal lng_hWnd As Long, ByVal uMsg As Long, Optional ByVal When As eMsgWhen = eMsgWhen.MSG_AFTER)
-  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
-    If When And MSG_BEFORE Then                                             'If the message is to be deleted from the before original WndProc table...
-      zDelMsg uMsg, IDX_BTABLE                                              'Delete the message from the before table
+
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+        If When And MSG_BEFORE Then                                             'If the message is to be deleted from the before original WndProc table...
+            zDelMsg uMsg, IDX_BTABLE                                              'Delete the message from the before table
+        End If
+
+        If When And MSG_AFTER Then                                              'If the message is to be deleted from the after original WndProc table...
+            zDelMsg uMsg, IDX_ATABLE                                              'Delete the message from the after table
+        End If
     End If
-    If When And MSG_AFTER Then                                              'If the message is to be deleted from the after original WndProc table...
-      zDelMsg uMsg, IDX_ATABLE                                              'Delete the message from the after table
-    End If
-  End If
+
 End Sub
 
 'Call the original WndProc
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function sc_CallOrigWndProc
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'                              uMsg (Long)
+'                              wParam (Long)
+'                              lParam (Long)
+'!--------------------------------------------------------------------------------
 Private Function sc_CallOrigWndProc(ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
-    sc_CallOrigWndProc = _
-        CallWindowProcA(zData(IDX_WNDPROC), lng_hWnd, uMsg, wParam, lParam) 'Call the original WndProc of the passed window handle parameter
-  End If
+
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+        sc_CallOrigWndProc = CallWindowProcA(zData(IDX_WNDPROC), lng_hWnd, uMsg, wParam, lParam) 'Call the original WndProc of the passed window handle parameter
+    End If
+
 End Function
 
 'Get the subclasser lParamUser callback parameter
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property sc_lParamUser
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'!--------------------------------------------------------------------------------
 Private Property Get sc_lParamUser(ByVal lng_hWnd As Long) As Long
-  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
-    sc_lParamUser = zData(IDX_PARM_USER)                                    'Get the lParamUser callback parameter
-  End If
+
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+        sc_lParamUser = zData(IDX_PARM_USER)                                    'Get the lParamUser callback parameter
+    End If
+
 End Property
 
 'Let the subclasser lParamUser callback parameter
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property sc_lParamUser
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'                              NewValue (Long)
+'!--------------------------------------------------------------------------------
 Private Property Let sc_lParamUser(ByVal lng_hWnd As Long, ByVal NewValue As Long)
-  If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
-    zData(IDX_PARM_USER) = NewValue                                         'Set the lParamUser callback parameter
-  End If
+
+    If IsBadCodePtr(zMap_hWnd(lng_hWnd)) = 0 Then                             'Ensure that the thunk hasn't already released its memory
+        zData(IDX_PARM_USER) = NewValue                                         'Set the lParamUser callback parameter
+    End If
+
 End Property
 
 '-The following routines are exclusively for the sc_ subclass routines----------------------------
-
 'Add the message to the specified table of the window handle
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub zAddMsg
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   uMsg (Long)
+'                              nTable (Long)
+'!--------------------------------------------------------------------------------
 Private Sub zAddMsg(ByVal uMsg As Long, ByVal nTable As Long)
-  Dim nCount As Long                                                        'Table entry count
-  Dim nBase  As Long                                                        'Remember z_ScMem
-  Dim i      As Long                                                        'Loop index
 
-  nBase = z_ScMem                                                            'Remember z_ScMem so that we can restore its value on exit
-  z_ScMem = zData(nTable)                                                    'Map zData() to the specified table
+    Dim nCount As Long                                                        'Table entry count
+    Dim nBase  As Long                                                        'Remember z_ScMem
+    Dim i      As Long                                                        'Loop index
 
-  If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being added to the table...
-    nCount = ALL_MESSAGES                                                   'Set the table entry count to ALL_MESSAGES
-  Else
-    nCount = zData(0)                                                       'Get the current table entry count
-    If nCount >= MSG_ENTRIES Then                                           'Check for message table overflow
-      zError "zAddMsg", "Message table overflow. Either increase the value of Const MSG_ENTRIES or use ALL_MESSAGES instead of specific message values"
-      GoTo Bail
+    nBase = z_ScMem                                                            'Remember z_ScMem so that we can restore its value on exit
+    z_ScMem = zData(nTable)                                                    'Map zData() to the specified table
+
+    If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being added to the table...
+        nCount = ALL_MESSAGES                                                   'Set the table entry count to ALL_MESSAGES
+    Else
+        nCount = zData(0)                                                       'Get the current table entry count
+
+        If nCount >= MSG_ENTRIES Then                                           'Check for message table overflow
+            zError "zAddMsg", "Message table overflow. Either increase the value of Const MSG_ENTRIES or use ALL_MESSAGES instead of specific message values"
+            GoTo Bail
+        End If
+
+        For i = 1 To nCount                                                     'Loop through the table entries
+
+            If zData(i) = 0 Then                                                  'If the element is free...
+                zData(i) = uMsg                                                     'Use this element
+                GoTo Bail                                                           'Bail
+            ElseIf zData(i) = uMsg Then                                           'If the message is already in the table...
+                GoTo Bail                                                           'Bail
+            End If
+
+        Next i                                                                  'Next message table entry
+
+        nCount = i                                                              'On drop through: i = nCount + 1, the new table entry count
+        zData(nCount) = uMsg                                                    'Store the message in the appended table entry
     End If
 
-    For i = 1 To nCount                                                     'Loop through the table entries
-      If zData(i) = 0 Then                                                  'If the element is free...
-        zData(i) = uMsg                                                     'Use this element
-        GoTo Bail                                                           'Bail
-      ElseIf zData(i) = uMsg Then                                           'If the message is already in the table...
-        GoTo Bail                                                           'Bail
-      End If
-    Next i                                                                  'Next message table entry
-
-    nCount = i                                                              'On drop through: i = nCount + 1, the new table entry count
-    zData(nCount) = uMsg                                                    'Store the message in the appended table entry
-  End If
-
-  zData(0) = nCount                                                         'Store the new table entry count
+    zData(0) = nCount                                                         'Store the new table entry count
 Bail:
-  z_ScMem = nBase                                                           'Restore the value of z_ScMem
+    z_ScMem = nBase                                                           'Restore the value of z_ScMem
 End Sub
 
 'Delete the message from the specified table of the window handle
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub zDelMsg
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   uMsg (Long)
+'                              nTable (Long)
+'!--------------------------------------------------------------------------------
 Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long)
-  Dim nCount As Long                                                        'Table entry count
-  Dim nBase  As Long                                                        'Remember z_ScMem
-  Dim i      As Long                                                        'Loop index
 
-  nBase = z_ScMem                                                           'Remember z_ScMem so that we can restore its value on exit
-  z_ScMem = zData(nTable)                                                   'Map zData() to the specified table
+    Dim nCount As Long                                                        'Table entry count
+    Dim nBase  As Long                                                        'Remember z_ScMem
+    Dim i      As Long                                                        'Loop index
 
-  If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being deleted from the table...
-    zData(0) = 0                                                            'Zero the table entry count
-  Else
-    nCount = zData(0)                                                       'Get the table entry count
-    
-    For i = 1 To nCount                                                     'Loop through the table entries
-      If zData(i) = uMsg Then                                               'If the message is found...
-        zData(i) = 0                                                        'Null the msg value -- also frees the element for re-use
-        GoTo Bail                                                           'Bail
-      End If
-    Next i                                                                  'Next message table entry
-    
-    zError "zDelMsg", "Message &H" & Hex$(uMsg) & " not found in table"
-  End If
-  
+    nBase = z_ScMem                                                           'Remember z_ScMem so that we can restore its value on exit
+    z_ScMem = zData(nTable)                                                   'Map zData() to the specified table
+
+    If uMsg = ALL_MESSAGES Then                                               'If ALL_MESSAGES are being deleted from the table...
+        zData(0) = 0                                                            'Zero the table entry count
+    Else
+        nCount = zData(0)                                                       'Get the table entry count
+
+        For i = 1 To nCount                                                     'Loop through the table entries
+
+            If zData(i) = uMsg Then                                               'If the message is found...
+                zData(i) = 0                                                        'Null the msg value -- also frees the element for re-use
+                GoTo Bail                                                           'Bail
+            End If
+
+        Next i                                                                  'Next message table entry
+
+        zError "zDelMsg", "Message &H" & Hex$(uMsg) & " not found in table"
+    End If
+
 Bail:
-  z_ScMem = nBase                                                           'Restore the value of z_ScMem
+    z_ScMem = nBase                                                           'Restore the value of z_ScMem
 End Sub
 
 'Error handler
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub zError
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sRoutine (String)
+'                              sMsg (String)
+'!--------------------------------------------------------------------------------
 Private Sub zError(ByVal sRoutine As String, ByVal sMsg As String)
-  App.LogEvent TypeName(Me) & "." & sRoutine & ": " & sMsg, vbLogEventTypeError
-  MsgBox sMsg & ".", vbExclamation + vbApplicationModal, "Error in " & TypeName(Me) & "." & sRoutine
+    App.LogEvent TypeName(Me) & "." & sRoutine & ": " & sMsg, vbLogEventTypeError
+    MsgBox sMsg & ".", vbExclamation + vbApplicationModal, "Error in " & TypeName(Me) & "." & sRoutine
 End Sub
 
 'Return the address of the specified DLL/procedure
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function zFnAddr
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sDLL (String)
+'                              sProc (String)
+'!--------------------------------------------------------------------------------
 Private Function zFnAddr(ByVal sDLL As String, ByVal sProc As String) As Long
-  zFnAddr = GetProcAddress(GetModuleHandleA(sDLL), sProc)                   'Get the specified procedure address
-  Debug.Assert zFnAddr                                                      'In the IDE, validate that the procedure address was located
+    zFnAddr = GetProcAddress(GetModuleHandleA(sDLL), sProc)                   'Get the specified procedure address
+    Debug.Assert zFnAddr                                                      'In the IDE, validate that the procedure address was located
 End Function
 
 'Map zData() to the thunk address for the specified window handle
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function zMap_hWnd
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lng_hWnd (Long)
+'!--------------------------------------------------------------------------------
 Private Function zMap_hWnd(ByVal lng_hWnd As Long) As Long
-  If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
-    zError "zMap_hWnd", "Subclassing hasn't been started"
-  Else
-    On Error GoTo Catch                                                     'Catch unsubclassed window handles
-    z_ScMem = z_Funk("h" & lng_hWnd)                                        'Get the thunk address
-    zMap_hWnd = z_ScMem
-  End If
-  
-  Exit Function                                                             'Exit returning the thunk address
+
+    If z_Funk Is Nothing Then                                                 'Ensure that subclassing has been started
+        zError "zMap_hWnd", "Subclassing hasn't been started"
+    Else
+
+        On Error GoTo Catch                                                     'Catch unsubclassed window handles
+
+        z_ScMem = z_Funk("h" & lng_hWnd)                                        'Get the thunk address
+        zMap_hWnd = z_ScMem
+    End If
+
+    Exit Function                                                             'Exit returning the thunk address
 
 Catch:
-  zError "zMap_hWnd", "Window handle isn't subclassed"
+    zError "zMap_hWnd", "Window handle isn't subclassed"
 End Function
 
 'Return the address of the specified ordinal method on the oCallback object, 1 = last private method, 2 = second last private method, etc
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function zAddressOf
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   oCallback (Object)
+'                              nOrdinal (Long)
+'!--------------------------------------------------------------------------------
 Private Function zAddressOf(ByVal oCallback As Object, ByVal nOrdinal As Long) As Long
-  Dim bSub  As Byte                                                         'Value we expect to find pointed at by a vTable method entry
-  Dim bVal  As Byte
-  Dim nAddr As Long                                                         'Address of the vTable
-  Dim i     As Long                                                         'Loop index
-  Dim j     As Long                                                         'Loop limit
-  
-  RtlMoveMemory VarPtr(nAddr), ObjPtr(oCallback), 4                         'Get the address of the callback object's instance
-  If Not zProbe(nAddr + &H1C, i, bSub) Then                                 'Probe for a Class method
-    If Not zProbe(nAddr + &H6F8, i, bSub) Then                              'Probe for a Form method
-      If Not zProbe(nAddr + &H7A4, i, bSub) Then                            'Probe for a UserControl method
-        Exit Function                                                       'Bail...
-      End If
-    End If
-  End If
-  
-  i = i + 4                                                                 'Bump to the next entry
-  j = i + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
-  Do While i < j
-    RtlMoveMemory VarPtr(nAddr), i, 4                                       'Get the address stored in this vTable entry
-    
-    If IsBadCodePtr(nAddr) Then                                             'Is the entry an invalid code address?
-      RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
-      Exit Do                                                               'Bad method signature, quit loop
+
+    Dim bSub  As Byte                                                         'Value we expect to find pointed at by a vTable method entry
+    Dim bVal  As Byte
+    Dim nAddr As Long                                                         'Address of the vTable
+    Dim i     As Long                                                         'Loop index
+    Dim j     As Long                                                         'Loop limit
+
+    RtlMoveMemory VarPtr(nAddr), ObjPtr(oCallback), 4                         'Get the address of the callback object's instance
+
+    If Not zProbe(nAddr + &H1C, i, bSub) Then                                 'Probe for a Class method
+        If Not zProbe(nAddr + &H6F8, i, bSub) Then                              'Probe for a Form method
+            If Not zProbe(nAddr + &H7A4, i, bSub) Then                            'Probe for a UserControl method
+
+                Exit Function                                                       'Bail...
+
+            End If
+        End If
     End If
 
-    RtlMoveMemory VarPtr(bVal), nAddr, 1                                    'Get the byte pointed to by the vTable entry
-    If bVal <> bSub Then                                                    'If the byte doesn't match the expected value...
-      RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
-      Exit Do                                                               'Bad method signature, quit loop
-    End If
-    
-    i = i + 4                                                             'Next vTable entry
-  Loop
+    i = i + 4                                                                 'Bump to the next entry
+    j = i + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
+
+    Do While i < j
+        RtlMoveMemory VarPtr(nAddr), i, 4                                       'Get the address stored in this vTable entry
+
+        If IsBadCodePtr(nAddr) Then                                             'Is the entry an invalid code address?
+            RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
+
+            Exit Do                                                               'Bad method signature, quit loop
+
+        End If
+
+        RtlMoveMemory VarPtr(bVal), nAddr, 1                                    'Get the byte pointed to by the vTable entry
+
+        If bVal <> bSub Then                                                    'If the byte doesn't match the expected value...
+            RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4               'Return the specified vTable entry address
+
+            Exit Do                                                               'Bad method signature, quit loop
+
+        End If
+
+        i = i + 4                                                             'Next vTable entry
+    Loop
+
 End Function
 
 'Probe at the specified start address for a method signature
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function zProbe
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   nStart (Long)
+'                              nMethod (Long)
+'                              bSub (Byte)
+'!--------------------------------------------------------------------------------
 Private Function zProbe(ByVal nStart As Long, ByRef nMethod As Long, ByRef bSub As Byte) As Boolean
-  Dim bVal    As Byte
-  Dim nAddr   As Long
-  Dim nLimit  As Long
-  Dim nEntry  As Long
-  
-  nAddr = nStart                                                            'Start address
-  nLimit = nAddr + 32                                                       'Probe eight entries
-  Do While nAddr < nLimit                                                   'While we've not reached our probe depth
-    RtlMoveMemory VarPtr(nEntry), nAddr, 4                                  'Get the vTable entry
-    
-    If nEntry <> 0 Then                                                     'If not an implemented interface
-      RtlMoveMemory VarPtr(bVal), nEntry, 1                                 'Get the value pointed at by the vTable entry
-      If bVal = &H33 Or bVal = &HE9 Then                                    'Check for a native or pcode method signature
-        nMethod = nAddr                                                     'Store the vTable entry
-        bSub = bVal                                                         'Store the found method signature
-        zProbe = True                                                       'Indicate success
-        Exit Function                                                       'Return
-      End If
-    End If
 
-'Next vTable entry
-    nAddr = nAddr + 4
-  Loop
+    Dim bVal   As Byte
+    Dim nAddr  As Long
+    Dim nLimit As Long
+    Dim nEntry As Long
+
+    nAddr = nStart                                                            'Start address
+    nLimit = nAddr + 32                                                       'Probe eight entries
+
+    Do While nAddr < nLimit                                                   'While we've not reached our probe depth
+        RtlMoveMemory VarPtr(nEntry), nAddr, 4                                  'Get the vTable entry
+
+        If nEntry <> 0 Then                                                     'If not an implemented interface
+            RtlMoveMemory VarPtr(bVal), nEntry, 1                                 'Get the value pointed at by the vTable entry
+
+            If bVal = &H33 Or bVal = &HE9 Then                                    'Check for a native or pcode method signature
+                nMethod = nAddr                                                     'Store the vTable entry
+                bSub = bVal                                                         'Store the found method signature
+                zProbe = True                                                       'Indicate success
+
+                Exit Function                                                       'Return
+
+            End If
+        End If
+
+        'Next vTable entry
+        nAddr = nAddr + 4
+    Loop
+
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property zData
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   nIndex (Long)
+'!--------------------------------------------------------------------------------
 Private Property Get zData(ByVal nIndex As Long) As Long
-  RtlMoveMemory VarPtr(zData), z_ScMem + (nIndex * 4), 4
+    RtlMoveMemory VarPtr(zData), z_ScMem + (nIndex * 4), 4
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property zData
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   nIndex (Long)
+'                              nValue (Long)
+'!--------------------------------------------------------------------------------
 Private Property Let zData(ByVal nIndex As Long, ByVal nValue As Long)
-  RtlMoveMemory z_ScMem + (nIndex * 4), VarPtr(nValue), 4
+    RtlMoveMemory z_ScMem + (nIndex * 4), VarPtr(nValue), 4
 End Property
 
 '======================================================================================================
 '   End SubClass Sections
 '======================================================================================================
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function AddPanel
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sText (String)
+'                              uTextAlign (usbAlignEnum = usbLeft)
+'                              bAutoSize (Boolean = True)
+'                              bEditable (Boolean)
+'                              oIcon (StdPicture)
+'                              bIconState (usbStateEnum = usbEnabled)
+'                              bUseMaskColor (Boolean)
+'                              lMaskColor (OLE_COLOR = vbMagenta)
+'                              lForeColor (OLE_COLOR = vbButtonText)
+'                              oFont (StdFont)
+'                              sToolTipText (String)
+'                              lWidth (Long = 40)
+'!--------------------------------------------------------------------------------
+Public Function AddPanel(Optional ByVal sText As String, Optional ByVal uTextAlign As usbAlignEnum = usbLeft, Optional ByVal bAutoSize As Boolean = True, Optional ByVal bEditable As Boolean, Optional ByVal oIcon As StdPicture, Optional ByVal _
+                            bIconState As usbStateEnum = usbEnabled, Optional ByVal bUseMaskColor As Boolean, Optional ByVal lMaskColor As OLE_COLOR = vbMagenta, Optional ByVal lForeColor As OLE_COLOR = vbButtonText, Optional ByVal oFont As _
+                            StdFont, Optional ByVal sToolTipText As String, Optional ByVal lWidth As Long = 40) As Boolean
 
-Public Function AddPanel(Optional ByVal sText As String, _
-                         Optional ByVal uTextAlign As usbAlignEnum = usbLeft, _
-                         Optional ByVal bAutoSize As Boolean = True, _
-                         Optional ByVal bEditable As Boolean, _
-                         Optional ByVal oIcon As StdPicture, _
-                         Optional ByVal bIconState As usbStateEnum = usbEnabled, _
-                         Optional ByVal bUseMaskColor As Boolean, _
-                         Optional ByVal lMaskColor As OLE_COLOR = vbMagenta, _
-                         Optional ByVal lForeColor As OLE_COLOR = vbButtonText, _
-                         Optional ByVal oFont As StdFont, _
-                         Optional ByVal sToolTipText As String, _
-                         Optional ByVal lWidth As Long = 40) As Boolean
-
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Func_ErrHandler
 
     m_PanelCount = m_PanelCount + 1
+
     ReDim Preserve m_PanelItems(1 To m_PanelCount)
 
     With m_PanelItems(m_PanelCount)
@@ -863,7 +1093,6 @@ Public Function AddPanel(Optional ByVal sText As String, _
 
             Case usbRight
                 .Alignment = DT_SB_RIGHT
-
         End Select
 
         .AutoSize = bAutoSize
@@ -877,16 +1106,13 @@ Public Function AddPanel(Optional ByVal sText As String, _
                 Set .Font = m_Font
             Else
                 Set .Font = Ambient.Font
-
             End If
-
         End If
 
         .ForeColor = lForeColor
 
         If Not oIcon Is Nothing Then
             Set .Icon = oIcon
-
         End If
 
         .IconState = bIconState
@@ -899,14 +1125,15 @@ Public Function AddPanel(Optional ByVal sText As String, _
             .Width = lWidth
         Else
             .Width = 40
-
         End If
 
     End With
 
     Refresh
 Func_ErrHandlerExit:
+
     Exit Function
+
 Func_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.AddPanel", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -914,12 +1141,17 @@ Func_ErrHandler:
 
 End Function
 
-Private Function AlphaBlend(ByVal FirstColor As Long, _
-                            ByVal SecondColor As Long, _
-                            ByVal AlphaValue As Long) As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function AlphaBlend
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FirstColor (Long)
+'                              SecondColor (Long)
+'                              AlphaValue (Long)
+'!--------------------------------------------------------------------------------
+Private Function AlphaBlend(ByVal FirstColor As Long, ByVal SecondColor As Long, ByVal AlphaValue As Long) As Long
 
-Dim iForeColor                          As RGBQUAD
-Dim iBackColor                          As RGBQUAD
+    Dim iForeColor As RGBQUAD
+    Dim iBackColor As RGBQUAD
 
     OleTranslateColorByRef FirstColor, 0, VarPtr(iForeColor)
     OleTranslateColorByRef SecondColor, 0, VarPtr(iBackColor)
@@ -931,14 +1163,22 @@ Dim iBackColor                          As RGBQUAD
     End With
 
     CopyMemoryLong VarPtr(AlphaBlend), VarPtr(iForeColor), 4
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub APILine
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   X1 (Long)
+'                              Y1 (Long)
+'                              X2 (Long)
+'                              Y2 (Long)
+'                              lColor (Long)
+'!--------------------------------------------------------------------------------
 Private Sub APILine(X1 As Long, Y1 As Long, X2 As Long, Y2 As Long, lColor As Long)
 
-'Use the API LineTo for Fast Drawing
-Dim PT                                  As POINT
-Dim hPen As Long, hPenOld               As Long
+    'Use the API LineTo for Fast Drawing
+    Dim PT   As POINT
+    Dim hPen As Long, hPenOld               As Long
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
@@ -951,7 +1191,9 @@ Dim hPen As Long, hPenOld               As Long
     SelectObject UserControl.hDC, hPenOld
     DeleteObject hPen
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.APILine", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -959,14 +1201,21 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     BackColor = m_BackColor
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -975,9 +1224,14 @@ Prop_ErrHandler:
 End Property
 
 'Description: Use this color for drawing
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let BackColor(ByVal NewValue As OLE_COLOR)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     m_BackColor = NewValue
@@ -985,7 +1239,9 @@ Public Property Let BackColor(ByVal NewValue As OLE_COLOR)
     Refresh
     PropertyChanged "BackColor"
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -993,14 +1249,20 @@ Prop_ErrHandler:
 
 End Property
 
-Public Sub BoundControl(ByVal Index As Long, _
-                        Control As Object, _
-                        ByVal SizeMethod As usbSizeEnum)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub BoundControl
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              Control (Object)
+'                              SizeMethod (usbSizeEnum)
+'!--------------------------------------------------------------------------------
+Public Sub BoundControl(ByVal Index As Long, Control As Object, ByVal SizeMethod As usbSizeEnum)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Sub
 
     End If
@@ -1018,15 +1280,15 @@ Public Sub BoundControl(ByVal Index As Long, _
         If Not m_PanelItems(Index).BoundObject Is Nothing Then
             SetParent m_PanelItems(Index).BoundObject.hWnd, m_PanelItems(Index).BoundParent
             Set m_PanelItems(Index).BoundObject = Nothing
-
         End If
-
     End If
 
     m_PanelItems(Index).BoundSize = SizeMethod
     Refresh
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.BoundControl", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1034,21 +1296,25 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Clear
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Clear()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
-    Dim lpRect                          As RECT
-    Dim hBrush                          As Long
-    Dim lColor                          As Long
+    Dim lpRect As RECT
+    Dim hBrush As Long
+    Dim lColor As Long
 
     With lpRect
         .Left = 0
         .Top = 0
         .Right = ScaleWidth
         .Bottom = ScaleHeight
-
     End With
 
     lColor = TranslateColor(m_BackColor)
@@ -1056,7 +1322,9 @@ Public Sub Clear()
     Call FillRect(UserControl.hDC, lpRect, hBrush)
     Call DeleteObject(hBrush)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Clear", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1064,14 +1332,21 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get ForeColor() As OLE_COLOR
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     ForeColor = m_Forecolor
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1080,9 +1355,14 @@ Prop_ErrHandler:
 End Property
 
 'Description: Use this color for drawing
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let ForeColor(ByVal NewValue As OLE_COLOR)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     m_BackColor = NewValue
@@ -1090,7 +1370,9 @@ Public Property Let ForeColor(ByVal NewValue As OLE_COLOR)
     Refresh
     PropertyChanged "ForeColor"
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1098,14 +1380,21 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Font() As StdFont
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     Set Font = m_Font
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1113,16 +1402,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFont (StdFont)
+'!--------------------------------------------------------------------------------
 Public Property Set Font(ByVal NewFont As StdFont)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     Set m_Font = NewFont
     Refresh
     PropertyChanged "Font"
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1130,11 +1426,16 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetPanelIndex
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function GetPanelIndex() As Long
 
-Dim i                                   As Long
-Dim tPt                                 As POINT
-Dim lpRect                              As RECT
+    Dim i      As Long
+    Dim tPt    As POINT
+    Dim lpRect As RECT
 
     '   Handle Any Errors
     On Error GoTo Func_ErrHandler
@@ -1156,22 +1457,19 @@ Dim lpRect                              As RECT
                     OffsetRect lpRect, -8, 0
                 ElseIf m_PanelItems(i).Alignment = DT_SB_RIGHT Then
                     InflateRect lpRect, 2, 0
-
                 End If
-
             End If
 
             If i > 1 Then
                 If (m_PanelItems(i - 1).ItemRect.Right + 10) < lpRect.Left Then
                     OffsetRect lpRect, -8, 0
                     InflateRect lpRect, 6, 0
-
                 End If
-
             End If
 
             If PtInRect(lpRect, tPt.X, tPt.Y) Then
                 GetPanelIndex = i
+
                 Exit For
 
             End If
@@ -1181,7 +1479,9 @@ Dim lpRect                              As RECT
     End If
 
 Func_ErrHandlerExit:
+
     Exit Function
+
 Func_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.GetPanelIndex", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1189,49 +1489,65 @@ Func_ErrHandler:
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetThemeInfo
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function GetThemeInfo() As String
 
-Dim lPtrColorName As Long
-Dim lPtrThemeFile As Long
-Dim hTheme As Long
-Dim sColorName As String
-Dim sThemeFile As String
+    Dim lPtrColorName As Long
+    Dim lPtrThemeFile As Long
+    Dim hTheme        As Long
+    Dim sColorName    As String
+    Dim sThemeFile    As String
 
     If m_bIsWinXpOrLater Then
         hTheme = OpenThemeData(hWnd, StrPtr("Button"))
+
         If hTheme Then
+
             ReDim bThemeFile(0 To 260 * 2) As Byte
+
             lPtrThemeFile = VarPtr(bThemeFile(0))
+
             ReDim bColorName(0 To 260 * 2) As Byte
+
             lPtrColorName = VarPtr(bColorName(0))
-            
+
             If GetCurrentThemeName(lPtrThemeFile, 260, lPtrColorName, 260, 0, 0) <> &H0 Then
                 GetThemeInfo = "UxTheme_Error"
+
                 Exit Function
+
             Else
                 sThemeFile = TrimNull(bThemeFile)
                 sColorName = TrimNull(bColorName)
             End If
-            
+
             CloseThemeData hTheme
         End If
     End If
-    
+
     If LenB(Trim$(sColorName)) = 0 Then sColorName = "None"
     GetThemeInfo = sColorName
-
 End Function
 
-Private Sub GrayBlt(ByVal hDstDC As Long, _
-                    ByVal hSrcDC As Long, _
-                    ByVal nWidth As Long, _
-                    ByVal nHeight As Long)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GrayBlt
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hDstDC (Long)
+'                              hSrcDC (Long)
+'                              nWidth (Long)
+'                              nHeight (Long)
+'!--------------------------------------------------------------------------------
+Private Sub GrayBlt(ByVal hDstDC As Long, ByVal hSrcDC As Long, ByVal nWidth As Long, ByVal nHeight As Long)
 
-Dim MakePal                             As Long
-Dim DIBInf                              As BITMAPINFO8
-Dim gsDIB                               As Long
-Dim hTmpDC                              As Long
-Dim OldDIB                              As Long
+    Dim MakePal As Long
+    Dim DIBInf  As BITMAPINFO8
+    Dim gsDIB   As Long
+    Dim hTmpDC  As Long
+    Dim OldDIB  As Long
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
@@ -1276,11 +1592,12 @@ Dim OldDIB                              As Long
         SelectObject hTmpDC, OldDIB
         DeleteObject gsDIB
         DeleteObject hTmpDC
-
     End If
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.GrayBlt", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1288,14 +1605,21 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property GripShape
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get GripShape() As usbGripEnum
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     GripShape = m_GripShape
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1303,9 +1627,14 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property GripShape
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lShape (usbGripEnum)
+'!--------------------------------------------------------------------------------
 Public Property Let GripShape(lShape As usbGripEnum)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     '   Check to see if this changed, otherwise we get an
@@ -1314,11 +1643,12 @@ Public Property Let GripShape(lShape As usbGripEnum)
         m_GripShape = lShape
         Refresh
         PropertyChanged "GripShape"
-
     End If
 
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1326,12 +1656,17 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PaintGradients
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub PaintGradients()
 
-Dim i                                   As Long
-Dim Y1                                  As Long
-Dim BtnFace                             As Long
-Dim lColor                              As Long
+    Dim i       As Long
+    Dim Y1      As Long
+    Dim BtnFace As Long
+    Dim lColor  As Long
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
@@ -1369,7 +1704,6 @@ Dim lColor                              As Long
 
                 Case Else
                     lColor = ShiftColor(BtnFace, -&H50)
-
             End Select
 
             APILine 0, 0, .ScaleWidth, 0, &HFFFFFF
@@ -1390,7 +1724,9 @@ Dim lColor                              As Long
     End With
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PaintGradients", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1398,10 +1734,15 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PaintGrip
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub PaintGrip()
 
-Dim AdjWidth                            As Long
-Dim AdjHeight                           As Long
+    Dim AdjWidth  As Long
+    Dim AdjHeight As Long
 
     '   Custom reoutine, to paint/repaint the shapes on the
     '   screen to represent the Grip Style selected...
@@ -1484,13 +1825,14 @@ Dim AdjHeight                           As Long
             APILine AdjWidth + 6, AdjHeight + 14, AdjWidth + 14, AdjHeight + 6, .ForeColor
             APILine AdjWidth + 4, AdjHeight + 14, AdjWidth + 14, AdjHeight + 4, .ForeColor
             APILine AdjWidth + 3, AdjHeight + 14, AdjWidth + 14, AdjHeight + 3, .ForeColor
-
         End If
 
     End With
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PaintGrip", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1498,14 +1840,19 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PaintPanels
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub PaintPanels()
 
-Dim i                                   As Long
-Dim lX                                  As Long
-Dim lForeColor                          As Long
-Dim lIconOffset                         As Long
-Dim lGripSize                           As Long
-Dim bMinWidth                           As Boolean
+    Dim i           As Long
+    Dim lX          As Long
+    Dim lForeColor  As Long
+    Dim lIconOffset As Long
+    Dim lGripSize   As Long
+    Dim bMinWidth   As Boolean
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
@@ -1517,7 +1864,6 @@ Dim bMinWidth                           As Boolean
         lGripSize = 16
     Else
         lGripSize = 18
-
     End If
 
     For i = 1 To PanelCount
@@ -1540,7 +1886,6 @@ Dim bMinWidth                           As Boolean
                 Else
                     '   Compute the Distance we need to Extend the Rect + Icon Distance
                     .ItemRect.Right = lX + TextWidth(.Text) + 8 + lIconOffset
-
                 End If
 
                 '   Set the Bottom of the Rect
@@ -1551,7 +1896,6 @@ Dim bMinWidth                           As Boolean
                     lX = .ItemRect.Right
                 Else
                     lX = lX + 20
-
                 End If
 
                 '   Check to see if the control is smaller then the
@@ -1560,7 +1904,6 @@ Dim bMinWidth                           As Boolean
                     '   Yep, so make the Rect scaller to match
                     .ItemRect.Right = (ScaleWidth - lGripSize)
                     lX = .ItemRect.Right
-
                 End If
 
             Else
@@ -1575,7 +1918,6 @@ Dim bMinWidth                           As Boolean
                 Else
                     '   Compute the Distance we need to Extend the Rect + Icon Distance
                     .ItemRect.Right = lX + .Width + lIconOffset
-
                 End If
 
                 '   Set the Bottom of the Rect
@@ -1588,9 +1930,7 @@ Dim bMinWidth                           As Boolean
                     '   Yep, so make the Rect scaller to match
                     .ItemRect.Right = (ScaleWidth - lGripSize)
                     lX = .ItemRect.Right
-
                 End If
-
             End If
 
             '   Now draw the Theme Based Borders....
@@ -1605,7 +1945,6 @@ Dim bMinWidth                           As Boolean
                 APILine lX + 1, .ItemRect.Top, lX + 1, .ItemRect.Bottom, vbWhite
                 '   Decrease the RECT by 4
                 InflateRect .ItemRect, -4, 0
-
             End If
 
             '   Does this have a bound object?
@@ -1617,7 +1956,6 @@ Dim bMinWidth                           As Boolean
                     '   Adjust the Initial Items RECT to line up correctly
                     If i = 1 Then
                         OffsetRect .ItemRect, -2, 0
-
                     End If
 
                     '   See if the size of the StatusBar is too small for an Icon + Padding
@@ -1636,7 +1974,6 @@ Dim bMinWidth                           As Boolean
                             If lX >= (ScaleWidth - lGripSize) Then
                                 '   Yep, so make the Rect scaller to match
                                 .ItemRect.Right = (ScaleWidth - lGripSize)
-
                             End If
 
                         ElseIf .Alignment = DT_SB_CENTER Then
@@ -1647,7 +1984,6 @@ Dim bMinWidth                           As Boolean
                                 '   Yep, so make the Rect scaller to match
                                 OffsetRect .ItemRect, 0, 0
                                 .ItemRect.Right = (ScaleWidth - lGripSize) - 2
-
                             End If
 
                         ElseIf .Alignment = DT_SB_RIGHT Then
@@ -1659,11 +1995,8 @@ Dim bMinWidth                           As Boolean
                                 OffsetRect .ItemRect, lIconOffset, 0
                                 InflateRect .ItemRect, lIconOffset, 0
                                 .ItemRect.Right = (ScaleWidth - lGripSize) - 2
-
                             End If
-
                         End If
-
                     End If
 
                     '   See if the size of the StatusBar is too small for an Icon + Padding
@@ -1674,7 +2007,6 @@ Dim bMinWidth                           As Boolean
                         If ((.ItemRect.Left + lIconOffset) <= (ScaleWidth - lGripSize)) Or ((.ItemRect.Right - .ItemRect.Left) > 16) Then
                             'DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
                             DrawTextW UserControl.hDC, StrPtr(.Text & vbNullChar), -1, .ItemRect, .Alignment
-
                         End If
 
                     Else
@@ -1683,9 +2015,7 @@ Dim bMinWidth                           As Boolean
                         If (.ItemRect.Left + lIconOffset \ 2) <= (ScaleWidth - lGripSize) Or ((.ItemRect.Right - .ItemRect.Left) > 16) Then
                             'DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
                             DrawTextW UserControl.hDC, StrPtr(.Text & vbNullChar), -1, .ItemRect, .Alignment
-
                         End If
-
                     End If
 
                 Else
@@ -1694,15 +2024,12 @@ Dim bMinWidth                           As Boolean
                     If (.ItemRect.Left + 2) <= (ScaleWidth - lGripSize) Then
                         'DrawText UserControl.hDC, .Text, -1, .ItemRect, .Alignment
                         DrawTextW UserControl.hDC, StrPtr(.Text & vbNullChar), -1, .ItemRect, .Alignment
-
                     End If
-
                 End If
 
             Else
 
                 '   Set the Bound Object onto the Control
-        
                 '   Handle errors quietly in this section as we are late bound
                 '   so it is hard to predict if all controls will support certain
                 '   object interfaces....
@@ -1727,7 +2054,6 @@ Dim bMinWidth                           As Boolean
                             '    .Visible = True
                             'End If
                             .ZOrder 0
-
                         End With
 
                     Else
@@ -1746,7 +2072,6 @@ Dim bMinWidth                           As Boolean
                                     bMinWidth = True
                                 Else
                                     bMinWidth = False
-
                                 End If
 
                             Else
@@ -1760,9 +2085,7 @@ Dim bMinWidth                           As Boolean
                                     bMinWidth = True
                                 Else
                                     bMinWidth = False
-
                                 End If
-
                             End If
 
                             .Height = 16 * Screen.TwipsPerPixelY
@@ -1772,15 +2095,12 @@ Dim bMinWidth                           As Boolean
                                 .Visible = False
                             Else
                                 .Visible = True
-
                             End If
 
                             .ZOrder 0
-
                         End With
 
                     End If
-
                 End If
 
                 '   Turn the normal Error handing back on....
@@ -1791,10 +2111,13 @@ Dim bMinWidth                           As Boolean
         End With
 
     Next
+
     '   Set the ForeColor back...
     UserControl.ForeColor = lForeColor
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PaintPanels", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1802,15 +2125,22 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelCount
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get PanelCount() As Long
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     m_PanelCount = UBoundEx(m_PanelItems)
     PanelCount = m_PanelCount
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelCount", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1818,9 +2148,14 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAlignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelAlignment(ByVal Index As Long) As usbAlignEnum
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
@@ -1836,11 +2171,12 @@ Public Property Get PanelAlignment(ByVal Index As Long) As usbAlignEnum
 
         Case DT_SB_RIGHT
             PanelAlignment = usbRight
-
     End Select
 
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1848,12 +2184,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAlignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (usbAlignEnum)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelAlignment(ByVal Index As Long, ByVal NewValue As usbAlignEnum)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -1871,12 +2214,13 @@ Public Property Let PanelAlignment(ByVal Index As Long, ByVal NewValue As usbAli
 
         Case usbRight
             m_PanelItems(Index).Alignment = DT_SB_RIGHT
-
     End Select
 
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1884,16 +2228,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAutoSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelAutoSize(ByVal Index As Long) As Boolean
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     PanelAutoSize = m_PanelItems(Index).AutoSize
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1901,12 +2252,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAutoSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelAutoSize(ByVal Index As Long, ByVal NewValue As Boolean)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -1916,7 +2274,9 @@ Public Property Let PanelAutoSize(ByVal Index As Long, ByVal NewValue As Boolean
     m_PanelItems(Index).AutoSize = NewValue
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1924,16 +2284,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelEditable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelEditable(ByVal Index As Long) As Boolean
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     PanelEditable = m_PanelItems(Index).Editable
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1941,12 +2308,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelEditable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelEditable(ByVal Index As Long, ByVal NewValue As Boolean)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -1956,7 +2330,9 @@ Public Property Let PanelEditable(ByVal Index As Long, ByVal NewValue As Boolean
     m_PanelItems(Index).Editable = NewValue
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1964,16 +2340,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelForeColor(ByVal Index As Long) As OLE_COLOR
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     PanelForeColor = m_PanelItems(Index).ForeColor
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -1981,12 +2364,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelForeColor(ByVal Index As Long, ByVal NewItem As OLE_COLOR)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -1996,7 +2386,9 @@ Public Property Let PanelForeColor(ByVal Index As Long, ByVal NewItem As OLE_COL
     m_PanelItems(Index).ForeColor = NewItem
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2004,16 +2396,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelFont
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelFont(ByVal Index As Long) As StdFont
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     Set PanelFont = m_PanelItems(Index).Font
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2021,12 +2420,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelFont
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (StdFont)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelFont(ByVal Index As Long, ByVal NewItem As StdFont)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -2036,7 +2442,9 @@ Public Property Let PanelFont(ByVal Index As Long, ByVal NewItem As StdFont)
     Set m_PanelItems(Index).Font = NewItem
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2044,16 +2452,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelIcon
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelIcon(ByVal Index As Long) As StdPicture
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     Set PanelIcon = m_PanelItems(Index).Icon
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2061,12 +2476,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelIcon
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (StdPicture)
+'!--------------------------------------------------------------------------------
 Public Property Set PanelIcon(ByVal Index As Long, ByVal NewItem As StdPicture)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -2076,7 +2498,9 @@ Public Property Set PanelIcon(ByVal Index As Long, ByVal NewItem As StdPicture)
     Set m_PanelItems(Index).Icon = NewItem
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2084,16 +2508,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelText(ByVal Index As Long) As String
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     PanelText = m_PanelItems(Index).Text
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2101,12 +2532,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (String)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelText(ByVal Index As Long, ByVal NewItem As String)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -2116,7 +2554,9 @@ Public Property Let PanelText(ByVal Index As Long, ByVal NewItem As String)
     m_PanelItems(Index).Text = NewItem
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2124,16 +2564,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelToolTipText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelToolTipText(ByVal Index As Long) As String
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     PanelToolTipText = m_PanelItems(Index).ToolTipText
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2141,12 +2588,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelToolTipText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (String)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelToolTipText(ByVal Index As Long, NewValue As String)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -2156,7 +2610,9 @@ Public Property Let PanelToolTipText(ByVal Index As Long, NewValue As String)
     m_PanelItems(Index).ToolTipText = NewValue
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2164,16 +2620,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelWidth
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
 Public Property Get PanelWidth(ByVal Index As Long) As Long
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If Index < 1 Then Index = 1
     If Index > m_PanelCount Then Index = m_PanelCount
     PanelWidth = m_PanelItems(Index).Width
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2181,12 +2644,19 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelWidth
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (Long)
+'!--------------------------------------------------------------------------------
 Public Property Let PanelWidth(ByVal Index As Long, ByVal NewItem As Long)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     If m_PanelCount < 1 Then
+
         Exit Property
 
     End If
@@ -2196,7 +2666,9 @@ Public Property Let PanelWidth(ByVal Index As Long, ByVal NewItem As Long)
     m_PanelItems(Index).Width = NewItem
     Refresh
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2204,11 +2676,18 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PtInRect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lpRect (RECT)
+'                              X (Long)
+'                              Y (Long)
+'!--------------------------------------------------------------------------------
 Private Function PtInRect(ByRef lpRect As RECT, X As Long, Y As Long) As Boolean
 
-'   This is a replacemnt for the PtInRect API call which seems to always
-'   return 0 depite the X & Y Points being in the RECT...
-'   Handle Any Errors
+    '   This is a replacemnt for the PtInRect API call which seems to always
+    '   return 0 depite the X & Y Points being in the RECT...
+    '   Handle Any Errors
     On Error GoTo Func_ErrHandler
 
     If (X >= lpRect.Left) Then
@@ -2222,7 +2701,9 @@ Private Function PtInRect(ByRef lpRect As RECT, X As Long, Y As Long) As Boolean
     End If
 
 Func_ErrHandlerExit:
+
     Exit Function
+
 Func_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.PtInRect", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2230,9 +2711,14 @@ Func_ErrHandler:
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Refresh
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Refresh()
 
-Dim AutoTheme                           As String
+    Dim AutoTheme As String
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
@@ -2249,7 +2735,6 @@ Dim AutoTheme                           As String
 
                     If m_GripShape <> usbNone Then
                         m_GripShape = usbBars
-
                     End If
 
                 Case "NormalColor"
@@ -2257,7 +2742,6 @@ Dim AutoTheme                           As String
 
                     If m_GripShape <> usbNone Then
                         m_GripShape = usbSquare
-
                     End If
 
                 Case "HomeStead"
@@ -2265,7 +2749,6 @@ Dim AutoTheme                           As String
 
                     If m_GripShape <> usbNone Then
                         m_GripShape = usbSquare
-
                     End If
 
                 Case "Metallic"
@@ -2273,7 +2756,6 @@ Dim AutoTheme                           As String
 
                     If m_GripShape <> usbNone Then
                         m_GripShape = usbSquare
-
                     End If
 
                 Case Else
@@ -2281,7 +2763,6 @@ Dim AutoTheme                           As String
 
                     If m_GripShape <> usbNone Then
                         m_GripShape = usbSquare
-
                     End If
 
             End Select
@@ -2291,7 +2772,6 @@ Dim AutoTheme                           As String
 
             If m_GripShape <> usbNone Then
                 m_GripShape = usbBars
-
             End If
 
         Case [usbBlue]
@@ -2299,7 +2779,6 @@ Dim AutoTheme                           As String
 
             If m_GripShape <> usbNone Then
                 m_GripShape = usbSquare
-
             End If
 
         Case [usbHomeStead]
@@ -2307,7 +2786,6 @@ Dim AutoTheme                           As String
 
             If m_GripShape <> usbNone Then
                 m_GripShape = usbSquare
-
             End If
 
         Case [usbMetallic]
@@ -2315,7 +2793,6 @@ Dim AutoTheme                           As String
 
             If m_GripShape <> usbNone Then
                 m_GripShape = usbSquare
-
             End If
 
         Case Else
@@ -2323,7 +2800,6 @@ Dim AutoTheme                           As String
 
             If m_GripShape <> usbNone Then
                 m_GripShape = usbSquare
-
             End If
 
     End Select
@@ -2342,11 +2818,12 @@ Dim AutoTheme                           As String
         AutoRedraw = True
         '   Refresh the Window
         UserControl.Refresh
-
     End If
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Refresh", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2354,11 +2831,17 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ShiftColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Color (Long)
+'                              Value (Long)
+'!--------------------------------------------------------------------------------
 Private Function ShiftColor(ByVal Color As Long, ByVal Value As Long) As Long
 
-Dim lR                                  As Long
-Dim lg                                  As Long
-Dim lb                                  As Long
+    Dim lR As Long
+    Dim lg As Long
+    Dim lb As Long
 
     '   Handle Any Errors
     On Error GoTo Func_ErrHandler
@@ -2378,12 +2861,13 @@ Dim lb                                  As Long
         If lR < 0 Then lR = 0
         If lg < 0 Then lg = 0
         If lb < 0 Then lb = 0
-
     End If
 
     ShiftColor = lR + 256& * lg + 65536 * lb
 Func_ErrHandlerExit:
+
     Exit Function
+
 Func_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.ShiftColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2391,14 +2875,21 @@ Func_ErrHandler:
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Sizable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Sizable() As Boolean
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     Sizable = m_Sizable
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2406,9 +2897,14 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Sizable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let Sizable(ByVal NewValue As Boolean)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     m_Sizable = NewValue
@@ -2418,18 +2914,18 @@ Public Property Let Sizable(ByVal NewValue As Boolean)
             m_GripShape = usbSquare
         Else
             m_GripShape = usbBars
-
         End If
 
     Else
         m_GripShape = usbNone
-
     End If
 
     Refresh
     PropertyChanged "Sizable"
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2437,14 +2933,21 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Theme
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Theme() As usbThemeEnum
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     Theme = m_Theme
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2452,16 +2955,23 @@ Prop_ErrHandler:
 
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Theme
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (usbThemeEnum)
+'!--------------------------------------------------------------------------------
 Public Property Let Theme(ByVal NewValue As usbThemeEnum)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Prop_ErrHandler
 
     m_Theme = NewValue
     Refresh
     PropertyChanged "Theme"
 Prop_ErrHandlerExit:
+
     Exit Property
+
 Prop_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2469,48 +2979,55 @@ Prop_ErrHandler:
 
 End Property
 
-Public Sub TransBltEx(ByVal hDestDC As Long, _
-                      ByVal X As Long, _
-                      ByVal Y As Long, _
-                      ByVal nWidth As Long, _
-                      ByVal nHeight As Long, _
-                      ByVal hSrcImg As StdPicture, _
-                      ByVal XSrc As Long, _
-                      ByVal YSrc As Long, _
-                      ByVal TransColor As Long, _
-                      ByVal Disabled As Boolean)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TransBltEx
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hDestDC (Long)
+'                              X (Long)
+'                              Y (Long)
+'                              nWidth (Long)
+'                              nHeight (Long)
+'                              hSrcImg (StdPicture)
+'                              XSrc (Long)
+'                              YSrc (Long)
+'                              TransColor (Long)
+'                              Disabled (Boolean)
+'!--------------------------------------------------------------------------------
+Public Sub TransBltEx(ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcImg As StdPicture, ByVal XSrc As Long, ByVal YSrc As Long, ByVal TransColor As Long, ByVal Disabled As Boolean)
 
-'
-'   32-Bit Transparent BitBlt Function
-'   Written by Karl E. Peterson, 9/20/96.
-'   Portions borrowed and modified from KB.
-'   Other portions modified following input from users. <g>
-'
-'   Modified by Paul R. Territo, Ph.D 02Apr07 to allow
-'   passing of a StdPicture object and populating a private
-'   hSrcDC instead of the original method which passed the hScrDC
-'
-'   Modified by Paul R. Territo, Ph.D 11Apr07 to allow for GrayScaling of
-'   the passed image via the GrayBlt method implemented in the UserControl.
-'
-'Parameters ************************************************************
-'   hDestDC:     Destination device context
-'   x, y:        Upper-left destination coordinates (pixels)
-'   nWidth:      Width of destination
-'   nHeight:     Height of destination
-'   hSrcImg:     Source StdPicture Object
-'   xSrc, ySrc:  Upper-left source coordinates (pixels)
-'   TransColor:  RGB value for transparent pixels, typically &HC0C0C0.
-'***********************************************************************
-' Holds original background color
-Dim OrigColor                           As Long
-' Holds original background drawing mode
-Dim OrigMode                            As Long
-Dim hSrcDC                              As Long
-Dim tObj                                As Long
-'Handle to the Brush we are using for MaskColor
-Dim hBrush                              As Long
-Dim hTmp                                As Long
+    '
+    '   32-Bit Transparent BitBlt Function
+    '   Written by Karl E. Peterson, 9/20/96.
+    '   Portions borrowed and modified from KB.
+    '   Other portions modified following input from users. <g>
+    '
+    '   Modified by Paul R. Territo, Ph.D 02Apr07 to allow
+    '   passing of a StdPicture object and populating a private
+    '   hSrcDC instead of the original method which passed the hScrDC
+    '
+    '   Modified by Paul R. Territo, Ph.D 11Apr07 to allow for GrayScaling of
+    '   the passed image via the GrayBlt method implemented in the UserControl.
+    '
+    'Parameters ************************************************************
+    '   hDestDC:     Destination device context
+    '   x, y:        Upper-left destination coordinates (pixels)
+    '   nWidth:      Width of destination
+    '   nHeight:     Height of destination
+    '   hSrcImg:     Source StdPicture Object
+    '   xSrc, ySrc:  Upper-left source coordinates (pixels)
+    '   TransColor:  RGB value for transparent pixels, typically &HC0C0C0.
+    '***********************************************************************
+    ' Holds original background color
+    Dim OrigColor As Long
+
+    ' Holds original background drawing mode
+    Dim OrigMode  As Long
+    Dim hSrcDC    As Long
+    Dim tObj      As Long
+
+    'Handle to the Brush we are using for MaskColor
+    Dim hBrush    As Long
+    Dim hTmp      As Long
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
@@ -2536,21 +3053,16 @@ Dim hTmp                                As Long
         DeleteObject hBrush
         DeleteObject hTmp
         DeleteObject tObj
-
     End If
 
     If (GetDeviceCaps(hDestDC, CAPS1) And C1_TRANSPARENT) Then
-
         ' Some NT machines support this *super* simple method!
         ' Save original settings, Blt, restore settings.
-
         OrigMode = SetBkMode(hDestDC, NEWTRANSPARENT)
         OrigColor = SetBkColor(hDestDC, TransColor)
 
-
         '   Check to see if this is a GreyScale Image, if so then GrayBlt it
         '   to the DC it is located on...
-
         If Disabled Then
             GrayBlt hSrcDC, hSrcDC, nWidth, nHeight
         End If
@@ -2559,93 +3071,90 @@ Dim hTmp                                As Long
         Call SetBkColor(hDestDC, OrigColor)
         Call SetBkMode(hDestDC, OrigMode)
     Else
+
         ' Backup copy of source bitmap
-        Dim saveDC                      As Long
+        Dim saveDC       As Long
+
         ' Mask bitmap (monochrome)
-        Dim maskDC                      As Long
+        Dim maskDC       As Long
+
         ' Inverse of mask bitmap (monochrome)
-        Dim invDC                       As Long
+        Dim invDC        As Long
+
         ' Combination of source bitmap & background
-        Dim resultDC                    As Long
+        Dim resultDC     As Long
+
         ' Bitmap stores backup copy of source bitmap
-        Dim hSaveBmp                    As Long
+        Dim hSaveBmp     As Long
+
         ' Bitmap stores mask (monochrome)
-        Dim hMaskBmp                    As Long
+        Dim hMaskBmp     As Long
+
         ' Bitmap holds inverse of mask (monochrome)
-        Dim hInvBmp                     As Long
+        Dim hInvBmp      As Long
+
         ' Bitmap combination of source & background
-        Dim hResultBmp                  As Long
+        Dim hResultBmp   As Long
+
         ' Holds previous bitmap in saved DC
-        Dim hSavePrevBmp                As Long
+        Dim hSavePrevBmp As Long
+
         ' Holds previous bitmap in the mask DC
-        Dim hMaskPrevBmp                As Long
+        Dim hMaskPrevBmp As Long
+
         ' Holds previous bitmap in inverted mask DC
-        Dim hInvPrevBmp                 As Long
+        Dim hInvPrevBmp  As Long
+
         ' Holds previous bitmap in destination DC
-        Dim hDestPrevBmp                As Long
+        Dim hDestPrevBmp As Long
 
         ' Create DCs to hold various stages of transformation.
         saveDC = CreateCompatibleDC(hDestDC)
         maskDC = CreateCompatibleDC(hDestDC)
         invDC = CreateCompatibleDC(hDestDC)
         resultDC = CreateCompatibleDC(hDestDC)
-
         ' Create monochrome bitmaps for the mask-related bitmaps.
         hMaskBmp = CreateBitmap(nWidth, nHeight, 1, 1, ByVal 0&)
         hInvBmp = CreateBitmap(nWidth, nHeight, 1, 1, ByVal 0&)
-
         ' Create color bitmaps for final result & stored copy of source.
-
         hResultBmp = CreateCompatibleBitmap(hDestDC, nWidth, nHeight)
         hSaveBmp = CreateCompatibleBitmap(hDestDC, nWidth, nHeight)
-
         ' Select bitmaps into DCs.
         hSavePrevBmp = SelectObject(saveDC, hSaveBmp)
         hMaskPrevBmp = SelectObject(maskDC, hMaskBmp)
         hInvPrevBmp = SelectObject(invDC, hInvBmp)
         hDestPrevBmp = SelectObject(resultDC, hResultBmp)
-
         ' Create mask: set background color of source to transparent color.
         OrigColor = SetBkColor(hSrcDC, TransColor)
         Call BitBlt(maskDC, 0, 0, nWidth, nHeight, hSrcDC, XSrc, YSrc, vbSrcCopy)
         TransColor = SetBkColor(hSrcDC, OrigColor)
-
         ' Create inverse of mask to AND w/ source & combine w/ background.
         Call BitBlt(invDC, 0, 0, nWidth, nHeight, maskDC, 0, 0, vbNotSrcCopy)
-
         ' Copy background bitmap to result.
         Call BitBlt(resultDC, 0, 0, nWidth, nHeight, hDestDC, X, Y, vbSrcCopy)
-
         ' AND mask bitmap w/ result DC to punch hole in the background by
         ' painting black area for non-transparent portion of source bitmap.
         Call BitBlt(resultDC, 0, 0, nWidth, nHeight, maskDC, 0, 0, vbSrcAnd)
-
 
         '   Check to see if this is a GreyScale Image, if so then GrayBlt it
         '   to the DC it is located on...
         If Disabled Then
             GrayBlt hSrcDC, hSrcDC, nWidth, nHeight
-
         End If
 
         ' get overlapper
         Call BitBlt(saveDC, 0, 0, nWidth, nHeight, hSrcDC, XSrc, YSrc, vbSrcCopy)
-
         ' AND with inverse monochrome mask
         Call BitBlt(saveDC, 0, 0, nWidth, nHeight, invDC, 0, 0, vbSrcAnd)
-
         ' XOR these two
         Call BitBlt(resultDC, 0, 0, nWidth, nHeight, saveDC, 0, 0, vbSrcInvert)
-
         ' Display transparent bitmap on background.
         Call BitBlt(hDestDC, X, Y, nWidth, nHeight, resultDC, 0, 0, vbSrcCopy)
-
         ' Select original objects back.
         Call SelectObject(saveDC, hSavePrevBmp)
         Call SelectObject(resultDC, hDestPrevBmp)
         Call SelectObject(maskDC, hMaskPrevBmp)
         Call SelectObject(invDC, hInvPrevBmp)
-      
         ' Deallocate system resources.
         Call DeleteObject(hSaveBmp)
         Call DeleteObject(hMaskBmp)
@@ -2655,12 +3164,13 @@ Dim hTmp                                As Long
         Call DeleteDC(invDC)
         Call DeleteDC(maskDC)
         Call DeleteDC(resultDC)
-
     End If
 
     Call DeleteDC(hSrcDC)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.TransBltEx", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2668,9 +3178,14 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function TranslateColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lColor (Long)
+'!--------------------------------------------------------------------------------
 Private Function TranslateColor(ByVal lColor As Long) As Long
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Func_ErrHandler
 
     If OleTranslateColor(lColor, 0, TranslateColor) Then
@@ -2678,7 +3193,9 @@ Private Function TranslateColor(ByVal lColor As Long) As Long
     End If
 
 Func_ErrHandlerExit:
+
     Exit Function
+
 Func_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.TranslateColor", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2686,17 +3203,27 @@ Func_ErrHandler:
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function UBoundEx
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   uArr() (PanelItem)
+'!--------------------------------------------------------------------------------
 Private Function UBoundEx(uArr() As PanelItem) As Long
 
     On Error Resume Next
 
     UBoundEx = UBound(uArr, 1)
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtEdit_KeyUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub txtEdit_KeyUp(KeyCode As Integer, Shift As Integer)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     Select Case KeyCode
@@ -2713,13 +3240,14 @@ Private Sub txtEdit_KeyUp(KeyCode As Integer, Shift As Integer)
                 m_PanelItems(m_ActivePanel).Text = txtEdit.Text
                 txtEdit.Visible = False
                 Refresh
-
             End If
 
     End Select
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.txtEdit_KeyUp", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2727,19 +3255,25 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtEdit_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtEdit_LostFocus()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     If txtEdit.Visible = True Then
         m_PanelItems(m_ActivePanel).Text = txtEdit.Text
         txtEdit.Visible = False
-
     End If
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.txtEdit_LostFocus", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2747,20 +3281,26 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Click()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     If txtEdit.Visible = True Then
         txtEdit.Visible = False
-
     End If
 
     RaiseEvent Click
     RaiseEvent PanelClick(GetPanelIndex())
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_Click", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2768,9 +3308,14 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_DblClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_DblClick()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     m_ActivePanel = GetPanelIndex()
@@ -2793,13 +3338,11 @@ Private Sub UserControl_DblClick()
                         txtEdit.Left = .ItemRect.Left - 1
                     Else
                         txtEdit.Left = .ItemRect.Left - 4
-
                     End If
 
                     txtEdit.Height = 16 - 12
                     txtEdit.Top = (ScaleHeight \ 2 - txtEdit.Height \ 2) - 1
                     txtEdit.Width = ((.ItemRect.Right - .ItemRect.Left)) + 8
-
                 End If
 
                 txtEdit.Text = .Text
@@ -2808,7 +3351,6 @@ Private Sub UserControl_DblClick()
                 txtEdit.Visible = True
                 txtEdit.ZOrder 0
                 txtEdit.SetFocus
-
             End If
 
         End With
@@ -2818,7 +3360,9 @@ Private Sub UserControl_DblClick()
     RaiseEvent DblClick
     RaiseEvent PanelDblClick(m_ActivePanel)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_DblClick", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2826,13 +3370,23 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Initialize()
     m_bIsWinXpOrLater = IsWinXPOrLater
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_InitProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_InitProperties()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     m_BackColor = vbButtonFace
@@ -2843,7 +3397,9 @@ Private Sub UserControl_InitProperties()
     m_Theme = usbAuto
     m_iTheme = m_Theme
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_InitProperties", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2851,14 +3407,22 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     RaiseEvent KeyDown(KeyCode, Shift)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_KeyDown", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2866,14 +3430,21 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_KeyPress
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyAscii (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_KeyPress(KeyAscii As Integer)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     RaiseEvent KeyPress(KeyAscii)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_KeyPress", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2881,14 +3452,22 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_KeyUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_KeyUp(KeyCode As Integer, Shift As Integer)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     RaiseEvent KeyUp(KeyCode, Shift)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_KeyUp", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2896,9 +3475,14 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_LostFocus()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     If txtEdit.Visible = True Then
@@ -2907,7 +3491,9 @@ Private Sub UserControl_LostFocus()
     End If
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_LostFocus", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2915,12 +3501,17 @@ Sub_ErrHandler:
 
 End Sub
 
-Private Sub UserControl_MouseDown(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     If m_Sizable Then
@@ -2935,7 +3526,9 @@ Private Sub UserControl_MouseDown(Button As Integer, _
     RaiseEvent MouseDown(Button, Shift, X, Y)
     RaiseEvent PanelMouseDown(GetPanelIndex(), Button, Shift, X, Y)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_MouseDown", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2943,25 +3536,31 @@ Sub_ErrHandler:
 
 End Sub
 
-Private Sub UserControl_MouseMove(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     If PtInRect(m_GripRect, CLng(X), CLng(Y)) Then
         UserControl.MousePointer = vbSizeNWSE
     Else
         UserControl.MousePointer = vbDefault
-
     End If
 
     RaiseEvent MouseMove(Button, Shift, X, Y)
     RaiseEvent PanelMouseMove(GetPanelIndex(), Button, Shift, X, Y)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_MouseMove", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2969,18 +3568,25 @@ Sub_ErrHandler:
 
 End Sub
 
-Private Sub UserControl_MouseUp(Button As Integer, _
-                                Shift As Integer, _
-                                X As Single, _
-                                Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     RaiseEvent MouseUp(Button, Shift, X, Y)
     RaiseEvent PanelMouseUp(GetPanelIndex(), Button, Shift, X, Y)
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_MouseUp", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -2988,14 +3594,21 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Paint
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Paint()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     Refresh
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_Paint", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -3003,9 +3616,14 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Resize()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     With UserControl
@@ -3023,7 +3641,9 @@ Private Sub UserControl_Resize()
     UserControl.Refresh
     Refresh
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_Resize", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -3031,14 +3651,21 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Show
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Show()
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     Refresh
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_Show", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -3046,9 +3673,14 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_ReadProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     With PropBag
@@ -3093,11 +3725,12 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
             End With
 
         End If
-
     End If
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_ReadProperties", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -3105,9 +3738,14 @@ Sub_ErrHandler:
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
 
-Dim i                                   As Long
+    Dim i As Long
 
     'The control is terminating - a good place to stop the subclasser
     On Error Resume Next
@@ -3125,13 +3763,17 @@ Dim i                                   As Long
 
     Next
 
-sc_Terminate
-
+    sc_Terminate
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 
-'   Handle Any Errors
+    '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
     With PropBag
@@ -3145,7 +3787,9 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     End With
 
 Sub_ErrHandlerExit:
+
     Exit Sub
+
 Sub_ErrHandler:
     Err.Raise Err.Number, "ucStatusBar.UserControl_WriteProperties", Err.Description, Err.HelpFile, Err.HelpContext
 
@@ -3155,31 +3799,38 @@ End Sub
 
 '======================================================================================================
 '-Subclass callback, usually ordinal #1, the last method in this source file----------------------
-Private Sub zWndProc1(ByVal bBefore As Boolean, _
-                      ByRef bHandled As Boolean, _
-                      ByRef lReturn As Long, _
-                      ByVal lng_hWnd As Long, _
-                      ByVal uMsg As Long, _
-                      ByVal wParam As Long, _
-                      ByVal lParam As Long, _
-                      ByRef lParamUser As Long)
-'*************************************************************************************************
-'* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
-'*              you will know unless the callback for the uMsg value is specified as
-'*              MSG_BEFORE_AFTER (both before and after the original WndProc).
-'* bHandled   - In a before original WndProc callback, setting bHandled to True will prevent the
-'*              message being passed to the original WndProc and (if set to do so) the after
-'*              original WndProc callback.
-'* lReturn    - WndProc return value. Set as per the MSDN documentation for the message value,
-'*              and/or, in an after the original WndProc callback, act on the return value as set
-'*              by the original WndProc.
-'* lng_hWnd   - Window handle.
-'* uMsg       - Message value.
-'* wParam     - Message related data.
-'* lParam     - Message related data.
-'* lParamUser - User-defined callback parameter
-'*************************************************************************************************
-  Select Case uMsg
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub zWndProc1
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   bBefore (Boolean)
+'                              bHandled (Boolean)
+'                              lReturn (Long)
+'                              lng_hWnd (Long)
+'                              uMsg (Long)
+'                              wParam (Long)
+'                              lParam (Long)
+'                              lParamUser (Long)
+'!--------------------------------------------------------------------------------
+Private Sub zWndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByRef lParamUser As Long)
+
+    '*************************************************************************************************
+    '* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
+    '*              you will know unless the callback for the uMsg value is specified as
+    '*              MSG_BEFORE_AFTER (both before and after the original WndProc).
+    '* bHandled   - In a before original WndProc callback, setting bHandled to True will prevent the
+    '*              message being passed to the original WndProc and (if set to do so) the after
+    '*              original WndProc callback.
+    '* lReturn    - WndProc return value. Set as per the MSDN documentation for the message value,
+    '*              and/or, in an after the original WndProc callback, act on the return value as set
+    '*              by the original WndProc.
+    '* lng_hWnd   - Window handle.
+    '* uMsg       - Message value.
+    '* wParam     - Message related data.
+    '* lParam     - Message related data.
+    '* lParamUser - User-defined callback parameter
+    '*************************************************************************************************
+    Select Case uMsg
+
         Case WM_MOUSEMOVE
 
             If Not bInCtrl Then
@@ -3203,5 +3854,6 @@ Private Sub zWndProc1(ByVal bBefore As Boolean, _
 
         Case WM_THEMECHANGED
             Refresh
-  End Select
+    End Select
+
 End Sub

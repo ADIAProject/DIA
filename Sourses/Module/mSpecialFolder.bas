@@ -74,7 +74,6 @@ Public Enum CSIDL_VALUES
     CSIDL_FLAG_DONT_VERIFY = &H4000
     CSIDL_FLAG_CREATE = &H8000
     CSIDL_FLAG_MASK = &HFF00
-
 End Enum
 
 #If False Then
@@ -91,59 +90,32 @@ End Enum
     Private CSIDL_FLAG_NO_ALIAS, CSIDL_FLAG_DONT_VERIFY, CSIDL_FLAG_CREATE, CSIDL_FLAG_MASK
 #End If
 
-Private Const SHGFP_TYPE_CURRENT        As Long = &H0    'current value for user, verify it exists
+Private Const SHGFP_TYPE_CURRENT As Long = &H0    'current value for user, verify it exists
 
 'Private Const SHGFP_TYPE_DEFAULT    As Long = &H1
-Private Const MAX_LENGTH                As Long = 260
-Private Const S_OK                      As Long = 0
+Private Const MAX_LENGTH         As Long = 260
+Private Const S_OK               As Long = 0
 
 'Private Const S_FALSE               As Long = 1
-Private Declare Function SHGetFolderPath _
-                          Lib "shfolder.dll" _
-                              Alias "SHGetFolderPathA" (ByVal hWndOwner As Long, _
-                                                        ByVal nFolder As Long, _
-                                                        ByVal hToken As Long, _
-                                                        ByVal dwReserved As Long, _
-                                                        ByVal lpszPath As String) As Long
+Private Declare Function SHGetFolderPath Lib "shfolder.dll" Alias "SHGetFolderPathA" (ByVal hWndOwner As Long, ByVal nFolder As Long, ByVal hToken As Long, ByVal dwReserved As Long, ByVal lpszPath As String) As Long
+Private Declare Function GetPrinterDriverDirectory Lib "winspool.drv" Alias "GetPrinterDriverDirectoryA" (ByVal pName As String, ByVal pEnvironment As String, ByVal Level As Long, ByVal pDriverDirectory As String, ByVal cbBuff As Long, pcbNeeded As Long) As Long
 
-Private Declare Function GetPrinterDriverDirectory _
-                          Lib "winspool.drv" _
-                              Alias "GetPrinterDriverDirectoryA" (ByVal pName As String, _
-                                                                  ByVal pEnvironment As String, _
-                                                                  ByVal Level As Long, _
-                                                                  ByVal pDriverDirectory As String, _
-                                                                  ByVal cbBuff As Long, _
-                                                                  pcbNeeded As Long) As Long
+Public Declare Function GetPrintProcessorDirectory Lib "winspool.drv" Alias "GetPrintProcessorDirectoryA" (ByVal pName As String, ByVal pEnvironment As String, ByVal Level As Long, ByVal pPrintProcessorInfo As String, ByVal cdBuf As Long, pcbNeeded As Long) As Long
+Declare Function GetColorDirectory Lib "mscms" Alias "GetColorDirectoryA" (ByVal pcstr As String, ByVal pstr As String, ByRef pdword As Long) As Long
 
-Public Declare Function GetPrintProcessorDirectory _
-                         Lib "winspool.drv" _
-                             Alias "GetPrintProcessorDirectoryA" (ByVal pName As String, _
-                                                                  ByVal pEnvironment As String, _
-                                                                  ByVal Level As Long, _
-                                                                  ByVal pPrintProcessorInfo As String, _
-                                                                  ByVal cdBuf As Long, _
-                                                                  pcbNeeded As Long) As Long
-Declare Function GetColorDirectory _
-                  Lib "mscms" _
-                      Alias "GetColorDirectoryA" (ByVal pcstr As String, _
-                                                  ByVal pstr As String, _
-                                                  ByRef pdword As Long) As Long
+Private Declare Function GetWindowsDirectory Lib "kernel32.dll" Alias "GetWindowsDirectoryA" (ByVal lpBuffer As String, ByVal nSize As Long) As Long
+Private Declare Function GetSystemDirectory Lib "kernel32.dll" Alias "GetSystemDirectoryA" (ByVal lpBuffer As String, ByVal nSize As Long) As Long
 
-Private Declare Function GetWindowsDirectory _
-                          Lib "kernel32.dll" _
-                              Alias "GetWindowsDirectoryA" (ByVal lpBuffer As String, _
-                                                            ByVal nSize As Long) As Long
-
-Private Declare Function GetSystemDirectory _
-                          Lib "kernel32.dll" _
-                              Alias "GetSystemDirectoryA" (ByVal lpBuffer As String, _
-                                                           ByVal nSize As Long) As Long
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function Getpath_PrinterColorDirectory
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function Getpath_PrinterColorDirectory() As String
 
-Dim WindirS                             As String * 255
-Dim Temp                                As Long
-Dim Result                              As String
+    Dim WindirS As String * 255
+    Dim Temp    As Long
+    Dim Result  As String
 
     'declares a full lenght string for DIR name(for getting the path)
     'a temporarry variable that holds LENGHT OF THE FINAL PATH STRING!
@@ -151,17 +123,21 @@ Dim Result                              As String
     Temp = GetColorDirectory(vbNullString, WindirS, 255)
     Result = TrimNull(WindirS)
     Getpath_PrinterColorDirectory = Result
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function Getpath_PrinterDriverDirectory
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function Getpath_PrinterDriverDirectory() As String
 
-Dim Level                               As Long
-Dim cbBuff                              As Long
-Dim pcbNeeded                           As Long
-Dim pName                               As String
-Dim pEnvironment                        As String
-Dim pDriverDirectory                    As String
+    Dim Level            As Long
+    Dim cbBuff           As Long
+    Dim pcbNeeded        As Long
+    Dim pName            As String
+    Dim pEnvironment     As String
+    Dim pDriverDirectory As String
 
     'initialization to determine size of buffer required
     Level = 1
@@ -195,21 +171,24 @@ Dim pDriverDirectory                    As String
         'call again. Success = 1
         If GetPrinterDriverDirectory(pName, pEnvironment, Level, pDriverDirectory, cbBuff, pcbNeeded) = 1 Then
             Getpath_PrinterDriverDirectory = Left$(pDriverDirectory, pcbNeeded)
-
         End If
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function Getpath_PrintProcessorDirectory
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function Getpath_PrintProcessorDirectory() As String
 
-Dim Level                               As Long
-Dim cbBuff                              As Long
-Dim pcbNeeded                           As Long
-Dim pName                               As String
-Dim pEnvironment                        As String
-Dim pDriverDirectory                    As String
+    Dim Level            As Long
+    Dim cbBuff           As Long
+    Dim pcbNeeded        As Long
+    Dim pName            As String
+    Dim pEnvironment     As String
+    Dim pDriverDirectory As String
 
     'initialization to determine size of buffer required
     Level = 1
@@ -243,18 +222,21 @@ Dim pDriverDirectory                    As String
         'call again. Success = 1
         If GetPrintProcessorDirectory(pName, pEnvironment, Level, pDriverDirectory, cbBuff, pcbNeeded) = 1 Then
             Getpath_PrintProcessorDirectory = Left$(pDriverDirectory, pcbNeeded)
-
         End If
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function Getpath_SYSTEM
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function Getpath_SYSTEM() As String
 
-Dim WindirS                             As String * 255
-Dim Temp                                As Long
-Dim Result                              As String
+    Dim WindirS As String * 255
+    Dim Temp    As Long
+    Dim Result  As String
 
     'declares a full lenght string for DIR name(for getting the path)
     'a temporarry variable that holds LENGHT OF THE FINAL PATH STRING!
@@ -262,15 +244,19 @@ Dim Result                              As String
     Temp = GetSystemDirectory(WindirS, 255)
     Result = Left$(WindirS, Temp)
     Getpath_SYSTEM = BackslashAdd2Path(Result)
-
 End Function
 
-Public Function GetSpecialFolderPath(csidl As CSIDL_VALUES, _
-                                     Optional SHGFP_TYPE As Long = SHGFP_TYPE_CURRENT) As String
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetSpecialFolderPath
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   csidl (CSIDL_VALUES)
+'                              SHGFP_TYPE (Long = SHGFP_TYPE_CURRENT)
+'!--------------------------------------------------------------------------------
+Public Function GetSpecialFolderPath(csidl As CSIDL_VALUES, Optional SHGFP_TYPE As Long = SHGFP_TYPE_CURRENT) As String
 
-Dim buff                                As String
-Dim dwFlags                             As Long
-Dim lngResult                           As Long
+    Dim buff      As String
+    Dim dwFlags   As Long
+    Dim lngResult As Long
 
     'fill buffer with the specified folder item
     buff = String$(MAX_LENGTH, vbNullChar)
@@ -280,7 +266,6 @@ Dim lngResult                           As Long
         GetSpecialFolderPath = TrimNull(buff)
     Else
         DebugMode "GetSpecialFolderPath: csidl=" & csidl & " SHGFP_TYPE=" & SHGFP_TYPE & " ResultCode=" & lngResult
-
     End If
 
 End Function

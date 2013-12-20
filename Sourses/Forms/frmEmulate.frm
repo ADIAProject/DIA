@@ -164,12 +164,17 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strFilePath                     As String
-Private strFormName                     As String
+Private strFilePath As String
+Private strFormName As String
 
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -183,6 +188,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  нажали выход
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
@@ -192,22 +202,30 @@ End Sub
 '!  Переменные  :  ByVal strFilePath As String
 '!  Описание    :  Загрузка файла и переопределение массива
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadAndParseFile
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFilePath (String)
+'!--------------------------------------------------------------------------------
 Private Sub LoadAndParseFile(ByVal strFilePath As String)
-Dim arrFileStrings()            As String
-Dim ColumnByStrings()           As String
-Dim i                           As Long
-Dim strContentFile              As String
-Dim objLoadedfFile              As TextStream
+
+    Dim arrFileStrings()  As String
+    Dim ColumnByStrings() As String
+    Dim i                 As Long
+    Dim strContentFile    As String
+    Dim objLoadedfFile    As TextStream
 
     Set objLoadedfFile = objFSO.OpenTextFile(strFilePath, ForReading, False, TristateUseDefault)
     strContentFile = objLoadedfFile.ReadAll
     objLoadedfFile.Close
-
     arrFileStrings = Split(strContentFile, vbNewLine)
+
     'Переопределяем основной массив с данными об устройствах компьютера
     ReDim arrHwidsLocal(UBound(arrFileStrings))
+
     For i = 0 To UBound(arrFileStrings)
         ColumnByStrings = Split(arrFileStrings(i), vbTab)
+
         With arrHwidsLocal(i)
             .HWID = ColumnByStrings(0)
             .DevName = ColumnByStrings(1)
@@ -226,27 +244,32 @@ Dim objLoadedfFile              As TextStream
             .DPsList = vbNullString
             .DRVScore = 0
         End With
+
     Next i
 
 End Sub
+
 '! -----------------------------------------------------------
 '!  Функция     :  cmdOK_Click
 '!  Переменные  :
 '!  Описание    :  нажали ок
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
-Dim strFilePath As String
+
+    Dim strFilePath As String
 
     strFilePath = ucFilePath.Path
-    
+
     If LenB(strFilePath) Then
-    
         LoadAndParseFile strFilePath
-        
         'Переопределение версии и разрядности системы для режима эмуляции
         mbIsWin64 = CBool(chk64bit.Value)
         strOsCurrentVersion = Mid$(cmbOS.Text, 2, 3)
-        
         ' А теперь Обновляем статус всех пакетов
         frmMain.UpdateStatusButtonAll
         ' Обновить список неизвестных дров и описание для кнопки
@@ -257,7 +280,13 @@ Dim strFilePath As String
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucFilePath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucFilePath_Click()
+
     If ucFilePath.FileCount > 0 Then
         strFilePath = ucFilePath.FileName
     End If
@@ -267,10 +296,16 @@ Private Sub ucFilePath_Click()
         ' активация кнопки старт
         EnablerCmdOK
     End If
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -280,7 +315,6 @@ Private Sub Localise(ByVal StrPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -288,6 +322,12 @@ End Sub
 '!  Переменные  :  KeyCode As Integer, Shift As Integer
 '!  Описание    :  обработка нажатий клавиш клавиатуры
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
@@ -301,8 +341,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  обработка при загрузке формы
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-' Устанавливаем картинки кнопок и убираем описание кнопок
+    ' Устанавливаем картинки кнопок и убираем описание кнопок
     SetupVisualStyles Me
 
     With Me
@@ -322,15 +367,20 @@ Private Sub Form_Load()
         ' Выставляем шрифт
         FontCharsetChange
     End If
-    
+
     ' Загружаем список операционных систем
     LoadListOS
     LoadDefaultParam
-    
 End Sub
 
 ' Активизация кнопки OK
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub EnablerCmdOK
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub EnablerCmdOK()
+
     If Not PathIsAFolder(ucFilePath.Path) Then
         If PathExists(ucFilePath.Path) Then
             If cmbOS.ListIndex >= 0 Then
@@ -338,35 +388,50 @@ Private Sub EnablerCmdOK()
             End If
         End If
     End If
+
 End Sub
 
 'заполнение списка на выделение
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadDefaultParam
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadDefaultParam()
-Dim i As Long
-Dim strVerClient As String
 
-' Выставляем текущую версию ОС, анализом из списка
+    Dim i            As Long
+    Dim strVerClient As String
+
+    ' Выставляем текущую версию ОС, анализом из списка
     If Not OsCurrVersionStruct.ClientOrServer Then
         strVerClient = "*" & OsCurrVersionStruct.VerFull & "*" & "Server"
     Else
         strVerClient = "*" & OsCurrVersionStruct.VerFull & "*"
     End If
-    
+
     For i = 0 To cmbOS.ListCount - 1
+
         If MatchSpec(cmbOS.List(i), strVerClient) Then
             cmbOS.ListIndex = i
+
             Exit For
+
         End If
+
     Next i
-    
-' Выставляем текущую разрядность ОС
+
+    ' Выставляем текущую разрядность ОС
     chk64bit.Value = CBool(mbIsWin64)
-    
-' Выставляем стартовый каталог
+    ' Выставляем стартовый каталог
     ucFilePath.Path = strAppPathBackSL
 End Sub
 
 'заполнение списка на выделение
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadListOS
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadListOS()
 
     With cmbOS
@@ -383,6 +448,5 @@ Private Sub LoadListOS()
         .AddItem "(6.2) Windows Server 2012", 9
         .AddItem "(6.3) Windows Server 2012 R2", 10
     End With
-    
-End Sub
 
+End Sub

@@ -6,25 +6,25 @@ Option Explicit
 'такие как разрешение по вертикали и горизонтали, а также глубину цвета и текущую частоту обновления.
 '----------------------------------------------------------
 'Размер по горизонтали в точках
-Private Const HORZRES                   As Long = 8
+Private Const HORZRES                As Long = 8
 
 'Размер по вертикали в точках
-Private Const VERTRES                   As Long = 10
+Private Const VERTRES                As Long = 10
 
 'Кол-во бит на точку
-Private Const BITSPIXEL                 As Long = 12
+Private Const BITSPIXEL              As Long = 12
 
-Private EW                              As Long
+Private EW                           As Long
 
-Private Const CCDEVICENAME              As Long = 32
-Private Const CCFORMNAME                As Long = 32
-Private Const DM_BITSPERPEL             As Long = &H40000
-Private Const DM_PELSWIDTH              As Long = &H80000
-Private Const DM_PELSHEIGHT             As Long = &H100000
-Private Const CDS_UPDATEREGISTRY        As Long = &H1
-Private Const CDS_TEST                  As Long = &H4
-Private Const DISP_CHANGE_SUCCESSFUL    As Long = 0
-Private Const DISP_CHANGE_RESTART       As Long = 1
+Private Const CCDEVICENAME           As Long = 32
+Private Const CCFORMNAME             As Long = 32
+Private Const DM_BITSPERPEL          As Long = &H40000
+Private Const DM_PELSWIDTH           As Long = &H80000
+Private Const DM_PELSHEIGHT          As Long = &H100000
+Private Const CDS_UPDATEREGISTRY     As Long = &H1
+Private Const CDS_TEST               As Long = &H4
+Private Const DISP_CHANGE_SUCCESSFUL As Long = 0
+Private Const DISP_CHANGE_RESTART    As Long = 1
 
 Private Type DEVMODE
     DMDeviceName                            As String * CCDEVICENAME
@@ -53,38 +53,22 @@ Private Type DEVMODE
     DMPelsHeight                        As Long
     DMDisplayFlags                      As Long
     DMDisplayFrequency                  As Long
-
 End Type
 
-Private MyDevMode                       As DEVMODE
-Private BackVal                         As Long
+Private MyDevMode        As DEVMODE
+Private BackVal          As Long
 
 '--------------------------------------------------
 'Завершает работу системы
 '--------------------------------------------------
 'Перезагружает компьютер
-Private Const EWX_REBOOT                As Long = 2
+Private Const EWX_REBOOT As Long = 2
 
-Private Declare Function ChangeDisplaySettings _
-                          Lib "user32.dll" _
-                              Alias "ChangeDisplaySettingsA" (lpDevMode As Any, _
-                                                              ByVal dwFlags As Long) As Long
-
-Private Declare Function EnumDisplaySettings _
-                          Lib "user32.dll" _
-                              Alias "EnumDisplaySettingsA" (ByVal lpszDeviceName As String, _
-                                                            ByVal iModeNum As Long, _
-                                                            lpDevMode As DEVMODE) As Long
-
+Private Declare Function ChangeDisplaySettings Lib "user32.dll" Alias "ChangeDisplaySettingsA" (lpDevMode As Any, ByVal dwFlags As Long) As Long
+Private Declare Function EnumDisplaySettings Lib "user32.dll" Alias "EnumDisplaySettingsA" (ByVal lpszDeviceName As String, ByVal iModeNum As Long, lpDevMode As DEVMODE) As Long
 Private Declare Function GetDC Lib "user32.dll" (ByVal hWnd As Long) As Long
-Private Declare Function ExitWindowsEx _
-                          Lib "user32.dll" (ByVal uFlags As Long, _
-                                            ByVal dwReserved As Long) As Long
-
-Private Declare Function GetDeviceCaps _
-                          Lib "gdi32.dll" (ByVal hDC As Long, _
-                                           ByVal nIndex As Long) As Long
-
+Private Declare Function ExitWindowsEx Lib "user32.dll" (ByVal uFlags As Long, ByVal dwReserved As Long) As Long
+Private Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 Private Declare Function GetDesktopWindow Lib "user32.dll" () As Long
 
 '! -----------------------------------------------------------
@@ -92,11 +76,16 @@ Private Declare Function GetDesktopWindow Lib "user32.dll" () As Long
 '!  Переменные  :  Width As Long, Height As Long, BitColor As Long
 '!  Описание    :  Получение настроек разрешения монитора
 '! -----------------------------------------------------------
-Private Sub ChangeResolution(ByVal lngWidth As Long, _
-                             ByVal lngHeight As Long, _
-                             ByVal BitColor As Long)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ChangeResolution
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lngWidth (Long)
+'                              lngHeight (Long)
+'                              BitColor (Long)
+'!--------------------------------------------------------------------------------
+Private Sub ChangeResolution(ByVal lngWidth As Long, ByVal lngHeight As Long, ByVal BitColor As Long)
 
-Dim iMsg                                As Long
+    Dim iMsg As Long
 
     MyDevMode.DMSize = Len(MyDevMode)
     BackVal = EnumDisplaySettings(vbNullString, 0&, MyDevMode)
@@ -106,7 +95,6 @@ Dim iMsg                                As Long
         .DMPelsWidth = lngWidth
         .DMPelsHeight = lngHeight
         .DMBitsPerPel = BitColor
-
     End With
 
     'MYDEVMODE
@@ -116,7 +104,6 @@ Dim iMsg                                As Long
     If BackVal <> DISP_CHANGE_SUCCESSFUL Then
         If Not mbRunWithParam Then
             MsgBox strMessages(47), 16, strProductName
-
         End If
 
     Else
@@ -134,18 +121,15 @@ Dim iMsg                                As Long
 
                     If iMsg = vbYes Then
                         EW = ExitWindowsEx(EWX_REBOOT, 0)
-
                         'Перезагрузка
                         'ExitWindowsEx(EWX_FORCE,0) закрыть все приложения без предложения сохранить изменения
                     End If
 
                 Case Else
                     MsgBox strMessages(50), 16, "Oops!"
-
             End Select
 
         End If
-
     End If
 
 End Sub
@@ -155,18 +139,22 @@ End Sub
 '!  Переменные  :  ByRef Width As Long, ByRef Height As Long, ByRef Depth As Long
 '!  Описание    :  Получение настроек разрешения монитора
 '! -----------------------------------------------------------
-Private Sub GetVideoMode(ByRef lngWidth As Long, _
-                         ByRef lngHeight As Long, _
-                         ByRef Depth As Long)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GetVideoMode
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lngWidth (Long)
+'                              lngHeight (Long)
+'                              Depth (Long)
+'!--------------------------------------------------------------------------------
+Private Sub GetVideoMode(ByRef lngWidth As Long, ByRef lngHeight As Long, ByRef Depth As Long)
 
-Dim hDC                                 As Long
+    Dim hDC As Long
 
     hDC = GetDC(GetDesktopWindow())
     lngWidth = GetDeviceCaps(hDC, HORZRES)
     lngHeight = GetDeviceCaps(hDC, VERTRES)
     Depth = GetDeviceCaps(hDC, BITSPIXEL)
     ReleaseDC GetDesktopWindow(), hDC
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -174,11 +162,16 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Изменение разрешения экрана
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetVideoMode
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub SetVideoMode()
 
-Dim iXres                               As Long
-Dim iYres                               As Long
-Dim iColor                              As Long
+    Dim iXres  As Long
+    Dim iYres  As Long
+    Dim iColor As Long
 
     'Текущие параметры экрана
     GetVideoMode iXres, iYres, iColor
@@ -193,12 +186,11 @@ Dim iColor                              As Long
 
         Else
             ChangeResolution 800, 600, iColor
-
         End If
-
     End If
 
     GetVideoMode iXres, iYres, iColor
+
     If iXres <= 800 Or iYres <= 600 Then
         mbChangeResolution = True
     End If

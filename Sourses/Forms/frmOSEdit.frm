@@ -459,15 +459,25 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strFormName                     As String
+Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkNotCheckBitOS_Click()
     chk64bit.Enabled = Not chkNotCheckBitOS.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -481,6 +491,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
@@ -490,18 +505,26 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
 
     If ucPathDB.Path = "Путь до каталога хранения БД" Then
         ucPathDB.Path = BackslashAdd2Path(ucPathDRP.Path) & "dev_db"
-
     End If
 
     SaveOptions
     Unload Me
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
     txtOSVer_Change
     'txtOSVer.SetFocus
@@ -512,11 +535,16 @@ End Sub
 '!  Переменные  :  KeyCode As Integer, Shift As Integer
 '!  Описание    :  обработка нажатий клавиш клавиатуры
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         Unload Me
-
     End If
 
 End Sub
@@ -526,9 +554,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
     SetupVisualStyles Me
-
 
     With Me
         strFormName = .Name
@@ -561,10 +593,13 @@ End Sub
 '    End If
 '
 'End Sub
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -583,7 +618,6 @@ Private Sub Localise(ByVal StrPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -591,9 +625,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveOptions
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-Dim i                                   As Long
+    Dim i As Long
 
     If mbAddInList Then
         i = LastIdOS + 1
@@ -609,6 +648,7 @@ Dim i                                   As Long
                 Else
                     .SubItems(4) = "1"
                 End If
+
             Else
 
                 If chkNotCheckBitOS.Value Then
@@ -616,7 +656,6 @@ Dim i                                   As Long
                 Else
                     .SubItems(4) = "0"
                 End If
-
             End If
 
             .SubItems(5) = ucPhysXPath.Path
@@ -640,7 +679,6 @@ Dim i                                   As Long
                     .ListItems.Item(i).SubItems(4) = "3"
                 Else
                     .ListItems.Item(i).SubItems(4) = "1"
-
                 End If
 
             Else
@@ -650,14 +688,12 @@ Dim i                                   As Long
                 Else
                     .ListItems.Item(i).SubItems(4) = "0"
                 End If
-
             End If
 
             .ListItems.Item(i).SubItems(5) = ucPhysXPath.Path
             .ListItems.Item(i).SubItems(6) = ucLangPath.Path
             .ListItems.Item(i).SubItems(7) = ucRuntimesPath.Path
             .ListItems.Item(i).SubItems(8) = txtExcludeFileName
-
         End With
 
         'FRMOPTIONS
@@ -666,127 +702,202 @@ Dim i                                   As Long
     LastIdOS = frmOptions.lvOS.ListItems.Count
     frmOptions.lvOS.Refresh
     mbAddInList = False
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtExcludeFileName_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtExcludeFileName_GotFocus()
     HighlightActiveControl Me, txtExcludeFileName, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtExcludeFileName_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtExcludeFileName_LostFocus()
     HighlightActiveControl Me, txtExcludeFileName, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtOSName_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtOSName_GotFocus()
     HighlightActiveControl Me, txtOSName, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtOSName_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtOSName_LostFocus()
     HighlightActiveControl Me, txtOSName, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtOSVer_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtOSVer_GotFocus()
     HighlightActiveControl Me, txtOSVer, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtOSVer_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtOSVer_LostFocus()
     HighlightActiveControl Me, txtOSVer, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtOSVer_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtOSVer_Change()
     cmdOK.Enabled = LenB(Trim$(txtOSVer)) > 0 And LenB(Trim$(ucPathDRP.Path)) > 0
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucLangPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucLangPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucLangPath.FileCount > 0 Then
         strTempPath = ucLangPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucLangPath.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucLangPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucLangPath_GotFocus()
     HighlightActiveControl Me, ucLangPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucLangPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucLangPath_LostFocus()
     HighlightActiveControl Me, ucLangPath, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathDB_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathDB_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucPathDB.FileCount > 0 Then
         strTempPath = ucPathDB.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucPathDB.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathDB_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathDB_GotFocus()
     HighlightActiveControl Me, ucPathDB, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathDB_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathDB_LostFocus()
     HighlightActiveControl Me, ucPathDB, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathDRP_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathDRP_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucPathDRP.FileCount > 0 Then
         strTempPath = ucPathDRP.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucPathDRP.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathDRP_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathDRP_GotFocus()
     HighlightActiveControl Me, ucPathDRP, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathDRP_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPathDRP_LostFocus()
     HighlightActiveControl Me, ucPathDRP, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPhysXPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPhysXPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucPhysXPath.FileCount > 0 Then
         strTempPath = ucPhysXPath.FileName
@@ -798,44 +909,65 @@ Dim strTempPath                         As String
 
     If LenB(strTempPath) > 0 Then
         ucPhysXPath.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPhysXPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPhysXPath_GotFocus()
     HighlightActiveControl Me, ucPhysXPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPhysXPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucPhysXPath_LostFocus()
     HighlightActiveControl Me, ucPhysXPath, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucRuntimesPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucRuntimesPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucRuntimesPath.FileCount > 0 Then
         strTempPath = ucRuntimesPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucRuntimesPath.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucRuntimesPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucRuntimesPath_GotFocus()
     HighlightActiveControl Me, ucRuntimesPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucRuntimesPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucRuntimesPath_LostFocus()
     HighlightActiveControl Me, ucRuntimesPath, False
 End Sub

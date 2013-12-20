@@ -3133,7 +3133,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Public WithEvents lvOptions             As cListView
+Public WithEvents lvOptions As cListView
 Attribute lvOptions.VB_VarHelpID = -1
 
 'ItemOptions1=Основные настройки
@@ -3145,33 +3145,38 @@ Attribute lvOptions.VB_VarHelpID = -1
 'ItemOptions8=Основные настройки 2
 'ItemOptions9=Оформление программы 2
 'ItemOptions10=Отладочный режим
+Private strItemOptions1     As String
+Private strItemOptions2     As String
+Private strItemOptions3     As String
+Private strItemOptions4     As String
+Private strItemOptions5     As String
+Private strItemOptions6     As String
+Private strItemOptions8     As String
+Private strItemOptions9     As String
+Private strItemOptions10    As String
+Private strTableOSHeader1   As String
+Private strTableOSHeader2   As String
+Private strTableOSHeader3   As String
+Private strTableOSHeader4   As String
+Private strTableOSHeader5   As String
+Private strTableOSHeader6   As String
+Private strTableOSHeader7   As String
+Private strTableOSHeader8   As String
+Private strTableOSHeader9   As String
+Private strTableUtilHeader1 As String
+Private strTableUtilHeader2 As String
+Private strTableUtilHeader3 As String
+Private strTableUtilHeader4 As String
+Private strFormName         As String
 
-Private strItemOptions1                 As String
-Private strItemOptions2                 As String
-Private strItemOptions3                 As String
-Private strItemOptions4                 As String
-Private strItemOptions5                 As String
-Private strItemOptions6                 As String
-Private strItemOptions8                 As String
-Private strItemOptions9                 As String
-Private strItemOptions10                As String
-Private strTableOSHeader1               As String
-Private strTableOSHeader2               As String
-Private strTableOSHeader3               As String
-Private strTableOSHeader4               As String
-Private strTableOSHeader5               As String
-Private strTableOSHeader6               As String
-Private strTableOSHeader7               As String
-Private strTableOSHeader8               As String
-Private strTableOSHeader9               As String
-Private strTableUtilHeader1             As String
-Private strTableUtilHeader2             As String
-Private strTableUtilHeader3             As String
-Private strTableUtilHeader4             As String
-Private strFormName                     As String
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -3191,6 +3196,11 @@ Private Sub FontCharsetChange()
     frOtherTools.Font.Charset = lngDialog_Charset
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ChangeButtonProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ChangeButtonProperties()
 
     With cmdFutureButton
@@ -3211,128 +3221,213 @@ Private Sub ChangeButtonProperties()
     End With
 
     SetButtonProperties cmdFutureButton
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkButtonDisable_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkButtonDisable_Click()
     cmdFutureButton.EnabledCtrl = chkButtonDisable.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkButtonTextUpCase_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkButtonTextUpCase_Click()
     ChangeButtonProperties
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkDebug_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkDebug_Click()
     DebugCtlEnable chkDebug.Value
     DebugCtlEnableLog2App Not chkDebugLog2AppPath.Value
+
     If Not chkDebug.Value Then
         If Not chkDebugLog2AppPath.Value Then
             ucDebugLogPath.Enabled = False
         End If
     End If
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkDebugLog2AppPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkDebugLog2AppPath_Click()
     DebugCtlEnableLog2App Not chkDebugLog2AppPath.Value
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkForceIfDriverIsNotBetter_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkForceIfDriverIsNotBetter_Click()
     mbDpInstForceIfDriverIsNotBetter = chkForceIfDriverIsNotBetter.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkFormMaximaze_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkFormMaximaze_Click()
 
     If chkFormMaximaze.Value Then
         chkFormSizeSave.Value = False
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkFormSizeSave_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkFormSizeSave_Click()
 
     If chkFormSizeSave.Value Then
         chkFormMaximaze.Value = False
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkLegacyMode_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkLegacyMode_Click()
     mbDpInstLegacyMode = chkLegacyMode.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkPromptIfDriverIsNotBetter_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkPromptIfDriverIsNotBetter_Click()
     mbDpInstPromptIfDriverIsNotBetter = chkPromptIfDriverIsNotBetter.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkQuietInstall_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkQuietInstall_Click()
     mbDpInstQuietInstall = chkQuietInstall.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkScanHardware_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkScanHardware_Click()
     mbDpInstScanHardware = chkScanHardware.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkSuppressAddRemovePrograms_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkSuppressAddRemovePrograms_Click()
     mbDpInstSuppressAddRemovePrograms = chkSuppressAddRemovePrograms.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkSuppressWizard_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkSuppressWizard_Click()
     mbDpInstSuppressWizard = chkSuppressWizard.Value
     txtCmdStringDPInst = CollectCmdString
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkTabBlock_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkTabBlock_Click()
     Tab2CtlEnable chkTabBlock.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkTabHide_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkTabHide_Click()
     TabCtlEnable Not chkTabHide.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkTempPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkTempPath_Click()
     TempCtlEnable chkTempPath.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkUpdate_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkUpdate_Click()
     UpdateCtlEnable chkUpdate.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbImageMain_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbImageMain_Click()
 
     If PathExists(strPathImageMain & cmbImageMain.Text) = False Then
         cmbImageMain.BackColor = vbRed
     Else
         cmbImageMain.BackColor = &H80000005
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbImageMain_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbImageMain_GotFocus()
     HighlightActiveControl Me, cmbImageMain, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbImageMain_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbImageMain_LostFocus()
 
     If PathExists(strPathImageMain & cmbImageMain.Text) = False Then
@@ -3344,35 +3439,47 @@ Private Sub cmbImageMain_LostFocus()
     HighlightActiveControl Me, cmbImageMain, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbImageStatus_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbImageStatus_Click()
 
-Dim strPathImageStatusButtonWorkTemp    As String
+    Dim strPathImageStatusButtonWorkTemp As String
 
     If PathExists(strPathImageStatusButton & cmbImageStatus.Text) = False Then
         cmbImageStatus.BackColor = vbRed
     Else
         cmbImageStatus.BackColor = &H80000005
-
     End If
 
     strPathImageStatusButtonWorkTemp = strPathImageStatusButton & cmbImageStatus.Text
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWorkTemp
     Set cmdFutureButton.Picture = imgOK.Picture
     cmdFutureButton.Refresh
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbImageStatus_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbImageStatus_GotFocus()
     HighlightActiveControl Me, cmbImageStatus, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbImageStatus_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbImageStatus_LostFocus()
 
     If PathExists(strPathImageStatusButton & cmbImageStatus.Text) = False Then
         cmbImageStatus.BackColor = vbRed
     Else
         cmbImageStatus.BackColor = &H80000005
-
     End If
 
     HighlightActiveControl Me, cmbImageStatus, False
@@ -3383,10 +3490,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  кнопка добавления ОС
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdAddOS_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdAddOS_Click()
     mbAddInList = True
     frmOSEdit.Show vbModal, Me
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3394,10 +3505,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  кнопка добавления утилиты
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdAddUtil_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdAddUtil_Click()
     mbAddInList = True
     frmUtilsEdit.Show vbModal, Me
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3405,9 +3520,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  кнопка удаление ОС
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdDelOS_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdDelOS_Click()
 
-Dim i                                   As Long
+    Dim i As Long
 
     With lvOS
 
@@ -3426,9 +3546,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  кнопка удаление утилиты
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdDelUtil_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdDelUtil_Click()
 
-Dim i                                   As Long
+    Dim i As Long
 
     With lvUtils
 
@@ -3436,23 +3561,26 @@ Dim i                                   As Long
             i = .SelectedItem.Index
             .ListItems.Remove (i)
             LastIdUtil = LastIdUtil - 1
-
         End If
 
     End With
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdDriverVer_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdDriverVer_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ff547394%28VS.85%29.aspx?ppud=4" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3460,9 +3588,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  кнопка редактирование ОС
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdEditOS_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdEditOS_Click()
     TransferOSData
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3470,9 +3602,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  кнопка редактирование утилиты
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdEditUtil_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdEditUtil_Click()
     TransferUtilsData
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3480,13 +3616,24 @@ End Sub
 '!  Переменные  :
 '!  Описание    : Нажатие кнопки Выход. Выход без сохранения
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     lngShowMessageResult = vbNo
     Me.Hide
     ChangeStatusTextAndDebug cmdExit.Caption
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdFontColorButton_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdFontColorButton_Click()
+
     With frmFontDialog
         .opt3.Value = True
         .txtFont.Font.Name = strDialog_FontName
@@ -3498,9 +3645,16 @@ Private Sub cmdFontColorButton_Click()
         .txtFont.ForeColor = lngDialog_Color
         .Show vbModal, Me
     End With
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdFontColorTabDrivers_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdFontColorTabDrivers_Click()
+
     With frmFontDialog
         .opt2.Value = True
         .txtFont.Font.Name = strDialogTab2_FontName
@@ -3515,7 +3669,13 @@ Private Sub cmdFontColorTabDrivers_Click()
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdFontColorTabOS_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdFontColorTabOS_Click()
+
     With frmFontDialog
         .opt1.Value = True
         .txtFont.Font.Name = strDialogTab_FontName
@@ -3527,30 +3687,39 @@ Private Sub cmdFontColorTabOS_Click()
         .txtFont.ForeColor = lngDialogTab_Color
         .Show vbModal, Me
     End With
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdForceIfDriverIsNotBetter_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdForceIfDriverIsNotBetter_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms793551.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdLegacyMode_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdLegacyMode_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794322.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3558,9 +3727,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Нажатие кнопки ОК. Применение настроек
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
 
-Dim lngMsgRet                           As Long
+    Dim lngMsgRet As Long
 
     If mbIsDriveCDRoom And mbLoadIniTmpAfterRestart Then
         SaveOptions
@@ -3576,9 +3750,13 @@ Dim lngMsgRet                           As Long
 
     'Unload Me
     Me.Hide
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdPathDefault_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdPathDefault_Click()
     ucDevCon86Path.Path = "Tools\Devcon\devcon.exe"
     ucDevCon64Path.Path = "Tools\Devcon\devcon64.exe"
@@ -3589,77 +3767,105 @@ Private Sub cmdPathDefault_Click()
     'Секция Arc
     ucArchPath.Path = "Tools\Arc\7za.exe"
     ucCmdDevconPath.Path = "Tools\Devcon\devcon_c.cmd"
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdPromptIfDriverIsNotBetter_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdPromptIfDriverIsNotBetter_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As String
+    Dim cmdString   As String
+    Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms793530.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdQuietInstall_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdQuietInstall_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As String
+    Dim cmdString   As String
+    Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794300.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdScanHardware_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdScanHardware_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As String
+    Dim cmdString   As String
+    Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794295.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdSuppressAddRemovePrograms_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdSuppressAddRemovePrograms_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As String
+    Dim cmdString   As String
+    Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794270.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdSuppressWizard_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdSuppressWizard_Click()
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As String
+    Dim cmdString   As String
+    Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms791062.aspx" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DebugCtlEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbEnable (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub DebugCtlEnable(ByVal mbEnable As Boolean)
     chkDebugTime2File.Enabled = mbEnable
     txtDebugLogName.Enabled = mbEnable
     ucDebugLogPath.Enabled = mbEnable
     chkDebugLog2AppPath.Enabled = mbEnable
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DebugCtlEnableLog2App
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbEnable (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub DebugCtlEnableLog2App(ByVal mbEnable As Boolean)
     ucDebugLogPath.Enabled = mbEnable
 End Sub
@@ -3669,13 +3875,18 @@ End Sub
 '!  Переменные  :  KeyCode As Integer, Shift As Integer
 '!  Описание    :  Обработка нажатий клавиш клавиатуры сначала на форме
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         If MsgBox(strMessages(37), vbQuestion + vbYesNo, strProductName) = vbYes Then
             cmdExit_Click
         End If
-
     End If
 
 End Sub
@@ -3685,8 +3896,12 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Загрузка формы
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
 
     With Me
@@ -3739,10 +3954,14 @@ Private Sub Form_Load()
     LoadIconImage2BtnJC cmdFontColorButton, "BTN_FONT", strPathImageMainWork
     LoadIconImage2BtnJC cmdFontColorTabOS, "BTN_FONT", strPathImageMainWork
     LoadIconImage2BtnJC cmdFontColorTabDrivers, "BTN_FONT", strPathImageMainWork
-    
     FormLoadAction
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadAction
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
     ' Локализациz приложения
@@ -3761,11 +3980,17 @@ Public Sub FormLoadAction()
     Set cmdFutureButton.Picture = imgOK.Picture
     SetButtonProperties cmdFutureButton
     DoEvents
-    
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_QueryUnload
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Cancel (Integer)
+'                              UnloadMode (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-' Выгружаем из памяти форму и другие компоненты
+
+    ' Выгружаем из памяти форму и другие компоненты
     If UnloadMode = vbFormControlMenu Then
         Cancel = 1
         Me.Hide
@@ -3774,6 +3999,7 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         Set lvOptions = Nothing
         Set frmOptions = Nothing
     End If
+
 End Sub
 
 '! -----------------------------------------------------------
@@ -3781,6 +4007,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Изменение размеров формы
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
 
     On Error Resume Next
@@ -3793,6 +4024,11 @@ Private Sub Form_Resize()
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub InitializeObjectProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub InitializeObjectProperties()
 
     With cmdFutureButton
@@ -3809,9 +4045,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Построение спиcка ОС
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadList_OS
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadList_OS()
 
-Dim i                                   As Long
+    Dim i As Long
 
     With lvOS
         .ListItems.Clear
@@ -3829,6 +4070,7 @@ Dim i                                   As Long
         End If
 
         For i = 0 To lngOSCount - 1
+
             With .ListItems.Add(, , arrOSList(i).Ver)
                 .SubItems(1) = arrOSList(i).Name
                 .SubItems(2) = arrOSList(i).drpFolder
@@ -3839,12 +4081,13 @@ Dim i                                   As Long
                 .SubItems(7) = arrOSList(i).PathRuntimes
                 .SubItems(8) = arrOSList(i).ExcludeFileName
             End With
+
         Next
+
     End With
 
     'LVOS
     LastIdOS = lngOSCount
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -3852,9 +4095,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Построение спика утилит
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadList_Utils
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadList_Utils()
 
-Dim i                                   As Long
+    Dim i As Long
 
     With lvUtils
         .ListItems.Clear
@@ -3867,11 +4115,13 @@ Dim i                                   As Long
         End If
 
         For i = 0 To lngUtilsCount - 1
+
             With .ListItems.Add(, , arrUtilsList(i, 0))
                 .SubItems(1) = arrUtilsList(i, 1)
                 .SubItems(2) = arrUtilsList(i, 2)
                 .SubItems(3) = arrUtilsList(i, 3)
             End With
+
         Next
 
     End With
@@ -3879,10 +4129,16 @@ Dim i                                   As Long
     LastIdUtil = lngUtilsCount
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadListCombo
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   cmbName (ComboBox)
+'                              strImagePath (String)
+'!--------------------------------------------------------------------------------
 Private Sub LoadListCombo(cmbName As ComboBox, strImagePath As String)
 
-Dim strListFolderTemp()                 As String
-Dim i                                   As Integer
+    Dim strListFolderTemp() As String
+    Dim i                   As Integer
 
     strListFolderTemp = GetAllFolderInFolder(strImagePath)
 
@@ -3894,12 +4150,17 @@ Dim i                                   As Integer
         Next
 
     End With
-    
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
 
-Dim strFormNameMain                     As String
+    Dim strFormNameMain As String
 
     strFormNameMain = frmMain.Name
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
@@ -4028,7 +4289,6 @@ Dim strFormNameMain                     As String
     cmdFontColorTabDrivers.Caption = LocaliseString(StrPathFile, strFormName, "cmdFontColorTabDrivers", cmdFontColorTabDrivers.Caption)
     chkButtonDisable.Caption = LocaliseString(StrPathFile, strFormName, "chkButtonDisable", chkButtonDisable.Caption)
     lblTheme.Caption = LocaliseString(StrPathFile, strFormName, "lblTheme", lblTheme.Caption)
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -4036,18 +4296,22 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  При выборе опции происходит отображение соответсвующего окна
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvOptions_ItemChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   iIndex (Long)
+'!--------------------------------------------------------------------------------
 Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
-    
-'ItemOptions1=Основные настройки
-'ItemOptions8=Основные настройки 2
-'ItemOptions2=Поддерживаемые ОС
-'ItemOptions3=Рабочие утилиты
-'ItemOptions4=Вспомогательные утилиты
-'ItemOptions5=Оформление программы
-'ItemOptions9=Оформление программы 2
-'ItemOptions6=Параметры запуска DPInst
-'ItemOptions10=Отладочный режим
 
+    'ItemOptions1=Основные настройки
+    'ItemOptions8=Основные настройки 2
+    'ItemOptions2=Поддерживаемые ОС
+    'ItemOptions3=Рабочие утилиты
+    'ItemOptions4=Вспомогательные утилиты
+    'ItemOptions5=Оформление программы
+    'ItemOptions9=Оформление программы 2
+    'ItemOptions6=Параметры запуска DPInst
+    'ItemOptions10=Отладочный режим
     Select Case iIndex
 
         Case 0 'strItemOptions1
@@ -4055,7 +4319,7 @@ Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
 
         Case 1 ' strItemOptions8
             frMain2.ZOrder 0
-            
+
         Case 2 'strItemOptions2
             frOS.ZOrder 0
             txtExcludeHWID.SetFocus
@@ -4073,7 +4337,7 @@ Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
 
         Case 6 ' strItemOptions9
             frDesign2.ZOrder 0
-            
+
         Case 7 'strItemOptions6
             frDpInstParam.ZOrder 0
             txtCmdStringDPInst.SetFocus
@@ -4084,7 +4348,6 @@ Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
 
         Case Else
             frOther.ZOrder 0
-
     End Select
 
 End Sub
@@ -4094,6 +4357,12 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Двойнок клик по элементу списка вызывает форму редактирования
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvOS_ItemDblClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Item (LvwListItem)
+'                              Button (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub lvOS_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
     TransferOSData
 End Sub
@@ -4103,6 +4372,12 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Двойнок клик по элементу списка вызывает форму редактирования
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvUtils_ItemDblClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Item (LvwListItem)
+'                              Button (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub lvUtils_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
     TransferUtilsData
 End Sub
@@ -4112,8 +4387,13 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Читаем настройки программы и заполняем поля
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ReadOptions
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ReadOptions()
-' загрузить список ОС
+    ' загрузить список ОС
     LoadList_OS
     ' загрузить список Утилит
     LoadList_Utils
@@ -4156,7 +4436,6 @@ Private Sub ReadOptions()
             optRezim_Ust.Value = False
             optRezim_Intellect.Value = False
             optRezim_Upd.Value = True
-
     End Select
 
     'MainForm
@@ -4196,7 +4475,6 @@ Private Sub ReadOptions()
         'Секция Arc
         ucArchPath.Path = Replace$(strArh7zExePATH, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucCmdDevconPath.Path = Replace$(strDevconCmdPath, strAppPathBackSL, vbNullString, , , vbTextCompare)
-
     End If
 
     ' Настройки DpInst
@@ -4242,7 +4520,6 @@ Private Sub ReadOptions()
     Tab2CtlEnable chkTabBlock.Value
     ' Инициализация параметров для изменения шрифта и цвета
     InitializeObjectProperties
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -4250,18 +4527,24 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Сохранение настроек в ини-файл
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveOptions
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-Dim miRezim                             As Long
-Dim cnt                                 As Long
-Dim lngOSCountNew                          As Long
-Dim lngUtilsCountNew                       As Long
-Dim strSysIniTemp                       As String
-Dim strLogNameTemp                      As String
+    Dim miRezim          As Long
+    Dim cnt              As Long
+    Dim lngOSCountNew    As Long
+    Dim lngUtilsCountNew As Long
+    Dim strSysIniTemp    As String
+    Dim strLogNameTemp   As String
 
     If mbIsDriveCDRoom And Not mbLoadIniTmpAfterRestart Then
         If strSysIni <> strWorkTempBackSL & "DriversInstaller.ini" Then
             MsgBox strMessages(38), vbInformation + vbApplicationModal, strProductName
+
             Exit Sub
 
         End If
@@ -4272,7 +4555,6 @@ Dim strLogNameTemp                      As String
         SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP_PATH", strSysIniTemp
     Else
         strSysIniTemp = strSysIni
-
     End If
 
     '**************************************************
@@ -4297,11 +4579,8 @@ Dim strLogNameTemp                      As String
 
             If optRezim_Upd.Value Then
                 miRezim = 3
-
             End If
-
         End If
-
     End If
 
     IniWriteStrPrivate "Main", "StartMode", CStr(miRezim), strSysIniTemp
@@ -4319,7 +4598,6 @@ Dim strLogNameTemp                      As String
 
     If mbLoadIniTmpAfterRestart Then
         IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", 1, strSysIniTemp
-
     End If
 
     ' Секция Debug
@@ -4330,11 +4608,13 @@ Dim strLogNameTemp                      As String
     IniWriteStrPrivate "Debug", "DebugLog2AppPath", CStr(Abs(chkDebugLog2AppPath.Value)), strSysIniTemp
     IniWriteStrPrivate "Debug", "DebugLogPath", ucDebugLogPath.Path, strSysIniTemp
     strLogNameTemp = "DIA-LOG_%DATE%.txt"
+
     If LenB(txtDebugLogName.Text) > 0 Then
         If InStr(txtDebugLogName.Text, ".") Then
             strLogNameTemp = txtDebugLogName.Text
         End If
     End If
+
     IniWriteStrPrivate "Debug", "DebugLogName", strLogNameTemp, strSysIniTemp
     IniWriteStrPrivate "Debug", "Detailmode", CStr(lngDetailMode), strSysIniTemp
     'Секция Devcon
@@ -4397,10 +4677,10 @@ Dim strLogNameTemp                      As String
             IniWriteStrPrivate "OS_" & cnt, "PathLanguages", .SubItems(6), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "PathRuntimes", .SubItems(7), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "ExcludeFileName", .SubItems(8), strSysIniTemp
-
         End With
 
     Next
+
     'Секция Utils
     'Число утилит
     lngUtilsCountNew = lvUtils.ListItems.Count
@@ -4415,10 +4695,10 @@ Dim strLogNameTemp                      As String
             IniWriteStrPrivate "Utils_" & cnt, "Path", .SubItems(1), strSysIniTemp
             IniWriteStrPrivate "Utils_" & cnt, "Path64", .SubItems(2), strSysIniTemp
             IniWriteStrPrivate "Utils_" & cnt, "Params", .SubItems(3), strSysIniTemp
-
         End With
 
     Next
+
     'Секция MainForm
     IniWriteStrPrivate "MainForm", "Width", txtFormWidth.Value, strSysIniTemp
     IniWriteStrPrivate "MainForm", "Height", txtFormHeight.Value, strSysIniTemp
@@ -4426,7 +4706,6 @@ Dim strLogNameTemp                      As String
     mbSaveSizeOnExit = chkFormSizeSave.Value
     IniWriteStrPrivate "MainForm", "SaveSizeOnExit", CStr(Abs(chkFormSizeSave.Value)), strSysIniTemp
     IniWriteStrPrivate "MainForm", "HighlightColor", CStr(glHighlightColor), strSysIniTemp
-
     'Секция Buttons
     IniWriteStrPrivate "Button", "Width", txtButtonWidth.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "Height", txtButtonHeight.Value, strSysIniTemp
@@ -4457,28 +4736,40 @@ Dim strLogNameTemp                      As String
     IniWriteStrPrivate "Tab2", "FontStrikethru", CStr(Abs(mbDialogTab2_Strikethru)), strSysIniTemp
     IniWriteStrPrivate "Tab2", "FontItalic", CStr(Abs(mbDialogTab2_Italic)), strSysIniTemp
     IniWriteStrPrivate "Tab2", "FontBold", CStr(Abs(mbDialogTab2_Bold)), strSysIniTemp
-
     'Секция "NotebookVendor"
     IniWriteStrPrivate "NotebookVendor", "FilterCount", UBound(arrNotebookFilterList), strSysIniTemp
+
     For cnt = 0 To UBound(arrNotebookFilterList) - 1
         IniWriteStrPrivate "NotebookVendor", "Filter_" & cnt + 1, arrNotebookFilterList(cnt), strSysIniTemp
     Next
 
     ' Приводим Ini файл к читабельному виду
     NormIniFile strSysIniTemp
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Tab2CtlEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbEnable (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub Tab2CtlEnable(ByVal mbEnable As Boolean)
     chkTabHide.Enabled = mbEnable
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TabCtlEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbEnable (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub TabCtlEnable(ByVal mbEnable As Boolean)
     chkTabBlock.Enabled = mbEnable
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TempCtlEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbEnable (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub TempCtlEnable(ByVal mbEnable As Boolean)
     ucTempPath.Enabled = mbEnable
 End Sub
@@ -4488,14 +4779,20 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Передача параметров ОС из спика в форму редактирования
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TransferOSData
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub TransferOSData()
 
-Dim i                                   As Long
+    Dim i As Long
 
     With lvOS
         i = .SelectedItem.Index
 
         If i = -1 Then
+
             Exit Sub
 
         End If
@@ -4527,19 +4824,16 @@ Dim i                                   As Long
             Case Else
                 frmOSEdit.chk64bit.Value = False
                 frmOSEdit.chkNotCheckBitOS.Value = False
-
         End Select
 
         frmOSEdit.ucPhysXPath.Path = .ListItems.Item(i).SubItems(5)
         frmOSEdit.ucLangPath.Path = .ListItems.Item(i).SubItems(6)
         frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(i).SubItems(7)
         frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(i).SubItems(8)
-
     End With
 
     'LVOS
     frmOSEdit.Show vbModal, Me
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -4547,26 +4841,31 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Передача параметров Утилит из спика в форму редактирования
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub TransferUtilsData
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub TransferUtilsData()
 
-Dim i                                   As Long
+    Dim i As Long
 
     With lvUtils
         i = .SelectedItem.Index
 
         If i = -1 Then
+
             Exit Sub
+
         End If
 
         frmUtilsEdit.txtUtilName.Text = .ListItems.Item(i).Text
         frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(i).SubItems(1)
         frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(i).SubItems(2)
         frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(i).SubItems(3)
-
     End With
 
     frmUtilsEdit.Show vbModal, Me
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -4574,6 +4873,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Построение дерева настроек
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub tvOptionsLoad
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub tvOptionsLoad()
     Set lvOptions = New cListView
 
@@ -4598,29 +4902,54 @@ Private Sub tvOptionsLoad()
         .AddItem strItemOptions9, , 6
         .AddItem strItemOptions6, , 7
         .AddItem strItemOptions10, , 8
-
     End With
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtButtonHeight_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtButtonHeight_Change()
     ChangeButtonProperties
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtButtonWidth_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtButtonWidth_Change()
     ChangeButtonProperties
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtExcludeHWID_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtExcludeHWID_GotFocus()
     HighlightActiveControl Me, txtExcludeHWID, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtExcludeHWID_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtExcludeHWID_LostFocus()
     HighlightActiveControl Me, txtExcludeHWID, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucArchPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucArchPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucArchPath.FileCount > 0 Then
         strTempPath = ucArchPath.FileName
@@ -4628,49 +4957,69 @@ Dim strTempPath                         As String
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucArchPath.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucArchPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucArchPath_GotFocus()
     HighlightActiveControl Me, ucArchPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucArchPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucArchPath_LostFocus()
     HighlightActiveControl Me, ucArchPath, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucCmdDevconPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucCmdDevconPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucCmdDevconPath.FileCount > 0 Then
         strTempPath = ucCmdDevconPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucCmdDevconPath.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucCmdDevconPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucCmdDevconPath_GotFocus()
     HighlightActiveControl Me, ucCmdDevconPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucCmdDevconPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucCmdDevconPath_LostFocus()
     HighlightActiveControl Me, ucCmdDevconPath, False
 End Sub
@@ -4680,23 +5029,25 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDebugLogPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDebugLogPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucDebugLogPath.FileCount > 0 Then
         strTempPath = ucDebugLogPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucDebugLogPath.Path = strTempPath
-
     End If
 
 End Sub
@@ -4706,31 +5057,43 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon64Path_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon64Path_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucDevCon64Path.FileCount > 0 Then
         strTempPath = ucDevCon64Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucDevCon64Path.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon64Path_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon64Path_GotFocus()
     HighlightActiveControl Me, ucDevCon64Path, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon64Path_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon64Path_LostFocus()
     HighlightActiveControl Me, ucDevCon64Path, False
 End Sub
@@ -4740,31 +5103,43 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon86Path_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Path_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucDevCon86Path.FileCount > 0 Then
         strTempPath = ucDevCon86Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucDevCon86Path.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon86Path_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Path_GotFocus()
     HighlightActiveControl Me, ucDevCon86Path, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon86Path_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Path_LostFocus()
     HighlightActiveControl Me, ucDevCon86Path, False
 End Sub
@@ -4774,31 +5149,43 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon86Pathw2k_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Pathw2k_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucDevCon86Pathw2k.FileCount > 0 Then
         strTempPath = ucDevCon86Pathw2k.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucDevCon86Pathw2k.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon86Pathw2k_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Pathw2k_GotFocus()
     HighlightActiveControl Me, ucDevCon86Pathw2k, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDevCon86Pathw2k_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Pathw2k_LostFocus()
     HighlightActiveControl Me, ucDevCon86Pathw2k, False
 End Sub
@@ -4808,31 +5195,43 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDPInst64Path_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDPInst64Path_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucDPInst64Path.FileCount > 0 Then
         strTempPath = ucDPInst64Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucDPInst64Path.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDPInst64Path_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDPInst64Path_GotFocus()
     HighlightActiveControl Me, ucDPInst64Path, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDPInst64Path_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDPInst64Path_LostFocus()
     HighlightActiveControl Me, ucDPInst64Path, False
 End Sub
@@ -4842,31 +5241,43 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDPInst86Path_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDPInst86Path_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucDPInst86Path.FileCount > 0 Then
         strTempPath = ucDPInst86Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
         ucDPInst86Path.Path = strTempPath
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDPInst86Path_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDPInst86Path_GotFocus()
     HighlightActiveControl Me, ucDPInst86Path, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDPInst86Path_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDPInst86Path_LostFocus()
     HighlightActiveControl Me, ucDPInst86Path, False
 End Sub
@@ -4876,9 +5287,14 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  выбор каталога или файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucTempPath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucTempPath_Click()
 
-Dim strTempPath                         As String
+    Dim strTempPath As String
 
     If ucTempPath.FileCount > 0 Then
         strTempPath = ucTempPath.Path
@@ -4886,7 +5302,6 @@ Dim strTempPath                         As String
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
         End If
-
     End If
 
     If LenB(strTempPath) > 0 Then
@@ -4895,55 +5310,112 @@ Dim strTempPath                         As String
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UpdateCtlEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbEnable (Boolean)
+'!--------------------------------------------------------------------------------
 Private Sub UpdateCtlEnable(ByVal mbEnable As Boolean)
     chkUpdateBeta.Enabled = mbEnable
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtDebugLogName_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtDebugLogName_GotFocus()
     HighlightActiveControl Me, txtDebugLogName, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtDebugLogName_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtDebugLogName_LostFocus()
     HighlightActiveControl Me, txtDebugLogName, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtCmdStringDPInst_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtCmdStringDPInst_GotFocus()
     HighlightActiveControl Me, txtCmdStringDPInst, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtCmdStringDPInst_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtCmdStringDPInst_LostFocus()
     HighlightActiveControl Me, txtCmdStringDPInst, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDebugLogPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDebugLogPath_GotFocus()
     HighlightActiveControl Me, ucDebugLogPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucDebugLogPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucDebugLogPath_LostFocus()
     HighlightActiveControl Me, ucDebugLogPath, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucTempPath_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucTempPath_GotFocus()
     HighlightActiveControl Me, ucTempPath, True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucTempPath_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub ucTempPath_LostFocus()
     HighlightActiveControl Me, ucTempPath, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvUtils_ColumnClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ColumnHeader (LvwColumnHeader)
+'!--------------------------------------------------------------------------------
 Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
-Dim i                                   As Long
+
+    Dim i As Long
+
     With lvUtils
         .Sorted = False
         .SortKey = ColumnHeader.Index - 1
+
         If ComCtlsSupportLevel() >= 1 Then
+
             For i = 1 To .ColumnHeaders.Count
+
                 If i <> ColumnHeader.Index Then
                     .ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
+
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
                         ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown
                     Else
+
                         If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown Then
                             ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp
                         ElseIf ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp Then
@@ -4951,22 +5423,31 @@ Dim i                                   As Long
                         End If
                     End If
                 End If
+
             Next i
+
             Select Case ColumnHeader.SortArrow
+
                 Case LvwColumnHeaderSortArrowDown, LvwColumnHeaderSortArrowNone
                     .SortOrder = LvwSortOrderAscending
+
                 Case LvwColumnHeaderSortArrowUp
                     .SortOrder = LvwSortOrderDescending
             End Select
+
             .SelectedColumn = ColumnHeader
         Else
+
             For i = 1 To .ColumnHeaders.Count
+
                 If i <> ColumnHeader.Index Then
                     .ColumnHeaders(i).Icon = 0
                 Else
+
                     If ColumnHeader.Icon = 0 Then
                         ColumnHeader.Icon = 1
                     Else
+
                         If ColumnHeader.Icon = 2 Then
                             ColumnHeader.Icon = 1
                         ElseIf ColumnHeader.Icon = 1 Then
@@ -4974,32 +5455,52 @@ Dim i                                   As Long
                         End If
                     End If
                 End If
+
             Next i
+
             Select Case ColumnHeader.Icon
+
                 Case 1, 0
                     .SortOrder = LvwSortOrderAscending
+
                 Case 2
                     .SortOrder = LvwSortOrderDescending
             End Select
+
         End If
+
         .Sorted = True
+
         If Not .SelectedItem Is Nothing Then .SelectedItem.EnsureVisible
     End With
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvOS_ColumnClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ColumnHeader (LvwColumnHeader)
+'!--------------------------------------------------------------------------------
 Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
-Dim i                                   As Long
+
+    Dim i As Long
+
     With lvOS
         .Sorted = False
         .SortKey = ColumnHeader.Index - 1
+
         If ComCtlsSupportLevel() >= 1 Then
+
             For i = 1 To .ColumnHeaders.Count
+
                 If i <> ColumnHeader.Index Then
                     .ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
+
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
                         ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown
                     Else
+
                         If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown Then
                             ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp
                         ElseIf ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp Then
@@ -5007,22 +5508,31 @@ Dim i                                   As Long
                         End If
                     End If
                 End If
+
             Next i
+
             Select Case ColumnHeader.SortArrow
+
                 Case LvwColumnHeaderSortArrowDown, LvwColumnHeaderSortArrowNone
                     .SortOrder = LvwSortOrderAscending
+
                 Case LvwColumnHeaderSortArrowUp
                     .SortOrder = LvwSortOrderDescending
             End Select
+
             .SelectedColumn = ColumnHeader
         Else
+
             For i = 1 To .ColumnHeaders.Count
+
                 If i <> ColumnHeader.Index Then
                     .ColumnHeaders(i).Icon = 0
                 Else
+
                     If ColumnHeader.Icon = 0 Then
                         ColumnHeader.Icon = 1
                     Else
+
                         If ColumnHeader.Icon = 2 Then
                             ColumnHeader.Icon = 1
                         ElseIf ColumnHeader.Icon = 1 Then
@@ -5030,15 +5540,23 @@ Dim i                                   As Long
                         End If
                     End If
                 End If
+
             Next i
+
             Select Case ColumnHeader.Icon
+
                 Case 1, 0
                     .SortOrder = LvwSortOrderAscending
+
                 Case 2
                     .SortOrder = LvwSortOrderDescending
             End Select
+
         End If
+
         .Sorted = True
+
         If Not .SelectedItem Is Nothing Then .SelectedItem.EnsureVisible
     End With
+
 End Sub

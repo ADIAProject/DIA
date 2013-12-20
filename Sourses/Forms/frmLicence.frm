@@ -130,14 +130,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' Минимальные размеры формы
-Private lngFormWidthMin                 As Long
-Private lngFormHeightMin                As Long
-Private strFormName                     As String
+Private lngFormWidthMin  As Long
+Private lngFormHeightMin As Long
+Private strFormName      As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CheckEditLicense
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub CheckEditLicense(StrPathFile As String)
 
-Dim strMD5TextRtf                       As String
-Dim strEULA_MD5RTF_temp                 As String
+    Dim strMD5TextRtf       As String
+    Dim strEULA_MD5RTF_temp As String
 
     strMD5TextRtf = GetMD5(StrPathFile)
     DebugMode "LicenceInfo: " & strMD5TextRtf
@@ -149,7 +154,6 @@ Dim strEULA_MD5RTF_temp                 As String
 
         Case Else
             strEULA_MD5RTF_temp = strEULA_MD5RTF_Eng
-
     End Select
 
     If InStr(1, strMD5TextRtf, strEULA_MD5RTF_temp, vbTextCompare) = 0 Then
@@ -158,23 +162,27 @@ Dim strEULA_MD5RTF_temp                 As String
 
             If MsgBox(strMessages(11), vbYesNo + vbQuestion, strProductName) = vbNo Then
                 Unload Me
-
             End If
-
         End If
 
         DebugMode "The Source text of the file of the license agreement was changed!!! The most Further functioning(working) the program impossible. Address to developer or download anew distribution program of the program."
+
         'Unload Me
         End
 
     End If
 
     DebugMode "LicenceText: End"
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -183,28 +191,42 @@ Private Sub FontCharsetChange()
 
     SetButtonProperties cmdExit
     SetButtonProperties cmdOK
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkAgreeLicence_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub chkAgreeLicence_Click()
     cmdOK.Enabled = chkAgreeLicence.Value
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
 
     If mbFirstStart Then
         Unload Me
+
         End
+
     Else
         Unload Me
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
-' если принимаем соглашение, записываем параметры в реестр
+    ' если принимаем соглашение, записываем параметры в реестр
     SaveSetting App.ProductName, "Licence", "Show at Startup", Not chkAgreeLicence.Value
     SaveSetting App.ProductName, "Licence", "EULA_DATE", strEULA_Version
     ' Загружаем основную форму
@@ -213,6 +235,12 @@ Private Sub cmdOK_Click()
     frmMain.Show
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
@@ -221,9 +249,13 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
     SetupVisualStyles Me
-
 
     With Me
         strFormName = .Name
@@ -253,18 +285,28 @@ Private Sub Form_Load()
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_QueryUnload
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Cancel (Integer)
+'                              UnloadMode (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     Set frmLicence = Nothing
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
 
-Dim miDeltaFrm                          As Long
+    Dim miDeltaFrm As Long
 
     On Error Resume Next
 
@@ -286,14 +328,18 @@ Dim miDeltaFrm                          As Long
                 .Width = lngFormWidthMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             If .Height < lngFormHeightMin Then
                 .Height = lngFormHeightMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             cmdExit.Left = .Width - cmdExit.Width - 200 - miDeltaFrm
@@ -304,7 +350,6 @@ Dim miDeltaFrm                          As Long
             cmdOK.Top = cmdExit.Top
             chkAgreeLicence.Left = 100
             chkAgreeLicence.Top = cmdExit.Top
-
         End If
 
     End With
@@ -369,10 +414,14 @@ End Sub
 '    ShellExecute Me.hWnd, "OPEN", strBuffer, vbNullString, vbNullString, 5
 '
 'End Sub
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadLicence
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadLicence()
 
-Dim strPathLicence                      As String
+    Dim strPathLicence As String
 
     strPathLicence = strWorkTempBackSL & "licence.rtf"
 
@@ -383,7 +432,6 @@ Dim strPathLicence                      As String
 
         Case Else
             strPathLicence = PathCollect("Tools\Docs\0409\licence.rtf")
-
     End Select
 
     If PathExists(strPathLicence) Then
@@ -392,22 +440,25 @@ Dim strPathLicence                      As String
 
         If Not mbSilentRun Then
             MsgBox strMessages(39), vbInformation, strProductName
-
         End If
 
         Unload Me
+
         End
 
     End If
 
     ' Проверка лицензии на неправомерное изменение
     CheckEditLicense strPathLicence
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -416,10 +467,9 @@ Private Sub Localise(ByVal StrPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-
 End Sub
 
 'Private Sub LicenceRTF_LinkEvent(ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal LinkStart As Long, ByVal LinkEnd As Long)
-    'Debug.Print LinkStart & " " & LinkEnd
-    'Debug.Print Mid$(LicenceRTF.Text, LinkStart, (LinkEnd - LinkStart))
+'Debug.Print LinkStart & " " & LinkEnd
+'Debug.Print Mid$(LicenceRTF.Text, LinkStart, (LinkEnd - LinkStart))
 'End Sub

@@ -75,56 +75,61 @@ Private Type SCROLLINFO
     nTrackPos                           As Long
 End Type
 
-Private Const MEM_COMMIT                As Long = &H1000
-Private Const PAGE_EXECUTE_READWRITE    As Long = &H40
-Private Const MEM_RELEASE               As Long = &H8000&
-Private Const WM_MOUSEWHEEL             As Long = &H20A
-Private Const WM_VSCROLL                As Long = &H115
-Private Const WM_HSCROLL                As Long = &H114
-Private Const WM_NCPAINT                As Long = &H85
-Private Const WM_DESTROY                As Long = &H2
-Private Const GWL_WNDPROC               As Long = -4
-Private Const GWL_STYLE                 As Long = (-16)
-Private Const WS_VSCROLL                As Long = &H200000
-Private Const WS_HSCROLL                As Long = &H100000
-Private Const GW_CHILD                  As Long = 5
-Private Const GW_HWNDNEXT               As Long = 2
-Private Const SB_HORZ                   As Long = 0
-Private Const SB_VERT                   As Long = 1
-Private Const SB_BOTH                   As Long = 3
-Private Const SB_LINEDOWN               As Long = 1
-Private Const SB_LINEUP                 As Long = 0
-Private Const SB_PAGEDOWN               As Long = 3
-Private Const SB_PAGEUP                 As Long = 2
-Private Const SB_THUMBTRACK             As Long = 5
-Private Const SB_ENDSCROLL              As Long = 8
-Private Const SB_LEFT                   As Long = 6
-Private Const SB_RIGHT                  As Long = 7
-Private Const SIF_ALL                   As Long = &H17
-Private Const SM_CYBORDER               As Long = 6
+Private Const MEM_COMMIT             As Long = &H1000
+Private Const PAGE_EXECUTE_READWRITE As Long = &H40
+Private Const MEM_RELEASE            As Long = &H8000&
+Private Const WM_MOUSEWHEEL          As Long = &H20A
+Private Const WM_VSCROLL             As Long = &H115
+Private Const WM_HSCROLL             As Long = &H114
+Private Const WM_NCPAINT             As Long = &H85
+Private Const WM_DESTROY             As Long = &H2
+Private Const GWL_WNDPROC            As Long = -4
+Private Const GWL_STYLE              As Long = (-16)
+Private Const WS_VSCROLL             As Long = &H200000
+Private Const WS_HSCROLL             As Long = &H100000
+Private Const GW_CHILD               As Long = 5
+Private Const GW_HWNDNEXT            As Long = 2
+Private Const SB_HORZ                As Long = 0
+Private Const SB_VERT                As Long = 1
+Private Const SB_BOTH                As Long = 3
+Private Const SB_LINEDOWN            As Long = 1
+Private Const SB_LINEUP              As Long = 0
+Private Const SB_PAGEDOWN            As Long = 3
+Private Const SB_PAGEUP              As Long = 2
+Private Const SB_THUMBTRACK          As Long = 5
+Private Const SB_ENDSCROLL           As Long = 8
+Private Const SB_LEFT                As Long = 6
+Private Const SB_RIGHT               As Long = 7
+Private Const SIF_ALL                As Long = &H17
+Private Const SM_CYBORDER            As Long = 6
 
 Public Enum EnuBorderStyle
     vbBSNone
     vbFixedSingle
 End Enum
 
-Private SI                              As SCROLLINFO
-Private pASMWrapper                     As Long
-Private PrevWndProc                     As Long
-Private hSubclassedWnd                  As Long
-Private mBorderSize                     As Long
-Private OldPosH                         As Long
-Private OldPosV                         As Long
-Private m_hFocus                        As Long
-Private m_AutoScrollToFocus             As Boolean
-Private m_UseHandsCursor                As Boolean
-Private m_HScrollVisible                As Boolean
-Private m_VScrollVisible                As Boolean
+Private SI                  As SCROLLINFO
+Private pASMWrapper         As Long
+Private PrevWndProc         As Long
+Private hSubclassedWnd      As Long
+Private mBorderSize         As Long
+Private OldPosH             As Long
+Private OldPosV             As Long
+Private m_hFocus            As Long
+Private m_AutoScrollToFocus As Boolean
+Private m_UseHandsCursor    As Boolean
+Private m_HScrollVisible    As Boolean
+Private m_VScrollVisible    As Boolean
 
-Public Function WindowProc(ByVal hWnd As Long, _
-                           ByVal uMsg As Long, _
-                           ByVal wParam As Long, _
-                           ByVal lParam As Long) As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function WindowProc
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'                              uMsg (Long)
+'                              wParam (Long)
+'                              lParam (Long)
+'!--------------------------------------------------------------------------------
+Public Function WindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
     WindowProc = CallWindowProc(PrevWndProc, hWnd, uMsg, wParam, lParam)
 
     Select Case uMsg
@@ -134,7 +139,7 @@ Public Function WindowProc(ByVal hWnd As Long, _
 
         Case WM_VSCROLL, WM_HSCROLL
 
-            Dim xScroll                 As Long
+            Dim xScroll As Long
 
             xScroll = IIf(uMsg = WM_VSCROLL, SB_VERT, SB_HORZ)
             GetScrollInfo hWnd, xScroll, SI
@@ -164,7 +169,6 @@ Public Function WindowProc(ByVal hWnd As Long, _
 
                 Case SB_RIGHT
                     SI.nPos = SI.nMax
-
             End Select
 
             SetScrollInfo hWnd, xScroll, SI, True
@@ -174,7 +178,6 @@ Public Function WindowProc(ByVal hWnd As Long, _
                 ScrollVerticalWindow -SI.nPos
             Else
                 ScrollHorizontalWindow -SI.nPos
-
             End If
 
         Case WM_MOUSEWHEEL
@@ -186,10 +189,10 @@ Public Function WindowProc(ByVal hWnd As Long, _
                 If m_HScrollVisible Then
                     xScroll = SB_HORZ
                 Else
+
                     Exit Function
 
                 End If
-
             End If
 
             GetScrollInfo hWnd, xScroll, SI
@@ -198,7 +201,6 @@ Public Function WindowProc(ByVal hWnd As Long, _
                 SI.nPos = SI.nPos + 10
             Else
                 SI.nPos = SI.nPos - 10
-
             End If
 
             SetScrollInfo hWnd, xScroll, SI, True
@@ -208,17 +210,16 @@ Public Function WindowProc(ByVal hWnd As Long, _
                 ScrollVerticalWindow -SI.nPos
             Else
                 ScrollHorizontalWindow -SI.nPos
-
             End If
 
         Case WM_NCPAINT
 
             If UserControl.BorderStyle = vbFixedSingle Then
 
-                Dim Rec                 As RECT
-                Dim ClipRec             As RECT
-                Dim hTheme              As Long
-                Dim DC                  As Long
+                Dim Rec     As RECT
+                Dim ClipRec As RECT
+                Dim hTheme  As Long
+                Dim DC      As Long
 
                 DC = GetWindowDC(hWnd)
                 GetWindowRect UserControl.hWnd, Rec
@@ -232,24 +233,22 @@ Public Function WindowProc(ByVal hWnd As Long, _
                     ExcludeClipRect DC, mBorderSize, mBorderSize, Rec.Right - mBorderSize, Rec.Bottom - mBorderSize
 
                     If DrawThemeBackground(hTheme, DC, 0, 0, Rec, Rec) = 0 Then
-
                     End If
 
                     Call CloseThemeData(hTheme)
-
                 End If
 
                 ReleaseDC hWnd, DC
-
             End If
 
         Case Else
 
             On Error Resume Next
 
-            Dim hFocus                  As Long
+            Dim hFocus As Long
 
             If m_AutoScrollToFocus = False Then
+
                 Exit Function
 
             End If
@@ -268,9 +267,7 @@ Public Function WindowProc(ByVal hWnd As Long, _
 
                         If Rec.Top < SI.nPos Then
                             SI.nPos = Rec.Top
-
                         End If
-
                     End If
 
                     SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
@@ -283,87 +280,132 @@ Public Function WindowProc(ByVal hWnd As Long, _
 
                         If Rec.Left < SI.nPos Then
                             SI.nPos = Rec.Left
-
                         End If
-
                     End If
 
                     SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
                     CheckScroll
-
                 End If
-
             End If
 
     End Select
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
     BackColor = UserControl.BackColor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (OLE_COLOR)
+'!--------------------------------------------------------------------------------
 Public Property Let BackColor(ByVal NewValue As OLE_COLOR)
     UserControl.BackColor = NewValue
     PropertyChanged "BackColor"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BorderStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get BorderStyle() As EnuBorderStyle
     BorderStyle = UserControl.BorderStyle
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BorderStyle
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (EnuBorderStyle)
+'!--------------------------------------------------------------------------------
 Public Property Let BorderStyle(ByVal NewValue As EnuBorderStyle)
     UserControl.BorderStyle = NewValue
     PropertyChanged "BorderStyle"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property AutoScrollToFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get AutoScrollToFocus() As Boolean
     AutoScrollToFocus = m_AutoScrollToFocus
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property AutoScrollToFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let AutoScrollToFocus(ByVal NewValue As Boolean)
     m_AutoScrollToFocus = NewValue
     PropertyChanged "AutoScrollToFocus"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property UseHandsCursor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get UseHandsCursor() As Boolean
     UseHandsCursor = m_UseHandsCursor
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property UseHandsCursor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let UseHandsCursor(ByVal NewValue As Boolean)
     m_UseHandsCursor = NewValue
     PropertyChanged "UseHandsCursor"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Enabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get Enabled() As Boolean
     Enabled = UserControl.Enabled
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Enabled
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Value (Boolean)
+'!--------------------------------------------------------------------------------
 Public Property Let Enabled(ByVal Value As Boolean)
     UserControl.Enabled = Value
     PropertyChanged "Enabled"
-
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_InitProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_InitProperties()
     m_AutoScrollToFocus = True
     m_UseHandsCursor = True
-
 End Sub
 
-Private Sub UserControl_MouseDown(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If m_UseHandsCursor Then
         If Button = 1 Then
@@ -375,10 +417,15 @@ Private Sub UserControl_MouseDown(Button As Integer, _
 
 End Sub
 
-Private Sub UserControl_MouseUp(Button As Integer, _
-                                Shift As Integer, _
-                                X As Single, _
-                                Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If m_UseHandsCursor Then
         If Button = 1 Then
@@ -390,15 +437,21 @@ Private Sub UserControl_MouseUp(Button As Integer, _
 
 End Sub
 
-Private Sub UserControl_MouseMove(Button As Integer, _
-                                  Shift As Integer, _
-                                  X As Single, _
-                                  Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Static mY                               As Single
-Static mX                               As Single
+    Static mY As Single
+    Static mX As Single
 
     If m_UseHandsCursor = False Then
+
         Exit Sub
 
     End If
@@ -410,7 +463,6 @@ Static mX                               As Single
             SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
             GetScrollInfo UserControl.hWnd, SB_VERT, SI
             ScrollVerticalWindow -SI.nPos
-
         End If
 
         If m_HScrollVisible Then
@@ -419,7 +471,6 @@ Static mX                               As Single
             SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
             GetScrollInfo UserControl.hWnd, SB_HORZ, SI
             ScrollHorizontalWindow -SI.nPos
-
         End If
 
     Else
@@ -427,15 +478,12 @@ Static mX                               As Single
         If m_VScrollVisible Then
             GetScrollInfo UserControl.hWnd, SB_VERT, SI
             mY = Y + SI.nPos
-
         End If
 
         If m_HScrollVisible Then
             GetScrollInfo UserControl.hWnd, SB_HORZ, SI
             mX = X + SI.nPos
-
         End If
-
     End If
 
     If m_VScrollVisible Or m_HScrollVisible Then
@@ -444,13 +492,16 @@ Static mX                               As Single
         Else
 
             If Button = 0 Then SetCursor UserControl.MouseIcon
-
         End If
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_ReadProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
     With PropBag
@@ -459,16 +510,19 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         m_AutoScrollToFocus = .ReadProperty("AutoScrollToFocus", True)
         m_UseHandsCursor = .ReadProperty("UseHandsCursor", True)
         Me.Enabled = .ReadProperty("Enabled", True)
-
     End With
 
     If Ambient.UserMode Then
         SetSubclassing UserControl.hWnd
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 
     With PropBag
@@ -477,14 +531,19 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
         .WriteProperty "AutoScrollToFocus", m_AutoScrollToFocus, True
         .WriteProperty "UseHandsCursor", m_UseHandsCursor, True
         .WriteProperty "Enabled", UserControl.Enabled, True
-
     End With
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetChildRectOfMe
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'                              SrcRect (RECT)
+'!--------------------------------------------------------------------------------
 Private Function GetChildRectOfMe(hWnd As Long, ByRef SrcRect As RECT)
 
-Dim PT                                  As POINT
+    Dim PT As POINT
 
     ClientToScreen UserControl.hWnd, PT
     Call GetWindowRect(hWnd, SrcRect)
@@ -494,14 +553,18 @@ Dim PT                                  As POINT
         .Top = .Top - PT.Y - OldPosV
         .Right = .Right - PT.X - OldPosH
         .Bottom = .Bottom - PT.Y - OldPosV
-
     End With
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsChildOfMe
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'!--------------------------------------------------------------------------------
 Private Function IsChildOfMe(hWnd As Long) As Boolean
 
-Dim hParent                             As Long
+    Dim hParent As Long
 
     hParent = GetParent(hWnd)
 
@@ -509,6 +572,7 @@ Dim hParent                             As Long
 
         If hParent = UserControl.hWnd Then
             IsChildOfMe = True
+
             Exit Do
 
         End If
@@ -519,9 +583,14 @@ Dim hParent                             As Long
 End Function
 
 ' ActiveVB
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function SetSubclassing
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'!--------------------------------------------------------------------------------
 Private Function SetSubclassing(ByVal hWnd As Long) As Boolean
 
-'Setzt Subclassing, sofern nicht schon gesetzt
+    'Setzt Subclassing, sofern nicht schon gesetzt
     If PrevWndProc = 0 Then
         If pASMWrapper <> 0 Then
             PrevWndProc = SetWindowLong(hWnd, GWL_WNDPROC, pASMWrapper)
@@ -529,39 +598,44 @@ Private Function SetSubclassing(ByVal hWnd As Long) As Boolean
             If PrevWndProc <> 0 Then
                 hSubclassedWnd = hWnd
                 SetSubclassing = True
-
             End If
-
         End If
-
     End If
 
 End Function
 
 ' ActiveVB
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function StopSubclassing
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function StopSubclassing() As Boolean
 
-'Stopt Subclassing, sofern gesetzt
+    'Stopt Subclassing, sofern gesetzt
     If hSubclassedWnd <> 0 Then
         If PrevWndProc <> 0 Then
             Call SetWindowLong(hSubclassedWnd, GWL_WNDPROC, PrevWndProc)
             hSubclassedWnd = 0
             PrevWndProc = 0
             StopSubclassing = True
-
         End If
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Initialize()
 
-Dim ASM(0 To 104)                       As Byte
-Dim pVar                                As Long
-Dim ThisClass                           As Long
-Dim CallbackFunction                    As Long
-Dim pVirtualFree
+    Dim ASM(0 To 104)    As Byte
+    Dim pVar             As Long
+    Dim ThisClass        As Long
+    Dim CallbackFunction As Long
+    Dim pVirtualFree
 
     SI.cbSize = Len(SI)
     SI.fMask = SIF_ALL
@@ -709,32 +783,44 @@ Dim pVirtualFree
         Call CopyMemory(ASM(90), pVar, 4)
         'fertigen Wrapper in DEP-kompatiblen Speicher kopieren
         Call CopyMemory(ByVal pASMWrapper, ASM(0), 104)
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Resize()
 
     On Error Resume Next
 
     CheckScroll
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Refresh
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Refresh()
     m_hFocus = 0
     CheckScroll
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CheckScroll
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub CheckScroll()
 
     On Error Resume Next
 
-    Dim bWnd                            As Long
-    Dim Rec                             As RECT
-    Dim mRec                            As RECT
+    Dim bWnd As Long
+    Dim Rec  As RECT
+    Dim mRec As RECT
 
     bWnd = GetWindow(UserControl.hWnd, GW_CHILD)
 
@@ -765,7 +851,6 @@ Private Sub CheckScroll()
         SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
         ScrollVerticalWindow 0
         m_VScrollVisible = False
-
     End If
 
     If mRec.Right + Abs(mRec.Left) > UserControl.ScaleWidth Or (mRec.Left < 0) Then
@@ -785,58 +870,81 @@ Private Sub CheckScroll()
         SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
         ScrollHorizontalWindow 0
         m_HScrollVisible = False
-
     End If
 
     SetWindowPos UserControl.hWnd, 0, 0, 0, 0, 0, 551
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ScrollVerticalWindow
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewPos (Long)
+'!--------------------------------------------------------------------------------
 Private Sub ScrollVerticalWindow(ByVal NewPos As Long)
     ScrollWindowByNum UserControl.hWnd, 0&, NewPos - OldPosV, 0&, 0&
     OldPosV = NewPos
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ScrollHorizontalWindow
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewPos (Long)
+'!--------------------------------------------------------------------------------
 Private Sub ScrollHorizontalWindow(ByVal NewPos As Long)
     ScrollWindowByNum UserControl.hWnd, NewPos - OldPosH, 0&, 0&, 0&
     OldPosH = NewPos
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetLoWord
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   dw (Long)
+'!--------------------------------------------------------------------------------
 Private Function GetLoWord(dw As Long) As Long
 
     If dw And &H8000& Then
         GetLoWord = &H8000 Or (dw And &H7FFF&)
     Else
         GetLoWord = dw And &HFFFF&
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetHiWord
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   dw (Long)
+'!--------------------------------------------------------------------------------
 Private Function GetHiWord(dw As Long) As Long
 
     If dw And &H80000000 Then
         GetHiWord = (dw \ 65535) - 1
     Else
         GetHiWord = dw \ 65535
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Show
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Show()
     Me.Refresh
     CheckScroll
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
 
-'Veranlasst das Freigeben des virtuellen Speichers
-Dim Counter                             As Long
-Dim Flag                                As Long
+    'Veranlasst das Freigeben des virtuellen Speichers
+    Dim Counter As Long
+    Dim Flag    As Long
 
     On Error Resume Next
 
@@ -852,9 +960,7 @@ Dim Flag                                As Long
             'Wrapper befindet sich noch innerhalb einer Rekursion und muss sich selbst lцschen; Flag setzen
             Flag = 1
             Call CopyMemory(ByVal (pASMWrapper + 108), Flag, 4)
-
         End If
-
     End If
 
 End Sub

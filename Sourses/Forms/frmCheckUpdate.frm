@@ -281,11 +281,17 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private mbFirstStartUpdate              As Boolean
-Private strFormName                     As String
+Private mbFirstStartUpdate As Boolean
+Private strFormName        As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -299,6 +305,11 @@ Private Sub FontCharsetChange()
     SetButtonProperties cmdExit
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmbVersions_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmbVersions_Click()
 
     With cmbVersions
@@ -315,21 +326,35 @@ Private Sub cmbVersions_Click()
 
     'cmbVersions
     LoadDescriptionAndLinks
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdDonate_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdDonate_Click()
     frmDonate.Show vbModal, Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdHistory_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdHistory_Click()
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
+    Dim nRetShellEx As Boolean
+    Dim cmdString   As String
 
     Select Case strPCLangCurrentID
 
@@ -338,31 +363,38 @@ Dim cmdString                           As String
 
         Case Else
             cmdString = Kavichki & strLinkHistory_en & Kavichki
-
     End Select
 
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUpdate_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdUpdate_Click()
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
+    Dim nRetShellEx As Boolean
+    Dim cmdString   As String
 
     cmdString = Kavichki & strLink(cmbVersions.ListIndex, 0) & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUpdate_ClickMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mnuIndex (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub cmdUpdate_ClickMenu(mnuIndex As Integer)
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
+    Dim nRetShellEx As Boolean
+    Dim cmdString   As String
 
     Select Case mnuIndex
 
@@ -374,31 +406,38 @@ Dim cmdString                           As String
 
         Case 4
             cmdString = Kavichki & strLink(cmbVersions.ListIndex, 4) & Kavichki
-
     End Select
 
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUpdateFull_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdUpdateFull_Click()
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
+    Dim nRetShellEx As Boolean
+    Dim cmdString   As String
 
     cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 0) & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUpdateFull_ClickMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mnuIndex (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub cmdUpdateFull_ClickMenu(mnuIndex As Integer)
 
-Dim nRetShellEx                         As Boolean
-Dim cmdString                           As String
+    Dim nRetShellEx As Boolean
+    Dim cmdString   As String
 
     Select Case mnuIndex
 
@@ -410,18 +449,21 @@ Dim cmdString                           As String
 
         Case 4
             cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 4) & Kavichki
-
     End Select
 
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
 
-Dim i                                   As Long
+    Dim i As Long
 
     If mbFirstStartUpdate Then
         lblWait.Visible = True
@@ -439,25 +481,33 @@ Dim i                                   As Long
         For i = LBound(strUpdVersions) To UBound(strUpdVersions)
             cmbVersions.AddItem strUpdVersions(i), i
         Next
-        cmbVersions.ListIndex = 0
 
+        cmbVersions.ListIndex = 0
     End If
 
     mbFirstStartUpdate = False
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
         Unload Me
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
-
     SetupVisualStyles Me
 
     With Me
@@ -472,7 +522,6 @@ Private Sub Form_Load()
     DoEvents
     lblWait.Left = 100
     lblWait.Width = Me.Width - 200
-
     LoadIconImage2Btn cmdExit, "BTN_EXIT", strPathImageMainWork
     LoadIconImage2Btn cmdUpdate, "BTN_UPDATE", strPathImageMainWork
     LoadIconImage2Btn cmdUpdateFull, "BTN_UPDATEFULL", strPathImageMainWork
@@ -485,29 +534,38 @@ Private Sub Form_Load()
     Else
         ' Выставляем шрифт
         FontCharsetChange
-
     End If
 
 End Sub
 
-Private Sub lblWWW_MouseDown(Button As Integer, _
-                             Shift As Integer, _
-                             X As Single, _
-                             Y As Single)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lblWWW_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://www.adia-project.net" & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadButtonLink
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ButtonName (ctlXpButton)
+'                              strMassivLink() (String)
+'!--------------------------------------------------------------------------------
 Private Sub LoadButtonLink(ButtonName As ctlXpButton, strMassivLink() As String)
 
-Dim strMirrorText                       As String
+    Dim strMirrorText As String
 
     If cmbVersions.ListIndex > -1 Then
 
@@ -519,7 +577,6 @@ Dim strMirrorText                       As String
 
             Case Else
                 strMirrorText = "Mirror"
-
         End Select
 
         With ButtonName
@@ -539,17 +596,14 @@ Dim strMirrorText                       As String
                     .AddMenu strMirrorText & " 2"
                     .AddMenu "-"
                     .AddMenu strMirrorText & " 3"
-
                 End If
 
                 If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
                     .MenuEnabled(2) = False
-
                 End If
 
                 If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
                     .MenuEnabled(4) = False
-
                 End If
 
                 If LenB(strMassivLink(cmbVersions.ListIndex, 1)) = 0 Then
@@ -557,7 +611,6 @@ Dim strMirrorText                       As String
                     .MenuVisible(1) = False
                 Else
                     .MenuCaption(0) = strMassivLink(cmbVersions.ListIndex, 1)
-
                 End If
 
                 If LenB(strMassivLink(cmbVersions.ListIndex, 3)) = 0 Then
@@ -565,7 +618,6 @@ Dim strMirrorText                       As String
                     .MenuVisible(2) = False
                 Else
                     .MenuCaption(2) = strMassivLink(cmbVersions.ListIndex, 3)
-
                 End If
 
                 If LenB(strMassivLink(cmbVersions.ListIndex, 5)) = 0 Then
@@ -574,7 +626,6 @@ Dim strMirrorText                       As String
                 Else
                     .MenuCaption(4) = strMassivLink(cmbVersions.ListIndex, 5)
                 End If
-
             End If
 
         End With
@@ -583,9 +634,14 @@ Dim strMirrorText                       As String
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadDescriptionAndLinks
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadDescriptionAndLinks()
 
-Dim strDescriptionTemp                  As String
+    Dim strDescriptionTemp As String
 
     ' Отличия работы если русский или английский
     Select Case strPCLangCurrentID
@@ -595,7 +651,6 @@ Dim strDescriptionTemp                  As String
 
         Case Else
             strDescriptionTemp = Replace$(strDescription_en, vbLf, vbNewLine)
-
     End Select
 
     ' Кнопка Скачать обновление
@@ -608,34 +663,34 @@ Dim strDescriptionTemp                  As String
         rtfDescription.TextRTF = strDescriptionTemp
     Else
         rtfDescription.TextRTF = "Error on load ChangeLog. Please inform the developer"
-
     End If
 
 End Sub
 
-Private Sub Localise(ByVal strPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal StrPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdUpdate.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
-    cmdUpdateFull.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
-    cmdHistory.Caption = LocaliseString(strPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
-    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdUpdate.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
+    cmdUpdateFull.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
+    cmdHistory.Caption = LocaliseString(StrPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
+    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
-    lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
+    lblVersion.Caption = LocaliseString(StrPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
 
     If InStr(1, strRelease, "beta", vbTextCompare) Then
         lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"
         lblVersion.ForeColor = vbRed
-
     End If
 
-    lblVersionList.Caption = LocaliseString(strPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
-    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
-
+    lblVersionList.Caption = LocaliseString(StrPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
+    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
 End Sub
-

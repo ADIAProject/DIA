@@ -2,21 +2,26 @@ Attribute VB_Name = "mWorkWithFiles"
 Option Explicit
 
 ' Переменные для работы с файловой системой
-Public objFSO                           As Scripting.FileSystemObject
+Public objFSO              As Scripting.FileSystemObject
 
 'Константы для FSO
-Public Const ForWriting                 As Long = 2
-Public Const ForAppending               As Long = 8
-Public Const ForReading                 As Long = 1
+Public Const ForWriting    As Long = 2
+Public Const ForAppending  As Long = 8
+Public Const ForReading    As Long = 1
 
-Private Root                            As String
-Private xFOL                            As Folder
-Private xFile                           As File
+Private Root               As String
+Private xFOL               As Folder
+Private xFile              As File
 
 ' Переменная
-Public strFileListInFolder              As String
+Public strFileListInFolder As String
 
 'Удаление слэша на конце
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function BacklashDelFromPath
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPath (String)
+'!--------------------------------------------------------------------------------
 Public Function BacklashDelFromPath(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathRemoveBackslash strPath
@@ -24,27 +29,35 @@ Public Function BacklashDelFromPath(ByVal strPath As String) As String
 End Function
 
 'Добавление слэша на конце
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function BackslashAdd2Path
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPath (String)
+'!--------------------------------------------------------------------------------
 Public Function BackslashAdd2Path(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathAddBackslash strPath
     BackslashAdd2Path = TrimNull(strPath)
 End Function
 
-Public Function CompareFilesByHashCAPICOM(ByVal strFirstFile As String, _
-                                          ByVal strSecondFile As String) As Boolean
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CompareFilesByHashCAPICOM
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFirstFile (String)
+'                              strSecondFile (String)
+'!--------------------------------------------------------------------------------
+Public Function CompareFilesByHashCAPICOM(ByVal strFirstFile As String, ByVal strSecondFile As String) As Boolean
 
-Dim strDataSHAFirst                     As String
-Dim strDataSHASecond                    As String
-Dim lngResult                           As Long
+    Dim strDataSHAFirst  As String
+    Dim strDataSHASecond As String
+    Dim lngResult        As Long
 
     If PathExists(strFirstFile) Then
         strDataSHAFirst = CalcHashFile(strFirstFile, CAPICOM_HASH_ALGORITHM_SHA1)
-
     End If
 
     If PathExists(strSecondFile) Then
         strDataSHASecond = CalcHashFile(strSecondFile, CAPICOM_HASH_ALGORITHM_SHA1)
-
     End If
 
     lngResult = StrComp(strDataSHAFirst, strDataSHASecond, vbTextCompare)
@@ -53,7 +66,6 @@ Dim lngResult                           As Long
         CompareFilesByHashCAPICOM = True
     Else
         CompareFilesByHashCAPICOM = False
-
     End If
 
 End Function
@@ -64,9 +76,15 @@ End Function
 '!  Возвр. знач.:  As Boolean
 '!  Описание    :  Скопирует файл 'PathFrom' в директорию 'CopyFileTo', Если файл существует, то он будет перезаписан новым файлом.
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CopyFileTo
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PathFrom (String)
+'                              PathTo (String)
+'!--------------------------------------------------------------------------------
 Public Function CopyFileTo(ByVal PathFrom As String, ByVal PathTo As String) As Boolean
 
-Dim ret                                 As Long
+    Dim ret As Long
 
     If PathExists(PathFrom) Then
         ' Для всех файлов, сброс атрибута только для чтения, и системный если есть
@@ -83,25 +101,28 @@ Dim ret                                 As Long
             CopyFileTo = False
             MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError), vbExclamation, strProductName
             DebugMode vbTab & "Copy file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-
         End If
 
     Else
         CopyFileTo = False
         DebugMode vbTab & "Copy file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CreateNewDirectory
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewDirectory (String)
+'!--------------------------------------------------------------------------------
 Public Sub CreateNewDirectory(ByVal NewDirectory As String)
 
-Dim SecAttrib                           As SECURITY_ATTRIBUTES
-Dim sPath                               As String
-Dim iCounter                            As Integer
-Dim sTempDir                            As String
-Dim ret                                 As Long
-Dim retLasrErr                          As Long
+    Dim SecAttrib  As SECURITY_ATTRIBUTES
+    Dim sPath      As String
+    Dim iCounter   As Integer
+    Dim sTempDir   As String
+    Dim ret        As Long
+    Dim retLasrErr As Long
 
     sPath = BackslashAdd2Path(NewDirectory)
     iCounter = 1
@@ -116,7 +137,6 @@ Dim retLasrErr                          As Long
             .lpSecurityDescriptor = &O0
             .bInheritHandle = False
             .nLength = Len(SecAttrib)
-
         End With
 
         ret = CreateDirectory(sTempDir, SecAttrib)
@@ -126,18 +146,21 @@ Dim retLasrErr                          As Long
 
             If PathExists(sTempDir) = False Then
                 DebugMode vbTab & "CreateDirectory: False : " & sTempDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
-
             End If
-
         End If
 
     Loop
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DeleteFiles
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PathFile (String)
+'!--------------------------------------------------------------------------------
 Public Function DeleteFiles(ByVal PathFile As String) As Boolean
 
-Dim ret                                 As Long
+    Dim ret As Long
 
     If PathIsValidUNC(PathFile) = False Then
         ret = DeleteFile(StrPtr("\\?\" & PathFile & vbNullChar))
@@ -154,17 +177,15 @@ Dim ret                                 As Long
             On Error GoTo errhandler
 
             objFSO.DeleteFile PathFile, True
-
         End If
 
         If PathExists(PathFile) Then
             DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
-
     End If
 
     Exit Function
-    
+
 errhandler:
     DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description
     DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
@@ -179,9 +200,14 @@ End Function
 '!  Переменные  :
 '!  Описание    :  Удаление временного каталога, если включена опция
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DelFolderBackUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFolderPath (String)
+'!--------------------------------------------------------------------------------
 Public Sub DelFolderBackUp(ByVal strFolderPath As String)
 
-Dim ret                                 As Long
+    Dim ret As Long
 
     On Error Resume Next
 
@@ -189,7 +215,6 @@ Dim ret                                 As Long
 
     If PathExists(strFolderPath) Then
         DelRecursiveFolder strFolderPath
-
     End If
 
     If PathExists(strFolderPath) Then
@@ -197,15 +222,12 @@ Dim ret                                 As Long
 
         If ret = 0 Then
             DebugMode vbTab & "RemoveDirectory: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-
         End If
-
     End If
 
     On Error GoTo 0
 
     DebugMode "DelFolder-End"
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -213,10 +235,15 @@ End Sub
 '!  Переменные  :  Folder As String
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DelRecursiveFolder
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Folder (String)
+'!--------------------------------------------------------------------------------
 Public Sub DelRecursiveFolder(ByVal Folder As String)
 
-Dim retDelete                           As Long
-Dim retStrMsg                           As String
+    Dim retDelete As Long
+    Dim retStrMsg As String
 
     Root = BacklashDelFromPath(Folder)
     DebugMode vbTab & "DeleteFolder: " & Root
@@ -237,7 +264,6 @@ Dim retStrMsg                           As String
         ' Получение списка каталогов подлежащих удалению
         If PathExists(Root) Then
             GetAllFolderInRoot Root, True
-
         End If
 
         If PathExists(Root) Then
@@ -256,15 +282,11 @@ Dim retStrMsg                           As String
 
                     Case Else
                         retStrMsg = "An Error was occured"
-
                 End Select
 
                 DebugMode vbTab & "DeleteFolder: " & " Result: " & retStrMsg
-
             End If
-
         End If
-
     End If
 
 End Sub
@@ -274,6 +296,11 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Удаление временного каталога, если включена опция
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DelTemp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub DelTemp()
 
     On Error Resume Next
@@ -291,17 +318,21 @@ Public Sub DelTemp()
     On Error GoTo 0
 
     DebugMode "DelTemp-End"
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DelTree
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strDir (String)
+'!--------------------------------------------------------------------------------
 Private Function DelTree(ByVal strDir As String) As Long
 
-Dim X                                   As Long
-Dim intAttr                             As Integer
-Dim strAllDirs                          As String
-Dim strFile                             As String
-Dim ret                                 As Long
-Dim retLasrErr                          As Long
+    Dim X          As Long
+    Dim intAttr    As Integer
+    Dim strAllDirs As String
+    Dim strFile    As String
+    Dim ret        As Long
+    Dim retLasrErr As Long
 
     DelTree = -1
 
@@ -336,7 +367,6 @@ Dim retLasrErr                          As Long
 
                                     If Err Then
                                         DelTree = Err.Number
-
                                     End If
 
                                     Exit Function
@@ -347,15 +377,12 @@ Dim retLasrErr                          As Long
 
                                 If Err Then
                                     DelTree = Err.Number
-
                                 End If
 
                                 Exit Function
 
                             End If
-
                         End If
-
                     End If
 
                     strFile = Dir
@@ -369,10 +396,10 @@ Dim retLasrErr                          As Long
 
                     If X Then
                         DelTree = X
-
                     End If
 
                 Loop
+
                 ret = RemoveDirectory(strDir)
 
                 If ret = 0 Then
@@ -380,28 +407,23 @@ Dim retLasrErr                          As Long
 
                     If PathExists(strDir) = False Then
                         DebugMode vbTab & "RemoveDirectory: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
-
                     End If
 
                     DelTree = retLasrErr
                 Else
                     DelTree = 0
-
                 End If
 
                 If Err Then
                     DelTree = Err.Number
                 Else
                     DelTree = 0
-
                 End If
 
                 On Error GoTo 0
 
             End If
-
         End If
-
     End If
 
 End Function
@@ -412,9 +434,14 @@ End Function
 '!  Возвр. знач.:  As String
 '!  Описание    :  Получить расширение файла из пути или имени файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ExtFromFileName
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FileName (String)
+'!--------------------------------------------------------------------------------
 Public Function ExtFromFileName(ByVal FileName As String) As String
 
-Dim intLastSeparator                    As Long
+    Dim intLastSeparator As Long
 
     intLastSeparator = InStrRev(FileName, ".")
 
@@ -422,19 +449,26 @@ Dim intLastSeparator                    As Long
         ExtFromFileName = Right$(FileName, Len(FileName) - intLastSeparator)
     Else
         ExtFromFileName = vbNullString
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileisReadOnly
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PathFile (String)
+'!--------------------------------------------------------------------------------
 Public Function FileisReadOnly(ByVal PathFile As String) As Boolean
     FileisReadOnly = GetAttr(PathFile) And vbReadOnly
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileisSystemAttr
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PathFile (String)
+'!--------------------------------------------------------------------------------
 Public Function FileisSystemAttr(PathFile As String) As Boolean
     FileisSystemAttr = GetAttr(PathFile) And vbSystem
-
 End Function
 
 '! -----------------------------------------------------------
@@ -443,9 +477,14 @@ End Function
 '!  Возвр. знач.:  As String
 '!  Описание    :  Получить имя файла без расширения, зная имя файла
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileName_woExt
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FileName (String)
+'!--------------------------------------------------------------------------------
 Public Function FileName_woExt(ByVal FileName As String) As String
 
-Dim intLastSeparator                    As Long
+    Dim intLastSeparator As Long
 
     FileName_woExt = FileName
 
@@ -454,9 +493,7 @@ Dim intLastSeparator                    As Long
 
         If intLastSeparator > 0 Then
             FileName_woExt = Left$(FileName, intLastSeparator - 1)
-
         End If
-
     End If
 
 End Function
@@ -467,9 +504,14 @@ End Function
 '!  Возвр. знач.:  As String
 '!  Описание    :  Получить имя файла из полного пути
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileNameFromPath
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FilePath (String)
+'!--------------------------------------------------------------------------------
 Public Function FileNameFromPath(ByVal FilePath As String) As String
 
-Dim intLastSeparator                    As Long
+    Dim intLastSeparator As Long
 
     FileNameFromPath = FilePath
 
@@ -478,9 +520,7 @@ Dim intLastSeparator                    As Long
 
         If intLastSeparator >= 0 Then
             FileNameFromPath = Right$(FilePath, Len(FilePath) - intLastSeparator)
-
         End If
-
     End If
 
 End Function
@@ -490,17 +530,22 @@ End Function
 '!  Переменные  :  xFolder As String, RealDelete As Boolean, Optional ExtFile As String
 '!  Описание    :  Получение всех файлов в выбранном каталоге
 '! -----------------------------------------------------------
-Public Sub GetAllFileInFolder(ByVal xFolder As String, _
-                              RealDelete As Boolean, _
-                              Optional ExtFile As String, _
-                              Optional ByVal mbRecursFolder As Boolean = True)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GetAllFileInFolder
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   xFolder (String)
+'                              RealDelete (Boolean)
+'                              ExtFile (String)
+'                              mbRecursFolder (Boolean = True)
+'!--------------------------------------------------------------------------------
+Public Sub GetAllFileInFolder(ByVal xFolder As String, RealDelete As Boolean, Optional ExtFile As String, Optional ByVal mbRecursFolder As Boolean = True)
 
-Dim strExtFile_x()                      As String
-Dim strExtFile                          As String
-Dim strExtFileReal                      As String
-Dim strTemp                             As String
-Dim strTempAll                          As String
-Dim i                                   As Long
+    Dim strExtFile_x() As String
+    Dim strExtFile     As String
+    Dim strExtFileReal As String
+    Dim strTemp        As String
+    Dim strTempAll     As String
+    Dim i              As Long
 
     DebugMode str2VbTab & "GetAllFileInFolder-Start: " & xFolder, 2
 
@@ -528,25 +573,20 @@ Dim i                                   As Long
                         If strExtFileReal = strExtFile Then
                             InfTempPathListCount = InfTempPathListCount + 1
                             InfTempPathList(InfTempPathListCount) = xFile.Path
-
                         End If
 
                     Else
 
                         If strExtFile = strExtFileReal Then
                             strTemp = xFile.Path
-
                         End If
-
                     End If
 
                 Next
 
                 If LenB(strTemp) > 0 Then
                     strTempAll = AppendStr(strTempAll, strTemp, ";")
-
                 End If
-
             End If
 
         Next
@@ -559,9 +599,7 @@ Dim i                                   As Long
                 If .Files.Count = 0 Then
                     If .SubFolders.Count = 0 Then
                         .Delete True
-
                     End If
-
                 End If
 
             End With
@@ -571,22 +609,19 @@ Dim i                                   As Long
             If LenB(strTempAll) > 0 Then
                 DebugMode str2VbTab & "ListFiles in Folder '" & xFOL.Name & "': " & vbNewLine & "*****************************************" & vbNewLine & strTempAll & vbNewLine & "*****************************************"
                 strFileListInFolder = AppendStr(strFileListInFolder, strTempAll, ";")
-
             End If
-
         End If
 
         If mbRecursFolder Or RealDelete Then
             ' Проверяем есть ли подкаталоги в каталоге
             GetAllFolderInRoot xFolder, RealDelete, ExtFile
-
         End If
-
     End If
 
     DebugMode str2VbTab & "GetAllFileInFolder-End", 2
+
     Exit Sub
-    
+
 errhandler:
     DebugMode vbTab & "GetAllFileInFolder: False : " & xFolder & " Error: №" & Err.Number & ": " & Err.Description
     Err.Clear
@@ -600,10 +635,15 @@ End Sub
 '!  Переменные  :  rootFolder As String
 '!  Описание    :  Получение всех подкаталогов в выбранном каталоге
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetAllFolderInFolder
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   RootFolder (String)
+'!--------------------------------------------------------------------------------
 Public Function GetAllFolderInFolder(ByVal RootFolder As String) As Variant
 
-Dim xFolder                             As Folder
-Dim strListFolder                       As String
+    Dim xFolder       As Folder
+    Dim strListFolder As String
 
     DebugMode str2VbTab & "GetAllFolderInFolder-Start: "
 
@@ -620,7 +660,6 @@ Dim strListFolder                       As String
         End If
 
         GetAllFolderInFolder = Split(strListFolder, ";")
-
     End If
 
 End Function
@@ -630,11 +669,16 @@ End Function
 '!  Переменные  :  rootFolder As String, RealDelete As Boolean, Optional ExtFile As String
 '!  Описание    :  Получение всех подкаталогов в выбранном каталоге
 '! -----------------------------------------------------------
-Private Sub GetAllFolderInRoot(ByVal RootFolder As String, _
-                               ByVal RealDelete As Boolean, _
-                               Optional ExtFile As String)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GetAllFolderInRoot
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   RootFolder (String)
+'                              RealDelete (Boolean)
+'                              ExtFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub GetAllFolderInRoot(ByVal RootFolder As String, ByVal RealDelete As Boolean, Optional ExtFile As String)
 
-Dim xFolder                             As Folder
+    Dim xFolder As Folder
 
     If PathExists(RootFolder) Then
         Set xFOL = objFSO.GetFolder(RootFolder)
@@ -648,7 +692,6 @@ Dim xFolder                             As Folder
             Next
 
         End If
-
     End If
 
 End Sub
@@ -659,12 +702,17 @@ End Sub
 '!  Возвр. знач.:  As String
 '!  Описание    :  Получение переменной системного окружения
 '! -----------------------------------------------------------
-Public Function GetEnviron(ByVal strEnv As String, _
-                           Optional ByVal mbCollectFull As Boolean = False) As String
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetEnviron
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strEnv (String)
+'                              mbCollectFull (Boolean = False)
+'!--------------------------------------------------------------------------------
+Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull As Boolean = False) As String
 
-Dim strTemp                             As String
-Dim strTempEnv                          As String
-Dim strNumPosition                      As Long
+    Dim strTemp        As String
+    Dim strTempEnv     As String
+    Dim strNumPosition As Long
 
     strNumPosition = InStr(strEnv, Percentage)
 
@@ -674,9 +722,7 @@ Dim strNumPosition                      As Long
 
         If strNumPosition > 0 Then
             strTemp = Left$(strTemp, strNumPosition - 1)
-
         End If
-
     End If
 
     strTempEnv = Environ$(strTemp)
@@ -685,18 +731,21 @@ Dim strNumPosition                      As Long
         GetEnviron = Replace$(strEnv, Percentage & strTemp & Percentage, strTempEnv, , , vbTextCompare)
     Else
         GetEnviron = strTempEnv
-
     End If
 
     DebugMode str2VbTab & "GetEnviron: %" & strTemp & "%=" & strTempEnv
     DebugMode str2VbTab & "GetEnviron-End"
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetUniqueTempFile
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function GetUniqueTempFile() As String
 
-Dim ll_Buffer                           As Long
-Dim ls_TempFileName                     As String
+    Dim ll_Buffer       As Long
+    Dim ls_TempFileName As String
 
     ll_Buffer = 255
     ls_TempFileName = Space$(255)
@@ -710,7 +759,6 @@ Dim ls_TempFileName                     As String
     Else
         ls_TempFileName = Left$(ls_TempFileName, ll_Buffer)
         GetUniqueTempFile = ls_TempFileName
-
     End If
 
 End Function
@@ -720,10 +768,15 @@ End Function
 '!  Переменные  :
 '!  Описание    :  Проверка на запск программы с CD\DVD
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsDriveCDRoom
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Function IsDriveCDRoom() As Boolean
 
-Dim strDriveName                        As String
-Dim xDrv                                As Drive
+    Dim strDriveName As String
+    Dim xDrv         As Drive
 
     IsDriveCDRoom = False
     strDriveName = Left$(strAppPath, 2)
@@ -735,30 +788,32 @@ Dim xDrv                                As Drive
 
         If xDrv.DriveType = CDRom Then
             IsDriveCDRoom = True
-
         End If
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathIsAFolder
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sPath (String)
+'!--------------------------------------------------------------------------------
 Public Function PathIsAFolder(ByVal sPath As String) As Boolean
 
-'Verifies that a path is a valid
-'directory, and returns True (1) if
-'the path is a valid directory,
-'or False otherwise. The path must
-'exist.
-'If the path is a directory on the
-'local machine, PathIsDirectory returns
-'16 (the file attribute for a folder).
-'If the path is a directory on a server
-'share, PathIsDirectory returns 1.
-'If it is neither PathIsDirectory returns 0.
-Dim Result                              As Long
+    'Verifies that a path is a valid
+    'directory, and returns True (1) if
+    'the path is a valid directory,
+    'or False otherwise. The path must
+    'exist.
+    'If the path is a directory on the
+    'local machine, PathIsDirectory returns
+    '16 (the file attribute for a folder).
+    'If the path is a directory on a server
+    'share, PathIsDirectory returns 1.
+    'If it is neither PathIsDirectory returns 0.
+    Dim Result As Long
 
     PathIsAFolder = PathIsDirectory(StrPtr(sPath & vbNullChar))
-
 End Function
 
 '! -----------------------------------------------------------
@@ -767,9 +822,15 @@ End Function
 '!  Возвр. знач.:  As Boolean
 '!  Описание    :  Скопирует файл 'PathFrom' в директорию 'PathTo', Если файл существует, то он будет перезаписан новым файлом.
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function MoveFileTo
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PathFrom (String)
+'                              PathTo (String)
+'!--------------------------------------------------------------------------------
 Public Function MoveFileTo(PathFrom As String, PathTo As String) As Boolean
 
-Dim ret                                 As Long
+    Dim ret As Long
 
     If StrComp(PathFrom, PathTo, vbTextCompare) <> 0 Then
         If PathExists(PathFrom) Then
@@ -787,48 +848,50 @@ Dim ret                                 As Long
                 MoveFileTo = False
                 MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError), vbExclamation, strProductName
                 DebugMode vbTab & "Move file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-
             End If
 
         Else
             MoveFileTo = False
             DebugMode vbTab & "Move file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-
         End If
 
     Else
         DebugMode vbTab & "Move file: Source and Destination are identicaly (" & PathFrom & " ; " & PathTo & ")"
-
     End If
 
 End Function
 
-Public Function ParserInf4Strings(ByVal strInfFilePath As String, _
-                                  ByVal strSearchString As String) As String
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ParserInf4Strings
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strInfFilePath (String)
+'                              strSearchString (String)
+'!--------------------------------------------------------------------------------
+Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearchString As String) As String
 
-Dim StringHash                          As Scripting.Dictionary
-Dim objInfFile                          As TextStream
-Dim RegExpStrSect                       As RegExp
-Dim RegExpStrDefs                       As RegExp
-Dim MatchesStrSect                      As MatchCollection
-Dim MatchesStrDefs                      As MatchCollection
-Dim objMatch                            As Match
-Dim objMatch1                           As Match
-Dim regex_strsect                       As String
-Dim regex_strings                       As String
-Dim r_beg                               As String
-Dim r_identS                            As String
-Dim r_str                               As String
-Dim FileContent                         As String
-Dim Key                                 As String
-Dim Value                               As String
-Dim R                                   As Boolean
-Dim i                                   As Long
-Dim Strings                             As String
-Dim valval                              As String
-Dim varname                             As String
-Dim lngFileDBSize                       As Long
-Dim Pos                                 As Long
+    Dim StringHash     As Scripting.Dictionary
+    Dim objInfFile     As TextStream
+    Dim RegExpStrSect  As RegExp
+    Dim RegExpStrDefs  As RegExp
+    Dim MatchesStrSect As MatchCollection
+    Dim MatchesStrDefs As MatchCollection
+    Dim objMatch       As Match
+    Dim objMatch1      As Match
+    Dim regex_strsect  As String
+    Dim regex_strings  As String
+    Dim r_beg          As String
+    Dim r_identS       As String
+    Dim r_str          As String
+    Dim FileContent    As String
+    Dim Key            As String
+    Dim Value          As String
+    Dim R              As Boolean
+    Dim i              As Long
+    Dim Strings        As String
+    Dim valval         As String
+    Dim varname        As String
+    Dim lngFileDBSize  As Long
+    Dim Pos            As Long
 
     r_beg = "^[ \t]*"
     r_identS = "([^; \t\r\n][^;\t\r\n]*[^; \t\r\n])"
@@ -837,8 +900,8 @@ Dim Pos                                 As Long
     ' variable = "str"
     regex_strings = r_beg & r_identS & "[ \t]*=[ \t]*" & r_str
     ' Init regexps
-
     Set RegExpStrSect = New RegExp
+
     With RegExpStrSect
         .Pattern = regex_strsect
         .MultiLine = True
@@ -848,6 +911,7 @@ Dim Pos                                 As Long
     End With
 
     Set RegExpStrDefs = New RegExp
+
     With RegExpStrDefs
         .Pattern = regex_strings
         .MultiLine = True
@@ -884,7 +948,6 @@ Dim Pos                                 As Long
 
             If LenB(Value) = 0 Then
                 Value = objMatch1.SubMatches(2)
-
             End If
 
             R = StringHash.Exists(Key)
@@ -892,7 +955,6 @@ Dim Pos                                 As Long
             If Not R Then
                 StringHash.Add Key, Value
                 StringHash.Add Percentage & Key & Percentage, Value
-
             End If
 
         Next
@@ -910,9 +972,7 @@ Dim Pos                                 As Long
             DebugMode "ParserInf4Strings: Error in inf: Cannot find '" & strSearchString & "'"
         Else
             ParserInf4Strings = Replace$(strSearchString, varname, valval)
-
         End If
-
     End If
 
 End Function
@@ -923,43 +983,58 @@ End Function
 '!  Возвр. знач.:  As String
 '!  Описание    :  Получить путь к файлу из полного пути
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathNameFromPath
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   FilePath (String)
+'!--------------------------------------------------------------------------------
 Public Function PathNameFromPath(FilePath As String) As String
 
-Dim intLastSeparator                    As Long
+    Dim intLastSeparator As Long
+
     intLastSeparator = InStrRev(FilePath, vbBackslash)
+
     If intLastSeparator > 0 Then
         If intLastSeparator < Len(FilePath) Then
             PathNameFromPath = Left$(FilePath, intLastSeparator)
         Else
             PathNameFromPath = FilePath
         End If
+
     Else
         PathNameFromPath = FilePath
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ResetReadOnly4File
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
 
     If PathExists(StrPathFile) Then
         If FileisReadOnly(StrPathFile) Then
             SetAttr StrPathFile, vbNormal
-
         End If
 
         If FileisSystemAttr(StrPathFile) Then
             SetAttr StrPathFile, vbNormal
-
         End If
-
     End If
 
 End Sub
 
 '# function to replace special chars to create dirs correctly #
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function SafeDir
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   str (String)
+'!--------------------------------------------------------------------------------
 Public Function SafeDir(ByVal str As String) As String
 
-Dim R                                   As String
+    Dim R As String
 
     R = str
     R = Replace$(R, vbBackslash, "_")
@@ -980,19 +1055,22 @@ Dim R                                   As String
     R = Replace$(R, "__", "_")
     R = Trim$(R)
     SafeDir = R
-
 End Function
 
 '# function to replace special chars to create dirs correctly #
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function SafeFileName
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strString (Variant)
+'!--------------------------------------------------------------------------------
 Public Function SafeFileName(ByVal strString) As String
-' Заменяем VbTab
+    ' Заменяем VbTab
     strString = Replace$(strString, vbTab, vbNullString)
     strString = TrimNull(strString)
 
     ' Отбрасываем все после ","
     If InStr(strString, ",") Then
         strString = Left$(strString, InStr(strString, ",") - 1)
-
     End If
 
     ' Отбрасываем все после ";"
@@ -1002,27 +1080,30 @@ Public Function SafeFileName(ByVal strString) As String
 
     strString = Trim$(TrimNull(strString))
     SafeFileName = strString
-
 End Function
 
 '# function to discover dirs with inf code #
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function WhereIsDir
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   str (String)
+'                              strInfFilePath (String)
+'!--------------------------------------------------------------------------------
 Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) As String
 
-Dim cDir                                As String
-Dim Str_x()                             As String
-Dim mbAdditionalPath                    As Boolean
+    Dim cDir             As String
+    Dim Str_x()          As String
+    Dim mbAdditionalPath As Boolean
 
     If InStr(str, ";") Then
         Str_x = Split(str, ";")
         str = Trim$(Str_x(0))
-
     End If
 
     If InStr(str, ",") Then
         Str_x = Split(str, ",")
         mbAdditionalPath = True
         str = Str_x(0)
-
     End If
 
     If InStr(str, vbNullChar) Then
@@ -1231,7 +1312,6 @@ Dim mbAdditionalPath                    As Boolean
 
             If LenB(cDir) = 0 Then
                 cDir = strSysDir86 & "spool\Drivers\w32x86"
-
             End If
 
         Case "66001"
@@ -1239,7 +1319,6 @@ Dim mbAdditionalPath                    As Boolean
 
             If LenB(cDir) = 0 Then
                 cDir = strSysDir86 & "spool\prtprocs\w32x86"
-
             End If
 
         Case "66002"
@@ -1250,7 +1329,6 @@ Dim mbAdditionalPath                    As Boolean
 
             If LenB(cDir) = 0 Then
                 cDir = strSysDir86 & "spool\drivers\color"
-
             End If
 
         Case "66004"
@@ -1258,7 +1336,6 @@ Dim mbAdditionalPath                    As Boolean
 
         Case Else
             cDir = vbNullString
-
     End Select
 
     If InStr(cDir, vbNullChar) Then
@@ -1270,16 +1347,13 @@ Dim mbAdditionalPath                    As Boolean
 
         If InStr(cDir, Percentage) Then
             cDir = ParserInf4Strings(strInfFilePath, cDir)
-
         End If
-
     End If
 
     cDir = Replace$(cDir, vbTab, vbNullString)
     cDir = Replace$(cDir, Kavichki, vbNullString)
     cDir = BackslashAdd2Path(cDir)
     WhereIsDir = TrimNull(cDir)
-
 End Function
 
 '! -----------------------------------------------------------
@@ -1288,6 +1362,11 @@ End Function
 '!  Возвр. знач.:  As String
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathCollect
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Path (String)
+'!--------------------------------------------------------------------------------
 Public Function PathCollect(Path As String) As String
 
     If InStr(Path, ":") = 2 Then
@@ -1317,22 +1396,15 @@ Public Function PathCollect(Path As String) As String
                                 PathCollect = Path
                             Else
                                 PathCollect = strAppPathBackSL & Path
-
                             End If
 
                         Else
                             PathCollect = strAppPathBackSL & Path
-
                         End If
-
                     End If
-
                 End If
-
             End If
-
         End If
-
     End If
 
     If InStr(PathCollect, vbBackslash) Then
@@ -1353,6 +1425,12 @@ End Function
 '!  Возвр. знач.:  As String
 '!  Описание    :
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathCollect4Dest
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Path (String)
+'                              strDest (String)
+'!--------------------------------------------------------------------------------
 Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) As String
 
     If InStr(Path, ":") = 2 Then
@@ -1380,22 +1458,15 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
                                 PathCollect4Dest = Path
                             Else
                                 PathCollect4Dest = BackslashAdd2Path(strDest) & Path
-
                             End If
 
                         Else
                             PathCollect4Dest = BackslashAdd2Path(strDest) & Path
-
                         End If
-
                     End If
-
                 End If
-
             End If
-
         End If
-
     End If
 
     If InStr(PathCollect4Dest, vbBackslash) Then
@@ -1406,29 +1477,35 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
                 PathCollect4Dest = vbBackslash & PathCollect4Dest
             Else
                 PathCollect4Dest = vbBackslash & PathCollect4Dest
-
             End If
-
         End If
-
     End If
 
     PathCollect4Dest = BackslashAdd2Path(PathCollect4Dest)
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathIsValidUNC
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sPath (String)
+'!--------------------------------------------------------------------------------
 Public Function PathIsValidUNC(ByVal sPath As String) As Boolean
-  ' Returns True if the string is a valid UNC path.
-  PathIsValidUNC = PathIsUNC(StrPtr(sPath))
+    ' Returns True if the string is a valid UNC path.
+    PathIsValidUNC = PathIsUNC(StrPtr(sPath))
 End Function
 
 ' Расширить имя файла - использование переменных %%
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ExpandFileNamebyEnvironment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFileName (String)
+'!--------------------------------------------------------------------------------
 Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As String
 
-Dim R                                   As String
-Dim str_OSVer                           As String
-Dim str_OSBit                           As String
-Dim str_DATE                            As String
+    Dim R         As String
+    Dim str_OSVer As String
+    Dim str_OSBit As String
+    Dim str_DATE  As String
 
     If InStr(strFileName, Percentage) Then
         ' Макроподстановка версия ОС %OSVer%
@@ -1455,33 +1532,47 @@ Dim str_DATE                            As String
         ExpandFileNamebyEnvironment = R
     Else
         ExpandFileNamebyEnvironment = strFileName
-
     End If
 
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CreateIfNotExistPath
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFolderPath (String)
+'!--------------------------------------------------------------------------------
 Public Function CreateIfNotExistPath(strFolderPath As String) As Boolean
+
     If LenB(strFolderPath) > 0 Then
+
         ' Если нет, то создаем каталог
         If PathExists(strFolderPath) = False Then
             CreateNewDirectory strFolderPath
             CreateIfNotExistPath = PathIsAFolder(strFolderPath)
         End If
     End If
+
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CopyFolderByShell
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sSource (String)
+'                              sDestination (String)
+'!--------------------------------------------------------------------------------
 Public Function CopyFolderByShell(sSource As String, sDestination As String) As Long
 
-Dim FOF_FLAGS                           As Long
-Dim SHFileOp                            As SHFILEOPSTRUCT
+    Dim FOF_FLAGS As Long
+    Dim SHFileOp  As SHFILEOPSTRUCT
 
     'terminate the folder string with a pair of nulls
     sSource = BacklashDelFromPath(sSource) & str2vbNullChar
+
     If PathExists(sDestination) = False Then
         CreateIfNotExistPath sDestination
     End If
-    sDestination = BacklashDelFromPath(sDestination) & str2vbNullChar
 
+    sDestination = BacklashDelFromPath(sDestination) & str2vbNullChar
     'determine the user's options selected
     FOF_FLAGS = FOF_FLAGS Or FOF_RENAMEONCOLLISION Or FOF_NOCONFIRMATION
 
@@ -1495,30 +1586,52 @@ Dim SHFileOp                            As SHFILEOPSTRUCT
 
     'and perform the chosen copy or move operation
     CopyFolderByShell = SHFileOperation(SHFileOp)
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathCombine
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strDirectory (String)
+'                              strFile (String)
+'!--------------------------------------------------------------------------------
 Public Function PathCombine(ByVal strDirectory As String, ByVal strFile As String) As String
-Dim strBuffer                           As String
+
+    Dim strBuffer As String
+
     ' Concatenates two strings that represent properly formed
     ' paths into one path, as well as any relative path pieces.
     strBuffer = String$(MAX_PATH_UNICODE, vbNullChar)
+
     If PathCombineW(StrPtr(strBuffer), StrPtr(strDirectory & vbNullChar), StrPtr(strFile & vbNullChar)) Then
         PathCombine = TrimNull(strBuffer)
     End If
+
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function PathExists
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPath (String)
+'!--------------------------------------------------------------------------------
 Public Function PathExists(ByVal strPath As String) As Boolean
     PathExists = PathFileExists(StrPtr(strPath & vbNullChar))
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetFileSizeByPath
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPath (String)
+'!--------------------------------------------------------------------------------
 Public Function GetFileSizeByPath(ByVal strPath As String) As Long
-Dim lHandle                             As Long
+
+    Dim lHandle As Long
+
     GetFileSizeByPath = -1
     lHandle = CreateFile(StrPtr(strPath & vbNullChar), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0)
+
     If lHandle <> INVALID_HANDLE_VALUE Then
         GetFileSizeByPath = GetFileSize(lHandle, 0&)
         CloseHandle lHandle
     End If
-End Function
 
+End Function

@@ -512,14 +512,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' Минимальные размеры формы
-Private lngFormWidthMin                 As Long
-Private lngFormHeightMin                As Long
+Private lngFormWidthMin  As Long
+Private lngFormHeightMin As Long
+Private lngDeviceCount   As Long
+Private strFormName      As String
 
-Private lngDeviceCount                  As Long
-Private strFormName                     As String
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
-' Выставляем шрифт
+
+    ' Выставляем шрифт
     With Me.Font
         .Name = strOtherForm_FontName
         .Size = lngOtherForm_FontSize
@@ -528,7 +533,6 @@ Private Sub FontCharsetChange()
 
     frGroup.Font.Charset = lngDialog_Charset
     frFindDrvInternet.Font.Charset = lngDialog_Charset
-
     SetButtonProperties cmdReNewHW
     SetButtonProperties cmdBackUpDrivers
     SetButtonProperties cmdOK
@@ -537,9 +541,14 @@ Private Sub FontCharsetChange()
     SetButtonProperties cmdGoSite
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdBackUpDrivers_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdBackUpDrivers_Click()
 
-Dim lngMsgRet                           As Long
+    Dim lngMsgRet As Long
 
     lngMsgRet = MsgBox(strMessages(123), vbYesNo + vbQuestion, strProductName)
 
@@ -547,14 +556,18 @@ Dim lngMsgRet                           As Long
 
         Case vbYes
             RunUtilsShell Kavichki & "http://www.adia-project.net" & Kavichki, False
-
     End Select
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdCheckAll_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdCheckAll_Click()
 
-Dim i                                   As Integer
+    Dim i As Integer
 
     With lvDevices.ListItems
 
@@ -562,23 +575,27 @@ Dim i                                   As Integer
 
             If Not .Item(i).Checked Then
                 .Item(i).Checked = True
-
             End If
 
         Next
+
     End With
 
     'LVDEVICES
     FindCheckCountList
-
 End Sub
 
 'найти драйвер для выделенного устройства
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdGoSite_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdGoSite_Click()
 
-Dim strDevID                            As String
-Dim cmdString                           As String
-Dim nRetShellEx                         As Boolean
+    Dim strDevID    As String
+    Dim cmdString   As String
+    Dim nRetShellEx As Boolean
 
     strDevID = txtFindText.Text
     strDevID = Replace$(strDevID, vbBackslash, "%5C", , , vbTextCompare)
@@ -595,34 +612,38 @@ Dim nRetShellEx                         As Boolean
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     Me.Hide
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdReNewHW_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdReNewHW_Click()
     BlockControl False
-
     lvDevices.ListItems.Clear
     lvDevices.Visible = False
     lblWait.Visible = True
-
     ReCollectHWID
     ' Провести повторно поиск драйверов в пакетах, т.е обновить кнопки
     frmMain.UpdateStatusButtonAll
     ' Обновить список неизвестных дров и описание для кнопки
     frmMain.LoadCmdViewAllDeviceCaption
     SaveHWIDs2File
-
     'загружаем список по новой
     LoadListbyMode
     lblWait.Visible = False
     lvDevices.Visible = True
-
     BlockControl True
-
 End Sub
 
 '! -----------------------------------------------------------
@@ -630,8 +651,12 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций
 '! -----------------------------------------------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub BlockControl
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbBlock (Boolean)
+'!--------------------------------------------------------------------------------
 Public Sub BlockControl(ByVal mbBlock As Boolean)
-
     optGrp1.Enabled = mbBlock
     optGrp2.Enabled = mbBlock
     optGrp3.Enabled = mbBlock
@@ -641,45 +666,68 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     cmdReNewHW.Enabled = mbBlock
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUnCheckAll_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdUnCheckAll_Click()
 
-Dim i                                   As Integer
+    Dim i As Integer
 
     With lvDevices.ListItems
+
         For i = 1 To .Count
+
             If .Item(i).Checked Then
                 .Item(i).Checked = False
             End If
+
         Next
+
     End With
 
     FindCheckCountList
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FindCheckCountList
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub FindCheckCountList()
 
-Dim i                                   As Integer
-Dim miCount                             As Integer
+    Dim i       As Integer
+    Dim miCount As Integer
 
     For i = 1 To lvDevices.ListItems.Count
 
         If lvDevices.ListItems.Item(i).Checked Then
             miCount = miCount + 1
         End If
+
     Next
 
     If miCount > 0 Then
+
         With cmdOK
+
             If Not .Enabled Then
                 .Enabled = True
             End If
 
         End With
+
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
     If KeyCode = vbKeyEscape Then
@@ -688,6 +736,11 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Load()
     SetupVisualStyles Me
 
@@ -701,25 +754,29 @@ Private Sub Form_Load()
     End With
 
     mnuContext.Visible = False
-
     LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
     LoadIconImage2BtnJC cmdCheckAll, "BTN_CHECKMARK", strPathImageMainWork
     LoadIconImage2BtnJC cmdUnCheckAll, "BTN_UNCHECKMARK", strPathImageMainWork
     LoadIconImage2BtnJC cmdGoSite, "BTN_VIEW_SEARCH", strPathImageMainWork
     LoadIconImage2BtnJC cmdReNewHW, "BTN_RENEWHW", strPathImageMainWork
     LoadIconImage2BtnJC cmdBackUpDrivers, "BTN_BACKUP", strPathImageMainWork
-
     ' все остальные процедуры
     FormLoadDefaultParam
     FormLoadAction
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadDefaultParam
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub FormLoadDefaultParam()
+
     If Not (lvDevices Is Nothing) Then
         lvDevices.ColumnHeaders.Clear
         lvDevices.ListItems.Clear
     End If
+
     optGrp1.Value = 0
     'uncheck
     optGrp2.Value = 1
@@ -728,9 +785,14 @@ Public Sub FormLoadDefaultParam()
     optGrp4.Value = True
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadAction
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
-' Локализациz приложения
+    ' Локализациz приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
@@ -741,34 +803,52 @@ Public Sub FormLoadAction()
     LoadList_Device False
     Me.Caption = Me.Caption & " (Find: " & lvDevices.ListItems.Count & ")"
     lngDeviceCount = lvDevices.ListItems.Count
-
     LoadListbyMode
     LoadFormCaption
     cmdGoSite.Enabled = LenB(txtFindText.Text) > 0
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadFormCaption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadFormCaption()
-Dim MeCaptionView                       As String
+
+    Dim MeCaptionView As String
 
     MeCaptionView = LocaliseString(strPCLangCurrentPath, strFormName, strFormName, Me.Caption)
     Me.Caption = MeCaptionView & " (" & lvDevices.ListItems.Count & " " & strMessages(124) & " " & lngDeviceCount & ")"
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_QueryUnload
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Cancel (Integer)
+'                              UnloadMode (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-' Выгружаем из памяти форму и другие компоненты
+
+    ' Выгружаем из памяти форму и другие компоненты
     If UnloadMode = vbFormControlMenu Then
         Cancel = 1
         Me.Hide
     Else
         Set frmListHwidAll = Nothing
     End If
+
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
 
-Dim lngLVHeight                         As Long
-Dim lngLVWidht                          As Long
-Dim lngLVTop                            As Long
+    Dim lngLVHeight As Long
+    Dim lngLVWidht  As Long
+    Dim lngLVTop    As Long
 
     On Error Resume Next
 
@@ -776,7 +856,7 @@ Dim lngLVTop                            As Long
 
         If .WindowState <> vbMinimized Then
 
-            Dim miDeltaFrm              As Long
+            Dim miDeltaFrm As Long
 
             If OsCurrVersionStruct.VerFull >= "6.0" Then
                 miDeltaFrm = 125
@@ -793,14 +873,18 @@ Dim lngLVTop                            As Long
                 .Width = lngFormWidthMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             If .Height < lngFormHeightMin Then
                 .Height = lngFormHeightMin
                 .Enabled = False
                 .Enabled = True
+
                 Exit Sub
+
             End If
 
             frFindDrvInternet.Width = .Width - frGroup.Left - frGroup.Width - 250 - miDeltaFrm
@@ -827,7 +911,6 @@ Dim lngLVTop                            As Long
 
             lblWait.Left = 100
             lblWait.Width = .Width - 200
-
         End If
 
     End With
@@ -840,20 +923,25 @@ End Sub
 '!  Переменные  :
 '!  Описание    :  Построение полного спиcка устройств
 '! -----------------------------------------------------------
-Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, _
-                            Optional ByVal lngMode As Long = 0)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadList_Device
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   mbViewed (Boolean = True)
+'                              lngMode (Long = 0)
+'!--------------------------------------------------------------------------------
+Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional ByVal lngMode As Long = 0)
 
-Dim strDevHwid                          As String
-Dim strDevDriverLocal                   As String
-Dim strDevStatus                        As String
-Dim strDevName                          As String
-Dim strProvider                         As String
-Dim strCompatID                         As String
-Dim strStrDescription                   As String
-Dim strOrigHwid                         As String
-Dim ii                                  As Integer
-Dim strInDPacks                         As String
-Dim lngNumRow                           As Long
+    Dim strDevHwid        As String
+    Dim strDevDriverLocal As String
+    Dim strDevStatus      As String
+    Dim strDevName        As String
+    Dim strProvider       As String
+    Dim strCompatID       As String
+    Dim strStrDescription As String
+    Dim strOrigHwid       As String
+    Dim ii                As Integer
+    Dim strInDPacks       As String
+    Dim lngNumRow         As Long
 
     With lvDevices
         .ListItems.Clear
@@ -892,6 +980,7 @@ Dim lngNumRow                           As Long
         strOrigHwid = arrHwidsLocal(ii).HWIDOrig
 
         Select Case lngMode
+
                 ' All - ALL
             Case 0, 3
 
@@ -908,9 +997,7 @@ Dim lngNumRow                           As Long
                 ' Microsoft - All
             Case 1
 
-                If InStr(1, strProvider, "microsoft", vbTextCompare) Or _
-                   InStr(1, strProvider, "майкрософт", vbTextCompare) Or _
-                   InStr(1, strProvider, "standard", vbTextCompare) Then
+                If InStr(1, strProvider, "microsoft", vbTextCompare) Or InStr(1, strProvider, "майкрософт", vbTextCompare) Or InStr(1, strProvider, "standard", vbTextCompare) Then
 
                     With lvDevices.ListItems.Add(, , strDevHwid)
                         .SubItems(1) = strDevName
@@ -923,15 +1010,12 @@ Dim lngNumRow                           As Long
                     End With
 
                     lngNumRow = lngNumRow + 1
-
                 End If
 
                 ' OEM - All
             Case 2
 
-                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And _
-                   InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And _
-                   InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
+                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
 
                     With lvDevices.ListItems.Add(, , strDevHwid)
                         .SubItems(1) = strDevName
@@ -944,7 +1028,6 @@ Dim lngNumRow                           As Long
                     End With
 
                     lngNumRow = lngNumRow + 1
-
                 End If
 
                 ' All - not in base
@@ -963,15 +1046,12 @@ Dim lngNumRow                           As Long
                     End With
 
                     lngNumRow = lngNumRow + 1
-
                 End If
 
                 ' Microsoft - not in base
             Case 5
 
-                If InStr(1, strProvider, "microsoft", vbTextCompare) Or _
-                   InStr(1, strProvider, "майкрософт", vbTextCompare) Or _
-                   InStr(1, strProvider, "standard", vbTextCompare) Then
+                If InStr(1, strProvider, "microsoft", vbTextCompare) Or InStr(1, strProvider, "майкрософт", vbTextCompare) Or InStr(1, strProvider, "standard", vbTextCompare) Then
                     If LenB(strInDPacks) = 0 Then
 
                         With lvDevices.ListItems.Add(, , strDevHwid)
@@ -985,17 +1065,13 @@ Dim lngNumRow                           As Long
                         End With
 
                         lngNumRow = lngNumRow + 1
-
                     End If
-
                 End If
 
                 ' OEM - not in base
             Case 6
 
-                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And _
-                   InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And _
-                   InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
+                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
                     If LenB(strInDPacks) = 0 Then
 
                         With lvDevices.ListItems.Add(, , strDevHwid)
@@ -1009,9 +1085,7 @@ Dim lngNumRow                           As Long
                         End With
 
                         lngNumRow = lngNumRow + 1
-
                     End If
-
                 End If
 
         End Select
@@ -1020,14 +1094,18 @@ Dim lngNumRow                           As Long
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadListbyMode
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub LoadListbyMode()
 
-Dim lngModeList                         As Long
-
-Dim mbOpt1                              As Boolean
-Dim mbOpt2                              As Boolean
-Dim mbOpt3                              As Boolean
-Dim mbOpt4                              As Boolean
+    Dim lngModeList As Long
+    Dim mbOpt1      As Boolean
+    Dim mbOpt2      As Boolean
+    Dim mbOpt3      As Boolean
+    Dim mbOpt4      As Boolean
 
     mbOpt1 = CBool(optGrp1.Value)
     mbOpt2 = CBool(optGrp2.Value)
@@ -1036,29 +1114,29 @@ Dim mbOpt4                              As Boolean
 
     ' Microsoft
     If mbOpt1 And Not mbOpt2 Then
+
         'All
         If mbOpt3 Then
             lngModeList = 1
             'NotInBase
         Else
             lngModeList = 5
-
         End If
 
         ' OEM
     ElseIf Not mbOpt1 And mbOpt2 Then
+
         'All
         If mbOpt3 Then
             lngModeList = 2
             'NotInBase
         Else
             lngModeList = 6
-
         End If
+
         ' Ничего
     ElseIf Not mbOpt1 And Not mbOpt2 Then
         lngModeList = 9999
-
         ' Microsoft+OEM
     Else
 
@@ -1069,12 +1147,10 @@ Dim mbOpt4                              As Boolean
         Else
             lngModeList = 4
         End If
-
     End If
 
     If Not (lvDevices Is Nothing) Then
         lvDevices.ListItems.Clear
-
     End If
 
     If lngModeList <> 9999 Then
@@ -1083,12 +1159,15 @@ Dim mbOpt4                              As Boolean
 
     LoadFormCaption
     FindCheckCountList
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal StrPathFile As String)
-
-' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
     Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
@@ -1105,16 +1184,27 @@ Private Sub Localise(ByVal StrPathFile As String)
     lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
     cmdReNewHW.Caption = LocaliseString(StrPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
     cmdBackUpDrivers.Caption = LocaliseString(StrPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvDevices_ItemClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Item (LvwListItem)
+'                              Button (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub lvDevices_ItemClick(ByVal Item As LvwListItem, ByVal Button As Integer)
     txtFindText.Text = ParseHwid(Item.Text)
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvDevices_ItemDblClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Item (LvwListItem)
+'                              Button (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub lvDevices_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
 
-Dim strOrigHwid                         As String
+    Dim strOrigHwid As String
 
     If Button = vbLeftButton Then
         txtFindText.Text = ParseHwid(Item.Text)
@@ -1124,19 +1214,31 @@ Dim strOrigHwid                         As String
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvDevices_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
 Private Sub lvDevices_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If Button = vbRightButton Then
         OpenContextMenu Me, Me.mnuContext
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuContextDelete_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub mnuContextDelete_Click()
 
-Dim strOrigHwid                         As String
-Dim mbDeleteDriverByHwidTemp            As Boolean
+    Dim strOrigHwid              As String
+    Dim mbDeleteDriverByHwidTemp As Boolean
 
     strOrigHwid = lvDevices.SelectedItem
     mbDeleteDriverByHwidTemp = DeleteDriverbyHwid(strOrigHwid)
@@ -1145,24 +1247,33 @@ Dim mbDeleteDriverByHwidTemp            As Boolean
         If Not mbDeleteDriverByHwid Then
             mbDeleteDriverByHwid = True
         End If
-
     End If
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuContextProperties_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub mnuContextProperties_Click()
 
-Dim strOrigHwid                         As String
+    Dim strOrigHwid As String
+
     strOrigHwid = lvDevices.ListItems(lvDevices.SelectedItem.Index).SubItems(6)
     OpenDeviceProp strOrigHwid
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub OpenDeviceProp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strHwid (String)
+'!--------------------------------------------------------------------------------
 Private Sub OpenDeviceProp(ByVal strHwid As String)
 
-Dim cmdString                           As String
-Dim cmdStringParams                     As String
-Dim nRetShellEx                         As Boolean
+    Dim cmdString       As String
+    Dim cmdStringParams As String
+    Dim nRetShellEx     As Boolean
 
     cmdString = "rundll32.exe"
     cmdStringParams = "devmgr.dll,DeviceProperties_RunDLL /DeviceID " & strHwid
@@ -1170,32 +1281,56 @@ Dim nRetShellEx                         As Boolean
     DebugMode "cmdStringParams: " & cmdStringParams
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL, cmdStringParams)
     DebugMode "cmdString: " & nRetShellEx
-
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub optGrp1_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub optGrp1_Click()
     LoadListbyMode
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub optGrp2_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub optGrp2_Click()
     LoadListbyMode
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub optGrp3_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub optGrp3_Click()
     LoadListbyMode
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub optGrp4_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub optGrp4_Click()
     LoadListbyMode
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ParseHwid
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strValuer (String)
+'!--------------------------------------------------------------------------------
 Private Function ParseHwid(strValuer As String) As String
 
-Dim strValuer_x()                       As String
-Dim miSubSys                            As Long
-Dim miREV                               As Long
-Dim miMI                                As Long
-Dim miCC                                As Long
+    Dim strValuer_x() As String
+    Dim miSubSys      As Long
+    Dim miREV         As Long
+    Dim miMI          As Long
+    Dim miCC          As Long
 
     ' Удаление дубликатов
     If chkParseHwid.Value Then
@@ -1204,55 +1339,69 @@ Dim miCC                                As Long
         If InStr(strValuer, vbBackslash) Then
             strValuer_x = Split(strValuer, vbBackslash)
             strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
-        
             miSubSys = InStr(strValuer, "&SUBSYS")
-    
+
             If miSubSys > 0 Then
                 strValuer = Left$(strValuer, miSubSys - 1)
             End If
-    
+
             miREV = InStr(strValuer, "&REV_")
-    
+
             If miREV > 0 Then
                 strValuer = Left$(strValuer, miREV - 1)
             End If
-    
+
             miMI = InStr(strValuer, "&MI_")
-    
+
             If miMI > 0 Then
                 strValuer = Left$(strValuer, miMI - 1)
             End If
-    
+
             miCC = InStr(strValuer, "&CC_")
-    
+
             If miCC > 0 Then
                 strValuer = Left$(strValuer, miCC - 1)
             End If
         End If
-
     End If
 
     ParseHwid = strValuer
-
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtFindText_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub txtFindText_Change()
     cmdGoSite.Enabled = LenB(txtFindText.Text) > 0
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lvDevices_ColumnClick
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ColumnHeader (LvwColumnHeader)
+'!--------------------------------------------------------------------------------
 Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
-Dim i                                   As Long
+
+    Dim i As Long
+
     With lvDevices
         .Sorted = False
         .SortKey = ColumnHeader.Index - 1
+
         If ComCtlsSupportLevel() >= 1 Then
+
             For i = 1 To .ColumnHeaders.Count
+
                 If i <> ColumnHeader.Index Then
                     .ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
+
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
                         ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown
                     Else
+
                         If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowDown Then
                             ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp
                         ElseIf ColumnHeader.SortArrow = LvwColumnHeaderSortArrowUp Then
@@ -1260,22 +1409,31 @@ Dim i                                   As Long
                         End If
                     End If
                 End If
+
             Next i
+
             Select Case ColumnHeader.SortArrow
+
                 Case LvwColumnHeaderSortArrowDown, LvwColumnHeaderSortArrowNone
                     .SortOrder = LvwSortOrderAscending
+
                 Case LvwColumnHeaderSortArrowUp
                     .SortOrder = LvwSortOrderDescending
             End Select
+
             .SelectedColumn = ColumnHeader
         Else
+
             For i = 1 To .ColumnHeaders.Count
+
                 If i <> ColumnHeader.Index Then
                     .ColumnHeaders(i).Icon = 0
                 Else
+
                     If ColumnHeader.Icon = 0 Then
                         ColumnHeader.Icon = 1
                     Else
+
                         If ColumnHeader.Icon = 2 Then
                             ColumnHeader.Icon = 1
                         ElseIf ColumnHeader.Icon = 1 Then
@@ -1283,16 +1441,23 @@ Dim i                                   As Long
                         End If
                     End If
                 End If
+
             Next i
+
             Select Case ColumnHeader.Icon
+
                 Case 1, 0
                     .SortOrder = LvwSortOrderAscending
+
                 Case 2
                     .SortOrder = LvwSortOrderDescending
             End Select
+
         End If
+
         .Sorted = True
+
         If Not .SelectedItem Is Nothing Then .SelectedItem.EnsureVisible
     End With
-End Sub
 
+End Sub
