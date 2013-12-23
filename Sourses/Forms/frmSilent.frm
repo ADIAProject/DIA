@@ -217,14 +217,9 @@ Private Sub cmdOK_Click()
     Unload Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_KeyDown
-'!  Переменные  :  KeyCode As Integer, Shift As Integer
-'!  Описание    :  обработка нажатий клавиш клавиатуры
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
@@ -269,16 +264,6 @@ Private Sub Form_Load()
     tmrSilent.Interval = 1000
 End Sub
 
-'Private Sub Form_Terminate()
-'
-'    On Error Resume Next
-'
-'    If Forms.Count = 0 Then
-'        UnloadApp
-'
-'    End If
-'
-'End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Localise
 '! Description (Описание)  :   [type_description_here]
@@ -314,5 +299,4 @@ Private Sub tmrSilent_Timer()
 
     miTimerSecond = miTimerSecond - 1
     lblTimer.Caption = miTimerSecond
-    'lblTimer.Refresh
 End Sub

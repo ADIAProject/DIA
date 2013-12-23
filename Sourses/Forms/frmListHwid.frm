@@ -399,7 +399,6 @@ Private Sub cmdCheckAll_Click()
 
     End With
 
-    'LVFOLDERS
     FindCheckCountList
 End Sub
 
@@ -459,7 +458,6 @@ Private Sub cmdUnCheckAll_Click()
 
     End With
 
-    'LVFOLDERS
     FindCheckCountList
 End Sub
 
@@ -543,7 +541,7 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
@@ -610,7 +608,7 @@ Public Sub FormLoadAction()
 
     miCurrentListCount = 0
 
-    ' Локализациz приложения
+    ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
@@ -713,25 +711,15 @@ Private Function GetPathList() As String
     GetPathList = strDevPathList
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  LoadList_OS
-'!  Переменные  :
-'!  Описание    :  Построение спиcка ОС
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function LoadList_Folders
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Построение спиcка ОС]
 '! Parameters  (Переменные):   lngButtIndex (Long)
 '                              mbViewed (Boolean = True)
 '                              strMode (String = vbNullString)
 '!--------------------------------------------------------------------------------
 Private Function LoadList_Folders(lngButtIndex As Long, Optional ByVal mbViewed As Boolean = True, Optional ByVal strMode As String = vbNullString) As Long
 
-    'Dim ii                                  As Long
-    'Dim objRegExp                           As RegExp
-    'Dim objMatch                            As Match
-    'Dim objMatches                          As MatchCollection
-    'Dim strTemp                             As String
     Dim strDevHwid          As String
     Dim strDevFolder        As String
     Dim strDevInf           As String

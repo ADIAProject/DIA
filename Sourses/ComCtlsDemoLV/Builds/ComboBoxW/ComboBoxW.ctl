@@ -42,6 +42,10 @@ Private Type POINTAPI
 X As Long
 Y As Long
 End Type
+Private Type SIZEAPI
+CX As Long
+CY As Long
+End Type
 Private Const LF_FACESIZE As Long = 32
 Private Const FW_NORMAL As Long = 400
 Private Const FW_BOLD As Long = 700
@@ -136,8 +140,10 @@ Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
+Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function MapWindowPoints Lib "user32" (ByVal hWndFrom As Long, ByVal hWndTo As Long, ByRef lppt As Any, ByVal cPoints As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+Private Declare Function GetTextExtentPoint32 Lib "gdi32" Alias "GetTextExtentPoint32W" (ByVal hDC As Long, ByVal lpsz As Long, ByVal cbString As Long, ByRef lpSize As SIZEAPI) As Long
 Private Declare Function FindWindowEx Lib "user32" Alias "FindWindowExW" (ByVal hWndParent As Long, ByVal hWndChildAfter As Long, ByVal lpszClass As Long, ByVal lpszWindow As Long) As Long
 Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
@@ -151,6 +157,9 @@ Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hIns
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 Private Declare Function DragDetect Lib "user32" (ByVal hWnd As Long, ByVal PX As Integer, ByVal PY As Integer) As Long
 Private Declare Function ReleaseCapture Lib "user32" () As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
 Private Const RDW_UPDATENOW As Long = &H100
 Private Const RDW_INVALIDATE As Long = &H1
@@ -210,6 +219,8 @@ Private Const CB_GETTOPINDEX As Long = &H15B
 Private Const CB_SETTOPINDEX As Long = &H15C
 Private Const CB_GETHORIZONTALEXTENT As Long = &H15D
 Private Const CB_SETHORIZONTALEXTENT As Long = &H15E
+Private Const CB_GETDROPPEDWIDTH As Long = &H15F
+Private Const CB_SETDROPPEDWIDTH As Long = &H160
 Private Const CB_GETLBTEXT As Long = &H148
 Private Const CB_GETLBTEXTLEN As Long = &H149
 Private Const CB_GETEDITSEL As Long = &H140
@@ -1263,7 +1274,7 @@ If Ambient.UserMode = True Then
     With Me
     If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
     Dim ListArr() As String, ItemDataArr() As Long
-    Dim ItemHeight As Long, ListIndex As Long, Text As String, SelStart As Long, SelEnd As Long, NewIndex As Long
+    Dim ItemHeight As Long, ListIndex As Long, Text As String, SelStart As Long, SelEnd As Long, DroppedWidth As Long, NewIndex As Long
     Dim Count As Long, i As Long
     If ComboBoxHandle <> 0 Then
         Count = SendMessage(ComboBoxHandle, CB_GETCOUNT, 0, ByVal 0&)
@@ -1279,6 +1290,7 @@ If Ambient.UserMode = True Then
         ListIndex = .ListIndex
         Text = .Text
         If ComboBoxEditHandle <> 0 Then SendMessage ComboBoxHandle, CB_GETEDITSEL, VarPtr(SelStart), ByVal VarPtr(SelEnd)
+        DroppedWidth = SendMessage(ComboBoxHandle, CB_GETDROPPEDWIDTH, 0, ByVal 0&)
     End If
     NewIndex = ComboBoxNewIndex
     Call DestroyComboBox
@@ -1291,12 +1303,14 @@ If Ambient.UserMode = True Then
             SendMessage ComboBoxHandle, CB_SETITEMDATA, i, ByVal ItemDataArr(i)
         Next i
         SendMessage ComboBoxHandle, WM_SETREDRAW, 1, ByVal 0&
+        Call SetDropListHeight(True)
     End If
     If ComboBoxHandle <> 0 Then
         SendMessage ComboBoxHandle, CB_SETITEMHEIGHT, 0, ByVal ItemHeight
         .ListIndex = ListIndex
         .Text = Text
         If ComboBoxEditHandle <> 0 Then SendMessage ComboBoxEditHandle, EM_SETSEL, SelStart, ByVal SelEnd
+        If Not DroppedWidth = CB_ERR Then SendMessage ComboBoxHandle, CB_SETDROPPEDWIDTH, DroppedWidth, ByVal 0&
     End If
     ComboBoxNewIndex = NewIndex
     If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
@@ -1419,6 +1433,28 @@ Public Property Let DroppedDown(ByVal Value As Boolean)
 If ComboBoxHandle <> 0 Then SendMessage ComboBoxHandle, CB_SHOWDROPDOWN, IIf(Value = True, 1, 0), ByVal 0&
 End Property
 
+Public Property Get DroppedWidth() As Single
+Attribute DroppedWidth.VB_Description = "Returns/sets the width of the drop-down list."
+Attribute DroppedWidth.VB_MemberFlags = "400"
+If ComboBoxHandle <> 0 Then
+    Dim RetVal As Long
+    RetVal = SendMessage(ComboBoxHandle, CB_GETDROPPEDWIDTH, 0, ByVal 0&)
+    If Not RetVal = CB_ERR Then DroppedWidth = UserControl.ScaleX(RetVal, vbPixels, vbContainerSize)
+End If
+End Property
+
+Public Property Let DroppedWidth(ByVal Value As Single)
+If Value < 0 Then Err.Raise 380
+If ComboBoxHandle <> 0 Then
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
+    If Err.Number <> 0 Then LngValue = 0
+    On Error GoTo 0
+    SendMessage ComboBoxHandle, CB_SETDROPPEDWIDTH, LngValue, ByVal 0&
+End If
+End Property
+
 Public Property Get NewIndex() As Long
 Attribute NewIndex.VB_Description = "Returns the index of the item most recently added to a control."
 Attribute NewIndex.VB_MemberFlags = "400"
@@ -1440,6 +1476,40 @@ If ComboBoxHandle <> 0 Then
     End If
 End If
 End Property
+
+Public Function GetIdealHorizontalExtent() As Single
+Attribute GetIdealHorizontalExtent.VB_Description = "Gets the ideal value for the horizontal extent property."
+If ComboBoxHandle <> 0 Then
+    Dim Count As Long
+    Count = SendMessage(ComboBoxHandle, CB_GETCOUNT, 0, ByVal 0&)
+    If Count > 0 Then
+        Dim ListHandle As Long
+        ListHandle = Me.hWndList
+        If ListHandle <> 0 Then
+            Dim RC(0 To 1) As RECT, CX As Long, ScrollWidth As Long, hDC As Long, i As Long, Length As Long, Text As String, Size As SIZEAPI
+            GetWindowRect ListHandle, RC(0)
+            GetClientRect ListHandle, RC(1)
+            If (GetWindowLong(ListHandle, GWL_STYLE) And WS_VSCROLL) = WS_VSCROLL Then
+                Const SM_CXVSCROLL As Long = 2
+                ScrollWidth = GetSystemMetrics(SM_CXVSCROLL)
+            End If
+            hDC = GetDC(ComboBoxHandle)
+            SelectObject hDC, ComboBoxFontHandle
+            For i = 0 To Count - 1
+                Length = SendMessage(ComboBoxHandle, CB_GETLBTEXTLEN, i, ByVal 0&)
+                If Not Length = CB_ERR Then
+                    Text = String(Length, vbNullChar)
+                    SendMessage ComboBoxHandle, CB_GETLBTEXT, i, ByVal StrPtr(Text)
+                    GetTextExtentPoint32 hDC, ByVal StrPtr(Text), Length, Size
+                    If (Size.CX - ScrollWidth) > CX Then CX = (Size.CX - ScrollWidth)
+                End If
+            Next i
+            ReleaseDC ComboBoxHandle, hDC
+            If CX > 0 Then GetIdealHorizontalExtent = UserControl.ScaleX(CX + ((RC(0).Right - RC(0).Left) - (RC(1).Right - RC(1).Left)), vbPixels, vbContainerSize)
+        End If
+    End If
+End If
+End Function
 
 Private Sub SetDropListHeight(ByVal Calculate As Boolean)
 If ComboBoxHandle <> 0 Then

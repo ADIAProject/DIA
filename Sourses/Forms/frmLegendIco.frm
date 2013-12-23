@@ -126,26 +126,18 @@ Begin VB.Form frmLegendIco
       TabIndex        =   8
       Top             =   7140
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1244
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   13
-      BackColor       =   12244692
-      Caption         =   "ОК"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1244
+      font            =   "frmLegendIco.frx":000C
+      buttonstyle     =   13
+      backcolor       =   12244692
+      caption         =   "ОК"
+      pictureshadow   =   -1
+      picturepushonhover=   -1
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.LabelW lblDescription 
       Height          =   795
@@ -385,7 +377,7 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
@@ -436,7 +428,7 @@ Private Sub Form_Load()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -445,7 +437,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOld.BorderStyle = 0
+    imgOkAttentionOLD.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
 

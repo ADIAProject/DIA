@@ -24,10 +24,9 @@ Public Declare Function lstrlenW Lib "kernel32.dll" (ByVal lpString As Long) As 
 Public Declare Function lstrcat Lib "kernel32.dll" Alias "lstrcatA" (ByVal lpString1 As String, ByVal lpString2 As String) As Long
 Public Declare Function ArrPtr Lib "msvbvm60.dll" Alias "VarPtr" (Ptr() As Any) As Long
 
-' Добавляет строку к строке с нужным разделителем
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function AppendStr
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Добавляет строку к строке с нужным разделителем]
 '! Parameters  (Переменные):   strHead (String)
 '                              strAdd (String)
 '                              strSep (String = " ")
@@ -232,10 +231,9 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
 
 End Sub
 
-' Check if date1 newer than date2
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareByDate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Check if date1 newer than date2]
 '! Parameters  (Переменные):   Date1 (String)
 '                              Date2 (String)
 '!--------------------------------------------------------------------------------
@@ -324,10 +322,9 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
     DebugMode str5VbTab & "CompareByDate-End"
 End Function
 
-' Заменяем в строке некоторые символы RegExp на константы VB
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ConvertString
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Заменяем в строке некоторые символы RegExp на константы VB]
 '! Parameters  (Переменные):   strStringText (String)
 '!--------------------------------------------------------------------------------
 Public Function ConvertString(strStringText As String) As String
@@ -351,24 +348,18 @@ Public Function ConvertString(strStringText As String) As String
     ConvertString = strStringText
 End Function
 
-' получаем значение из буфера данных
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function TrimNull
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [получаем значение из буфера данных]
 '! Parameters  (Переменные):   startstr (String)
 '!--------------------------------------------------------------------------------
 Public Function TrimNull(ByVal startstr As String) As String
     TrimNull = Left$(startstr, lstrlenW(StrPtr(startstr)))
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  DelSpaceAfterZPT
-'!  Переменные  :
-'!  Описание    :  Удаление пробелов после запятой в строке с версией драйвера
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DelSpaceAfterZPT
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаление пробелов после запятой в строке с версией драйвера]
 '! Parameters  (Переменные):   strVersion (String)
 '!--------------------------------------------------------------------------------
 Public Sub DelSpaceAfterZPT(ByRef strVersion As String)
@@ -387,10 +378,9 @@ Public Sub DelSpaceAfterZPT(ByRef strVersion As String)
 
 End Sub
 
-' Check if date1 newer than date2
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ConvertVerByDate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Check if date1 newer than date2]
 '! Parameters  (Переменные):   strVersion1 (String)
 '!--------------------------------------------------------------------------------
 Public Sub ConvertVerByDate(ByRef strVersion1 As String)
@@ -413,10 +403,9 @@ Public Sub ConvertVerByDate(ByRef strVersion1 As String)
 
 End Sub
 
-' Удаляем лишние символы из строки
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ReplaceBadSymbol
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаляем лишние символы из строки]
 '! Parameters  (Переменные):   strString (String)
 '!--------------------------------------------------------------------------------
 Public Function ReplaceBadSymbol(ByVal strString As String) As String
@@ -471,19 +460,6 @@ Public Function ReplaceBadSymbol(ByVal strString As String) As String
         strString = Replace$(strString, ":", vbNullString)
     End If
 
-    ' Убираем символ """
-    '    If InStr(strString, Kavichki) Then
-    '        strString = Replace$(strString, Kavichki, vbNullString)
-    '    End If
-    ' Убираем символ "'"
-    '    If InStr(strString, Chr$(150)) Then
-    '        strString = Replace$(strString, Chr$(150), Chr$(45))
-    '    End If
-    '
-    '    ' Убираем символ "'"
-    '    If InStr(strString, Chr$(178)) Then
-    '        strString = Replace$(strString, Chr$(178), Chr$(73))
-    '    End If
     ' Убираем символ "   "
     If InStr(strString, "   ") Then
         strString = Replace$(strString, "   ", " ")
@@ -494,17 +470,12 @@ Public Function ReplaceBadSymbol(ByVal strString As String) As String
         strString = Replace$(strString, "  ", " ")
     End If
 
-    ' Убираем символ vbTab
-    '    If InStr(strString, vbTab) Then
-    '        strString = Replace$(strString, vbTab, vbNullString)
-    '    End If
     ReplaceBadSymbol = Trim$(strString)
 End Function
 
-' Удаляем лишние символы из строки
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ReplaceBadSymbolInDate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаляем лишние символы из строки]
 '! Parameters  (Переменные):   strString (String)
 '!--------------------------------------------------------------------------------
 Public Function ReplaceBadSymbolInDate(strString As String) As String
@@ -527,10 +498,3 @@ Public Function ReplaceBadSymbolInDate(strString As String) As String
     ReplaceBadSymbolInDate = strString
 End Function
 
-'Public Function StrCompApiI(ByVal First As String, ByVal Second As String) As Long
-'    StrCompApiI = StrCmpI(StrPtr(First & vbNullChar), StrPtr(Second & vbNullChar))
-'End Function
-'
-'Public Function StrCompApi(ByVal First As String, ByVal Second As String) As Long
-'        StrCompApi = StrCmp(StrPtr(First & vbNullChar), StrPtr(Second & vbNullChar))
-'End Function

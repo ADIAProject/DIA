@@ -3136,24 +3136,15 @@ Option Explicit
 Public WithEvents lvOptions As cListView
 Attribute lvOptions.VB_VarHelpID = -1
 
-'ItemOptions1=Основные настройки
-'ItemOptions2=Поддерживаемые ОС
-'ItemOptions3=Рабочие утилиты
-'ItemOptions4=Вспомогательные утилиты
-'ItemOptions5=Оформление программы
-'ItemOptions6=Параметры запуска DPInst
-'ItemOptions8=Основные настройки 2
-'ItemOptions9=Оформление программы 2
-'ItemOptions10=Отладочный режим
-Private strItemOptions1     As String
-Private strItemOptions2     As String
-Private strItemOptions3     As String
-Private strItemOptions4     As String
-Private strItemOptions5     As String
-Private strItemOptions6     As String
-Private strItemOptions8     As String
-Private strItemOptions9     As String
-Private strItemOptions10    As String
+Private strItemOptions1     As String 'Основные настройки
+Private strItemOptions2     As String 'Поддерживаемые ОС
+Private strItemOptions3     As String 'Рабочие утилиты
+Private strItemOptions4     As String 'Вспомогательные утилиты
+Private strItemOptions5     As String 'Оформление программы
+Private strItemOptions6     As String 'Параметры запуска DPInst
+Private strItemOptions8     As String 'Основные настройки 2
+Private strItemOptions9     As String 'Оформление программы 2
+Private strItemOptions10    As String 'Отладочный режим
 Private strTableOSHeader1   As String
 Private strTableOSHeader2   As String
 Private strTableOSHeader3   As String
@@ -3485,14 +3476,9 @@ Private Sub cmbImageStatus_LostFocus()
     HighlightActiveControl Me, cmbImageStatus, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdAddOS_Click
-'!  Переменные  :
-'!  Описание    :  кнопка добавления ОС
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdAddOS_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [кнопка добавления ОС]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdAddOS_Click()
@@ -3500,14 +3486,9 @@ Private Sub cmdAddOS_Click()
     frmOSEdit.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdAddUtil_Click
-'!  Переменные  :
-'!  Описание    :  кнопка добавления утилиты
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdAddUtil_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [кнопка добавления утилиты]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdAddUtil_Click()
@@ -3515,14 +3496,9 @@ Private Sub cmdAddUtil_Click()
     frmUtilsEdit.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdDelOS_Click
-'!  Переменные  :
-'!  Описание    :  кнопка удаление ОС
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdDelOS_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [кнопка удаление ОС]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdDelOS_Click()
@@ -3541,14 +3517,9 @@ Private Sub cmdDelOS_Click()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdDelUtil_Click
-'!  Переменные  :
-'!  Описание    :  кнопка удаление утилиты
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdDelUtil_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [кнопка удаление утилиты]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdDelUtil_Click()
@@ -3583,42 +3554,27 @@ Private Sub cmdDriverVer_Click()
     DebugMode "cmdString: " & nRetShellEx
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdEditOS_Click
-'!  Переменные  :
-'!  Описание    :  кнопка редактирование ОС
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdEditOS_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [кнопка редактирование ОС]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdEditOS_Click()
     TransferOSData
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdEditUtil_Click
-'!  Переменные  :
-'!  Описание    :  кнопка редактирование утилиты
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdEditUtil_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [кнопка редактирование утилиты]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdEditUtil_Click()
     TransferUtilsData
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdExit_Click
-'!  Переменные  :
-'!  Описание    : Нажатие кнопки Выход. Выход без сохранения
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Нажатие кнопки Выход. Выход без сохранения]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
@@ -3722,14 +3678,9 @@ Private Sub cmdLegacyMode_Click()
     DebugMode "cmdString: " & nRetShellEx
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdOK_Click
-'!  Переменные  :
-'!  Описание    :  Нажатие кнопки ОК. Применение настроек
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Нажатие кнопки ОК. Применение настроек]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
@@ -3748,7 +3699,6 @@ Private Sub cmdOK_Click()
         mbRestartProgram = lngMsgRet = vbYes
     End If
 
-    'Unload Me
     Me.Hide
 End Sub
 
@@ -3870,14 +3820,9 @@ Private Sub DebugCtlEnableLog2App(ByVal mbEnable As Boolean)
     ucDebugLogPath.Enabled = mbEnable
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_KeyDown
-'!  Переменные  :  KeyCode As Integer, Shift As Integer
-'!  Описание    :  Обработка нажатий клавиш клавиатуры сначала на форме
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Обработка нажатий клавиш клавиатуры сначала на форме]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
@@ -3891,14 +3836,9 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Load
-'!  Переменные  :
-'!  Описание    :  Загрузка формы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Загрузка формы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Form_Load()
@@ -3913,7 +3853,7 @@ Private Sub Form_Load()
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
 
-    'Top
+    'Top frame position
     frOptions.Top = 50
     frDesign.Top = 50
     frDesign2.Top = 50
@@ -3925,7 +3865,7 @@ Private Sub Form_Load()
     frOS.Top = 50
     frOther.Top = 50
     frDebug.Top = 50
-    'Left
+    'Left frame position
     frDesign.Left = 3100
     frDesign2.Left = 3100
     frDpInstParam.Left = 3100
@@ -3936,7 +3876,7 @@ Private Sub Form_Load()
     frOther.Left = 3100
     frOtherTools.Left = 3100
     frDebug.Left = 3100
-    ' Устанавливаем минимальные значения
+    ' Устанавливаем минимальные значения для текстовых полей
     txtTabPerRowCount.Min = 2
     txtFormHeight.Min = MainFormHeightMin
     txtFormWidth.Min = MainFormWidthMin
@@ -4002,14 +3942,9 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Resize
-'!  Переменные  :
-'!  Описание    :  Изменение размеров формы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Resize
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Изменение размеров формы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Form_Resize()
@@ -4040,14 +3975,9 @@ Private Sub InitializeObjectProperties()
     ChangeButtonProperties
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  LoadList_OS
-'!  Переменные  :
-'!  Описание    :  Построение спиcка ОС
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadList_OS
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Построение спиcка ОС]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_OS()
@@ -4086,18 +4016,12 @@ Private Sub LoadList_OS()
 
     End With
 
-    'LVOS
     LastIdOS = lngOSCount
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  LoadList_Utils
-'!  Переменные  :
-'!  Описание    :  Построение спика утилит
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadList_Utils
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Построение спика утилит]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_Utils()
@@ -4291,58 +4215,44 @@ Private Sub Localise(ByVal StrPathFile As String)
     lblTheme.Caption = LocaliseString(StrPathFile, strFormName, "lblTheme", lblTheme.Caption)
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  lvOptions_ItemChanged
-'!  Переменные  :
-'!  Описание    :  При выборе опции происходит отображение соответсвующего окна
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lvOptions_ItemChanged
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [При выборе опции происходит отображение соответсвующего окна]
 '! Parameters  (Переменные):   iIndex (Long)
 '!--------------------------------------------------------------------------------
 Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
 
-    'ItemOptions1=Основные настройки
-    'ItemOptions8=Основные настройки 2
-    'ItemOptions2=Поддерживаемые ОС
-    'ItemOptions3=Рабочие утилиты
-    'ItemOptions4=Вспомогательные утилиты
-    'ItemOptions5=Оформление программы
-    'ItemOptions9=Оформление программы 2
-    'ItemOptions6=Параметры запуска DPInst
-    'ItemOptions10=Отладочный режим
     Select Case iIndex
 
-        Case 0 'strItemOptions1
+        Case 0 'ItemOptions1=Основные настройки
             frMain.ZOrder 0
 
-        Case 1 ' strItemOptions8
+        Case 1 ' ItemOptions8=Основные настройки 2
             frMain2.ZOrder 0
 
-        Case 2 'strItemOptions2
+        Case 2 'ItemOptions2=Поддерживаемые ОС
             frOS.ZOrder 0
             txtExcludeHWID.SetFocus
 
-        Case 3 'strItemOptions3
+        Case 3 'ItemOptions3=Рабочие утилиты
             frMainTools.ZOrder 0
             ucDevCon86Path.SetFocus
 
-        Case 4 ' strItemOptions4
+        Case 4 'ItemOptions4=Вспомогательные утилиты
             frOtherTools.ZOrder 0
 
-        Case 5 'strItemOptions5
+        Case 5 'ItemOptions5=Оформление программы
             frDesign.ZOrder 0
             cmbImageMain.SetFocus
 
-        Case 6 ' strItemOptions9
+        Case 6 'ItemOptions9=Оформление программы 2
             frDesign2.ZOrder 0
 
-        Case 7 'strItemOptions6
+        Case 7 'ItemOptions6=Параметры запуска DPInst
             frDpInstParam.ZOrder 0
             txtCmdStringDPInst.SetFocus
 
-        Case 8 ' strItemOptions10
+        Case 8 'ItemOptions10=Отладочный режим
             frDebug.ZOrder 0
             txtDebugLogName.SetFocus
 
@@ -4352,14 +4262,9 @@ Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  lvOS_ItemDblClick
-'!  Переменные  :
-'!  Описание    :  Двойнок клик по элементу списка вызывает форму редактирования
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lvOS_ItemDblClick
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Двойнок клик по элементу списка вызывает форму редактирования]
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
@@ -4367,14 +4272,9 @@ Private Sub lvOS_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer
     TransferOSData
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  lvUtils_ItemDblClick
-'!  Переменные  :
-'!  Описание    :  Двойнок клик по элементу списка вызывает форму редактирования
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lvUtils_ItemDblClick
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Двойнок клик по элементу списка вызывает форму редактирования]
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
@@ -4382,14 +4282,9 @@ Private Sub lvUtils_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Inte
     TransferUtilsData
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ReadOptions
-'!  Переменные  :
-'!  Описание    :  Читаем настройки программы и заполняем поля
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ReadOptions
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Читаем настройки программы и заполняем поля]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ReadOptions()
@@ -4522,14 +4417,9 @@ Private Sub ReadOptions()
     InitializeObjectProperties
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  SaveOptions
-'!  Переменные  :
-'!  Описание    :  Сохранение настроек в ини-файл
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SaveOptions
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Сохранение настроек в ини-файл]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
@@ -4774,14 +4664,9 @@ Private Sub TempCtlEnable(ByVal mbEnable As Boolean)
     ucTempPath.Enabled = mbEnable
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  TransferOSData
-'!  Переменные  :
-'!  Описание    :  Передача параметров ОС из спика в форму редактирования
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub TransferOSData
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Передача параметров ОС из спика в форму редактирования]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub TransferOSData()
@@ -4836,14 +4721,9 @@ Private Sub TransferOSData()
     frmOSEdit.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  TransferUtilsData
-'!  Переменные  :
-'!  Описание    :  Передача параметров Утилит из спика в форму редактирования
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub TransferUtilsData
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Передача параметров Утилит из спика в форму редактирования]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub TransferUtilsData()
@@ -4868,14 +4748,9 @@ Private Sub TransferUtilsData()
     frmUtilsEdit.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  tvOptionsLoad
-'!  Переменные  :
-'!  Описание    :  Построение дерева настроек
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub tvOptionsLoad
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Построение дерева настроек]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub tvOptionsLoad()
@@ -5024,14 +4899,9 @@ Private Sub ucCmdDevconPath_LostFocus()
     HighlightActiveControl Me, ucCmdDevconPath, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucDebugLogPath_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDebugLogPath_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucDebugLogPath_Click()
@@ -5052,14 +4922,9 @@ Private Sub ucDebugLogPath_Click()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucDevCon64Path_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDevCon64Path_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucDevCon64Path_Click()
@@ -5098,14 +4963,10 @@ Private Sub ucDevCon64Path_LostFocus()
     HighlightActiveControl Me, ucDevCon64Path, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucDevCon86Path_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDevCon86Path_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Path_Click()
@@ -5144,14 +5005,9 @@ Private Sub ucDevCon86Path_LostFocus()
     HighlightActiveControl Me, ucDevCon86Path, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucDevCon86Pathw2k_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDevCon86Pathw2k_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucDevCon86Pathw2k_Click()
@@ -5190,14 +5046,9 @@ Private Sub ucDevCon86Pathw2k_LostFocus()
     HighlightActiveControl Me, ucDevCon86Pathw2k, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucDPInst64Path_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDPInst64Path_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucDPInst64Path_Click()
@@ -5236,14 +5087,9 @@ Private Sub ucDPInst64Path_LostFocus()
     HighlightActiveControl Me, ucDPInst64Path, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucDPInst86Path_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDPInst86Path_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucDPInst86Path_Click()
@@ -5282,14 +5128,9 @@ Private Sub ucDPInst86Path_LostFocus()
     HighlightActiveControl Me, ucDPInst86Path, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucTempPath_Click
-'!  Переменные  :
-'!  Описание    :  выбор каталога или файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucTempPath_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [выбор каталога или файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucTempPath_Click()

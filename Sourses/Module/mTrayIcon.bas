@@ -20,15 +20,9 @@ End Type
 
 Private Declare Function Shell_NotifyIconA Lib "shell32.dll" (ByVal dwMessage As Long, lpData As NOTIFYICONDATA) As Integer
 
-'! -----------------------------------------------------------
-'!  Функция     :  SetTrayIcon
-'!  Переменные  :  Mode As Long, hwnd As Long, Icon As Long, tip As String
-'!  Возвр. знач.:  As Long
-'!  Описание    :  Установка значка в трей
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SetTrayIcon
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Установка значка в трей]
 '! Parameters  (Переменные):   Mode (Long)
 '                              lngHWnd (Long)
 '                              lngIcon (Long)
@@ -48,6 +42,5 @@ Public Function SetTrayIcon(Mode As Long, ByVal lngHWnd As Long, ByVal lngIcon A
         .szTip = tip & vbNullChar
     End With
 
-    'NIDTEMP
     SetTrayIcon = Shell_NotifyIconA(Mode, nidTemp)
 End Function

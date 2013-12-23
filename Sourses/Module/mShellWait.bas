@@ -161,9 +161,7 @@ Public Enum AppWinStyle                         'WindowStyle constants for Shell
 End Enum
 
 #If False Then
-
     Dim vbHide, vbShowNormal, vbShowMinimized, vbShowMaximized, vbMaximize, vbShowNoActivate, vbShow, vbMinimize, vbShowMinNoActive, vbShowNA, vbRestore, vbShowDefault
-
 #End If
 
 '=======================================================================================================================
@@ -404,12 +402,6 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                 If LenB(.lpParameters) Then
                     'If there are, then trim the
                     PathRemoveArgsW StrPtr(.lpFile)                                         'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)

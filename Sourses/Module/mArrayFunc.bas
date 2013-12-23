@@ -1,10 +1,9 @@
 Attribute VB_Name = "mArrayFunc"
 Option Explicit
 
-'My Function for Save Any String Array Any Dimension to File
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SaveAnyStringArray2File
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [My Function for Save Any String Array Any Dimension to File]
 '! Parameters  (Переменные):   StrPathFile (String)
 '                              MyArray() (String)
 '                              strDelimiter (String = vbTab)
@@ -45,10 +44,9 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
     DebugMode vbTab & "SaveAnyStringArray2File-End"
 End Function
 
-'My Function for Save Any String Array Any Dimension to File
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SaveHwidsArray2File
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [My Function for Save Any String Array Any Dimension to File]
 '! Parameters  (Переменные):   StrPathFile (String)
 '                              MyArray() (arrHwidsStruct)
 '!--------------------------------------------------------------------------------
@@ -99,17 +97,15 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
     DebugMode vbTab & "SaveHwidsArray2File-End"
 End Function
 
-' Written by Ellis Dee
-' Sort a 2-dimensional array on either dimension
-' Omit plngLeft & plngRight; they are used internally during recursion
-' Sample usage to sort on column 4
-' Dim MyArray(1 to 1000, 1 to 5) As Long
-' QuickSort MyArray, 2, 4
-' Dim MyArray(1 to 5, 1 to 1000) As Long
-' QuickSort MyArray, 1, 4
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub QuickSortMDArray
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Written by Ellis Dee
+'                               Sort a 2-dimensional array on either dimension
+'                               Sample usage to sort on column 4
+'                               Dim MyArray(1 to 1000, 1 to 5) As Long
+'                               QuickSort MyArray, 2, 4
+'                               Dim MyArray(1 to 5, 1 to 1000) As Long
+'                               QuickSort MyArray, 1, 4]
 '! Parameters  (Переменные):   pArray (Variant)
 '                              pbytDimension (Byte)
 '                              plngColumn (Long)

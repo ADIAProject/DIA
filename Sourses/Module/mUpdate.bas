@@ -23,10 +23,9 @@ Private Const Url_Test_Site     As String = "http://adia-project.net/test.txt"
 
 Private Declare Function InternetGetConnectedStateEx Lib "wininet.dll" (ByRef lpdwFlags As Long, ByVal lpszConnectionName As String, ByVal dwNameLen As Integer, ByVal dwReserved As Long) As Long
 
-' Проверка существования файла на сервере
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckConnection2Server
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка существования файла на сервере]
 '! Parameters  (Переменные):   URL (String)
 '!--------------------------------------------------------------------------------
 Function CheckConnection2Server(ByVal URL As String) As String
@@ -109,14 +108,9 @@ Public Function CheckInternetConnection() As Boolean
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  CheckUpd
-'!  Переменные  :  Optional start As Boolean
-'!  Описание    :  Проверка новых версий программы с использованием MSXML
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckUpd
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка новых версий программы с использованием MSXML]
 '! Parameters  (Переменные):   Start (Boolean = True)
 '!--------------------------------------------------------------------------------
 Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
@@ -319,14 +313,9 @@ Private Function DeltaDayNew(ByVal dtFirstDate As Date, ByVal dtSecondDate As Da
     DeltaDayNew = DeltaTemp
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  CheckUpd
-'!  Переменные  :  Optional start As Boolean
-'!  Описание    :  Проверка новых версий программы с использованием MSXML
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadUpdateData
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка новых версий программы с использованием MSXML]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub LoadUpdateData()
@@ -483,10 +472,9 @@ Public Sub LoadUpdDescription(ByVal strVer As String, ByVal lngIndexVer As Long)
 
 End Sub
 
-' Показ напоминания об обновлении
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowUpdateToolTip
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Показ напоминания об обновлении]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub ShowUpdateToolTip()

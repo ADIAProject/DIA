@@ -16,10 +16,9 @@ Private xFile              As File
 ' Переменная
 Public strFileListInFolder As String
 
-'Удаление слэша на конце
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function BacklashDelFromPath
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаление слэша на конце]
 '! Parameters  (Переменные):   strPath (String)
 '!--------------------------------------------------------------------------------
 Public Function BacklashDelFromPath(ByVal strPath As String) As String
@@ -28,10 +27,9 @@ Public Function BacklashDelFromPath(ByVal strPath As String) As String
     BacklashDelFromPath = TrimNull(strPath)
 End Function
 
-'Добавление слэша на конце
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function BackslashAdd2Path
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Добавление слэша на конце]
 '! Parameters  (Переменные):   strPath (String)
 '!--------------------------------------------------------------------------------
 Public Function BackslashAdd2Path(ByVal strPath As String) As String
@@ -70,15 +68,9 @@ Public Function CompareFilesByHashCAPICOM(ByVal strFirstFile As String, ByVal st
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  CopyFileTo
-'!  Переменные  :  PathFrom As String, PathTo As String
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  Скопирует файл 'PathFrom' в директорию 'CopyFileTo', Если файл существует, то он будет перезаписан новым файлом.
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CopyFileTo
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Скопирует файл 'PathFrom' в директорию 'CopyFileTo', Если файл существует, то он будет перезаписан новым файлом.]
 '! Parameters  (Переменные):   PathFrom (String)
 '                              PathTo (String)
 '!--------------------------------------------------------------------------------
@@ -195,14 +187,9 @@ errhandler:
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  DelFolderBackUp
-'!  Переменные  :
-'!  Описание    :  Удаление временного каталога, если включена опция
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DelFolderBackUp
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаление временного каталога, если включена опция]
 '! Parameters  (Переменные):   strFolderPath (String)
 '!--------------------------------------------------------------------------------
 Public Sub DelFolderBackUp(ByVal strFolderPath As String)
@@ -230,11 +217,6 @@ Public Sub DelFolderBackUp(ByVal strFolderPath As String)
     DebugMode "DelFolder-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  DelRecursiveFolder
-'!  Переменные  :  Folder As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DelRecursiveFolder
 '! Description (Описание)  :   [type_description_here]
@@ -291,14 +273,9 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  DelTemp
-'!  Переменные  :
-'!  Описание    :  Удаление временного каталога, если включена опция
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DelTemp
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаление временного каталога, если включена опция]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub DelTemp()
@@ -428,15 +405,9 @@ Private Function DelTree(ByVal strDir As String) As Long
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  ExtFromFileName
-'!  Переменные  :  FileName As String
-'!  Возвр. знач.:  As String
-'!  Описание    :  Получить расширение файла из пути или имени файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ExtFromFileName
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получить расширение файла из пути или имени файла]
 '! Parameters  (Переменные):   FileName (String)
 '!--------------------------------------------------------------------------------
 Public Function ExtFromFileName(ByVal FileName As String) As String
@@ -471,15 +442,9 @@ Public Function FileisSystemAttr(PathFile As String) As Boolean
     FileisSystemAttr = GetAttr(PathFile) And vbSystem
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  FileName_woExt
-'!  Переменные  :  FileName As String
-'!  Возвр. знач.:  As String
-'!  Описание    :  Получить имя файла без расширения, зная имя файла
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileName_woExt
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получить имя файла без расширения, зная имя файла]
 '! Parameters  (Переменные):   FileName (String)
 '!--------------------------------------------------------------------------------
 Public Function FileName_woExt(ByVal FileName As String) As String
@@ -498,15 +463,9 @@ Public Function FileName_woExt(ByVal FileName As String) As String
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  FileNameFromPath
-'!  Переменные  :  FilePath As String
-'!  Возвр. знач.:  As String
-'!  Описание    :  Получить имя файла из полного пути
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileNameFromPath
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получить имя файла из полного пути]
 '! Parameters  (Переменные):   FilePath (String)
 '!--------------------------------------------------------------------------------
 Public Function FileNameFromPath(ByVal FilePath As String) As String
@@ -525,14 +484,9 @@ Public Function FileNameFromPath(ByVal FilePath As String) As String
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetAllFileInFolder
-'!  Переменные  :  xFolder As String, RealDelete As Boolean, Optional ExtFile As String
-'!  Описание    :  Получение всех файлов в выбранном каталоге
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub GetAllFileInFolder
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение всех файлов в выбранном каталоге]
 '! Parameters  (Переменные):   xFolder (String)
 '                              RealDelete (Boolean)
 '                              ExtFile (String)
@@ -630,14 +584,9 @@ errhandler:
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetAllFolderInFolder
-'!  Переменные  :  rootFolder As String
-'!  Описание    :  Получение всех подкаталогов в выбранном каталоге
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetAllFolderInFolder
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение всех подкаталогов в выбранном каталоге]
 '! Parameters  (Переменные):   RootFolder (String)
 '!--------------------------------------------------------------------------------
 Public Function GetAllFolderInFolder(ByVal RootFolder As String) As Variant
@@ -664,14 +613,9 @@ Public Function GetAllFolderInFolder(ByVal RootFolder As String) As Variant
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetAllFolderInRoot
-'!  Переменные  :  rootFolder As String, RealDelete As Boolean, Optional ExtFile As String
-'!  Описание    :  Получение всех подкаталогов в выбранном каталоге
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub GetAllFolderInRoot
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение всех подкаталогов в выбранном каталоге]
 '! Parameters  (Переменные):   RootFolder (String)
 '                              RealDelete (Boolean)
 '                              ExtFile (String)
@@ -696,15 +640,9 @@ Private Sub GetAllFolderInRoot(ByVal RootFolder As String, ByVal RealDelete As B
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetEnviron
-'!  Переменные  :  strEnv As String, Optional mbCollectFull As Boolean = False
-'!  Возвр. знач.:  As String
-'!  Описание    :  Получение переменной системного окружения
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetEnviron
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение переменной системного окружения]
 '! Parameters  (Переменные):   strEnv (String)
 '                              mbCollectFull (Boolean = False)
 '!--------------------------------------------------------------------------------
@@ -763,14 +701,9 @@ Public Function GetUniqueTempFile() As String
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  IsDriveCDRoom
-'!  Переменные  :
-'!  Описание    :  Проверка на запск программы с CD\DVD
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IsDriveCDRoom
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка на запск программы с CD\DVD]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function IsDriveCDRoom() As Boolean
@@ -811,20 +744,12 @@ Public Function PathIsAFolder(ByVal sPath As String) As Boolean
     'If the path is a directory on a server
     'share, PathIsDirectory returns 1.
     'If it is neither PathIsDirectory returns 0.
-    Dim Result As Long
-
     PathIsAFolder = PathIsDirectory(StrPtr(sPath & vbNullChar))
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  MoveFileTo
-'!  Переменные  :  PathFrom As String, PathTo As String
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  Скопирует файл 'PathFrom' в директорию 'PathTo', Если файл существует, то он будет перезаписан новым файлом.
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function MoveFileTo
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Скопирует файл 'PathFrom' в директорию 'PathTo', Если файл существует, то он будет перезаписан новым файлом.]
 '! Parameters  (Переменные):   PathFrom (String)
 '                              PathTo (String)
 '!--------------------------------------------------------------------------------
@@ -977,15 +902,9 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  PathNameFromPath
-'!  Переменные  :  FilePath As String
-'!  Возвр. знач.:  As String
-'!  Описание    :  Получить путь к файлу из полного пути
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function PathNameFromPath
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получить путь к файлу из полного пути]
 '! Parameters  (Переменные):   FilePath (String)
 '!--------------------------------------------------------------------------------
 Public Function PathNameFromPath(FilePath As String) As String
@@ -1026,10 +945,9 @@ Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
 
 End Sub
 
-'# function to replace special chars to create dirs correctly #
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SafeDir
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [function to replace special chars to create dirs correctly]
 '! Parameters  (Переменные):   str (String)
 '!--------------------------------------------------------------------------------
 Public Function SafeDir(ByVal str As String) As String
@@ -1057,13 +975,12 @@ Public Function SafeDir(ByVal str As String) As String
     SafeDir = R
 End Function
 
-'# function to replace special chars to create dirs correctly #
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SafeFileName
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [function to replace special chars to create files correctly]
 '! Parameters  (Переменные):   strString (Variant)
 '!--------------------------------------------------------------------------------
-Public Function SafeFileName(ByVal strString) As String
+Public Function SafeFileName(ByVal strString As String) As String
     ' Заменяем VbTab
     strString = Replace$(strString, vbTab, vbNullString)
     strString = TrimNull(strString)
@@ -1082,10 +999,9 @@ Public Function SafeFileName(ByVal strString) As String
     SafeFileName = strString
 End Function
 
-'# function to discover dirs with inf code #
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function WhereIsDir
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [function to discover dirs with inf code]
 '! Parameters  (Переменные):   str (String)
 '                              strInfFilePath (String)
 '!--------------------------------------------------------------------------------
@@ -1356,12 +1272,6 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     WhereIsDir = TrimNull(cDir)
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  PathCollect
-'!  Переменные  :  Path As String
-'!  Возвр. знач.:  As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function PathCollect
 '! Description (Описание)  :   [type_description_here]
@@ -1419,12 +1329,6 @@ Public Function PathCollect(Path As String) As String
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  PathCollect4Dest
-'!  Переменные  :  Path As String
-'!  Возвр. знач.:  As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function PathCollect4Dest
 '! Description (Описание)  :   [type_description_here]
@@ -1494,10 +1398,9 @@ Public Function PathIsValidUNC(ByVal sPath As String) As Boolean
     PathIsValidUNC = PathIsUNC(StrPtr(sPath))
 End Function
 
-' Расширить имя файла - использование переменных %%
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ExpandFileNamebyEnvironment
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Расширить имя файла - использование переменных %%]
 '! Parameters  (Переменные):   strFileName (String)
 '!--------------------------------------------------------------------------------
 Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As String

@@ -304,15 +304,6 @@ Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As 
     Unload Me
 End Sub
 
-'Private Sub Form_Terminate()
-'    On Error Resume Next
-'
-'    If Forms.Count = 0 Then
-'        UnloadApp
-'
-'    End If
-'
-'End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Unload
 '! Description (Описание)  :   [type_description_here]

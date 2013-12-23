@@ -18,14 +18,9 @@ Private RegExpDevSect     As RegExp
 Private objHashOutput     As Scripting.Dictionary
 Private objStringHash     As Scripting.Dictionary
 
-'! -----------------------------------------------------------
-'!  Функция     :  DevParserByRegExp
-'!  Переменные  :  strPackFileName As String, strPathDRP As String, strPathDevDB As String
-'!  Описание    :  Парсинг ID и названий устройст из inf-файла и построение БД
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DevParserByRegExp
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Парсинг ID и названий устройст из inf-файла и построение БД]
 '! Parameters  (Переменные):   strPackFileName (String)
 '                              strPathDRP (String)
 '                              strPathDevDB (String)
@@ -34,8 +29,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     Dim objMatch                  As Match
     Dim objMatch1                 As Match
-    Dim objMatch2                 As Match
-    Dim objMatch3                 As Match
     Dim objMatchesStrSect         As MatchCollection
     Dim objMatchesVerSect         As MatchCollection
     Dim objMatchesCatSect         As MatchCollection
@@ -165,7 +158,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
             ' Создаем спсиок файлов *.cat в архиве
             strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
-            cmdString = "cmd.exe /c " & Kavichki & Kavichki & strArh7zExePATH & Kavichki & " l " & Kavichki & strPathDRP & strPackFileName & Kavichki & " -yr *.cat >>" & Kavichki & strArchCatFileList & Kavichki
+            cmdString = "cmd.exe /c " & Kavichki & Kavichki & strArh7zExePATH & Kavichki & " l " & Kavichki & strPathDRP & strPackFileName & Kavichki & " -yr *.cat >" & Kavichki & strArchCatFileList & Kavichki
 
             If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
                 DebugMode strMessages(13) & str2vbNewLine & cmdString
@@ -179,7 +172,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Else
         ' Создаем спсиок файлов *.cat в архиве
         strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
-        cmdString = "cmd.exe /c " & Kavichki & "Dir" & " " & Kavichki & strPathDRP & strPackFileName & "\*.cat" & Kavichki & " /B /S >" & Kavichki & strArchCatFileList & Kavichki
+        cmdString = "cmd.exe /c Dir " & Kavichki & strPathDRP & strPackFileName & "\*.cat" & Kavichki & " /B /S >" & Kavichki & strArchCatFileList & Kavichki
 
         'dir c:\windows\temp\*.tmp /S /B
         If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then

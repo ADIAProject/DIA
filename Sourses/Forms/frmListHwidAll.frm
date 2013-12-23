@@ -585,10 +585,9 @@ Private Sub cmdCheckAll_Click()
     FindCheckCountList
 End Sub
 
-'найти драйвер для выделенного устройства
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdGoSite_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [найти драйвер для выделенного устройства]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdGoSite_Click()
@@ -646,14 +645,9 @@ Private Sub cmdReNewHW_Click()
     BlockControl True
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  BlockControl
-'!  Переменные  :
-'!  Описание    :  Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub BlockControl
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций]
 '! Parameters  (Переменные):   mbBlock (Boolean)
 '!--------------------------------------------------------------------------------
 Public Sub BlockControl(ByVal mbBlock As Boolean)
@@ -724,7 +718,7 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
@@ -778,9 +772,7 @@ Public Sub FormLoadDefaultParam()
     End If
 
     optGrp1.Value = 0
-    'uncheck
     optGrp2.Value = 1
-    'check
     optGrp3.Value = False
     optGrp4.Value = True
 End Sub
@@ -918,14 +910,9 @@ Private Sub Form_Resize()
     'Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  LoadList_Device
-'!  Переменные  :
-'!  Описание    :  Построение полного спиcка устройств
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadList_Device
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Построение полного спиcка устройств]
 '! Parameters  (Переменные):   mbViewed (Boolean = True)
 '                              lngMode (Long = 0)
 '!--------------------------------------------------------------------------------
@@ -981,7 +968,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
 
         Select Case lngMode
 
-                ' All - ALL
+            ' All - ALL
             Case 0, 3
 
                 With lvDevices.ListItems.Add(, , strDevHwid)
@@ -994,7 +981,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
                     .SubItems(7) = strInDPacks
                 End With
 
-                ' Microsoft - All
+            ' Microsoft - All
             Case 1
 
                 If InStr(1, strProvider, "microsoft", vbTextCompare) Or InStr(1, strProvider, "майкрософт", vbTextCompare) Or InStr(1, strProvider, "standard", vbTextCompare) Then
@@ -1030,7 +1017,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
                     lngNumRow = lngNumRow + 1
                 End If
 
-                ' All - not in base
+            ' All - not in base
             Case 4
 
                 If LenB(strInDPacks) = 0 Then
@@ -1048,7 +1035,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
                     lngNumRow = lngNumRow + 1
                 End If
 
-                ' Microsoft - not in base
+            ' Microsoft - not in base
             Case 5
 
                 If InStr(1, strProvider, "microsoft", vbTextCompare) Or InStr(1, strProvider, "майкрософт", vbTextCompare) Or InStr(1, strProvider, "standard", vbTextCompare) Then
@@ -1068,7 +1055,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
                     End If
                 End If
 
-                ' OEM - not in base
+            ' OEM - not in base
             Case 6
 
                 If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And InStr(1, strProvider, "standard", vbTextCompare) = 0 Then

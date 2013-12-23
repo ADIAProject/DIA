@@ -45,16 +45,9 @@ Private Const HWND_NOTOPMOST = -2
 Private Const TOPMOST_FLAGS = SWP_NOMOVE Or SWP_NOSIZE
 Private Const SWP_FLAGS = SWP_NOACTIVATE Or SWP_NOMOVE Or SWP_NOSIZE
 
-'-------------------------------------------------------------------------
-' Procedure  : AnimateForm
-' Auther     : Jim Jose
-' Input      : AnimeObject, Event , Effect + Time/frame values
-' OutPut     : None
-' Purpose    : Cooool flash style animations in Vb
-'-------------------------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function AnimateForm
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Cooool flash style animations in Vb]
 '! Parameters  (Переменные):   hwndObject (Object)
 '                              aEvent (AnimeEventEnum)
 '                              aEffect (AnimeEffectEnum = 11)
@@ -410,6 +403,5 @@ End Function
 '! Parameters  (Переменные):   hWnd (Long)
 '!--------------------------------------------------------------------------------
 Public Sub MakeTopMostNoFocus(hWnd As Long)
-    'SetWindowPos hwnd, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS
     SetWindowPos hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_FLAGS
 End Sub

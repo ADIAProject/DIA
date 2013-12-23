@@ -12,12 +12,6 @@ Begin VB.UserControl FrameW
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   160
    ToolboxBitmap   =   "FrameW.ctx":0035
-   Begin VB.Image ImageTransparent 
-      Height          =   480
-      Left            =   0
-      Top             =   0
-      Width           =   480
-   End
 End
 Attribute VB_Name = "FrameW"
 Attribute VB_GlobalNameSpace = False
@@ -287,40 +281,20 @@ Private Sub UserControl_Click()
 RaiseEvent Click
 End Sub
 
-Private Sub ImageTransparent_Click()
-Call UserControl_Click
-End Sub
-
 Private Sub UserControl_DblClick()
 RaiseEvent DblClick
-End Sub
-
-Private Sub ImageTransparent_DblClick()
-Call UserControl_DblClick
 End Sub
 
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 RaiseEvent MouseDown(Button, Shift, X, Y)
 End Sub
 
-Private Sub ImageTransparent_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-Call UserControl_MouseDown(Button, Shift, X, Y)
-End Sub
-
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 RaiseEvent MouseMove(Button, Shift, X, Y)
 End Sub
 
-Private Sub ImageTransparent_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-Call UserControl_MouseMove(Button, Shift, X, Y)
-End Sub
-
 Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 RaiseEvent MouseUp(Button, Shift, X, Y)
-End Sub
-
-Private Sub ImageTransparent_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-Call UserControl_MouseUp(Button, Shift, X, Y)
 End Sub
 
 Private Sub UserControl_OLECompleteDrag(Effect As Long)
@@ -682,7 +656,7 @@ FrameGroupBoxHandle = 0
 If FrameTransparentBrush <> 0 Then
     DeleteObject FrameTransparentBrush
     FrameTransparentBrush = 0
-    Set ImageTransparent.Picture = Nothing
+    Set UserControl.Picture = Nothing
 End If
 End Sub
 
@@ -692,7 +666,7 @@ Attribute Refresh.VB_UserMemId = -550
 If FrameTransparentBrush <> 0 Then
     DeleteObject FrameTransparentBrush
     FrameTransparentBrush = 0
-    Set ImageTransparent.Picture = Nothing
+    Set UserControl.Picture = Nothing
 End If
 UserControl.Refresh
 RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
@@ -743,7 +717,7 @@ Select Case wMsg
                                     DeleteDC hDCBmp2
                                 End If
                             End If
-                            Set ImageTransparent.Picture = PictureFromHandle(hBmp2, vbPicTypeBitmap)
+                            Set UserControl.Picture = PictureFromHandle(hBmp2, vbPicTypeBitmap)
                             If FrameGroupBoxHandle <> 0 Then RedrawWindow FrameGroupBoxHandle, 0, 0, RDW_INVALIDATE
                             SelectObject hDCBmp, hBmpOld
                             DeleteObject hBmp

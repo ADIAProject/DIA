@@ -500,11 +500,6 @@ Private Sub cmdExit_Click()
     Unload Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdOK_Click
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdOK_Click
 '! Description (Описание)  :   [type_description_here]
@@ -530,14 +525,9 @@ Private Sub Form_Activate()
     'txtOSVer.SetFocus
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_KeyDown
-'!  Переменные  :  KeyCode As Integer, Shift As Integer
-'!  Описание    :  обработка нажатий клавиш клавиатуры
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
@@ -583,16 +573,6 @@ Private Sub Form_Load()
 
 End Sub
 
-'Private Sub Form_Terminate()
-'
-'    On Error Resume Next
-'
-'    If Forms.Count = 0 Then
-'        UnloadApp
-'
-'    End If
-'
-'End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Localise
 '! Description (Описание)  :   [type_description_here]
@@ -620,11 +600,6 @@ Private Sub Localise(ByVal StrPathFile As String)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  SaveOptions
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SaveOptions
 '! Description (Описание)  :   [type_description_here]
@@ -664,7 +639,6 @@ Private Sub SaveOptions()
             .SubItems(8) = txtExcludeFileName
         End With
 
-        'FRMOPTIONS
     Else
 
         With frmOptions.lvOS

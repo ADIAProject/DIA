@@ -3,10 +3,9 @@ Option Explicit
 
 Public Declare Function GetTickCount Lib "kernel32.dll" () As Long
 
-' Функция расчета времени, исходя из полученных значений в миллисекундах функции GetTickCount
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CalculateTime
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Функция расчета времени, исходя из полученных значений в миллисекундах функции GetTickCount]
 '! Parameters  (Переменные):   lngStartTime (Long)
 '                              lngEndTime (Long)
 '                              mbmSec (Boolean = False)

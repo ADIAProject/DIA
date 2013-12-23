@@ -1,10 +1,9 @@
 Attribute VB_Name = "mDevParser"
 Option Explicit
 
-' Сравнение версий баз драйверов, с константой в программе
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareDevDBVersion
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Сравнение версий баз драйверов, с константой в программе]
 '! Parameters  (Переменные):   strDevDBFullFileName (String)
 '                              strPathDRP (String)
 '!--------------------------------------------------------------------------------
@@ -24,14 +23,9 @@ Public Function CompareDevDBVersion(strDevDBFullFileName As String, Optional ByV
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  DevParserLocalHwids2
-'!  Переменные  :
-'!  Описание    :  Парсинг выходного файла devcon для локальных устройств
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DevParserLocalHwids2
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Парсинг выходного файла devcon для локальных устройств]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub DevParserLocalHwids2()
@@ -225,15 +219,9 @@ Public Function ParseDoubleHwid(ByVal strValuer As String) As String
     ParseDoubleHwid = strValuer
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  RunDevcon
-'!  Переменные  :
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  Запуск программы Devcon
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function RunDevcon
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск программы Devcon при старте программы для сбора информации по HWID]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function RunDevcon() As Boolean
@@ -241,7 +229,11 @@ Public Function RunDevcon() As Boolean
     Dim cmdString As String
 
     DebugMode "RunDevcon-Start"
-    cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConExePath & Kavichki & " " & Kavichki & strHwidsTxtPath & Kavichki & " 1"
+    If PathExists(strHwidsTxtPath) Then
+        DeleteFiles strHwidsTxtPath
+    End If
+    'cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConExePath & Kavichki & " " & Kavichki & strHwidsTxtPath & Kavichki & " 1"
+    cmdString = "cmd.exe /c " & Kavichki & Kavichki & strDevConExePath & Kavichki & " status * > " & Kavichki & strHwidsTxtPath & Kavichki
     CreateIfNotExistPath strWorkTemp
 
     If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
@@ -262,15 +254,9 @@ Public Function RunDevcon() As Boolean
     DebugMode "RunDevcon-End"
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  RunDevconRescan
-'!  Переменные  :
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  'Поиск новых устройств + Запуск программы Devcon
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function RunDevconRescan
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Поиск новых устройств + Запуск программы Devcon]
 '! Parameters  (Переменные):   lngPause (Long = 1)
 '!--------------------------------------------------------------------------------
 Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
@@ -293,15 +279,9 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
     DebugMode "RunDevconRescan-End"
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  RunDevconView
-'!  Переменные  :
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  Запуск программы Devcon
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function RunDevconView
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск программы Devcon]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function RunDevconView() As Boolean
@@ -322,14 +302,9 @@ Public Function RunDevconView() As Boolean
     DebugMode "RunDevconView-End"
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  CollectCmdString
-'!  Переменные  :
-'!  Описание    :  Создание коммандной строки запуска программы DPInst
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CollectCmdString
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Создание коммандной строки запуска программы DPInst]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function CollectCmdString() As String

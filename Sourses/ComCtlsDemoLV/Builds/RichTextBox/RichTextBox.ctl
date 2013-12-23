@@ -292,7 +292,7 @@ Attribute OLEGetDragEffect.VB_Description = "This is a request to specify the al
 Public Event OLEGetDropEffect(ByVal Button As Integer, ByVal Shift As Integer, Effect As Long)
 Attribute OLEGetDropEffect.VB_Description = "This is a request to specify the effect to use in a OLE drop operation."
 Public Event OLEGetContextMenu(ByVal SelType As Integer, ByVal LpOleObject As Long, ByVal SelStart As Long, ByVal SelEnd As Long, ByRef hMenu As Long)
-Attribute OLEGetContextMenu.VB_Description = "This is a request to provide a popup menu to use on a right-click."
+Attribute OLEGetContextMenu.VB_Description = "This is a request to provide a popup menu to use on a right-click. The rich text box control destroys the popup menu when it is finished."
 Public Event OLEContextMenuClick(ByVal ID As Long)
 Attribute OLEContextMenuClick.VB_Description = "Occurs when the user selects an item from a popup menu that was provided in the OLEGetContextMenu event."
 Public Event OLEDeleteObject(ByVal LpOleObject As Long)

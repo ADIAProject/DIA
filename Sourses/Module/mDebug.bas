@@ -16,14 +16,9 @@ Public lngDetailMode           As Long
 Public mbDebugLog2AppPath      As Boolean
 Public mbDebugTime2File        As Boolean
 
-'! -----------------------------------------------------------
-'!  Функция     :  DebugMode
-'!  Переменные  :  Msg - Передаваемое сообщение
-'!  Описание    :  Функция отладочных сообщений
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DebugMode
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Функция отладочных сообщений]
 '! Parameters  (Переменные):   Msg (String)
 '                              lngDetailModeTemp (Long = 1)
 '!--------------------------------------------------------------------------------
@@ -56,14 +51,9 @@ Public Sub DebugMode(ByVal Msg As String, Optional ByVal lngDetailModeTemp As Lo
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  LogNotOnCDRoom
-'!  Переменные  :
-'!  Описание    :  Проверка на хранение лог-файла на CD
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function LogNotOnCDRoom
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка на хранение лог-файла на CD]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function LogNotOnCDRoom() As Boolean
@@ -86,14 +76,9 @@ Public Function LogNotOnCDRoom() As Boolean
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  MakeCleanHistory
-'!  Переменные  :
-'!  Описание    :  Удаление истории отладочного режима
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub MakeCleanHistory
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Удаление истории отладочного режима]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub MakeCleanHistory()
@@ -111,10 +96,9 @@ Public Sub MakeCleanHistory()
 
 End Sub
 
-' Запись в DebugLog сожержимого файла
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub PrintFileInDebugLog
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запись в DebugLog сожержимого файла]
 '! Parameters  (Переменные):   strFilePath (String)
 '!--------------------------------------------------------------------------------
 Public Sub PrintFileInDebugLog(ByVal strFilePath As String)

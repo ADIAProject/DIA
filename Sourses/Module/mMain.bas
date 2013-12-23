@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram         As String = "20/12/2013"
+Public Const strDateProgram         As String = "23/12/2013"
 
 ' Текущая версия базы данных
 Public Const lngDevDBVersion        As Long = 5

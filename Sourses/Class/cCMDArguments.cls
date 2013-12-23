@@ -45,43 +45,43 @@ Option Explicit
 '************************************************************************************************************
 '************************************************************************************************************
 '************************************************************************************************************
-Private CFm_CommandLine As String
-Private Declare Function CommandLineToArgvW Lib "shell32.dll" (ByVal nInput As Long, ByRef retcount As Long) As Long
+Private cFm_CommandLine As String
+Private Declare Function CommandLineToArgvW Lib "shell32.dll" (ByVal nInput As Long, ByRef retCount As Long) As Long
 Private Declare Function LocalFree Lib "kernel32.dll" (ByVal hMem As Long) As Long
 Private Declare Function SysAllocString Lib "oleaut32.dll" (ByVal nString As Long) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function Arguments
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Get unicode supporting unicode]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function Arguments() As Collection
 
     Dim lngRet   As Long
-    Dim retcount As Long
+    Dim retCount As Long
     Dim rt       As String
     Dim i        As Integer
     Dim sPtr     As Long
     Dim cmdLine  As String
-    Dim ret      As Collection
+    Dim retColl  As Collection
 
-    Set ret = New Collection
-    cmdLine = CFm_CommandLine
-    lngRet = CommandLineToArgvW(StrPtr(cmdLine & vbNullChar), retcount)
+    Set retColl = New Collection
+    cmdLine = cFm_CommandLine
+    lngRet = CommandLineToArgvW(StrPtr(cmdLine & vbNullChar), retCount)
 
-    If retcount > 0 Then
+    If retCount > 0 Then
 
-        For i = 0 To retcount - 1
+        For i = 0 To retCount - 1
             CopyMemoryLong VarPtr(sPtr), lngRet + i * 4, 4
             CopyMemoryLong VarPtr(rt), VarPtr(SysAllocString(sPtr)), 4
-            ret.Add rt
+            retColl.Add rt
         Next
 
     End If
 
     If lngRet <> 0 Then
         LocalFree lngRet
-        Set Arguments = ret
+        Set Arguments = retColl
     End If
 
 End Function
@@ -97,28 +97,19 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
     Dim Cmd         As String
     Dim cmdLen      As Long
     Dim cmdLine     As String
-    Dim ret         As Collection
+    Dim retColl     As Collection
     Dim Append      As Boolean
-
-    'Append to The Argument
     Dim InvertStart As Boolean
-
-    'If this is the Inverted Comma Start
     Dim CurPos      As Long
-
-    'CurrentPosition of the loop
     Dim curChar     As String
-
-    'Current Character
     Dim CurArg      As String
 
-    'Current Argument being written
     On Error Resume Next
-
-    Set ret = New Collection
+    
     'Initialize the command Line and the count
-    cmdLine = CFm_CommandLine
-    Cmd = CFm_CommandLine
+    Set retColl = New Collection
+    cmdLine = cFm_CommandLine
+    Cmd = cFm_CommandLine
     cmdLen = Len(Cmd)
     '****Declare Return Collection
     '****Declare Used Variables***
@@ -158,7 +149,7 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
                 End If
 
             Case False
-                ret.Add CurArg
+                retColl.Add CurArg
                 CurArg = vbNullString
         End Select
 
@@ -166,10 +157,10 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
     Next
 
     If LenB(CurArg) Then
-        ret.Add CurArg
+        retColl.Add CurArg
     End If
 
-    Set ArgumentsClassical = ret
+    Set ArgumentsClassical = retColl
 
     On Error GoTo 0
 
@@ -181,14 +172,14 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get CommandLine() As String
-    CommandLine = CFm_CommandLine
+    CommandLine = cFm_CommandLine
 End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property CommandLine
 '! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   PropVal (String)
+'! Parameters  (Переменные):   sNewString (String)
 '!--------------------------------------------------------------------------------
-Public Property Let CommandLine(ByVal PropVal As String)
-    CFm_CommandLine = PropVal
+Public Property Let CommandLine(ByVal sNewString As String)
+    cFm_CommandLine = sNewString
 End Property

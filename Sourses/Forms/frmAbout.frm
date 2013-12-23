@@ -30,20 +30,28 @@ Begin VB.Form frmAbout
       TabIndex        =   1
       Top             =   5500
       Width           =   1450
-      _extentx        =   3201
-      _extenty        =   661
-      font            =   "frmAbout.frx":000C
-      caption         =   "HomePage"
-      pictureposition =   0
-      buttonstyle     =   3
-      picturewidth    =   0
-      pictureheight   =   0
-      xpcolor_pressed =   15116940
-      xpcolor_hover   =   4692449
-      showfocusrect   =   0
-      textcolor       =   0
-      menucaption0    =   "#"
-      menuexist       =   -1
+      _ExtentX        =   3201
+      _ExtentY        =   661
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "HomePage"
+      PicturePosition =   0
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
+      TextColor       =   0
+      MenuCaption0    =   "#"
+      MenuExist       =   -1  'True
    End
    Begin prjDIADBS.ctlXpButton cmdOsZoneNet 
       Height          =   735
@@ -51,13 +59,21 @@ Begin VB.Form frmAbout
       TabIndex        =   2
       Top             =   5500
       Width           =   1575
-      _extentx        =   3201
-      _extenty        =   661
-      font            =   "frmAbout.frx":0034
-      caption         =   "Обсуждение на OsZone.Net"
-      buttonstyle     =   3
-      xpcolor_pressed =   15116940
-      xpcolor_hover   =   4692449
+      _ExtentX        =   3201
+      _ExtentY        =   661
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "Обсуждение на OsZone.Net"
+      ButtonStyle     =   3
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlXpButton cmdLicence 
       Height          =   735
@@ -65,18 +81,26 @@ Begin VB.Form frmAbout
       TabIndex        =   3
       Top             =   5500
       Width           =   2050
-      _extentx        =   3625
-      _extenty        =   1296
-      font            =   "frmAbout.frx":005C
-      caption         =   "Лицензионное соглашение"
-      buttonstyle     =   3
-      picturewidth    =   48
-      pictureheight   =   48
-      xpcolor_pressed =   15116940
-      xpcolor_hover   =   4692449
-      showfocusrect   =   0
-      textcolor       =   0
-      menucaption0    =   "#"
+      _ExtentX        =   3625
+      _ExtentY        =   1296
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "Лицензионное соглашение"
+      ButtonStyle     =   3
+      PictureWidth    =   48
+      PictureHeight   =   48
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
+      TextColor       =   0
+      MenuCaption0    =   "#"
    End
    Begin prjDIADBS.ctlXpButton cmdDonate 
       Height          =   735
@@ -84,18 +108,26 @@ Begin VB.Form frmAbout
       TabIndex        =   5
       Top             =   5500
       Width           =   2150
-      _extentx        =   3784
-      _extenty        =   1296
-      font            =   "frmAbout.frx":0084
-      caption         =   "Поддержать проект"
-      buttonstyle     =   3
-      picturewidth    =   51
-      pictureheight   =   28
-      xpcolor_pressed =   15116940
-      xpcolor_hover   =   4692449
-      showfocusrect   =   0
-      textcolor       =   0
-      menucaption0    =   "#"
+      _ExtentX        =   3784
+      _ExtentY        =   1296
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "Поддержать проект"
+      ButtonStyle     =   3
+      PictureWidth    =   51
+      PictureHeight   =   28
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
+      TextColor       =   0
+      MenuCaption0    =   "#"
    End
    Begin prjDIADBS.ctlXpButton cmdExit 
       Height          =   735
@@ -103,16 +135,24 @@ Begin VB.Form frmAbout
       TabIndex        =   0
       Top             =   5500
       Width           =   1550
-      _extentx        =   2725
-      _extenty        =   1296
-      font            =   "frmAbout.frx":00AC
-      caption         =   "Закрыть"
-      buttonstyle     =   3
-      picturewidth    =   0
-      pictureheight   =   0
-      xpcolor_pressed =   15116940
-      xpcolor_hover   =   4692449
-      showfocusrect   =   0
+      _ExtentX        =   2725
+      _ExtentY        =   1296
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Caption         =   "Закрыть"
+      ButtonStyle     =   3
+      PictureWidth    =   0
+      PictureHeight   =   0
+      ShowFocusRect   =   0   'False
+      XPColor_Pressed =   15116940
+      XPColor_Hover   =   4692449
    End
    Begin prjDIADBS.ctlJCbutton ctlAquaButton1 
       Height          =   1995
@@ -120,16 +160,24 @@ Begin VB.Form frmAbout
       TabIndex        =   4
       Top             =   120
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   3519
-      font            =   "frmAbout.frx":00D4
-      buttonstyle     =   10
-      backcolor       =   16765357
-      caption         =   ""
-      picturenormal   =   "frmAbout.frx":00FC
-      pictureshadow   =   -1
-      captioneffects  =   0
-      tooltipbackcolor=   0
+      _ExtentX        =   3704
+      _ExtentY        =   3519
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   10
+      BackColor       =   16765357
+      Caption         =   ""
+      PictureNormal   =   "frmAbout.frx":000C
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
    End
    Begin prjDIADBS.LabelW lblTranslator 
       Height          =   255
@@ -137,12 +185,20 @@ Begin VB.Form frmAbout
       TabIndex        =   6
       Top             =   3175
       Width           =   9255
-      _extentx        =   0
-      _extenty        =   0
-      font            =   "frmAbout.frx":4D56
-      mousepointer    =   4
-      backstyle       =   0
-      caption         =   "Перевод программы: Головеев Роман"
+      _ExtentX        =   0
+      _ExtentY        =   0
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   9.75
+         Charset         =   204
+         Weight          =   400
+         Underline       =   -1  'True
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      MousePointer    =   4
+      BackStyle       =   0
+      Caption         =   "Перевод программы: Головеев Роман"
    End
    Begin prjDIADBS.LabelW lblThanks 
       Height          =   195
@@ -151,13 +207,21 @@ Begin VB.Form frmAbout
       TabIndex        =   7
       Top             =   3480
       Width           =   2500
-      _extentx        =   4419
-      _extenty        =   344
-      font            =   "frmAbout.frx":4D7E
-      backstyle       =   0
-      caption         =   "Благодарности:"
-      autosize        =   -1
-      wordwrap        =   0
+      _ExtentX        =   4419
+      _ExtentY        =   344
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackStyle       =   0
+      Caption         =   "Благодарности:"
+      AutoSize        =   -1  'True
+      WordWrap        =   0   'False
    End
    Begin prjDIADBS.LabelW lblAuthor 
       Height          =   255
@@ -165,11 +229,19 @@ Begin VB.Form frmAbout
       TabIndex        =   8
       Top             =   2880
       Width           =   9255
-      _extentx        =   0
-      _extenty        =   0
-      font            =   "frmAbout.frx":4DA6
-      backstyle       =   0
-      caption         =   "Автор программы: Головеев Роман"
+      _ExtentX        =   0
+      _ExtentY        =   0
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   9.75
+         Charset         =   204
+         Weight          =   400
+         Underline       =   -1  'True
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackStyle       =   0
+      Caption         =   "Автор программы: Головеев Роман"
    End
    Begin prjDIADBS.LabelW lblInfo 
       Height          =   1335
@@ -177,11 +249,19 @@ Begin VB.Form frmAbout
       TabIndex        =   9
       Top             =   1560
       Width           =   7155
-      _extentx        =   0
-      _extenty        =   0
-      font            =   "frmAbout.frx":4DCE
-      backstyle       =   0
-      caption         =   "Описание программы"
+      _ExtentX        =   0
+      _ExtentY        =   0
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   9
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackStyle       =   0
+      Caption         =   "Описание программы"
    End
    Begin prjDIADBS.LabelW lblNameProg 
       Height          =   1575
@@ -189,12 +269,20 @@ Begin VB.Form frmAbout
       TabIndex        =   10
       Top             =   45
       Width           =   7155
-      _extentx        =   12621
-      _extenty        =   2778
-      font            =   "frmAbout.frx":4DF6
-      alignment       =   2
-      backstyle       =   0
-      caption         =   "Label1"
+      _ExtentX        =   12621
+      _ExtentY        =   2778
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   18
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Alignment       =   2
+      BackStyle       =   0
+      Caption         =   "Label1"
    End
    Begin prjDIADBS.LabelW lblMailTo 
       Height          =   255
@@ -202,13 +290,21 @@ Begin VB.Form frmAbout
       TabIndex        =   11
       Top             =   5160
       Width           =   9255
-      _extentx        =   16325
-      _extenty        =   450
-      font            =   "frmAbout.frx":4E1E
-      forecolor       =   12582912
-      mousepointer    =   4
-      backstyle       =   0
-      caption         =   "Написать E-mail автору программу"
+      _ExtentX        =   16325
+      _ExtentY        =   450
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   9.75
+         Charset         =   204
+         Weight          =   700
+         Underline       =   -1  'True
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   12582912
+      MousePointer    =   4
+      BackStyle       =   0
+      Caption         =   "Написать E-mail автору программу"
    End
 End
 Attribute VB_Name = "frmAbout"
@@ -519,8 +615,6 @@ Private Sub LoadThankYou()
     GenerateThankyou "Juned Chhipa", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=71482&lngWId=1"
     GenerateThankyou "Leandro Ascierto", "http://leandroascierto.com/blog/clsmenuimage/"
     GenerateThankyou "VBnet and Randy Birch", "http://vbnet.mvps.org/"
-    ' win7Toolbar
-    GenerateThankyou "AndRAY (Makarov Andrey)", "http://planetsourcecode.com/vb/scripts/ShowCode.asp?txtCodeId=72856&lngWId=1"
     'cmdparsing
     GenerateThankyou "EliteXP Software Solutions", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=72018&lngWId=1"
     'ucPickBox' ucStatusBar

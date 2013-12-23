@@ -321,7 +321,7 @@ Public Event ColumnBeforeDrag(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnBeforeDrag.VB_Description = "Occurs when a drag operation has begun on one column header."
 Public Event ColumnAfterDrag(ByVal ColumnHeader As LvwColumnHeader, ByVal NewPosition As Long, ByRef Cancel As Boolean)
 Attribute ColumnAfterDrag.VB_Description = "Occurs when a drag operation has ended on one column header."
-Public Event ColumnDropDown(ByVal ColumnHeader As LvwColumnHeader, ByVal Button As Integer)
+Public Event ColumnDropDown(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnDropDown.VB_Description = "Occurs when the drop-down arrow on the split button of a column header is clicked. Requires comctl32.dll version 6.1 or higher."
 Public Event ColumnCheck(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnCheck.VB_Description = "Occurs when a column header is checked. Requires comctl32.dll version 6.1 or higher."
@@ -4368,16 +4368,7 @@ Select Case wMsg
                     End If
                 Case HDN_DROPDOWN
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
-                    If NMHDR.iItem > -1 Then
-                        Select Case NMHDR.iButton
-                            Case 0
-                                RaiseEvent ColumnDropDown(Me.ColumnHeaders(NMHDR.iItem + 1), vbLeftButton)
-                            Case 1
-                                RaiseEvent ColumnDropDown(Me.ColumnHeaders(NMHDR.iItem + 1), vbRightButton)
-                            Case 2
-                                RaiseEvent ColumnDropDown(Me.ColumnHeaders(NMHDR.iItem + 1), vbMiddleButton)
-                        End Select
-                    End If
+                    If NMHDR.iItem > -1 Then RaiseEvent ColumnDropDown(Me.ColumnHeaders(NMHDR.iItem + 1))
                 Case HDN_ITEMSTATEICONCLICK
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
                     If NMHDR.iItem > -1 Then

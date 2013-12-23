@@ -1371,18 +1371,11 @@ Private mbLoadAppEnd             As Boolean
 Private objHashOutput            As Scripting.Dictionary
 Private objHashOutput2           As Scripting.Dictionary
 Private objHashOutput3           As Scripting.Dictionary
-
-' Положение кнопок пакетов драйверов на основной вкладке
 Private strFormName              As String
 
-'! -----------------------------------------------------------
-'!  Функция     :  acmdPackFiles_Click
-'!  Переменные  :  Index As Integer
-'!  Описание    :  Обработка События нажатия кнопки
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Обработка События нажатия кнопки]
 '! Parameters  (Переменные):   Index (Integer)
 '!--------------------------------------------------------------------------------
 Private Sub acmdPackFiles_Click(Index As Integer)
@@ -1630,14 +1623,9 @@ Private Sub acmdPackFiles_KeyDown(Index As Integer, KeyCode As Integer, Shift As
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  acmdPackFiles_MouseDown
-'!  Переменные  :  Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single
-'!  Описание    :  Обработка события нажатия правой кнопкой мыши
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_MouseDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Обработка события нажатия правой кнопкой мыши]
 '! Parameters  (Переменные):   Index (Integer)
 '                              Button (Integer)
 '                              Shift (Integer)
@@ -1681,14 +1669,9 @@ Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift A
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  BaseUpdateOrRunTask
-'!  Переменные  :  Optional mbOnlyNew As Boolean = False
-'!  Описание    :  Обновление всех баз или только новых поочередно
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub BaseUpdateOrRunTask
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Обновление всех баз или только новых поочередно]
 '! Parameters  (Переменные):   mbOnlyNew (Boolean = False)
 '                              mbTasks (Boolean = False)
 '!--------------------------------------------------------------------------------
@@ -1868,13 +1851,9 @@ TheEnd:
     DebugMode "BaseUpdateOrRunTask-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  BlockControl
-'!  Описание    :  Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub BlockControl
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Блокировка(Разблокировка) некоторых элементов формы при работе сложных функций]
 '! Parameters  (Переменные):   mbBlock (Boolean)
 '!--------------------------------------------------------------------------------
 Public Sub BlockControl(ByVal mbBlock As Boolean)
@@ -1894,21 +1873,16 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOld.Enabled = mbBlock
+    imgOkAttentionOLD.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
     SSTab1.Enabled = mbBlock
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  BlockControlEx
-'!  Переменные  :  ByVal mbBlock As Boolean
-'!  Описание    :  Блокировка(Разблокировка) элементов
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub BlockControlEx
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Блокировка(Разблокировка) элементов]
 '! Parameters  (Переменные):   mbBlock (Boolean)
 '!--------------------------------------------------------------------------------
 Private Sub BlockControlEx(ByVal mbBlock As Boolean)
@@ -1918,14 +1892,9 @@ Private Sub BlockControlEx(ByVal mbBlock As Boolean)
     optRezim_Upd.Enabled = mbBlock
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  BlockControlInNoDP
-'!  Переменные  :  ByVal mbBlock As Boolean
-'!  Описание    :  Блокировка(Разблокировка) элементов если нет пакетов драйверов
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub BlockControlInNoDP
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Блокировка(Разблокировка) элементов если нет пакетов драйверов]
 '! Parameters  (Переменные):   mbBlock (Boolean)
 '!--------------------------------------------------------------------------------
 Private Sub BlockControlInNoDP(ByVal mbBlock As Boolean)
@@ -1946,13 +1915,9 @@ Private Sub BlockControlInNoDP(ByVal mbBlock As Boolean)
     mnuReCollectHWIDTab.Enabled = mbBlock
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CalculateUnknownDrivers
-'!  Описание    :  Подсчитываем кол-во неизвестных драйверов
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CalculateUnknownDrivers
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Подсчитываем количество неизвестных драйверов]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Function CalculateUnknownDrivers() As Long
@@ -1979,14 +1944,9 @@ Private Function CalculateUnknownDrivers() As Long
     CalculateUnknownDrivers = lngCountUnknown
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  ChangeFrmMainCaption
-'!  Переменные  :  Optional ByVal lngPercentage As Long
-'!  Описание    :  Изменение Caption Формы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ChangeFrmMainCaption
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Изменение Caption Формы]
 '! Parameters  (Переменные):   lngPercentage (Long)
 '!--------------------------------------------------------------------------------
 Private Sub ChangeFrmMainCaption(Optional ByVal lngPercentage As Long)
@@ -2054,14 +2014,9 @@ Private Sub ChangeMenuCaption()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ChangeStatusAndPictureButton
-'!  Переменные  :  strPathDevDB, strPackFileName, ButtonIndex As Integer
-'!  Описание    :  Присваиваем картинку в соответсвии с наличием БД к файлу
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ChangeStatusAndPictureButton
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Присваиваем картинку в соответсвии с наличием БД к файлу]
 '! Parameters  (Переменные):   strPathDevDB (String)
 '                              strPackFileName (String)
 '                              ButtonIndex (Long)
@@ -2137,7 +2092,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
                                 Set .Picture = Nothing
-                                Set .Picture = imgOkAttentionOld.Picture
+                                Set .Picture = imgOkAttentionOLD.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionOLD"
                             Else
                                 Set .Picture = Nothing
@@ -2170,7 +2125,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
                             Set .Picture = Nothing
-                            Set .Picture = imgOkAttentionOld.Picture
+                            Set .Picture = imgOkAttentionOLD.Picture
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionOLD"
                         Else
                             Set .Picture = Nothing
@@ -2210,14 +2165,9 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
     DebugMode str3VbTab & "ChangeStatusAndPictureButton-End"
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  CheckAllButton
-'!  Переменные  :  ByVal mbCheckAll As Boolean
-'!  Описание    :  Выделение всех кнопок
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckAllButton
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Выделение всех кнопок]
 '! Parameters  (Переменные):   mbCheckAll (Boolean)
 '!--------------------------------------------------------------------------------
 Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
@@ -2237,15 +2187,9 @@ Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
     FindCheckCount
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CheckExistDB
-'!  Переменные  :  ByRef DevDBPath As String, ByRef strPackFileName As String
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  Проверяет есть ли txt/hwid файл для данного архива
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckExistDB
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверяет есть ли txt/hwid файл для данного архива]
 '! Parameters  (Переменные):   strDevDBPath (String)
 '                              strPackFileName (String)
 '!--------------------------------------------------------------------------------
@@ -3035,10 +2979,9 @@ Private Function CheckDRVbyNotebookVendor(ByVal strInfPath As String) As Boolean
     CheckDRVbyNotebookVendor = mbFind
 End Function
 
-' Изменяем имя пакета драйверов (удаление лишних Символов)
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ConvertDPName
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Изменяем имя пакета драйверов (удаление лишних Символов)]
 '! Parameters  (Переменные):   strButtonName (String)
 '!--------------------------------------------------------------------------------
 Private Function ConvertDPName(ByVal strButtonName As String) As String
@@ -3075,14 +3018,9 @@ Private Function ConvertDPName(ByVal strButtonName As String) As String
     ConvertDPName = strButtonName
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  CreateButtonsonSSTab
-'!  Переменные  :  strDrpPath As String, strDevDBPath As String, miTabIndex As Long
-'!  Описание    :  Создание кнопок на выбранной вкладке табконтрола
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateButtonsonSSTab
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Создание кнопок на выбранной вкладке табконтрола]
 '! Parameters  (Переменные):   strDrpPath (String)
 '                              strDevDBPath (String)
 '                              miTabIndex (Long)
@@ -3356,11 +3294,6 @@ ExitSub:
     DebugMode vbTab & "CreateButtonsonSSTab-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CreateMenuIndex
-'!  Переменные  :  Name As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateMenuIndex
 '! Description (Описание)  :   [type_description_here]
@@ -3398,11 +3331,6 @@ Private Sub CreateMenuIndex(ByVal strName As String)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CreateMenuDevIDIndexDelMenu
-'!  Переменные  :  strDevID As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateMenuDevIDIndexDelMenu
 '! Description (Описание)  :   [type_description_here]
@@ -3464,11 +3392,6 @@ Private Sub CreateMenuDevIDIndexDelMenu(ByVal strDevID As String)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CreateMenuDevIDIndexCopyMenu
-'!  Переменные  :  strDevID As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateMenuDevIDIndexCopyMenu
 '! Description (Описание)  :   [type_description_here]
@@ -3530,11 +3453,6 @@ Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CreateMenuLngIndex
-'!  Переменные  :  Name As String
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateMenuLngIndex
 '! Description (Описание)  :   [type_description_here]
@@ -3572,11 +3490,6 @@ Private Sub CreateMenuLngIndex(ByVal strName As String)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  CreateProgressBar
-'!  Переменные  :
-'!  Описание    :  Создаем элемент ProgressBar
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateProgressNew
 '! Description (Описание)  :   [type_description_here]
@@ -3739,10 +3652,9 @@ Private Sub DeleteUnUsedBase()
     DebugMode "DeleteUnUsedBase-End"
 End Sub
 
-' Вызов функции для показана формы с сообщением вместо стандартного MsgBox
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ShowMsbBoxForm
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Вызов функции для показана формы с сообщением вместо стандартного MsgBox]
 '! Parameters  (Переменные):   strMsgDialog (String)
 '                              strMsgFrmCaption (String)
 '                              strMsgOKCaption (String)
@@ -3839,10 +3751,9 @@ Private Sub EditOrReadDPName(ByVal CurButtonIndex As Long, Optional ByVal mbRead
     DebugMode str2VbTab & "EditOrReadDPName-End"
 End Sub
 
-' Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub EventOnActivateForm
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub EventOnActivateForm()
@@ -4100,14 +4011,9 @@ Private Function FindCheckCount(Optional ByVal mbMsgStatus As Boolean = True) As
     FindCheckCount = miCount
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  FindHwidInBaseNew
-'!  Переменные  :  strPathDB As String
-'!  Описание    :  Поиск вхождения Hwids в БД
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FindHwidInBaseNew
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Поиск вхождения Hwids в БД]
 '! Parameters  (Переменные):   strDevDBPath (String)
 '                              strPackFileName (String)
 '                              lngButtonIndex (Long)
@@ -4728,14 +4634,9 @@ Private Function FindUnHideTab() As Integer
     FindUnHideTab = miCount
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Activate
-'!  Переменные  :
-'!  Описание    :  Событие активации формы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Activate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Событие активации формы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
@@ -4796,152 +4697,136 @@ Private Sub Form_Activate()
 
             ChangeFrmMainCaption 250
             ChangeStatusTextAndDebug strMessages(80)
-        Else
-            ChangeStatusTextAndDebug strMessages(57) & vbNewLine & strMessages(4)
-            Unload Me
-        End If
-
-        ' Назначить имена для вкладок и установить текущую на основании версии ОС
-        SetTabsNameAndCurrTab False
-        ' Загрузить все кнопки
-        LoadButton
-        SaveHWIDs2File
-
-        ' Вывести в лог список всех драйверов
-        If lngDriversArrCount > 0 Then
-            PutAllDrivers2Log
-        End If
-
-        SetTabsNameAndCurrTab True
-        DoEvents
-        BlockControl True
-        FindCheckCount
-        frTabPanel.Visible = True
-
-        'SSTab1.Visible = True
-        If SSTab1.Tab = 0 Then
-            If Not SSTab1.TabEnabled(0) Then
-                If acmdPackFiles.Count <= 1 Then
-                    acmdPackFiles(0).Visible = False
-                    chkPackFiles(0).Visible = False
+            
+            ' Назначить имена для вкладок и установить текущую на основании версии ОС
+            SetTabsNameAndCurrTab False
+            ' Загрузить все кнопки
+            LoadButton
+            SaveHWIDs2File
+    
+            ' Вывести в лог список всех драйверов
+            If lngDriversArrCount > 0 Then
+                PutAllDrivers2Log
+            End If
+    
+            SetTabsNameAndCurrTab True
+            DoEvents
+            BlockControl True
+            FindCheckCount
+            frTabPanel.Visible = True
+    
+            'SSTab1.Visible = True
+            If SSTab1.Tab = 0 Then
+                If Not SSTab1.TabEnabled(0) Then
+                    If acmdPackFiles.Count <= 1 Then
+                        acmdPackFiles(0).Visible = False
+                        chkPackFiles(0).Visible = False
+                    End If
                 End If
             End If
-        End If
-
-        mbFirstStart = False
-        ' Режим при старте
-        SelectStartMode
-        ' Активируем скрытую форму
-        frTabPanel.Visible = True
-        SSTab1.Enabled = True
-
-        ' устанавливаем размера табконтрола и положения FrameScroll
-        With frTabPanel
-            cntFindUnHideTab = FindUnHideTab
-
-            If .Visible Then
-                SetTabsWidth cntFindUnHideTab
-                SetStartScrollFramePos cntFindUnHideTab
-            End If
-
-        End With
-
-        ' подсчитываем кол-во неизвестных драйверов и изменяем текст кнопки
-        LoadCmdViewAllDeviceCaption
-        ' Загружаем описание значков иконок
-        ToolTipStatusLoad
-        Unload frmLicence
-        Set frmLicence = Nothing
-        dtEndTimeProg = GetTickCount
-        dtAllTimeProg = CalculateTime(dtStartTimeProg, dtEndTimeProg)
-        ChangeStatusTextAndDebug strMessages(59) & " " & dtAllTimeProg, "End Start Operation" & " StartTime is: " & dtAllTimeProg
-        ' Иконки меню
-        'If mbExMenu Then
-        'ExMenuEnable
-        'End If
-        Me.Refresh
-        Sleep 400
-
-        If mbRunWithParam Then
-            ChangeStatusTextAndDebug strMessages(60), "Program start in silentMode"
-            frmSilent.Show vbModal, Me
-
-            If mbSilentRun Then
-
-                ' Создаем точку восстановления
-                If mbCreateRestorePoint Then
-                    CreateRestorePoint
+    
+            mbFirstStart = False
+            ' Режим при старте
+            SelectStartMode
+            ' Активируем скрытую форму
+            frTabPanel.Visible = True
+            SSTab1.Enabled = True
+    
+            ' устанавливаем размера табконтрола и положения FrameScroll
+            With frTabPanel
+                cntFindUnHideTab = FindUnHideTab
+    
+                If .Visible Then
+                    SetTabsWidth cntFindUnHideTab
+                    SetStartScrollFramePos cntFindUnHideTab
                 End If
-
-                If Not mbNoSupportedOS Then
-                    '"Начинается автоматическая установка"
-                    SilentInstall
-                    ' после установки закрываем программу
-                    Unload Me
+    
+            End With
+    
+            ' подсчитываем кол-во неизвестных драйверов и изменяем текст кнопки
+            LoadCmdViewAllDeviceCaption
+            ' Загружаем описание значков иконок
+            ToolTipStatusLoad
+            Unload frmLicence
+            Set frmLicence = Nothing
+            dtEndTimeProg = GetTickCount
+            dtAllTimeProg = CalculateTime(dtStartTimeProg, dtEndTimeProg)
+            ChangeStatusTextAndDebug strMessages(59) & " " & dtAllTimeProg, "End Start Operation" & " StartTime is: " & dtAllTimeProg
+            ' Иконки меню
+            'If mbExMenu Then
+            'ExMenuEnable
+            'End If
+            Me.Refresh
+            Sleep 400
+    
+            If mbRunWithParam Then
+                ChangeStatusTextAndDebug strMessages(60), "Program start in silentMode"
+                frmSilent.Show vbModal, Me
+    
+                If mbSilentRun Then
+    
+                    ' Создаем точку восстановления
+                    If mbCreateRestorePoint Then
+                        CreateRestorePoint
+                    End If
+    
+                    If Not mbNoSupportedOS Then
+                        '"Начинается автоматическая установка"
+                        SilentInstall
+                        ' после установки закрываем программу
+                        Unload Me
+                    End If
+    
+                Else
+    
+                    ' Создаем точку восстановления
+                    If mbCreateRestorePoint Then
+                        If MsgBox(strMessages(115) & vbNewLine & strMessages(120), vbQuestion + vbYesNo, strProductName) = vbYes Then
+                            CreateRestorePoint
+                        End If
+                    End If
                 End If
-
+    
             Else
-
+                ' Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами
+                EventOnActivateForm
+    
                 ' Создаем точку восстановления
                 If mbCreateRestorePoint Then
                     If MsgBox(strMessages(115) & vbNewLine & strMessages(120), vbQuestion + vbYesNo, strProductName) = vbYes Then
                         CreateRestorePoint
                     End If
                 End If
-            End If
-
-        Else
-            ' Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами
-            EventOnActivateForm
-
-            ' Создаем точку восстановления
-            If mbCreateRestorePoint Then
-                If MsgBox(strMessages(115) & vbNewLine & strMessages(120), vbQuestion + vbYesNo, strProductName) = vbYes Then
-                    CreateRestorePoint
+    
+                ' Проверка обновлений при старте, только если не тихий режим установки
+                If mbUpdateCheck Then
+                    ctlUcStatusBar1.PanelText(1) = strMessages(145)
+                    ChangeStatusTextAndDebug strMessages(58)
+                    CheckUpd
+                Else
+                    ShowUpdateToolTip
                 End If
             End If
-
-            ' Проверка обновлений при старте, только если не тихий режим установки
-            If mbUpdateCheck Then
-                ctlUcStatusBar1.PanelText(1) = strMessages(145)
-                ChangeStatusTextAndDebug strMessages(58)
-                CheckUpd
-            Else
-                ShowUpdateToolTip
-            End If
+        Else
+            MsgBox strHwidsTxtPath & vbNewLine & strMessages(46), vbInformation, strProductName
+            Unload Me
         End If
+
     End If
 
     mbFirstStart = False
     mbLoadAppEnd = True
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_KeyDown
-'!  Переменные  :  KeyCode As Integer, Shift As Integer
-'!  Описание    :  обработка нажатий клавиш клавиатуры
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
 '                              Shift (Integer)
 '!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
-    ' Выход из программы по "Escape"
-    If Not mbFirstStart And KeyCode = vbKeyEscape Then
-        If Not mbCheckUpdNotEnd Then
-            If MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
-                Unload Me
-
-                Exit Sub
-
-            End If
-        End If
-
-        ' Нажата кнопка "Ctrl"
-    ElseIf Shift = 2 Then
+    If Shift = 2 Then
 
         Select Case KeyCode
 
@@ -4989,15 +4874,21 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
         End Select
 
+    Else
+        ' Выход из программы по "Escape"
+        If Not mbFirstStart And KeyCode = vbKeyEscape Then
+            If Not mbCheckUpdNotEnd Then
+                If VBA.MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
+                    Unload Me
+                End If
+            End If
+    
+            ' Нажата кнопка "Ctrl"
+        End If
     End If
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Load
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Load
 '! Description (Описание)  :   [type_description_here]
@@ -5156,7 +5047,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOld.BorderStyle = 0
+    imgOkAttentionOLD.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -5182,14 +5073,9 @@ Private Sub Form_Load()
     mnuAutoInfoAfterDelDRV.Checked = mbAutoInfoAfterDelDRV
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_QueryUnload
-'!  Переменные  :  Cancel As Integer, UnloadMode As Integer
-'!  Описание    :  Корректная выгрузка формы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_QueryUnload
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Корректная выгрузка формы]
 '! Parameters  (Переменные):   Cancel (Integer)
 '                              UnloadMode (Integer)
 '!--------------------------------------------------------------------------------
@@ -5227,14 +5113,10 @@ Public Sub UnloadAllForms(Optional FormToIgnore As String = vbNullString)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Resize
-'!  Переменные  :
-'!  Описание    :  Изменение размеров формы
-'! -----------------------------------------------------------
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Resize
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Изменение размеров контролов при изменении размеров формы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub Form_Resize()
@@ -5351,8 +5233,8 @@ Public Sub Form_Resize()
         imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
         imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
         imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOld.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOld.Left + ImgWidth + imgWidthDelta
+        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
+        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
         lblOsInfo.Width = frInfo.Width - 200
@@ -5463,9 +5345,8 @@ Private Sub Form_Unload(Cancel As Integer)
         End If
     End If
 
-    ' Выгружаем из памяти другие компоненты
-    'Unload Me
-    'Set frmMain = Nothing
+    Unload frmMain
+    Set frmMain = Nothing
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5484,14 +5365,9 @@ Private Sub frDescriptionIco_MouseMove(Button As Integer, Shift As Integer, X As
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  FRMStateSave
-'!  Переменные  :
-'!  Описание    :  Запись положения форм в ini-шку
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FRMStateSave
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запись положения форм в ini-файл]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub FRMStateSave()
@@ -5923,10 +5799,9 @@ EndedSub:
     ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
 End Sub
 
-' Запуск процесс установки(или обновления БД) выделенных пакетов драйверов
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub InsOrUpdSelectedDP
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск процесс установки(или обновления БД) выделенных пакетов драйверов]
 '! Parameters  (Переменные):   mbInstallMode (Boolean)
 '!--------------------------------------------------------------------------------
 Private Sub InsOrUpdSelectedDP(ByVal mbInstallMode As Boolean)
@@ -6172,10 +6047,9 @@ Private Sub LoadCmdRunTask()
 
 End Sub
 
-' Изменение описания кнопки cmdViewAllDevice
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadCmdViewAllDeviceCaption
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Изменение описания кнопки cmdViewAllDevice]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub LoadCmdViewAllDeviceCaption()
@@ -6202,7 +6076,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -6269,7 +6143,6 @@ Private Sub LoadListChecked()
             .ListIndex = 1
         End With
 
-        'CMBCHECKBUTTON
     End If
 
 End Sub
@@ -6297,7 +6170,6 @@ Private Sub LoadSSTab2Desc()
 
     End With
 
-    'SSTab2
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6465,14 +6337,9 @@ Private Sub Localise(ByVal StrPathFile As String)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuAbout_Click
-'!  Переменные  :
-'!  Описание    :  Меню - О программе
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuAbout_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - О программе]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuAbout_Click()
@@ -6489,14 +6356,9 @@ Private Sub mnuAutoInfoAfterDelDRV_Click()
     mbAutoInfoAfterDelDRV = Not mbAutoInfoAfterDelDRV
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuCheckUpd_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Проверить обновление
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuCheckUpd_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [еню - Проверить обновление]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuCheckUpd_Click()
@@ -6711,14 +6573,9 @@ Private Sub mnuContextToolTip_Click()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuContextTxt_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Файл БД в текстовом виде
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuContextTxt_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Файл БД в текстовом виде]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextTxt_Click()
@@ -6743,14 +6600,9 @@ Private Sub mnuContextUpdStatus_Click()
     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(CurrentSelButtonIndex)
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuContextXLS_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Файл БД в Excel
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuContextXLS_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Файл БД в Excel]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextXLS_Click()
@@ -6823,14 +6675,9 @@ Private Sub mnuDriverPacksOnMySite_Click()
     RunUtilsShell Kavichki & "http://adia-project.net/forum/index.php?topic=789.0" & Kavichki, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuHelp_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Помощь
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuHelp_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Помощь]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHelp_Click()
@@ -6855,7 +6702,7 @@ End Sub
 '! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuHistory_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - История изменений]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHistory_Click()
@@ -6961,14 +6808,9 @@ Private Sub mnuLicence_Click()
     frmLicence.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuLinks_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Ссылки
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuLinks_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Ссылки]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuLinks_Click()
@@ -7009,14 +6851,9 @@ Private Sub mnuModulesVersion_Click()
     VerModules
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuOptions_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Настройки
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuOptions_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Настройки]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuOptions_Click()
@@ -7069,42 +6906,27 @@ Private Sub mnuReCollectHWIDTab_Click()
     ChangeStatusTextAndDebug strMessages(114)
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuRezimBaseDrvClean_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Очистка лишних файлов БД
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuRezimBaseDrvClean_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Очистка лишних файлов БД]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuRezimBaseDrvClean_Click()
     DeleteUnUsedBase
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuRezimBaseDrvUpdateALL_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Обновление всех баз поочередно
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuRezimBaseDrvUpdateALL_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Обновление всех баз поочередно]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuRezimBaseDrvUpdateALL_Click()
     BaseUpdateOrRunTask False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuRezimBaseDrvUpdateNew_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Обновление новых баз поочередно
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuRezimBaseDrvUpdateNew_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Обновление новых баз поочередно]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuRezimBaseDrvUpdateNew_Click()
@@ -7205,15 +7027,6 @@ Private Sub mnuShowHwidsAll_Click()
 
 End Sub
 
-'Private Sub mnuShowHwidsAllBase_Click()
-'
-''frmListHwidAllBase.Show vbModal, Me
-'End Sub
-'! -----------------------------------------------------------
-'!  Функция     :  mnuShowHwidsTxt_Click
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuShowHwidsTxt_Click
 '! Description (Описание)  :   [type_description_here]
@@ -7259,14 +7072,9 @@ Private Sub mnuUpdateStatusTab_Click()
     LoadCmdViewAllDeviceCaption
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuUtils_Click
-'!  Переменные  :  Index As Integer
-'!  Описание    :  Запуск дополнительной утилиты
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuUtils_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск дополнительной утилиты]
 '! Parameters  (Переменные):   Index (Integer)
 '!--------------------------------------------------------------------------------
 Private Sub mnuUtils_Click(Index As Integer)
@@ -7313,14 +7121,9 @@ Private Sub mnuUtils_DevManView_Click()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuUtils_devmgmt_Click
-'!  Переменные  :
-'!  Описание    :  Запуск диспетчера устройств
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuUtils_devmgmt_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск диспетчера устройств]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuUtils_devmgmt_Click()
@@ -7393,10 +7196,9 @@ Private Sub mnuViewDPInstLog_Click()
 
 End Sub
 
-' Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub NoSupportOSorNoDevBD
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub NoSupportOSorNoDevBD()
@@ -7465,7 +7267,6 @@ Private Sub OpenTxtInExcel(ByVal strPathTxt As String)
             .Visible = True
         End With
 
-        'EXCELAPP
     End If
 
 End Sub
@@ -8211,10 +8012,9 @@ Private Function RunDPInst(ByVal strWorkPath As String) As Long
     DebugMode "RunDPInst-End"
 End Function
 
-' Выделение все пакеты драйверов на текущей вкладке
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SelectAllOnTabDP
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Выделение все пакеты драйверов на текущей вкладке]
 '! Parameters  (Переменные):   mbIntellectMode (Boolean = True)
 '!--------------------------------------------------------------------------------
 Private Sub SelectAllOnTabDP(Optional ByVal mbIntellectMode As Boolean = True)
@@ -8274,16 +8074,14 @@ Private Sub SelectNextTab()
 
 End Sub
 
-' Выделение пакетов c неустановленными драйверами
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SelectNotInstalledDP
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Выделение пакетов c неустановленными драйверами]
 '! Parameters  (Переменные):   mbIntellectMode (Boolean = True)
 '!--------------------------------------------------------------------------------
 Private Sub SelectNotInstalledDP(Optional ByVal mbIntellectMode As Boolean = True)
 
     If SSTab1.Enabled Then
-        'MsgBox "Выбираем нужный режим установки"
         Sleep 100
 
         If mbIntellectMode Then
@@ -8301,10 +8099,9 @@ Private Sub SelectNotInstalledDP(Optional ByVal mbIntellectMode As Boolean = Tru
 
 End Sub
 
-' Выделение пакетов рекомендованных к установке
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SelectRecommendedDP
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Выделение пакетов рекомендованных к установке]
 '! Parameters  (Переменные):   mbIntellectMode (Boolean = True)
 '!--------------------------------------------------------------------------------
 Private Sub SelectRecommendedDP(Optional ByVal mbIntellectMode As Boolean = True)
@@ -8319,7 +8116,6 @@ Private Sub SelectRecommendedDP(Optional ByVal mbIntellectMode As Boolean = True
             SelectStartMode 2, False
         End If
 
-        'MsgBox "Выбираем всё рекомендованное для установки"
         cmbCheckButton.ListIndex = 2
         cmbCheckButton.Refresh
         DoEvents
@@ -8379,7 +8175,6 @@ Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, By
 
             If Not (SSTab2.Item(i) Is Nothing) Then
 
-                '.Visible = False
                 If lngCntTab > lngOSCountPerRow Then
                     If sgnNum = LngValue Then
                         .Top = sgnNum * SSTabTabHeight + 35
@@ -8519,14 +8314,9 @@ Private Sub SetTabPropertiesTabDrivers()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  SetTabsNameAndCurrTab
-'!  Переменные  :
-'!  Описание    :  Назначить имена для вкладок и установить текущую на основании версии ОС
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SetTabsNameAndCurrTab
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Назначить имена для вкладок и установить текущую на основании версии ОС]
 '! Parameters  (Переменные):   mbSecondStart (Boolean)
 '!--------------------------------------------------------------------------------
 Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
@@ -8668,10 +8458,9 @@ Private Sub SetTabsWidth(ByVal miUnHideTabTemp As Integer)
 
 End Sub
 
-'Сценарий запуска тихой установки
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SilentCheckNoDB
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Сценарий запуска тихой установки]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SilentCheckNoDB()
@@ -8692,10 +8481,9 @@ Private Sub SilentCheckNoDB()
     mbGroupTask = False
 End Sub
 
-'Сценарий запуска тихой установки
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SilentInstall
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Сценарий запуска тихой установки]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SilentInstall()
@@ -8749,11 +8537,6 @@ Private Sub SilentInstall()
     DebugMode "SilentInstall-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  SSTab1_Click
-'!  Переменные  :  PreviousTab As Integer
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SSTab1_Click
 '! Description (Описание)  :   [type_description_here]
@@ -8786,10 +8569,9 @@ Private Sub SSTab1_Click(PreviousTab As Integer)
 
 End Sub
 
-' Нажатие кнопки на SStab2
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SSTab2_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Нажатие кнопки на SStab2]
 '! Parameters  (Переменные):   Index (Integer)
 '                              PreviousTab (Integer)
 '!--------------------------------------------------------------------------------
@@ -8813,10 +8595,9 @@ Private Sub SSTab2_Click(Index As Integer, PreviousTab As Integer)
 
 End Sub
 
-' Запуск перестроение кнопок на активной вкладке
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub StartReOrderBtnOnTab2
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск перестроение кнопок на активной вкладке]
 '! Parameters  (Переменные):   miIndex (Integer)
 '                              miPrevTab (Integer)
 '!--------------------------------------------------------------------------------
@@ -8890,10 +8671,9 @@ Private Sub StartReOrderBtnOnTab2(ByVal miIndex As Integer, ByVal miPrevTab As I
 
 End Sub
 
-' Запуск перестроение кнопок на определенной вкладке
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ReOrderBtnOnTab2
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Запуск перестроение кнопок на определенной вкладке]
 '! Parameters  (Переменные):   lngTab2Tab (Long)
 '                              lngBtnPrevCnt (Long)
 '                              lngBtnTabCnt (Long)
@@ -8916,7 +8696,6 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     lngStartPosTop = miButtonTop
     lngBtnPrevNum = 0
     lngNoDP4ModeCnt = 0
-    'Debug.Print objScrollControl.Index
     objScrollControl.Visible = False
 
     For i = lngBtnPrevCnt To lngBtnTabCnt
@@ -8925,9 +8704,14 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
             Select Case lngTab2Tab
 
+                Case 0
+                
+                    GoTo MoveBtn
+                    
                 Case 1
 
-                    If acmdPackFiles(i).Picture = imgOkNew.Picture Or acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
+                    If acmdPackFiles(i).Picture = imgOkNew.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8935,7 +8719,9 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 2
 
-                    If acmdPackFiles(i).Picture = imgOkAttention.Picture Or acmdPackFiles(i).Picture = imgOkAttentionOld.Picture Or acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
+                    If acmdPackFiles(i).Picture = imgOkAttention.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8943,8 +8729,11 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 3
 
-                    If acmdPackFiles(i).Picture = imgOK.Picture Or acmdPackFiles(i).Picture = imgOkAttentionOld.Picture Or acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Or acmdPackFiles(i).Picture = imgOkNew.Picture Or acmdPackFiles( _
-                                                i).Picture = imgOkOld.Picture Then
+                    If acmdPackFiles(i).Picture = imgOK.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkNew.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkOld.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8957,7 +8746,6 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     Else
                         GoTo NextBtn
                     End If
-
             End Select
 
 MoveBtn:
@@ -8970,7 +8758,7 @@ MoveBtn:
                 lngNextPosLeft = lngStartPosLeft
                 lngNextPosTop = lngStartPosTop
             Else
-
+                
                 If lngBtnPrevNum > 0 Then
                     lngDeltaPosLeft = acmdPackFiles(lngBtnPrevNum).Left + miButtonWidth + miBtn2BtnLeft - lngStartPosLeft
                 Else
@@ -8982,7 +8770,12 @@ MoveBtn:
                         End If
 
                     Else
-                        lngDeltaPosLeft = acmdPackFiles(0).Left + miButtonWidth + miBtn2BtnLeft - lngStartPosLeft
+                        If i = lngBtnPrevCnt And StrComp(acmdPackFiles(0).Container.Name & "_" & acmdPackFiles(0).Container.Index, acmdPackFiles(lngBtnPrevCnt).Container.Name & "_" & acmdPackFiles(lngBtnPrevCnt).Container.Index) <> 0 Then
+                            lngNextPosLeft = lngStartPosLeft
+                            lngNextPosTop = lngStartPosTop
+                        Else
+                            lngDeltaPosLeft = acmdPackFiles(0).Left + miButtonWidth + miBtn2BtnLeft - lngStartPosLeft
+                        End If
                     End If
                 End If
 
@@ -9108,14 +8901,9 @@ Private Sub TabStopParam()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ToolTipStatusLoad
-'!  Переменные  :
-'!  Описание    :  Загрузка статусных соощений
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ToolTipStatusLoad
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Загрузка статусных соощений]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ToolTipStatusLoad()
@@ -9193,7 +8981,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
@@ -9203,10 +8991,9 @@ Private Sub ToolTipStatusLoad()
     DebugMode "ToolTipStatusLoad-End"
 End Sub
 
-' Перезагрузка всплывающих подсказок для кнопок с драйверами
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ToolTipBtnReLoad
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Перезагрузка всплывающих подсказок для кнопок с драйверами]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ToolTipBtnReLoad()
@@ -9223,14 +9010,9 @@ Private Sub ToolTipBtnReLoad()
     DebugMode str2VbTab & "ReloadToolTip-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  UnPackDPFile
-'!  Переменные  :  strPathDRP As String, strPackFileName As String, StrMaskFile As String
-'!  Описание    :  Извлечение файлов из архива
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function UnPackDPFile
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Извлечение файлов из архива]
 '! Parameters  (Переменные):   strPathDRP (String)
 '                              strPackFileName (String)
 '                              strMaskFile (String)
@@ -9476,14 +9258,9 @@ Private Function UnpackOtherFile(ByVal strArcDRPPath As String, ByVal strWorkDir
     DebugMode "UnpackOtherFile-End"
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  UpdateStatusButtonAll
-'!  Переменные  :
-'!  Описание    :  Обновление всех статусов
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UpdateStatusButtonAll
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Обновление всех статусов]
 '! Parameters  (Переменные):   mbReloadTT (Boolean = False)
 '!--------------------------------------------------------------------------------
 Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
@@ -9651,14 +9428,9 @@ TheEnd:
     DebugMode "StatusUpdateAll-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  UpdateStatusButtonTAB
-'!  Переменные  :
-'!  Описание    :  Обновление всех статусов
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UpdateStatusButtonTAB
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Обновление всех статусов]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub UpdateStatusButtonTAB()
@@ -9768,14 +9540,9 @@ TheEnd:
     DebugMode "UpdateStatusButtonTAB-End"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  VerModules
-'!  Переменные  :
-'!  Описание    :  Отображение версий модулей
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub VerModules
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Отображение версий модулей]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub VerModules()
@@ -9838,10 +9605,9 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
     DebugMode "WorkWithFinish-End"
 End Sub
 
-' Выбор стартового режима работы программы
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SelectStartMode
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Выбор стартового режима работы программы]
 '! Parameters  (Переменные):   miModeTemp (Long = 0)
 '                              mbTab2 (Boolean = True)
 '!--------------------------------------------------------------------------------
@@ -9919,10 +9685,9 @@ Private Sub SelectStartMode(Optional miModeTemp As Long = 0, Optional mbTab2 As 
 
 End Sub
 
-' Функция проверяет есть ли искомый текст в источнике посредством RegEXP
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckExistbyRegExp
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Функция проверяет есть ли искомый текст в источнике посредством RegEXP]
 '! Parameters  (Переменные):   strSourceText (String)
 '                              strSearchText (String)
 '                              mbGetText (Boolean)
