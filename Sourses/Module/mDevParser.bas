@@ -250,8 +250,8 @@ Public Function RunDevcon() As Boolean
         RunDevcon = False
     End If
 
-    DebugMode vbTab & "Run Devcon: " & RunDevcon
-    DebugMode "RunDevcon-End"
+    DebugMode vbTab & "Run Devcon: " & RunDevcon & vbNewLine & _
+              "RunDevcon-End"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -275,8 +275,8 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
         RunDevconRescan = True
     End If
 
-    DebugMode vbTab & "Run RunDevconRescan: " & RunDevconRescan
-    DebugMode "RunDevconRescan-End"
+    DebugMode vbTab & "Run RunDevconRescan: " & RunDevconRescan & vbNewLine & _
+              "RunDevconRescan-End"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -298,8 +298,8 @@ Public Function RunDevconView() As Boolean
         RunDevconView = True
     End If
 
-    DebugMode vbTab & "Run DevconView: " & RunDevconView
-    DebugMode "RunDevconView-End"
+    DebugMode vbTab & "Run DevconView: " & RunDevconView & vbNewLine & _
+              "RunDevconView-End"
 End Function
 
 '!--------------------------------------------------------------------------------

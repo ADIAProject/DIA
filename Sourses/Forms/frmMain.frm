@@ -1393,8 +1393,9 @@ Private Sub acmdPackFiles_Click(Index As Integer)
     Dim DPInstExitCode        As Long
     Dim ReadExitCodeString    As String
 
-    DebugMode "acmdPackFiles_Click-Start"
-    DebugMode vbTab & "acmdPackFiles_Click: Index=" & Index
+    DebugMode "acmdPackFiles_Click-Start" & vbNewLine & _
+               vbTab & "acmdPackFiles_Click: Index=" & Index
+               
     strPathDRPList = vbNullString
     BlockControl False
 
@@ -1693,6 +1694,7 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
     Dim lngNumButtOnTab       As Long
 
     DebugMode "BaseUpdateOrRunTask-Start"
+    
     mbBreakUpdateDBAll = False
     lngSStabStart = SSTab1.Tab
     strTextNew = " "
@@ -2026,8 +2028,9 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
     Dim strTextHwids As String
     Dim mbUnSuppOS   As Boolean
 
-    DebugMode str3VbTab & "ChangeStatusAndPictureButton-Start"
-    DebugMode str4VbTab & "ChangeStatusAndPictureButton: strPackFileName=" & strPackFileName
+    DebugMode str3VbTab & "ChangeStatusAndPictureButton-Start" & vbNewLine & _
+              str4VbTab & "ChangeStatusAndPictureButton: strPackFileName=" & strPackFileName
+              
     ' Небольшое прерывание для большего отклика от приложения
     DoEvents
     ChangeStatusAndPictureButton = vbNullString
@@ -3051,8 +3054,8 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
 
     On Error Resume Next
 
-    DebugMode vbTab & "CreateButtonsonSSTab-Start"
-    DebugMode str2VbTab & "CreateButtonsonSSTab: miTabIndex=" & miTabIndex
+    DebugMode vbTab & "CreateButtonsonSSTab-Start" & vbNewLine & _
+              str2VbTab & "CreateButtonsonSSTab: miTabIndex=" & miTabIndex
 
     If PathExists(strDrpPath) Then
         tabN = miTabIndex
@@ -3090,8 +3093,8 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
 
         mbStep = False
         strFileListInFolder = vbNullString
-        DebugMode str2VbTab & "CreateButtonsonSSTab: Recursion: " & mbRecursion
-        DebugMode str2VbTab & "CreateButtonsonSSTab: Get ListFile in folder: " & strDrpPath
+        DebugMode str2VbTab & "CreateButtonsonSSTab: Recursion: " & mbRecursion & vbNewLine & _
+                  str2VbTab & "CreateButtonsonSSTab: Get ListFile in folder: " & strDrpPath
 
         'Строим список файлов 7z
         If Not mbDP_Is_aFolder Then
@@ -3100,7 +3103,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
         Else
 
             If FolderContainsSubfolders(strDrpPath) Then
-                strFileList_x = SearchFoldersInRoot(strDrpPath, "DP*", False, False)
+                strFileList_x = SearchFoldersInRoot(strDrpPath, "DP*")
             End If
         End If
 
@@ -3134,8 +3137,8 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
 
         For ii = LBound(strFileList_x, 2) To UBound(strFileList_x, 2)
             strPackFileName = Replace$(strFileList_x(0, ii), BackslashAdd2Path(strDrpPath), vbNullString, , , vbTextCompare)
-            DebugMode "===================================================================================================="
-            DebugMode str2VbTab & "Work with File: " & strPackFileName
+            DebugMode "====================================================================================================" & vbNewLine & _
+                      str2VbTab & "Work with File: " & strPackFileName
             ChangeStatusTextAndDebug strMessages(69) & " " & strDrpPath & " " & vbNewLine & strMessages(70) & "(" & (ii + 1) & " " & strMessages(124) & " " & lngFileCount & "):" & strPackFileName
             mbStatusHwid = True
 
@@ -3283,15 +3286,15 @@ NextFiles:
 
 ExitSub:
     arrOSList(tabN).CntBtn = lngCntBtn
-    DebugMode str2VbTab & "CreateButtonsonSSTab: cntButton=" & lngCntBtn
 
     If miOffSideCountTemp > miOffSideCount Then
         miOffSideCount = miOffSideCountTemp
     End If
 
     On Error GoTo 0
-
-    DebugMode vbTab & "CreateButtonsonSSTab-End"
+    
+    DebugMode str2VbTab & "CreateButtonsonSSTab: cntButton=" & lngCntBtn & vbNewLine & _
+              vbTab & "CreateButtonsonSSTab-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3560,7 +3563,7 @@ Private Sub DeleteUnUsedBase()
             If Not mbDP_Is_aFolder Then
                 strFileListDRP_x = SearchFilesInRoot(strPathDRP, "DP*.7z;DP*.zip", True, False)
             Else
-                strFileListDRP_x = SearchFoldersInRoot(strPathDRP, "DP*", False, False)
+                strFileListDRP_x = SearchFoldersInRoot(strPathDRP, "DP*")
             End If
 
             'Построение списка txt и ini файлов в каталоге БД
@@ -3686,8 +3689,8 @@ Private Sub EditOrReadDPName(ByVal CurButtonIndex As Long, Optional ByVal mbRead
     Dim strDPNameOld   As String
     Dim strDPNameMsg   As String
 
-    DebugMode str2VbTab & "EditOrReadDPName-Start"
-    DebugMode str3VbTab & "EditOrReadDPName: CurButtonIndex=" & CurButtonIndex
+    DebugMode str2VbTab & "EditOrReadDPName-Start" & vbNewLine & _
+              str3VbTab & "EditOrReadDPName: CurButtonIndex=" & CurButtonIndex
     'Считываем текущее имя пакета из файла
     strDPName = vbNullString
     strDRPFilename = FileNameFromPath(acmdPackFiles(CurButtonIndex).Tag)
@@ -3839,10 +3842,10 @@ Private Function FindAndInstallPanel(ByVal strArcDRPPath As String, ByVal strIni
     Dim cmdString        As String
 
     'Dim strCommands()    As String
-    DebugMode "FindAndInstallPanel-Start"
-    DebugMode "FindAndInstallPanel: strIniPath=" & strIniPath
-    DebugMode "FindAndInstallPanel: strSection=" & strSection
-    DebugMode "FindAndInstallPanel: lngNumberPanel=" & lngNumberPanel
+    DebugMode "FindAndInstallPanel-Start" & vbNewLine & _
+              "FindAndInstallPanel: strIniPath=" & strIniPath & vbNewLine & _
+              "FindAndInstallPanel: strSection=" & strSection & vbNewLine & _
+              "FindAndInstallPanel: lngNumberPanel=" & lngNumberPanel
     'exc_1_tagFiles = 3
     'exc_1_tagFile1 = "%SystemDrive%\ATICCC.ins"
     'exc_1_tagFile2 = "%DPSROOT%\D\G\A1\CCC\setup.exe"
@@ -4080,8 +4083,8 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim strResult_x()            As String
     Dim strResultByTab_x()       As String
 
-    DebugMode str4VbTab & "FindHwidInBaseNew-Start"
-    DebugMode str5VbTab & "FindHwidInBaseNew: strPackFileName=" & strPackFileName
+    DebugMode str4VbTab & "FindHwidInBaseNew-Start" & vbNewLine & _
+              str5VbTab & "FindHwidInBaseNew: strPackFileName=" & strPackFileName
     TimeScriptRun = GetTickCount
     mbStatusNewer = False
     mbStatusOlder = False
@@ -4993,9 +4996,9 @@ Private Sub Form_Load()
         End If
     End If
 
-    DebugMode "LoadTabList"
-    DebugMode "TabsPerRow: " & SSTab1.TabsPerRow
-    DebugMode "TabsCount: " & SSTab1.Tabs
+    DebugMode "LoadTabList" & vbNewLine & _
+              "TabsPerRow: " & SSTab1.TabsPerRow & vbNewLine & _
+              "TabsCount: " & SSTab1.Tabs
 
     ' Загрузка меню утилит
     If arrUtilsList(0, 1) <> "List_Empty" Then
@@ -5026,8 +5029,8 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    DebugMode "OsInfo: " & lblOsInfo.Caption
-    DebugMode "PCModel: " & lblPCInfo.Caption
+    DebugMode "OsInfo: " & lblOsInfo.Caption & vbNewLine & _
+              "PCModel: " & lblPCInfo.Caption
     ' Выставляем шрифт
     FontCharsetChange
 
@@ -5877,14 +5880,13 @@ Private Sub PutAllDrivers2Log()
     Const strTableHwidHeaderDP As String = "Drivers in DriverPack"
 
     Dim strLineAll             As String
-
-    DebugMode "===============================List of all found a matched driver==================================="
     'Формируем шапку для подсказки
     strTTipTextHeaders = strTTipTextDrv2Install & vbNewLine & String$(maxSizeRowAllLineMax, "-") & vbNewLine & UCase$(strTableHwidHeader1 & Space$(lngSizeRow1Max - lngTableHwidHeader1 + 1) & "| " & strTableHwidHeaderDP & Space$(lngSizeRowDPMax - _
                                 Len(strTableHwidHeaderDP) + 1) & "| " & strTableHwidHeader2 & Space$(lngSizeRow2Max - lngTableHwidHeader2 + 1) & "| " & strTableHwidHeader3 & Space$(lngSizeRow3Max - lngTableHwidHeader3 + 1) & "| " & _
                                 strTableHwidHeader4 & Space$(lngSizeRow4Max - lngTableHwidHeader4 + 1) & "| " & strTableHwidHeader9 & Space$(lngSizeRow9Max - lngTableHwidHeader9 + 1) & "| " & strTableHwidHeader5 & Space$(lngSizeRow5Max - _
                                 lngTableHwidHeader5 + 1) & "| " & strTableHwidHeader6 & Space$(lngSizeRow6Max - lngTableHwidHeader6 + 1) & "| " & strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLineMax, "-") & vbNewLine
-    DebugMode strTTipTextHeaders
+
+    DebugMode "===============================List of all found a matched driver===================================" & vbNewLine & strTTipTextHeaders
 
     ReDim Preserve arrDriversList(13, lngDriversArrCount - 1)
 
@@ -5976,8 +5978,10 @@ Private Sub LoadButton()
         strPathFolderDRP = arrOSList(i).drpFolderFull
         strPathFolderDB = arrOSList(i).devIDFolderFull
         ChangeStatusTextAndDebug strMessages(69) & " " & strPathFolderDRP
-        DebugMode vbTab & "Analize Folder DRP: " & strPathFolderDRP
-        DebugMode vbTab & "Analize Folder DB: " & strPathFolderDB
+        
+        DebugMode vbTab & "Analize Folder DRP: " & strPathFolderDRP & vbNewLine & _
+                  vbTab & "Analize Folder DB: " & strPathFolderDB
+                  
         pbProgressBar.Refresh
 
         If Not arrOSList(i).DPFolderNotExist Then
@@ -7676,8 +7680,8 @@ Private Function ReadExitCode(ByVal lngCode As Long) As String
     Dim mbReadyToInstall           As Boolean
     Dim mbCodeReboot               As Boolean
 
-    DebugMode str2VbTab & "ReadExitCode-Start"
-    DebugMode str2VbTab & "ReadExitCode: lngCode=" & CStr(lngCode)
+    DebugMode str2VbTab & "ReadExitCode-Start" & vbNewLine & _
+              str2VbTab & "ReadExitCode: lngCode=" & CStr(lngCode)
     ''0xWW If a driver package could not be installed, the 0x80 bit is set. If a computer restart is necessary, the 0x40 bit is set. Otherwise, no bits are set.
     ''0xXX The number of driver packages that could not be installed.
     ''0xYY The number of driver packages that were copied to the driver store but were not installed on a device.
@@ -7799,8 +7803,8 @@ Private Function ReadExitCode(ByVal lngCode As Long) As String
         ReadExitCode = vbNullString
     End If
 
-    DebugMode str2VbTab & "ReadExitCode: strResultText=" & strResultText
-    DebugMode str2VbTab & "ReadExitCode-End"
+    DebugMode str2VbTab & "ReadExitCode: strResultText=" & strResultText & vbNewLine & _
+              str2VbTab & "ReadExitCode-End"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -7956,8 +7960,8 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                 'arrTTip(index) = strTTipText
                 arrTTip(Index) = strTTipTextOnlyDrivers
             Else
-                DebugMode str2VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & ":" & UBound(arrTTip)
-                DebugMode str2VbTab & "ReadOrSaveToolTip: strTTipText=" & strTTipText
+                DebugMode str2VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & ":" & UBound(arrTTip) & vbNewLine & _
+                          str2VbTab & "ReadOrSaveToolTip: strTTipText=" & strTTipText
                 arrTTip(Index) = strTTipText
             End If
         End If
@@ -7980,9 +7984,9 @@ Private Function RunDPInst(ByVal strWorkPath As String) As Long
 
     Dim cmdString As String
 
-    DebugMode "RunDPInst-Start"
-    DebugMode "RunDPInst: strWorkPath" & strWorkPath
-    RunDPInst = 0
+    DebugMode "RunDPInst-Start" & vbNewLine & _
+              "RunDPInst: strWorkPath" & strWorkPath
+
     cmdString = Kavichki & strDPInstExePath & Kavichki & " " & CollectCmdString & "/PATH " & Kavichki & strWorkPath & Kavichki
     ChangeStatusTextAndDebug strMessages(93)
 
@@ -8415,9 +8419,9 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
 
     strSSTabCurrentOSList = strTabIndex
     lngFirstActiveTabIndex = SetFirstEnableTab
-    DebugMode vbTab & "SetTabsNameAndCurrTab: SetCurrentTabOSList=" & strTabIndex
-    DebugMode vbTab & "SetTabsNameAndCurrTab: SetCurrentTab=" & miFirstTabIndex
-    DebugMode "SetTabsNameAndCurrTab-End"
+    DebugMode vbTab & "SetTabsNameAndCurrTab: SetCurrentTabOSList=" & strTabIndex & vbNewLine & _
+              vbTab & "SetTabsNameAndCurrTab: SetCurrentTab=" & miFirstTabIndex & vbNewLine & _
+              "SetTabsNameAndCurrTab-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8493,10 +8497,10 @@ Private Sub SilentInstall()
     mbDpInstPromptIfDriverIsNotBetter = False
     ' Включение отладочного режима
     mbDebugEnable = True
-    DebugMode "SilentInstall-Start"
+    DebugMode "SilentInstall-Start" & vbNewLine & _
+              vbTab & "SilentInstall: SelectMode: " & strSilentSelectMode
+    
     'MsgBox "Выбираем нужный режим установки"
-    DebugMode vbTab & "SilentInstall: SelectMode: " & strSilentSelectMode
-
     Select Case strSilentSelectMode
 
         Case "n"
@@ -8973,7 +8977,7 @@ Private Sub ToolTipStatusLoad()
 
         .Font.Name = strMainForm_FontName
         .Font.Size = lngMainForm_FontSize
-        .MaxTipWidth = frDescriptionIco.Width
+        .MaxTipWidth = Me.Width
         .SetDelayTime TipDelayTimeInitial, 200
         .SetDelayTime TipDelayTimeShow, 15000
         .Tools.Add imgOK.hWnd, , arrTTipStatusIcon(0)
@@ -9036,8 +9040,8 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
     Dim strMaskFile_x_TEMPTo  As String
     Dim strMaskFile_xx()      As String
 
-    DebugMode "UnPackDPFile-Start"
-    DebugMode "UnPackDPFile: strMaskFile=" & strMaskFile
+    DebugMode "UnPackDPFile-Start" & vbNewLine & _
+              "UnPackDPFile: strMaskFile=" & strMaskFile
 
     If Not mbOnlyUnpackDP Then
         strPackFileName_woExt = FileName_woExt(strPackFileName)
@@ -9227,9 +9231,10 @@ Private Function UnpackOtherFile(ByVal strArcDRPPath As String, ByVal strWorkDir
 
     Dim cmdString As String
 
-    DebugMode "UnpackOtherFile-Start"
-    DebugMode "UnpackOtherFile: strArcDRPPath=" & strArcDRPPath
-    DebugMode "UnpackOtherFile: strMaskFile=" & strMaskFile
+    DebugMode "UnpackOtherFile-Start" & vbNewLine & _
+              "UnpackOtherFile: strArcDRPPath=" & strArcDRPPath & vbNewLine & _
+              "UnpackOtherFile: strMaskFile=" & strMaskFile
+     
     cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strWorkDir & Kavichki & " -r " & Kavichki & strArcDRPPath & Kavichki & " " & strMaskFile
     ChangeStatusTextAndDebug strMessages(99) & " " & strArcDRPPath, "Extract: " & cmdString
     UnpackOtherFile = True

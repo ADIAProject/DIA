@@ -151,8 +151,8 @@ Public Sub CollectHwidFromReestr()
     '12 - strInfName
     '13 - Есть драйвера или нет
     '14 - Список пакетов где обнуружены драйвера
-    DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & i
-    DebugMode vbTab & "CollectHwidFromReestr-End"
+    DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & i & vbNewLine & _
+              vbTab & "CollectHwidFromReestr-End"
 End Sub
 
 '!--------------------------------------------------------------------------------

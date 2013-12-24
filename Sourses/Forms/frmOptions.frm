@@ -4064,7 +4064,7 @@ Private Sub LoadListCombo(cmbName As ComboBox, strImagePath As String)
     Dim strListFolderTemp() As String
     Dim i                   As Integer
 
-    strListFolderTemp = GetAllFolderInFolder(strImagePath)
+    strListFolderTemp = SearchFoldersInRoot(strImagePath, "*")
 
     With cmbName
         .Clear

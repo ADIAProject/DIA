@@ -65,8 +65,8 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
     Dim i                   As Integer
     Dim ResultTemp          As String
 
-    DebugMode str6VbTab & "CompareByVersion-Start"
-    DebugMode str7VbTab & "CompareByVersion-Start: " & strVersionBD & " compare with " & strVersionLocal
+    DebugMode str6VbTab & "CompareByVersion-Start" & vbNewLine & _
+              str7VbTab & "CompareByVersion-Start: " & strVersionBD & " compare with " & strVersionLocal
     ResultTemp = "?"
     strDevVer_x = Split(Trim$(strVersionBD), ",")
     miDimension = UBound(strDevVer_x)
@@ -178,8 +178,8 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
 
 CompareFinish:
     CompareByVersion = ResultTemp
-    DebugMode str7VbTab & "CompareByVersion-Result: " & strVersionBD & " " & ResultTemp & " " & strVersionLocal
-    DebugMode str6VbTab & "CompareByVersion-End"
+    DebugMode str7VbTab & "CompareByVersion-Result: " & strVersionBD & " " & ResultTemp & " " & strVersionLocal & vbNewLine & _
+              str6VbTab & "CompareByVersion-End"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -254,8 +254,8 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
     Dim strDate2_x() As String
     Dim strResult    As String
 
-    DebugMode str5VbTab & "CompareByDate-Start"
-    DebugMode str6VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
+    DebugMode str5VbTab & "CompareByDate-Start" & vbNewLine & _
+              str6VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
 
     If InStr(Date1, "unknown") = 0 Then
         If InStr(Date1, ",") Then
@@ -318,8 +318,8 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
         CompareByDate = "?"
     End If
 
-    DebugMode str6VbTab & "CompareByDate-Result: " & Date1 & " " & strResult & " " & Date1
-    DebugMode str5VbTab & "CompareByDate-End"
+    DebugMode str6VbTab & "CompareByDate-Result: " & Date1 & " " & strResult & " " & Date1 & vbNewLine & _
+              str5VbTab & "CompareByDate-End"
 End Function
 
 '!--------------------------------------------------------------------------------

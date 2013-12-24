@@ -62,8 +62,8 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFile(imgName As PictureBox, PicturePath As String)
-    DebugMode "LoadIconImageFromFile-Start", 2
-    DebugMode vbTab & "LoadIconImageFromFile: PicturePath=" & PicturePath, 2
+    DebugMode "LoadIconImageFromFile-Start" & vbNewLine & _
+              vbTab & "LoadIconImageFromFile: PicturePath=" & PicturePath, 2
 
     If PathExists(PicturePath) Then
         Set imgName.Picture = Nothing
@@ -86,8 +86,8 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFileBtn(ByVal imgName As ctlXpButton, ByVal PicturePath As String)
-    DebugMode vbTab & "LoadIconImageFromFileBtn-Start", 2
-    DebugMode str2VbTab & "LoadIconImageFromFileBtn: PicturePath=" & PicturePath, 2
+    DebugMode vbTab & "LoadIconImageFromFileBtn-Start" & vbNewLine & _
+              str2VbTab & "LoadIconImageFromFileBtn: PicturePath=" & PicturePath, 2
 
     If PathExists(PicturePath) Then
 
@@ -128,8 +128,8 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFileBtnJC(ByVal btnName As ctlJCbutton, ByVal PicturePath As String)
-    DebugMode vbTab & "LoadIconImageFromFileBtnJC-Start", 2
-    DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: PicturePath=" & PicturePath, 2
+    DebugMode vbTab & "LoadIconImageFromFileBtnJC-Start" & vbNewLine & _
+              str2VbTab & "LoadIconImageFromFileBtnJC: PicturePath=" & PicturePath, 2
 
     If PathExists(PicturePath) Then
 
@@ -181,8 +181,8 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFileJC(ByVal imgName As ctlJCFrames, ByVal PicturePath As String)
-    DebugMode vbTab & "LoadIconImageFromFileJC-Start", 2
-    DebugMode str2VbTab & "LoadIconImageFromFileJC: PicturePath=" & PicturePath, 2
+    DebugMode vbTab & "LoadIconImageFromFileJC-Start" & vbNewLine & _
+              str2VbTab & "LoadIconImageFromFileJC: PicturePath=" & PicturePath, 2
 
     If PathExists(PicturePath) Then
         'imgName.Picture = stdole.LoadPicture(PicturePath, lngIMG_SIZE, lngIMG_SIZE, Color)

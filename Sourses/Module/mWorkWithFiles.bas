@@ -179,8 +179,8 @@ Public Function DeleteFiles(ByVal PathFile As String) As Boolean
     Exit Function
 
 errhandler:
-    DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description
-    DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+    DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description & vbNewLine & _
+              vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
     Err.Clear
 
     Resume Next
@@ -237,19 +237,13 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
         If xFOL.Files.Count > 0 Then
 
             For Each xFile In xFOL.Files
-
                 DeleteFiles xFile.Path
             Next
 
         End If
 
-        ' Получение списка каталогов подлежащих удалению
+        ' Удаление пустых каталогов
         If PathExists(Root) Then
-            GetAllFolderInRoot Root, True
-        End If
-
-        If PathExists(Root) Then
-            GetAllFolderInRoot Root, True
             retDelete = DelTree(Root)
 
             If mbDebugEnable Then
@@ -485,162 +479,6 @@ Public Function FileNameFromPath(ByVal FilePath As String) As String
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub GetAllFileInFolder
-'! Description (Описание)  :   [Получение всех файлов в выбранном каталоге]
-'! Parameters  (Переменные):   xFolder (String)
-'                              RealDelete (Boolean)
-'                              ExtFile (String)
-'                              mbRecursFolder (Boolean = True)
-'!--------------------------------------------------------------------------------
-Public Sub GetAllFileInFolder(ByVal xFolder As String, RealDelete As Boolean, Optional ExtFile As String, Optional ByVal mbRecursFolder As Boolean = True)
-
-    Dim strExtFile_x() As String
-    Dim strExtFile     As String
-    Dim strExtFileReal As String
-    Dim strTemp        As String
-    Dim strTempAll     As String
-    Dim i              As Long
-
-    DebugMode str2VbTab & "GetAllFileInFolder-Start: " & xFolder, 2
-
-    If Not PathExists(xFolder) = False Then
-        Set xFOL = objFSO.GetFolder(xFolder)
-        strExtFile_x = Split(ExtFile, ";")
-
-        For Each xFile In xFOL.Files
-
-            ' Если требуется удаление файла, то удалаем
-            If RealDelete Then
-
-                On Error GoTo errhandler
-
-                xFile.Delete True
-            Else
-                ' Если расширение файл INF, то добавляем путь файла в массив
-                strTemp = vbNullString
-
-                For i = LBound(strExtFile_x) To UBound(strExtFile_x)
-                    strExtFile = UCase$(strExtFile_x(i))
-                    strExtFileReal = UCase$(ExtFromFileName(xFile.Path))
-
-                    If strExtFile = "INF" Then
-                        If strExtFileReal = strExtFile Then
-                            InfTempPathListCount = InfTempPathListCount + 1
-                            InfTempPathList(InfTempPathListCount) = xFile.Path
-                        End If
-
-                    Else
-
-                        If strExtFile = strExtFileReal Then
-                            strTemp = xFile.Path
-                        End If
-                    End If
-
-                Next
-
-                If LenB(strTemp) > 0 Then
-                    strTempAll = AppendStr(strTempAll, strTemp, ";")
-                End If
-            End If
-
-        Next
-
-        ' Если требуется удаление каталога, то удалаем
-        If RealDelete Then
-
-            With xFOL
-
-                If .Files.Count = 0 Then
-                    If .SubFolders.Count = 0 Then
-                        .Delete True
-                    End If
-                End If
-
-            End With
-
-        Else
-
-            If LenB(strTempAll) > 0 Then
-                DebugMode str2VbTab & "ListFiles in Folder '" & xFOL.Name & "': " & vbNewLine & "*****************************************" & vbNewLine & strTempAll & vbNewLine & "*****************************************"
-                strFileListInFolder = AppendStr(strFileListInFolder, strTempAll, ";")
-            End If
-        End If
-
-        If mbRecursFolder Or RealDelete Then
-            ' Проверяем есть ли подкаталоги в каталоге
-            GetAllFolderInRoot xFolder, RealDelete, ExtFile
-        End If
-    End If
-
-    DebugMode str2VbTab & "GetAllFileInFolder-End", 2
-
-    Exit Sub
-
-errhandler:
-    DebugMode vbTab & "GetAllFileInFolder: False : " & xFolder & " Error: №" & Err.Number & ": " & Err.Description
-    Err.Clear
-
-    Resume Next
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetAllFolderInFolder
-'! Description (Описание)  :   [Получение всех подкаталогов в выбранном каталоге]
-'! Parameters  (Переменные):   RootFolder (String)
-'!--------------------------------------------------------------------------------
-Public Function GetAllFolderInFolder(ByVal RootFolder As String) As Variant
-
-    Dim xFolder       As Folder
-    Dim strListFolder As String
-
-    DebugMode str2VbTab & "GetAllFolderInFolder-Start: "
-
-    If PathExists(RootFolder) Then
-        Set xFOL = objFSO.GetFolder(RootFolder)
-
-        If xFOL.SubFolders.Count > 0 Then
-
-            For Each xFolder In xFOL.SubFolders
-
-                strListFolder = AppendStr(strListFolder, xFolder.Name, ";")
-            Next
-
-        End If
-
-        GetAllFolderInFolder = Split(strListFolder, ";")
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub GetAllFolderInRoot
-'! Description (Описание)  :   [Получение всех подкаталогов в выбранном каталоге]
-'! Parameters  (Переменные):   RootFolder (String)
-'                              RealDelete (Boolean)
-'                              ExtFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub GetAllFolderInRoot(ByVal RootFolder As String, ByVal RealDelete As Boolean, Optional ExtFile As String)
-
-    Dim xFolder As Folder
-
-    If PathExists(RootFolder) Then
-        Set xFOL = objFSO.GetFolder(RootFolder)
-
-        If xFOL.SubFolders.Count > 0 Then
-
-            For Each xFolder In xFOL.SubFolders
-
-                DebugMode str2VbTab & "Analize Subfolder: " & xFolder.Path, 2
-                GetAllFileInFolder xFolder.Path, RealDelete, ExtFile
-            Next
-
-        End If
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetEnviron
 '! Description (Описание)  :   [Получение переменной системного окружения]
 '! Parameters  (Переменные):   strEnv (String)
@@ -671,8 +509,8 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
         GetEnviron = strTempEnv
     End If
 
-    DebugMode str2VbTab & "GetEnviron: %" & strTemp & "%=" & strTempEnv
-    DebugMode str2VbTab & "GetEnviron-End"
+    DebugMode str2VbTab & "GetEnviron: %" & strTemp & "%=" & strTempEnv & vbNewLine & _
+              str2VbTab & "GetEnviron-End"
 End Function
 
 '!--------------------------------------------------------------------------------

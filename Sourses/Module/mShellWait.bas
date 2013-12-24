@@ -4,31 +4,12 @@ Option Explicit
 '=======================================================================================================================
 '···············································    C O N S T A N T S    ···············································
 '=======================================================================================================================
-Public Const INFINITE As Long = &HFFFFFFFF   'Infinite timeout
+Public Const INFINITE As Long = &HFFFFFFFF   'Infinite timeout. Pass INFINITE to ShellW to wait indefinitely until the process terminates
+Public Const USER_TIMER_MINIMUM = &HA&       'If uElapse is less than USER_TIMER_MINIMUM (0x0000000A), the timeout is set to USER_TIMER_MINIMUM.
+Public Const USER_TIMER_MAXIMUM = &H7FFFFFFF    'If uElapse is greater than USER_TIMER_MAXIMUM (0x7FFFFFFF), the timeout is set to USER_TIMER_MAXIMUM.
 
-'Pass INFINITE to ShellW to wait indefinitely until the process terminates
-Public Const USER_TIMER_MINIMUM = &HA&       'If uElapse is less than USER_TIMER_MINIMUM (0x0000000A),
-
-'the timeout is set to USER_TIMER_MINIMUM.
-Public Const USER_TIMER_MAXIMUM = &H7FFFFFFF    'If uElapse is greater than USER_TIMER_MAXIMUM (0x7FFFFFFF),
-
-'the timeout is set to USER_TIMER_MAXIMUM.
 '=======================================================================================================================
 '············································    E N U M E R A T I O N S    ············································
-'=======================================================================================================================
-'=======================================================================================================================
-Private Enum bool
-    FALSE 
-    TRUE 
-End Enum       'To use, type Ctrl+Space to Complete Word
-
-#If False Then
-
-    Dim FALSE , TRUE 
-
-#End If
-
-'=======================================================================================================================
 '=======================================================================================================================
 Private Enum SEE_Mask
     SEE_MASK_DEFAULT = &H0                  'Use default values.
@@ -104,14 +85,13 @@ Private Enum SEE_Mask
     'IUnknown of the object that will be used as a site pointer. The site
     'pointer is used to provide services to the ShellExecute function, the
     'handler binding process, and invoked verb handlers.
+    'http://msdn.microsoft.com/en-us/library/bb759784(v=vs.85).aspx
 End Enum
 
-#If False Then                              'http://msdn.microsoft.com/en-us/library/bb759784(v=vs.85).aspx
-
+#If False Then
     Dim SEE_MASK_DEFAULT, SEE_MASK_CLASSNAME, SEE_MASK_CLASSKEY, SEE_MASK_IDLIST, SEE_MASK_INVOKEIDLIST, SEE_MASK_ICON, SEE_MASK_HOTKEY, SEE_MASK_NOCLOSEPROCESS, SEE_MASK_CONNECTNETDRV, SEE_MASK_NOASYNC, SEE_MASK_FLAG_DDEWAIT, SEE_MASK_DOENVSUBST, _
                                 SEE_MASK_FLAG_NO_UI, SEE_MASK_UNICODE, SEE_MASK_NO_CONSOLE, SEE_MASK_ASYNCOK, SEE_MASK_HMONITOR, SEE_MASK_NOZONECHECKS, SEE_MASK_NOQUERYCLASSSTORE, SEE_MASK_WAITFORINPUTIDLE, SEE_MASK_FLAG_LOG_USAGE, _
                                 SEE_MASK_FLAG_HINST_IS_SITE
-
 #End If
 
 '=======================================================================================================================
@@ -138,9 +118,7 @@ Private Enum E_ShowCmd
 End Enum
 
 #If False Then             'http://msdn.microsoft.com/en-us/library/bb762153(v=vs.85).aspx
-
     Dim SW_HIDE, SW_SHOWNORMAL, SW_SHOWMINIMIZED, SW_SHOWMAXIMIZED, SW_MAXIMIZE, SW_SHOWNOACTIVATE, SW_SHOW, SW_MINIMIZE, SW_SHOWMINNOACTIVE, SW_SHOWNA, SW_RESTORE, SW_SHOWDEFAULT
-
 #End If
 
 '=======================================================================================================================
@@ -176,73 +154,68 @@ End Type            'http://msdn.microsoft.com/en-us/library/dd162805(v=vs.85).a
 
 '=======================================================================================================================
 '=======================================================================================================================
-Private Type Msg      'Contains message information from a thread's message queue.
-    hWnd                                    As Long   'A handle to the window whose window procedure receives the message. This member is NULL when the
-    'message is a thread message.
-    Message                                 As Long   'The message identifier. Applications can only use the low word; the high word is reserved by the
-    'system.
-    wParam                                  As Long   'Additional information about the message. The exact meaning depends on the value of the message
-    'member.
-    lParam                                  As Long   'Additional information about the message. The exact meaning depends on the value of the message
-    'member.
+'Contains message information from a thread's message queue.
+'Minimum supported client: Windows 2000 Professional
+'http://msdn.microsoft.com/en-us/library/ms644958(v=vs.85).aspx
+Private Type Msg
+    hWnd                                    As Long   'A handle to the window whose window procedure receives the message. This member is NULL when the message is a thread message.
+    Message                                 As Long   'The message identifier. Applications can only use the low word; the high word is reserved by the system.
+    wParam                                  As Long   'Additional information about the message. The exact meaning depends on the value of the message member.
+    lParam                                  As Long   'Additional information about the message. The exact meaning depends on the value of the message member.
     time                                    As Long   'The time at which the message was posted.
-    PT                                      As POINT     'The cursor position, in screen coordinates, when the message was posted.
-    'Minimum supported client: Windows 2000 Professional
-End Type              'http://msdn.microsoft.com/en-us/library/ms644958(v=vs.85).aspx
+    PT                                      As POINT  'The cursor position, in screen coordinates, when the message was posted.
+End Type
 
 '=======================================================================================================================
 '=======================================================================================================================
-Private Type SHELLEXECUTEINFO    'Contains information used by ShellExecuteEx.
-    cbSize                                  As Long      'Required. The size of this structure, in bytes.
-    fMask                                   As SEE_Mask  'Flags that indicate the content and validity of the other structure members; a
-    'combination of the following values: (See Enum SEE_Mask above)
-    hWnd                                    As Long      'Optional. A handle to the parent window, used to display any message boxes that the
-    'system might produce while executing this function. This value can be NULL.
-    lpVerb                                  As String    'A string, referred to as a verb, that specifies the action to be performed. The set of
-    'available verbs depends on the particular file or folder. Generally, the actions
-    'available from an object's shortcut menu are available verbs. This parameter can be NULL,
-    'in which case the default verb is used if available. If not, the "open" verb is used. If
-    'neither verb is available, the system uses the first verb listed in the registry. The
-    'following verbs are commonly used:
-    'edit       : Launches an editor and opens the document for editing. If lpFile is not a
-    '             document file, the function will fail.
-    'explore    : Explores the folder specified by lpFile.
-    'find       : Initiates a search starting from the specified directory.
-    'open       : Opens the file specified by the lpFile parameter. The file can be an
-    '             executable file, a document file, or a folder.
-    'openas     : Displays the "Open with" dialog for a file.
-    'print      : Prints the document file specified by lpFile. If lpFile is not a document
-    '             file, the function will fail.
-    'properties : Displays the file or folder's properties.
-    'runas      : Grants the user the ability to launch an application with different
-    '             credentials.
-    lpFile                                  As String    'The address of a null-terminated string that specifies the name of the file or object on
-    'which ShellExecuteEx will perform the action specified by the lpVerb parameter. The
-    'system registry verbs that are supported by the ShellExecuteEx function include "open"
-    'for executable files and document files and "print" for document files for which a print
-    'handler has been registered. Other applications might have added Shell verbs through the
-    'system registry, such as "play" for .avi and .wav files. To specify a Shell namespace
-    'object, pass the fully qualified parse name and set the SEE_MASK_INVOKEIDLIST flag in the
-    'fMask parameter.
-    'Note:  If the SEE_MASK_INVOKEIDLIST flag is set, you can use either lpFile or lpIDList to
-    'identify the item by its file system path or its PIDL respectively. One of the two
-    'values — lpFile or lpIDList — must be set.
-    'Note:  If the path is not included with the name, the current directory is assumed.
-    lpParameters                            As String    'Optional. The address of a null-terminated string that contains the application
-    'parameters. The parameters must be separated by spaces. If the lpFile member specifies a
-    'document file, lpParameters should be NULL.
-    lpDirectory                             As String    'Optional. The address of a null-terminated string that specifies the name of the working
-    'directory. If this member is NULL, the current directory is used as the working directory.
-    nShow                                   As E_ShowCmd    'Required. Flags that specify how an application is to be shown when it is opened; one of
+    'Contains information used by ShellExecuteEx.
+Private Type SHELLEXECUTEINFO
+    cbSize                                  As Long     'Required. The size of this structure, in bytes.
+    fMask                                   As SEE_Mask 'Flags that indicate the content and validity of the other structure members; a combination of the following values: (See Enum SEE_Mask above)
+    hWnd                                    As Long     'Optional. A handle to the parent window, used to display any message boxes that the system might produce while executing this function. This value can be NULL.
+    lpVerb                                  As String   'A string, referred to as a verb, that specifies the action to be performed.
+                                                        'The set of available verbs depends on the particular file or folder. Generally, the actions
+                                                        'available from an object's shortcut menu are available verbs. This parameter can be NULL,
+                                                        'in which case the default verb is used if available. If not, the "open" verb is used. If
+                                                        'neither verb is available, the system uses the first verb listed in the registry. The
+                                                            'following verbs are commonly used:
+                                                            'edit       : Launches an editor and opens the document for editing. If lpFile is not a
+                                                            '             document file, the function will fail.
+                                                            'explore    : Explores the folder specified by lpFile.
+                                                            'find       : Initiates a search starting from the specified directory.
+                                                            'open       : Opens the file specified by the lpFile parameter. The file can be an
+                                                            '             executable file, a document file, or a folder.
+                                                            'openas     : Displays the "Open with" dialog for a file.
+                                                            'print      : Prints the document file specified by lpFile. If lpFile is not a document
+                                                            '             file, the function will fail.
+                                                            'properties : Displays the file or folder's properties.
+                                                            'runas      : Grants the user the ability to launch an application with different
+                                                            '             credentials.
+    lpFile                                  As String   'The address of a null-terminated string that specifies the name of the file or object on
+                                                        'which ShellExecuteEx will perform the action specified by the lpVerb parameter. The
+                                                        'system registry verbs that are supported by the ShellExecuteEx function include "open"
+                                                        'for executable files and document files and "print" for document files for which a print
+                                                        'handler has been registered. Other applications might have added Shell verbs through the
+                                                        'system registry, such as "play" for .avi and .wav files. To specify a Shell namespace
+                                                        'object, pass the fully qualified parse name and set the SEE_MASK_INVOKEIDLIST flag in the
+                                                        'fMask parameter.
+                                                        'Note:  If the SEE_MASK_INVOKEIDLIST flag is set, you can use either lpFile or lpIDList to
+                                                        'identify the item by its file system path or its PIDL respectively. One of the two
+                                                        'values — lpFile or lpIDList — must be set.
+                                                        'Note:  If the path is not included with the name, the current directory is assumed.
+    lpParameters                            As String   'Optional. The address of a null-terminated string that contains the application
+                                                        'parameters. The parameters must be separated by spaces. If the lpFile member specifies a
+                                                        'document file, lpParameters should be NULL.
+    lpDirectory                             As String     'Optional. The address of a null-terminated string that specifies the name of the working directory. If this member is NULL, the current directory is used as the working directory.
+    nShow                                   As E_ShowCmd  'Required. Flags that specify how an application is to be shown when it is opened; one of
     'the SW_ values listed for the ShellExecute function. If lpFile specifies a document file,
     'the flag is simply passed to the associated application. It is up to the application to
     'decide how to handle it.
-    hInstApp                                As Long      'If SEE_MASK_NOCLOSEPROCESS is set and the ShellExecuteEx call succeeds, it sets this
-    'member to a value greater than 32. If the function fails, it is set to an SE_ERR_XXX
-    'error value that indicates the cause of the failure. Although hInstApp is declared as an
-    'HINSTANCE for compatibility with 16-bit Windows applications, it is not a true HINSTANCE.
-    'It can be cast only to an int and compared to either 32 or the following SE_ERR_XXX error
-    'codes.
+    hInstApp                                As Long     'If SEE_MASK_NOCLOSEPROCESS is set and the ShellExecuteEx call succeeds, it sets this
+                                                        'member to a value greater than 32. If the function fails, it is set to an SE_ERR_XXX
+                                                        'error value that indicates the cause of the failure. Although hInstApp is declared as an
+                                                        'HINSTANCE for compatibility with 16-bit Windows applications, it is not a true HINSTANCE.
+                                                        'It can be cast only to an int and compared to either 32 or the following SE_ERR_XXX error codes.
     lpIDList                                As Long      'The address of an absolute ITEMIDLIST structure (PCIDLIST_ABSOLUTE) to contain an item
     'identifier list that uniquely identifies the file to execute. This member is ignored if
     'the fMask member does not include SEE_MASK_IDLIST or SEE_MASK_INVOKEIDLIST.
@@ -256,12 +229,9 @@ Private Type SHELLEXECUTEINFO    'Contains information used by ShellExecuteEx.
     'flags, see the description of the WM_SETHOTKEY message. This member is ignored if fMask
     'does not include SEE_MASK_HOTKEY.
     #If True Then
-        hIcon                               As Long      'A handle to the icon for the file type. This member is ignored if fMask does not include
-        'SEE_MASK_ICON. This value is used only in Windows XP and earlier. It is ignored as of
-        'Windows Vista.
+        hIcon                               As Long      'A handle to the icon for the file type. This member is ignored if fMask does not include SEE_MASK_ICON. This value is used only in Windows XP and earlier. It is ignored as of Windows Vista.
     #Else
-        hMonitor                            As Long      'A handle to the monitor upon which the document is to be displayed. This member is
-        'ignored if fMask does not include SEE_MASK_HMONITOR.
+        hMonitor                            As Long      'A handle to the monitor upon which the document is to be displayed. This member is ignored if fMask does not include SEE_MASK_HMONITOR.
     #End If
     hProcess                            As Long      'A handle to the newly started application. This member is set on return and is always
     'NULL unless fMask is set to SEE_MASK_NOCLOSEPROCESS. Even if fMask is set to
@@ -303,31 +273,27 @@ End Type                      'http://msdn.microsoft.com/en-us/library/bb759784(
 '=======================================================================================================================
 '········································    A P I   D E C L A R A T I O N S    ········································
 '=======================================================================================================================
-'Used by both Shell_n_Wait and ShellW
+Private Declare Sub PathRemoveArgsW Lib "shlwapi.dll" (ByVal pszPath As Long)
 Private Declare Function ExpandEnvironmentStringsW Lib "kernel32.dll" (ByVal lpSrc As Long, Optional ByVal lpDst As Long, Optional ByVal nSize As Long) As Long
 Private Declare Function GetExitCodeProcess Lib "kernel32.dll" (ByVal hProcess As Long, ByRef lpExitCode As Long) As Long    'BOOL
 Private Declare Function WaitMessage Lib "user32.dll" () As Long    'BOOL
-
-'Used in ShellW
 Private Declare Function GetProcessId Lib "kernel32.dll" (ByVal hProcess As Long) As Long
-Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As bool
-Private Declare Function PathCanonicalizeW Lib "shlwapi.dll" (ByVal lpszDst As Long, ByVal lpszSrc As Long) As bool
+Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Boolean
+Private Declare Function PathCanonicalizeW Lib "shlwapi.dll" (ByVal lpszDst As Long, ByVal lpszSrc As Long) As Boolean
 Private Declare Function PathGetArgsW Lib "shlwapi.dll" (ByVal pszPath As Long) As Long
-Private Declare Function PeekMessageW Lib "user32.dll" (ByRef lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As bool
+Private Declare Function PeekMessageW Lib "user32.dll" (ByRef lpMsg As Msg, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Boolean
 Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, Optional ByVal lpTimerFunc As Long) As Long
-Private Declare Function ShellExecuteExW Lib "shell32.dll" (ByVal pExecInfo As Long) As bool
+Private Declare Function ShellExecuteExW Lib "shell32.dll" (ByVal pExecInfo As Long) As Boolean
 Private Declare Function SysReAllocString Lib "oleaut32.dll" (ByVal pBSTR As Long, Optional ByVal pszStrPtr As Long) As Long
 Private Declare Function SysReAllocStringLen Lib "oleaut32.dll" (ByVal pBSTR As Long, Optional ByVal pszStrPtr As Long, Optional ByVal Length As Long) As Long
 Private Declare Function WaitForSingleObject Lib "kernel32.dll" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
-Private Declare Sub PathRemoveArgsW Lib "shlwapi.dll" (ByVal pszPath As Long)
 
 '=======================================================================================================================
 '··········································    P U B L I C   M E T H O D S    ··········································
 '=======================================================================================================================
-'Runs an executable program or document; optionally waits for a specified amount of time before resuming execution
 '!--------------------------------------------------------------------------------
 '! Procedure   (Ôóíêöèÿ)   :   Function ShellW
-'! Description (Îïèñàíèå)  :   [type_description_here]
+'! Description (Îïèñàíèå)  :   [Runs an executable program or document; optionally waits for a specified amount of time before resuming execution]
 '! Parameters  (Ïåðåìåííûå):   PathName (String)
 '                              WindowStyle (AppWinStyle = vbShowNormal)
 '                              Wait (Long)
@@ -335,40 +301,35 @@ Private Declare Sub PathRemoveArgsW Lib "shlwapi.dll" (ByVal pszPath As Long)
 Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As AppWinStyle = vbShowNormal, Optional ByVal Wait As Long) As Long
 
     Const o = 0&, l = 1&, MAX_PATH = 260&
-    Const PM_NOREMOVE = &H0&
-
     'Messages are not removed from the queue after processing by PeekMessage.
-    Const PM_QS_POSTMESSAGE = &H980000
-
+    Const PM_NOREMOVE = &H0&
     'Process all posted messages, including timers and hotkeys.
-    Const WAIT_TIMEOUT = &H102&
-
+    Const PM_QS_POSTMESSAGE = &H980000
     'The time-out interval elapsed, and the object's state is nonsignaled.
-    Const WM_TIMER = &H113&
-
+    Const WAIT_TIMEOUT = &H102&
     'Posted to the installing thread's message queue when a timer expires.
+    Const WM_TIMER = &H113&
     Dim TimedOut As Boolean, Tmr1 As Long, Tmr2 As Long, m As Msg, SEI As SHELLEXECUTEINFO
-
     Static Busy  As Boolean
-
+    
+    'Reset Err object everytime this function is called
     Err.Clear
 
-    'Reset Err object everytime this function is called
+    'This function shouldn't be called
     If Not Busy Then
-        'This function shouldn't be called
+        'more than once at any given time
         Busy = True
 
-        'more than once at any given time
+        'See if there's anything to do
         If LenB(PathName) Then
-
-            'See if there's anything to do
+            
             With SEI
                 .cbSize = LenB(SEI)
                 .fMask = SEE_MASK_NOCLOSEPROCESS Or SEE_MASK_DOENVSUBST Or SEE_MASK_FLAG_NO_UI
                 'Suppress error message
                 .nShow = WindowStyle
 
-                'Expand environment variables                 'boxes by ShellExecuteEx
+                'Expand environment variables
                 If InStr(PathName, Percentage) Then
                     SysReAllocStringLen VarPtr(.lpFile), , ExpandEnvironmentStringsW(StrPtr(PathName)) - l
                     ExpandEnvironmentStringsW StrPtr(PathName), StrPtr(.lpFile), Len(.lpFile) + l
@@ -378,17 +339,18 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                 End If
 
                 Select Case True
-
+                    
+                    'Look for "\.", "\..", ".\" or "..\"
                     Case InStr(.lpFile, "\.") <> o, InStr(.lpFile, ".\") <> o
 
-                        'Look for "\.", "\..", ".\" or "..\"
+                        
                         If Len(.lpFile) < MAX_PATH Then
                             SysReAllocStringLen VarPtr(.lpVerb), , MAX_PATH - l
 
+                            'Simplify the given path
                             If PathCanonicalizeW(StrPtr(.lpVerb), StrPtr(.lpFile)) Then
-                                'Simplify the given path
-                                SysReAllocString VarPtr(.lpFile), StrPtr(.lpVerb)
                                 'by removing "." & ".."
+                                SysReAllocString VarPtr(.lpFile), StrPtr(.lpVerb)
                             End If
 
                             .lpVerb = vbNullString
@@ -396,38 +358,34 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
 
                 End Select
 
+                'Extract arguments, if any
                 SysReAllocString VarPtr(.lpParameters), PathGetArgsW(StrPtr(.lpFile))
 
-                'Extract arguments, if any
+                'If there are, then trim the
                 If LenB(.lpParameters) Then
-                    'If there are, then trim the
-                    PathRemoveArgsW StrPtr(.lpFile)                                         'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
-                    'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
+                    PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile PathRemoveArgsW StrPtr(.lpFile)
                     'original args from lpFile If InStr(.lpParameters, """") Then .lpParameters = Replace(.lpParameters, """", """""""")
+                    'MSDN's instructions don't seem to work in XP
                 End If
-
-                'MSDN's instructions don't seem to work in XP
+                
+                'Run the specified executable or document
                 If ShellExecuteExW(VarPtr(SEI)) Then
-                    'Run the specified executable or document
+                    'Return the Task ID, a.k.a. Process ID
                     ShellW = GetProcessId(.hProcess)
 
-                    'Return the Task ID, a.k.a. Process ID
+                    'If specified, wait Wait millisecs before returning
                     If Wait Then
-
-                        'If specified, wait Wait millisecs before returning
+                    
                         'If specified waiting time isn't INFINITE or negative then set a timer with the given duration
                         If Wait > INFINITE Then Tmr1 = SetTimer(o, .hProcess, Wait)
-                        'Debug.Assert Tmr1
                         'and another one with a very short interval used to ensure a constant flow of messages
                         Tmr2 = SetTimer(o, App.ThreadID, 250&)
 
-                        'Debug.Assert Tmr2
                         Do
+                            'This API suspends the thread if no new messages have arrived
                             WaitMessage
 
-                            'This API suspends the thread if no new messages have arrived
                             If Tmr1 Then
 
                                 'Check the message queue for WM_TIMER messages only
@@ -435,53 +393,47 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                                     If m.wParam = Tmr1 Then Err.Clear
 
                                     Exit Do
-
-                                End If
-
+                                
                                 'Reset Err (in case it was raised elsewhere) if the Timer ID
-                            End If
-
+                                End If
+                            
                             'is the one for the wait interval and break out of the loop
-                            DoEvents
+                            End If
+                            
                             'Let the system perform other tasks
+                            DoEvents
                             'The process becomes signaled when it ends, WaitForSingleObject thus returns WAIT_OBJECT_0
                             TimedOut = (WaitForSingleObject(.hProcess, o) = WAIT_TIMEOUT)
-                            'Taken from Myria's post
-                        Loop While TimedOut
-
                         'http://msdn.microsoft.com/en-us/library/ms683189(v=vs.85).aspx#1
+                        Loop While TimedOut
+                        
                         Tmr2 = KillTimer(o, Tmr2)
 
-                        'Debug.Assert Tmr2
                         If Tmr1 Then Tmr1 = KillTimer(o, Tmr1)
 
-                        'Debug.Assert Tmr1
+                        'WaitForSingleObject didn't timeout, therefore the process has terminated
                         If Not TimedOut Then
-                            'WaitForSingleObject didn't timeout, therefore the process has terminated
                             Tmr1 = GetExitCodeProcess(.hProcess, ShellW)
                             Debug.Assert Tmr1
                             'Return the terminated
                             Err = vbObjectError
+                            'Set the Err object's properties instead of raising an error;
+                            'this is similar to the API's use of Get/SetLastError
                             Err.Description = "Exit Code"
-                            'process' exit code
                         End If
-
-                        'Set the Err object's properties instead of raising an error;
+                        
                     End If
-
-                    'this is similar to the API's use of Get/SetLastError
+                    
                     Tmr2 = CloseHandle(.hProcess)
                     Debug.Assert Tmr2
                 End If
 
-                'If code stops here, the
             End With
 
-            'handle wasn't closed
         End If
-
-        Busy = False
+        
         'Reset flag
+        Busy = False
     End If
 
 End Function

@@ -52,10 +52,9 @@ Public Function FileSizeApi(sSource As String) As String
     FindClose hFile
 End Function
 
-' Проверка на соответствие условиям поиска
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function MatchSpec
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка на соответствие условиям поиска]
 '! Parameters  (Переменные):   sFile (String)
 '                              sSpec (String)
 '!--------------------------------------------------------------------------------
@@ -94,8 +93,6 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
     End If
 
     'Start searching for files in the Target directory.
-    'hFile = FindFirstFile(sSourcePath & sFiles, wfd)
-    'hFile = FindFirstFile(StrPtr("\\?\" & sSourcePath & sFiles & vbNullChar), wfd)
     If PathIsValidUNC(sSourcePath) = False Then
         hFile = FindFirstFile(StrPtr("\\?\" & sSourcePath & sFiles & vbNullChar), wfd)
     Else
@@ -176,7 +173,6 @@ Public Function SearchFilesInRoot(strRootDir As String, ByVal strSearchMask As S
         Else
 
             If mbSort Then
-                'StartSorting2 sResultFileList, UBound(sResultFileList, 2)
                 QuickSortMDArray sResultFileList, 1, 0
             End If
 
@@ -194,22 +190,16 @@ End Function
 '                              mbSearchRecursion (Boolean)
 '                              mbOnlyFirstFile (Boolean)
 '!--------------------------------------------------------------------------------
-Public Function SearchFoldersInRoot(strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean)
+Public Function SearchFoldersInRoot(strRootDir As String, ByVal strSearchMask As String)
 
     With fp2
         .sFileRoot = BackslashAdd2Path(strRootDir)
         .sFileNameExt = strSearchMask
-        .bRecurse = mbSearchRecursion
+        .bRecurse = False
     End With
 
-    'FP
     SearchForFolders fp2.sFileRoot, True, 100
-
-    If mbOnlyFirstFile Then
-        SearchFoldersInRoot = sResultFolderList(0, 0)
-    Else
-        SearchFoldersInRoot = sResultFolderList
-    End If
+    SearchFoldersInRoot = sResultFolderList
 
 End Function
 

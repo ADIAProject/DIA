@@ -109,6 +109,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim ii                        As Long
 
     DebugMode "DevParserByRegExp-Start"
+    
     TimeScriptRun = GetTickCount
     Set RegExpStrSect = New RegExp
     Set RegExpStrDefs = New RegExp
@@ -121,7 +122,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Set RegExpDevID = New RegExp
     Set RegExpDevSect = New RegExp
     Set objHashOutput = New Scripting.Dictionary
-    InfTempPathListCount = 0
+    
     'Имя папки с распакованными драйверами
     strPackFileName_woExt = FileName_woExt(FileNameFromPath(strPackFileName))
     'Рабочий каталог
@@ -167,7 +168,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
         ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName
         'Построение списка inf файлов в рабочем каталоге
-        ' тут заполняем переменную InfTempPathList
         strInfPathTempList_x = SearchFilesInRoot(strInfPathTemp, "*.inf", True, False)
     Else
         ' Создаем спсиок файлов *.cat в архиве
@@ -181,7 +181,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
         ChangeStatusTextAndDebug strMessages(148) & " " & strPackFileName
         'Построение списка inf файлов в рабочем каталоге
-        ' тут заполняем переменную InfTempPathList
         strInfPathTempList_x = SearchFilesInRoot(strPathDRP & strPackFileName, "*.inf", True, False)
     End If
 
@@ -195,7 +194,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     TimeScriptFinish = GetTickCount
     DebugMode "DevParserByRegExp-Time to Unpack Inf-file: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
-    InfTempPathListCount = UBound(strInfPathTempList_x, 2) - LBound(strInfPathTempList_x, 2) + 1
     DoEvents
     ' sections
     strRegEx_mansect = "^[ ]*\[Manufacturer\](?:([\s\S]*?)^[ #]*(?=\[)|([\s\S]*))"
@@ -295,14 +293,13 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         strInfFullname = strInfPathTempList_x(0, InfCount)
         ' полный путь к файлу inf
         strInfPath = PathNameFromPath(strInfFullname)
-        'if mbis
         'If InIDE() Then
         'If InStr(1, strInfFullname, "FORCED\7x64\HP\E1D62x64.INF", vbTextCompare) Then Stop ' Debug .Assert strInfPath
         'End If
         ' Имя inf файла
         strInfFileName = LCase$(FileNameFromPath(strInfFullname))
         'Debug.Print strInfFileName
-        ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " " & strMessages(124) & " (" & InfCount & " " & strMessages(124) & " " & InfTempPathListCount & ": " & strInfFileName & ")"
+        ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " " & strMessages(124) & " (" & InfCount & " " & strMessages(124) & " " & (UBound(strInfPathTempList_x, 2) - LBound(strInfPathTempList_x, 2) + 1) & ": " & strInfFileName & ")"
 
         ' путь к файлу inf для записи в параметры
         If Not mbDP_Is_aFolder Then
@@ -489,7 +486,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     For j = 0 To objMatchesManID.Count - 1
                         Set objMatch1 = objMatchesManID.Item(j)
                         sB = objMatch1.SubMatches(0)
-                        ' & objMatch1.SubMatches(1)
                         sB = RTrim$(sB)
 
                         If i <> 0 Or j <> 0 Then
@@ -684,8 +680,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         ShellSortAny VarPtr(strLinesArr(0)), lngNumLines, 4&, AddressOf CompareString
         ShellSortAny VarPtr(strLinesArrHwid(0)), lngNumLines, 4&, AddressOf CompareString
         TimeScriptFinish = GetTickCount
-        DebugMode "DevParserByRegExp-Time to Sort Index: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
-        DebugMode "DevParserByRegExp--Finished reading inf-files"
+        DebugMode "DevParserByRegExp-Time to Sort Index: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True) & vbNewLine & _
+                  "DevParserByRegExp--Finished reading inf-files"
         DoEvents
         TimeScriptRun = GetTickCount
 

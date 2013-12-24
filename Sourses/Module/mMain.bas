@@ -163,8 +163,6 @@ Public dtAllTimeProg                     As String
 Public strExcludeHWID                    As String
 
 ' Переменные для парсинга
-Public InfTempPathList(3000)             As String
-Public InfTempPathListCount              As Long
 Public IndexDevIDMass                    As Long
 Public mbDevParserRun                    As Boolean
 
@@ -534,11 +532,11 @@ Private Sub Main()
         DebugMode "Current Date: " & Now()
     End If
 
-    DebugMode "Version: " & strProductName & " v." & strProductVersion
-    DebugMode "Build: " & strDateProgram
-    DebugMode "ExeName: " & App.EXEName & ".exe"
-    DebugMode "AppWork: " & strAppPath
-    DebugMode "is User an Admin?: " & mbIsUserAnAdmin
+    DebugMode "Version: " & strProductName & " v." & strProductVersion & vbNewLine & _
+              "Build: " & strDateProgram & vbNewLine & _
+              "ExeName: " & App.EXEName & ".exe" & vbNewLine & _
+              "AppWork: " & strAppPath & vbNewLine & _
+              "is User an Admin?: " & mbIsUserAnAdmin
 
     If mbIsUserAnAdmin Then
         ' записываем в реестр мой сертификат, для ЭЦП на exe-файлы
@@ -555,10 +553,10 @@ Private Sub Main()
         End If
     End If
 
-    DebugMode "WinDir: " & strWinDir
-    DebugMode "TmpDir: " & strWinTemp
-    DebugMode "WorkTemp: " & strWorkTemp
-    DebugMode "IsDriveCDRoom: " & mbIsDriveCDRoom
+    DebugMode "WinDir: " & strWinDir & vbNewLine & _
+              "TmpDir: " & strWinTemp & vbNewLine & _
+              "WorkTemp: " & strWorkTemp & vbNewLine & _
+              "IsDriveCDRoom: " & mbIsDriveCDRoom
 
     If strOsCurrentVersion > "5.0" Then
         ' Определение windows x64
@@ -579,8 +577,8 @@ Private Sub Main()
         SetDEPDisable
     End If
 
-    DebugMode "OsCurrentVersion: " & strOsCurrentVersion
-    DebugMode "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
+    DebugMode "OsCurrentVersion: " & strOsCurrentVersion & vbNewLine & _
+              "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
     ' Служебные файлы
     InitializePathHwidsTxt
     ' Регистрация внешних компонент
@@ -610,8 +608,8 @@ Private Sub Main()
     GetWorkArea
     ' Переменные для использовании при создании имени архива
     strCompModel = GetMBInfo()
-    DebugMode "isNotebook: " & mbIsNotebok
-    DebugMode "Notebook/Motherboard Model: " & strCompModel
+    DebugMode "isNotebook: " & mbIsNotebok & vbNewLine & _
+              "Notebook/Motherboard Model: " & strCompModel
     hc_Handle_Hand = LoadCursor(0, IDC_HAND)
     ' Показ лицензионного соглашения
     mbFirstStart = True

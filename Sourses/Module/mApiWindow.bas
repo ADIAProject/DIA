@@ -64,6 +64,7 @@ Public Const GWL_EXSTYLE        As Long = (-20)
 Public Const GWL_STYLE          As Long = -16
 Public Const GWL_WNDPROC        As Long = -4               'Get/SetWindow offset to the WndProc procedure address
 Public Const SW_HIDE            As Long = 0
+Public Const SW_SHOWNORMAL      As Long = 1
 Public Const GW_HWNDPREV        As Long = 3
 Public Const GW_OWNER = 4
 

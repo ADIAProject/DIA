@@ -82,8 +82,8 @@ ErrCode:
     Debug.Print Err.Number & " " & Err.Description & " " & Err.LastDllError
 
     If errNum <> 0 Then
-        DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-        DebugMode str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
+        DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError) & vbNewLine & _
+                  str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
     End If
 
 End Function
