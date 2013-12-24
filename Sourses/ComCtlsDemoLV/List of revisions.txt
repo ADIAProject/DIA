@@ -1,0 +1,402 @@
+List of revisions:
+
+22-Dec-2013
+- Included the SplitButton property and DropDown event to the CommandButtonW control.
+- Removed the embedded VB Image control in the FrameW control as it is not necessary anymore.
+- Included the run time property 'DroppedWidth' to the ComboBoxW and ImageCombo control.
+- Included the GetIdealHorizontalExtent function to the ListBoxW and ComboBoxW control.
+
+19-Dec-2013
+- Fixed a bug that the WM_SETFOCUS handler was not included in the 'WindowProcEdit' of the ImageCombo control. (correct behavior now when pressing right mouse button)
+
+18-Dec-2013
+- Several bugfixes in the WM_MOUSEACTIVATE handler on almost all controls. (behavior errors)
+- Fixed a minor memory leak concerning to the accelerator table in the TabStrip, CheckBox and CommandButton control.
+
+16-Dec-2013
+- Enhanced the 'BuddyProperty' property of the UpDown control in the property page. (Drop down of all properties of the buddy control)
+
+14-Dec-2013
+- Optimized the editing of the Back- and ForeColor in the 'Bands' property page of the CoolBar control in the IDE.
+  It uses now the StandardColor property page instead of the Color dialog of the CommonDialog. Thus it is easier to select a system color.
+- Optimized the serializing of the picture objects in the property bags. (Using the OleLoadPicturePath API)
+  Thus the 'hidden' PictureByteStream properties are removed in the CoolBar, ImageList and StatusBar control.
+
+12-Dec-2013
+- Remake of the Style property of the ListBoxW control. (Bugfixes and instead of the ItemData it uses now the new ItemChecked property to determine if a item is checked or not)
+- Some other minor bugfixes in the ListBoxW and ComboBoxW control.
+
+11-Dec-2013
+- Included the Style property to the ListBoxW control. (0 - Standard, 1 - Checkbox)
+
+09-Dec-2013
+- Included the CoolBar control.
+- Renamed 'hWndOwner' to 'hWndUserControl' and the 'hWnd' of the ToolTip control to 'hToolTip'.
+- Fixed a bug in the ToolBar control that the CustomWidth and AutoSize property of the buttons are messed up when changing the TextAlignment property.
+- Optimized the UserControl_Resize handler and the GetIdealSize method of the ToolBar control.
+
+03-Dec-2013
+- Major improvement of controls that have a class object and use them in design mode. (ImageList, StatusBar, TabStrip, ToolBar)
+  There was an issue that the UserControl_Terminate event still did not fire under certain circumstances, resulting in a unstable IDE.
+  Another effect of this improvement is that there is no crash anymore when you compile the project with a opened form that contains a StatusBar and which is also subclassed. (DesignModeSubclass)
+
+02-Dec-2013
+- Optimized the StatusBar control. (SetParent issue and it does not cause a crash anymore when included in another UserControl)
+
+27-Nov-2013
+- Fixed a bug in the ToolBar control concerning the style property and optimized the resize event.
+
+25-Nov-2013
+- Fixed a bug in the FontChanged handler (freeze problem) and optimized the OLEFontToLogFont method.
+
+23-Nov-2013
+- Included a new CommonDialog.cls to have a reliable replace of the orginal CommonDialog from MS. (Thus the prior CommonDialog.bas have been discarded)
+  Another advantage is that the new CommonDialog.cls is public when building an ActiveX control out of the project.
+- Fixed a bug in the FileName property of the RichTextBox control.
+- Other minor improvements.
+
+18-Nov-2013
+- Fixed a bug in the SelFontCharset property in the RichTextBox control.
+- Improved/Enhanced the ShowFont dialog to provide a proper Font feature in the RichTextBox Demo that works like in wordpad.
+
+17-Nov-2013
+- Included the SelFontCharset property in the RichTextBox control.
+- Improved the OLEFontToLogFont method. (Charset is now included)
+
+16-Nov-2013
+- Const MFS_DISABLED had an incorrect value and the Const BFFM_SETSELECTION value is changed to the Unicode version.
+
+13-Nov-2013
+- MinDate/MaxDate property of the DTPicker control does not cause a crash anymore at runtime and support now time values.
+
+12-Nov-2013
+- Modified the OLEGuids.tlb.
+- RichTextBox control is added.
+- Adopted the modified MousePointer property (see 10-Sep-2013) to all property pages.
+- LoadFile function supports now unicode path and file names.
+- Other minor improvements are done.
+
+28-Oct-2013
+- Included the GetLineFromChar function and fixed a bug in the GetLine function in the TextBoxW control.
+
+26-Oct-2013
+- Optimized the ContainerKeyDown method on the ToolBar control. (No beeps anymore when an intrinsic menu is present)
+
+25-Oct-2013
+- Fixed a behavior bug concerning the Text property in the TextBoxW and ImageCombo control.
+
+20-Oct-2013
+- Some enhancements to the TextBoxW control.
+- Fixed a bug on each Data.GetData(CF_UNICODETEXT) that the vbNullChar was not considered.
+
+18-Oct-2013
+- HotKey control is added.
+
+17-Oct-2013
+- Included a terminating vbNullChar on each Data.SetData(CF_UNICODETEXT). (is necessary)
+- Some other minor improvements are done.
+
+15-Oct-2013
+- Fixed a bug in the ListView control concerning the ColumnCheck event.
+
+14-Oct-2013
+- Included the OLEDragMode property to the ComboBoxW control.
+
+02-Oct-2013
+- Optimized the MousePointer handling in the FrameW control. (MousePointer works now on windowless controls when placed onto the FrameW control)
+- Included the Transparent property to the FrameW control.
+
+01-Oct-2013
+- Fixed a bug (careless mistake) that the LabelW control could receive the input focus.
+
+29-Sep-2013
+- Renamed the Flat property to "Appearance".
+- Included the Appearance property to the CommandButtonW and LabelW control.
+  (CommandButtonW thus can be flat now whereas the intrinsic VB CommandButton cannot even though there is a Appearance property...)
+- Included the Transparent property to the Slider control.
+
+26-Sep-2013
+- Remake of the FrameW control. (Fixed a lot of bugs; also the control is now a real one (BS_GROUPBOX) and not emulated anymore)
+- Included the Flat property to the CheckBoxW and OptionButtonW control.
+
+21-Sep-2013
+- Optimized the AccelCharCode function. (Returns now the correct char when multiple ampersands are in a string)
+- LabelW control is added.
+
+18-Sep-2013
+- Included the Transparent property to the CheckBoxW, OptionButtonW and CommandButtonW control.
+- Fixed a bug in the Height property. (Bug occured on shadow objects only)
+- Some general modifications.
+
+11-Sep-2013
+- FrameW control is added.
+
+10-Sep-2013
+- Included the "Arrow and CD" value to the MousePointer property and minor modification to the MousePointerID function.
+
+08-Sep-2013
+- Enhanced the InitVisualStyles() function to prevent crashes (under certain circumstances) at application shutdown.
+
+31-Aug-2013
+- Included the TabAlignment property to the TabStrip control.
+
+29-Aug-2013
+- Some improvements are done.
+
+28-Aug-2013
+- Included the OLEDragMode property to the TextBoxW control, thus supporting vbOLEDragAutomatic. (Same behavior as the original TextBox control)
+- Unicode support when using an automatic OLE drag/drop handling.
+
+27-Aug-2013
+- TextBoxW control supports now vbOLEDropAutomatic in the OLEDropMode property. (Same behavior as the original TextBox control)
+
+26-Aug-2013
+- Included the WantReturn property to the TextBoxW control.
+
+25-Aug-2013
+- ListBoxW control is added.
+- Some modifications concerning the OLE drag/drop handling.
+- Other minor improvements are done.
+
+16-Aug-2013
+- Improvements to the ToolBar control concerning the ImageList handling.
+
+06-Aug-2013
+- Included the PreviewKeyDown/PreviewKeyUp event to all controls.
+
+05-Aug-2013
+- Improved the TranslateAccelerator handling of the ComboBoxW and ImageCombo control.
+
+28-Jul-2013
+- ComboBoxW control is added.
+- Some modifications to the ImageCombo control.
+- Other minor improvements are done.
+
+23-Jul-2013
+- The LabelEdit window in the ListView control is now also processing the WM_IME_CHAR message.
+- Included the ResetEmptyMarkup method in the ListView control. (undocumented feature)
+
+22-Jul-2013
+- Included the WM_IME_CHAR handler to provide unicode character input from an IME.
+- Improved the WM_CHAR handler to provide full unicode support.
+
+21-Jul-2013
+- TextBoxW control is added.
+- Included the DataBinding properties to some controls.
+- Some other general improvements.
+
+18-Jul-2013
+- CommandButtonW control is added.
+
+16-Jul-2013
+- Included the SetTaskBarProgressState and SetTaskBarProgressValue method to the ProgressBar control.
+- Min, Max and Value property for the ProgressBar control are now 32-bit.
+- Other minor improvements to the ProgressBar control.
+
+14-Jul-2013
+- CheckBoxW control is added.
+- Included the ForeColor and WordWrap property to the OptionButtonW control.
+- Fixed a bug in the OptionButtonW control that it did not receive the focus via tab key when all value
+  properties were false (in the same container) and not combined with an intrinsic VB OptionButton.
+
+12-Jul-2013
+- OptionButtonW control is added. (can be combined with the intrinsic VB OptionButton)
+- Improved the WM_MOUSEACTIVATE handler.
+
+07-Jul-2013
+- Pager control is added.
+
+06-Jul-2013
+- Some bug fixes. (Actually they were generated after the update as per 30-Jun-2013)
+
+30-Jun-2013
+- Implemented the KeyPress/KeyDown/KeyUp and MouseDown/MouseMove/MouseUp events to the IPAddress control.
+- Minor improvements are done.
+
+25-Jun-2013
+- Fixed a bug in the WM_MOUSEACTIVATE handler.
+- Improved the TranslateAccelerator handling of the DTPicker control.
+
+23-Jun-2013
+- Remake of the UpDown control. (For general use. It works similar to the original control from MS)
+- SpinBox control is added. (UpDown control that is included in an edit control)
+
+18-Jun-2013
+- Improved the bug fix for the WM_MOUSEACTIVATE handler.
+
+16-Jun-2013
+- If the validate event of a control was cancelled than normally this control is forced to be on focus.
+  This is working properly when try to shift the focus via tab key, but not when shifting the focus via the mouse.
+  Reason is due to a missing check in the WM_MOUSEACTIVATE handler, which has been fixed now.
+
+11-Jun-2013
+- Fixed a bug that the UserControl_Terminate event did not fire on controls that contains a class object. (e.g. ListView, TreeView, ToolBar, StatusBar, etc.)
+
+04-Jun-2013
+- ToolBar control is added.
+
+09-May-2013
+- Some enhancements to the SubclassProc.
+- StatusBar can process WM_DRAWITEM in Design Mode via ASM Subclassing. (Tooglable compile option)
+
+04-May-2013
+- MonthView control does not need to subclass the parent form anymore at creation of the control.
+- DTPicker control support now bold dates. (But only on Vista/7 or above)
+
+02-May-2013
+- Implemented a GETDISPINFO handling on the ImageCombo and TreeView control.
+  Therefore if SelImage/SelectedImage is not specified it will copy it from the Image value. (Same behavior now like the original controls)
+
+01-May-2013
+- TreeView control is added.
+- Some enhancements and bug fixes to the ListView control.
+
+25-Apr-2013
+- Some enhancements to the ListView control.
+- Improved the WM_SETFOCUS handling on all concerned controls. SetFocus API can now also be passed to .hWnd directly.
+  But when using a SetParent API than you still should pass .hWndOwner and not .hWnd to it.
+
+14-Apr-2013
+- CallbackKeyDown, FormatString and FormatSize events are added to the DTPicker control to provide Callback Fields.
+- Property Page is implemented to the ProgressBar control.
+
+09-Apr-2013
+- Fixed a bug with the property bag concerning the date properties of the DTPicker and MonthView control.
+- Property Page is implemented to the MonthView control.
+
+08-Apr-2013
+- Const DTM_SETFORMATW on the DTPicker control was incorrect, causing no success on the CustomFormat property.
+- Included the MouseIcon/MousePointer property to the DTPicker control.
+- Property Page is implemented to the DTPicker control.
+- ItemBkColor event is added to the ListView.
+
+14-Mar-2013
+- ImageCombo control is added.
+
+10-Mar-2013
+- 'Tile' view on the ListView does not cause a crash anymore on Windows XP.
+- Fixed a issue on the ListView that the SelectedItem property could not be set to Nothing.
+
+08-Mar-2013
+- Minor improvements are done.
+
+27-Feb-2013
+- Included the 'Tile' view (and some other enhancements) to the ListView control.
+
+23-Feb-2013
+- IPAddress control is added.
+- Changes to the KeyAscii/KeyCode value on the KeyPress/KeyDown/KeyUp event will be considered now.
+- Included the WM_KEYUP message to the TranslateAccelerator handling.
+
+20-Feb-2013
+- Fixed a bug with the WM_MOUSEACTIVATE message on the ListView.
+
+14-Feb-2013
+- The Tag, Width and Height properties are now also available when setting to a shadow object. ('Set' command)
+- Some minor modifications on the property pages of the ImageList control.
+- Minor bugfixes on the ListView.
+
+13-Feb-2013
+- Complete remake of the ImageList control. (More comfortable and it works now like the orginal ImageList from MS)
+- Picture property of the ListView can now hold icons as well.
+
+07-Feb-2013
+- PictureAlignment 'Tile' for the ListView is improved on systems with version 6.1 of comctl32.dll.
+
+06-Feb-2013
+- Removed the 'Ex' addition to the whole project.
+- Fixed the column headers Left property for the ListView.
+
+05-Feb-2013
+- The Name and Parent properties are now also available when setting to a shadow object. ('Set' command)
+- Added the column headers Left property for the ListView.
+
+04-Feb-2013
+- Some enhancements to the ListView control.
+
+03-Feb-2013
+- ListView control is added.
+- Modified the OLEGuids.tlb and other components.
+- Fixed a scale mode issue with the X and Y coordinates of the OLEDragDrop/OLEDragOver events.
+- Improved the BuddyControl property of the UpDown control. (Returns now an object at runtime and it is even available on Form_Load)
+- Removed the hWndBuddy property of the UpDown control as now the object provides all information.
+
+24-Jan-2013
+- Improved the ImageList property of the TabStrip control. (Returns now an object at runtime and it is even available on Form_Load)
+- Renamed the ImageIndex property to Image of the tab object to harmonize more the namings with the original control.
+- Removed the ImageListHandle property of the TabStrip control as now the object provides all information.
+- Property Page is implemented to the Animation control and some modifications are done on it.
+- Included the OLEDrag method for each control.
+
+16-Jan-2013
+- Included the MouseIcon/MousePointer property to the MonthView control and improved the WM_SETCURSOR handling for all controls.
+
+07-Jan-2013
+- Improved the collections of the property classes. (Issue with internal wrong indexing when adding an item before an existing item)
+
+06-Jan-2013
+- Fixed a bug in the StartOfWeek property of the MonthView control.
+
+04-Jan-2013
+- Set the VB_Creatable property to false for all property classes. (e.g. Panel on StatusBar control)
+
+30-Dec-2012
+- Changed the way of subclassing. (From Friend Functions to ISubclass.cls)
+- The #Const declarations for subclassing are therefore not needed anymore.
+
+23-Dec-2012
+- IDE doesn't crash anymore when you push the End Button. (Togglable function)
+- Fixed a leak on the MonthView control concerning the subclassing of the parent.
+
+20-Dec-2012
+- Modified again the OLEGuids.tlb and other components.
+- VTable subclasses are reduced to the only necessary ones.
+
+19-Dec-2012
+- Modified the OLEGuids.tlb and other components.
+- The VB Classes HookIOleIPAO, HookIOleControl and HookIOlePPB are not needed anymore.
+
+17-Dec-2012
+- Included the OLEDropMode property and the OLE events for each control.
+- Included the Placement property to the TabStrip control.
+- Included the Enabled, MouseIcon and MousePointer property to the ProgressBar control.
+- Included the Click event to the ProgressBar and Slider control.
+- Added a StyleChange event to the StatusBar control.
+
+15-Dec-2012
+- Property Page is implemented to the Slider control and a bug is fixed of the TickStyle property.
+
+14-Dec-2012
+- Fixed a bug on the StatusBar that the last panel RECT (.Right value) gets calculated wrong,
+  but only when running Windows XP, using the comctl32 v6 and activated SizeGrip.
+
+11-Dec-2012
+- Added the panels ToolTipText property for the StatusBar.
+
+08-Dec-2012
+- Improved the calculation of the X and Y params of the MouseMove, MouseDown and MouseUp events for all controls.
+
+04-Dec-2012
+- The panels Picture property of the StatusBar control can be set now at design time as well.
+
+01-Dec-2012
+- Optimized the property bags for the TabStrip and StatusBar control.
+
+29-Nov-2012
+- StatusBar control is added.
+
+21-Nov-2012
+- Subclassing conflicts fixed with the UpDown and ToolTip control.
+
+20-Nov-2012
+- Simplified the Tag and ToolTipText property for the TabStrip control.
+
+18-Nov-2012
+- Unicode support added for all controls.
+
+15-Nov-2012
+- The design time properties of the ToolTip control can now also be modified at run time.
+- TabMinWidth property added to the TabStrip control.
+
+11-Nov-2012
+- First release.
