@@ -354,7 +354,8 @@ Private Sub SearchForFolders(sRoot As String, ByVal mbInitial As Boolean, miMaxC
 
                         ' Полный путь файла
                         sResultFolderList(0, sResultFolderListCount) = sRoot & strFindData
-                        sResultFolderList(1, sResultFolderListCount) = Left$(strFindData, InStrRev(strFindData, "_", , vbTextCompare) - 1)
+                        'sResultFolderList(1, sResultFolderListCount) = Left$(strFindData, InStrRev(strFindData, "_", , vbTextCompare) - 1)
+                        sResultFolderList(1, sResultFolderListCount) = strFindData
                         sResultFolderListCount = sResultFolderListCount + 1
                     End If
 

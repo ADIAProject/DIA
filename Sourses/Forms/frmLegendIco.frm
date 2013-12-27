@@ -126,18 +126,26 @@ Begin VB.Form frmLegendIco
       TabIndex        =   8
       Top             =   7140
       Width           =   1815
-      _extentx        =   3201
-      _extenty        =   1244
-      font            =   "frmLegendIco.frx":000C
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Œ "
-      pictureshadow   =   -1
-      picturepushonhover=   -1
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3201
+      _ExtentY        =   1244
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   13
+      BackColor       =   12244692
+      Caption         =   "Œ "
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.LabelW lblDescription 
       Height          =   795

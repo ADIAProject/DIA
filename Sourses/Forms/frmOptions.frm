@@ -1500,7 +1500,7 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.SpinBox txtButton2BtnL 
          Height          =   255
-         Left            =   5685
+         Left            =   6405
          TabIndex        =   7
          Top             =   1605
          Width           =   1575
@@ -1520,7 +1520,7 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.SpinBox txtButton2BtnT 
          Height          =   255
-         Left            =   5685
+         Left            =   6405
          TabIndex        =   12
          Top             =   1965
          Width           =   1575
@@ -1669,7 +1669,7 @@ Begin VB.Form frmOptions
          Height          =   270
          Left            =   3960
          TabIndex        =   74
-         Top             =   3480
+         Top             =   3540
          Width           =   4560
          _ExtentX        =   8043
          _ExtentY        =   476
@@ -1858,12 +1858,12 @@ Begin VB.Form frmOptions
          AutoSize        =   -1  'True
       End
       Begin prjDIADBS.LabelW lblButton2BtnT 
-         Height          =   195
+         Height          =   255
          Left            =   3525
          TabIndex        =   111
          Top             =   1965
-         Width           =   1845
-         _ExtentX        =   3413
+         Width           =   2865
+         _ExtentX        =   5054
          _ExtentY        =   450
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -1879,12 +1879,12 @@ Begin VB.Form frmOptions
          AutoSize        =   -1  'True
       End
       Begin prjDIADBS.LabelW lblButton2BtnL 
-         Height          =   195
+         Height          =   255
          Left            =   3525
          TabIndex        =   112
          Top             =   1605
-         Width           =   2010
-         _ExtentX        =   3678
+         Width           =   2850
+         _ExtentX        =   5027
          _ExtentY        =   450
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -4069,8 +4069,8 @@ Private Sub LoadListCombo(cmbName As ComboBox, strImagePath As String)
     With cmbName
         .Clear
 
-        For i = LBound(strListFolderTemp) To UBound(strListFolderTemp)
-            .AddItem strListFolderTemp(i), i
+        For i = LBound(strListFolderTemp, 2) To UBound(strListFolderTemp, 2)
+            .AddItem strListFolderTemp(1, i), i
         Next
 
     End With
@@ -4224,35 +4224,44 @@ Private Sub lvOptions_ItemChanged(ByVal iIndex As Long)
 
     Select Case iIndex
 
-        Case 0 'ItemOptions1=Основные настройки
+        Case 0
+        'ItemOptions1=Основные настройки
             frMain.ZOrder 0
 
-        Case 1 ' ItemOptions8=Основные настройки 2
+        Case 1
+        ' ItemOptions8=Основные настройки 2
             frMain2.ZOrder 0
 
-        Case 2 'ItemOptions2=Поддерживаемые ОС
+        Case 2
+        'ItemOptions2=Поддерживаемые ОС
             frOS.ZOrder 0
             txtExcludeHWID.SetFocus
 
-        Case 3 'ItemOptions3=Рабочие утилиты
+        Case 3
+        'ItemOptions3=Рабочие утилиты
             frMainTools.ZOrder 0
             ucDevCon86Path.SetFocus
 
-        Case 4 'ItemOptions4=Вспомогательные утилиты
+        Case 4
+        'ItemOptions4=Вспомогательные утилиты
             frOtherTools.ZOrder 0
 
-        Case 5 'ItemOptions5=Оформление программы
+        Case 5
+        'ItemOptions5=Оформление программы
             frDesign.ZOrder 0
             cmbImageMain.SetFocus
 
-        Case 6 'ItemOptions9=Оформление программы 2
+        Case 6
+        'ItemOptions9=Оформление программы 2
             frDesign2.ZOrder 0
 
-        Case 7 'ItemOptions6=Параметры запуска DPInst
+        Case 7
+        'ItemOptions6=Параметры запуска DPInst
             frDpInstParam.ZOrder 0
             txtCmdStringDPInst.SetFocus
 
-        Case 8 'ItemOptions10=Отладочный режим
+        Case 8
+        'ItemOptions10=Отладочный режим
             frDebug.ZOrder 0
             txtDebugLogName.SetFocus
 
