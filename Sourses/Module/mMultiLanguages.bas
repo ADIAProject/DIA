@@ -220,7 +220,7 @@ Public Function LoadLanguageList() As Boolean
                 If InStr(1, strTemp, strPCLangID, vbTextCompare) Then
                     strPCLangCurrentPath = arrLanguage(1, ii + 1)
                     strPCLangCurrentID = strPCLangID
-                    lngDialog_Charset = GetCharsetFromLng(CLng(arrLanguage(6, ii + 1)))
+                    lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, ii + 1)))
                 End If
 
             Else
@@ -229,7 +229,7 @@ Public Function LoadLanguageList() As Boolean
                     If InStr(1, strTemp, strStartLanguageID, vbTextCompare) Then
                         strPCLangCurrentPath = arrLanguage(1, ii + 1)
                         strPCLangCurrentID = strStartLanguageID
-                        lngDialog_Charset = GetCharsetFromLng(CLng(arrLanguage(6, ii + 1)))
+                        lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, ii + 1)))
                     End If
                 End If
             End If
@@ -241,7 +241,7 @@ Public Function LoadLanguageList() As Boolean
     If LenB(strPCLangCurrentPath) = 0 Then
         strPCLangCurrentPath = strAppPathBackSL & "Tools\Lang\English.lng"
         strPCLangCurrentID = "0409"
-        lngDialog_Charset = 1
+        lngFont_Charset = 1
     End If
 
 End Function

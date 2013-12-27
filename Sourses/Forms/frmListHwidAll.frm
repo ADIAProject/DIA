@@ -526,19 +526,19 @@ Private Sub FontCharsetChange()
 
     ' Выставляем шрифт
     With Me.Font
-        .Name = strOtherForm_FontName
-        .Size = lngOtherForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
     End With
 
-    frGroup.Font.Charset = lngDialog_Charset
-    frFindDrvInternet.Font.Charset = lngDialog_Charset
-    SetButtonProperties cmdReNewHW
-    SetButtonProperties cmdBackUpDrivers
-    SetButtonProperties cmdOK
-    SetButtonProperties cmdCheckAll
-    SetButtonProperties cmdUnCheckAll
-    SetButtonProperties cmdGoSite
+    frGroup.Font.Charset = lngFont_Charset
+    frFindDrvInternet.Font.Charset = lngFont_Charset
+    SetBtnFontProperties cmdReNewHW
+    SetBtnFontProperties cmdBackUpDrivers
+    SetBtnFontProperties cmdOK
+    SetBtnFontProperties cmdCheckAll
+    SetBtnFontProperties cmdUnCheckAll
+    SetBtnFontProperties cmdGoSite
 End Sub
 
 '!--------------------------------------------------------------------------------

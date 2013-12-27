@@ -154,6 +154,51 @@ Begin VB.Form frmMain
          Caption         =   "Сведения об операционой системе и компьютере..."
          TextBoxHeight   =   20
          ThemeColor      =   1
+         Begin VB.CommandButton Command3 
+            Caption         =   "Command3"
+            BeginProperty Font 
+               Name            =   "Lucida Console"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   -1  'True
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   7440
+            TabIndex        =   34
+            Top             =   600
+            Visible         =   0   'False
+            Width           =   2595
+         End
+         Begin VB.CommandButton Command2 
+            Caption         =   "Command2"
+            BeginProperty Font 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   4620
+            TabIndex        =   33
+            Top             =   600
+            Visible         =   0   'False
+            Width           =   2055
+         End
+         Begin VB.CommandButton Command1 
+            Caption         =   "Command1"
+            Height          =   315
+            Left            =   2580
+            TabIndex        =   32
+            Top             =   600
+            Visible         =   0   'False
+            Width           =   1335
+         End
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255
             Left            =   75
@@ -983,7 +1028,7 @@ Begin VB.Form frmMain
       _ExtentX        =   450
       _ExtentY        =   450
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Courier New"
+         Name            =   "Lucida Console"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -1000,7 +1045,7 @@ Begin VB.Form frmMain
       _ExtentX        =   450
       _ExtentY        =   450
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Courier New"
+         Name            =   "Lucida Console"
          Size            =   8.25
          Charset         =   204
          Weight          =   400
@@ -1372,6 +1417,9 @@ Private objHashOutput            As Scripting.Dictionary
 Private objHashOutput2           As Scripting.Dictionary
 Private objHashOutput3           As Scripting.Dictionary
 Private strFormName              As String
+
+Private Const WM_SETFONT                As Long = &H30
+Private Const WM_GETFONT                As Long = &H31
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
@@ -2003,8 +2051,8 @@ Private Sub ChangeMenuCaption()
                 If .MenuCount > 0 Then
                     .MenuCaption(0) = strContextInstall1
                     .MenuCaption(2) = strContextInstall2
-                    .MenuCaption(4) = strContextInstall3
-                    .MenuCaption(6) = strContextInstall4
+                    '.MenuCaption(4) = strContextInstall3
+                    '.MenuCaption(6) = strContextInstall4
                     .Refresh
                 End If
 
@@ -3063,8 +3111,8 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
         Sleep 200
         DoEvents
         SSTab1.Tab = tabN
-        StartPositionLeft = miButtonLeft
-        StartPositionTop = miButtonTop
+        StartPositionLeft = lngButtonLeft
+        StartPositionTop = lngButtonTop
 
         If tabN > 0 Then
             Load SSTab2(tabN)
@@ -3167,14 +3215,14 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
                     NextPositionTop = StartPositionTop
                     mbNextTab = False
                 Else
-                    DeltaPositionLeft = acmdPackFiles(lngCntBtn - 1).Left + miButtonWidth + miBtn2BtnLeft - StartPositionLeft
+                    DeltaPositionLeft = acmdPackFiles(lngCntBtn - 1).Left + lngButtonWidth + lngBtn2BtnLeft - StartPositionLeft
                     NextPositionLeft = StartPositionLeft + DeltaPositionLeft
 
                     ' Если Кол-во ОС больше кол-ва вкладок на строку
                     If lngOSCount > lngOSCountPerRow Then
-                        MaxLeftPosition = NextPositionLeft + miButtonWidth + 100 * (Abs(lngOSCount / lngOSCountPerRow) - 1)
+                        MaxLeftPosition = NextPositionLeft + lngButtonWidth + 100 * (Abs(lngOSCount / lngOSCountPerRow) - 1)
                     Else
-                        MaxLeftPosition = NextPositionLeft + miButtonWidth + 25
+                        MaxLeftPosition = NextPositionLeft + lngButtonWidth + 25
                     End If
 
                     If MaxLeftPosition > ctlScrollControl1(tabN).Width Then
@@ -3187,7 +3235,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
                     ' Перешагиваем, если кнопки на одну строку не входят
                     If mbStep Then
                         DeltaPositionLeft = 0
-                        DeltaPositionTop = DeltaPositionTop + miButtonHeight + miBtn2BtnTop
+                        DeltaPositionTop = DeltaPositionTop + lngButtonHeight + lngBtn2BtnTop
                         NextPositionLeft = StartPositionLeft
                         NextPositionTop = StartPositionTop + DeltaPositionTop
 
@@ -3226,7 +3274,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             With chkPackFiles(lngCntBtn)
                 .Visible = True
                 .Left = NextPositionLeft + 50
-                .Top = NextPositionTop + (miButtonHeight - .Height) / 2
+                .Top = NextPositionTop + (lngButtonHeight - .Height) / 2
                 .ZOrder 0
                 .Tag = tabN
             End With
@@ -4637,6 +4685,18 @@ Private Function FindUnHideTab() As Integer
     FindUnHideTab = miCount
 End Function
 
+Private Sub Command1_Click()
+Call SendMessageW(TT.hToolTip, WM_SETFONT, SendMessageW(Command1.hWnd, WM_GETFONT, &H0, &H0), ByVal &H1)
+End Sub
+
+Private Sub Command2_Click()
+Call SendMessageW(TT.hToolTip, WM_SETFONT, SendMessageW(Command2.hWnd, WM_GETFONT, &H0, &H0), ByVal &H1)
+End Sub
+
+Private Sub Command3_Click()
+Call SendMessageW(TT.hToolTip, WM_SETFONT, SendMessageW(Command3.hWnd, WM_GETFONT, &H0, &H0), ByVal &H1)
+End Sub
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Activate
 '! Description (Описание)  :   [Событие активации формы]
@@ -4916,8 +4976,8 @@ Private Sub Form_Load()
         strFormName = .Name
         ChangeFrmMainCaption
         ' Разворачиваем форму на весь экран
-        .Width = MainFormWidth
-        .Height = MainFormHeight
+        .Width = lngMainFormWidth
+        .Height = lngMainFormHeight
         ' Центрируем форму на экране
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
@@ -4936,7 +4996,7 @@ Private Sub Form_Load()
     With ctlUcStatusBar1
         .AddPanel strMessages(127)
         .AddPanel strMessages(1), , False
-        .PanelWidth(2) = (MainFormWidth \ Screen.TwipsPerPixelX) - .PanelWidth(1)
+        .PanelWidth(2) = (lngMainFormWidth \ Screen.TwipsPerPixelX) - .PanelWidth(1)
     End With
 
     ' Запись файла настроек в ini
@@ -4964,22 +5024,23 @@ Private Sub Form_Load()
     lblOsInfo.Left = 75
 
     With acmdPackFiles(0)
-        .Left = miButtonLeft
-        .Top = miButtonTop
-        .Width = miButtonWidth
-        .Height = miButtonHeight
+        .Left = lngButtonLeft
+        .Top = lngButtonTop
+        .Width = lngButtonWidth
+        .Height = lngButtonHeight
         .CheckExist = True
     End With
 
     With chkPackFiles(0)
         .Width = 200
         .Height = 200
-        .Left = miButtonLeft + miButtonWidth - 225
-        .Top = miButtonTop + 30
+        .Left = lngButtonLeft + lngButtonWidth - 225
+        .Top = lngButtonTop + 30
     End With
 
     ' Устанавливаем шрифт кнопок
-    SetButtonProperties acmdPackFiles(0)
+    SetBtnFontProperties acmdPackFiles(0)
+    acmdPackFiles(0).TextColor = lngFontBtn_Color
     ' Устанавливаем шрифт закладок
     SetTabProperties
     SetTabPropertiesTabDrivers
@@ -5036,12 +5097,11 @@ Private Sub Form_Load()
 
     ' Изменяем параметры Всплывающей подсказки для кнопок
     With TT
-        .Font.Name = strMainForm_FontName
-        .Font.Size = lngMainForm_FontSize
-        .MaxTipWidth = Me.Width
+        .MaxTipWidth = lngRightWorkArea
         .SetDelayTime TipDelayTimeInitial, 400
         .SetDelayTime TipDelayTimeShow, 15000
         .Title = strTTipTextTitle
+        SetTTFontProperties TT
     End With
 
     ' Изменяем параметры кнопок и картинок
@@ -5155,8 +5215,8 @@ Public Sub Form_Resize()
             End If
         End If
 
-        If Me.Width < MainFormWidthMin Then
-            Me.Width = MainFormWidthMin
+        If Me.Width < lngMainFormWidthMin Then
+            Me.Width = lngMainFormWidthMin
             Me.Enabled = False
             Me.Enabled = True
 
@@ -5164,8 +5224,8 @@ Public Sub Form_Resize()
 
         End If
 
-        If Me.Height < MainFormHeightMin Then
-            Me.Height = MainFormHeightMin
+        If Me.Height < lngMainFormHeightMin Then
+            Me.Height = lngMainFormHeightMin
             Me.Enabled = False
             Me.Enabled = True
 
@@ -6334,8 +6394,8 @@ Private Sub Localise(ByVal StrPathFile As String)
         ' изменение caption кнопки CmdViewAll
         LoadCmdViewAllDeviceCaption
         ' Перезагрузка всплывающих подсказок для кнопок с драйверами
-        Me.Font.Name = strMainForm_FontName
-        Me.Font.Size = lngMainForm_FontSize
+        Me.Font.Name = strFontMainForm_Name
+        Me.Font.Size = lngFontMainForm_Size
         ToolTipBtnReLoad
     End If
 
@@ -6764,7 +6824,7 @@ Private Sub mnuLang_Click(Index As Integer)
     strPathLng = arrLanguage(1, i)
     strPCLangCurrentPath = strPathLng
     strPCLangCurrentIDTemp = arrLanguage(3, i)
-    lngDialog_Charset = GetCharsetFromLng(CLng(arrLanguage(6, i)))
+    lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, i)))
 
     If InStr(strPCLangCurrentIDTemp, ";") Then
         strPCLangCurrentID_x = Split(strPCLangCurrentIDTemp, ";")
@@ -6778,9 +6838,9 @@ Private Sub mnuLang_Click(Index As Integer)
 
     ' ПереВыставляем шрифт основной формы
     With Me.Font
-        .Name = strMainForm_FontName
-        .Size = lngMainForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontMainForm_Name
+        .Size = lngFontMainForm_Size
+        .Charset = lngFont_Charset
     End With
 
     ChangeStatusTextAndDebug strMessages(142) & " " & arrLanguage(2, i), , , False
@@ -8258,14 +8318,14 @@ End Sub
 Private Sub SetTabProperties()
 
     With SSTab1
-        .Font.Name = strDialogTab_FontName
-        .Font.Size = miDialogTab_FontSize
-        .Font.Underline = mbDialogTab_Underline
-        .Font.Strikethrough = mbDialogTab_Strikethru
-        .Font.Bold = mbDialogTab_Bold
-        .Font.Italic = mbDialogTab_Italic
-        .ForeColor = lngDialogTab_Color
-        .Font.Charset = lngDialog_Charset
+        .Font.Name = strFontTab_Name
+        .Font.Size = miFontTab_Size
+        .Font.Underline = mbFontTab_Underline
+        .Font.Strikethrough = mbFontTab_Strikethru
+        .Font.Bold = mbFontTab_Bold
+        .Font.Italic = mbFontTab_Italic
+        .ForeColor = lngFontTab_Color
+        .Font.Charset = lngFont_Charset
     End With
 
 End Sub
@@ -8281,14 +8341,14 @@ Private Sub SetTabPropertiesTabDrivers()
     If mbFirstStart Then
 
         With SSTab2(0)
-            .Font.Name = strDialogTab2_FontName
-            .Font.Size = miDialogTab2_FontSize
-            .Font.Underline = mbDialogTab2_Underline
-            .Font.Strikethrough = mbDialogTab2_Strikethru
-            .Font.Bold = mbDialogTab2_Bold
-            .Font.Italic = mbDialogTab2_Italic
-            .ForeColor = lngDialogTab2_Color
-            .Font.Charset = lngDialog_Charset
+            .Font.Name = strFontTab2_Name
+            .Font.Size = miFontTab2_Size
+            .Font.Underline = mbFontTab2_Underline
+            .Font.Strikethrough = mbFontTab2_Strikethru
+            .Font.Bold = mbFontTab2_Bold
+            .Font.Italic = mbFontTab2_Italic
+            .ForeColor = lngFontTab2_Color
+            .Font.Charset = lngFont_Charset
         End With
 
     Else
@@ -8300,14 +8360,14 @@ Private Sub SetTabPropertiesTabDrivers()
             For i = .LBound To .UBound
 
                 With .Item(i)
-                    .Font.Name = strDialogTab2_FontName
-                    .Font.Size = miDialogTab2_FontSize
-                    .Font.Underline = mbDialogTab2_Underline
-                    .Font.Strikethrough = mbDialogTab2_Strikethru
-                    .Font.Bold = mbDialogTab2_Bold
-                    .Font.Italic = mbDialogTab2_Italic
-                    .ForeColor = lngDialogTab2_Color
-                    .Font.Charset = lngDialog_Charset
+                    .Font.Name = strFontTab2_Name
+                    .Font.Size = miFontTab2_Size
+                    .Font.Underline = mbFontTab2_Underline
+                    .Font.Strikethrough = mbFontTab2_Strikethru
+                    .Font.Bold = mbFontTab2_Bold
+                    .Font.Italic = mbFontTab2_Italic
+                    .ForeColor = lngFontTab2_Color
+                    .Font.Charset = lngFont_Charset
                 End With
 
             Next
@@ -8696,8 +8756,8 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     Dim lngBtnPrevNum   As Long
     Dim lngNoDP4ModeCnt As Long
 
-    lngStartPosLeft = miButtonLeft
-    lngStartPosTop = miButtonTop
+    lngStartPosLeft = lngButtonLeft
+    lngStartPosTop = lngButtonTop
     lngBtnPrevNum = 0
     lngNoDP4ModeCnt = 0
     objScrollControl.Visible = False
@@ -8764,13 +8824,13 @@ MoveBtn:
             Else
                 
                 If lngBtnPrevNum > 0 Then
-                    lngDeltaPosLeft = acmdPackFiles(lngBtnPrevNum).Left + miButtonWidth + miBtn2BtnLeft - lngStartPosLeft
+                    lngDeltaPosLeft = acmdPackFiles(lngBtnPrevNum).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                 Else
 
                     ' Если первая кнопка подходит, то расчитываем следующее положение исходя из нее
                     If lngTab2Tab > 0 Then
                         If InStr(1, acmdPackFiles(0).Container.Name, "ctlScrollControlTab", vbTextCompare) Then
-                            lngDeltaPosLeft = acmdPackFiles(0).Left + miButtonWidth + miBtn2BtnLeft - lngStartPosLeft
+                            lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                         End If
 
                     Else
@@ -8778,18 +8838,18 @@ MoveBtn:
                             lngNextPosLeft = lngStartPosLeft
                             lngNextPosTop = lngStartPosTop
                         Else
-                            lngDeltaPosLeft = acmdPackFiles(0).Left + miButtonWidth + miBtn2BtnLeft - lngStartPosLeft
+                            lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                         End If
                     End If
                 End If
 
                 lngNextPosLeft = lngStartPosLeft + lngDeltaPosLeft
-                lngMaxLeftPos = lngNextPosLeft + miButtonWidth + 25
+                lngMaxLeftPos = lngNextPosLeft + lngButtonWidth + 25
 
                 If lngMaxLeftPos > objScrollControl.Width Then
                     ' Если по горизонтали кнопка не входит, то перешагиваем
                     lngDeltaPosLeft = 0
-                    lngDeltaPosTop = lngDeltaPosTop + miButtonHeight + miBtn2BtnTop
+                    lngDeltaPosTop = lngDeltaPosTop + lngButtonHeight + lngBtn2BtnTop
                     lngNextPosLeft = lngStartPosLeft
                     lngNextPosTop = lngStartPosTop + lngDeltaPosTop
                 Else
@@ -8799,7 +8859,7 @@ MoveBtn:
 
             ' Перемещение кнопок и checkbox по расчитанным ранее параметрам
             acmdPackFiles(i).Move lngNextPosLeft, lngNextPosTop
-            chkPackFiles(i).Move (lngNextPosLeft + 50), (lngNextPosTop + (miButtonHeight - chkPackFiles(i).Height) / 2)
+            chkPackFiles(i).Move (lngNextPosLeft + 50), (lngNextPosTop + (lngButtonHeight - chkPackFiles(i).Height) / 2)
             chkPackFiles(i).ZOrder 0
             ' Увеличиваем счетчики
             lngBtnPrevNum = i
@@ -8975,8 +9035,8 @@ Private Sub ToolTipStatusLoad()
             .Tools.Clear
         End If
 
-        .Font.Name = strMainForm_FontName
-        .Font.Size = lngMainForm_FontSize
+        .Font.Name = strFontMainForm_Name
+        .Font.Size = lngFontMainForm_Size
         .MaxTipWidth = Me.Width
         .SetDelayTime TipDelayTimeInitial, 200
         .SetDelayTime TipDelayTimeShow, 15000
@@ -9990,20 +10050,20 @@ Private Sub FontCharsetChange()
 
     ' Выставляем шрифт
     With Me.Font
-        .Name = strMainForm_FontName
-        .Size = lngMainForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontMainForm_Name
+        .Size = lngFontMainForm_Size
+        .Charset = lngFont_Charset
     End With
 
-    frCheck.Font.Charset = lngDialog_Charset
-    frDescriptionIco.Font.Charset = lngDialog_Charset
-    frInfo.Font.Charset = lngDialog_Charset
-    frRezim.Font.Charset = lngDialog_Charset
-    frRunChecked.Font.Charset = lngDialog_Charset
-    frTabPanel.Font.Charset = lngDialog_Charset
-    ctlUcStatusBar1.Font.Charset = lngDialog_Charset
-    SetButtonProperties cmdRunTask
-    SetButtonProperties cmdBreakUpdateDB
+    frCheck.Font.Charset = lngFont_Charset
+    frDescriptionIco.Font.Charset = lngFont_Charset
+    frInfo.Font.Charset = lngFont_Charset
+    frRezim.Font.Charset = lngFont_Charset
+    frRunChecked.Font.Charset = lngFont_Charset
+    frTabPanel.Font.Charset = lngFont_Charset
+    ctlUcStatusBar1.Font.Charset = lngFont_Charset
+    SetBtnFontProperties cmdRunTask
+    SetBtnFontProperties cmdBreakUpdateDB
 End Sub
 
 '!--------------------------------------------------------------------------------

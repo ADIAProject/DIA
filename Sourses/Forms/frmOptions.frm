@@ -1367,21 +1367,21 @@ Begin VB.Form frmOptions
          BackColor       =   &H00E0FFFF&
          ForeColor       =   &H80000008&
          Height          =   495
-         Left            =   7920
+         Left            =   8040
          ScaleHeight     =   465
          ScaleWidth      =   465
          TabIndex        =   77
          TabStop         =   0   'False
-         Top             =   2700
+         Top             =   4680
          Visible         =   0   'False
          Width           =   495
       End
       Begin prjDIADBS.CheckBoxW chkFutureButton 
          Height          =   210
-         Left            =   4680
+         Left            =   780
          TabIndex        =   76
          TabStop         =   0   'False
-         Top             =   2940
+         Top             =   3240
          Width           =   210
          _ExtentX        =   370
          _ExtentY        =   370
@@ -1404,7 +1404,7 @@ Begin VB.Form frmOptions
          List            =   "frmOptions.frx":1181
          Sorted          =   -1  'True
          TabIndex        =   52
-         Top             =   4605
+         Top             =   4845
          Width           =   3000
       End
       Begin VB.ComboBox cmbImageStatus 
@@ -1414,7 +1414,7 @@ Begin VB.Form frmOptions
          List            =   "frmOptions.frx":11C6
          Sorted          =   -1  'True
          TabIndex        =   34
-         Top             =   4605
+         Top             =   4845
          Width           =   3000
       End
       Begin prjDIADBS.CheckBoxW chkButtonTextUpCase 
@@ -1641,10 +1641,10 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorButton 
          Height          =   795
-         Left            =   420
+         Left            =   3480
          TabIndex        =   73
-         Top             =   3075
-         Width           =   2850
+         Top             =   2805
+         Width           =   2450
          _ExtentX        =   5027
          _ExtentY        =   1402
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -1666,13 +1666,13 @@ Begin VB.Form frmOptions
          TooltipBackColor=   0
       End
       Begin prjDIADBS.CheckBoxW chkButtonDisable 
-         Height          =   270
-         Left            =   3960
+         Height          =   450
+         Left            =   780
          TabIndex        =   74
-         Top             =   3540
+         Top             =   3660
          Width           =   4560
          _ExtentX        =   8043
-         _ExtentY        =   476
+         _ExtentY        =   794
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   8.25
@@ -1687,9 +1687,9 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlXpButton cmdFutureButton 
          Height          =   615
-         Left            =   4620
+         Left            =   660
          TabIndex        =   75
-         Top             =   2760
+         Top             =   3000
          Width           =   2370
          _ExtentX        =   4180
          _ExtentY        =   1085
@@ -1712,11 +1712,54 @@ Begin VB.Form frmOptions
          TextColor       =   0
          MenuExist       =   -1  'True
       End
+      Begin prjDIADBS.ctlJCbutton cmdFontColorToolTip 
+         Height          =   795
+         Left            =   6060
+         TabIndex        =   141
+         Top             =   2805
+         Width           =   2445
+         _ExtentX        =   3969
+         _ExtentY        =   1402
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ButtonStyle     =   8
+         BackColor       =   16765357
+         Caption         =   "Установить цвет и шрифт текста подсказок"
+         PictureAlign    =   0
+         PicturePushOnHover=   -1  'True
+         PictureShadow   =   -1  'True
+         CaptionEffects  =   0
+         TooltipBackColor=   0
+      End
+      Begin prjDIADBS.ToolTip TT 
+         Left            =   7320
+         Top             =   4680
+         _ExtentX        =   450
+         _ExtentY        =   450
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Courier New"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         VisualStyles    =   -1  'True
+         Title           =   "frmOptions.frx":13B2
+      End
       Begin prjDIADBS.LabelW lblTheme 
          Height          =   225
          Left            =   360
          TabIndex        =   104
-         Top             =   4020
+         Top             =   4260
          Width           =   7875
          _ExtentX        =   13150
          _ExtentY        =   476
@@ -1737,7 +1780,7 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   3960
          TabIndex        =   105
-         Top             =   4305
+         Top             =   4545
          Width           =   3000
          _ExtentX        =   0
          _ExtentY        =   0
@@ -1757,7 +1800,7 @@ Begin VB.Form frmOptions
          Height          =   255
          Left            =   615
          TabIndex        =   106
-         Top             =   4305
+         Top             =   4545
          Width           =   3000
          _ExtentX        =   0
          _ExtentY        =   0
@@ -2046,7 +2089,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":13B2
+         Caption         =   "frmOptions.frx":13D2
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkTabHide 
@@ -2066,7 +2109,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1474
+         Caption         =   "frmOptions.frx":1494
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkLoadUnSupportedOS 
@@ -2086,7 +2129,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1522
+         Caption         =   "frmOptions.frx":1542
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabOS 
@@ -2308,9 +2351,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":159E
+         Text            =   "frmOptions.frx":15BE
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":15BE
+         CueBanner       =   "frmOptions.frx":15DE
       End
       Begin prjDIADBS.CheckBoxW chkLegacyMode 
          Height          =   210
@@ -2329,7 +2372,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":15DE
+         Caption         =   "frmOptions.frx":15FE
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkPromptIfDriverIsNotBetter 
@@ -2349,7 +2392,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1612
+         Caption         =   "frmOptions.frx":1632
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkForceIfDriverIsNotBetter 
@@ -2369,7 +2412,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1664
+         Caption         =   "frmOptions.frx":1684
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSuppressAddRemovePrograms 
@@ -2390,7 +2433,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":16B4
+         Caption         =   "frmOptions.frx":16D4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSuppressWizard 
@@ -2410,7 +2453,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1706
+         Caption         =   "frmOptions.frx":1726
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkQuietInstall 
@@ -2430,7 +2473,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1742
+         Caption         =   "frmOptions.frx":1762
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkScanHardware 
@@ -2450,7 +2493,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":177A
+         Caption         =   "frmOptions.frx":179A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblCmdStringDPInst 
@@ -2653,7 +2696,7 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          BackStyle       =   0
-         Caption         =   $"frmOptions.frx":17B2
+         Caption         =   $"frmOptions.frx":17D2
       End
    End
    Begin prjDIADBS.ctlJCFrames frDebug 
@@ -2696,8 +2739,8 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":18B0
-         CueBanner       =   "frmOptions.frx":18F4
+         Text            =   "frmOptions.frx":18D0
+         CueBanner       =   "frmOptions.frx":1914
       End
       Begin prjDIADBS.TextBoxW txtMacrosDate 
          Height          =   255
@@ -2716,9 +2759,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1914
+         Text            =   "frmOptions.frx":1934
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1940
+         CueBanner       =   "frmOptions.frx":1960
       End
       Begin prjDIADBS.TextBoxW txtMacrosOSBIT 
          Height          =   255
@@ -2737,9 +2780,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1960
+         Text            =   "frmOptions.frx":1980
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":198E
+         CueBanner       =   "frmOptions.frx":19AE
       End
       Begin prjDIADBS.TextBoxW txtMacrosOSVER 
          Height          =   255
@@ -2758,9 +2801,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":19AE
+         Text            =   "frmOptions.frx":19CE
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":19DC
+         CueBanner       =   "frmOptions.frx":19FC
       End
       Begin prjDIADBS.TextBoxW txtMacrosPCModel 
          Height          =   255
@@ -2779,9 +2822,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":19FC
+         Text            =   "frmOptions.frx":1A1C
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1A2E
+         CueBanner       =   "frmOptions.frx":1A4E
       End
       Begin prjDIADBS.TextBoxW txtMacrosPCName 
          Height          =   255
@@ -2800,9 +2843,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1A4E
+         Text            =   "frmOptions.frx":1A6E
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1A7E
+         CueBanner       =   "frmOptions.frx":1A9E
       End
       Begin prjDIADBS.CheckBoxW chkDebug 
          Height          =   210
@@ -2821,7 +2864,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1A9E
+         Caption         =   "frmOptions.frx":1ABE
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDebugLogPath 
@@ -2854,7 +2897,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1AEE
+         Caption         =   "frmOptions.frx":1B0E
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkDebugTime2File 
@@ -2874,7 +2917,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1B6E
+         Caption         =   "frmOptions.frx":1B8E
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblMacrosDate 
@@ -3169,22 +3212,22 @@ Private Sub FontCharsetChange()
 
     ' Выставляем шрифт
     With Me.Font
-        .Name = strOtherForm_FontName
-        .Size = lngOtherForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
     End With
 
-    frDebug.Font.Charset = lngDialog_Charset
-    frDesign.Font.Charset = lngDialog_Charset
-    frDesign2.Font.Charset = lngDialog_Charset
-    frDpInstParam.Font.Charset = lngDialog_Charset
-    frMain.Font.Charset = lngDialog_Charset
-    frMain2.Font.Charset = lngDialog_Charset
-    frMainTools.Font.Charset = lngDialog_Charset
-    frOptions.Font.Charset = lngDialog_Charset
-    frOS.Font.Charset = lngDialog_Charset
-    frOther.Font.Charset = lngDialog_Charset
-    frOtherTools.Font.Charset = lngDialog_Charset
+    frDebug.Font.Charset = lngFont_Charset
+    frDesign.Font.Charset = lngFont_Charset
+    frDesign2.Font.Charset = lngFont_Charset
+    frDpInstParam.Font.Charset = lngFont_Charset
+    frMain.Font.Charset = lngFont_Charset
+    frMain2.Font.Charset = lngFont_Charset
+    frMainTools.Font.Charset = lngFont_Charset
+    frOptions.Font.Charset = lngFont_Charset
+    frOS.Font.Charset = lngFont_Charset
+    frOther.Font.Charset = lngFont_Charset
+    frOtherTools.Font.Charset = lngFont_Charset
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3211,7 +3254,7 @@ Private Sub ChangeButtonProperties()
         .Top = cmdFutureButton.Top + (txtButtonHeight.Value - .Height) / 2
     End With
 
-    SetButtonProperties cmdFutureButton
+    SetBtnFontProperties cmdFutureButton
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3578,27 +3621,26 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
-    lngShowMessageResult = vbNo
     Me.Hide
     ChangeStatusTextAndDebug cmdExit.Caption
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdFontColorButton_Click
+'! Procedure   (Функция)   :   Sub cmdFontColorTabOS_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub cmdFontColorButton_Click()
+Private Sub cmdFontColorTabOS_Click()
 
     With frmFontDialog
-        .opt3.Value = True
-        .txtFont.Font.Name = strDialog_FontName
-        .txtFont.Font.Size = miDialog_FontSize
-        .txtFont.Font.Bold = mbDialog_Bold
-        .txtFont.Font.Italic = mbDialog_Italic
-        .txtFont.Font.Underline = mbDialog_Underline
-        .txtFont.Font.Charset = lngDialog_Charset
-        .txtFont.ForeColor = lngDialog_Color
+        .optControl(0).Value = True
+        .txtFont.Font.Name = strFontTab_Name
+        .txtFont.Font.Size = miFontTab_Size
+        .txtFont.Font.Bold = mbFontTab_Bold
+        .txtFont.Font.Italic = mbFontTab_Italic
+        .txtFont.Font.Underline = mbFontTab_Underline
+        .txtFont.Font.Charset = lngFont_Charset
+        .txtFont.ForeColor = lngFontTab_Color
         .Show vbModal, Me
     End With
 
@@ -3612,35 +3654,56 @@ End Sub
 Private Sub cmdFontColorTabDrivers_Click()
 
     With frmFontDialog
-        .opt2.Value = True
-        .txtFont.Font.Name = strDialogTab2_FontName
-        .txtFont.Font.Size = miDialogTab2_FontSize
-        .txtFont.Font.Bold = mbDialogTab2_Bold
-        .txtFont.Font.Italic = mbDialogTab2_Italic
-        .txtFont.Font.Underline = mbDialogTab2_Underline
-        .txtFont.Font.Charset = lngDialog_Charset
-        .ForeColor = lngDialogTab2_Color
+        .optControl(1).Value = True
+        .txtFont.Font.Name = strFontTab2_Name
+        .txtFont.Font.Size = miFontTab2_Size
+        .txtFont.Font.Bold = mbFontTab2_Bold
+        .txtFont.Font.Italic = mbFontTab2_Italic
+        .txtFont.Font.Underline = mbFontTab2_Underline
+        .txtFont.Font.Charset = lngFont_Charset
+        .ForeColor = lngFontTab2_Color
         .Show vbModal, Me
     End With
 
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdFontColorTabOS_Click
+'! Procedure   (Функция)   :   Sub cmdFontColorToolTip_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub cmdFontColorTabOS_Click()
+Private Sub cmdFontColorToolTip_Click()
+    
+    With frmFontDialog
+        .optControl(2).Value = True
+        .txtFont.Font.Name = strFontTT_Name
+        .txtFont.Font.Size = miFontTT_Size
+        .txtFont.Font.Bold = mbFontTT_Bold
+        .txtFont.Font.Italic = mbFontTT_Italic
+        .txtFont.Font.Underline = mbFontTT_Underline
+        .txtFont.Font.Charset = lngFont_Charset
+        .txtFont.ForeColor = lngFontTT_Color
+        .Show vbModal, Me
+    End With
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdFontColorButton_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdFontColorButton_Click()
 
     With frmFontDialog
-        .opt1.Value = True
-        .txtFont.Font.Name = strDialogTab_FontName
-        .txtFont.Font.Size = miDialogTab_FontSize
-        .txtFont.Font.Bold = mbDialogTab_Bold
-        .txtFont.Font.Italic = mbDialogTab_Italic
-        .txtFont.Font.Underline = mbDialogTab_Underline
-        .txtFont.Font.Charset = lngDialog_Charset
-        .txtFont.ForeColor = lngDialogTab_Color
+        .optControl(3).Value = True
+        .txtFont.Font.Name = strFontBtn_Name
+        .txtFont.Font.Size = miFontBtn_Size
+        .txtFont.Font.Bold = mbFontBtn_Bold
+        .txtFont.Font.Italic = mbFontBtn_Italic
+        .txtFont.Font.Underline = mbFontBtn_Underline
+        .txtFont.Font.Charset = lngFont_Charset
+        .txtFont.ForeColor = lngFontBtn_Color
         .Show vbModal, Me
     End With
 
@@ -3878,10 +3941,10 @@ Private Sub Form_Load()
     frDebug.Left = 3100
     ' Устанавливаем минимальные значения для текстовых полей
     txtTabPerRowCount.Min = 2
-    txtFormHeight.Min = MainFormHeightMin
-    txtFormWidth.Min = MainFormWidthMin
-    txtButtonHeight.Min = ButtonHeightMin
-    txtButtonWidth.Min = ButtonWidthMin
+    txtFormHeight.Min = lngMainFormHeightMin
+    txtFormWidth.Min = lngMainFormWidthMin
+    txtButtonHeight.Min = lngButtonHeightMin
+    txtButtonWidth.Min = lngButtonWidthMin
     ' Устанавливаем картинки кнопок и убираем описание кнопок
     LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
     LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
@@ -3894,6 +3957,7 @@ Private Sub Form_Load()
     LoadIconImage2BtnJC cmdFontColorButton, "BTN_FONT", strPathImageMainWork
     LoadIconImage2BtnJC cmdFontColorTabOS, "BTN_FONT", strPathImageMainWork
     LoadIconImage2BtnJC cmdFontColorTabDrivers, "BTN_FONT", strPathImageMainWork
+    LoadIconImage2BtnJC cmdFontColorToolTip, "BTN_FONT", strPathImageMainWork
     FormLoadAction
 End Sub
 
@@ -3916,9 +3980,13 @@ Public Sub FormLoadAction()
     tvOptionsLoad
     ' Заполнить опции
     ReadOptions
-    ' установить опции шрифта и цвета
+    ' установить опции шрифта и цвета для будущей кнопки
     Set cmdFutureButton.Picture = imgOK.Picture
-    SetButtonProperties cmdFutureButton
+    cmdFutureButton.TextColor = lngFontBtn_Color
+    SetBtnFontProperties cmdFutureButton
+    'Загрузить подсказку
+    LoadToolTip
+    
     DoEvents
 End Sub
 
@@ -4213,6 +4281,8 @@ Private Sub Localise(ByVal StrPathFile As String)
     cmdFontColorTabDrivers.Caption = LocaliseString(StrPathFile, strFormName, "cmdFontColorTabDrivers", cmdFontColorTabDrivers.Caption)
     chkButtonDisable.Caption = LocaliseString(StrPathFile, strFormName, "chkButtonDisable", chkButtonDisable.Caption)
     lblTheme.Caption = LocaliseString(StrPathFile, strFormName, "lblTheme", lblTheme.Caption)
+    cmdFontColorToolTip.Caption = LocaliseString(StrPathFile, strFormName, "cmdFontColorToolTip", cmdFontColorToolTip.Caption)
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4343,16 +4413,16 @@ Private Sub ReadOptions()
     End Select
 
     'MainForm
-    txtFormHeight.Value = MainFormHeight
-    txtFormWidth.Value = MainFormWidth
+    txtFormHeight.Value = lngMainFormHeight
+    txtFormWidth.Value = lngMainFormWidth
     txtExcludeHWID.Text = strExcludeHWID
     'Buttons
-    txtButtonWidth.Value = miButtonWidth
-    txtButtonHeight.Value = miButtonHeight
-    txtButtonLeft.Value = miButtonLeft
-    txtButtonTop.Value = miButtonTop
-    txtButton2BtnL.Value = miBtn2BtnLeft
-    txtButton2BtnT.Value = miBtn2BtnTop
+    txtButtonWidth.Value = lngButtonWidth
+    txtButtonHeight.Value = lngButtonHeight
+    txtButtonLeft.Value = lngButtonLeft
+    txtButtonTop.Value = lngButtonTop
+    txtButton2BtnL.Value = lngBtn2BtnLeft
+    txtButton2BtnT.Value = lngBtn2BtnTop
     chkButtonTextUpCase.Value = mbButtonTextUpCase
     txtTabPerRowCount.Value = lngOSCountPerRow
 
@@ -4392,7 +4462,6 @@ Private Sub ReadOptions()
     ' Другие настройки
     txtCmdStringDPInst = CollectCmdString
     chkLoadFinishFile.Value = mbLoadFinishFile
-    'chkReadClasses.value = mbReadClasses
     chkReadDPName.Value = mbReadDPName
     chkConvertDPName.Value = mbConvertDPName
     ' Загрузка списка скинов
@@ -4613,28 +4682,35 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Button", "Btn2BtnLeft", txtButton2BtnL.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "Btn2BtnTop", txtButton2BtnT.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "TextUpCase", CStr(Abs(chkButtonTextUpCase.Value)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontName", strDialog_FontName, strSysIniTemp
-    IniWriteStrPrivate "Button", "FontSize", CStr(miDialog_FontSize), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontUnderline", CStr(Abs(mbDialog_Underline)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontStrikethru", CStr(Abs(mbDialog_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontItalic", CStr(Abs(mbDialog_Italic)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontBold", CStr(Abs(mbDialog_Bold)), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontName", strFontBtn_Name, strSysIniTemp
+    IniWriteStrPrivate "Button", "FontSize", CStr(miFontBtn_Size), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontUnderline", CStr(Abs(mbFontBtn_Underline)), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontStrikethru", CStr(Abs(mbFontBtn_Strikethru)), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontItalic", CStr(Abs(mbFontBtn_Italic)), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontBold", CStr(Abs(mbFontBtn_Bold)), strSysIniTemp
     IniWriteStrPrivate "Button", "FontColor", CStr(cmdFutureButton.TextColor), strSysIniTemp
     IniWriteStrPrivate "Button", "IconStatusSkin", cmbImageStatus.Text, strSysIniTemp
     'Секция Tab
-    IniWriteStrPrivate "Tab", "FontName", strDialogTab_FontName, strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontSize", CStr(miDialogTab_FontSize), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontUnderline", CStr(Abs(mbDialogTab_Underline)), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontStrikethru", CStr(Abs(mbDialogTab_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontItalic", CStr(Abs(mbDialogTab_Italic)), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontBold", CStr(Abs(mbDialogTab_Bold)), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontName", strFontTab_Name, strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontSize", CStr(miFontTab_Size), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontUnderline", CStr(Abs(mbFontTab_Underline)), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontStrikethru", CStr(Abs(mbFontTab_Strikethru)), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontItalic", CStr(Abs(mbFontTab_Italic)), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontBold", CStr(Abs(mbFontTab_Bold)), strSysIniTemp
     'Секция Tab2
-    IniWriteStrPrivate "Tab2", "FontName", strDialogTab2_FontName, strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontSize", CStr(miDialogTab2_FontSize), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontUnderline", CStr(Abs(mbDialogTab2_Underline)), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontStrikethru", CStr(Abs(mbDialogTab2_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontItalic", CStr(Abs(mbDialogTab2_Italic)), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontBold", CStr(Abs(mbDialogTab2_Bold)), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontName", strFontTab2_Name, strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontSize", CStr(miFontTab2_Size), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontUnderline", CStr(Abs(mbFontTab2_Underline)), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontStrikethru", CStr(Abs(mbFontTab2_Strikethru)), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontItalic", CStr(Abs(mbFontTab2_Italic)), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontBold", CStr(Abs(mbFontTab2_Bold)), strSysIniTemp
+    'Секция ToolTip
+    IniWriteStrPrivate "ToolTip", "FontName", strFontTT_Name, strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontSize", CStr(miFontTT_Size), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontUnderline", CStr(Abs(mbFontTT_Underline)), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontStrikethru", CStr(Abs(mbFontTT_Strikethru)), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontItalic", CStr(Abs(mbFontTT_Italic)), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontBold", CStr(Abs(mbFontTT_Bold)), strSysIniTemp
     'Секция "NotebookVendor"
     IniWriteStrPrivate "NotebookVendor", "FilterCount", UBound(arrNotebookFilterList), strSysIniTemp
 
@@ -5409,4 +5485,48 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
         If Not .SelectedItem Is Nothing Then .SelectedItem.EnsureVisible
     End With
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadToolTip
+'! Description (Описание)  :   [Инициализация подсказки для "будущей" кнопки]
+'! Parameters  (Переменные):   ColumnHeader (LvwColumnHeader)
+'!--------------------------------------------------------------------------------
+Private Sub LoadToolTip()
+Dim strTTText As String
+Dim strTTipTextTitle As String
+
+    strTTipTextTitle = LocaliseString(strPCLangCurrentPath, frmMain.Name, "ToolTipTextTitle", "Файл пакета драйверов:")
+    strTTText = "d:\DriversInstaller\driverpacks.net\All\" & vbNewLine & vbNewLine & _
+                "dp_chipset_wnt5_x86-32_1209.7z" & vbNewLine & _
+                "File Size: 4,33 МБ" & vbNewLine & _
+                "Class of the Drivers: System" & vbNewLine & vbNewLine & _
+                "DRIVERS AVAILABLE TO INSTALL:" & vbNewLine & _
+                "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" & vbNewLine & _
+                "HWID                  | PATH      | INFFILE      | VERSION(DB)            | ! | VERSION(PC)              | STATUS | DEVICE NAME                                                                                " & vbNewLine & _
+                "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" & vbNewLine & _
+                "*PNP0103              | D\C\I\    | dmi_pci.inf  | 11/07/2008,7.0.1.1011  | > | 07/01/2001,5.1.2600.5512 | 0      | High Precision Event Timer                                                                 " & vbNewLine & _
+                "PCI\VEN_8086&DEV_0100 | D\C\I\    | snb2009.inf  | 03/10/2011,9.2.0.1026  | < | 09/10/2012,9.2.0.1031    | 1      | 2nd Generation Intel(R) Core(TM) Processor Family DRAM Controller - 0100                   " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C10 | D\C\I\    | cougcore.inf | 11/20/2010,9.2.0.1016  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) 6 Series/C200 Series Chipset Family PCI Express Root Port 1 - 1C10                " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C1A | D\C\I\    | cougcore.inf | 11/20/2010,9.2.0.1016  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) 6 Series/C200 Series Chipset Family PCI Express Root Port 6 - 1C1A                " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C1C | D\C\I\    | cougcore.inf | 11/20/2010,9.2.0.1016  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) 6 Series/C200 Series Chipset Family PCI Express Root Port 7 - 1C1C                " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C1E | D\C\I\    | cougcore.inf | 11/20/2010,9.2.0.1016  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) 6 Series/C200 Series Chipset Family PCI Express Root Port 8 - 1C1E                " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C22 | D\C\I\    | cougsmb.inf  | 09/10/2010,9.2.0.1011  | < | 09/10/2012,9.2.0.1031    | 0      | Intel(R) 6 Series/C200 Series Chipset Family SMBus Controller - 1C22                       " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C24 | D\C\I\    | cougcore.inf | 11/20/2010,9.2.0.1016  | = | 11/20/2010,9.2.0.1016    | 0      | Intel(R) 6 Series/C200 Series Chipset Family Thermal Control - 1C24                        " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C26 | D\C\I\    | cougusb.inf  | 07/31/2010,9.2.0.1031  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) 6 Series/C200 Series Chipset Family USB Enhanced Host Controller - 1C26           " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C2D | D\C\I\    | cougusb.inf  | 07/31/2010,9.2.0.1031  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) 6 Series/C200 Series Chipset Family USB Enhanced Host Controller - 1C2D           " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C3A | D\C\I6\   | heci.inf     | 09/22/2011,7.1.21.1134 | < | 12/17/2012,9.0.0.1287    | 1      | Intel(R) Management Engine Interface                                                       " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C3A | D\C\I\    | cougme.inf   | 04/14/2011,1.2.0.1030  | < | 12/17/2012,9.0.0.1287    | 1      | Intel(R) 6 Series/C200 Series Management Engine Interface - 1C3A                           " & vbNewLine & _
+                "PCI\VEN_8086&DEV_1C4A | D\C\I\    | cougcore.inf | 11/20/2010,9.2.0.1016  | < | 09/10/2012,9.2.0.1031    | 1      | Intel(R) H67 Express Chipset Family LPC Interface Controller - 1C4A                        " & vbNewLine & _
+                "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+    ' Изменяем параметры Всплывающей подсказки для кнопки
+    With TT
+        .MaxTipWidth = lngRightWorkArea
+        .SetDelayTime TipDelayTimeInitial, 400
+        .SetDelayTime TipDelayTimeShow, 15000
+        .Title = strTTipTextTitle
+        .Tools.Add cmdFutureButton.hWnd, , strTTText
+        SetTTFontProperties TT
+    End With
 End Sub

@@ -406,9 +406,9 @@ Private Sub FontCharsetChange()
 
     ' Выставляем шрифт
     With Me.Font
-        .Name = strOtherForm_FontName
-        .Size = lngOtherForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
     End With
 
 End Sub
@@ -436,7 +436,7 @@ Private Sub Form_Load()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -445,7 +445,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
 

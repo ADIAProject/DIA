@@ -1,6 +1,10 @@
 Attribute VB_Name = "mTimeFunction"
 Option Explicit
 
+Public dtStartTimeProg                   As Long
+Public dtEndTimeProg                     As Long
+Public dtAllTimeProg                     As String
+
 Public Declare Function GetTickCount Lib "kernel32.dll" () As Long
 
 '!--------------------------------------------------------------------------------

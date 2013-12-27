@@ -60,3 +60,4 @@
 2013_10_29=Added in section 	[frmMain]		mnuSaveInfoPC
 	   Added new section 	[frmEmulate]		frmEmulate;lblInfo;chk64bit;cmdOK;cmdExit
 
+2013_12_27=Added in section 	[frmOptions]		cmdFontColorToolTip

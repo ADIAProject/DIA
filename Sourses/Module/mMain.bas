@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram         As String = "24/12/2013"
+Public Const strDateProgram         As String = "27/12/2013"
 
 ' Текущая версия базы данных
 Public Const lngDevDBVersion        As Long = 5
@@ -34,15 +34,6 @@ Public mbLoadIniTmpAfterRestart     As Boolean
 ' кэпшн основной формы
 Public strFrmMainCaptionTemp        As String
 Public strFrmMainCaptionTempDate    As String
-
-' Шрифт основной формы и шрифта подсказок
-Public strMainForm_FontName         As String
-Public lngMainForm_FontSize         As Long
-
-' Шрифт других форм
-Public strOtherForm_FontName        As String
-Public lngOtherForm_FontSize        As Long
-Public mbCalcDriverScore            As Boolean
 
 Public Type arrHwidsStruct
     HWID                                As String
@@ -141,39 +132,12 @@ Public miStartMode                       As Long
 Public mbPatnAbs                         As Boolean
 Public mbRecursion                       As Boolean
 Public mbSaveSizeOnExit                  As Boolean
-
-' стартовая вкладка для типов пакетов
-Public lngStartModeTab2                  As Long
-
-' Добавляем к описанию в главном окне в названии программы
-Public strThisBuildBy                    As String
-
-' Параметры каталога %Temp%
-Public mbTempPath                        As Boolean
-Public strAlternativeTempPath            As String
-
-Private mbInitXPStyle                    As Boolean
-
-' Пользователь администратор?
-Private mbIsUserAnAdmin                  As Boolean
-
-Public dtStartTimeProg                   As Long
-Public dtEndTimeProg                     As Long
-Public dtAllTimeProg                     As String
 Public strExcludeHWID                    As String
-
-' Переменные для парсинга
-Public IndexDevIDMass                    As Long
-Public mbDevParserRun                    As Boolean
-
-'номер последнего элемента в списке ОС
-Public LastIdOS                          As Long
-
-'номер последнего элемента в списке утилит
-Public LastIdUtil                        As Long
-
-'режим работы с элементом listview - либо изменние либо добавление
-Public mbAddInList                       As Boolean
+Public LastIdOS                          As Long            ' номер последнего элемента в списке ОС
+Public LastIdUtil                        As Long            ' номер последнего элемента в списке утилит
+Public mbAddInList                       As Boolean         ' режим работы с элементом listview - либо изменние либо добавление
+Public lngStartModeTab2                  As Long            ' стартовая вкладка для типов пакетов
+Public strThisBuildBy                    As String          ' Добавляем к описанию в главном окне в названии программы
 Public mbIsDriveCDRoom                   As Boolean
 Public mbTabBlock                        As Boolean
 Public mbTabHide                         As Boolean
@@ -190,8 +154,7 @@ Public strExcludeFileName                As String
 Public strTTipTextHeaders                As String
 Public strImageStatusButtonName          As String
 Public strImageMainName                  As String
-
-'Public strImageMenuName                         As String
+'Public strImageMenuName                  As String
 Public mbTasks                           As Boolean
 Public strPathDRPList                    As String
 Public mbooSelectInstall                 As Boolean
@@ -199,18 +162,30 @@ Public mbCheckDRVOk                      As Boolean
 Public mbGroupTask                       As Boolean
 Public mbIgnorStatusHwid                 As Boolean
 Public mbDRVNotInstall                   As Boolean
-
-' Лицензионное соглашение
-Private mbShowLicence                    As Boolean
+Private mbShowLicence                    As Boolean         ' Лицензионное соглашение
 Private strLicenceDate                   As String
-
 Public mbEULAAgree                       As Boolean
-
 Private mbAllFolderDRVNotExist           As Boolean
+Private mbIsUserAnAdmin                  As Boolean         ' Пользователь администратор?
+
+' Параметры каталога %Temp%
+Public mbTempPath                        As Boolean
+Public strAlternativeTempPath            As String
+
+Private mbInitXPStyle                    As Boolean
+
+
+
+
+' Переменные для парсинга
+Public IndexDevIDMass                    As Long
+Public mbDevParserRun                    As Boolean
+
+
+
 
 ' Запуск с коммандной строкой
 Public mbRunWithParam                    As Boolean
-
 Private mbRunWithParamS                  As Boolean
 Private strRunWithParam                  As String
 
@@ -228,9 +203,6 @@ Public mbDpInstSuppressAddRemovePrograms As Boolean
 Public mbDpInstSuppressWizard            As Boolean
 Public mbDpInstQuietInstall              As Boolean
 Public mbDpInstScanHardware              As Boolean
-Public mbLogNotOnCDRoom                  As Boolean
-Public mbHideOtherProcess                As Boolean
-Public mbChangeResolution                As Boolean
 
 ' Сравнение версий драйверов по дате
 Public mbCompareDrvVerByDate             As Boolean
@@ -256,56 +228,61 @@ Public mbDateFormatRus                   As Boolean
 ' Искать новые устройства при запуске программы
 Public mbSearchOnStart                   As Boolean
 Public lngPauseAfterSearch               As Long
+
+' Переменная для режима создания точки восстановления
 Public mbCreateRestorePoint              As Boolean
+
+' Различные параметры программы для настройки поиска совпадений по HWID
+Public mbCalcDriverScore        As Boolean
 Public mbMatchingHWID                    As Boolean
 Public mbCompatiblesHWID                 As Boolean
 Public mbSearchCompatibleDriverOtherOS   As Boolean
-
-' Переменная для оперделния режима только распаковки драйверов
-Public mbOnlyUnpackDP                    As Boolean
-
-' Переменная для определения выключения DEP
-Private mbDisableDEP                     As Boolean
-
 ' Глубина поиска совместимых HWID
 Public lngCompatiblesHWIDCount           As Long
-
-' Глубина поиска совместимых HWID
 Public mbMatchHWIDbyDPName               As Boolean
 
+' Переменная для определения режима - только распаковка драйверов
+Public mbOnlyUnpackDP                    As Boolean
+' Переменная для определения выключения DEP
+Private mbDisableDEP                     As Boolean
+' Лог отладки находится не на CD
+Public mbLogNotOnCDRoom                  As Boolean
+' Скрывать сторонние процессы при запуске
+Public mbHideOtherProcess                As Boolean
+' Маркер, показывающий что проводилось измеенние разрешения экрана
+Public mbChangeResolution                As Boolean
+
 ' Расширенное меню
-'Public mbExMenu                              As Boolean
-'-------------------- Переменные размеров Формы и кнопок ------------------'
-Public MainFormWidth                     As Long
-Public MainFormHeight                    As Long
-Public miButtonWidth                     As Long
-Public miButtonHeight                    As Long
-Public miButtonLeft                      As Long
-Public miButtonTop                       As Long
-Public miBtn2BtnLeft                     As Long
-Public miBtn2BtnTop                      As Long
+'Public mbExMenu                           As Boolean
 
-' Минимальные значения размеров формы
-Public Const MainFormWidthMin            As Long = 9350
-Public Const MainFormHeightMin           As Long = 6500
-
-' Дефолтные значения размеров формы
-Private Const MainFormWidthDef           As Long = 11800
-Private Const MainFormHeightDef          As Long = 8400
-
+'-------------------- Переменные размеров кнопок ------------------'
+Public lngMainFormWidth                   As Long
+Public lngMainFormHeight                  As Long
+Public lngButtonWidth                     As Long
+Public lngButtonHeight                    As Long
+Public lngButtonLeft                      As Long
+Public lngButtonTop                       As Long
+Public lngBtn2BtnLeft                     As Long
+Public lngBtn2BtnTop                      As Long
 ' Минимальные значения размеров кнопки
-Public Const ButtonWidthMin              As Long = 1500
-Public Const ButtonHeightMin             As Long = 350
-
+Public Const lngButtonWidthMin            As Long = 1500
+Public Const lngButtonHeightMin           As Long = 350
 ' Дефолтные значения размеров кнопки
-Private Const ButtonWidthDef             As Long = 2150
-Private Const ButtonHeightDef            As Long = 550
-
+Private Const lngButtonWidthDef           As Long = 2150
+Private Const lngButtonHeightDef          As Long = 550
 ' Дефолтные значения размеров кнопки
-Private Const ButtonLeftDef              As Long = 100
-Private Const ButtonTopDef               As Long = 480
-Private Const Btn2BtnLeftDef             As Long = 100
-Private Const Btn2BtnTopDef              As Long = 100
+Private Const lngButtonLeftDef            As Long = 100
+Private Const lngButtonTopDef             As Long = 480
+Private Const lngBtn2BtnLeftDef           As Long = 100
+Private Const lngBtn2BtnTopDef            As Long = 100
+
+'-------------------- Переменные размеров Формы  ------------------'
+' Минимальные значения размеров формы
+Public Const lngMainFormWidthMin          As Long = 9350
+Public Const lngMainFormHeightMin         As Long = 6500
+' Дефолтные значения размеров формы
+Private Const lngMainFormWidthDef         As Long = 11800
+Private Const lngMainFormHeightDef        As Long = 8400
 
 ' Дефолтные значения размеров колонок в всплывающем сообщении
 Public lngSizeRow1                       As Long
@@ -610,7 +587,7 @@ Private Sub Main()
     strCompModel = GetMBInfo()
     DebugMode "isNotebook: " & mbIsNotebok & vbNewLine & _
               "Notebook/Motherboard Model: " & strCompModel
-    hc_Handle_Hand = LoadCursor(0, IDC_HAND)
+              
     ' Показ лицензионного соглашения
     mbFirstStart = True
     mbShowLicence = GetSetting(App.ProductName, "Licence", "Show at Startup", True)
@@ -863,22 +840,22 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Utils_3", "Path", "Tools\Nvidia\PatchPostInstall.cmd", strSysIni
         IniWriteStrPrivate "Utils_3", "Params", vbNullString, strSysIni
         'Секция MainForm
-        IniWriteStrPrivate "MainForm", "Width", CStr(MainFormWidthDef), strSysIni
-        IniWriteStrPrivate "MainForm", "Height", CStr(MainFormHeightDef), strSysIni
+        IniWriteStrPrivate "MainForm", "Width", CStr(lngMainFormWidthDef), strSysIni
+        IniWriteStrPrivate "MainForm", "Height", CStr(lngMainFormHeightDef), strSysIni
         IniWriteStrPrivate "MainForm", "StartMaximazed", "0", strSysIni
         IniWriteStrPrivate "MainForm", "SaveSizeOnExit", "0", strSysIni
-        IniWriteStrPrivate "MainForm", "FontName", "Courier New", strSysIni
+        IniWriteStrPrivate "MainForm", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "MainForm", "FontSize", "8", strSysIni
         IniWriteStrPrivate "MainForm", "HighlightColor", "32896", strSysIni
         'Секция Buttons
-        IniWriteStrPrivate "Button", "Width", CStr(ButtonWidthDef), strSysIni
-        IniWriteStrPrivate "Button", "Height", CStr(ButtonHeightDef), strSysIni
+        IniWriteStrPrivate "Button", "Width", CStr(lngButtonWidthDef), strSysIni
+        IniWriteStrPrivate "Button", "Height", CStr(lngButtonHeightDef), strSysIni
         IniWriteStrPrivate "Button", "Left", "100", strSysIni
         IniWriteStrPrivate "Button", "Top", "100", strSysIni
         IniWriteStrPrivate "Button", "Btn2BtnLeft", "100", strSysIni
         IniWriteStrPrivate "Button", "Btn2BtnTop", "100", strSysIni
         IniWriteStrPrivate "Button", "TextUpCase", "0", strSysIni
-        IniWriteStrPrivate "Button", "FontName", "MS Sans Serif", strSysIni
+        IniWriteStrPrivate "Button", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Button", "FontSize", "8", strSysIni
         IniWriteStrPrivate "Button", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "Button", "FontStrikethru", "0", strSysIni
@@ -887,7 +864,7 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Button", "FontColor", "0", strSysIni
         IniWriteStrPrivate "Button", "IconStatusSkin", "Standart", strSysIni
         'Секция Tab
-        IniWriteStrPrivate "Tab", "FontName", "MS Sans Serif", strSysIni
+        IniWriteStrPrivate "Tab", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Tab", "FontSize", "8", strSysIni
         IniWriteStrPrivate "Tab", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "Tab", "FontStrikethru", "0", strSysIni
@@ -896,13 +873,22 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Tab", "FontColor", "0", strSysIni
         'Секция Tab2
         IniWriteStrPrivate "Tab2", "StartMode", "1", strSysIni
-        IniWriteStrPrivate "Tab2", "FontName", "MS Sans Serif", strSysIni
+        IniWriteStrPrivate "Tab2", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Tab2", "FontSize", "8", strSysIni
         IniWriteStrPrivate "Tab2", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontStrikethru", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontItalic", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontBold", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontColor", "&H8000000D", strSysIni
+        'Секция ToolTip
+        'IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontName", "Lucida Console", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontSize", "8", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontUnderline", "0", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontStrikethru", "0", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontItalic", "0", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontBold", "0", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontColor", "0", strSysIni
         'Секция NotebookVendor
         IniWriteStrPrivate "NotebookVendor", "FilterCount", "22", strSysIni
         'Секция "NotebookVendor"
@@ -1337,37 +1323,37 @@ Private Sub GetMainIniParam()
     ' Сохранять настройки при выходе
     mbSaveSizeOnExit = GetIniValueBoolean(strSysIni, "MainForm", "SaveSizeOnExit", 0)
     'Ширина основной формы
-    MainFormWidth = GetIniValueLong(strSysIni, "MainForm", "Width", MainFormWidthDef)
+    lngMainFormWidth = GetIniValueLong(strSysIni, "MainForm", "Width", lngMainFormWidthDef)
 
     'Если полученное значение меньше минимального, то устанавливаем значение по умолчанию
-    If MainFormWidth < MainFormWidthMin Then
-        MainFormWidth = MainFormWidthDef
+    If lngMainFormWidth < lngMainFormWidthMin Then
+        lngMainFormWidth = lngMainFormWidthDef
     End If
 
     'Высота основной формы
-    MainFormHeight = GetIniValueLong(strSysIni, "MainForm", "Height", MainFormHeightDef)
+    lngMainFormHeight = GetIniValueLong(strSysIni, "MainForm", "Height", lngMainFormHeightDef)
 
     'Если полученное значение меньше минимального, то устанавливаем значение по умолчанию
-    If MainFormHeight < MainFormHeightMin Then
-        MainFormHeight = MainFormHeightDef
+    If lngMainFormHeight < lngMainFormHeightMin Then
+        lngMainFormHeight = lngMainFormHeightDef
     End If
 
     ' получение вида запуска (Секция MainForm)
     mbStartMaximazed = GetIniValueBoolean(strSysIni, "MainForm", "StartMaximazed", 0)
-    strMainForm_FontName = GetIniValueString(strSysIni, "MainForm", "FontName", "Courier New")
-    lngMainForm_FontSize = GetIniValueLong(strSysIni, "MainForm", "FontSize", 8)
+    strFontMainForm_Name = GetIniValueString(strSysIni, "MainForm", "FontName", "Tahoma")
+    lngFontMainForm_Size = GetIniValueLong(strSysIni, "MainForm", "FontSize", 8)
     ' Подсветка активного элемента
     glHighlightColor = GetIniValueLong(strSysIni, "MainForm", "HighlightColor", 32896)
     ' получение вида запуска (Секция OtherForm)
-    strOtherForm_FontName = GetIniValueString(strSysIni, "OtherForm", "FontName", "Tahoma")
-    lngOtherForm_FontSize = GetIniValueLong(strSysIni, "OtherForm", "FontSize", 8)
+    strFontOtherForm_Name = GetIniValueString(strSysIni, "OtherForm", "FontName", "Tahoma")
+    lngFontOtherForm_Size = GetIniValueLong(strSysIni, "OtherForm", "FontSize", 8)
     '[Buttons]
-    miButtonWidth = GetIniValueLong(strSysIni, "Button", "Width", ButtonWidthDef)
-    miButtonHeight = GetIniValueLong(strSysIni, "Button", "Height", ButtonHeightDef)
-    miButtonLeft = GetIniValueLong(strSysIni, "Button", "Left", ButtonLeftDef)
-    miButtonTop = GetIniValueLong(strSysIni, "Button", "Top", ButtonTopDef)
-    miBtn2BtnLeft = GetIniValueLong(strSysIni, "Button", "Btn2BtnLeft", Btn2BtnLeftDef)
-    miBtn2BtnTop = GetIniValueLong(strSysIni, "Button", "Btn2BtnTop", Btn2BtnTopDef)
+    lngButtonWidth = GetIniValueLong(strSysIni, "Button", "Width", lngButtonWidthDef)
+    lngButtonHeight = GetIniValueLong(strSysIni, "Button", "Height", lngButtonHeightDef)
+    lngButtonLeft = GetIniValueLong(strSysIni, "Button", "Left", lngButtonLeftDef)
+    lngButtonTop = GetIniValueLong(strSysIni, "Button", "Top", lngButtonTopDef)
+    lngBtn2BtnLeft = GetIniValueLong(strSysIni, "Button", "Btn2BtnLeft", lngBtn2BtnLeftDef)
+    lngBtn2BtnTop = GetIniValueLong(strSysIni, "Button", "Btn2BtnTop", lngBtn2BtnTopDef)
     ' текст кнопок в верхнем регистре (Секция Button)
     mbButtonTextUpCase = GetIniValueBoolean(strSysIni, "Button", "TextUpCase", 0)
     '[OS]
@@ -1397,33 +1383,42 @@ Private Sub GetMainIniParam()
     mbSearchCompatibleDriverOtherOS = GetIniValueBoolean(strSysIni, "OS", "SearchCompatibleDriverOtherOS", 1)
     '[Button]
     ' Шрифт Кнопок
-    strDialog_FontName = GetIniValueString(strSysIni, "Button", "FontName", "MS Sans Serif")
-    miDialog_FontSize = GetIniValueLong(strSysIni, "Button", "FontSize", 8)
-    mbDialog_Bold = GetIniValueBoolean(strSysIni, "Button", "FontBold", 0)
-    mbDialog_Italic = GetIniValueBoolean(strSysIni, "Button", "FontItalic", 0)
-    mbDialog_Underline = GetIniValueBoolean(strSysIni, "Button", "FontUnderline", 0)
-    mbDialog_Strikethru = GetIniValueBoolean(strSysIni, "Button", "FontStrikethru", 0)
-    lngDialog_Color = GetIniValueLong(strSysIni, "Button", "FontColor", 0)
+    strFontBtn_Name = GetIniValueString(strSysIni, "Button", "FontName", "Tahoma")
+    miFontBtn_Size = GetIniValueLong(strSysIni, "Button", "FontSize", 8)
+    mbFontBtn_Bold = GetIniValueBoolean(strSysIni, "Button", "FontBold", 0)
+    mbFontBtn_Italic = GetIniValueBoolean(strSysIni, "Button", "FontItalic", 0)
+    mbFontBtn_Underline = GetIniValueBoolean(strSysIni, "Button", "FontUnderline", 0)
+    mbFontBtn_Strikethru = GetIniValueBoolean(strSysIni, "Button", "FontStrikethru", 0)
+    lngFontBtn_Color = GetIniValueLong(strSysIni, "Button", "FontColor", 0)
     strImageStatusButtonName = GetIniValueString(strSysIni, "Button", "IconStatusSkin", "Standart")
     '[Tab]
     ' Шрифт и настройки ЗАКЛАДОК
-    strDialogTab_FontName = GetIniValueString(strSysIni, "Tab", "FontName", "MS Sans Serif")
-    miDialogTab_FontSize = GetIniValueLong(strSysIni, "Tab", "FontSize", 8)
-    mbDialogTab_Bold = GetIniValueBoolean(strSysIni, "Tab", "FontBold", 0)
-    mbDialogTab_Italic = GetIniValueBoolean(strSysIni, "Tab", "FontItalic", 0)
-    mbDialogTab_Underline = GetIniValueBoolean(strSysIni, "Tab", "FontUnderline", 0)
-    mbDialogTab_Strikethru = GetIniValueBoolean(strSysIni, "Tab", "FontStrikethru", 0)
-    lngDialogTab_Color = GetIniValueLong(strSysIni, "Tab", "FontColor", 0)
+    strFontTab_Name = GetIniValueString(strSysIni, "Tab", "FontName", "Tahoma")
+    miFontTab_Size = GetIniValueLong(strSysIni, "Tab", "FontSize", 8)
+    mbFontTab_Bold = GetIniValueBoolean(strSysIni, "Tab", "FontBold", 0)
+    mbFontTab_Italic = GetIniValueBoolean(strSysIni, "Tab", "FontItalic", 0)
+    mbFontTab_Underline = GetIniValueBoolean(strSysIni, "Tab", "FontUnderline", 0)
+    mbFontTab_Strikethru = GetIniValueBoolean(strSysIni, "Tab", "FontStrikethru", 0)
+    lngFontTab_Color = GetIniValueLong(strSysIni, "Tab", "FontColor", 0)
     '[Tab2]
     ' Шрифт и настройки ЗАКЛАДОК
-    strDialogTab2_FontName = GetIniValueString(strSysIni, "Tab2", "FontName", "MS Sans Serif")
-    miDialogTab2_FontSize = GetIniValueLong(strSysIni, "Tab2", "FontSize", 8)
-    mbDialogTab2_Bold = GetIniValueBoolean(strSysIni, "Tab2", "FontBold", 0)
-    mbDialogTab2_Italic = GetIniValueBoolean(strSysIni, "Tab2", "FontItalic", 0)
-    mbDialogTab2_Underline = GetIniValueBoolean(strSysIni, "Tab2", "FontUnderline", 0)
-    mbDialogTab2_Strikethru = GetIniValueBoolean(strSysIni, "Tab2", "FontStrikethru", 0)
-    lngDialogTab2_Color = GetIniValueLong(strSysIni, "Tab2", "FontColor", &H8000000D)
+    strFontTab2_Name = GetIniValueString(strSysIni, "Tab2", "FontName", "Tahoma")
+    miFontTab2_Size = GetIniValueLong(strSysIni, "Tab2", "FontSize", 8)
+    mbFontTab2_Bold = GetIniValueBoolean(strSysIni, "Tab2", "FontBold", 0)
+    mbFontTab2_Italic = GetIniValueBoolean(strSysIni, "Tab2", "FontItalic", 0)
+    mbFontTab2_Underline = GetIniValueBoolean(strSysIni, "Tab2", "FontUnderline", 0)
+    mbFontTab2_Strikethru = GetIniValueBoolean(strSysIni, "Tab2", "FontStrikethru", 0)
+    lngFontTab2_Color = GetIniValueLong(strSysIni, "Tab2", "FontColor", &H8000000D)
     lngStartModeTab2 = GetIniValueLong(strSysIni, "Tab2", "StartMode", 1)
+    '[ToolTip]
+    ' Шрифт и настройки ToolTip
+    strFontTT_Name = GetIniValueString(strSysIni, "ToolTip", "FontName", "Courier New")
+    miFontTT_Size = GetIniValueLong(strSysIni, "ToolTip", "FontSize", 8)
+    mbFontTT_Bold = GetIniValueBoolean(strSysIni, "ToolTip", "FontBold", 0)
+    mbFontTT_Italic = GetIniValueBoolean(strSysIni, "ToolTip", "FontItalic", 0)
+    mbFontTT_Underline = GetIniValueBoolean(strSysIni, "ToolTip", "FontUnderline", 0)
+    mbFontTT_Strikethru = GetIniValueBoolean(strSysIni, "ToolTip", "FontStrikethru", 0)
+    lngFontTT_Color = GetIniValueLong(strSysIni, "ToolTip", "FontColor", 0)
     '[Main]
     strImageMainName = GetIniValueString(strSysIni, "Main", "IconMainSkin", "Standart")
     ' расширенное меню

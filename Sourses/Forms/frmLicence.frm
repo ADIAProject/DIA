@@ -184,13 +184,13 @@ Private Sub FontCharsetChange()
 
     ' Выставляем шрифт
     With Me.Font
-        .Name = strOtherForm_FontName
-        .Size = lngOtherForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
     End With
 
-    SetButtonProperties cmdExit
-    SetButtonProperties cmdOK
+    SetBtnFontProperties cmdExit
+    SetBtnFontProperties cmdOK
 End Sub
 
 '!--------------------------------------------------------------------------------

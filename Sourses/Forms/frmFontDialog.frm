@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmFontDialog 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Locate Font and Color ..."
-   ClientHeight    =   2685
+   ClientHeight    =   2670
    ClientLeft      =   45
    ClientTop       =   405
    ClientWidth     =   4425
@@ -18,7 +18,7 @@ Begin VB.Form frmFontDialog
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   2685
+   ScaleHeight     =   2670
    ScaleWidth      =   4425
    ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
@@ -43,15 +43,16 @@ Begin VB.Form frmFontDialog
       Alignment       =   2
       CueBanner       =   "frmFontDialog.frx":0052
    End
-   Begin prjDIADBS.OptionButtonW opt3 
+   Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
-      Left            =   3000
+      Index           =   3
+      Left            =   3240
       TabIndex        =   8
-      Top             =   2700
+      Top             =   2760
       Visible         =   0   'False
-      Width           =   1215
-      _ExtentX        =   0
-      _ExtentY        =   0
+      Width           =   975
+      _ExtentX        =   1720
+      _ExtentY        =   450
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -64,15 +65,16 @@ Begin VB.Form frmFontDialog
       Value           =   0   'False
       Caption         =   "frmFontDialog.frx":0072
    End
-   Begin prjDIADBS.OptionButtonW opt2 
+   Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
-      Left            =   1560
+      Index           =   1
+      Left            =   960
       TabIndex        =   7
-      Top             =   2700
+      Top             =   2760
       Visible         =   0   'False
-      Width           =   1215
-      _ExtentX        =   0
-      _ExtentY        =   0
+      Width           =   1035
+      _ExtentX        =   1826
+      _ExtentY        =   450
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -85,15 +87,16 @@ Begin VB.Form frmFontDialog
       Value           =   0   'False
       Caption         =   "frmFontDialog.frx":009E
    End
-   Begin prjDIADBS.OptionButtonW opt1 
+   Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
+      Index           =   0
       Left            =   120
       TabIndex        =   6
-      Top             =   2700
+      Top             =   2760
       Visible         =   0   'False
-      Width           =   1215
-      _ExtentX        =   0
-      _ExtentY        =   0
+      Width           =   795
+      _ExtentX        =   1402
+      _ExtentY        =   450
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -271,6 +274,28 @@ Begin VB.Form frmFontDialog
       CaptionEffects  =   0
       TooltipBackColor=   0
       ColorScheme     =   3
+   End
+   Begin prjDIADBS.OptionButtonW optControl 
+      Height          =   255
+      Index           =   2
+      Left            =   2100
+      TabIndex        =   14
+      Top             =   2760
+      Visible         =   0   'False
+      Width           =   1035
+      _ExtentX        =   1826
+      _ExtentY        =   450
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Value           =   0   'False
+      Caption         =   "frmFontDialog.frx":02DC
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375
@@ -456,13 +481,13 @@ Private Sub FontCharsetChange()
 
     ' Выставляем шрифт
     With Me.Font
-        .Name = strOtherForm_FontName
-        .Size = lngOtherForm_FontSize
-        .Charset = lngDialog_Charset
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
     End With
 
-    SetButtonProperties cmdExit
-    SetButtonProperties cmdOK
+    SetBtnFontProperties cmdExit
+    SetBtnFontProperties cmdOK
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -502,31 +527,44 @@ Private Sub SaveOptions()
 
     With txtFont
 
-        If opt1.Value Then
-            strDialogTab_FontName = .Font.Name
-            miDialogTab_FontSize = .Font.Size
-            mbDialogTab_Underline = .Font.Underline
-            mbDialogTab_Strikethru = .Font.Strikethrough
-            mbDialogTab_Bold = .Font.Bold
-            mbDialogTab_Italic = .Font.Italic
-            lngDialogTab_Color = .ForeColor
-        ElseIf opt2.Value Then
-            strDialogTab2_FontName = .Font.Name
-            miDialogTab2_FontSize = .Font.Size
-            mbDialogTab2_Underline = .Font.Underline
-            mbDialogTab2_Strikethru = .Font.Strikethrough
-            mbDialogTab2_Bold = .Font.Bold
-            mbDialogTab2_Italic = .Font.Italic
-            lngDialogTab2_Color = .ForeColor
-        Else
-            strDialog_FontName = .Font.Name
-            miDialog_FontSize = .Font.Size
-            mbDialog_Underline = .Font.Underline
-            mbDialog_Strikethru = .Font.Strikethrough
-            mbDialog_Bold = .Font.Bold
-            mbDialog_Italic = .Font.Italic
-            lngDialog_Color = .ForeColor
-            SetButtonProperties frmOptions.cmdFutureButton
+        If optControl.Item(0).Value Then
+            strFontTab_Name = .Font.Name
+            miFontTab_Size = .Font.Size
+            mbFontTab_Underline = .Font.Underline
+            mbFontTab_Strikethru = .Font.Strikethrough
+            mbFontTab_Bold = .Font.Bold
+            mbFontTab_Italic = .Font.Italic
+            lngFontTab_Color = .ForeColor
+            
+        ElseIf optControl.Item(1).Value Then
+            strFontTab2_Name = .Font.Name
+            miFontTab2_Size = .Font.Size
+            mbFontTab2_Underline = .Font.Underline
+            mbFontTab2_Strikethru = .Font.Strikethrough
+            mbFontTab2_Bold = .Font.Bold
+            mbFontTab2_Italic = .Font.Italic
+            lngFontTab2_Color = .ForeColor
+            
+        ElseIf optControl.Item(2).Value Then
+            strFontTT_Name = .Font.Name
+            miFontTT_Size = .Font.Size
+            mbFontTT_Underline = .Font.Underline
+            mbFontTT_Strikethru = .Font.Strikethrough
+            mbFontTT_Bold = .Font.Bold
+            mbFontTT_Italic = .Font.Italic
+            lngFontTT_Color = .ForeColor
+            SetTTFontProperties frmOptions.TT
+            
+        ElseIf optControl.Item(3).Value Then
+            strFontBtn_Name = .Font.Name
+            miFontBtn_Size = .Font.Size
+            mbFontBtn_Underline = .Font.Underline
+            mbFontBtn_Strikethru = .Font.Strikethrough
+            mbFontBtn_Bold = .Font.Bold
+            mbFontBtn_Italic = .Font.Italic
+            lngFontBtn_Color = .ForeColor
+            SetBtnFontProperties frmOptions.cmdFutureButton
+            frmOptions.cmdFutureButton.TextColor = .ForeColor
             frmOptions.cmdFutureButton.Refresh
         End If
 
