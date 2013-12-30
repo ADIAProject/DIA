@@ -55,25 +55,17 @@ Begin VB.Form frmListHwid
       Left            =   60
       Top             =   60
       Width           =   11610
-      _ExtentX        =   20479
-      _ExtentY        =   1746
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   15783104
-      FillColor       =   15783104
-      TextBoxColor    =   11595760
-      Style           =   3
-      RoundedCorner   =   0   'False
-      Caption         =   "Группы драйверов:"
-      Alignment       =   0
-      HeaderStyle     =   1
+      _extentx        =   20479
+      _extenty        =   1746
+      font            =   "frmListHwid.frx":0090
+      fillcolor       =   15783104
+      textboxcolor    =   11595760
+      style           =   3
+      roundedcorner   =   0
+      caption         =   "Группы драйверов:"
+      alignment       =   0
+      headerstyle     =   1
+      backcolor       =   15783104
       Begin prjDIADBS.CheckBoxW chkGrp1 
          Height          =   450
          Left            =   60
@@ -92,7 +84,7 @@ Begin VB.Form frmListHwid
             Strikethrough   =   0   'False
          EndProperty
          Value           =   1
-         Caption         =   "frmListHwid.frx":0090
+         Caption         =   "frmListHwid.frx":00B8
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkGrp4 
@@ -113,7 +105,7 @@ Begin VB.Form frmListHwid
             Strikethrough   =   0   'False
          EndProperty
          Value           =   1
-         Caption         =   "frmListHwid.frx":00EE
+         Caption         =   "frmListHwid.frx":0116
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkGrp3 
@@ -133,7 +125,7 @@ Begin VB.Form frmListHwid
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmListHwid.frx":0140
+         Caption         =   "frmListHwid.frx":0168
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkGrp2 
@@ -154,7 +146,7 @@ Begin VB.Form frmListHwid
             Strikethrough   =   0   'False
          EndProperty
          Value           =   1
-         Caption         =   "frmListHwid.frx":017A
+         Caption         =   "frmListHwid.frx":01A2
          Transparent     =   -1  'True
       End
    End
@@ -164,26 +156,18 @@ Begin VB.Form frmListHwid
       TabIndex        =   4
       Top             =   4080
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "ОК"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1323
+      font            =   "frmListHwid.frx":01E8
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "ОК"
+      pictureshadow   =   -1
+      picturepushonhover=   -1
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
@@ -191,26 +175,18 @@ Begin VB.Form frmListHwid
       TabIndex        =   5
       Top             =   4080
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1296
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Выход"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1296
+      font            =   "frmListHwid.frx":0210
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Выход"
+      pictureshadow   =   -1
+      picturepushonhover=   -1
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdCheckAll 
       Height          =   360
@@ -219,26 +195,18 @@ Begin VB.Form frmListHwid
       Top             =   4080
       Visible         =   0   'False
       Width           =   2055
-      _ExtentX        =   3625
-      _ExtentY        =   635
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Выделить всё"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3625
+      _extenty        =   635
+      font            =   "frmListHwid.frx":0238
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Выделить всё"
+      pictureshadow   =   -1
+      picturepushonhover=   -1
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdUnCheckAll 
       Height          =   360
@@ -247,26 +215,18 @@ Begin VB.Form frmListHwid
       Top             =   4500
       Visible         =   0   'False
       Width           =   2055
-      _ExtentX        =   3625
-      _ExtentY        =   635
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Снять выделение"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3625
+      _extenty        =   635
+      font            =   "frmListHwid.frx":0260
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Снять выделение"
+      pictureshadow   =   -1
+      picturepushonhover=   -1
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.LabelW lblInformation 
       Height          =   675
@@ -287,7 +247,7 @@ Begin VB.Form frmListHwid
          Strikethrough   =   0   'False
       EndProperty
       BackStyle       =   0
-      Caption         =   $"frmListHwid.frx":01C0
+      Caption         =   $"frmListHwid.frx":0288
    End
 End
 Attribute VB_Name = "frmListHwid"
@@ -769,7 +729,6 @@ Private Function LoadList_Folders(lngButtIndex As Long, Optional ByVal mbViewed 
     Dim strTempLine_x() As String
     Dim i_arr           As Long
 
-    Debug.Print arrTTip(lngButtIndex)
     strTemp_x = Split(arrTTip(lngButtIndex), vbNewLine)
 
     For i_arr = LBound(strTemp_x) To UBound(strTemp_x)

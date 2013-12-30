@@ -154,51 +154,6 @@ Begin VB.Form frmMain
          Caption         =   "Сведения об операционой системе и компьютере..."
          TextBoxHeight   =   20
          ThemeColor      =   1
-         Begin VB.CommandButton Command3 
-            Caption         =   "Command3"
-            BeginProperty Font 
-               Name            =   "Lucida Console"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   -1  'True
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Left            =   7440
-            TabIndex        =   34
-            Top             =   600
-            Visible         =   0   'False
-            Width           =   2595
-         End
-         Begin VB.CommandButton Command2 
-            Caption         =   "Command2"
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   700
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Height          =   315
-            Left            =   4620
-            TabIndex        =   33
-            Top             =   600
-            Visible         =   0   'False
-            Width           =   2055
-         End
-         Begin VB.CommandButton Command1 
-            Caption         =   "Command1"
-            Height          =   315
-            Left            =   2580
-            TabIndex        =   32
-            Top             =   600
-            Visible         =   0   'False
-            Width           =   1335
-         End
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255
             Left            =   75
@@ -1036,7 +991,6 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      VisualStyles    =   -1  'True
       Title           =   "frmMain.frx":01A0
    End
    Begin prjDIADBS.ToolTip TT 
@@ -1053,7 +1007,6 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      VisualStyles    =   -1  'True
       Title           =   "frmMain.frx":01C0
    End
    Begin VB.Menu mnuRezim 
@@ -1417,9 +1370,6 @@ Private objHashOutput            As Scripting.Dictionary
 Private objHashOutput2           As Scripting.Dictionary
 Private objHashOutput3           As Scripting.Dictionary
 Private strFormName              As String
-
-Private Const WM_SETFONT                As Long = &H30
-Private Const WM_GETFONT                As Long = &H31
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
@@ -4133,6 +4083,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
     DebugMode str4VbTab & "FindHwidInBaseNew-Start" & vbNewLine & _
               str5VbTab & "FindHwidInBaseNew: strPackFileName=" & strPackFileName
+              
     TimeScriptRun = GetTickCount
     mbStatusNewer = False
     mbStatusOlder = False
@@ -4181,8 +4132,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
             lngMaxLengthRow13 = lngTableHwidHeader13
             maxSizeRowAllLine = 0
 
-            'i = 0
-            'Do While i <= lngCnt
             For i = 0 To lngCnt
                 strFind = arrHwidsLocal(i).HWIDCutting
                 'Debug.Print strFind
@@ -4235,9 +4184,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
                             'Глубина поиска HWID
                             If iii > lngCompatiblesHWIDCount Then
-
                                 Exit For
-
                             End If
 
                             strFindCompatIDFind = strFindCompatID_x(iii)
@@ -4276,7 +4223,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
                     lngDriverScore = -1
                 End If
 
-                '
 ExitFromForNext_iii:
 
                 If lngFileStartFromSymbol < 0 Then
@@ -4291,8 +4237,6 @@ ExitFromForNext_iii:
                 If lngMatchesCount >= 0 Then
                     DebugMode str5VbTab & "FindHwidInBaseNew: !!!Find " & lngMatchesCount & "Match in: " & strPackFileName & vbBackslash & BackslashAdd2Path(strDevPath) & strDevInf & " by HWID=" & strFind, 2
 
-                    'ii = 0
-                    'Do While ii <= lngMatchesCount
                     For ii = 0 To lngMatchesCount
                         strResultByTab_x = Split(strResult_x(ii), vbTab)
                         ' Получаем имя секции файла inf для дальнейшего анализа
@@ -4308,6 +4252,12 @@ ExitFromForNext_iii:
                         End If
 
                         strDevID = strResultByTab_x(0)
+                        
+                        If StrComp(strDevID, strFind, vbBinaryCompare) <> 0 Then
+                            DebugMode str5VbTab & "FindHwidInBaseNew: ***Seeking HWID included in found HWID from database: HWID=" & strDevID, 1
+                            GoTo NextlngMatchesCount
+                        End If
+                        
                         strDevInf = strResultByTab_x(2)
                         strCatFileExists = strResultByTab_x(6)
 
@@ -4483,8 +4433,7 @@ ExitFromForNext_iii:
                         End If
 
 NextlngMatchesCount:
-                        '    ii = ii + 1
-                        'Loop
+
                     Next ii
 
                 Else
@@ -4492,11 +4441,10 @@ NextlngMatchesCount:
                 End If
 
 NextStrFind:
-                'i = i + 1
+
                 Set objHashOutput3 = Nothing
             Next i
 
-            'Loop
             If lngTTipLocalArrCount > 0 Then
                 ' Объеявляем индексы, чтобы убрать повторяющие ся строки в подсказках
                 Set objHashOutput = New Scripting.Dictionary
@@ -4506,10 +4454,7 @@ NextStrFind:
 
                 ReDim Preserve strTTipLocalArr(12, lngTTipLocalArrCount - 1)
 
-                'i = LBound(strTTipLocalArr, 2)
-                'ii = UBound(strTTipLocalArr, 2)
                 For i = LBound(strTTipLocalArr, 2) To UBound(strTTipLocalArr, 2)
-                    'Do While i <= ii
                     'strDevID
                     strTemp = strTTipLocalArr(0, i)
                     strTTipLocalArr(0, i) = strTemp & Space$(lngMaxLengthRow1 - Len(strTemp) + 1) & "| "
@@ -4557,8 +4502,6 @@ NextStrFind:
                         lngMaxLengthRowAllLine = Len(strLineAll)
                     End If
 
-                    'i = i + 1
-                    'Loop
                 Next i
 
                 Set objHashOutput = Nothing
@@ -4685,18 +4628,6 @@ Private Function FindUnHideTab() As Integer
     FindUnHideTab = miCount
 End Function
 
-Private Sub Command1_Click()
-Call SendMessageW(TT.hToolTip, WM_SETFONT, SendMessageW(Command1.hWnd, WM_GETFONT, &H0, &H0), ByVal &H1)
-End Sub
-
-Private Sub Command2_Click()
-Call SendMessageW(TT.hToolTip, WM_SETFONT, SendMessageW(Command2.hWnd, WM_GETFONT, &H0, &H0), ByVal &H1)
-End Sub
-
-Private Sub Command3_Click()
-Call SendMessageW(TT.hToolTip, WM_SETFONT, SendMessageW(Command3.hWnd, WM_GETFONT, &H0, &H0), ByVal &H1)
-End Sub
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Activate
 '! Description (Описание)  :   [Событие активации формы]
@@ -4765,6 +4696,9 @@ Private Sub Form_Activate()
             SetTabsNameAndCurrTab False
             ' Загрузить все кнопки
             LoadButton
+            'выставить настройки шрифта
+            SetTTFontProperties TT
+            'сохранить найденные драйвера в файл
             SaveHWIDs2File
     
             ' Вывести в лог список всех драйверов
@@ -4778,7 +4712,6 @@ Private Sub Form_Activate()
             FindCheckCount
             frTabPanel.Visible = True
     
-            'SSTab1.Visible = True
             If SSTab1.Tab = 0 Then
                 If Not SSTab1.TabEnabled(0) Then
                     If acmdPackFiles.Count <= 1 Then
@@ -4889,6 +4822,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
+    ' Нажата кнопка "Ctrl"
     If Shift = 2 Then
 
         Select Case KeyCode
@@ -4945,8 +4879,6 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
                     Unload Me
                 End If
             End If
-    
-            ' Нажата кнопка "Ctrl"
         End If
     End If
 
@@ -5012,7 +4944,6 @@ Private Sub Form_Load()
 
     ' информация о системе свернута
     frInfo.Collapsado = False
-    'SSTab1.Visible = False
     frTabPanel.Visible = False
     mnuContextMenu.Visible = False
     mnuContextMenu2.Visible = False
@@ -5101,7 +5032,7 @@ Private Sub Form_Load()
         .SetDelayTime TipDelayTimeInitial, 400
         .SetDelayTime TipDelayTimeShow, 15000
         .Title = strTTipTextTitle
-        SetTTFontProperties TT
+        'SetTTFontProperties TT
     End With
 
     ' Изменяем параметры кнопок и картинок
@@ -5147,9 +5078,7 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     ' Проверяем закончена ли проверка обновления, если нет то прерываем выход из программы, иначе программа вылетит
     If mbCheckUpdNotEnd Then
         Cancel = UnloadMode = vbFormControlMenu Or vbFormCode
-
         Exit Sub
-
     End If
 
 End Sub
@@ -5775,6 +5704,7 @@ Private Sub GroupInstallDP()
         End With
 
         ChangeFrmMainCaption
+        
 BreakUnpack:
 
         If mbBreakUpdateDBAll Then
@@ -5936,15 +5866,25 @@ Private Sub PutAllDrivers2Log()
     Dim i                      As Long
     Dim strTTipTextHeaders     As String
     Dim strTemp                As String
-
-    Const strTableHwidHeaderDP As String = "Drivers in DriverPack"
-
     Dim strLineAll             As String
+    Const strTableHwidHeaderDP As String = "Drivers in DriverPack"
+    
+    If lngSizeRowDPMax < Len(strTableHwidHeaderDP) Then
+        lngSizeRowDPMax = Len(strTableHwidHeaderDP)
+    End If
+    
     'Формируем шапку для подсказки
-    strTTipTextHeaders = strTTipTextDrv2Install & vbNewLine & String$(maxSizeRowAllLineMax, "-") & vbNewLine & UCase$(strTableHwidHeader1 & Space$(lngSizeRow1Max - lngTableHwidHeader1 + 1) & "| " & strTableHwidHeaderDP & Space$(lngSizeRowDPMax - _
-                                Len(strTableHwidHeaderDP) + 1) & "| " & strTableHwidHeader2 & Space$(lngSizeRow2Max - lngTableHwidHeader2 + 1) & "| " & strTableHwidHeader3 & Space$(lngSizeRow3Max - lngTableHwidHeader3 + 1) & "| " & _
-                                strTableHwidHeader4 & Space$(lngSizeRow4Max - lngTableHwidHeader4 + 1) & "| " & strTableHwidHeader9 & Space$(lngSizeRow9Max - lngTableHwidHeader9 + 1) & "| " & strTableHwidHeader5 & Space$(lngSizeRow5Max - _
-                                lngTableHwidHeader5 + 1) & "| " & strTableHwidHeader6 & Space$(lngSizeRow6Max - lngTableHwidHeader6 + 1) & "| " & strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLineMax, "-") & vbNewLine
+    strTTipTextHeaders = strTTipTextDrv2Install & vbNewLine & _
+                        String$(maxSizeRowAllLineMax, "-") & vbNewLine & _
+                        UCase$(strTableHwidHeader1 & Space$(lngSizeRow1Max - lngTableHwidHeader1 + 1) & "| " & _
+                        strTableHwidHeaderDP & Space$(lngSizeRowDPMax - Len(strTableHwidHeaderDP) + 1) & "| " & _
+                        strTableHwidHeader2 & Space$(lngSizeRow2Max - lngTableHwidHeader2 + 1) & "| " & _
+                        strTableHwidHeader3 & Space$(lngSizeRow3Max - lngTableHwidHeader3 + 1) & "| " & _
+                        strTableHwidHeader4 & Space$(lngSizeRow4Max - lngTableHwidHeader4 + 1) & "| " & _
+                        strTableHwidHeader9 & Space$(lngSizeRow9Max - lngTableHwidHeader9 + 1) & "| " & _
+                        strTableHwidHeader5 & Space$(lngSizeRow5Max - lngTableHwidHeader5 + 1) & "| " & _
+                        strTableHwidHeader6 & Space$(lngSizeRow6Max - lngTableHwidHeader6 + 1) & "| " & _
+                        strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLineMax, "-") & vbNewLine
 
     DebugMode "===============================List of all found a matched driver===================================" & vbNewLine & strTTipTextHeaders
 
@@ -5988,14 +5928,9 @@ Private Sub PutAllDrivers2Log()
     DebugMode "===================================================================================================="
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  LoadButton
-'!  Переменные  :
-'!  Описание    :  Загрузка кнопок при старте программы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadButton
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Загрузка кнопок при старте программы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub LoadButton()
@@ -7999,10 +7934,17 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                     End If
                 End If
 
-                strTTipTextHeaders = strTTipTextHeadersTemp & str2vbNewLine & strTTipTextDrv2Install & vbNewLine & String$(maxSizeRowAllLine, "-") & vbNewLine & UCase$(strTableHwidHeader1 & Space$(lngSizeRow1 - lngTableHwidHeader1 + 1) & "| " & _
-                                            strTableHwidHeader2 & Space$(lngSizeRow2 - lngTableHwidHeader2 + 1) & "| " & strTableHwidHeader3 & Space$(lngSizeRow3 - lngTableHwidHeader3 + 1) & "| " & strTableHwidHeader4 & Space$(lngSizeRow4 - _
-                                            lngTableHwidHeader4 + 1) & "| " & strTableHwidHeader9 & Space$(lngSizeRow9 - lngTableHwidHeader9 + 1) & "| " & strTableHwidHeader5 & Space$(lngSizeRow5 - lngTableHwidHeader5 + 1) & "| " & _
-                                            strTableHwidHeader6 & Space$(lngSizeRow6 - lngTableHwidHeader6 + 1) & "| " & strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLine, "-") & vbNewLine
+                strTTipTextHeaders = strTTipTextHeadersTemp & str2vbNewLine & _
+                                     strTTipTextDrv2Install & vbNewLine & _
+                                     String$(maxSizeRowAllLine, "-") & vbNewLine & _
+                                     UCase$(strTableHwidHeader1 & Space$(lngSizeRow1 - lngTableHwidHeader1 + 1) & "| " & _
+                                     strTableHwidHeader2 & Space$(lngSizeRow2 - lngTableHwidHeader2 + 1) & "| " & _
+                                     strTableHwidHeader3 & Space$(lngSizeRow3 - lngTableHwidHeader3 + 1) & "| " & _
+                                     strTableHwidHeader4 & Space$(lngSizeRow4 - lngTableHwidHeader4 + 1) & "| " & _
+                                     strTableHwidHeader9 & Space$(lngSizeRow9 - lngTableHwidHeader9 + 1) & "| " & _
+                                     strTableHwidHeader5 & Space$(lngSizeRow5 - lngTableHwidHeader5 + 1) & "| " & _
+                                     strTableHwidHeader6 & Space$(lngSizeRow6 - lngTableHwidHeader6 + 1) & "| " & _
+                                     strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLine, "-") & vbNewLine
                 'Текст итоговой подсказки
                 strTTipText = strTTipTextHeaders & strTTipTextTemp & vbNewLine & String$(maxSizeRowAllLine, "-")
             Else
@@ -10062,6 +10004,7 @@ Private Sub FontCharsetChange()
     frRunChecked.Font.Charset = lngFont_Charset
     frTabPanel.Font.Charset = lngFont_Charset
     ctlUcStatusBar1.Font.Charset = lngFont_Charset
+    
     SetBtnFontProperties cmdRunTask
     SetBtnFontProperties cmdBreakUpdateDB
 End Sub
@@ -10088,3 +10031,4 @@ Private Function IsFormLoaded(FormName As String) As Boolean
 
     IsFormLoaded = False
 End Function
+

@@ -67,6 +67,8 @@ Public Const SW_HIDE            As Long = 0
 Public Const SW_SHOWNORMAL      As Long = 1
 Public Const GW_HWNDPREV        As Long = 3
 Public Const GW_OWNER = 4
+Public Const WM_SETFONT         As Long = &H30
+Public Const WM_GETFONT         As Long = &H31
 
 'Tooltip Window Constants
 Public Const TTS_NOPREFIX        As Long = &H2

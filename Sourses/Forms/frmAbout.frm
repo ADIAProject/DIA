@@ -478,13 +478,12 @@ Private Sub Form_Load()
 
         Case "0419"
             lblAuthor.Caption = "Автор программы: Головеев Роман aka Romeo91"
-            lblThanks(0).Caption = "Мои благодарности:" '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & lblThanks(0).Caption = "Мои благодарности:"
-
+            lblThanks(0).Caption = "Мои благодарности:"
             '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & lblThanks(0).Caption = "Мои благодарности:"
             '& vbNewLine & "* Участникам форума сайта OSZONE.NET за помощь в тестировании и за помощь в развитии проекта" & vbNewLine & "* Всем остальным пользователям, которые помогли сделать эту программу лучше (за поиск ошибок, за идеи развития проекта, за критику)" & vbNewLine & "* Всем, кто бескорыстно поддерживает проект - морально и финансово" & vbNewLine & "* Также огромное спасибо Александру Дровосекову (apexsun.narod.ru) - в программе использованы, написанных когда-то им, элементы управления (User Control)"
         Case Else
             lblAuthor.Caption = "Author of the program: Goloveev Roman (Romeo91)"
-            lblThanks(0).Caption = "My thanks:" '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & lblThanks(0).Caption = "My thanks:"
+            lblThanks(0).Caption = "My thanks:"
             '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & lblThanks(0).Caption = "My thanks:"
             '& vbNewLine & "* The Users of the forum of the site OSZONE.NET for help in testing and for help in development of the project" & vbNewLine & "* All rest user, which helped to do this program better (for searching for error, for ideas of the development of the project, for critic)" & vbNewLine & "* All, who unselfish supports project - morally and financial" & vbNewLine & "* Also big thank to Alexander Drovosekov (apexsun.narod.ru) - in program are used, written at one time him, elements of control (User Control)"
     End Select

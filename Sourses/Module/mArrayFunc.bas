@@ -190,7 +190,7 @@ Public Function BinarySearch(strArray() As String, strSearch As String) As Long
     Dim lngLast         As Long
     Dim lngMiddle       As Long
     Dim bolInverseOrder As Boolean
-
+                
     lngFirst = LBound(strArray)
     lngLast = UBound(strArray)
     bolInverseOrder = (strArray(lngFirst) > strArray(lngLast))

@@ -1,8 +1,6 @@
 Attribute VB_Name = "mStringFunction"
 Option Explicit
 
-Public Kavichki As String
-
 Public Const str2vbNullChar = vbNullChar & vbNullChar
 Public Const str2vbNewLine = vbNewLine & vbNewLine
 Public Const str2VbTab = vbTab & vbTab
@@ -12,6 +10,7 @@ Public Const str5VbTab = vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const str6VbTab = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const str7VbTab = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const Percentage = "%"
+Public Const Kavichki = """" 'ChrW$(34)
 
 ' Not use in project
 ' Сравнение строк с учетм регистра и без

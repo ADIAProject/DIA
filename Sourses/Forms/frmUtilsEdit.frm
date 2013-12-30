@@ -70,14 +70,14 @@ Begin VB.Form frmUtilsEdit
       TabIndex        =   1
       Top             =   600
       Width           =   4935
-      _ExtentX        =   10398
-      _ExtentY        =   556
-      UseAutoForeColor=   0   'False
-      DefaultExt      =   ""
-      DialogType      =   1
-      Enabled         =   0   'False
-      FileFlags       =   2621446
-      Filters         =   "Supported files|*.*|All Files (*.*)"
+      _extentx        =   10398
+      _extenty        =   556
+      useautoforecolor=   0   'False
+      defaultext      =   ""
+      dialogtype      =   1
+      enabled         =   0   'False
+      fileflags       =   2621446
+      filters         =   "Supported files|*.*|All Files (*.*)"
    End
    Begin prjDIADBS.ctlUcPickBox ucPathUtil64 
       Height          =   315
@@ -85,14 +85,14 @@ Begin VB.Form frmUtilsEdit
       TabIndex        =   3
       Top             =   1080
       Width           =   4935
-      _ExtentX        =   10398
-      _ExtentY        =   556
-      UseAutoForeColor=   0   'False
-      DefaultExt      =   ""
-      DialogType      =   1
-      Enabled         =   0   'False
-      FileFlags       =   2621446
-      Filters         =   "Supported files|*.*|All Files (*.*)"
+      _extentx        =   10398
+      _extenty        =   556
+      useautoforecolor=   0   'False
+      defaultext      =   ""
+      dialogtype      =   1
+      enabled         =   0   'False
+      fileflags       =   2621446
+      filters         =   "Supported files|*.*|All Files (*.*)"
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   750
@@ -100,26 +100,18 @@ Begin VB.Form frmUtilsEdit
       TabIndex        =   4
       Top             =   2040
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   13
-      BackColor       =   12244692
-      Caption         =   "Сохранить изменения и выйти"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1323
+      font            =   "frmUtilsEdit.frx":008C
+      buttonstyle     =   13
+      backcolor       =   12244692
+      caption         =   "Сохранить изменения и выйти"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
@@ -127,26 +119,18 @@ Begin VB.Form frmUtilsEdit
       TabIndex        =   5
       Top             =   2040
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1296
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   13
-      BackColor       =   12244692
-      Caption         =   "Выход без сохранения"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1296
+      font            =   "frmUtilsEdit.frx":00B4
+      buttonstyle     =   13
+      backcolor       =   12244692
+      caption         =   "Выход без сохранения"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.LabelW lblPathUtil64 
       Height          =   450

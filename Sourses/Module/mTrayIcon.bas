@@ -9,7 +9,7 @@ Private Const NIF_ICON  As Long = 2
 Private Const NIF_TIP   As Long = 4
 
 Type NOTIFYICONDATA
-    cbSize                                  As Long
+    cbSize                              As Long
     hWnd                                As Long
     uId                                 As Long
     uFlags                              As Long

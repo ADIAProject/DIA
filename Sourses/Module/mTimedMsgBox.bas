@@ -19,6 +19,7 @@ Private m_lNoHandle         As Long
 Private m_lhHook            As Long
 Private bTimedOut           As Boolean
 Private sMsgText            As String
+
 Private Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameA" (ByVal hWnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
 Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Long) As Long
 Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
@@ -51,11 +52,9 @@ Private Function EnumChildWindowsProc(ByVal lngHWnd As Long, ByVal lParam As Lon
 
 End Function
 
-' *********************************************************************************************************
-' THIS IS CALLBACK procedure. Will called by Hook procedure
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetMessageBoxHandle
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [THIS IS CALLBACK procedure. Will called by Hook procedure]
 '! Parameters  (Переменные):   lMsg (Long)
 '                              wParam (Long)
 '                              lParam (Long)
@@ -78,12 +77,9 @@ Private Function GetMessageBoxHandle(ByVal lMsg As Long, ByVal wParam As Long, B
     GetMessageBoxHandle = False
 End Function
 
-' *********************************************************************************************************
-' THIS IS CALLBACK procedure. Will called by timer procedure
-' This function is called when time out occurs by the timer
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub MessageBoxTimerEvent
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [THIS IS CALLBACK procedure. Will called by timer procedure. This function is called when time out occurs by the timer]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub MessageBoxTimerEvent()
@@ -103,12 +99,9 @@ Private Sub MessageBoxTimerEvent()
     bTimedOut = True
 End Sub
 
-' *********************************************************************************************************
-' THIS IS CALLBACK procedure. Will called by timer procedure
-' This function is called when time out occurs by the timer
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub MessageBoxTimerUpdateEvent
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [THIS IS CALLBACK procedure. Will called by timer procedure. This function is called when time out occurs by the timer]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub MessageBoxTimerUpdateEvent()
@@ -132,7 +125,6 @@ Private Sub MessageBoxTimerUpdateEvent()
 
 End Sub
 
-' *********************************************************************************************************
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function MsgBoxEx
 '! Description (Описание)  :   [type_description_here]
@@ -141,7 +133,7 @@ End Sub
 '                              Buttons (VbMsgBoxStyle = vbOKOnly)
 '                              sTitle (String = "Timed MessageBox Demo")
 '!--------------------------------------------------------------------------------
-Public Function MsgBoxEx(sMsgText As String, dwWait As Long, Optional Buttons As VbMsgBoxStyle = vbOKOnly, Optional sTitle As String = "Timed MessageBox Demo") As VbMsgBoxResult
+Public Function MsgBoxEx(sMsgText As String, dwWait As Long, Optional Buttons As VbMsgBoxStyle = vbOKOnly, Optional sTitle As String = "Timed MessageBox") As VbMsgBoxResult
 
     Dim lTimer       As Long
     Dim lTimerUpdate As Long
@@ -153,7 +145,6 @@ Public Function MsgBoxEx(sMsgText As String, dwWait As Long, Optional Buttons As
     lTimer = SetTimer(0, 0, dwWait * 1000, AddressOf MessageBoxTimerEvent)
     ' Set timer
     lTimerUpdate = SetTimer(0, 0, 1 * 1000, AddressOf MessageBoxTimerUpdateEvent)
-    ' Set timer
     ' Set the flag to false
     bTimedOut = False
     ' Display the message Box

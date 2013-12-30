@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram         As String = "27/12/2013"
+Public Const strDateProgram         As String = "30/12/2013"
 
 ' Текущая версия базы данных
 Public Const lngDevDBVersion        As Long = 5
@@ -370,7 +370,7 @@ Private Sub Main()
 
     dtStartTimeProg = GetTickCount
     Set objFSO = New Scripting.FileSystemObject
-    Kavichki = ChrW$(34)
+
     ' Запоминаем app.path и прочее в переменные
     GetCurAppPath
     strProductVersion = App.Major & "." & App.Minor & "." & App.Revision
@@ -881,8 +881,8 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Tab2", "FontBold", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontColor", "&H8000000D", strSysIni
         'Секция ToolTip
-        'IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
-        IniWriteStrPrivate "ToolTip", "FontName", "Lucida Console", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
+        'IniWriteStrPrivate "ToolTip", "FontName", "Lucida Console", strSysIni
         IniWriteStrPrivate "ToolTip", "FontSize", "8", strSysIni
         IniWriteStrPrivate "ToolTip", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "ToolTip", "FontStrikethru", "0", strSysIni
@@ -1412,7 +1412,8 @@ Private Sub GetMainIniParam()
     lngStartModeTab2 = GetIniValueLong(strSysIni, "Tab2", "StartMode", 1)
     '[ToolTip]
     ' Шрифт и настройки ToolTip
-    strFontTT_Name = GetIniValueString(strSysIni, "ToolTip", "FontName", "Courier New")
+    'strFontTT_Name = GetIniValueString(strSysIni, "ToolTip", "FontName", "Courier New")
+    strFontTT_Name = GetIniValueString(strSysIni, "ToolTip", "FontName", "Lucida Console")
     miFontTT_Size = GetIniValueLong(strSysIni, "ToolTip", "FontSize", 8)
     mbFontTT_Bold = GetIniValueBoolean(strSysIni, "ToolTip", "FontBold", 0)
     mbFontTT_Italic = GetIniValueBoolean(strSysIni, "ToolTip", "FontItalic", 0)

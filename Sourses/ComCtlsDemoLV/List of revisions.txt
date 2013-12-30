@@ -1,5 +1,8 @@
 List of revisions:
 
+28-Dec-2013
+- Changing the 'ListIndex' will fire now the Click event in the ListBoxW and ComboBoxW control as the intrinsic VB controls does it also.
+
 22-Dec-2013
 - Included the SplitButton property and DropDown event to the CommandButtonW control.
 - Removed the embedded VB Image control in the FrameW control as it is not necessary anymore.

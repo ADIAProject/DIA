@@ -27,26 +27,18 @@ Begin VB.Form frmListHwidAll
       TabIndex        =   0
       Top             =   5580
       Width           =   2505
-      _ExtentX        =   4419
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Выход"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   4419
+      _extenty        =   1323
+      font            =   "frmListHwidAll.frx":000C
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Выход"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdReNewHW 
       Height          =   750
@@ -54,26 +46,18 @@ Begin VB.Form frmListHwidAll
       TabIndex        =   1
       Top             =   5595
       Width           =   2505
-      _ExtentX        =   4419
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Обновить конфигурацию оборудования"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   4419
+      _extenty        =   1323
+      font            =   "frmListHwidAll.frx":0034
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Обновить конфигурацию оборудования"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdBackUpDrivers 
       Height          =   750
@@ -81,26 +65,18 @@ Begin VB.Form frmListHwidAll
       TabIndex        =   2
       Top             =   5595
       Width           =   2500
-      _ExtentX        =   4419
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Создать резервную копию драйверов"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   4419
+      _extenty        =   1323
+      font            =   "frmListHwidAll.frx":005C
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Создать резервную копию драйверов"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdCheckAll 
       Height          =   300
@@ -109,26 +85,18 @@ Begin VB.Form frmListHwidAll
       Top             =   5580
       Visible         =   0   'False
       Width           =   2055
-      _ExtentX        =   3625
-      _ExtentY        =   529
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Выделить всё"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3625
+      _extenty        =   529
+      font            =   "frmListHwidAll.frx":0084
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Выделить всё"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdUnCheckAll 
       Height          =   300
@@ -137,51 +105,35 @@ Begin VB.Form frmListHwidAll
       Top             =   6000
       Visible         =   0   'False
       Width           =   2055
-      _ExtentX        =   3625
-      _ExtentY        =   529
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Снять выделение"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3625
+      _extenty        =   529
+      font            =   "frmListHwidAll.frx":00AC
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Снять выделение"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCFrames frGroup 
       Height          =   1250
       Left            =   75
       Top             =   40
       Width           =   4080
-      _ExtentX        =   7197
-      _ExtentY        =   2196
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   15783104
-      FillColor       =   15783104
-      TextBoxColor    =   11595760
-      Style           =   3
-      RoundedCorner   =   0   'False
-      Caption         =   "Группы драйверов:"
-      Alignment       =   0
-      HeaderStyle     =   1
+      _extentx        =   7197
+      _extenty        =   2196
+      font            =   "frmListHwidAll.frx":00D4
+      fillcolor       =   15783104
+      textboxcolor    =   11595760
+      style           =   3
+      roundedcorner   =   0   'False
+      caption         =   "Группы драйверов:"
+      alignment       =   0
+      headerstyle     =   1
+      backcolor       =   15783104
       Begin prjDIADBS.OptionButtonW optGrp4 
          Height          =   405
          Left            =   1860
@@ -200,7 +152,7 @@ Begin VB.Form frmListHwidAll
             Strikethrough   =   0   'False
          EndProperty
          Value           =   0   'False
-         Caption         =   "frmListHwidAll.frx":000C
+         Caption         =   "frmListHwidAll.frx":00FC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optGrp3 
@@ -220,7 +172,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmListHwidAll.frx":0054
+         Caption         =   "frmListHwidAll.frx":0144
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW optGrp1 
@@ -240,7 +192,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmListHwidAll.frx":007A
+         Caption         =   "frmListHwidAll.frx":016A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW optGrp2 
@@ -260,7 +212,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmListHwidAll.frx":00AC
+         Caption         =   "frmListHwidAll.frx":019C
          Transparent     =   -1  'True
       End
    End
@@ -269,25 +221,17 @@ Begin VB.Form frmListHwidAll
       Left            =   4200
       Top             =   40
       Width           =   7500
-      _ExtentX        =   13229
-      _ExtentY        =   2196
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   15783104
-      FillColor       =   15783104
-      TextBoxColor    =   11595760
-      Style           =   3
-      RoundedCorner   =   0   'False
-      Caption         =   "Поиск драйвера в Интернете:"
-      Alignment       =   0
-      HeaderStyle     =   1
+      _extentx        =   13229
+      _extenty        =   2196
+      font            =   "frmListHwidAll.frx":01C2
+      fillcolor       =   15783104
+      textboxcolor    =   11595760
+      style           =   3
+      roundedcorner   =   0   'False
+      caption         =   "Поиск драйвера в Интернете:"
+      alignment       =   0
+      headerstyle     =   1
+      backcolor       =   15783104
       Begin prjDIADBS.TextBoxW txtFindText 
          Height          =   315
          Left            =   60
@@ -305,8 +249,8 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmListHwidAll.frx":00D2
-         CueBanner       =   "frmListHwidAll.frx":00F2
+         Text            =   "frmListHwidAll.frx":01EA
+         CueBanner       =   "frmListHwidAll.frx":020A
       End
       Begin prjDIADBS.CheckBoxW chkParseHwid 
          Height          =   210
@@ -325,7 +269,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmListHwidAll.frx":0112
+         Caption         =   "frmListHwidAll.frx":022A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optDevID 
@@ -346,7 +290,7 @@ Begin VB.Form frmListHwidAll
             Strikethrough   =   0   'False
          EndProperty
          Value           =   0   'False
-         Caption         =   "frmListHwidAll.frx":0184
+         Caption         =   "frmListHwidAll.frx":029C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optMS 
@@ -367,7 +311,7 @@ Begin VB.Form frmListHwidAll
             Strikethrough   =   0   'False
          EndProperty
          Value           =   0   'False
-         Caption         =   "frmListHwidAll.frx":01B8
+         Caption         =   "frmListHwidAll.frx":02D0
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optGoogle 
@@ -387,7 +331,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmListHwidAll.frx":01F2
+         Caption         =   "frmListHwidAll.frx":030A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdGoSite 
@@ -396,26 +340,18 @@ Begin VB.Form frmListHwidAll
          TabIndex        =   14
          Top             =   360
          Width           =   1905
-         _ExtentX        =   5318
-         _ExtentY        =   688
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ButtonStyle     =   8
-         BackColor       =   12244692
-         Caption         =   "Выделить"
-         PictureAlign    =   0
-         PicturePushOnHover=   -1  'True
-         PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
-         ColorScheme     =   3
+         _extentx        =   5318
+         _extenty        =   688
+         font            =   "frmListHwidAll.frx":033E
+         buttonstyle     =   8
+         backcolor       =   12244692
+         caption         =   "Выделить"
+         pictureshadow   =   -1  'True
+         picturepushonhover=   -1  'True
+         captioneffects  =   0
+         picturealign    =   0
+         tooltipbackcolor=   0
+         colorscheme     =   3
       End
    End
    Begin prjDIADBS.ListView lvDevices 
@@ -435,9 +371,9 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Icons           =   "frmListHwidAll.frx":0226
-      SmallIcons      =   "frmListHwidAll.frx":0252
-      ColumnHeaderIcons=   "frmListHwidAll.frx":027E
+      Icons           =   "frmListHwidAll.frx":0366
+      SmallIcons      =   "frmListHwidAll.frx":0392
+      ColumnHeaderIcons=   "frmListHwidAll.frx":03BE
       View            =   3
       Arrange         =   1
       AllowColumnReorder=   -1  'True

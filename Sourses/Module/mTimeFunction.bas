@@ -102,7 +102,6 @@ Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Lo
 
         ' Итоговое время
         CalculateTime = strWorkTimeHours & ":" & strWorkTimeMinutes & ":" & strWorkTimeSecound & "." & strWorkTimeMilliSecound & " (hh:mm:ss.ms)"
-        'Debug.Print CalculateTime
     Else
         ' Итоговое время
         CalculateTime = strWorkTimeHours & ":" & strWorkTimeMinutes & ":" & strWorkTimeSecound & " (hh:mm:ss)"

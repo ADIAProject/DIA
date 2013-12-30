@@ -324,7 +324,6 @@ Private Sub cmbVersions_Click()
 
     End With
 
-    'cmbVersions
     LoadDescriptionAndLinks
 End Sub
 

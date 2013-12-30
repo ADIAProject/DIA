@@ -1171,11 +1171,14 @@ End Property
 
 Public Property Let ListIndex(ByVal Value As Long)
 If ComboBoxHandle <> 0 Then
+    Dim Changed As Boolean
+    Changed = CBool(SendMessage(ComboBoxHandle, CB_GETCURSEL, 0, ByVal 0&) <> Value)
     If Not Value = -1 Then
         If SendMessage(ComboBoxHandle, CB_SETCURSEL, Value, ByVal 0&) = CB_ERR Then Err.Raise 380
     Else
         SendMessage ComboBoxHandle, CB_SETCURSEL, -1, ByVal 0&
     End If
+    If Changed = True Then RaiseEvent Click
 End If
 End Property
 

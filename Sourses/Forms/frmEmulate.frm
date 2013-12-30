@@ -15,6 +15,7 @@ Begin VB.Form frmEmulate
       Italic          =   0   'False
       Strikethrough   =   0   'False
    EndProperty
+   KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -28,16 +29,16 @@ Begin VB.Form frmEmulate
       TabIndex        =   1
       Top             =   600
       Width           =   7935
-      _ExtentX        =   13996
-      _ExtentY        =   556
-      UseAutoForeColor=   0   'False
-      DefaultExt      =   ""
-      DialogType      =   1
-      Enabled         =   0   'False
-      FileFlags       =   2621446
-      Filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
-      ToolTipText1    =   "Click Here to Locate File"
-      UseDialogText   =   0   'False
+      _extentx        =   13996
+      _extenty        =   556
+      useautoforecolor=   0   'False
+      defaultext      =   ""
+      dialogtype      =   1
+      enabled         =   0   'False
+      fileflags       =   2621446
+      filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
+      tooltiptext1    =   "Click Here to Locate File"
+      usedialogtext   =   0   'False
    End
    Begin prjDIADBS.ComboBoxW cmbOS 
       Height          =   330
@@ -66,27 +67,19 @@ Begin VB.Form frmEmulate
       TabIndex        =   2
       Top             =   1920
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      Enabled         =   0   'False
-      BackColor       =   12244692
-      Caption         =   "Загрузить файл"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1323
+      font            =   "frmEmulate.frx":0040
+      buttonstyle     =   8
+      backcolor       =   12244692
+      enabled         =   0   'False
+      caption         =   "Загрузить файл"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
@@ -94,26 +87,18 @@ Begin VB.Form frmEmulate
       TabIndex        =   3
       Top             =   1920
       Width           =   1815
-      _ExtentX        =   3201
-      _ExtentY        =   1296
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Отмена"
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
-      ColorScheme     =   3
+      _extentx        =   3201
+      _extenty        =   1296
+      font            =   "frmEmulate.frx":0068
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Отмена"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      tooltipbackcolor=   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.CheckBoxW chk64bit 
       Height          =   255
@@ -132,7 +117,7 @@ Begin VB.Form frmEmulate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmEmulate.frx":0040
+      Caption         =   "frmEmulate.frx":0090
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.LabelW lblInfo 

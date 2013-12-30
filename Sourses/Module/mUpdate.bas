@@ -17,7 +17,7 @@ Private XMLHTTP                 As MSXML2.XMLHTTP30
 
 Private Const iTimeOutInSecs    As Integer = 5
 Private Const strXMLMainSection As String = "//driversinstaller"
-Private Const Url_Request       As String = "http://www.adia-project.net/Project/dia_update2.xml"
+Private Const Url_Request       As String = "http://adia-project.net/Project/dia_update2.xml"
 Private Const Url_Test_WWW      As String = "http://ya.ru/"
 Private Const Url_Test_Site     As String = "http://adia-project.net/test.txt"
 
