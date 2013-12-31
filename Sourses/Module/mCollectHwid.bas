@@ -156,30 +156,6 @@ Public Sub CollectHwidFromReestr()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsCorrectShortDateFormat
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function IsCorrectShortDateFormat() As Boolean
-
-    Dim intMMPos As Long
-    Dim intDDPos As Long
-
-    regParam = GetKeyValue(HKEY_CURRENT_USER, "Control Panel\International", "sShortDate")
-
-    If LenB(regParam) = 0 Then
-        IsCorrectShortDateFormat = True
-    Else
-        intMMPos = InStr(1, regParam, "m", vbTextCompare)
-        intDDPos = InStr(1, regParam, "d", vbTextCompare)
-        IsCorrectShortDateFormat = Not (intDDPos < intMMPos)
-        ' значит формат  похож на dd/mm/yyyy, а нам нужен mm/dd/yyyy
-    End If
-
-    DebugMode "ShortDateFormat: " & regParam
-End Function
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ReCollectHWID
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):

@@ -99,10 +99,6 @@ Public strDPInstExePath86                As String
 Public strArh7zExePATH                   As String
 Public strHwidsTxtPath                   As String
 Public strHwidsTxtPathView               As String
-
-Private strHwidsTxtPathVersion           As String
-Private strHwidsTxtPathDRVFiles          As String
-
 Public strResultHwidsTxtPath             As String
 Public strResultHwidsExtTxtPath          As String
 Public strWorkTemp                       As String
@@ -133,11 +129,11 @@ Public mbPatnAbs                         As Boolean
 Public mbRecursion                       As Boolean
 Public mbSaveSizeOnExit                  As Boolean
 Public strExcludeHWID                    As String
-Public LastIdOS                          As Long            ' номер последнего элемента в списке ОС
-Public LastIdUtil                        As Long            ' номер последнего элемента в списке утилит
-Public mbAddInList                       As Boolean         ' режим работы с элементом listview - либо изменние либо добавление
-Public lngStartModeTab2                  As Long            ' стартовая вкладка для типов пакетов
-Public strThisBuildBy                    As String          ' Добавляем к описанию в главном окне в названии программы
+Public LastIdOS                          As Long    ' номер последнего элемента в списке ОС
+Public LastIdUtil                        As Long    ' номер последнего элемента в списке утилит
+Public mbAddInList                       As Boolean ' режим работы с элементом listview - либо изменние либо добавление
+Public lngStartModeTab2                  As Long    ' стартовая вкладка для типов пакетов
+Public strThisBuildBy                    As String  ' Добавляем к описанию в главном окне в названии программы
 Public mbIsDriveCDRoom                   As Boolean
 Public mbTabBlock                        As Boolean
 Public mbTabHide                         As Boolean
@@ -162,11 +158,20 @@ Public mbCheckDRVOk                      As Boolean
 Public mbGroupTask                       As Boolean
 Public mbIgnorStatusHwid                 As Boolean
 Public mbDRVNotInstall                   As Boolean
-Private mbShowLicence                    As Boolean         ' Лицензионное соглашение
-Private strLicenceDate                   As String
 Public mbEULAAgree                       As Boolean
 Private mbAllFolderDRVNotExist           As Boolean
-Private mbIsUserAnAdmin                  As Boolean         ' Пользователь администратор?
+Public mbCompareDrvVerByDate             As Boolean ' Сравнение версий драйверов по дате
+Public mbLoadUnSupportedOS               As Boolean ' Грузить\негрузить драйвера для несовместимых ОС
+Public mbRestartProgram                  As Boolean ' Маркер перезапуска программы
+Public mbDeleteDriverByHwid              As Boolean ' Флаг сообщает о том что драйвер был удален
+Public mbAutoInfoAfterDelDRV             As Boolean ' Автообновление конфигурации при удалении драйвера
+Public mbDateFormatRus                   As Boolean ' Автообновление конфигурации при удалении драйвера
+Public mbCreateRestorePoint              As Boolean ' Переменная для режима создания точки восстановления
+Public mbOnlyUnpackDP                    As Boolean ' Переменная для определения режима - только распаковка драйверов
+Private mbDisableDEP                     As Boolean ' Переменная для определения выключения DEP
+Public mbLogNotOnCDRoom                  As Boolean ' Лог отладки находится не на CD
+Public mbHideOtherProcess                As Boolean ' Скрывать сторонние процессы при запуске
+Public mbChangeResolution                As Boolean ' Маркер, показывающий что проводилось измеенние разрешения экрана
 
 ' Параметры каталога %Temp%
 Public mbTempPath                        As Boolean
@@ -174,15 +179,8 @@ Public strAlternativeTempPath            As String
 
 Private mbInitXPStyle                    As Boolean
 
-
-
-
 ' Переменные для парсинга
-Public IndexDevIDMass                    As Long
 Public mbDevParserRun                    As Boolean
-
-
-
 
 ' Запуск с коммандной строкой
 Public mbRunWithParam                    As Boolean
@@ -204,53 +202,18 @@ Public mbDpInstSuppressWizard            As Boolean
 Public mbDpInstQuietInstall              As Boolean
 Public mbDpInstScanHardware              As Boolean
 
-' Сравнение версий драйверов по дате
-Public mbCompareDrvVerByDate             As Boolean
-
-' Грузить\негрузить драйвера для несовместимых ОС
-Public mbLoadUnSupportedOS               As Boolean
-
-'Маркер перезапуска программы
-Public mbRestartProgram                  As Boolean
-
-'Проверка соответствия даты в региональных настрйоках формату mm/dd/уууу
-Private mbCorrectShortDateFormat         As Boolean
-
-'Флаг сообщает о том что драйвер был удален
-Public mbDeleteDriverByHwid              As Boolean
-
-' Автообновление конфигурации при удалении драйвера
-Public mbAutoInfoAfterDelDRV             As Boolean
-
-' Автообновление конфигурации при удалении драйвера
-Public mbDateFormatRus                   As Boolean
-
 ' Искать новые устройства при запуске программы
 Public mbSearchOnStart                   As Boolean
 Public lngPauseAfterSearch               As Long
 
-' Переменная для режима создания точки восстановления
-Public mbCreateRestorePoint              As Boolean
-
 ' Различные параметры программы для настройки поиска совпадений по HWID
-Public mbCalcDriverScore        As Boolean
+Public mbCalcDriverScore                 As Boolean
 Public mbMatchingHWID                    As Boolean
 Public mbCompatiblesHWID                 As Boolean
 Public mbSearchCompatibleDriverOtherOS   As Boolean
 ' Глубина поиска совместимых HWID
 Public lngCompatiblesHWIDCount           As Long
 Public mbMatchHWIDbyDPName               As Boolean
-
-' Переменная для определения режима - только распаковка драйверов
-Public mbOnlyUnpackDP                    As Boolean
-' Переменная для определения выключения DEP
-Private mbDisableDEP                     As Boolean
-' Лог отладки находится не на CD
-Public mbLogNotOnCDRoom                  As Boolean
-' Скрывать сторонние процессы при запуске
-Public mbHideOtherProcess                As Boolean
-' Маркер, показывающий что проводилось измеенние разрешения экрана
-Public mbChangeResolution                As Boolean
 
 ' Расширенное меню
 'Public mbExMenu                           As Boolean
@@ -365,6 +328,9 @@ Private Sub Main()
 
     Dim mbShowFormLicence As Boolean
     Dim strSysIniTMP      As String
+    Dim strLicenceDate    As String  ' дата лицензионного соглашения из реестра
+    Dim mbShowLicence     As Boolean ' Показать лицензионное соглашение
+    Dim mbIsUserAnAdmin   As Boolean ' Пользователь администратор?
 
     On Error Resume Next
 
@@ -579,7 +545,6 @@ Private Sub Main()
 
     mbAeroEnabled = IsAeroEnabled
     DebugMode "IsAeroEnabled : " & mbAeroEnabled
-    mbCorrectShortDateFormat = IsCorrectShortDateFormat()
     ' изменяем разрешающую способность экрана монитора при необходимости
     SetVideoMode
     GetWorkArea
@@ -785,6 +750,7 @@ Private Sub CreateIni()
         IniWriteStrPrivate "OS", "CalcDriverScore", "1", strSysIni
         IniWriteStrPrivate "OS", "SearchCompatibleDriverOtherOS", "1", strSysIni
         IniWriteStrPrivate "OS", "MatchHWIDbyDPName", "1", strSysIni
+        IniWriteStrPrivate "OS", "DP_is_aFolder", "0", strSysIni
         'Секция OS_1
         IniWriteStrPrivate "OS_1", "Ver", "5.0;5.1;5.2", strSysIni
         IniWriteStrPrivate "OS_1", "Name", "2000/XP/2003 Server", strSysIni
@@ -825,6 +791,7 @@ Private Sub CreateIni()
         IniWriteStrPrivate "OS_4", "PathLanguages", vbNullString, strSysIni
         IniWriteStrPrivate "OS_4", "PathRuntimes", vbNullString, strSysIni
         IniWriteStrPrivate "OS_4", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
+        
         'Секция Utils
         IniWriteStrPrivate "Utils", "UtilsCount", "3", strSysIni
         'Секция Utils_1
@@ -881,8 +848,8 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Tab2", "FontBold", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontColor", "&H8000000D", strSysIni
         'Секция ToolTip
-        IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
-        'IniWriteStrPrivate "ToolTip", "FontName", "Lucida Console", strSysIni
+        'IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
+        IniWriteStrPrivate "ToolTip", "FontName", "Lucida Console", strSysIni
         IniWriteStrPrivate "ToolTip", "FontSize", "8", strSysIni
         IniWriteStrPrivate "ToolTip", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "ToolTip", "FontStrikethru", "0", strSysIni
@@ -1913,8 +1880,6 @@ End Sub
 Private Sub InitializePathHwidsTxt()
     strHwidsTxtPath = strWorkTempBackSL & "HWIDS.txt"
     strHwidsTxtPathView = strWorkTempBackSL & "HWIDS_ForView.txt"
-    strHwidsTxtPathVersion = strWorkTempBackSL & "HWIDS_Version.txt"
-    strHwidsTxtPathDRVFiles = strWorkTempBackSL & "HWIDS_DRVFiles.txt"
     strResultHwidsTxtPath = strWorkTempBackSL & "HwidsTemp.txt"
     strResultHwidsExtTxtPath = strWorkTempBackSL & "HwidsTempExt.txt"
 End Sub
