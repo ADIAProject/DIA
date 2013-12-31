@@ -59,6 +59,7 @@ Attribute VB_Name = "mDPMarkers"
 '============================================================================
 Option Explicit
 
+' поддерживаемые программой маркеры операционных систем
 Public Const strVer_51x64   As String = "5x64"
 Public Const strVer_51x86   As String = "5x86"
 Public Const strVer_60x64   As String = "6x64|NTx64|AllNT"
@@ -80,10 +81,15 @@ Public Const strVer_XXxXX   As String = "WinAll"
 Public Const strVerSTRICT   As String = "STRICT"
 Public Const strVerFORCED   As String = "FORCED"
 
+' Служебные переменные для всех версий маркеров
 Public strVer_Known_Ver     As String
 Public strVer_All_Known_Ver As String
 Public strVer_Any86         As String
 Public strVer_Any64         As String
+
+' Массив вендлров ноутбуков
+Public arrNotebookFilterList()           As String ' Массив производителей ноутбуков, загружается шз файла настроек (для корректного определения модели тачпада)
+Public arrNotebookFilterListDef()        As String ' Массив производителей ноутбуков, по умолчанию, если не прописано в файле настроек
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub GetSummaryDPMarkers
@@ -96,3 +102,50 @@ Public Sub GetSummaryDPMarkers()
     strVer_Any64 = strVer_51x64 + "|" + strVer_60x64 + "|" + strVer_61x64 + "|" + strVer_62x64 + "|" + strVer_63x64 + "|" + strVer_XXx64
     strVer_All_Known_Ver = strVer_Any86 + "|" + strVer_Any64 + "|" + strVer_51xXX + "|" + strVer_60xXX + "|" + strVer_61xXX + "|" + strVer_62xXX + "|" + strVer_63xXX + "|" + strVer_XXxXX
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadNotebookList
+'! Description (Описание)  :   [Загрузка массива производителей ноутбуков, для корректного оперделения модели тачпада]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub LoadNotebookList()
+
+    ReDim arrNotebookFilterListDef(35) As String
+
+    arrNotebookFilterListDef(0) = "3Q;*3q*"
+    arrNotebookFilterListDef(1) = "Acer;*acer*;*emachines*;*packard*bell*;*gateway*"
+    arrNotebookFilterListDef(2) = "Apple;*apple*"
+    arrNotebookFilterListDef(3) = "Asus;*asus*"
+    arrNotebookFilterListDef(4) = "BenQ;*benq*"
+    arrNotebookFilterListDef(5) = "Clevo;*clevo*"
+    arrNotebookFilterListDef(6) = "Dell;*dell*;*alienware*"
+    arrNotebookFilterListDef(7) = "Eurocom;*eurocom*"
+    arrNotebookFilterListDef(8) = "Fujitsu;*fujitsu*;*sieme*"
+    arrNotebookFilterListDef(9) = "Getac;*getac*"
+    arrNotebookFilterListDef(10) = "Gigabyte;*gigabyte*;*ecs*;*elitegroup*"
+    arrNotebookFilterListDef(11) = "HP;*hp*;*hewle*;*compaq*"
+    arrNotebookFilterListDef(12) = "Intel;*intel*"
+    arrNotebookFilterListDef(13) = "Inventec;*inventec*"
+    arrNotebookFilterListDef(14) = "iRU;*iru*"
+    arrNotebookFilterListDef(15) = "Lenovo;*lenovo*;*compal*;*ibm*"
+    arrNotebookFilterListDef(16) = "LG;*lg*"
+    arrNotebookFilterListDef(17) = "Matsushita;*matsushita*"
+    arrNotebookFilterListDef(18) = "Mitac;*mitac*;*MTC*"
+    arrNotebookFilterListDef(19) = "MSI;*msi*;*micro-star*"
+    arrNotebookFilterListDef(20) = "NEC;*nec*"
+    arrNotebookFilterListDef(21) = "Panasonic;*panasonic*"
+    arrNotebookFilterListDef(22) = "Pegatron;*pegatron*"
+    arrNotebookFilterListDef(23) = "PROLiNK;*prolink*"
+    arrNotebookFilterListDef(24) = "Quanta;*quanta*"
+    arrNotebookFilterListDef(25) = "Roverbook;*roverbook*"
+    arrNotebookFilterListDef(26) = "Sager;*sager*"
+    arrNotebookFilterListDef(27) = "Samsung;*samsung*"
+    arrNotebookFilterListDef(28) = "Shuttle;*shuttle*"
+    arrNotebookFilterListDef(29) = "SiS;*sis*"
+    arrNotebookFilterListDef(30) = "Sony;*sony*;*vaio*"
+    arrNotebookFilterListDef(31) = "Toshiba;*toshiba*"
+    arrNotebookFilterListDef(32) = "ViewSonic;*viewsonic*;*ViewBook*;*viewbook*"
+    arrNotebookFilterListDef(33) = "VIZIO;*vizio*"
+    arrNotebookFilterListDef(34) = "Wistron;*wistron*"
+End Sub
+

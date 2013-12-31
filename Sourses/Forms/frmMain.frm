@@ -6684,10 +6684,10 @@ Private Sub mnuHelp_Click()
     Dim cmdString       As String
     Dim strFilePathTemp As String
 
-    strFilePathTemp = strAppPathBackSL & "Tools\Docs\" & strPCLangCurrentID & "\Help.html"
+    strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\Help.html"
 
     If PathExists(strFilePathTemp) = False Then
-        strFilePathTemp = strAppPathBackSL & "Tools\Docs\0409\Help.html"
+        strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Help.html"
     End If
 
     cmdString = Kavichki & strFilePathTemp & Kavichki
@@ -6709,10 +6709,10 @@ Private Sub mnuHistory_Click()
     Dim cmdString       As String
     Dim strFilePathTemp As String
 
-    strFilePathTemp = strAppPathBackSL & "Tools\Docs\" & strPCLangCurrentID & "\history.txt"
+    strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\history.txt"
 
     If PathExists(strFilePathTemp) = False Then
-        strFilePathTemp = strAppPathBackSL & "Tools\Docs\0409\history.txt"
+        strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\history.txt"
     End If
 
     cmdString = Kavichki & strFilePathTemp & Kavichki
@@ -6817,10 +6817,10 @@ Private Sub mnuLinks_Click()
     Dim cmdString       As String
     Dim strFilePathTemp As String
 
-    strFilePathTemp = strAppPathBackSL & "Tools\Docs\" & strPCLangCurrentID & "\Links.html"
+    strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\Links.html"
 
     If PathExists(strFilePathTemp) = False Then
-        strFilePathTemp = strAppPathBackSL & "Tools\Docs\0409\Links.html"
+        strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Links.html"
     End If
 
     cmdString = Kavichki & strFilePathTemp & Kavichki

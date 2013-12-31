@@ -13,7 +13,7 @@ Option Explicit
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 'Поддержка многоязычности в программе
 Public mbMultiLanguage                As Boolean
-Public arrLanguage()                  As String
+Public arrLanguage()                  As String     ' Массив служебных сообщений
 Public strPCLangID                    As String
 Public strPCLangLocaliseName          As String
 Public strPCLangEngName               As String
@@ -165,7 +165,7 @@ Public Function LoadLanguageList() As Boolean
     Dim strTemp         As String
     Dim LngValue        As Long
 
-    strFileList_x = SearchFilesInRoot(strAppPathBackSL & "Tools\Lang", "*.lng", False, False)
+    strFileList_x = SearchFilesInRoot(strAppPathBackSL & strToolsLang_Path, "*.lng", False, False)
 
     If UBound(strFileList_x, 2) = 0 Then
         If LenB(strFileList_x(0, 0)) = 0 Then
@@ -239,7 +239,7 @@ Public Function LoadLanguageList() As Boolean
     Next
 
     If LenB(strPCLangCurrentPath) = 0 Then
-        strPCLangCurrentPath = strAppPathBackSL & "Tools\Lang\English.lng"
+        strPCLangCurrentPath = PathCombine(strAppPathBackSL & strToolsLang_Path, "English.lng")
         strPCLangCurrentID = "0409"
         lngFont_Charset = 1
     End If
@@ -283,3 +283,23 @@ Public Function LocaliseString(ByVal StrPathFile As String, ByVal strSection As 
     End If
 
 End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadLanguageOS
+'! Description (Описание)  :   [Считываем язык операционной системы, и записываем в переменные Public]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub LoadLanguageOS()
+
+    Dim LCID As Long
+
+    ' Считываем язык операционой системы
+    LCID = GetSystemDefaultLCID()
+    'language id
+    strPCLangID = GetUserLocaleInfo(LCID, LOCALE_ILANGUAGE)
+    'localized name of language
+    strPCLangLocaliseName = GetUserLocaleInfo(LCID, LOCALE_SLANGUAGE)
+    'English name of language
+    strPCLangEngName = GetUserLocaleInfo(LCID, LOCALE_SENGLANGUAGE)
+End Sub
+

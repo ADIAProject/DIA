@@ -342,3 +342,36 @@ Public Function CollectCmdString() As String
     ' Результирующая строка
     CollectCmdString = strCmdStringDPInstTemp
 End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DeleteDriverbyHwid
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strHwid (String)
+'!--------------------------------------------------------------------------------
+Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
+
+    Dim cmdString     As String
+    Dim strDevConTemp As String
+
+    If mbIsWin64 Then
+        strDevConTemp = strDevConExePath64
+    Else
+
+        If strOsCurrentVersion = "5.0" Then
+            strDevConTemp = strDevConExePathW2k
+        Else
+            strDevConTemp = strDevConExePath
+        End If
+    End If
+
+    cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConTemp & Kavichki & " " & Kavichki & strHwidsTxtPath & Kavichki & " 4 " & Kavichki & strHwid & Kavichki
+
+    If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
+        MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
+        DeleteDriverbyHwid = False
+    Else
+        DeleteDriverbyHwid = True
+    End If
+
+End Function
+

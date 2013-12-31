@@ -1,6 +1,10 @@
 Attribute VB_Name = "mDevParserByReqExp"
 Option Explicit
 
+' Текущая версия базы данных
+Public Const lngDevDBVersion        As Long = 5
+
+' Рабочие переменные
 Private objInfFile        As TextStream
 Private objRezultFile     As TextStream
 Private objRezultFileHWID As TextStream

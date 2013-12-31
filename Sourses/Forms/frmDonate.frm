@@ -417,10 +417,10 @@ Private Sub LoadDonate()
     Select Case strPCLangCurrentID
 
         Case "0419"
-            strPathDonate = PathCollect("Tools\Docs\0419\donate.rtf")
+            strPathDonate = PathCollect(strToolsDocs_Path & "\0419\donate.rtf")
 
         Case Else
-            strPathDonate = PathCollect("Tools\Docs\0409\donate.rtf")
+            strPathDonate = PathCollect(strToolsDocs_Path & "\0409\donate.rtf")
     End Select
 
     If PathExists(strPathDonate) Then

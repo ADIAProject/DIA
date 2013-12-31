@@ -428,10 +428,10 @@ Private Sub LoadLicence()
     Select Case strPCLangCurrentID
 
         Case "0419"
-            strPathLicence = PathCollect("Tools\Docs\0419\licence.rtf")
+            strPathLicence = PathCollect(strToolsDocs_Path & "\0419\licence.rtf")
 
         Case Else
-            strPathLicence = PathCollect("Tools\Docs\0409\licence.rtf")
+            strPathLicence = PathCollect(strToolsDocs_Path & "\0409\licence.rtf")
     End Select
 
     If PathExists(strPathLicence) Then

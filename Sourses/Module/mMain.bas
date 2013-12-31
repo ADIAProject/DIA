@@ -2,10 +2,18 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram         As String = "30/12/2013"
+Public Const strDateProgram         As String = "31/12/2013"
 
-' Текущая версия базы данных
-Public Const lngDevDBVersion        As Long = 5
+' Основные переменные проекта (название, версия и т.д)
+Public strProductName               As String
+Public strProductVersion            As String
+Public Const strProjectName         As String = "DriversInstaller"
+
+'Константы путей основных каталогов и файла настроек (вынесены отдельно для универсальности кода под разные проекты)
+Public Const strToolsLang_Path      As String = "Tools\Lang"            ' Каталог с языковыми файлами
+Public Const strToolsDocs_Path      As String = "Tools\Docs"            ' Каталог с документацией на программу
+Public Const strToolsGraphics_Path  As String = "Tools\Graphics"        ' Каталог с графическими ресурсами программы
+Public Const strSettingIniFile      As String = "DriversInstaller.ini"  ' INI-Файл настроек программы
 
 ' Версии лицензионного соглашения и файла Donate
 Public Const strEULA_Version        As String = "02/02/2010"
@@ -13,6 +21,7 @@ Public Const strEULA_MD5RTF         As String = "68da44c8b1027547e4763472e0ecb72
 Public Const strEULA_MD5RTF_Eng     As String = "0cbd9d50eec41b26d24c5465c4be70bc"
 Public Const strDONATE_MD5RTF       As String = "637e1aacdfcfa01fdc8827eb48796b1b"
 Public Const strDONATE_MD5RTF_Eng   As String = "ca762ec290f0d9bedf2e09319661921a"
+
 
 'Константы путей дополнительных утилит
 Public Const strDevManView_Path     As String = "Tools\DevManView\DevManView.exe"
@@ -22,10 +31,6 @@ Public Const strSIV_Path64          As String = "Tools\SIV\SIV64X.exe"
 Public Const strUDI_Path            As String = "Tools\UDI\UnknownDeviceIdentifier.exe"
 Public Const strDoubleDriver_Path   As String = "Tools\DoubleDriver\dd.exe"
 Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDevices.exe"
-
-' Переменная название программы
-Public strProductName               As String
-Public strProductVersion            As String
 
 ' рабочий файл настроек
 Public strSysIni                    As String
@@ -83,7 +88,7 @@ Public arrDriversList()                  As String
 Public lngMaxDriversArrCount             As Long
 Public lngDriversArrCount                As Long
 
-' Массив служебных сообщений
+
 Public lngOSCount                        As Long
 Public lngOSCountPerRow                  As Long
 Public lngUtilsCount                     As Long
@@ -314,8 +319,6 @@ Public lngTableHwidHeader14              As Long
 ' Переменные для определения модели компа
 Public strCompModel                      As String
 Public mbIsNotebok                       As Boolean
-Public arrNotebookFilterList()           As String
-Public arrNotebookFilterListDef()        As String
 Public mbDP_Is_aFolder                   As Boolean
 Public mbCheckUpdNotEnd                  As Boolean
 
@@ -340,7 +343,7 @@ Private Sub Main()
     ' Запоминаем app.path и прочее в переменные
     GetCurAppPath
     strProductVersion = App.Major & "." & App.Minor & "." & App.Revision
-    strProductName = App.ProductName
+    strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
 
     'считываем версию операционки
     If Not OsCurrVersionStruct.IsInitialize Then
@@ -353,7 +356,7 @@ Private Sub Main()
     strWinTemp = BackslashAdd2Path(Environ$("TMP"))
 
     If InStr(strWinTemp, " ") Then
-        strWinTemp = strWinDir & "TEMP"
+        strWinTemp = BackslashAdd2Path(PathCombine(strWinDir, "TEMP"))
     End If
 
     ' Если временный каталог windows  (%windir%\temp)недоступен
@@ -366,6 +369,8 @@ Private Sub Main()
 
     ' Инициализация массива вендоров ноутбуков
     LoadNotebookList
+    'Получение значений маркеров
+    GetSummaryDPMarkers
 
     '******************************************
     ' Проверяем работает ли программа в режиме IDE
@@ -390,14 +395,14 @@ Private Sub Main()
     End If
 
     ' Рабочий временный каталог
-    strWorkTemp = strWinTemp & "DriversInstaller"
+    strWorkTemp = strWinTemp & strProjectName
     strWorkTempBackSL = BackslashAdd2Path(strWorkTemp)
 
     ' Создаем временный рабочий каталог
-    If PathExists(strAppPathBackSL & "DriversInstaller.ini") = False Then
-        strSysIni = strAppPathBackSL & "Tools\DriversInstaller.ini"
+    If PathExists(strAppPathBackSL & strSettingIniFile) = False Then
+        strSysIni = strAppPathBackSL & "Tools\" & strSettingIniFile
     Else
-        strSysIni = strAppPathBackSL & "DriversInstaller.ini"
+        strSysIni = strAppPathBackSL & strSettingIniFile
     End If
 
     ' Запущена ли программа с CD
@@ -408,7 +413,7 @@ Private Sub Main()
     LoadLanguageOS
 
     'загружаем языковые файлы
-    If PathExists(strAppPathBackSL & "Tools\Lang") Then
+    If PathExists(strAppPathBackSL & strToolsLang_Path) Then
         mbMultiLanguage = LoadLanguageList
     End If
 
@@ -416,8 +421,6 @@ Private Sub Main()
     LocaliseMessage strPCLangCurrentPath
     ' Получение настроек из ini-файла
     GetMainIniParam
-    'Получение значений маркеров
-    GetSummaryDPMarkers
 
     ' Если стоит настройка проверять временный путь на наличие ini, то перезагружаем файл параметров
     If mbLoadIniTmpAfterRestart Then
@@ -440,15 +443,15 @@ Private Sub Main()
     End If
 
     'Перегружаем языковые файлы
-    If PathExists(strAppPathBackSL & "Tools\Lang") Then
+    If PathExists(strAppPathBackSL & strToolsLang_Path) Then
         mbMultiLanguage = LoadLanguageList
     End If
 
     'перегружаем программные сообщения
     LocaliseMessage strPCLangCurrentPath
-    strPathImageStatusButton = strAppPathBackSL & "Tools\Graphics\StatusButton\"
-    strPathImageMain = strAppPathBackSL & "Tools\Graphics\Main\"
-    'strPathImageMenu = strAppPathBackSL & "Tools\Graphics\Menu\"
+    strPathImageStatusButton = strAppPathBackSL & strToolsGraphics_Path & "\StatusButton\"
+    strPathImageMain = strAppPathBackSL & strToolsGraphics_Path & "\Main\"
+    'strPathImageMenu = strAppPathBackSL & strToolsGraphics_Path & "\Menu\"
     LoadIconImagePath
     ' Находится ли лог на CD
     mbLogNotOnCDRoom = LogNotOnCDRoom
@@ -461,8 +464,7 @@ Private Sub Main()
 
     If LenB(strRunWithParam) > 0 Then
         ' Парсинг строки запуска
-        cmdLineParsing
-        cmdLineAnalize
+        CmdLineParsing
     End If
 
     If APIFunctionPresent("IsUserAnAdmin", "shell32.dll") Then
@@ -475,7 +477,7 @@ Private Sub Main()
         DebugMode "Current Date: " & Now()
     End If
 
-    DebugMode "Version: " & strProductName & " v." & strProductVersion & vbNewLine & _
+    DebugMode "Version: " & strProductName & vbNewLine & _
               "Build: " & strDateProgram & vbNewLine & _
               "ExeName: " & App.EXEName & ".exe" & vbNewLine & _
               "AppWork: " & strAppPath & vbNewLine & _
@@ -520,14 +522,17 @@ Private Sub Main()
         SetDEPDisable
     End If
 
-    DebugMode "OsCurrentVersion: " & strOsCurrentVersion & vbNewLine & _
-              "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
-    ' Служебные файлы
-    InitializePathHwidsTxt
     ' Регистрация внешних компонент
     RegisterAddComponent
 
-    ' Если не существует каталогов с драйверами прописанных в настрйках, то выводим сообщение
+    DebugMode "OsCurrentVersion: " & strOsCurrentVersion & vbNewLine & _
+              "Architecture: " & strOSArchitecture & vbNewLine & _
+              "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
+
+    ' Служебные файлы
+    InitializePathHwidsTxt
+
+    ' Если не существует каталогов с драйверами прописанных в настройках, то выводим сообщение
     If mbAllFolderDRVNotExist Then
         MsgBox strMessages(6), vbCritical + vbApplicationModal, strProductName
         DebugMode strMessages(6)
@@ -553,8 +558,9 @@ Private Sub Main()
     DebugMode "isNotebook: " & mbIsNotebok & vbNewLine & _
               "Notebook/Motherboard Model: " & strCompModel
               
-    ' Показ лицензионного соглашения
+
     mbFirstStart = True
+    ' Показ лицензионного соглашения
     mbShowLicence = GetSetting(App.ProductName, "Licence", "Show at Startup", True)
     strLicenceDate = GetSetting(App.ProductName, "Licence", "EULA_DATE", strEULA_Version)
 
@@ -656,23 +662,6 @@ Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional s
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function CheckBallonTip
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Function CheckBallonTip() As Boolean
-    regParam = GetKeyValue(HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "EnableBalloonTips")
-
-    If LenB(regParam) = 0 Then
-        CheckBallonTip = True
-    Else
-        CheckBallonTip = regParam = "1"
-    End If
-
-    DebugMode "EnableBalloonTips: " & regParam & "(" & CheckBallonTip & ")"
-End Function
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateIni
 '! Description (Описание)  :   [Сохранение настроек в ини файл если файла нет]
 '! Parameters  (Переменные):
@@ -683,8 +672,8 @@ Private Sub CreateIni()
 
     If PathExists(strSysIni) = False Then
         If mbIsDriveCDRoom Then
-            strSysIni = strWorkTempBackSL & "DriversInstaller.ini"
-            MsgBox "File DriversInstaller.ini is not Exist!" & vbNewLine & "This program works from CD\DVD, so we create temporary DriversInstaller.ini-file" & vbNewLine & strSysIni, vbInformation + vbApplicationModal, strProductName
+            strSysIni = strWorkTempBackSL & strSettingIniFile
+            MsgBox "File " & strSettingIniFile & " is not Exist!" & vbNewLine & "This program works from CD\DVD, so we create temporary " & strSettingIniFile & "-file" & vbNewLine & strSysIni, vbInformation + vbApplicationModal, strProductName
         End If
 
         'Секция Main
@@ -815,13 +804,6 @@ Private Sub CreateIni()
         IniWriteStrPrivate "MainForm", "FontSize", "8", strSysIni
         IniWriteStrPrivate "MainForm", "HighlightColor", "32896", strSysIni
         'Секция Buttons
-        IniWriteStrPrivate "Button", "Width", CStr(lngButtonWidthDef), strSysIni
-        IniWriteStrPrivate "Button", "Height", CStr(lngButtonHeightDef), strSysIni
-        IniWriteStrPrivate "Button", "Left", "100", strSysIni
-        IniWriteStrPrivate "Button", "Top", "100", strSysIni
-        IniWriteStrPrivate "Button", "Btn2BtnLeft", "100", strSysIni
-        IniWriteStrPrivate "Button", "Btn2BtnTop", "100", strSysIni
-        IniWriteStrPrivate "Button", "TextUpCase", "0", strSysIni
         IniWriteStrPrivate "Button", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Button", "FontSize", "8", strSysIni
         IniWriteStrPrivate "Button", "FontUnderline", "0", strSysIni
@@ -829,6 +811,13 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Button", "FontItalic", "0", strSysIni
         IniWriteStrPrivate "Button", "FontBold", "0", strSysIni
         IniWriteStrPrivate "Button", "FontColor", "0", strSysIni
+        IniWriteStrPrivate "Button", "Width", CStr(lngButtonWidthDef), strSysIni
+        IniWriteStrPrivate "Button", "Height", CStr(lngButtonHeightDef), strSysIni
+        IniWriteStrPrivate "Button", "Left", "100", strSysIni
+        IniWriteStrPrivate "Button", "Top", "100", strSysIni
+        IniWriteStrPrivate "Button", "Btn2BtnLeft", "100", strSysIni
+        IniWriteStrPrivate "Button", "Btn2BtnTop", "100", strSysIni
+        IniWriteStrPrivate "Button", "TextUpCase", "0", strSysIni
         IniWriteStrPrivate "Button", "IconStatusSkin", "Standart", strSysIni
         'Секция Tab
         IniWriteStrPrivate "Tab", "FontName", "Tahoma", strSysIni
@@ -875,38 +864,6 @@ Private Sub CreateIni()
     End If
 
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function DeleteDriverbyHwid
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strHwid (String)
-'!--------------------------------------------------------------------------------
-Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
-
-    Dim cmdString     As String
-    Dim strDevConTemp As String
-
-    If mbIsWin64 Then
-        strDevConTemp = strDevConExePath64
-    Else
-
-        If strOsCurrentVersion = "5.0" Then
-            strDevConTemp = strDevConExePathW2k
-        Else
-            strDevConTemp = strDevConExePath
-        End If
-    End If
-
-    cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConTemp & Kavichki & " " & Kavichki & strHwidsTxtPath & Kavichki & " 4 " & Kavichki & strHwid & Kavichki
-
-    If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
-        MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
-        DeleteDriverbyHwid = False
-    Else
-        DeleteDriverbyHwid = True
-    End If
-
-End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub GetMainIniParam
@@ -1011,7 +968,7 @@ Private Sub GetMainIniParam()
 
         If PathExists(strAlternativeTempPath) Then
             strWinTemp = strAlternativeTempPath
-            strWorkTemp = strWinTemp & "DriversInstaller"
+            strWorkTemp = strWinTemp & strProjectName
 
             ' Если нет, то создаем временный рабочий каталог
             If PathExists(strWorkTemp) = False Then
@@ -1426,225 +1383,11 @@ Private Sub GetMainIniParam()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMB_Manufacturer
-'! Description (Описание)  :   [type_description_here]
+'! Procedure   (Функция)   :   Sub CmdLineParsing
+'! Description (Описание)  :   [Функция анализа коммандной строки и присвоение переменных на основании передеваемых комманд]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function GetMB_Manufacturer() As String
-
-    Dim colItems           As Object
-    Dim objItem            As Object
-    Dim objWMIService      As Object
-    Dim sAnsComputerSystem As String
-    Dim sAnsBaseBoard      As String
-    Dim objRegExp          As RegExp
-    Dim strTemp            As String
-
-    Const wbemFlagReturnImmediately = &H10
-    Const wbemFlagForwardOnly = &H20
-
-    ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
-    Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsComputerSystem = sAnsComputerSystem & objItem.Manufacturer
-    Next
-
-    ' получение данных из Win32_ComputerSystem
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsBaseBoard = sAnsBaseBoard & objItem.Manufacturer
-    Next
-
-    ' итог
-    If StrComp(sAnsComputerSystem, "System manufacturer", vbTextCompare) = 0 Then
-        strTemp = Trim$(sAnsBaseBoard)
-        mbIsNotebok = False
-    Else
-        strTemp = Trim$(sAnsComputerSystem)
-        mbIsNotebok = True
-    End If
-
-    ' удаляем лишние символы в наименовании
-    Set objRegExp = New RegExp
-
-    With objRegExp
-        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
-        .IgnoreCase = True
-        .Global = True
-    End With
-
-    'получаем date1
-    GetMB_Manufacturer = Trim$(objRegExp.Replace(strTemp, " "))
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMB_Model
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function GetMB_Model() As String
-
-    Dim colItems           As Object
-    Dim objItem            As Object
-    Dim objWMIService      As Object
-    Dim sAnsComputerSystem As String
-    Dim sAnsBaseBoard      As String
-    Dim objRegExp          As RegExp
-    Dim strTemp            As String
-
-    Const wbemFlagReturnImmediately = &H10
-    Const wbemFlagForwardOnly = &H20
-
-    ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
-    Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsComputerSystem = sAnsComputerSystem & objItem.Model
-    Next
-
-    ' получение данных из Win32_ComputerSystem
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsBaseBoard = sAnsBaseBoard & objItem.Product
-    Next
-
-    ' итог
-    If StrComp(sAnsComputerSystem, "System Product Name", vbTextCompare) = 0 Then
-        strTemp = Trim$(sAnsBaseBoard)
-        mbIsNotebok = False
-    Else
-        strTemp = Trim$(sAnsComputerSystem)
-        mbIsNotebok = True
-    End If
-
-    ' удаляем лишние символы в наименовании
-    Set objRegExp = New RegExp
-
-    With objRegExp
-        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
-        .IgnoreCase = True
-        .Global = True
-    End With
-
-    'получаем date1
-    GetMB_Model = Trim$(objRegExp.Replace(strTemp, " "))
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMBInfo
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Function GetMBInfo() As String
-
-    Dim strMB_Manufacturer As String
-    Dim strMB_Model        As String
-
-    strMB_Manufacturer = GetMB_Manufacturer()
-    strMB_Model = GetMB_Model()
-
-    If LenB(strMB_Manufacturer) > 0 And LenB(strMB_Model) > 0 Then
-        GetMBInfo = strMB_Manufacturer & "_" & strMB_Model
-    ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) > 0 Then
-        GetMBInfo = strMB_Model
-    ElseIf LenB(strMB_Manufacturer) > 0 And LenB(strMB_Model) = 0 Then
-        GetMBInfo = strMB_Manufacturer
-    Else
-        GetMBInfo = "Unknown"
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadNotebookList
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadNotebookList()
-
-    ReDim arrNotebookFilterListDef(35) As String
-
-    arrNotebookFilterListDef(0) = "3Q;*3q*"
-    arrNotebookFilterListDef(1) = "Acer;*acer*;*emachines*;*packard*bell*;*gateway*"
-    arrNotebookFilterListDef(2) = "Apple;*apple*"
-    arrNotebookFilterListDef(3) = "Asus;*asus*"
-    arrNotebookFilterListDef(4) = "BenQ;*benq*"
-    arrNotebookFilterListDef(5) = "Clevo;*clevo*"
-    arrNotebookFilterListDef(6) = "Dell;*dell*;*alienware*"
-    arrNotebookFilterListDef(7) = "Eurocom;*eurocom*"
-    arrNotebookFilterListDef(8) = "Fujitsu;*fujitsu*;*sieme*"
-    arrNotebookFilterListDef(9) = "Getac;*getac*"
-    arrNotebookFilterListDef(10) = "Gigabyte;*gigabyte*;*ecs*;*elitegroup*"
-    arrNotebookFilterListDef(11) = "HP;*hp*;*hewle*;*compaq*"
-    arrNotebookFilterListDef(12) = "Intel;*intel*"
-    arrNotebookFilterListDef(13) = "Inventec;*inventec*"
-    arrNotebookFilterListDef(14) = "iRU;*iru*"
-    arrNotebookFilterListDef(15) = "Lenovo;*lenovo*;*compal*;*ibm*"
-    arrNotebookFilterListDef(16) = "LG;*lg*"
-    arrNotebookFilterListDef(17) = "Matsushita;*matsushita*"
-    arrNotebookFilterListDef(18) = "Mitac;*mitac*;*MTC*"
-    arrNotebookFilterListDef(19) = "MSI;*msi*;*micro-star*"
-    arrNotebookFilterListDef(20) = "NEC;*nec*"
-    arrNotebookFilterListDef(21) = "Panasonic;*panasonic*"
-    arrNotebookFilterListDef(22) = "Pegatron;*pegatron*"
-    arrNotebookFilterListDef(23) = "PROLiNK;*prolink*"
-    arrNotebookFilterListDef(24) = "Quanta;*quanta*"
-    arrNotebookFilterListDef(25) = "Roverbook;*roverbook*"
-    arrNotebookFilterListDef(26) = "Sager;*sager*"
-    arrNotebookFilterListDef(27) = "Samsung;*samsung*"
-    arrNotebookFilterListDef(28) = "Shuttle;*shuttle*"
-    arrNotebookFilterListDef(29) = "SiS;*sis*"
-    arrNotebookFilterListDef(30) = "Sony;*sony*;*vaio*"
-    arrNotebookFilterListDef(31) = "Toshiba;*toshiba*"
-    arrNotebookFilterListDef(32) = "ViewSonic;*viewsonic*;*ViewBook*;*viewbook*"
-    arrNotebookFilterListDef(33) = "VIZIO;*vizio*"
-    arrNotebookFilterListDef(34) = "Wistron;*wistron*"
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadLanguageOS
-'! Description (Описание)  :   [Считываем язык операционной системы]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadLanguageOS()
-
-    Dim LCID As Long
-
-    ' Считавыем язык операционки
-    LCID = GetSystemDefaultLCID()
-    'language id
-    strPCLangID = GetUserLocaleInfo(LCID, LOCALE_ILANGUAGE)
-    'localized name of language
-    strPCLangLocaliseName = GetUserLocaleInfo(LCID, LOCALE_SLANGUAGE)
-    'English name of language
-    strPCLangEngName = GetUserLocaleInfo(LCID, LOCALE_SENGLANGUAGE)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Win64ReloadOptions
-'! Description (Описание)  :   [Переназначение переменных для Win x64]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Win64ReloadOptions()
-    DebugMode "Win64ReloadOptions"
-    strDPInstExePath = strDPInstExePath64
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdLineParsing
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdLineParsing()
+Private Sub CmdLineParsing()
 
     Dim argRetCMD    As Collection
     Dim i            As Integer
@@ -1757,55 +1500,13 @@ Private Sub cmdLineParsing()
 
 End Sub
 
-' Показ окна с параметрами запуска
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowHelpMsg
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Показ окна с параметрами запуска]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ShowHelpMsg()
-    MsgBox strMessages(137), vbInformation & vbOKOnly, strProductName & " " & strProductVersion
-End Sub
-
-' Извлечение ресурсов программы в каталог
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ExtractrResToFolder
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strArg (String)
-'!--------------------------------------------------------------------------------
-Private Sub ExtractrResToFolder(strArg As String)
-
-    Dim strArg_x()    As String
-    Dim strPathToTemp As String
-    Dim strPathTo     As String
-
-    ' Извлекаем путь из параметра
-    strPathToTemp = strArg
-
-    ' Проверяем существоание каталога
-    If LenB(strPathToTemp) > 0 Then
-        If PathExists(strPathToTemp) = False Then
-            CreateNewDirectory strPathToTemp
-        End If
-
-        strPathTo = BackslashAdd2Path(strPathToTemp)
-    Else
-        strPathTo = strWorkTemp
-    End If
-
-    ' Запуск извлечения всех (dll-ocx) ресурсов программы
-    If ExtractResourceAll(strPathTo) Then
-        If MsgBox(strMessages(135), vbYesNo + vbInformation, strProductName) = vbYes Then
-            ShellEx strPathTo, essSW_SHOWNORMAL
-        End If
-
-    Else
-
-        If MsgBox(strMessages(136), vbYesNo + vbInformation, strProductName) = vbYes Then
-            ShellEx strPathTo, essSW_SHOWNORMAL
-        End If
-    End If
-
+    MsgBox strMessages(137), vbInformation & vbOKOnly, strProductName
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1873,6 +1574,16 @@ Private Sub SaveSert2Reestr()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Win64ReloadOptions
+'! Description (Описание)  :   [Переназначение переменных для Win x64]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Win64ReloadOptions()
+    DebugMode "Win64ReloadOptions"
+    strDPInstExePath = strDPInstExePath64
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub InitializePathHwidsTxt
 '! Description (Описание)  :   [Служебные файлы]
 '! Parameters  (Переменные):
@@ -1885,90 +1596,18 @@ Private Sub InitializePathHwidsTxt()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdLineAnalize
-'! Description (Описание)  :   [Функция анализа коммандной строки и присвоение переменных на основании передеваемых комманд]
+'! Procedure   (Функция)   :   Function CheckBallonTip
+'! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub cmdLineAnalize()
+Private Function CheckBallonTip() As Boolean
+    regParam = GetKeyValue(HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "EnableBalloonTips")
 
-    Dim miSilentRunTimerTemp    As String
-    Dim strRunWithParam_x()     As String
-    Dim strRunWithParamTemp     As String
-    Dim strSilentSelectModeTemp As String
-    Dim i                       As Long
-
-    DebugMode "CmdString: " & Command
-    strRunWithParam = Trim$(strRunWithParam)
-    strRunWithParam_x = Split(strRunWithParam, " ")
-
-    For i = LBound(strRunWithParam_x) To UBound(strRunWithParam_x)
-        strRunWithParamTemp = strRunWithParam_x(i)
-
-        If InStr(1, strRunWithParamTemp, "-t", vbTextCompare) = 1 Or InStr(1, strRunWithParamTemp, "t", vbTextCompare) = 1 Then
-            mbRunWithParam = True
-            miSilentRunTimerTemp = Replace$(strRunWithParamTemp, "-", vbNullString)
-            miSilentRunTimerTemp = Replace$(miSilentRunTimerTemp, "t", vbNullString)
-
-            If IsNumeric(miSilentRunTimerTemp) Then
-                miSilentRunTimer = CInt(miSilentRunTimerTemp)
-            Else
-                miSilentRunTimer = 10
-            End If
-
-            mbDebugEnable = True
-            mbUpdateCheck = False
-        End If
-
-        If InStr(1, strRunWithParamTemp, "-s", vbTextCompare) = 1 Or InStr(1, strRunWithParamTemp, "s", vbTextCompare) = 1 Then
-            mbRunWithParamS = True
-            strSilentSelectModeTemp = Replace$(strRunWithParamTemp, "-", vbNullString)
-            strSilentSelectModeTemp = Replace$(strSilentSelectModeTemp, "s", vbNullString)
-
-            Select Case LCase$(strSilentSelectModeTemp)
-
-                Case "n"
-                    ' новые
-                    strSilentSelectMode = "n"
-
-                Case "q"
-                    ' неустановленные
-                    strSilentSelectMode = "q"
-
-                Case "a"
-                    ' Все на вкладке
-                    strSilentSelectMode = "a"
-
-                Case "n2"
-                    ' новые
-                    strSilentSelectMode = "n2"
-
-                Case "q2"
-                    ' неустановленные
-                    strSilentSelectMode = "q2"
-
-                Case "a2"
-                    ' Все на вкладке
-                    strSilentSelectMode = "a2"
-
-                Case Else
-                    ' по умолчанию
-                    strSilentSelectMode = "n"
-            End Select
-
-            mbDebugEnable = True
-            mbUpdateCheck = False
-        Else
-            strSilentSelectMode = "n"
-        End If
-
-    Next
-
-    ' Если стоит только параметр -s и нет -t, то делаем -t10
-    If mbRunWithParamS Then
-        If Not mbRunWithParam Then
-            mbRunWithParam = True
-            miSilentRunTimer = 10
-        End If
+    If LenB(regParam) = 0 Then
+        CheckBallonTip = True
+    Else
+        CheckBallonTip = regParam = "1"
     End If
 
-End Sub
+    DebugMode "EnableBalloonTips: " & regParam & "(" & CheckBallonTip & ")"
+End Function
