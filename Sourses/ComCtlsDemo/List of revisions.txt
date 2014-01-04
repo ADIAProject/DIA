@@ -1,5 +1,10 @@
 List of revisions:
 
+03-Jan-2014
+- MouseUp event is now working properly for the left and right button in the ListView and TreeView control.
+- Included the WorkAreas property in the ListView control.
+- Fixed a bug in the TreeView control that NodeClick event is firing when clicking on the button of an item.
+
 28-Dec-2013
 - Changing the 'ListIndex' will fire now the Click event in the ListBoxW and ComboBoxW control as the intrinsic VB controls does it also.
 

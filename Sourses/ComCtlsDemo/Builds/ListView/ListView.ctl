@@ -394,6 +394,7 @@ Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObj
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
+Private Declare Function WindowFromPoint Lib "user32" (ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
@@ -553,6 +554,7 @@ Private Const LVM_GETBKIMAGE As Long = LVM_GETBKIMAGEW
 Private Const LVM_GETWORKAREAS As Long = (LVM_FIRST + 70)
 Private Const LVM_SETHOVERTIME As Long = (LVM_FIRST + 71)
 Private Const LVM_GETHOVERTIME As Long = (LVM_FIRST + 72)
+Private Const LVM_GETNUMBEROFWORKAREAS As Long = (LVM_FIRST + 73)
 Private Const LVM_SETTOOLTIPS As Long = (LVM_FIRST + 74)
 Private Const LVM_GETTOOLTIPS As Long = (LVM_FIRST + 78)
 Private Const LVM_SORTITEMSEX As Long = (LVM_FIRST + 81)
@@ -665,6 +667,7 @@ Private Const LVHT_ABOVE As Long = &H8
 Private Const LVHT_BELOW As Long = &H10
 Private Const LVHT_TORIGHT As Long = &H20
 Private Const LVHT_TOLEFT As Long = &H40
+Private Const LV_MAX_WORKAREAS As Long = 16
 Private Const EMF_CENTERED As Long = 1
 Private Const HDM_FIRST As Long = &H1200
 Private Const HDM_SETIMAGELIST As Long = (HDM_FIRST + 8)
@@ -776,6 +779,7 @@ Private ListViewLogFont As LOGFONT, ListViewBoldLogFont As LOGFONT, ListViewUnde
 Private ListViewFocusIndex As Long
 Private ListViewLabelInEdit As Boolean
 Private ListViewStartLabelEdit As Boolean
+Private ListViewButtonDown As Integer
 Private ListViewListItemsControl As Long
 Private ListViewDragIndexBuffer As Long, ListViewDragIndex As Long
 Private ListViewDragOffsetX As Long, ListViewDragOffsetY As Long
@@ -3672,15 +3676,29 @@ UserControl.Refresh
 RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub
 
-Public Function HitTest(ByVal X As Single, ByVal Y As Single) As LvwListItem
+Public Function HitTest(ByVal X As Single, ByVal Y As Single, Optional ByRef SubItemIndex As Variant) As LvwListItem
 Attribute HitTest.VB_Description = "Returns a reference to the list item object located at the coordinates of X and Y."
 If ListViewHandle <> 0 Then
     Dim LVHTI As LVHITTESTINFO
     With LVHTI
     .PT.X = UserControl.ScaleX(X, vbContainerPosition, vbPixels)
     .PT.Y = UserControl.ScaleY(Y, vbContainerPosition, vbPixels)
-    If SendMessage(ListViewHandle, LVM_HITTEST, 0, ByVal VarPtr(LVHTI)) > -1 Then
-        If CBool(.Flags And LVHT_ONITEM) = True Then Set HitTest = Me.ListItems(.iItem + 1)
+    If IsMissing(SubItemIndex) = True Then
+        If SendMessage(ListViewHandle, LVM_HITTEST, 0, ByVal VarPtr(LVHTI)) > -1 Then
+            If (.Flags And LVHT_ONITEM) <> 0 Then Set HitTest = Me.ListItems(.iItem + 1)
+        End If
+    Else
+        Select Case VarType(SubItemIndex)
+            Case vbLong, vbInteger, vbByte
+                If SendMessage(ListViewHandle, LVM_SUBITEMHITTEST, 0, ByVal VarPtr(LVHTI)) > -1 Then
+                    If (.Flags And LVHT_ONITEM) <> 0 Then
+                        Set HitTest = Me.ListItems(.iItem + 1)
+                        SubItemIndex = .iSubItem
+                    End If
+                End If
+            Case Else
+                Err.Raise 13
+        End Select
     End If
     End With
 End If
@@ -4056,6 +4074,77 @@ If ListViewDragIndex > 0 Then
 End If
 End Property
 
+Public Property Get WorkAreas() As Variant
+Attribute WorkAreas.VB_Description = "Returns/sets the working areas of the list view in 'icon' and 'small icon' view. All the client coordinates (left, top, right and bottom) are in pixels."
+If ListViewHandle <> 0 Then
+    Dim StructCount As Long
+    SendMessage ListViewHandle, LVM_GETNUMBEROFWORKAREAS, 0, ByVal VarPtr(StructCount)
+    If StructCount > 0 Then
+        Dim RC() As RECT
+        ReDim RC(0 To (StructCount - 1)) As RECT
+        SendMessage ListViewHandle, LVM_GETWORKAREAS, StructCount, ByVal VarPtr(RC(0))
+        Dim ArgList() As Long
+        ReDim ArgList(0 To ((StructCount * 4) - 1)) As Long
+        CopyMemory ArgList(0), ByVal VarPtr(RC(0)), StructCount * 16
+        WorkAreas = ArgList()
+    Else
+        WorkAreas = Empty
+    End If
+End If
+End Property
+
+Public Property Let WorkAreas(ByVal ArgList As Variant)
+If ListViewHandle <> 0 Then
+    If IsArray(ArgList) Then
+        Dim Ptr As Long
+        CopyMemory Ptr, ByVal UnsignedAdd(VarPtr(ArgList), 8), 4
+        If Ptr <> 0 Then
+            Dim RetVal As Long
+            CopyMemory ByVal VarPtr(RetVal), Ptr, 4
+            If RetVal <> 0 Then
+                Dim DimensionCount As Integer
+                CopyMemory DimensionCount, ByVal Ptr, 2
+                If DimensionCount = 1 Then
+                    Dim Arr() As Long, Count As Long, i As Long
+                    For i = LBound(ArgList) To UBound(ArgList)
+                        Select Case VarType(ArgList(i))
+                            Case vbLong, vbInteger, vbByte
+                                If ArgList(i) >= 0 Then
+                                    ReDim Preserve Arr(0 To Count) As Long
+                                    Arr(Count) = ArgList(i)
+                                    Count = Count + 1
+                                End If
+                        End Select
+                    Next i
+                    If Count > 0 Then
+                        If Count Mod 4 = 0 Then
+                            Dim StructCount As Long
+                            StructCount = (Count / 4)
+                            If StructCount > LV_MAX_WORKAREAS Then StructCount = LV_MAX_WORKAREAS
+                            SendMessage ListViewHandle, LVM_SETWORKAREAS, StructCount, ByVal VarPtr(Arr(0))
+                        Else
+                            Err.Raise 5
+                        End If
+                    Else
+                        SendMessage ListViewHandle, LVM_SETWORKAREAS, 0, ByVal 0&
+                    End If
+                Else
+                    Err.Raise Number:=5, Description:="Array must be single dimensioned"
+                End If
+            Else
+                Err.Raise Number:=91, Description:="Array is not allocated"
+            End If
+        Else
+            Err.Raise 5
+        End If
+    ElseIf IsEmpty(ArgList) Then
+        SendMessage ListViewHandle, LVM_SETWORKAREAS, 0, ByVal 0&
+    Else
+        Err.Raise 380
+    End If
+End If
+End Property
+
 Private Sub SetVisualStylesHeader()
 If ListViewHandle <> 0 Then
     If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
@@ -4320,18 +4409,27 @@ Select Case wMsg
         Select Case wMsg
             Case WM_LBUTTONDOWN
                 RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                ListViewButtonDown = vbLeftButton
             Case WM_MBUTTONDOWN
                 RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                ListViewButtonDown = vbMiddleButton
             Case WM_RBUTTONDOWN
                 RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                ListViewButtonDown = vbRightButton
             Case WM_MOUSEMOVE
                 RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
-            Case WM_LBUTTONUP
-                RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
-            Case WM_MBUTTONUP
-                RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
-            Case WM_RBUTTONUP
-                RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+            Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
+                Select Case wMsg
+                    Case WM_LBUTTONUP
+                        RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                    Case WM_MBUTTONUP
+                        RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                    Case WM_RBUTTONUP
+                        RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                End Select
+                Dim P As POINTAPI
+                GetCursorPos P
+                If WindowFromPoint(P.X, P.Y) = hWnd Then RaiseEvent Click
         End Select
     Case WM_NOTIFY
         Dim NM As NMHDR
@@ -4503,7 +4601,14 @@ Select Case wMsg
                             RaiseEvent ItemClick(Me.ListItems(NMIA.iItem + 1), vbRightButton)
                         End If
                     End If
-                    RaiseEvent Click
+                    If NMIA.iItem > -1 Or (NMIA.iItem = -1 And (PropView = LvwViewReport Or PropView = LvwViewList)) Then
+                        Dim P1 As POINTAPI
+                        GetCursorPos P1
+                        ScreenToClient ListViewHandle, P1
+                        RaiseEvent MouseUp(ListViewButtonDown, GetShiftState(), UserControl.ScaleX(P1.X, vbPixels, vbTwips), UserControl.ScaleY(P1.Y, vbPixels, vbTwips))
+                        ListViewButtonDown = 0
+                        RaiseEvent Click
+                    End If
                 Case NM_DBLCLK, NM_RDBLCLK
                     CopyMemory NMIA, ByVal lParam, LenB(NMIA)
                     If NMIA.iItem > -1 Then
@@ -4681,13 +4786,13 @@ Select Case wMsg
         End If
     Case WM_CONTEXTMENU
         If wParam = ListViewHandle Then
-            Dim P As POINTAPI
-            P.X = Get_X_lParam(lParam)
-            P.Y = Get_Y_lParam(lParam)
-            If P.X > 0 And P.Y > 0 Then
-                ScreenToClient ListViewHandle, P
-                RaiseEvent ContextMenu(UserControl.ScaleX(P.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition))
-            ElseIf P.X = -1 And P.Y = -1 Then
+            Dim P2 As POINTAPI
+            P2.X = Get_X_lParam(lParam)
+            P2.Y = Get_Y_lParam(lParam)
+            If P2.X > 0 And P2.Y > 0 Then
+                ScreenToClient ListViewHandle, P2
+                RaiseEvent ContextMenu(UserControl.ScaleX(P2.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P2.Y, vbPixels, vbContainerPosition))
+            ElseIf P2.X = -1 And P2.Y = -1 Then
                 ' According to MSDN:
                 ' If the context menu is generated from the keyboard - for example
                 ' if the user types SHIFT + F10 — then the X and Y coordinates
