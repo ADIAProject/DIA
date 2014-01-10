@@ -15,23 +15,23 @@ Public strUpdDescription()      As String
 
 Private XMLHTTP                 As MSXML2.XMLHTTP30
 
-Private Const iTimeOutInSecs    As Integer = 5
-Private Const strXMLMainSection As String = "//driversinstaller"
-Private Const Url_Request       As String = "http://adia-project.net/Project/dia_update2.xml"
-Private Const Url_Test_WWW      As String = "http://ya.ru/"
-Private Const Url_Test_Site     As String = "http://adia-project.net/test.txt"
+Private Const iTimeOutInSecs       As Integer = 5                           ' Таймаут ожидания ответа от сервера в секундах
+Private Const strXMLMainSection    As String = "//driversinstaller"         ' Раздел файла Xml-описателя обновления
+Private Const strUrl_ProjectFolder As String = "Project/"                   ' Каталог проекта на сервере, в нем ищем все файлы xml
+Private Const strUrl_UpdFile       As String = "dia_update2.xml"            ' Файл рееестр всех обновлений программы
+Private Const strUrl_TestFile      As String = "test.txt"                   ' Файл для проверки доступности сайта программы
+Private Const strUrl_TestWWW       As String = "http://ya.ru/"              ' Сайт для проверки наличия соединения интернет
 
 Private Declare Function InternetGetConnectedStateEx Lib "wininet.dll" (ByRef lpdwFlags As Long, ByVal lpszConnectionName As String, ByVal dwNameLen As Integer, ByVal dwReserved As Long) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckConnection2Server
-'! Description (Описание)  :   [Проверка существования файла на сервере]
+'! Description (Описание)  :   [Проверка существования файла (константа Url_Test_Site) на сайте программы]
 '! Parameters  (Переменные):   URL (String)
 '!--------------------------------------------------------------------------------
 Function CheckConnection2Server(ByVal URL As String) As String
 
-    ' Функция скачивает файл по ссылке URL$
-    ' и сохраняет его под именем LocalPath$
+    ' Функция скачивает файл по ссылке URL$ и сохраняет его под именем LocalPath$
     Dim strResultText As String
     Dim strResultCode As String
     Dim errNum        As Long
@@ -39,12 +39,12 @@ Function CheckConnection2Server(ByVal URL As String) As String
 
     On Error GoTo ErrCode
 
+    ' Если есть интернет-соединение, то
     If CheckInternetConnection Then
         Set XMLHTTP = New MSXML2.XMLHTTP30
         tmstart = Now
 
         With XMLHTTP
-            '.Open "GET", Replace$(URL, vbBackslash, "/"), "False"
             .Open "GET", Replace$(URL, vbBackslash, "/"), "True"
             .sEnd ""
 
@@ -90,7 +90,7 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckInternetConnection
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка наличия интернет соединения]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function CheckInternetConnection() As Boolean
@@ -115,41 +115,54 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 
-    Dim TextNodeName         As String
-    Dim NodeIndex            As Integer
-    Dim strVerTemp           As String
-    Dim strResultCompare     As String
-    Dim Url_Test_Result_WWW  As String
-    Dim Url_Test_Result_Site As String
+    Dim strTextNodeName         As String
+    Dim miNodeIndex             As Integer
+    Dim strVerTemp              As String
+    Dim strResultCompare        As String
+    Dim strUrl_TestWWW_Result   As String
+    Dim strUrl_Test_Site        As String
+    Dim strUrl_Test_Site_Result As String
+    Dim strUrl_Request          As String
+    
 
-    DebugMode "CheckUpd-Start"
+    DebugMode "CheckUpd-Start" & vbNewLine & _
+               vbTab & "CheckUpd-Options: " & Start
+    
+    ' Маркер окончания процесса проверки обновления
     mbCheckUpdNotEnd = True
-    DebugMode vbTab & "CheckUpd-Options: " & Start
 
     On Error Resume Next
 
     'Узнаем версию программы (установленной)
     strVerTemp = strProductVersion
-    'Url_Request = strAppPathBackSL & "dia_update2.xml"
-    ' проверка наличия доступа до google
-    Url_Test_Result_WWW = CheckConnection2Server(Url_Test_WWW)
+    
+    ' проверка наличия доступа до google/yandex
+    strUrl_TestWWW_Result = CheckConnection2Server(strUrl_TestWWW)
+    ' Если доступ есть, тогда проверяем дальше
+    If StrComp(strUrl_TestWWW_Result, "OK", vbTextCompare) = 0 Then
+        
+        ' Формируем ссылку для скачивания тестового файла с сайта программы
+        strUrl_Test_Site = strUrl_MainWWWSite & strUrl_TestFile
+        
+        ' проверка наличия доступа до сайта adia-project - файл test.txt
+        strUrl_Test_Site_Result = CheckConnection2Server(strUrl_Test_Site)
 
-    If StrComp(Url_Test_Result_WWW, "OK", vbTextCompare) = 0 Then
-        ' проверка наличия доступа до сайта adia-project
-        Url_Test_Result_Site = CheckConnection2Server(Url_Test_Site)
-
-        If StrComp(Url_Test_Result_Site, "OK", vbTextCompare) = 0 Then
+        If StrComp(strUrl_Test_Site_Result, "OK", vbTextCompare) = 0 Then
 
             Dim xmlDoc       As DOMDocument30
             Dim nodeList     As IXMLDOMNodeList
             Dim xmlNode      As IXMLDOMNode
             Dim propertyNode As IXMLDOMElement
-
+            
+            ' Формируем ссылку для скачивания файла реестра обновлений
+            'strUrl_Request = strAppPathBackSL & "dia_update2.xml"
+            strUrl_Request = strUrl_MainWWWSite & strUrl_ProjectFolder & strUrl_UpdFile
+            
             Set xmlDoc = New DOMDocument
             xmlDoc.async = False
-
-            ' загружаем файл
-            If Not xmlDoc.Load(Url_Request) Then
+            
+            ' загружаем файл реестра обновления
+            If Not xmlDoc.Load(strUrl_Request) Then
                 ChangeStatusTextAndDebug strMessages(126)
 
                 If Not Start Then
@@ -159,36 +172,38 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
             Else
                 Set nodeList = xmlDoc.documentElement.selectNodes(strXMLMainSection)
                 Set xmlNode = nodeList(0)
-                NodeIndex = 0
+                miNodeIndex = 0
 
                 For Each propertyNode In xmlNode.childNodes
 
-                    TextNodeName = vbNullString
-                    TextNodeName = xmlNode.childNodes(NodeIndex).nodeName
+                    strTextNodeName = vbNullString
+                    strTextNodeName = LCase$(xmlNode.childNodes(miNodeIndex).nodeName)
 
-                    Select Case TextNodeName
-
-                            ' Данные из файла dia_update2.xml
-                            ' Версия проги
+                    ' Данные из файла *_update2.xml
+                    Select Case strTextNodeName
+                        
+                        ' Версия программы
                         Case "version"
-                            strVersion = xmlNode.childNodes(NodeIndex).Text
+                            strVersion = xmlNode.childNodes(miNodeIndex).Text
 
-                            ' Дата проги
+                        ' Дата программы
                         Case "date"
-                            strDateProg = xmlNode.childNodes(NodeIndex).Text
+                            strDateProg = xmlNode.childNodes(miNodeIndex).Text
 
+                        ' Тип программы - beta/release
                         Case "release"
-                            strRelease = xmlNode.childNodes(NodeIndex).Text
+                            strRelease = xmlNode.childNodes(miNodeIndex).Text
 
-                            ' Ссылка на Полную историю изменений
-                        Case "linkHistory"
-                            strLinkHistory = xmlNode.childNodes(NodeIndex).Text
+                        ' Ссылка на Полную историю изменений - RUS
+                        Case "linkhistory"
+                            strLinkHistory = xmlNode.childNodes(miNodeIndex).Text
 
-                        Case "linkHistory_en"
-                            strLinkHistory_en = xmlNode.childNodes(NodeIndex).Text
+                        ' Ссылка на Полную историю изменений - ENG
+                        Case "linkhistory_en"
+                            strLinkHistory_en = xmlNode.childNodes(miNodeIndex).Text
                     End Select
 
-                    NodeIndex = NodeIndex + 1
+                    miNodeIndex = miNodeIndex + 1
                 Next
 
                 '**** Сравнение версий программ
@@ -257,24 +272,27 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
             End If
 
         Else
-            DebugMode vbTab & "CheckUPD-Site: " & strMessages(53) & vbNewLine & "Error: " & Url_Test_Result_Site
+            DebugMode vbTab & "CheckUPD-Site: " & strMessages(53) & vbNewLine & "Error: " & strUrl_Test_Site_Result
             ChangeStatusTextAndDebug strMessages(143)
 
             If Not Start Then
-                MsgBox strMessages(143) & vbNewLine & "Error: " & Url_Test_Result_Site, vbInformation, strMessages(54)
+                MsgBox strMessages(143) & vbNewLine & "Error: " & strUrl_Test_Site_Result, vbInformation, strMessages(54)
             End If
         End If
 
+    ' на 99% интернет отсутствует
     Else
-        DebugMode vbTab & "CheckUPD-Inet: " & strMessages(53) & vbNewLine & "Error: " & Url_Test_Result_WWW
+        DebugMode vbTab & "CheckUPD-Inet: " & strMessages(53) & vbNewLine & "Error: " & strUrl_TestWWW_Result
         ChangeStatusTextAndDebug strMessages(53)
 
         If Not Start Then
-            MsgBox strMessages(53) & vbNewLine & "Error: " & Url_Test_Result_WWW, vbInformation, strMessages(54)
+            MsgBox strMessages(53) & vbNewLine & "Error: " & strUrl_TestWWW_Result, vbInformation, strMessages(54)
         End If
     End If
 
     Set xmlDoc = Nothing
+    
+    ' Маркер окончания процесса проверки обновления
     mbCheckUpdNotEnd = False
 
     On Error GoTo 0
@@ -283,39 +301,18 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function DeltaDay
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Function DeltaDay() As Integer
-
-    Dim CurrentDate As Date
-    Dim BuildDate   As Date
-    Dim DeltaTemp   As Integer
-
-    CurrentDate = Date
-    BuildDate = CDate(strDateProgram)
-    DeltaTemp = CInt(CurrentDate - BuildDate)
-    DeltaDay = DeltaTemp
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function DeltaDayNew
-'! Description (Описание)  :   [type_description_here]
+'! Procedure   (Функция)   :   Function GetDeltaDay
+'! Description (Описание)  :   [Рассчитываем разницу в днях между двумя датами]
 '! Parameters  (Переменные):   dtFirstDate (Date)
 '                              dtSecondDate (Date)
 '!--------------------------------------------------------------------------------
-Private Function DeltaDayNew(ByVal dtFirstDate As Date, ByVal dtSecondDate As Date) As Integer
-
-    Dim DeltaTemp As Integer
-
-    DeltaTemp = CInt(dtFirstDate - dtSecondDate)
-    DeltaDayNew = DeltaTemp
+Private Function GetDeltaDay(ByVal dtFirstDate As Date, ByVal dtSecondDate As Date) As Integer
+    GetDeltaDay = CInt(DateDiff("d", dtFirstDate, dtSecondDate))
 End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadUpdateData
-'! Description (Описание)  :   [Проверка новых версий программы с использованием MSXML]
+'! Description (Описание)  :   [Загрузка данных списка версий программы с использованием MSXML]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub LoadUpdateData()
@@ -324,53 +321,53 @@ Public Sub LoadUpdateData()
     Dim nodeList        As IXMLDOMNodeList
     Dim xmlNode         As IXMLDOMNode
     Dim propertyNode    As IXMLDOMElement
-    Dim Url_Request     As String
-    Dim TextNodeName    As String
-    Dim NodeIndex       As Integer
+    Dim strTextNodeName As String
+    Dim miNodeIndex     As Integer
     Dim strVersionsTemp As String
     Dim i               As Long
+    Dim strUrl_Request  As String
 
     On Error Resume Next
-
+   
+    ' Формируем ссылку для скачивания файла реестра обновлений
+    'strUrl_Request = strAppPathBackSL & "d*_update2.xml"
+    strUrl_Request = strUrl_MainWWWSite & strUrl_ProjectFolder & strUrl_UpdFile
+    
     Set xmlDoc = New DOMDocument
     xmlDoc.async = False
-    Url_Request = "http://www.adia-project.net/Project/dia_update2.xml"
-
-    'Url_Request = strAppPathBackSL & "dia_update2.xml"
-    If Not xmlDoc.Load(Url_Request) Then
+            
+    If Not xmlDoc.Load(strUrl_Request) Then
         ChangeStatusTextAndDebug strMessages(53)
         MsgBox strMessages(53), vbInformation, strMessages(54)
     Else
         Set nodeList = xmlDoc.documentElement.selectNodes(strXMLMainSection)
         Set xmlNode = nodeList(0)
-        NodeIndex = 0
+        miNodeIndex = 0
 
+        ' Данные из файла d*_update2.xml - массив версий
         For Each propertyNode In xmlNode.childNodes
 
-            TextNodeName = vbNullString
-            TextNodeName = xmlNode.childNodes(NodeIndex).nodeName
+            strTextNodeName = vbNullString
+            strTextNodeName = LCase$(xmlNode.childNodes(miNodeIndex).nodeName)
+            
+            ' Ищем раздел в файле xml со списком версий программы
+            If StrComp(strTextNodeName, "versions") = 0 Then
+            
+                strVersionsTemp = xmlNode.childNodes(miNodeIndex).Text
+                strUpdVersions = Split(strVersionsTemp, ";")
 
-            Select Case TextNodeName
+                ReDim strUpdDescription(UBound(strUpdVersions), 2) As String
+                ReDim strLink(UBound(strUpdVersions), 6) As String
+                ReDim strLinkFull(UBound(strUpdVersions), 6) As String
 
-                    ' Данные из файла dia_update2.xml
-                    ' массив версий
-                Case "versions"
-                    strVersionsTemp = xmlNode.childNodes(NodeIndex).Text
-                    strUpdVersions = Split(strVersionsTemp, ";")
+                ' Данные из файла %ver%.xml - Загрузка описаний изменений
+                For i = LBound(strUpdVersions) To UBound(strUpdVersions)
+                    LoadUpdDescription strUpdVersions(i), i
+                Next i
 
-                    ReDim strUpdDescription(UBound(strUpdVersions), 2) As String
-                    ReDim strLink(UBound(strUpdVersions), 6) As String
-                    ReDim strLinkFull(UBound(strUpdVersions), 6) As String
+            End If
 
-                    ' Данные из файла %ver%.xml
-                    'Загрузка описаний изменений
-                    For i = LBound(strUpdVersions) To UBound(strUpdVersions)
-                        LoadUpdDescription strUpdVersions(i), i
-                    Next
-
-            End Select
-
-            NodeIndex = NodeIndex + 1
+            miNodeIndex = miNodeIndex + 1
         Next
 
         Set xmlNode = Nothing
@@ -385,7 +382,8 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadUpdDescription
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Загрузка данных файла описателя выбранного обновления
+'!                              Из файла получаем: ссылки на дистрибутивы для скачивания, описание обновления в rtf-формате в rus/eng]
 '! Parameters  (Переменные):   strVer (String)
 '                              lngIndexVer (Long)
 '!--------------------------------------------------------------------------------
@@ -395,77 +393,79 @@ Public Sub LoadUpdDescription(ByVal strVer As String, ByVal lngIndexVer As Long)
     Dim nodeListVers     As IXMLDOMNodeList
     Dim xmlNodeVers      As IXMLDOMNode
     Dim propertyNodeVers As IXMLDOMElement
-    Dim Url_Request      As String
-    Dim TextNodeName     As String
-    Dim NodeIndex        As Integer
+    Dim strTextNodeName  As String
+    Dim miNodeIndex      As Integer
+    Dim strUrl_Request   As String
+
+    ' Формируем ссылку для скачивания файла описателя обновления
+    'strUrl_Request = strAppPathBackSL & strVer & ".xml"
+    strUrl_Request = strUrl_MainWWWSite & strUrl_ProjectFolder & strVer & ".xml"
 
     Set xmlDocVers = New DOMDocument
     xmlDocVers.async = False
-    Url_Request = "http://www.adia-project.net/Project/" & strVer & ".xml"
-
-    'Url_Request = strAppPath & vbBackslash & strVer & ".xml"
-    If Not xmlDocVers.Load(Url_Request) Then
+    
+    If Not xmlDocVers.Load(strUrl_Request) Then
         ChangeStatusTextAndDebug strMessages(53)
         MsgBox strMessages(53), vbInformation, strMessages(54)
     Else
         Set nodeListVers = xmlDocVers.documentElement.selectNodes(strXMLMainSection)
         Set xmlNodeVers = nodeListVers(0)
-        NodeIndex = 0
+        miNodeIndex = 0
 
         For Each propertyNodeVers In xmlNodeVers.childNodes
 
-            TextNodeName = vbNullString
-            TextNodeName = xmlNodeVers.childNodes(NodeIndex).nodeName
+            strTextNodeName = vbNullString
+            strTextNodeName = LCase$(xmlNodeVers.childNodes(miNodeIndex).nodeName)
 
-            Select Case TextNodeName
+            Select Case strTextNodeName
 
-                    ' Описание изменений
+                ' Описание изменений
                 Case "description"
-                    strUpdDescription(lngIndexVer, 0) = xmlNodeVers.childNodes(NodeIndex).Text
+                    strUpdDescription(lngIndexVer, 0) = xmlNodeVers.childNodes(miNodeIndex).Text
 
                 Case "description_en"
-                    strUpdDescription(lngIndexVer, 1) = xmlNodeVers.childNodes(NodeIndex).Text
+                    strUpdDescription(lngIndexVer, 1) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                    ' Ссылка на обновление
+                ' Ссылки/зеркала на файл обновления - ссылка/заголовок
                 Case "link"
-                    strLink(lngIndexVer, 0) = xmlNodeVers.childNodes(NodeIndex).Text
+                    strLink(lngIndexVer, 0) = xmlNodeVers.childNodes(miNodeIndex).Text
 
                 Case "link_header"
-                    strLink(lngIndexVer, 1) = xmlNodeVers.childNodes(NodeIndex).Text
+                    strLink(lngIndexVer, 1) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "link_Mirror1"
-                    strLink(lngIndexVer, 2) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "link_mirror1"
+                    strLink(lngIndexVer, 2) = xmlNodeVers.childNodes(miNodeIndex).Text
 
                 Case "link_header1"
-                    strLink(lngIndexVer, 3) = xmlNodeVers.childNodes(NodeIndex).Text
+                    strLink(lngIndexVer, 3) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "link_Mirror2"
-                    strLink(lngIndexVer, 4) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "link_mirror2"
+                    strLink(lngIndexVer, 4) = xmlNodeVers.childNodes(miNodeIndex).Text
 
                 Case "link_header2"
-                    strLink(lngIndexVer, 5) = xmlNodeVers.childNodes(NodeIndex).Text
+                    strLink(lngIndexVer, 5) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                    ' Ссылка на дистрибутив
-                Case "linkFull"
-                    strLinkFull(lngIndexVer, 0) = xmlNodeVers.childNodes(NodeIndex).Text
+                ' Ссылки/зеркала на файл полного дистрибутива - ссылка/заголовок
+                Case "linkfull"
+                    strLinkFull(lngIndexVer, 0) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "linkFull_header"
-                    strLinkFull(lngIndexVer, 1) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "linkfull_header"
+                    strLinkFull(lngIndexVer, 1) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "linkFull_Mirror1"
-                    strLinkFull(lngIndexVer, 2) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "linkfull_mirror1"
+                    strLinkFull(lngIndexVer, 2) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "linkFull_header1"
-                    strLinkFull(lngIndexVer, 3) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "linkfull_header1"
+                    strLinkFull(lngIndexVer, 3) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "linkFull_Mirror2"
-                    strLinkFull(lngIndexVer, 4) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "linkfull_mirror2"
+                    strLinkFull(lngIndexVer, 4) = xmlNodeVers.childNodes(miNodeIndex).Text
 
-                Case "linkFull_header2"
-                    strLinkFull(lngIndexVer, 5) = xmlNodeVers.childNodes(NodeIndex).Text
+                Case "linkfull_header2"
+                    strLinkFull(lngIndexVer, 5) = xmlNodeVers.childNodes(miNodeIndex).Text
             End Select
 
-            NodeIndex = NodeIndex + 1
+            miNodeIndex = miNodeIndex + 1
         Next
 
     End If
@@ -474,7 +474,7 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowUpdateToolTip
-'! Description (Описание)  :   [Показ напоминания об обновлении]
+'! Description (Описание)  :   [Показ при необходимости всплывающего сообщения о возможном наличии обновления]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub ShowUpdateToolTip()
@@ -483,17 +483,21 @@ Public Sub ShowUpdateToolTip()
     Dim intDeltaDay   As Integer
     Dim dtToolTipDate As Date
     Dim strTTipDate   As String
-
-    If DeltaDay > 180 Then
+    
+    If GetDeltaDay(Date, CDate(strDateProgram)) > 180 Then
         If mbUpdateToolTip Then
+            ' считываем дату когда показывалось всплывающее сообщений последний раз
             strTTipDate = GetSetting(App.ProductName, "UpdateToolTip", "Show at Date", vbNullString)
 
+            'Если не показывалось (т.е параметр пустой), то показываем
             If LenB(strTTipDate) = 0 Then
                 mbShowToolTip = True
             Else
+                'Если показывалось, то определям как давно
                 dtToolTipDate = CDate(strTTipDate)
-                intDeltaDay = DeltaDayNew(Date, dtToolTipDate)
+                intDeltaDay = GetDeltaDay(Date, dtToolTipDate)
 
+                ' Если показывалось более пяти дней назад, то показываем опять
                 If intDeltaDay >= 5 Then
                     mbShowToolTip = True
                 End If
@@ -508,7 +512,7 @@ Public Sub ShowUpdateToolTip()
     End If
 
     ' Если все условия выполнены, то показываем сообщение
-    ' "Возможно, используемая вами, версия программы 'Помощник установки драйверов' уже устарела! "
+    ' "Возможно, используемая вами, версия программы 'DIA/DBS' уже устарела! "
     If mbShowToolTip Then
         ShowNotifyMessage strMessages(107)
     End If

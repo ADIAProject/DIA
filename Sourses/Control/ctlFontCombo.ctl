@@ -1283,7 +1283,7 @@ Private Sub ShowFont(fName As String)
     If mShowFontName = True Then
         OleTranslateColor mComboForeColor, 0, tC
         Br = CreateSolidBrush(vbBlack)
-        PicPreview.FontName = "MS Sans Serif"
+        PicPreview.FontName = "Tahoma"
         PicPreview.FontSize = 8
         PicPreview.FontBold = False
         PicPreview.FontItalic = False

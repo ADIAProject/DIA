@@ -24,7 +24,7 @@ Begin VB.UserControl ctlColorButton
       AutoRedraw      =   -1  'True
       BorderStyle     =   0  'None
       BeginProperty Font 
-         Name            =   "MS Sans Serif"
+         Name            =   "Tahoma"
          Size            =   8.25
          Charset         =   204
          Weight          =   400

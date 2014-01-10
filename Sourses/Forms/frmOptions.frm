@@ -2741,7 +2741,7 @@ Begin VB.Form frmOptions
          Text            =   "frmOptions.frx":18D0
          CueBanner       =   "frmOptions.frx":1914
       End
-      Begin prjDIADBS.TextBoxW txtMacrosDate 
+      Begin prjDIADBS.TextBoxW txtMacrosDateDebug 
          Height          =   255
          Left            =   480
          TabIndex        =   82
@@ -2762,7 +2762,7 @@ Begin VB.Form frmOptions
          Locked          =   -1  'True
          CueBanner       =   "frmOptions.frx":1960
       End
-      Begin prjDIADBS.TextBoxW txtMacrosOSBIT 
+      Begin prjDIADBS.TextBoxW txtMacrosOSBITDebug 
          Height          =   255
          Left            =   480
          TabIndex        =   81
@@ -2783,7 +2783,7 @@ Begin VB.Form frmOptions
          Locked          =   -1  'True
          CueBanner       =   "frmOptions.frx":19AE
       End
-      Begin prjDIADBS.TextBoxW txtMacrosOSVER 
+      Begin prjDIADBS.TextBoxW txtMacrosOSVERDebug 
          Height          =   255
          Left            =   480
          TabIndex        =   80
@@ -2804,7 +2804,7 @@ Begin VB.Form frmOptions
          Locked          =   -1  'True
          CueBanner       =   "frmOptions.frx":19FC
       End
-      Begin prjDIADBS.TextBoxW txtMacrosPCModel 
+      Begin prjDIADBS.TextBoxW txtMacrosPCModelDebug 
          Height          =   255
          Left            =   480
          TabIndex        =   79
@@ -2825,7 +2825,7 @@ Begin VB.Form frmOptions
          Locked          =   -1  'True
          CueBanner       =   "frmOptions.frx":1A4E
       End
-      Begin prjDIADBS.TextBoxW txtMacrosPCName 
+      Begin prjDIADBS.TextBoxW txtMacrosPCNameDebug 
          Height          =   255
          Left            =   480
          TabIndex        =   78
@@ -2851,8 +2851,8 @@ Begin VB.Form frmOptions
          Left            =   495
          TabIndex        =   83
          Top             =   750
-         Width           =   7920
-         _ExtentX        =   13970
+         Width           =   4440
+         _ExtentX        =   7832
          _ExtentY        =   370
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -2919,7 +2919,48 @@ Begin VB.Form frmOptions
          Caption         =   "frmOptions.frx":1B8E
          Transparent     =   -1  'True
       End
-      Begin prjDIADBS.LabelW lblMacrosDate 
+      Begin prjDIADBS.SpinBox txtDebugLogLevel 
+         Height          =   255
+         Left            =   7680
+         TabIndex        =   142
+         Top             =   720
+         Width           =   735
+         _ExtentX        =   1296
+         _ExtentY        =   450
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Min             =   1
+         Value           =   1
+      End
+      Begin prjDIADBS.LabelW lblDebugLogLevel 
+         Height          =   255
+         Left            =   4680
+         TabIndex        =   143
+         Top             =   720
+         Width           =   3015
+         _ExtentX        =   5318
+         _ExtentY        =   450
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "Уровень отладки:"
+      End
+      Begin prjDIADBS.LabelW lblMacrosDateDebug 
          Height          =   375
          Left            =   2400
          TabIndex        =   130
@@ -2939,7 +2980,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Дата и время создания лог-файла"
       End
-      Begin prjDIADBS.LabelW lblMacrosOSBit 
+      Begin prjDIADBS.LabelW lblMacrosOSBitDebug 
          Height          =   375
          Left            =   2400
          TabIndex        =   131
@@ -2959,7 +3000,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Архитектура операционной системы, в виде x32[64]"
       End
-      Begin prjDIADBS.LabelW lblMacrosOSVer 
+      Begin prjDIADBS.LabelW lblMacrosOSVerDebug 
          Height          =   375
          Left            =   2400
          TabIndex        =   132
@@ -2979,7 +3020,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Версия операционной системы в виде wnt5[6]"
       End
-      Begin prjDIADBS.LabelW lblMacrosPCModel 
+      Begin prjDIADBS.LabelW lblMacrosPCModelDebug 
          Height          =   375
          Left            =   2400
          TabIndex        =   133
@@ -2999,7 +3040,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Модель компьютера/материнской платы"
       End
-      Begin prjDIADBS.LabelW lblMacrosParam 
+      Begin prjDIADBS.LabelW lblMacrosParamDebug 
          Height          =   255
          Left            =   480
          TabIndex        =   134
@@ -3019,7 +3060,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Параметр"
       End
-      Begin prjDIADBS.LabelW lblMacrosDescription 
+      Begin prjDIADBS.LabelW lblMacrosDescriptionDebug 
          Height          =   255
          Left            =   2400
          TabIndex        =   135
@@ -3039,7 +3080,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Описание  параметра"
       End
-      Begin prjDIADBS.LabelW lblMacrosPCName 
+      Begin prjDIADBS.LabelW lblMacrosPCNameDebug 
          Height          =   375
          Left            =   2400
          TabIndex        =   136
@@ -3059,7 +3100,7 @@ Begin VB.Form frmOptions
          BackStyle       =   0
          Caption         =   "Краткое имя компьютера, без доменного суффикса"
       End
-      Begin prjDIADBS.LabelW lblMacrosType 
+      Begin prjDIADBS.LabelW lblMacrosTypeDebug 
          Height          =   285
          Left            =   480
          TabIndex        =   137
@@ -3262,7 +3303,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkButtonDisable_Click()
-    cmdFutureButton.EnabledCtrl = chkButtonDisable.Value
+    cmdFutureButton.EnabledCtrl = CBool(chkButtonDisable.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3280,11 +3321,11 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkDebug_Click()
-    DebugCtlEnable chkDebug.Value
-    DebugCtlEnableLog2App Not chkDebugLog2AppPath.Value
+    DebugCtlEnable CBool(chkDebug.Value)
+    DebugCtlEnableLog2App Not CBool(chkDebugLog2AppPath.Value)
 
-    If Not chkDebug.Value Then
-        If Not chkDebugLog2AppPath.Value Then
+    If Not CBool(chkDebug.Value) Then
+        If Not CBool(chkDebugLog2AppPath.Value) Then
             ucDebugLogPath.Enabled = False
         End If
     End If
@@ -3297,7 +3338,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkDebugLog2AppPath_Click()
-    DebugCtlEnableLog2App Not chkDebugLog2AppPath.Value
+    DebugCtlEnableLog2App Not CBool(chkDebugLog2AppPath.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3306,7 +3347,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkForceIfDriverIsNotBetter_Click()
-    mbDpInstForceIfDriverIsNotBetter = chkForceIfDriverIsNotBetter.Value
+    mbDpInstForceIfDriverIsNotBetter = CBool(chkForceIfDriverIsNotBetter.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3318,7 +3359,7 @@ End Sub
 Private Sub chkFormMaximaze_Click()
 
     If chkFormMaximaze.Value Then
-        chkFormSizeSave.Value = False
+        chkFormSizeSave.Value = vbUnchecked
     End If
 
 End Sub
@@ -3331,7 +3372,7 @@ End Sub
 Private Sub chkFormSizeSave_Click()
 
     If chkFormSizeSave.Value Then
-        chkFormMaximaze.Value = False
+        chkFormMaximaze.Value = vbUnchecked
     End If
 
 End Sub
@@ -3342,7 +3383,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkLegacyMode_Click()
-    mbDpInstLegacyMode = chkLegacyMode.Value
+    mbDpInstLegacyMode = CBool(chkLegacyMode.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3352,7 +3393,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkPromptIfDriverIsNotBetter_Click()
-    mbDpInstPromptIfDriverIsNotBetter = chkPromptIfDriverIsNotBetter.Value
+    mbDpInstPromptIfDriverIsNotBetter = CBool(chkPromptIfDriverIsNotBetter.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3362,7 +3403,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkQuietInstall_Click()
-    mbDpInstQuietInstall = chkQuietInstall.Value
+    mbDpInstQuietInstall = CBool(chkQuietInstall.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3372,7 +3413,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkScanHardware_Click()
-    mbDpInstScanHardware = chkScanHardware.Value
+    mbDpInstScanHardware = CBool(chkScanHardware.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3382,7 +3423,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkSuppressAddRemovePrograms_Click()
-    mbDpInstSuppressAddRemovePrograms = chkSuppressAddRemovePrograms.Value
+    mbDpInstSuppressAddRemovePrograms = CBool(chkSuppressAddRemovePrograms.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3392,7 +3433,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkSuppressWizard_Click()
-    mbDpInstSuppressWizard = chkSuppressWizard.Value
+    mbDpInstSuppressWizard = CBool(chkSuppressWizard.Value)
     txtCmdStringDPInst = CollectCmdString
 End Sub
 
@@ -3402,7 +3443,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkTabBlock_Click()
-    Tab2CtlEnable chkTabBlock.Value
+    Tab2CtlEnable CBool(chkTabBlock.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3411,7 +3452,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkTabHide_Click()
-    TabCtlEnable Not chkTabHide.Value
+    TabCtlEnable Not CBool(chkTabHide.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3420,7 +3461,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkTempPath_Click()
-    TempCtlEnable chkTempPath.Value
+    TempCtlEnable CBool(chkTempPath.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3429,7 +3470,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkUpdate_Click()
-    UpdateCtlEnable chkUpdate.Value
+    UpdateCtlEnable CBool(chkUpdate.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3871,6 +3912,7 @@ Private Sub DebugCtlEnable(ByVal mbEnable As Boolean)
     txtDebugLogName.Enabled = mbEnable
     ucDebugLogPath.Enabled = mbEnable
     chkDebugLog2AppPath.Enabled = mbEnable
+    txtDebugLogLevel.Enabled = mbEnable
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4265,14 +4307,14 @@ Private Sub Localise(ByVal StrPathFile As String)
     chkLoadUnSupportedOS.Caption = LocaliseString(StrPathFile, strFormName, "chkLoadUnSupportedOS", chkLoadUnSupportedOS.Caption)
     chkDebugLog2AppPath.Caption = LocaliseString(StrPathFile, strFormName, "chkDebugLog2AppPath", chkDebugLog2AppPath.Caption)
     frDebug.Caption = LocaliseString(StrPathFile, strFormName, "frDebug", frDebug.Caption)
-    lblMacrosType.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosType", lblMacrosType.Caption)
-    lblMacrosParam.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosParam", lblMacrosParam.Caption)
-    lblMacrosDescription.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosDescription", lblMacrosDescription.Caption)
-    lblMacrosPCName.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosPCName", lblMacrosPCName.Caption)
-    lblMacrosPCModel.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosPCModel", lblMacrosPCModel.Caption)
-    lblMacrosOSVer.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosOSVer", lblMacrosOSVer.Caption)
-    lblMacrosOSBit.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosOSBit", lblMacrosOSBit.Caption)
-    lblMacrosDate.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosDate", lblMacrosDate.Caption)
+    lblMacrosTypeDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosTypeDebug", lblMacrosTypeDebug.Caption)
+    lblMacrosParamDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosParamDebug", lblMacrosParamDebug.Caption)
+    lblMacrosDescriptionDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosDescriptionDebug", lblMacrosDescriptionDebug.Caption)
+    lblMacrosPCNameDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosPCNameDebug", lblMacrosPCNameDebug.Caption)
+    lblMacrosPCModelDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosPCModelDebug", lblMacrosPCModelDebug.Caption)
+    lblMacrosOSVerDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosOSVerDebug", lblMacrosOSVerDebug.Caption)
+    lblMacrosOSBitDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosOSBitDebug", lblMacrosOSBitDebug.Caption)
+    lblMacrosDateDebug.Caption = LocaliseString(StrPathFile, strFormName, "lblMacrosDateDebug", lblMacrosDateDebug.Caption)
     chkDebugTime2File.Caption = LocaliseString(StrPathFile, strFormName, "chkDebugTime2File", chkDebugTime2File.Caption)
     lblDebugLogName.Caption = LocaliseString(StrPathFile, strFormName, "lblDebugLogName", lblDebugLogName.Caption)
     cmdFontColorButton.Caption = LocaliseString(StrPathFile, strFormName, "cmdFontColorButton", cmdFontColorButton.Caption)
@@ -4281,6 +4323,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     chkButtonDisable.Caption = LocaliseString(StrPathFile, strFormName, "chkButtonDisable", chkButtonDisable.Caption)
     lblTheme.Caption = LocaliseString(StrPathFile, strFormName, "lblTheme", lblTheme.Caption)
     cmdFontColorToolTip.Caption = LocaliseString(StrPathFile, strFormName, "cmdFontColorToolTip", cmdFontColorToolTip.Caption)
+    lblDebugLogLevel.Caption = LocaliseString(StrPathFile, strFormName, "lblDebugLogLevel", lblDebugLogLevel.Caption)
     
 End Sub
 
@@ -4391,6 +4434,7 @@ Private Sub ReadOptions()
     chkCreateRP.Value = mbCreateRestorePoint
     chkLoadUnSupportedOS.Value = mbLoadUnSupportedOS
     chkCompatiblesHWID.Value = mbCompatiblesHWID
+    txtDebugLogLevel.Text = lngDetailMode
 
     ' Режим при старте
     Select Case miStartMode
@@ -4484,12 +4528,12 @@ Private Sub ReadOptions()
     End With
 
     ' изменение активности элементов
-    DebugCtlEnable chkDebug.Value
-    DebugCtlEnableLog2App Not chkDebugLog2AppPath.Value
-    TempCtlEnable chkTempPath.Value
-    UpdateCtlEnable chkUpdate.Value
-    TabCtlEnable Not chkTabHide.Value
-    Tab2CtlEnable chkTabBlock.Value
+    DebugCtlEnable CBool(chkDebug.Value)
+    DebugCtlEnableLog2App Not CBool(chkDebugLog2AppPath.Value)
+    TempCtlEnable CBool(chkTempPath.Value)
+    UpdateCtlEnable CBool(chkUpdate.Value)
+    TabCtlEnable Not CBool(chkTabHide.Value)
+    Tab2CtlEnable CBool(chkTabBlock.Value)
     ' Инициализация параметров для изменения шрифта и цвета
     InitializeObjectProperties
 End Sub
@@ -4529,11 +4573,11 @@ Private Sub SaveOptions()
     '**************************************************
     ' Секция MAIN
     'Удаление TEMP при выходе
-    IniWriteStrPrivate "Main", "DelTmpAfterClose", CStr(Abs(chkRemoveTemp.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "DelTmpAfterClose", chkRemoveTemp.Value, strSysIniTemp
     ' Автообновление
-    IniWriteStrPrivate "Main", "UpdateCheck", CStr(Abs(chkUpdate.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "UpdateCheck", chkUpdate.Value, strSysIniTemp
     ' Автообновление Beta
-    IniWriteStrPrivate "Main", "UpdateCheckBeta", CStr(Abs(chkUpdateBeta.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "UpdateCheckBeta", chkUpdateBeta.Value, strSysIniTemp
 
     ' Режим запуска
     If optRezim_Intellect.Value Then
@@ -4550,30 +4594,31 @@ Private Sub SaveOptions()
         End If
     End If
 
-    IniWriteStrPrivate "Main", "StartMode", CStr(miRezim), strSysIniTemp
-    IniWriteStrPrivate "Main", "EULAAgree", CStr(Abs(mbEULAAgree)), strSysIniTemp
-    IniWriteStrPrivate "Main", "HideOtherProcess", CStr(Abs(chkHideOtherProcess.Value)), strSysIniTemp
-    IniWriteStrPrivate "Main", "AlternativeTemp", CStr(Abs(chkTempPath.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "StartMode", miRezim, strSysIniTemp
+    IniWriteStrPrivate "Main", "EULAAgree", Abs(mbEULAAgree), strSysIniTemp
+    IniWriteStrPrivate "Main", "HideOtherProcess", chkHideOtherProcess.Value, strSysIniTemp
+    IniWriteStrPrivate "Main", "AlternativeTemp", chkTempPath.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "AlternativeTempPath", ucTempPath.Path, strSysIniTemp
     IniWriteStrPrivate "Main", "IconMainSkin", cmbImageMain.Text, strSysIniTemp
-    IniWriteStrPrivate "Main", "SilentDLL", CStr(Abs(chkSilentDll.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "SilentDLL", chkSilentDll.Value, strSysIniTemp
     ' поиск новых устройств при старте
-    IniWriteStrPrivate "Main", "SearchOnStart", CStr(Abs(chkSearchOnStart.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "SearchOnStart", chkSearchOnStart.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "PauseAfterSearch", txtPauseAfterSearch.Value, strSysIniTemp
     ' Создание точки восстановления
-    IniWriteStrPrivate "Main", "CreateRestorePoint", CStr(Abs(chkCreateRP.Value)), strSysIniTemp
+    IniWriteStrPrivate "Main", "CreateRestorePoint", chkCreateRP.Value, strSysIniTemp
 
     If mbLoadIniTmpAfterRestart Then
         IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", 1, strSysIniTemp
     End If
 
     ' Секция Debug
-    IniWriteStrPrivate "Debug", "DebugEnable", CStr(Abs(chkDebug.Value)), strSysIniTemp
+    IniWriteStrPrivate "Debug", "DebugEnable", chkDebug.Value, strSysIniTemp
     ' Очистка истории:
     IniWriteStrPrivate "Debug", "CleenHistory", 1, strSysIniTemp
     ' Путь до лог-файла
-    IniWriteStrPrivate "Debug", "DebugLog2AppPath", CStr(Abs(chkDebugLog2AppPath.Value)), strSysIniTemp
+    IniWriteStrPrivate "Debug", "DebugLog2AppPath", chkDebugLog2AppPath.Value, strSysIniTemp
     IniWriteStrPrivate "Debug", "DebugLogPath", ucDebugLogPath.Path, strSysIniTemp
+    IniWriteStrPrivate "Debug", "Detailmode", txtDebugLogLevel.Text, strSysIniTemp
     strLogNameTemp = "DIA-LOG_%DATE%.txt"
 
     If LenB(txtDebugLogName.Text) > 0 Then
@@ -4583,7 +4628,7 @@ Private Sub SaveOptions()
     End If
 
     IniWriteStrPrivate "Debug", "DebugLogName", strLogNameTemp, strSysIniTemp
-    IniWriteStrPrivate "Debug", "Detailmode", CStr(lngDetailMode), strSysIniTemp
+    IniWriteStrPrivate "Debug", "Detailmode", lngDetailMode, strSysIniTemp
     'Секция Devcon
     IniWriteStrPrivate "Devcon", "PathExe", ucDevCon86Path.Path, strSysIniTemp
     IniWriteStrPrivate "Devcon", "PathExe64", ucDevCon64Path.Path, strSysIniTemp
@@ -4592,43 +4637,43 @@ Private Sub SaveOptions()
     'Секция DPInst
     IniWriteStrPrivate "DPInst", "PathExe", ucDPInst86Path.Path, strSysIniTemp
     IniWriteStrPrivate "DPInst", "PathExe64", ucDPInst64Path.Path, strSysIniTemp
-    IniWriteStrPrivate "DPInst", "LegacyMode", CStr(Abs(chkLegacyMode.Value)), strSysIniTemp
-    IniWriteStrPrivate "DPInst", "PromptIfDriverIsNotBetter", CStr(Abs(chkPromptIfDriverIsNotBetter.Value)), strSysIniTemp
-    IniWriteStrPrivate "DPInst", "ForceIfDriverIsNotBetter", CStr(Abs(chkForceIfDriverIsNotBetter.Value)), strSysIniTemp
-    IniWriteStrPrivate "DPInst", "SuppressAddRemovePrograms", CStr(Abs(chkSuppressAddRemovePrograms.Value)), strSysIniTemp
-    IniWriteStrPrivate "DPInst", "SuppressWizard", CStr(Abs(chkSuppressWizard.Value)), strSysIniTemp
-    IniWriteStrPrivate "DPInst", "QuietInstall", CStr(Abs(chkQuietInstall.Value)), strSysIniTemp
-    IniWriteStrPrivate "DPInst", "ScanHardware", CStr(Abs(chkScanHardware.Value)), strSysIniTemp
+    IniWriteStrPrivate "DPInst", "LegacyMode", chkLegacyMode.Value, strSysIniTemp
+    IniWriteStrPrivate "DPInst", "PromptIfDriverIsNotBetter", chkPromptIfDriverIsNotBetter.Value, strSysIniTemp
+    IniWriteStrPrivate "DPInst", "ForceIfDriverIsNotBetter", chkForceIfDriverIsNotBetter.Value, strSysIniTemp
+    IniWriteStrPrivate "DPInst", "SuppressAddRemovePrograms", chkSuppressAddRemovePrograms.Value, strSysIniTemp
+    IniWriteStrPrivate "DPInst", "SuppressWizard", chkSuppressWizard.Value, strSysIniTemp
+    IniWriteStrPrivate "DPInst", "QuietInstall", chkQuietInstall.Value, strSysIniTemp
+    IniWriteStrPrivate "DPInst", "ScanHardware", chkScanHardware.Value, strSysIniTemp
     'Секция Arc
     IniWriteStrPrivate "Arc", "PathExe", ucArchPath.Path, strSysIniTemp
     'Секция OS
     'Число ОС
     lngOSCountNew = lvOS.ListItems.Count
-    IniWriteStrPrivate "OS", "OSCount", CStr(lngOSCountNew), strSysIniTemp
+    IniWriteStrPrivate "OS", "OSCount", lngOSCountNew, strSysIniTemp
     ' Рекурсивный перебор папок
-    IniWriteStrPrivate "OS", "Recursion", CStr(Abs(chkRecursion.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "Recursion", chkRecursion.Value, strSysIniTemp
     ' кол-во табов на строку
     IniWriteStrPrivate "OS", "OSCountPerRow", txtTabPerRowCount.Value, strSysIniTemp
     ' Блокировать лишние вкладки
-    IniWriteStrPrivate "OS", "TabBlock", CStr(Abs(chkTabBlock.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "TabBlock", chkTabBlock.Value, strSysIniTemp
     ' Скрывать лишние вкладки
-    IniWriteStrPrivate "OS", "TabHide", CStr(Abs(chkTabHide.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "TabHide", chkTabHide.Value, strSysIniTemp
     ' Обрабатывать файлы Finish
-    IniWriteStrPrivate "OS", "LoadFinishFile", CStr(Abs(chkLoadFinishFile.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "LoadFinishFile", chkLoadFinishFile.Value, strSysIniTemp
     ' Считывать класс пакета драйверов из Finish
-    'IniWriteStrPrivate "OS", "ReadClasses", CStr(Abs(chkReadClasses.value)), strSysIniTemp
+    'IniWriteStrPrivate "OS", "ReadClasses", chkReadClasses.value)), strSysIniTemp
     ' Считывать класс пакета драйверов из Finish
-    IniWriteStrPrivate "OS", "ReadDPName", CStr(Abs(chkReadDPName.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "ReadDPName", chkReadDPName.Value, strSysIniTemp
     ' Считывать класс пакета драйверов из Finish
-    IniWriteStrPrivate "OS", "ConvertDPName", CStr(Abs(chkConvertDPName.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "ConvertDPName", chkConvertDPName.Value, strSysIniTemp
     IniWriteStrPrivate "OS", "ExcludeHWID", txtExcludeHWID.Text, strSysIniTemp
     ' Сравнение версий драйверов
-    IniWriteStrPrivate "OS", "CompareDrvVerByDate", CStr(Abs(optCompareByDate.Value)), strSysIniTemp
-    IniWriteStrPrivate "OS", "DateFormatRus", CStr(Abs(chkDateFormatRus.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "CompareDrvVerByDate", Abs(optCompareByDate.Value), strSysIniTemp
+    IniWriteStrPrivate "OS", "DateFormatRus", chkDateFormatRus.Value, strSysIniTemp
     ' Необрабатывать вкладки
-    IniWriteStrPrivate "OS", "LoadUnSupportedOS", CStr(Abs(chkLoadUnSupportedOS.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "LoadUnSupportedOS", chkLoadUnSupportedOS.Value, strSysIniTemp
     ' Обрабатывать совместимые HWID
-    IniWriteStrPrivate "OS", "CompatiblesHWID", CStr(Abs(chkCompatiblesHWID.Value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "CompatiblesHWID", chkCompatiblesHWID.Value, strSysIniTemp
 
     'Заполяем в цикле подсекции ОС
     For cnt = 1 To lngOSCountNew
@@ -4651,11 +4696,10 @@ Private Sub SaveOptions()
     'Секция Utils
     'Число утилит
     lngUtilsCountNew = lvUtils.ListItems.Count
-    IniWriteStrPrivate "Utils", "UtilsCount", CStr(lngUtilsCountNew), strSysIniTemp
+    IniWriteStrPrivate "Utils", "UtilsCount", lngUtilsCountNew, strSysIniTemp
 
     'Заполяем в цикле подсекции Утилиты
     For cnt = 1 To lngUtilsCountNew
-
         'Секция Utils_N
         With lvUtils.ListItems(cnt)
             IniWriteStrPrivate "Utils_" & cnt, "Name", .Text, strSysIniTemp
@@ -4663,15 +4707,14 @@ Private Sub SaveOptions()
             IniWriteStrPrivate "Utils_" & cnt, "Path64", .SubItems(2), strSysIniTemp
             IniWriteStrPrivate "Utils_" & cnt, "Params", .SubItems(3), strSysIniTemp
         End With
-
     Next
 
     'Секция MainForm
     IniWriteStrPrivate "MainForm", "Width", txtFormWidth.Value, strSysIniTemp
     IniWriteStrPrivate "MainForm", "Height", txtFormHeight.Value, strSysIniTemp
-    IniWriteStrPrivate "MainForm", "StartMaximazed", CStr(Abs(chkFormMaximaze.Value)), strSysIniTemp
-    mbSaveSizeOnExit = chkFormSizeSave.Value
-    IniWriteStrPrivate "MainForm", "SaveSizeOnExit", CStr(Abs(chkFormSizeSave.Value)), strSysIniTemp
+    IniWriteStrPrivate "MainForm", "StartMaximazed", chkFormMaximaze.Value, strSysIniTemp
+    mbSaveSizeOnExit = CBool(chkFormSizeSave.Value)
+    IniWriteStrPrivate "MainForm", "SaveSizeOnExit", chkFormSizeSave.Value, strSysIniTemp
     IniWriteStrPrivate "MainForm", "HighlightColor", CStr(glHighlightColor), strSysIniTemp
     'Секция Buttons
     IniWriteStrPrivate "Button", "Width", txtButtonWidth.Value, strSysIniTemp
@@ -4680,36 +4723,36 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Button", "Top", txtButtonTop.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "Btn2BtnLeft", txtButton2BtnL.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "Btn2BtnTop", txtButton2BtnT.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "TextUpCase", CStr(Abs(chkButtonTextUpCase.Value)), strSysIniTemp
+    IniWriteStrPrivate "Button", "TextUpCase", chkButtonTextUpCase.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "FontName", strFontBtn_Name, strSysIniTemp
-    IniWriteStrPrivate "Button", "FontSize", CStr(miFontBtn_Size), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontUnderline", CStr(Abs(mbFontBtn_Underline)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontStrikethru", CStr(Abs(mbFontBtn_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontItalic", CStr(Abs(mbFontBtn_Italic)), strSysIniTemp
-    IniWriteStrPrivate "Button", "FontBold", CStr(Abs(mbFontBtn_Bold)), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontSize", miFontBtn_Size, strSysIniTemp
+    IniWriteStrPrivate "Button", "FontUnderline", Abs(mbFontBtn_Underline), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontStrikethru", Abs(mbFontBtn_Strikethru), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontItalic", Abs(mbFontBtn_Italic), strSysIniTemp
+    IniWriteStrPrivate "Button", "FontBold", Abs(mbFontBtn_Bold), strSysIniTemp
     IniWriteStrPrivate "Button", "FontColor", CStr(cmdFutureButton.TextColor), strSysIniTemp
     IniWriteStrPrivate "Button", "IconStatusSkin", cmbImageStatus.Text, strSysIniTemp
     'Секция Tab
     IniWriteStrPrivate "Tab", "FontName", strFontTab_Name, strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontSize", CStr(miFontTab_Size), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontUnderline", CStr(Abs(mbFontTab_Underline)), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontStrikethru", CStr(Abs(mbFontTab_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontItalic", CStr(Abs(mbFontTab_Italic)), strSysIniTemp
-    IniWriteStrPrivate "Tab", "FontBold", CStr(Abs(mbFontTab_Bold)), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontSize", miFontTab_Size, strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontUnderline", Abs(mbFontTab_Underline), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontStrikethru", Abs(mbFontTab_Strikethru), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontItalic", Abs(mbFontTab_Italic), strSysIniTemp
+    IniWriteStrPrivate "Tab", "FontBold", Abs(mbFontTab_Bold), strSysIniTemp
     'Секция Tab2
     IniWriteStrPrivate "Tab2", "FontName", strFontTab2_Name, strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontSize", CStr(miFontTab2_Size), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontUnderline", CStr(Abs(mbFontTab2_Underline)), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontStrikethru", CStr(Abs(mbFontTab2_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontItalic", CStr(Abs(mbFontTab2_Italic)), strSysIniTemp
-    IniWriteStrPrivate "Tab2", "FontBold", CStr(Abs(mbFontTab2_Bold)), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontSize", miFontTab2_Size, strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontUnderline", Abs(mbFontTab2_Underline), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontStrikethru", Abs(mbFontTab2_Strikethru), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontItalic", Abs(mbFontTab2_Italic), strSysIniTemp
+    IniWriteStrPrivate "Tab2", "FontBold", Abs(mbFontTab2_Bold), strSysIniTemp
     'Секция ToolTip
     IniWriteStrPrivate "ToolTip", "FontName", strFontTT_Name, strSysIniTemp
-    IniWriteStrPrivate "ToolTip", "FontSize", CStr(miFontTT_Size), strSysIniTemp
-    IniWriteStrPrivate "ToolTip", "FontUnderline", CStr(Abs(mbFontTT_Underline)), strSysIniTemp
-    IniWriteStrPrivate "ToolTip", "FontStrikethru", CStr(Abs(mbFontTT_Strikethru)), strSysIniTemp
-    IniWriteStrPrivate "ToolTip", "FontItalic", CStr(Abs(mbFontTT_Italic)), strSysIniTemp
-    IniWriteStrPrivate "ToolTip", "FontBold", CStr(Abs(mbFontTT_Bold)), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontSize", miFontTT_Size, strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontUnderline", Abs(mbFontTT_Underline), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontStrikethru", Abs(mbFontTT_Strikethru), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontItalic", Abs(mbFontTT_Italic), strSysIniTemp
+    IniWriteStrPrivate "ToolTip", "FontBold", Abs(mbFontTT_Bold), strSysIniTemp
     'Секция "NotebookVendor"
     IniWriteStrPrivate "NotebookVendor", "FilterCount", UBound(arrNotebookFilterList), strSysIniTemp
 

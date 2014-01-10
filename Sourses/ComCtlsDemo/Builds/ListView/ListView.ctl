@@ -4076,6 +4076,7 @@ End Property
 
 Public Property Get WorkAreas() As Variant
 Attribute WorkAreas.VB_Description = "Returns/sets the working areas of the list view in 'icon' and 'small icon' view. All the client coordinates (left, top, right and bottom) are in pixels."
+Attribute WorkAreas.VB_MemberFlags = "400"
 If ListViewHandle <> 0 Then
     Dim StructCount As Long
     SendMessage ListViewHandle, LVM_GETNUMBEROFWORKAREAS, 0, ByVal VarPtr(StructCount)

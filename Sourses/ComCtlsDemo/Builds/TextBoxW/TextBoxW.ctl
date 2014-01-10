@@ -1036,12 +1036,8 @@ MultiLine = PropMultiLine
 End Property
 
 Public Property Let MultiLine(ByVal Value As Boolean)
-If Ambient.UserMode = True Then
-    Err.Raise Number:=382, Description:="MultiLine property is read-only at run time"
-Else
-    PropMultiLine = Value
-    If TextBoxHandle <> 0 Then Call ReCreateTextBox
-End If
+PropMultiLine = Value
+If TextBoxHandle <> 0 Then Call ReCreateTextBox
 UserControl.PropertyChanged "MultiLine"
 End Property
 

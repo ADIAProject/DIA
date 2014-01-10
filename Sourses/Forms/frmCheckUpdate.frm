@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmCheckUpdate 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Обновление: Обнаружена новая версия программы"
-   ClientHeight    =   6015
+   ClientHeight    =   6000
    ClientLeft      =   45
    ClientTop       =   540
    ClientWidth     =   11340
@@ -20,17 +20,28 @@ Begin VB.Form frmCheckUpdate
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6015
+   ScaleHeight     =   6000
    ScaleWidth      =   11340
    StartUpPosition =   1  'CenterOwner
-   Begin VB.ComboBox cmbVersions 
+   Begin prjDIADBS.ComboBoxW cmbVersions 
       Height          =   315
       Left            =   5100
-      Sorted          =   -1  'True
-      Style           =   2  'Dropdown List
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   450
-      Width           =   1455
+      Width           =   1335
+      _ExtentX        =   2355
+      _ExtentY        =   556
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Style           =   2
+      Sorted          =   -1  'True
    End
    Begin prjDIADBS.ctlXpButton cmdExit 
       Height          =   750
@@ -550,7 +561,7 @@ Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
     Dim cmdString   As String
     Dim nRetShellEx As Boolean
 
-    cmdString = Kavichki & "http://www.adia-project.net" & Kavichki
+    cmdString = Kavichki & strUrl_MainWWWSite & Kavichki
     DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     DebugMode "cmdString: " & nRetShellEx

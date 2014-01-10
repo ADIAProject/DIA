@@ -1,5 +1,13 @@
 List of revisions:
 
+09-Jan-2014
+- MultiLine property of the TextBoxW control can now be changed at run time.
+- The Text property (via property page "PPTextBoxWText") of the TextBoxW control is now unicode aware at design time.
+
+07-Jan-2014
+- Included the Resize event to the CoolBar control.
+- Minor modifications on the Animation control.
+
 03-Jan-2014
 - MouseUp event is now working properly for the left and right button in the ListView and TreeView control.
 - Included the WorkAreas property in the ListView control.

@@ -96,7 +96,7 @@ Begin VB.Form frmError
       Width           =   8500
       Begin VB.TextBox lblErrDescr 
          BeginProperty Font 
-            Name            =   "MS Sans Serif"
+            Name            =   "Tahoma"
             Size            =   9.75
             Charset         =   204
             Weight          =   400
@@ -302,7 +302,7 @@ Dim FileName As String
 
     FileName = "error.log"
     
-    sFile = App.Path + "\" + FileName
+    sFile = App.Path + vbBackslash + FileName
     If mbIsDriveCDRoom Then sFile = "c:\error.log"
     
         With Me.MSFlexGrid1
@@ -320,7 +320,7 @@ Dim iFile As Integer
 Dim ErrText As String
 'On Error GoTo err
     
-    ErrText = "Description error in program DriversInstallerAssistant" & vbCrLf & _
+    ErrText = "Description error in program " & App.ProductName & vbCrLf & _
               "====================================" & vbCrLf & vbCrLf & _
               "DateTime:" & vbTab & CStr(Date + time) & vbCrLf & _
               "Error Number:" & vbTab & lblErrCode.Caption & vbCrLf & _
@@ -391,7 +391,7 @@ Private Sub cmdEmail_Click()
         cmdCreateFile_Click
     End If
     Call ShellExecute(0, "Open", "mailto:Roman<roman-novosib@ngs.ru>" & _
-                                "?Subject=Error_DriversInstallerAssistant_" & App.Major & "." & App.Minor & "." & App.Revision, "", "", 1)
+                                "?Subject=Error_" & Replace$(App.ProductName," ", vbNullString) & "_" & App.Major & "." & App.Minor & "." & App.Revision, vbNullString, vbNullString, 1)
 End Sub
 
 Private Sub cmdExit_Click()

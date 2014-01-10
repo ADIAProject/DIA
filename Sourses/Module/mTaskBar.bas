@@ -30,3 +30,30 @@ Public Sub GetWorkArea()
     End With
 
 End Sub
+
+Public Function HPadding(ByVal Form As Form)
+
+    Dim SaveMode As Integer
+
+    With Form
+        SaveMode = .ScaleMode
+        .ScaleMode = vbTwips
+        HPadding = .Width - .ScaleWidth
+        .ScaleMode = SaveMode
+        DoEvents
+    End With
+End Function
+
+Public Function VPadding(ByVal Form As Form)
+
+    Dim SaveMode As Integer
+
+    With Form
+        SaveMode = .ScaleMode
+        .ScaleMode = vbTwips
+        VPadding = .Height - .ScaleHeight
+        .ScaleMode = SaveMode
+        DoEvents
+    End With
+End Function
+

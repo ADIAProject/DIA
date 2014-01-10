@@ -2,12 +2,15 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 ' Основные параметры программы
-Public Const strDateProgram         As String = "31/12/2013"
+Public Const strDateProgram         As String = "10/01/2014"
 
 ' Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
 Public strProductVersion            As String
 Public Const strProjectName         As String = "DriversInstaller"
+Public Const strUrl_MainWWWSite     As String = "http://adia-project.net/"                   ' Домашний сайт проекта
+Public Const strUrl_MainWWWForum    As String = "http://adia-project.net/forum/index.php"    ' Домашний форум проекта
+Public Const strUrlOsZoneNetThread  As String = "http://forum.oszone.net/thread-139908.html" ' Топик программы на сайте Oszone.net
 
 'Константы путей основных каталогов и файла настроек (вынесены отдельно для универсальности кода под разные проекты)
 Public Const strToolsLang_Path      As String = "Tools\Lang"            ' Каталог с языковыми файлами
@@ -679,7 +682,7 @@ Private Sub CreateIni()
         'Секция Main
         IniWriteStrPrivate "Main", "DelTmpAfterClose", "1", strSysIni
         IniWriteStrPrivate "Main", "UpdateCheck", "1", strSysIni
-        IniWriteStrPrivate "Main", "UpdateCheckBeta", "1", strSysIni
+        IniWriteStrPrivate "Main", "UpdateCheckBeta", "0", strSysIni
         IniWriteStrPrivate "Main", "StartMode", "1", strSysIni
         IniWriteStrPrivate "Main", "EULAAgree", "0", strSysIni
         IniWriteStrPrivate "Main", "HideOtherProcess", "1", strSysIni
@@ -689,11 +692,12 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Main", "StartLanguageID", "0409", strSysIni
         IniWriteStrPrivate "Main", "IconMainSkin", "Standart", strSysIni
         IniWriteStrPrivate "Main", "SilentDLL", "0", strSysIni
+        IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", "0", strSysIni
         IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", "1", strSysIni
         IniWriteStrPrivate "Main", "SearchOnStart", "0", strSysIni
         IniWriteStrPrivate "Main", "PauseAfterSearch", "1", strSysIni
         IniWriteStrPrivate "Main", "CreateRestorePoint", "1", strSysIni
-        IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", "0", strSysIni
+
         'Секция Debug
         IniWriteStrPrivate "Debug", "DebugEnable", "1", strSysIni
         IniWriteStrPrivate "Debug", "DebugLogPath", "%SYSTEMDRIVE%", strSysIni
@@ -702,11 +706,6 @@ Private Sub CreateIni()
         IniWriteStrPrivate "Debug", "DetailMode", "1", strSysIni
         IniWriteStrPrivate "Debug", "DebugLog2AppPath", "0", strSysIni
         IniWriteStrPrivate "Debug", "Time2File", "0", strSysIni
-        'Секция Devcon
-        IniWriteStrPrivate "Devcon", "PathExe", "Tools\Devcon\devcon.exe", strSysIni
-        IniWriteStrPrivate "Devcon", "PathExe64", "Tools\Devcon\devcon64.exe", strSysIni
-        IniWriteStrPrivate "Devcon", "PathExeW2K", "Tools\Devcon\devconw2k.exe", strSysIni
-        IniWriteStrPrivate "Devcon", "CollectHwidsCmd", "Tools\Devcon\devcon_c.cmd", strSysIni
         'Секция DPInst
         IniWriteStrPrivate "DPInst", "PathExe", "Tools\DPInst\DPInst.exe", strSysIni
         IniWriteStrPrivate "DPInst", "PathExe64", "Tools\DPInst\DPInst64.exe", strSysIni
@@ -719,6 +718,11 @@ Private Sub CreateIni()
         IniWriteStrPrivate "DPInst", "ScanHardware", 1, strSysIni
         'Секция Arc
         IniWriteStrPrivate "Arc", "PathExe", "Tools\Arc\7za.exe", strSysIni
+        'Секция Devcon
+        IniWriteStrPrivate "Devcon", "PathExe", "Tools\Devcon\devcon.exe", strSysIni
+        IniWriteStrPrivate "Devcon", "PathExe64", "Tools\Devcon\devcon64.exe", strSysIni
+        IniWriteStrPrivate "Devcon", "PathExeW2K", "Tools\Devcon\devconw2k.exe", strSysIni
+        IniWriteStrPrivate "Devcon", "CollectHwidsCmd", "Tools\Devcon\devcon_c.cmd", strSysIni
         'Секция OS
         IniWriteStrPrivate "OS", "OSCount", "4", strSysIni
         IniWriteStrPrivate "OS", "OSCountPerRow", "4", strSysIni
@@ -889,7 +893,7 @@ Private Sub GetMainIniParam()
     ' Активация отладки
     mbDebugEnable = GetIniValueBoolean(strSysIni, "Debug", "DebugEnable", 0)
     ' Очистка истории
-    mbCleanHistory = GetIniValueBoolean(strSysIni, "Debug", "CleenHistory", 0)
+    mbCleanHistory = GetIniValueBoolean(strSysIni, "Debug", "CleenHistory", 1)
     ' Путь до лог файла
     strDebugLogPathTemp = PathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%"))
     strDebugLogPath = PathCollect(PathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%")))

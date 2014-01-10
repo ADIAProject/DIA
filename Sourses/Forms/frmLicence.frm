@@ -156,7 +156,7 @@ Private Sub CheckEditLicense(StrPathFile As String)
             strEULA_MD5RTF_temp = strEULA_MD5RTF_Eng
     End Select
 
-    If InStr(1, strMD5TextRtf, strEULA_MD5RTF_temp, vbTextCompare) = 0 Then
+    If StrComp(strMD5TextRtf, strEULA_MD5RTF_temp, vbTextCompare) <> 0 Then
         If Not mbSilentRun Then
             DebugMode "LicenceInfo: NotValid"
 
@@ -166,9 +166,6 @@ Private Sub CheckEditLicense(StrPathFile As String)
         End If
 
         DebugMode "The Source text of the file of the license agreement was changed!!! The most Further functioning(working) the program impossible. Address to developer or download anew distribution program of the program."
-
-        'Unload Me
-        End
 
     End If
 
@@ -211,9 +208,7 @@ Private Sub cmdExit_Click()
 
     If mbFirstStart Then
         Unload Me
-
-        End
-
+        'End
     Else
         Unload Me
     End If
@@ -227,7 +222,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
     ' если принимаем соглашение, записываем параметры в реестр
-    SaveSetting App.ProductName, "Licence", "Show at Startup", Not chkAgreeLicence.Value
+    SaveSetting App.ProductName, "Licence", "Show at Startup", Not CBool(chkAgreeLicence.Value)
     SaveSetting App.ProductName, "Licence", "EULA_DATE", strEULA_Version
     ' Загружаем основную форму
     frmLicence.Hide
@@ -277,8 +272,7 @@ Private Sub Form_Load()
 
     LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
     LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
-    LoadLicence
-
+    
     ' Локализациz приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
@@ -286,6 +280,8 @@ Private Sub Form_Load()
         ' Выставляем шрифт
         FontCharsetChange
     End If
+    
+    LoadLicence
 
 End Sub
 
@@ -296,6 +292,7 @@ End Sub
 '                              UnloadMode (Integer)
 '!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    Unload Me
     Set frmLicence = Nothing
 End Sub
 
@@ -436,6 +433,9 @@ Private Sub LoadLicence()
 
     If PathExists(strPathLicence) Then
         LicenceRTF.LoadFile strPathLicence
+        
+        ' Проверка лицензии на неправомерное изменение
+        CheckEditLicense strPathLicence
     Else
 
         If Not mbSilentRun Then
@@ -443,13 +443,8 @@ Private Sub LoadLicence()
         End If
 
         Unload Me
-
-        End
-
     End If
 
-    ' Проверка лицензии на неправомерное изменение
-    CheckEditLicense strPathLicence
 End Sub
 
 '!--------------------------------------------------------------------------------

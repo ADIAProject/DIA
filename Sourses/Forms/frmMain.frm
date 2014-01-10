@@ -1370,6 +1370,10 @@ Private objHashOutput            As Scripting.Dictionary
 Private objHashOutput2           As Scripting.Dictionary
 Private objHashOutput3           As Scripting.Dictionary
 Private strFormName              As String
+Private lngFrameTime             As Long
+Private lngFrameCount            As Long
+Private lngBorderWidthX          As Long
+Private lngBorderWidthY          As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
@@ -4891,8 +4895,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_Load()
 
-    'cmdViewAllDevice.SetPopupMenu mnuContextMenu
-    'cmdViewAllDevice.SetPopupMenuRBT mnuContextMenu2
     Dim i  As Long
     Dim ii As Long
 
@@ -4919,6 +4921,7 @@ Private Sub Form_Load()
     ' Подчеркавание меню (аля 3D)
     Me.Line (0, 15)-(ScaleWidth, 15), vbWhite
     Me.Line (0, 0)-(ScaleWidth, 0), GetSysColor(COLOR_BTNSHADOW)
+    
     frRezim.Top = 500
     frRunChecked.Top = 500
     frDescriptionIco.Top = 2100
@@ -5081,6 +5084,57 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         Exit Sub
     End If
 
+    ' Удаление временных файлов если есть и если опция включена
+    If mbDelTmpAfterClose Then
+        ChangeStatusTextAndDebug strMessages(81), , , , strMessages(130)
+
+        'Чистим если только не перезапуск программы
+        If Not mbRestartProgram Then
+            'Me.Hide
+            DelTemp
+        End If
+    End If
+
+    ' сохранение параметров при выходе
+    If mbSaveSizeOnExit Then
+        FRMStateSave
+    End If
+
+    ' Сохраняем язык при старте
+    If Not mbIsDriveCDRoom Then
+        If mnuLangStart.Checked Then
+            IniWriteStrPrivate "Main", "StartLanguageID", strPCLangCurrentID, strSysIni
+        End If
+
+        IniWriteStrPrivate "Main", "AutoLanguage", CStr(Abs(Not mnuLangStart.Checked)), strSysIni
+        IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", CStr(Abs(mnuAutoInfoAfterDelDRV.Checked)), strSysIni
+    End If
+
+    SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP", False
+
+    If mbLoadIniTmpAfterRestart Then
+        SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP_PATH", "-"
+
+        If StrComp(FileNameFromPath(strSysIni), "Settings_DIA_TMP.ini", vbTextCompare) = 0 Then
+            DeleteFiles strSysIni
+        End If
+    End If
+    
+    If lngFrameTime < 0 Then lngFrameTime = 2
+    If lngFrameCount < 1 Then lngFrameCount = 40
+    If Me.WindowState <> vbMinimized Then
+        AnimateForm Me, aUnload, eZoomOut, lngFrameTime, lngFrameCount
+    End If
+
+    Set frmMain = Nothing
+        
+    ' Выгружаем из памяти формы
+    UnloadAllForms strFormName
+    
+    ' Выгружаем из памяти главную форму
+    Unload Me
+    Set frmMain = Nothing
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5104,7 +5158,6 @@ Public Sub UnloadAllForms(Optional FormToIgnore As String = vbNullString)
     Next F
 
 End Sub
-
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Resize
@@ -5281,64 +5334,6 @@ Public Sub Form_Resize()
         SetTrayIcon NIM_ADD, Me.hWnd, Me.Icon, "Drivers Installation Assistant"
     End If
 
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Unload
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Cancel (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_Unload(Cancel As Integer)
-
-    ' Проверяем закончена ли проверка обновления, если нет то прерываем выход из программы, иначе программа вылетит
-    If mbCheckUpdNotEnd Then
-        Cancel = True
-
-        Exit Sub
-
-    End If
-
-    ' Выгружаем из памяти формы
-    UnloadAllForms strFormName
-
-    ' Удаление временных файлов если есть и если опция включена
-    If mbDelTmpAfterClose Then
-        ChangeStatusTextAndDebug strMessages(81), , , , strMessages(130)
-
-        'Чистим если только не перезапуск программы
-        If Not mbRestartProgram Then
-            Me.Hide
-            DelTemp
-        End If
-    End If
-
-    ' сохранение параметров при выходе
-    If mbSaveSizeOnExit Then
-        FRMStateSave
-    End If
-
-    ' Сохраняем язык при старте
-    If Not mbIsDriveCDRoom Then
-        If mnuLangStart.Checked Then
-            IniWriteStrPrivate "Main", "StartLanguageID", strPCLangCurrentID, strSysIni
-        End If
-
-        IniWriteStrPrivate "Main", "AutoLanguage", CStr(Abs(Not mnuLangStart.Checked)), strSysIni
-        IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", CStr(Abs(mnuAutoInfoAfterDelDRV.Checked)), strSysIni
-    End If
-
-    SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP", False
-
-    If mbLoadIniTmpAfterRestart Then
-        SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP_PATH", "-"
-
-        If StrComp(FileNameFromPath(strSysIni), "Settings_DIA_TMP.ini", vbTextCompare) = 0 Then
-            DeleteFiles strSysIni
-        End If
-    End If
-
-    Unload frmMain
-    Set frmMain = Nothing
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6725,7 +6720,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHomePage1_Click()
-    RunUtilsShell Kavichki & "http://www.adia-project.net" & Kavichki, False
+    RunUtilsShell Kavichki & strUrl_MainWWWSite & Kavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------

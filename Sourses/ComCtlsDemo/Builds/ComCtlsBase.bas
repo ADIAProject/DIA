@@ -398,6 +398,7 @@ End Sub
 #If ImplementIDEStopProtection = True Then
 
 Private Sub IDEStopProtectionHandler()
+On Error Resume Next
 Call RemoveAllVTableSubclass(VTableInterfaceInPlaceActiveObject)
 Call RemoveAllVTableSubclass(VTableInterfaceControl)
 Call RemoveAllVTableSubclass(VTableInterfacePerPropertyBrowsing)

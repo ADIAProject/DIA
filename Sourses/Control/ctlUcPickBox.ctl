@@ -3136,7 +3136,7 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
     'sInput As String :         the path to alter
     'iTextWidth as Integer :    the desired length of the inputted path in twips
     'sReplaceString as String : the string which is interted for missing text.  Default "..."
-    'sFont as String :          the font being used for display.  Default "MS Sans Serif"
+    'sFont as String :          the font being used for display.  Default "Tahoma"
     'iFontSize as Integer :     the font size being used for display.  Default "8"
     'Output:
     'TrimPathByLen intellengently cuts the input (sInput) to a string that fits
