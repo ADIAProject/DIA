@@ -47,6 +47,7 @@ Private Declare Function MessageBoxIndirect Lib "user32" Alias "MessageBoxIndire
 Private Declare Function GetActiveWindow Lib "user32" () As Long
 Private Declare Function GetForegroundWindow Lib "user32" () As Long
 Private Declare Function GetFileAttributes Lib "kernel32" Alias "GetFileAttributesW" (ByVal lpFileName As Long) As Long
+Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameW" (ByVal hModule As Long, ByVal lpFileName As Long, ByVal nSize As Long) As Long
 Private Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal VKey As Long) As Integer
 Private Declare Function GetObjectAPI Lib "gdi32" Alias "GetObjectW" (ByVal hObject As Long, ByVal nCount As Long, ByRef lpObject As Any) As Long
@@ -115,8 +116,29 @@ On Error GoTo 0
 If (Attributes And (vbDirectory Or vbVolume)) = 0 And ErrVal = 0 Then FileExists = True
 End Function
 
-Public Function ApplicationPath() As String
-ApplicationPath = App.Path & IIf(Right$(App.Path, 1) = "\", "", "\")
+Public Function GetEXEName() As String
+If InIDE() = False Then
+    Const MAX_PATH As Long = 260
+    Dim Buffer As String
+    Buffer = String(MAX_PATH, vbNullChar)
+    Buffer = Left$(Buffer, GetModuleFileName(0, StrPtr(Buffer), MAX_PATH + 1))
+    Buffer = Right$(Buffer, Len(Buffer) - InStrRev(Buffer, "\"))
+    GetEXEName = Left$(Buffer, InStrRev(Buffer, ".") - 1)
+Else
+    GetEXEName = App.EXEName
+End If
+End Function
+
+Public Function GetAppPath() As String
+If InIDE() = False Then
+    Const MAX_PATH As Long = 260
+    Dim Buffer As String
+    Buffer = String(MAX_PATH, vbNullChar)
+    Buffer = Left$(Buffer, GetModuleFileName(0, StrPtr(Buffer), MAX_PATH + 1))
+    GetAppPath = Left$(Buffer, InStrRev(Buffer, "\"))
+Else
+    GetAppPath = App.Path & IIf(Right$(App.Path, 1) = "\", "", "\")
+End If
 End Function
 
 Public Function AccelCharCode(ByVal Caption As String) As Integer

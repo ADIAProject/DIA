@@ -10,7 +10,7 @@ Begin VB.UserControl RichTextBox
    ScaleHeight     =   120
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   160
-   ToolboxBitmap   =   "RichTextBox.ctx":0060
+   ToolboxBitmap   =   "RichTextBox.ctx":004C
 End
 Attribute VB_Name = "RichTextBox"
 Attribute VB_GlobalNameSpace = False
@@ -397,7 +397,6 @@ Private Const SB_THUMBPOSITION = 4, SB_THUMBTRACK As Long = 5
 Private Const SB_HORZ As Long = 0, SB_VERT As Long = 1
 Private Const WM_MOUSEACTIVATE As Long = &H21, MA_NOACTIVATE As Long = &H3, MA_NOACTIVATEANDEAT As Long = &H4, HTBORDER As Long = 18
 Private Const SW_HIDE As Long = &H0
-Private Const SW_SHOW As Long = &H5
 Private Const WM_SETFOCUS As Long = &H7
 Private Const WM_ENABLE As Long = &HA
 Private Const WM_THEMECHANGED As Long = &H31A
@@ -780,52 +779,14 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Select Case PropMousePointer
-        Case 0: DisplayName = "0 - Default"
-        Case 1: DisplayName = "1 - Arrow"
-        Case 2: DisplayName = "2 - Cross"
-        Case 3: DisplayName = "3 - I-Beam"
-        Case 4: DisplayName = "4 - Hand"
-        Case 5: DisplayName = "5 - Size"
-        Case 6: DisplayName = "6 - Size NE SW"
-        Case 7: DisplayName = "7 - Size N S"
-        Case 8: DisplayName = "8 - Size NW SE"
-        Case 9: DisplayName = "9 - Size W E"
-        Case 10: DisplayName = "10 - Up Arrow"
-        Case 11: DisplayName = "11 - Hourglass"
-        Case 12: DisplayName = "12 - No Drop"
-        Case 13: DisplayName = "13 - Arrow and Hourglass"
-        Case 14: DisplayName = "14 - Arrow and Question"
-        Case 15: DisplayName = "15 - Size All"
-        Case 16: DisplayName = "16 - Arrow and CD"
-        Case 99: DisplayName = "99 - Custom"
-    End Select
+    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    ReDim StringsOut(0 To (17 + 1)) As String
-    ReDim CookiesOut(0 To (17 + 1)) As Long
-    StringsOut(0) = "0 - Default": CookiesOut(0) = 0
-    StringsOut(1) = "1 - Arrow": CookiesOut(1) = 1
-    StringsOut(2) = "2 - Cross": CookiesOut(2) = 2
-    StringsOut(3) = "3 - I-Beam": CookiesOut(3) = 3
-    StringsOut(4) = "4 - Hand": CookiesOut(4) = 4
-    StringsOut(5) = "5 - Size": CookiesOut(5) = 5
-    StringsOut(6) = "6 - Size NE SW": CookiesOut(6) = 6
-    StringsOut(7) = "7 - Size N S": CookiesOut(7) = 7
-    StringsOut(8) = "8 - Size NW SE": CookiesOut(8) = 8
-    StringsOut(9) = "9 - Size W E": CookiesOut(9) = 9
-    StringsOut(10) = "10 - Up Arrow": CookiesOut(10) = 10
-    StringsOut(11) = "11 - Hourglass": CookiesOut(11) = 11
-    StringsOut(12) = "12 - No Drop": CookiesOut(12) = 12
-    StringsOut(13) = "13 - Arrow and Hourglass": CookiesOut(13) = 13
-    StringsOut(14) = "14 - Arrow and Question": CookiesOut(14) = 14
-    StringsOut(15) = "15 - Size All": CookiesOut(15) = 15
-    StringsOut(16) = "16 - Arrow and CD": CookiesOut(16) = 16
-    StringsOut(17) = "99 - Custom": CookiesOut(17) = 99
+    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -1007,6 +968,24 @@ End Property
 Public Property Get Parent() As Object
 Attribute Parent.VB_Description = "Returns the object on which this object is located."
 Set Parent = UserControl.Parent
+End Property
+
+Public Property Get Left() As Single
+Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
+Left = Extender.Left
+End Property
+
+Public Property Let Left(ByVal Value As Single)
+Extender.Left = Value
+End Property
+
+Public Property Get Top() As Single
+Attribute Top.VB_Description = "Returns/sets the distance between the internal top edge of an object and the top edge of its container."
+Top = Extender.Top
+End Property
+
+Public Property Let Top(ByVal Value As Single)
+Extender.Top = Value
 End Property
 
 Public Property Get Width() As Single
@@ -1656,7 +1635,11 @@ Else
     Call DestroyRichTextBox
     Call CreateRichTextBox
     Call UserControl_Resize
-    StreamStringIn Buffer, Flags
+    If PropFileName = vbNullString Then
+        StreamStringIn Buffer, Flags
+    Else
+        Me.FileName = PropFileName
+    End If
 End If
 End Sub
 
@@ -1754,6 +1737,10 @@ End Property
 Public Property Let Modified(ByVal Value As Boolean)
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETMODIFY, IIf(Value = True, 1, 0), ByVal 0&
 End Property
+
+Public Sub Span(ByVal CharacterSet As String, Optional ByVal Forward As Variant, Optional ByVal Negate As Variant)
+'
+End Sub
 
 Public Function Find(ByVal Text As String, Optional ByVal Min As Variant, Optional ByVal Max As Variant, Optional ByVal Options As RtfFindOptionConstants) As Long
 Attribute Find.VB_Description = "Finds text within a rich text box control."

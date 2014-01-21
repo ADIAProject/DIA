@@ -238,44 +238,7 @@ Option Explicit
 Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
-With ComboMousePointer
-.AddItem "0 - Default"
-.ItemData(.NewIndex) = 0
-.AddItem "1 - Arrow"
-.ItemData(.NewIndex) = 1
-.AddItem "2 - Cross"
-.ItemData(.NewIndex) = 2
-.AddItem "3 - I-Beam"
-.ItemData(.NewIndex) = 3
-.AddItem "4 - Hand"
-.ItemData(.NewIndex) = 4
-.AddItem "5 - Size"
-.ItemData(.NewIndex) = 5
-.AddItem "6 - Size NE SW"
-.ItemData(.NewIndex) = 6
-.AddItem "7 - Size N S"
-.ItemData(.NewIndex) = 7
-.AddItem "8 - Size NW SE"
-.ItemData(.NewIndex) = 8
-.AddItem "9 - Size W E"
-.ItemData(.NewIndex) = 9
-.AddItem "10 - Up Arrow"
-.ItemData(.NewIndex) = 10
-.AddItem "11 - Hourglass"
-.ItemData(.NewIndex) = 11
-.AddItem "12 - No Drop"
-.ItemData(.NewIndex) = 12
-.AddItem "13 - Arrow and Hourglass"
-.ItemData(.NewIndex) = 13
-.AddItem "14 - Arrow and Question"
-.ItemData(.NewIndex) = 14
-.AddItem "15 - Size All"
-.ItemData(.NewIndex) = 15
-.AddItem "16 - Arrow and CD"
-.ItemData(.NewIndex) = 16
-.AddItem "99 - Custom"
-.ItemData(.NewIndex) = 99
-End With
+Call ComCtlsMousePointerPPInitCombo(ComboMousePointer)
 With ComboScrollBars
 .AddItem vbSBNone & " - None"
 .ItemData(.NewIndex) = vbSBNone
@@ -299,6 +262,16 @@ On Error Resume Next
 PropertyPage.ValidateControls
 If Err.Number = 380 Then Exit Sub
 On Error GoTo 0
+If Not TextFileName.Text = vbNullString Then
+    If FileExists(TextFileName.Text) = False Then
+        MsgBox "The specified file name cannot be accessed or is invalid.", vbExclamation + vbOKOnly
+        TextFileName.SetFocus
+        TextFileName.SelStart = 0
+        TextFileName.SelLength = Len(TextFileName.Text)
+        PropertyPage.Changed = True
+        Exit Sub
+    End If
+End If
 With PropertyPage.SelectedControls(0)
 .Enabled = CBool(CheckEnabled.Value = vbChecked)
 .VisualStyles = CBool(CheckVisualStyles.Value = vbChecked)
@@ -318,16 +291,6 @@ If .TextMode <> ComboTextMode.ItemData(ComboTextMode.ListIndex) Then .TextMode =
 .DisableNoScroll = CBool(CheckDisableNoScroll.Value = vbChecked)
 .AutoURLDetect = CBool(CheckAutoURLDetect.Value = vbChecked)
 .SelectionBar = CBool(CheckSelectionBar.Value = vbChecked)
-If Not TextFileName.Text = vbNullString Then
-    If FileExists(TextFileName.Text) = False Then
-        MsgBox "The specified file name cannot be accessed or is invalid.", vbExclamation + vbOKOnly
-        TextFileName.SetFocus
-        TextFileName.SelStart = 0
-        TextFileName.SelLength = Len(TextFileName.Text)
-        PropertyPage.Changed = True
-        Exit Sub
-    End If
-End If
 If Not .FileName = TextFileName.Text Or Not TextFileName.Text = vbNullString Then .FileName = TextFileName.Text
 End With
 End Sub

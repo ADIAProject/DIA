@@ -13,12 +13,13 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 #If False Then
-Private CdlCancel, CdlBufferTooSmall, CdlInvalidFileName, CdlSubclassFailure, CdlMaxLessThanMin, CdlNoFonts, CdlInitFailure
+Private CdlCancel, CdlBufferTooSmall, CdlInvalidFileName, CdlSubclassFailure, CdlMaxLessThanMin, CdlNoFonts, CdlInitFailure, CdlHelp
 Private CdlOFNReadOnly, CdlOFNOverwritePrompt, CdlOFNHideReadOnly, CdlOFNNoChangeDir, CdlOFNShowHelp, CdlOFNNoValidate, CdlOFNAllowMultiSelect, CdlOFNExtensionDifferent, CdlOFNPathMustExist, CdlOFNFileMustExist, CdlOFNCreatePrompt, CdlOFNShareAware, CdlOFNNoReadOnlyReturn, CdlOFNNoNetworkButton, CdlOFNExplorer, CdlOFNNoDereferenceLinks, CdlOFNDontAddToRecent, CdlOFNForcesShowHidden
 Private CdlCCRGBInit, CdlCCFullOpen, CdlCCPreventFullOpen, CdlCCShowHelp, CdlCCSolidColor, CdlCCAnyColor
 Private CdlCFScreenFonts, CdlCFPrinterFonts, CdlCFShowHelp, CdlCFEffects, CdlCFScriptsOnly, CdlCFNoVectorFonts, CdlCFLimitSize, CdlCFFixedPitchOnly, CdlCFForceFontExist, CdlCFScalableOnly, CdlCFTTOnly, CdlCFNoFaceSel, CdlCFNoStyleSel, CdlCFNoSizeSel, CdlCFSelectScript, CdlCFNoScriptSel, CdlCFNoVertFonts
 Private CdlPDAllPages, CdlPDSelection, CdlPDPageNums, CdlPDNoSelection, CdlPDNoPageNums, CdlPDCollate, CdlPDPrintToFile, CdlPDNoWarning, CdlPDReturnDC, CdlPDReturnIC, CdlPDReturnDefault, CdlPDUseDevModeCopiesAndCollate, CdlPDDisablePrintToFile, CdlPDCurrentPage, CdlPDHidePrintToFile, CdlPDNoCurrentPage
 Private CdlPDResultCancel, CdlPDResultPrint, CdlPDResultApply
+Private CdlHelpContext, CdlHelpQuit, CdlHelpIndex, CdlHelpContents, CdlHelpHelpOnHelp, CdlHelpSetIndex, CdlHelpSetContents, CdlHelpContextPopup, CdlHelpForceFile, CdlHelpKey, CdlHelpCommandHelp, CdlHelpPartialKey
 Private CdlBIFReturnOnlyFSDirs, CdlBIFDontGoBelowDomain, CdlBIFReturnFSAncestors, CdlBIFEditBox, CdlBIFNewDialogStyle, CdlBIFBrowseIncludeURLs, CdlBIFUseNewUI, CdlBIFUAHint, CdlBIFNoNewFolderButton, CdlBIFNoTranslateTargets, CdlBIFBrowseForComputer, CdlBIFBrowseForPrinter, CdlBIFBrowseIncludeFiles, CdlBIFShareable, CdlBIFBrowseFileJunctions
 #End If
 Private Const FNERR_BUFFERTOOSMALL As Long = &H3003
@@ -34,6 +35,7 @@ CdlSubclassFailure = 20478
 CdlMaxLessThanMin = 24573
 CdlNoFonts = 24574
 CdlInitFailure = 28665
+CdlHelp = 32751
 End Enum
 Private Const OFN_READONLY As Long = &H1
 Private Const OFN_OVERWRITEPROMPT As Long = &H2
@@ -164,6 +166,32 @@ Public Enum CdlPDResultConstants
 CdlPDResultCancel = PD_RESULT_CANCEL
 CdlPDResultPrint = PD_RESULT_PRINT
 CdlPDResultApply = PD_RESULT_APPLY
+End Enum
+Private Const HELP_CONTEXT As Long = &H1
+Private Const HELP_QUIT As Long = &H2
+Private Const HELP_INDEX As Long = &H3
+Private Const HELP_CONTENTS As Long = &H3
+Private Const HELP_HELPONHELP As Long = &H4
+Private Const HELP_SETINDEX As Long = &H5
+Private Const HELP_SETCONTENTS As Long = &H5
+Private Const HELP_CONTEXTPOPUP As Long = &H8
+Private Const HELP_FORCEFILE As Long = &H9
+Private Const HELP_KEY As Long = &H101
+Private Const HELP_COMMAND As Long = &H102
+Private Const HELP_PARTIALKEY As Long = &H105
+Public Enum CdlHelpConstants
+CdlHelpContext = HELP_CONTEXT
+CdlHelpQuit = HELP_QUIT
+CdlHelpIndex = HELP_INDEX
+CdlHelpContents = HELP_CONTENTS
+CdlHelpHelpOnHelp = HELP_HELPONHELP
+CdlHelpSetIndex = HELP_SETINDEX
+CdlHelpSetContents = HELP_SETCONTENTS
+CdlHelpContextPopup = HELP_CONTEXTPOPUP
+CdlHelpForceFile = HELP_FORCEFILE
+CdlHelpKey = HELP_KEY
+CdlHelpCommandHelp = HELP_COMMAND
+CdlHelpPartialKey = HELP_PARTIALKEY
 End Enum
 Private Const BIF_RETURNONLYFSDIRS As Long = &H1
 Private Const BIF_DONTGOBELOWDOMAIN As Long = &H2
@@ -349,6 +377,7 @@ Private Declare Function GetOpenFileName Lib "comdlg32" Alias "GetOpenFileNameW"
 Private Declare Function GetSaveFileName Lib "comdlg32" Alias "GetSaveFileNameW" (ByRef pOpenfilename As OPENFILENAME) As Long
 Private Declare Function ChooseColor Lib "comdlg32" Alias "ChooseColorW" (ByRef lpChooseColor As TCHOOSECOLOR) As Long
 Private Declare Function ChooseFont Lib "comdlg32" Alias "ChooseFontW" (ByRef lpcf As TCHOOSEFONT) As Long
+Private Declare Function WinHelp Lib "user32" Alias "WinHelpW" (ByVal hWnd As Long, ByVal lpHelpFile As Long, ByVal wCommand As Long, ByVal dwData As Long) As Long
 Private Declare Function GetSysColor Lib "user32" (ByVal nIndex As Long) As Long
 Private Declare Function GetActiveWindow Lib "user32" () As Long
 Private Declare Function SHBrowseForFolder Lib "shell32" Alias "SHBrowseForFolderW" (ByRef lpBI As BROWSEINFO) As Long
@@ -382,11 +411,20 @@ Private PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropMin As Long, PropMax As Long
 Private PropFromPage As Long, PropToPage As Long
+Private PropHelpFile As String
+Private PropHelpCommand As CdlHelpConstants
+Private PropHelpContext As Long
+Private PropHelpKey As String
 
 Private Sub Class_Initialize()
 PropMaxFileSize = MAX_PATH
 Set PropFont = New StdFont
 End Sub
+
+Public Property Get Object() As Object
+Attribute Object.VB_Description = "Returns the own instance."
+Set Object = Me
+End Property
 
 Public Property Get CancelError() As Boolean
 Attribute CancelError.VB_Description = "Indicates whether an error is generated when the user chooses the cancel button."
@@ -461,12 +499,12 @@ Public Property Let FileTitle(ByVal Value As String)
 Err.Raise Number:=383, Description:="Property is read-only"
 End Property
 
-Public Property Get FileOffset() As Long
+Public Property Get FileOffset() As Integer
 Attribute FileOffset.VB_Description = "Returns a zero-based offset, in characters, from the beginning of the path to the file name."
-FileOffset = CIntToUInt(PropFileOffset)
+FileOffset = PropFileOffset
 End Property
 
-Public Property Let FileOffset(ByVal Value As Long)
+Public Property Let FileOffset(ByVal Value As Integer)
 Err.Raise Number:=383, Description:="Property is read-only"
 End Property
 
@@ -569,6 +607,47 @@ If Value < 0 Then Err.Raise 380
 PropToPage = Value
 End Property
 
+Public Property Get HelpFile() As String
+Attribute HelpFile.VB_Description = "Returns/sets the name of the help file associated with the project."
+HelpFile = PropHelpFile
+End Property
+
+Public Property Let HelpFile(ByVal Value As String)
+PropHelpFile = Value
+End Property
+
+Public Property Get HelpCommand() As CdlHelpConstants
+Attribute HelpCommand.VB_Description = "Returns/sets the type of online help requested."
+HelpCommand = PropHelpCommand
+End Property
+
+Public Property Let HelpCommand(ByVal Value As CdlHelpConstants)
+Select Case Value
+    Case CdlHelpContext, CdlHelpQuit, CdlHelpIndex, CdlHelpContents, CdlHelpHelpOnHelp, CdlHelpSetIndex, CdlHelpSetContents, CdlHelpContextPopup, CdlHelpForceFile, CdlHelpKey, CdlHelpCommandHelp, CdlHelpPartialKey
+        PropHelpCommand = Value
+    Case Else
+        Err.Raise 380
+End Select
+End Property
+
+Public Property Get HelpContext() As Long
+Attribute HelpContext.VB_Description = "Returns/sets the context ID of the requested help topic."
+HelpContext = PropHelpContext
+End Property
+
+Public Property Let HelpContext(ByVal Value As Long)
+PropHelpContext = Value
+End Property
+
+Public Property Get HelpKey() As String
+Attribute HelpKey.VB_Description = "Returns/sets the keyword that identifies the requested help topic."
+HelpKey = PropHelpKey
+End Property
+
+Public Property Let HelpKey(ByVal Value As String)
+PropHelpKey = Value
+End Property
+
 Public Property Get Action() As Integer
 Attribute Action.VB_Description = "Sets the type of dialog box to be displayed."
 Attribute Action.VB_UserMemId = 0
@@ -588,7 +667,7 @@ Select Case Value
     Case 5
         Me.ShowPrinter
     Case 6
-        Shell "winhlp32.exe"
+        Me.ShowHelp
     Case 7
         Me.ShowFolder
     Case Else
@@ -694,11 +773,11 @@ Else
     ErrVal = CommDlgExtendedError()
     Select Case ErrVal
         Case FNERR_BUFFERTOOSMALL
-            Err.Raise Number:=CdlBufferTooSmall, Description:="The buffer at which the member LpstrFile points is too small."
+            Err.Raise Number:=CdlBufferTooSmall, Description:="The buffer at which the member lpstrFile points is too small."
         Case FNERR_INVALIDFILENAME
             Err.Raise Number:=CdlInvalidFileName, Description:="File name is invalid."
         Case FNERR_SUBCLASSFAILURE
-            Err.Raise Number:=CdlSubclassFailure, Description:="An attempt to subclass a listbox failed due to insufficient memory."
+            Err.Raise Number:=CdlSubclassFailure, Description:="An attempt to subclass a list box failed due to insufficient memory."
         Case 0
             If PropCancelError = True Then Err.Raise Number:=CdlCancel, Description:="Cancel was selected."
         Case Else
@@ -942,6 +1021,20 @@ Else
     End Select
 End If
 End Function
+
+Public Sub ShowHelp()
+Attribute ShowHelp.VB_Description = "Runs windows help and displays the help file you specify."
+Dim dwData As Long
+Select Case PropHelpCommand
+    Case CdlHelpKey, CdlHelpCommandHelp, CdlHelpPartialKey
+        dwData = StrPtr(PropHelpKey)
+    Case CdlHelpContext, CdlHelpSetIndex, CdlHelpSetContents, CdlHelpContextPopup
+        dwData = PropHelpContext
+    Case CdlHelpQuit, CdlHelpIndex, CdlHelpContents, CdlHelpHelpOnHelp, CdlHelpForceFile
+        dwData = 0
+End Select
+If WinHelp(0, StrPtr(PropHelpFile), PropHelpCommand, dwData) = 0 Then Err.Raise Number:=CdlHelp, Description:="Call to windows help failed."
+End Sub
 
 Public Function ShowFolder(Optional ByVal RootFolder As Variant) As Boolean
 Attribute ShowFolder.VB_Description = "Displays the folder dialog box."

@@ -79,7 +79,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 strDevVer_xx = strVersionBD
             End If
 
-            strDevVerLocal_x = Split(Trim$(strVersionLocal), ",", , vbTextCompare)
+            strDevVerLocal_x = Split(Trim$(strVersionLocal), ",")
             miDimensionLocal = UBound(strDevVerLocal_x)
 
             If miDimensionLocal > 0 Then

@@ -139,7 +139,6 @@ Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
 Private Const WS_EX_RTLREADING As Long = &H2000
 Private Const SW_HIDE As Long = &H0
-Private Const SW_SHOW As Long = &H5
 Private Const WM_MOUSEACTIVATE As Long = &H21, MA_NOACTIVATE As Long = &H3, MA_NOACTIVATEANDEAT As Long = &H4
 Private Const WM_SETFOCUS As Long = &H7
 Private Const WM_KEYDOWN As Long = &H100
@@ -282,26 +281,7 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Select Case PropMousePointer
-        Case 0: DisplayName = "0 - Default"
-        Case 1: DisplayName = "1 - Arrow"
-        Case 2: DisplayName = "2 - Cross"
-        Case 3: DisplayName = "3 - I-Beam"
-        Case 4: DisplayName = "4 - Hand"
-        Case 5: DisplayName = "5 - Size"
-        Case 6: DisplayName = "6 - Size NE SW"
-        Case 7: DisplayName = "7 - Size N S"
-        Case 8: DisplayName = "8 - Size NW SE"
-        Case 9: DisplayName = "9 - Size W E"
-        Case 10: DisplayName = "10 - Up Arrow"
-        Case 11: DisplayName = "11 - Hourglass"
-        Case 12: DisplayName = "12 - No Drop"
-        Case 13: DisplayName = "13 - Arrow and Hourglass"
-        Case 14: DisplayName = "14 - Arrow and Question"
-        Case 15: DisplayName = "15 - Size All"
-        Case 16: DisplayName = "16 - Arrow and CD"
-        Case 99: DisplayName = "99 - Custom"
-    End Select
+    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
     Handled = True
 ElseIf DispID = DispIDValue Then
     Select Case PropValue
@@ -315,26 +295,7 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    ReDim StringsOut(0 To (17 + 1)) As String
-    ReDim CookiesOut(0 To (17 + 1)) As Long
-    StringsOut(0) = "0 - Default": CookiesOut(0) = 0
-    StringsOut(1) = "1 - Arrow": CookiesOut(1) = 1
-    StringsOut(2) = "2 - Cross": CookiesOut(2) = 2
-    StringsOut(3) = "3 - I-Beam": CookiesOut(3) = 3
-    StringsOut(4) = "4 - Hand": CookiesOut(4) = 4
-    StringsOut(5) = "5 - Size": CookiesOut(5) = 5
-    StringsOut(6) = "6 - Size NE SW": CookiesOut(6) = 6
-    StringsOut(7) = "7 - Size N S": CookiesOut(7) = 7
-    StringsOut(8) = "8 - Size NW SE": CookiesOut(8) = 8
-    StringsOut(9) = "9 - Size W E": CookiesOut(9) = 9
-    StringsOut(10) = "10 - Up Arrow": CookiesOut(10) = 10
-    StringsOut(11) = "11 - Hourglass": CookiesOut(11) = 11
-    StringsOut(12) = "12 - No Drop": CookiesOut(12) = 12
-    StringsOut(13) = "13 - Arrow and Hourglass": CookiesOut(13) = 13
-    StringsOut(14) = "14 - Arrow and Question": CookiesOut(14) = 14
-    StringsOut(15) = "15 - Size All": CookiesOut(15) = 15
-    StringsOut(16) = "16 - Arrow and CD": CookiesOut(16) = 16
-    StringsOut(17) = "99 - Custom": CookiesOut(17) = 99
+    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
     Handled = True
 ElseIf DispID = DispIDValue Then
     ReDim StringsOut(0 To (2 + 1)) As String
@@ -491,6 +452,24 @@ Attribute Parent.VB_Description = "Returns the object on which this object is lo
 Set Parent = UserControl.Parent
 End Property
 
+Public Property Get Left() As Single
+Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
+Left = Extender.Left
+End Property
+
+Public Property Let Left(ByVal Value As Single)
+Extender.Left = Value
+End Property
+
+Public Property Get Top() As Single
+Attribute Top.VB_Description = "Returns/sets the distance between the internal top edge of an object and the top edge of its container."
+Top = Extender.Top
+End Property
+
+Public Property Let Top(ByVal Value As Single)
+Extender.Top = Value
+End Property
+
 Public Property Get Width() As Single
 Attribute Width.VB_Description = "Returns/sets the width of an object."
 Width = Extender.Width
@@ -643,7 +622,7 @@ End Property
 
 Public Property Let MousePointer(ByVal Value As Integer)
 Select Case Value
-    Case 0 To 17, 99
+    Case 0 To 16, 99
         PropMousePointer = Value
     Case Else
         Err.Raise 380

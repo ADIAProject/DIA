@@ -1,5 +1,18 @@
 List of revisions:
 
+20-Jan-2014
+- Included 'CdlHelpConstants' and the HelpKey/HelpContext (HelpData is removed) property to the CommonDialog class.
+- Centralized the MousePointer handling in the ComCtlsBase. (No recurring codes anymore)
+
+19-Jan-2014
+- Included the MCIWnd control.
+- The Left and Top properties are now also available when setting to a shadow object. ('Set' command)
+- Included the ShowHelp function to the CommonDialog class. (When using, WinHlp32 Update KB need to be installed post Windows XP)
+- Included the Object property in the CommonDialog class that returns the own instance.
+
+10-Jan-2014
+- Minor modifications/bug fixes on the RichTextBox control.
+
 09-Jan-2014
 - MultiLine property of the TextBoxW control can now be changed at run time.
 - The Text property (via property page "PPTextBoxWText") of the TextBoxW control is now unicode aware at design time.
