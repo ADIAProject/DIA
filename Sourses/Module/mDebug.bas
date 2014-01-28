@@ -1,20 +1,25 @@
 Attribute VB_Name = "mDebug"
 Option Explicit
 
+' Модуль для организации записи отладочных сообщений в лог-файл
+' Имееется возможность задания режима детализации отладочных сообщений
+
 '==========================================================================
 '------------------ Параметры отладочного режима --------------------------'
 '==========================================================================
+' Параметры считываются из ini-файла при запуске программы
 Public mbDebugEnable           As Boolean
+Public mbCleanHistory          As Boolean   'Очистка истории отладочного режима
+Public mbDebugTime2File        As Boolean   'Записывать время события в лог-файл
+Public mbDebugLog2AppPath      As Boolean   'Каталог Logs находится в папке с программой
+Public lngDetailMode           As Long      'Режим детализации лог-файла
+' Параметры рассчитываемые в ходе работы программы
 Public strDebugLogFullPath     As String
 Public strDebugLogPath         As String
-Public strDebugLogPathTemp     As String
 Public strDebugLogName         As String
+Public strDebugLogPathTemp     As String
 Public strDebugLogNameTemp     As String
-Public strDebugLogPath2AppPath As String
-Public mbCleanHistory          As Boolean     'Очистка истории отладочного режима
-Public lngDetailMode           As Long
-Public mbDebugLog2AppPath      As Boolean
-Public mbDebugTime2File        As Boolean
+Public mbLogNotOnCDRoom        As Boolean   'Лог отладки находится не на CD
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DebugMode

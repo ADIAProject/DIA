@@ -31,14 +31,10 @@ Private Const strCAPICOMVerDll     As String = "2.1.0.2"
 '2003 - http://www.microsoft.com/downloads/details.aspx?familyid=F00CB8C0-32E9-411D-A896-F2CD5EF21EB4&displaylang=en
 '2000 - http://www.microsoft.com/downloads/details.aspx?familyid=C03D3E49-B40E-4CA1-A0C7-CC135EC4D2BE&displaylang=en
 'http://support.microsoft.com/?kbid=951978
-'! -----------------------------------------------------------
-'!  Функция     :  APIFunctionPresent
-'!  Переменные  :  ByVal FunctionName As String, ByVal DLLName As String
-'!  Описание    :  Проверка на поддержку функции Api в текущей винде
-'! -----------------------------------------------------------
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function APIFunctionPresent
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка на поддержку функции Api в текущей винде]
 '! Parameters  (Переменные):   FunctionName (String)
 '                              DLLName (String)
 '!--------------------------------------------------------------------------------

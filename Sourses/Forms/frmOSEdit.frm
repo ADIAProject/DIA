@@ -109,13 +109,13 @@ Begin VB.Form frmOSEdit
          TabIndex        =   2
          Top             =   270
          Width           =   5295
-         _extentx        =   9340
-         _extenty        =   556
-         defaultext      =   ""
-         dialogtype      =   1
-         enabled         =   0   'False
-         fileflags       =   2621446
-         filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         _ExtentX        =   9340
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.7z|7z Files (*.7z)"
       End
       Begin prjDIADBS.ctlUcPickBox ucLangPath 
          Height          =   315
@@ -123,13 +123,13 @@ Begin VB.Form frmOSEdit
          TabIndex        =   3
          Top             =   720
          Width           =   5295
-         _extentx        =   9340
-         _extenty        =   556
-         defaultext      =   ""
-         dialogtype      =   1
-         enabled         =   0   'False
-         fileflags       =   2621446
-         filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         _ExtentX        =   9340
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.7z|7z Files (*.7z)"
       End
       Begin prjDIADBS.ctlUcPickBox ucRuntimesPath 
          Height          =   315
@@ -137,13 +137,13 @@ Begin VB.Form frmOSEdit
          TabIndex        =   4
          Top             =   1185
          Width           =   5295
-         _extentx        =   9340
-         _extenty        =   556
-         defaultext      =   ""
-         dialogtype      =   1
-         enabled         =   0   'False
-         fileflags       =   2621446
-         filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         _ExtentX        =   9340
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.7z|7z Files (*.7z)"
       End
       Begin prjDIADBS.LabelW lblRuntimes 
          Height          =   255
@@ -298,12 +298,12 @@ Begin VB.Form frmOSEdit
       TabIndex        =   9
       Top             =   1200
       Width           =   5275
-      _extentx        =   9313
-      _extenty        =   556
-      useautoforecolor=   0   'False
-      defaultext      =   ""
-      enabled         =   0   'False
-      filters         =   "Supported files|*.*|All Files (*.*)"
+      _ExtentX        =   9313
+      _ExtentY        =   556
+      UseAutoForeColor=   0   'False
+      DefaultExt      =   ""
+      Enabled         =   0   'False
+      Filters         =   "Supported files|*.*|All Files (*.*)"
    End
    Begin prjDIADBS.ctlUcPickBox ucPathDB 
       Height          =   315
@@ -311,11 +311,11 @@ Begin VB.Form frmOSEdit
       TabIndex        =   10
       Top             =   1710
       Width           =   5275
-      _extentx        =   9313
-      _extenty        =   556
-      defaultext      =   ""
-      enabled         =   0   'False
-      filters         =   "Supported files|*.*|All Files (*.*)"
+      _ExtentX        =   9313
+      _ExtentY        =   556
+      DefaultExt      =   ""
+      Enabled         =   0   'False
+      Filters         =   "Supported files|*.*|All Files (*.*)"
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   750
@@ -323,18 +323,26 @@ Begin VB.Form frmOSEdit
       TabIndex        =   11
       Top             =   5080
       Width           =   1815
-      _extentx        =   3201
-      _extenty        =   1323
-      font            =   "frmOSEdit.frx":02BC
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Сохранить изменения и выйти"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3201
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   13
+      BackColor       =   12244692
+      Caption         =   "Сохранить изменения и выйти"
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
@@ -342,18 +350,26 @@ Begin VB.Form frmOSEdit
       TabIndex        =   7
       Top             =   5080
       Width           =   1815
-      _extentx        =   3201
-      _extenty        =   1296
-      font            =   "frmOSEdit.frx":02E4
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Выход без сохранения"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3201
+      _ExtentY        =   1296
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   13
+      BackColor       =   12244692
+      Caption         =   "Выход без сохранения"
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.LabelW lblPathDB 
       Height          =   495
@@ -594,7 +610,7 @@ Private Sub SaveOptions()
     Dim i As Long
 
     If mbAddInList Then
-        i = LastIdOS + 1
+        i = lngLastIdOS + 1
 
         With frmOptions.lvOS.ListItems.Add(, , txtOSVer)
             .SubItems(1) = txtOSName
@@ -657,7 +673,7 @@ Private Sub SaveOptions()
         'FRMOPTIONS
     End If
 
-    LastIdOS = frmOptions.lvOS.ListItems.Count
+    lngLastIdOS = frmOptions.lvOS.ListItems.Count
     frmOptions.lvOS.Refresh
     mbAddInList = False
 End Sub

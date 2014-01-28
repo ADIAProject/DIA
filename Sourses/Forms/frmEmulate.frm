@@ -2,10 +2,10 @@ VERSION 5.00
 Begin VB.Form frmEmulate 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Режим эмуляции работы программы для другого ПК"
-   ClientHeight    =   2775
+   ClientHeight    =   8055
    ClientLeft      =   45
    ClientTop       =   435
-   ClientWidth     =   8160
+   ClientWidth     =   8775
    BeginProperty Font 
       Name            =   "Tahoma"
       Size            =   8.25
@@ -19,26 +19,92 @@ Begin VB.Form frmEmulate
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   2775
-   ScaleWidth      =   8160
+   ScaleHeight     =   8055
+   ScaleWidth      =   8775
    ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
-   Begin prjDIADBS.ctlUcPickBox ucFilePath 
+   Begin prjDIADBS.ctlJCFrames ctlJCFrames1 
+      Height          =   1395
+      Left            =   60
+      Top             =   3660
+      Width           =   8475
+      _ExtentX        =   14949
+      _ExtentY        =   2461
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackColor       =   15783104
+      FillColor       =   15783104
+      TextBoxColor    =   11595760
+      Style           =   3
+      RoundedCorner   =   0   'False
+      Caption         =   "Файл для эмуляции"
+      TextBoxHeight   =   20
+      GradientHeaderStyle=   1
+      Begin prjDIADBS.ctlUcPickBox ucFilePath 
+         Height          =   315
+         Left            =   120
+         TabIndex        =   6
+         Top             =   900
+         Width           =   7935
+         _ExtentX        =   13996
+         _ExtentY        =   556
+         UseAutoForeColor=   0   'False
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
+         ToolTipText1    =   "Click Here to Locate File"
+         UseDialogText   =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblInfo 
+         Height          =   495
+         Left            =   120
+         TabIndex        =   7
+         Top             =   360
+         Width           =   7935
+         _ExtentX        =   13996
+         _ExtentY        =   873
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   9.75
+            Charset         =   204
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   2
+         BackStyle       =   0
+         Caption         =   "Выберите файл для загрузки и укажите для какой операционной системы произвести эмуляцию работы программы"
+      End
+   End
+   Begin prjDIADBS.TextBoxW txtPCModel 
       Height          =   315
       Left            =   120
-      TabIndex        =   1
-      Top             =   600
-      Width           =   7935
-      _extentx        =   13996
-      _extenty        =   556
-      useautoforecolor=   0   'False
-      defaultext      =   ""
-      dialogtype      =   1
-      enabled         =   0   'False
-      fileflags       =   2621446
-      filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
-      tooltiptext1    =   "Click Here to Locate File"
-      usedialogtext   =   0   'False
+      TabIndex        =   5
+      Top             =   1980
+      Width           =   7875
+      _ExtentX        =   13891
+      _ExtentY        =   556
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Text            =   "frmEmulate.frx":0000
+      CueBanner       =   "frmEmulate.frx":0040
    End
    Begin prjDIADBS.ComboBoxW cmbOS 
       Height          =   330
@@ -58,52 +124,68 @@ Begin VB.Form frmEmulate
          Strikethrough   =   0   'False
       EndProperty
       Locked          =   -1  'True
-      Text            =   "frmEmulate.frx":0000
-      CueBanner       =   "frmEmulate.frx":0020
+      Text            =   "frmEmulate.frx":0060
+      CueBanner       =   "frmEmulate.frx":0080
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   750
       Left            =   4260
-      TabIndex        =   2
-      Top             =   1920
+      TabIndex        =   1
+      Top             =   2880
       Width           =   1815
-      _extentx        =   3201
-      _extenty        =   1323
-      font            =   "frmEmulate.frx":0040
-      buttonstyle     =   8
-      backcolor       =   12244692
-      enabled         =   0   'False
-      caption         =   "Загрузить файл"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3201
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      Enabled         =   0   'False
+      BackColor       =   12244692
+      Caption         =   "Загрузить файл"
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
       Left            =   6240
-      TabIndex        =   3
-      Top             =   1920
+      TabIndex        =   2
+      Top             =   2880
       Width           =   1815
-      _extentx        =   3201
-      _extenty        =   1296
-      font            =   "frmEmulate.frx":0068
-      buttonstyle     =   8
-      backcolor       =   12244692
-      caption         =   "Отмена"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3201
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
+      Caption         =   "Отмена"
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.CheckBoxW chk64bit 
       Height          =   255
       Left            =   120
-      TabIndex        =   5
+      TabIndex        =   3
       Top             =   1560
       Width           =   7935
       _ExtentX        =   13996
@@ -117,29 +199,28 @@ Begin VB.Form frmEmulate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmEmulate.frx":0090
+      Caption         =   "frmEmulate.frx":00A0
       Transparent     =   -1  'True
    End
-   Begin prjDIADBS.LabelW lblInfo 
-      Height          =   495
+   Begin prjDIADBS.CheckBoxW chkIsNotebook 
+      Height          =   255
       Left            =   120
       TabIndex        =   4
-      Top             =   60
+      Top             =   2460
       Width           =   7935
       _ExtentX        =   13996
-      _ExtentY        =   873
+      _ExtentY        =   450
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   9.75
+         Size            =   8.25
          Charset         =   204
-         Weight          =   700
+         Weight          =   400
          Underline       =   0   'False
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Alignment       =   2
-      BackStyle       =   0
-      Caption         =   "Выберите файл для загрузки и укажите для какой операционной системы произвести эмуляцию работы программы"
+      Caption         =   "frmEmulate.frx":00DE
+      Transparent     =   -1  'True
    End
 End
 Attribute VB_Name = "frmEmulate"
@@ -239,7 +320,7 @@ Private Sub cmdOK_Click()
         LoadAndParseFile strFilePath
         'Переопределение версии и разрядности системы для режима эмуляции
         mbIsWin64 = CBool(chk64bit.Value)
-        strOsCurrentVersion = Mid$(cmbOS.Text, 2, 3)
+        strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
         ' А теперь Обновляем статус всех пакетов
         frmMain.UpdateStatusButtonAll
         ' Обновить список неизвестных дров и описание для кнопки
@@ -361,10 +442,10 @@ Private Sub LoadDefaultParam()
     Dim strVerClient As String
 
     ' Выставляем текущую версию ОС, анализом из списка
-    If Not OsCurrVersionStruct.ClientOrServer Then
-        strVerClient = "*" & OsCurrVersionStruct.VerFull & "*" & "Server"
+    If Not OSCurrVersionStruct.ClientOrServer Then
+        strVerClient = "*" & OSCurrVersionStruct.VerFull & "*" & "Server"
     Else
-        strVerClient = "*" & OsCurrVersionStruct.VerFull & "*"
+        strVerClient = "*" & OSCurrVersionStruct.VerFull & "*"
     End If
 
     For i = 0 To cmbOS.ListCount - 1

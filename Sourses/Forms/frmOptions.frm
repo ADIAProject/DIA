@@ -3593,7 +3593,7 @@ Private Sub cmdDelOS_Click()
         If .ListItems.Count > 0 Then
             i = .SelectedItem.Index
             .ListItems.Remove (i)
-            LastIdOS = LastIdOS - 1
+            lngLastIdOS = lngLastIdOS - 1
         End If
 
     End With
@@ -3614,7 +3614,7 @@ Private Sub cmdDelUtil_Click()
         If .ListItems.Count > 0 Then
             i = .SelectedItem.Index
             .ListItems.Remove (i)
-            LastIdUtil = LastIdUtil - 1
+            lngLastIdUtil = lngLastIdUtil - 1
         End If
 
     End With
@@ -4125,7 +4125,7 @@ Private Sub LoadList_OS()
 
     End With
 
-    LastIdOS = lngOSCount
+    lngLastIdOS = lngOSCount
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4159,7 +4159,7 @@ Private Sub LoadList_Utils()
 
     End With
 
-    LastIdUtil = lngUtilsCount
+    lngLastIdUtil = lngUtilsCount
 End Sub
 
 '!--------------------------------------------------------------------------------

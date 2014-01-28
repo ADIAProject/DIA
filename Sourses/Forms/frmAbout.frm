@@ -26,15 +26,15 @@ Begin VB.Form frmAbout
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ctlXpButton cmdHomePage 
       Height          =   735
-      Left            =   7560
+      Left            =   7320
       TabIndex        =   2
       Top             =   5505
-      Width           =   1950
-      _ExtentX        =   3440
+      Width           =   2205
+      _ExtentX        =   3889
       _ExtentY        =   1296
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9.75
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -54,15 +54,15 @@ Begin VB.Form frmAbout
    End
    Begin prjDIADBS.ctlXpButton cmdOsZoneNet 
       Height          =   735
-      Left            =   5520
+      Left            =   4980
       TabIndex        =   3
       Top             =   5505
-      Width           =   1950
-      _ExtentX        =   3440
+      Width           =   2205
+      _ExtentX        =   3889
       _ExtentY        =   1296
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9.75
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -76,15 +76,15 @@ Begin VB.Form frmAbout
    End
    Begin prjDIADBS.ctlXpButton cmdCheckUpd 
       Height          =   735
-      Left            =   1140
+      Left            =   1320
       TabIndex        =   4
       Top             =   6345
-      Width           =   1950
-      _ExtentX        =   3440
+      Width           =   2205
+      _ExtentX        =   3889
       _ExtentY        =   1296
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9.75
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -103,15 +103,15 @@ Begin VB.Form frmAbout
    End
    Begin prjDIADBS.ctlXpButton cmdLicence 
       Height          =   735
-      Left            =   2070
+      Left            =   2460
       TabIndex        =   12
       Top             =   5505
-      Width           =   1950
-      _ExtentX        =   3440
+      Width           =   2205
+      _ExtentX        =   3889
       _ExtentY        =   1296
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9.75
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -130,15 +130,15 @@ Begin VB.Form frmAbout
    End
    Begin prjDIADBS.ctlXpButton cmdDonate 
       Height          =   735
-      Left            =   60
+      Left            =   120
       TabIndex        =   5
       Top             =   5505
-      Width           =   1950
-      _ExtentX        =   3440
+      Width           =   2200
+      _ExtentX        =   3889
       _ExtentY        =   1296
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9.75
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -157,15 +157,15 @@ Begin VB.Form frmAbout
    End
    Begin prjDIADBS.ctlXpButton cmdExit 
       Height          =   735
-      Left            =   6540
+      Left            =   6120
       TabIndex        =   1
       Top             =   6345
-      Width           =   1950
-      _ExtentX        =   3440
+      Width           =   2205
+      _ExtentX        =   3889
       _ExtentY        =   1296
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9.75
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -486,6 +486,7 @@ Private Sub Form_Load()
     LoadIconImage2Btn cmdDonate, "BTN_DONATE", strPathImageMainWork
     LoadIconImage2Btn cmdCheckUpd, "BTN_UPDATE", strPathImageMainWork
     LoadIconImage2Btn cmdHomePage, "BTN_HOME", strPathImageMainWork
+    LoadIconImage2Btn cmdOsZoneNet, "BTN_HOME", strPathImageMainWork
     LoadIconImage2Btn cmdLicence, "BTN_LICENCE", strPathImageMainWork
 
     Select Case strPCLangCurrentID

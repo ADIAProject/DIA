@@ -5,16 +5,9 @@ Option Explicit
 'GetDeviceCaps() позволяет получить наиболее часто используемые параметры видео адаптера,
 'такие как разрешение по вертикали и горизонтали, а также глубину цвета и текущую частоту обновления.
 '----------------------------------------------------------
-'Размер по горизонтали в точках
-Private Const HORZRES                As Long = 8
-
-'Размер по вертикали в точках
-Private Const VERTRES                As Long = 10
-
-'Кол-во бит на точку
-Private Const BITSPIXEL              As Long = 12
-
-Private EW                           As Long
+Private Const HORZRES                As Long = 8    'Размер по горизонтали в точках
+Private Const VERTRES                As Long = 10   'Размер по вертикали в точках
+Private Const BITSPIXEL              As Long = 12   'Кол-во бит на точку
 
 Private Const CCDEVICENAME           As Long = 32
 Private Const CCFORMNAME             As Long = 32
@@ -27,7 +20,7 @@ Private Const DISP_CHANGE_SUCCESSFUL As Long = 0
 Private Const DISP_CHANGE_RESTART    As Long = 1
 
 Private Type DEVMODE
-    DMDeviceName                            As String * CCDEVICENAME
+    DMDeviceName                        As String * CCDEVICENAME
     DMSpecVersion                       As Integer
     DMDriverVersion                     As Integer
     DMSize                              As Integer
@@ -55,14 +48,7 @@ Private Type DEVMODE
     DMDisplayFrequency                  As Long
 End Type
 
-Private MyDevMode        As DEVMODE
-Private BackVal          As Long
-
-'--------------------------------------------------
-'Завершает работу системы
-'--------------------------------------------------
-'Перезагружает компьютер
-Private Const EWX_REBOOT As Long = 2
+Private Const EWX_REBOOT As Long = 2 'Перезагрузка компьютера
 
 Private Declare Function ChangeDisplaySettings Lib "user32.dll" Alias "ChangeDisplaySettingsA" (lpDevMode As Any, ByVal dwFlags As Long) As Long
 Private Declare Function EnumDisplaySettings Lib "user32.dll" Alias "EnumDisplaySettingsA" (ByVal lpszDeviceName As String, ByVal iModeNum As Long, lpDevMode As DEVMODE) As Long
@@ -71,21 +57,21 @@ Private Declare Function ExitWindowsEx Lib "user32.dll" (ByVal uFlags As Long, B
 Private Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 Private Declare Function GetDesktopWindow Lib "user32.dll" () As Long
 
-'! -----------------------------------------------------------
-'!  Функция     :  ChangeResolution
-'!  Переменные  :  Width As Long, Height As Long, BitColor As Long
-'!  Описание    :  Получение настроек разрешения монитора
-'! -----------------------------------------------------------
+Public mbChangeResolution                As Boolean ' Маркер, показывающий что проводилось измеенние разрешения экрана
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ChangeResolution
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Изменение настроек разрешения экрана]
 '! Parameters  (Переменные):   lngWidth (Long)
 '                              lngHeight (Long)
 '                              BitColor (Long)
 '!--------------------------------------------------------------------------------
 Private Sub ChangeResolution(ByVal lngWidth As Long, ByVal lngHeight As Long, ByVal BitColor As Long)
 
-    Dim iMsg As Long
+    Dim iMsg        As Long
+    Dim BackVal     As Long
+    Dim EW          As Long
+    Dim MyDevMode   As DEVMODE
 
     MyDevMode.DMSize = Len(MyDevMode)
     BackVal = EnumDisplaySettings(vbNullString, 0&, MyDevMode)
@@ -97,7 +83,6 @@ Private Sub ChangeResolution(ByVal lngWidth As Long, ByVal lngHeight As Long, By
         .DMBitsPerPel = BitColor
     End With
 
-    'MYDEVMODE
     BackVal = ChangeDisplaySettings(MyDevMode, CDS_TEST)
     DebugMode "ResolutionChangeStatus=" & BackVal
 
@@ -134,14 +119,9 @@ Private Sub ChangeResolution(ByVal lngWidth As Long, ByVal lngHeight As Long, By
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetVideoMode
-'!  Переменные  :  ByRef Width As Long, ByRef Height As Long, ByRef Depth As Long
-'!  Описание    :  Получение настроек разрешения монитора
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub GetVideoMode
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение настроек текущего разрешения экрана]
 '! Parameters  (Переменные):   lngWidth (Long)
 '                              lngHeight (Long)
 '                              Depth (Long)
@@ -157,14 +137,9 @@ Private Sub GetVideoMode(ByRef lngWidth As Long, ByRef lngHeight As Long, ByRef 
     ReleaseDC GetDesktopWindow(), hDC
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  SetVideoMode
-'!  Переменные  :
-'!  Описание    :  Изменение разрешения экрана
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SetVideoMode
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка и запуск изменения разрешения экрана при необходимости]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub SetVideoMode()

@@ -1,12 +1,27 @@
 Attribute VB_Name = "mOsVer"
 Option Explicit
+' Получения подробной информации о версии операционной системы,
+' а также модели компьтера/ноутбука/материнской платы
 
 ' Программные переменные
-Public strOSArchitecture   As String
-Public strOsCurrentVersion As String
-Public OsCurrVersionStruct As OSInfoStruct
+Public strOSArchitecture   As String        ' Архитетуктура ОС
+Public strOSCurrentVersion As String
+Public OSCurrVersionStruct As OSInfoStruct
+Public mbIsWin64           As Boolean
 
-'Получение расширенной информации о версии Windows
+Public Type OSInfoStruct
+    Name As String
+    BuildNumber As String
+    ServicePack As String
+    VerFullwBuild As String
+    VerFull As String
+    VerMajor As String
+    VerMinor As String
+    ClientOrServer As Boolean
+    IsInitialize As Boolean
+End Type
+
+' API-Declared
 Public Type OSVERSIONINFO
     dwOSVersionInfoSize                 As Long
     dwMajorVersion                      As Long
@@ -45,25 +60,11 @@ Public Type SYSTEM_INFO
     wProcessorRevision                  As Integer
 End Type
 
-Public Type OSInfoStruct
-    Name As String
-    BuildNumber As String
-    ServicePack As String
-    VerFullwBuild As String
-    VerFull As String
-    VerMajor As String
-    VerMinor As String
-    ClientOrServer As Boolean
-    IsInitialize As Boolean
-End Type
-
 Public Const PROCESSOR_ARCHITECTURE_AMD64 As Long = &H9
 Public Const PROCESSOR_ARCHITECTURE_IA64  As Long = &H6
 Public Const PROCESSOR_ARCHITECTURE_INTEL As Long = 0
 Public Const PROCESSOR_ARCHITECTURE_ALPHA = 2
 Public Const PROCESSOR_ARCHITECTURE_ALPHA64 As Long = 7
-
-'Windows NT - constants for unicode support
 Public Const VER_PLATFORM_WIN32_NT          As Long = 2
 Public Const VER_NT_WORKSTATION             As Long = 1
 
@@ -77,11 +78,11 @@ Public Declare Sub GetNativeSystemInfo Lib "kernel32.dll" (ByRef lpSystemInfo As
 '!--------------------------------------------------------------------------------
 Public Function IsWinXPOrLater() As Boolean
 
-    If Not OsCurrVersionStruct.IsInitialize Then
-        OsCurrVersionStruct = OSInfo
+    If Not OSCurrVersionStruct.IsInitialize Then
+        OSCurrVersionStruct = OSInfo
     End If
 
-    IsWinXPOrLater = OsCurrVersionStruct.VerFull > "5.0"
+    IsWinXPOrLater = OSCurrVersionStruct.VerFull > "5.0"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -91,11 +92,11 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function IsWinVistaOrLater() As Boolean
 
-    If Not OsCurrVersionStruct.IsInitialize Then
-        OsCurrVersionStruct = OSInfo
+    If Not OSCurrVersionStruct.IsInitialize Then
+        OSCurrVersionStruct = OSInfo
     End If
 
-    IsWinVistaOrLater = OsCurrVersionStruct.VerFull >= "6.0"
+    IsWinVistaOrLater = OSCurrVersionStruct.VerFull >= "6.0"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -207,6 +208,7 @@ Public Function OSInfo() As OSInfoStruct
             OSInfo.VerMinor = .dwMinorVersion
             OSInfo.ClientOrServer = .wProductType = VER_NT_WORKSTATION
             OSInfo.IsInitialize = True
+            strOSCurrentVersion = OSCurrVersionStruct.VerFull
         End With
 
     End If

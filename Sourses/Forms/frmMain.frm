@@ -153,6 +153,7 @@ Begin VB.Form frmMain
          RoundedCorner   =   0   'False
          Caption         =   "Сведения об операционой системе и компьютере..."
          TextBoxHeight   =   20
+         Alignment       =   0
          ThemeColor      =   1
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255
@@ -618,6 +619,7 @@ Begin VB.Form frmMain
          RoundedCorner   =   0   'False
          Caption         =   "Режим работы программы с пакетами драйверов"
          TextBoxHeight   =   20
+         Alignment       =   0
          Begin prjDIADBS.ctlJCbutton cmdViewAllDevice 
             Height          =   510
             Left            =   120
@@ -755,6 +757,7 @@ Begin VB.Form frmMain
          RoundedCorner   =   0   'False
          Caption         =   "Обозначения кнопок (наведите курсор на картинку для просмотра описания)"
          TextBoxHeight   =   20
+         Alignment       =   0
          GradientHeaderStyle=   1
          Begin VB.PictureBox imgOkAttentionOld 
             Appearance      =   0  'Flat
@@ -1374,6 +1377,13 @@ Private lngFrameTime             As Long
 Private lngFrameCount            As Long
 Private lngBorderWidthX          As Long
 Private lngBorderWidthY          As Long
+Private mbOffSideButton          As Boolean     ' Флаг, указывающий что надо переходить на следующую строку при построении кнопок
+Private miOffSideCount           As Long        ' Кол-во переходов строк при построении кнопок
+Private mbDevParserRun           As Boolean     ' Флаг, указывающий что начата обработка пакета, защита от двойного нажатия
+Private mbBreakUpdateDBAll       As Boolean     ' Флаг, указывающий что нажата кнопка прерывания процесса групповой обработки пакетов
+Private strTTipTextHeaders       As String      ' Заголовок для Подсказки пакета драйверов
+Public mbIgnorStatusHwid                 As Boolean
+Public mbDRVNotInstall                   As Boolean
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
@@ -1603,7 +1613,7 @@ Private Sub acmdPackFiles_ClickMenu(Index As Integer, mnuIndex As Integer)
             acmdPackFiles_Click Index
 
         Case 2
-            CurrentSelButtonIndex = Index
+            lngCurrentBtnIndex = Index
             mbooSelectInstall = True
             acmdPackFiles_Click Index
     End Select
@@ -1666,7 +1676,7 @@ Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift A
             mnuContextCopyHWIDs.Enabled = False
         End If
 
-        CurrentSelButtonIndex = Index
+        lngCurrentBtnIndex = Index
         OpenContextMenu Me, Me.mnuContextMenu
     End If
 
@@ -2047,7 +2057,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                     strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
                 Else
 
-                    If InStr(arrOSList(SSTab1.Tab).Ver, strOsCurrentVersion) Then
+                    If InStr(arrOSList(SSTab1.Tab).Ver, strOSCurrentVersion) Then
                         If arrOSList(SSTab1.Tab).is64bit = 2 Or arrOSList(SSTab1.Tab).is64bit = 3 Then
                             strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
                         Else
@@ -2594,7 +2604,7 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
     If Not mbSearchCompatibleDriverOtherOS Then
         strOsVer = arrOSList(SSTab1.Tab).Ver
     Else
-        strOsVer = strOsCurrentVersion
+        strOsVer = strOSCurrentVersion
     End If
 
     strDPInfPath = UCase$(strDPInfPath)
@@ -2654,7 +2664,7 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
     If LenB(strDRVOSVer) = 0 Then
 CheckVerByMarkers:
 
-        Select Case strOsCurrentVersion
+        Select Case strOSCurrentVersion
 
             Case "5.1"
 
@@ -2738,7 +2748,7 @@ CheckVerByMarkers:
         mbVerFromMarkers = CheckExistbyRegExp(strDPInfPath, strRegExpMarkerPattern)
 
         If mbVerFromMarkers Then
-            strDRVOSVer = strOsCurrentVersion
+            strDRVOSVer = strOSCurrentVersion
         Else
 
             ' Если по маркерам определить нельзя, определяем версию по имени DP
@@ -2752,13 +2762,13 @@ CheckVerByMarkers:
 
                         If mbOSx64 Then
                             If InStr(strDRVx64, "AMD64") Then
-                                strDRVOSVer = strOsCurrentVersion
+                                strDRVOSVer = strOSCurrentVersion
                             End If
 
                         Else
 
                             If InStr(strDRVx64, "X86") Then
-                                strDRVOSVer = strOsCurrentVersion
+                                strDRVOSVer = strOSCurrentVersion
                             End If
                         End If
                     End If
@@ -2854,7 +2864,7 @@ CheckVerByMarkersArch:
             strSection_x = Split(strSection, ".")
             strSectionMain = strSection_x(0)
 
-            If strOsCurrentVersion <> "5.0" Then
+            If strOSCurrentVersion <> "5.0" Then
                 Set objRegExp = New RegExp
 
                 With objRegExp
@@ -2904,7 +2914,7 @@ CheckVerByMarkersArch:
             Else
 
                 If UBound(strSection_x) < 1 Then
-                    DebugMode str5VbTab & "CompatibleDriver4OS: verOS=" & strOsCurrentVersion & " Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported, 1
+                    DebugMode str5VbTab & "CompatibleDriver4OS: verOS=" & strOSCurrentVersion & " Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported, 1
                     mbCompatibleByArch = False
                     mbCompatibleByVer = False
                 End If
@@ -4155,16 +4165,14 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
                     objHashOutput3.CompareMode = TextCompare
 
                     ' подходящие HWID (т.е обозначение HWID просто может быть записано по другому)
-                    If mbMatchingHWID Then
-                        strFindMachID = arrHwidsLocal(i).HWIDMatches
+                    strFindMachID = arrHwidsLocal(i).HWIDMatches
 
-                        If LenB(strFindMachID) > 0 Then
-                            If StrComp(strFind, strFindMachID) <> 0 Then
-                                If InStr(strFindMachID, "UNKNOWN") = 0 Then
-                                    If Not MatchSpec(strFindMachID, strExcludeHWID) Then
-                                        If InStr(strFindMachID & " | ", strFindCompatIDTemp) = 0 Then
-                                            strFindCompatIDTemp = strFindCompatIDTemp & " | " & strFindMachID
-                                        End If
+                    If LenB(strFindMachID) > 0 Then
+                        If StrComp(strFind, strFindMachID) <> 0 Then
+                            If InStr(strFindMachID, "UNKNOWN") = 0 Then
+                                If Not MatchSpec(strFindMachID, strExcludeHWID) Then
+                                    If InStr(strFindMachID & " | ", strFindCompatIDTemp) = 0 Then
+                                        strFindCompatIDTemp = strFindCompatIDTemp & " | " & strFindMachID
                                     End If
                                 End If
                             End If
@@ -5180,7 +5188,7 @@ Public Sub Form_Resize()
     If Me.WindowState <> vbMinimized Then
 
         ' если форма не максимизирована, то изменяем размеры формы
-        If OsCurrVersionStruct.VerFull >= "6.0" Then
+        If OSCurrVersionStruct.VerFull >= "6.0" Then
             miDeltafrmMainWidth = 120
             miDeltafrmMainHeight = 120
             '            miDeltafrmMainHeight = 405
@@ -6423,11 +6431,11 @@ Private Sub mnuContextDeleteDRP_Click()
         i = SSTab1.Tab
         strPathDRP = arrOSList(i).drpFolderFull
         strPathDB = arrOSList(i).devIDFolderFull
-        strFullPathDRP = PathCombine(strPathDRP, acmdPackFiles(CurrentSelButtonIndex).Tag)
+        strFullPathDRP = PathCombine(strPathDRP, acmdPackFiles(lngCurrentBtnIndex).Tag)
         strFullPathDB = PathCombine(strPathDB, FileNameFromPath(strCurSelButtonPath))
         strFullPathDBIni = Replace$(strFullPathDB, ".txt", "*.ini", , , vbTextCompare)
 
-        If MsgBox(strMessages(17) & " '" & acmdPackFiles(CurrentSelButtonIndex).Tag & "' ?", vbQuestion + vbYesNo, strProductName) = vbYes Then
+        If MsgBox(strMessages(17) & " '" & acmdPackFiles(lngCurrentBtnIndex).Tag & "' ?", vbQuestion + vbYesNo, strProductName) = vbYes Then
             If PathExists(strFullPathDRP) Then
                 If Not PathIsAFolder(strFullPathDRP) Then
                     DebugMode "Delete file: " & strFullPathDRP
@@ -6451,9 +6459,9 @@ Private Sub mnuContextDeleteDRP_Click()
                 End If
             End If
 
-            acmdPackFiles(CurrentSelButtonIndex).Visible = False
-            chkPackFiles(CurrentSelButtonIndex).Visible = False
-            chkPackFiles(CurrentSelButtonIndex).Value = False
+            acmdPackFiles(lngCurrentBtnIndex).Visible = False
+            chkPackFiles(lngCurrentBtnIndex).Visible = False
+            chkPackFiles(lngCurrentBtnIndex).Value = False
             ChangeStatusTextAndDebug strMessages(88) & " " & strFullPathDRP
         End If
     End If
@@ -6468,7 +6476,7 @@ End Sub
 Private Sub mnuContextEditDPName_Click()
 
     If Not FileisReadOnly(strSysIni) Then
-        EditOrReadDPName CurrentSelButtonIndex
+        EditOrReadDPName lngCurrentBtnIndex
     End If
 
 End Sub
@@ -6526,7 +6534,7 @@ Private Sub mnuContextTestDRP_Click()
     Dim strPackFileName As String
     Dim strPathDRP      As String
 
-    strPackFileName = acmdPackFiles(CurrentSelButtonIndex).Tag
+    strPackFileName = acmdPackFiles(lngCurrentBtnIndex).Tag
     strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
     cmdString = Kavichki & strArh7zExePATH & Kavichki & " t " & Kavichki & strPathDRP & strPackFileName & Kavichki & " -r"
     ChangeStatusTextAndDebug strMessages(109) & " " & strPackFileName
@@ -6589,9 +6597,9 @@ Private Sub mnuContextUpdStatus_Click()
 
     strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
     strPathDevDB = arrOSList(SSTab1.Tab).devIDFolderFull
-    strPackFileName = acmdPackFiles(CurrentSelButtonIndex).Tag
+    strPackFileName = acmdPackFiles(lngCurrentBtnIndex).Tag
     ' Обновление подсказки
-    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(CurrentSelButtonIndex)
+    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(lngCurrentBtnIndex)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6966,7 +6974,7 @@ Private Sub mnuSaveInfoPC_Click()
         .Filter = "Text Files (*.TXT)|*.TXT"
         .DefaultExt = ".txt"
         .InitDir = GetSpecialFolderPath(CSIDL_DESKTOPDIRECTORY)
-        .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOsCurrentVersion & "_%OSBIT%")
+        .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
 
         '.DialogTitle = "Select File"
         If .ShowSave = True Then
@@ -8341,7 +8349,7 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
         StrTabName = arrOSList(i).Name
         str_x64 = arrOSList(i).is64bit
 
-        If InStr(arrOSList(i).Ver, strOsCurrentVersion) Then
+        If InStr(arrOSList(i).Ver, strOSCurrentVersion) Then
 
             ' Если в списке есть ОС x64
             If str_x64 = 1 Then
@@ -9942,7 +9950,7 @@ Private Sub DelDuplicateOldDP()
                 For ii = 0 To ButtIndex
 
                     If StrComp(strPackFileName2DelTemp, acmdPackFiles(ii).Tag, vbTextCompare) = 0 Then
-                        CurrentSelButtonIndex = ii
+                        lngCurrentBtnIndex = ii
                         mnuContextDeleteDRP_Click
                     End If
 
