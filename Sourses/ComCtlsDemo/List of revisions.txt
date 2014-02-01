@@ -1,5 +1,24 @@
 List of revisions:
 
+31-Jan-2014
+- Finally, the printer dialogs in the CommonDialog class are now unicode aware.
+- Included the PrinterDefault property to the CommonDialog class.
+
+30-Jan-2014
+- Fixed a bug that the UserControl_Terminate event did not fire in the RichTextBox control.
+- The constant CdlPDReturnDefault is now working as expected in the ShowPrinter/ShowPrinterEx function in the CommonDialog class.
+- Fixed a bug in the ShowPrinter/ShowPrinterEx function in the CommonDialog class that the DM_DEFAULTSOURCE constant was not included into the DMFields.
+- Included the ShowPageSetup function in the CommonDialog class.
+
+27-Jan-2014
+- Splitted the ShowPrinter function into ShowPrinter and ShowPrinterEx in the CommonDialog class.
+  Reason is due to the fact that they have both pros and cons.
+  Some flags are only supported into one and not to the other and vice versa.
+  Also the ShowPrinter is full compatible to the orginal ShowPrinter function from the CommonDialog from MS.
+- HelpButton constants are now supported in the CommonDialog class.
+  When pressing a Help button the ShowHelp function will be fired by default, but only when the new 'Help' event was not handled.
+- Included the SysInfo control.
+
 20-Jan-2014
 - Included 'CdlHelpConstants' and the HelpKey/HelpContext (HelpData is removed) property to the CommonDialog class.
 - Centralized the MousePointer handling in the ComCtlsBase. (No recurring codes anymore)

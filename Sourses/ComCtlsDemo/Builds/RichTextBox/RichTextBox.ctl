@@ -935,6 +935,15 @@ MoveWindow RichTextBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
 End With
 End Sub
 
+Private Sub UserControl_Hide()
+On Error Resume Next
+If UserControl.Parent Is Nothing Then
+    Call RemoveVTableSubclassIRichEditOleCallback(Me)
+    Call DestroyRichTextBox
+End If
+On Error GoTo 0
+End Sub
+
 Private Sub UserControl_Terminate()
 Call RemoveVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call RemoveVTableSubclass(Me, VTableInterfaceControl)

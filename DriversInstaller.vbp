@@ -114,7 +114,6 @@ PropertyPage=Sourses\ComCtlsDemo\Builds\TextBoxW\PPTextBoxWText.pag
 UserControl=Sourses\ComCtlsDemo\Builds\RichTextBox\RichTextBox.ctl
 Module=RichTextBoxBase; Sourses\ComCtlsDemo\Builds\RichTextBox\RichTextBoxBase.bas
 PropertyPage=Sourses\ComCtlsDemo\Builds\RichTextBox\PPRichTextBoxGeneral.pag
-PropertyPage=Sourses\ComCtlsDemo\Builds\RichTextBox\PPRichTextBoxText.pag
 UserControl=Sourses\ComCtlsDemo\Builds\ToolTip\ToolTip.ctl
 Class=TipTools; Sourses\ComCtlsDemo\Builds\ToolTip\TipTools.cls
 Class=TipTool; Sourses\ComCtlsDemo\Builds\ToolTip\TipTool.cls

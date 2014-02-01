@@ -510,7 +510,7 @@ For Each AppForm In Forms
                 Call ComCtlsRemoveSubclass(CurrControl.hWndCombo)
                 If CurrControl.hWndEdit <> 0 Then Call ComCtlsRemoveSubclass(CurrControl.hWndEdit)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
-            Case "RichTextBox", "MCIWnd"
+            Case "RichTextBox", "MCIWnd", "SysInfo"
                 CurrControl.IDEStop ' Hidden
         End Select
     Next CurrControl
