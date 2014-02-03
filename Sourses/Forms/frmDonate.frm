@@ -360,7 +360,7 @@ Private Sub Form_Resize()
 
         Dim miDeltaFrm As Long
 
-        If OsCurrVersionStruct.VerFull >= "6.0" Then
+        If OSCurrVersionStruct.VerFull >= "6.0" Then
             miDeltaFrm = 125
         Else
 

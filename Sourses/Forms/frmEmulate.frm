@@ -296,7 +296,6 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
             .HWIDCutting = ColumnByStrings(10)
             .HWIDMatches = ColumnByStrings(11)
             .InfName = ColumnByStrings(12)
-            .DRVExist = 0
             .DPsList = vbNullString
             .DRVScore = 0
         End With

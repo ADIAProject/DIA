@@ -1,6 +1,8 @@
 Attribute VB_Name = "mUpdate"
 Option Explicit
 
+Public mbCheckUpdNotEnd         As Boolean ' Флаг, показывающий окончание процесса обновления (так как асинхронный режим)
+
 Public strLink()                As String
 Public strLinkFull()            As String
 Public strLinkHistory           As String

@@ -1333,57 +1333,57 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private lngCntBtn                As Long
-Private mbNextTab                As Boolean
-Private strCurSelButtonPath      As String
-Private mbStatusHwid             As Boolean
-Private mbStatusNewer            As Boolean
-Private mbStatusOlder            As Boolean
-Private lngSSTabCurrentOS        As Long
-Private strSSTabCurrentOSList    As String
-Private strCmbChkBtnListElement1 As String
-Private strCmbChkBtnListElement2 As String
-Private strCmbChkBtnListElement3 As String
-Private strCmbChkBtnListElement4 As String
-Private strCmbChkBtnListElement5 As String
-Private strCmbChkBtnListElement6 As String
-Private strContextInstall1       As String
-Private strContextInstall2       As String
-Private strContextInstall3       As String
-Private strContextInstall4       As String
-Private strTTipTextTitle         As String
-Private strTTipTextFileSize      As String
-Private strTTipTextClassDRV      As String
-Private strTTipTextDrv2Install   As String
-Private strTTipTextDrv4UnsupOS   As String
-Private strTTipTextTitleStatus   As String
-Private mbUnpackAdditionalFile   As Boolean
-Private lngFirstActiveTabIndex   As Long
-Private mbNoSupportedOS          As Boolean
-Private mbNotSupportedDevDB      As Boolean
-Private strSSTabTypeDPTab1       As String
-Private strSSTabTypeDPTab2       As String
-Private strSSTabTypeDPTab3       As String
-Private strSSTabTypeDPTab4       As String
-Private strSSTabTypeDPTab5       As String
-Private mbSet2UpdateFromTab4     As Boolean
-Private lngNotFinedDriversInDP   As Long
-Private mbLoadAppEnd             As Boolean
-Private objHashOutput            As Scripting.Dictionary
-Private objHashOutput2           As Scripting.Dictionary
-Private objHashOutput3           As Scripting.Dictionary
-Private strFormName              As String
-Private lngFrameTime             As Long
-Private lngFrameCount            As Long
-Private lngBorderWidthX          As Long
-Private lngBorderWidthY          As Long
-Private mbOffSideButton          As Boolean     ' Флаг, указывающий что надо переходить на следующую строку при построении кнопок
-Private miOffSideCount           As Long        ' Кол-во переходов строк при построении кнопок
-Private mbDevParserRun           As Boolean     ' Флаг, указывающий что начата обработка пакета, защита от двойного нажатия
-Private mbBreakUpdateDBAll       As Boolean     ' Флаг, указывающий что нажата кнопка прерывания процесса групповой обработки пакетов
-Private strTTipTextHeaders       As String      ' Заголовок для Подсказки пакета драйверов
-Public mbIgnorStatusHwid                 As Boolean
-Public mbDRVNotInstall                   As Boolean
+Private lngCntBtn                   As Long
+Private mbNextTab                   As Boolean
+Private strCurSelButtonPath         As String
+Private mbStatusHwid                As Boolean
+Private mbStatusNewer               As Boolean
+Private mbStatusOlder               As Boolean
+Private lngSSTabCurrentOS           As Long
+Private strSSTabCurrentOSList       As String
+Private strCmbChkBtnListElement1    As String
+Private strCmbChkBtnListElement2    As String
+Private strCmbChkBtnListElement3    As String
+Private strCmbChkBtnListElement4    As String
+Private strCmbChkBtnListElement5    As String
+Private strCmbChkBtnListElement6    As String
+Private strContextInstall1          As String
+Private strContextInstall2          As String
+Private strContextInstall3          As String
+Private strContextInstall4          As String
+Private strTTipTextTitle            As String
+Private strTTipTextFileSize         As String
+Private strTTipTextClassDRV         As String
+Private strTTipTextDrv2Install      As String
+Private strTTipTextDrv4UnsupOS      As String
+Private strTTipTextTitleStatus      As String
+Private mbUnpackAdditionalFile      As Boolean
+Private lngFirstActiveTabIndex      As Long
+Private mbNoSupportedOS             As Boolean
+Private mbNotSupportedDevDB         As Boolean
+Private strSSTabTypeDPTab1          As String
+Private strSSTabTypeDPTab2          As String
+Private strSSTabTypeDPTab3          As String
+Private strSSTabTypeDPTab4          As String
+Private strSSTabTypeDPTab5          As String
+Private mbSet2UpdateFromTab4        As Boolean
+Private lngNotFinedDriversInDP      As Long
+Private mbLoadAppEnd                As Boolean
+Private objHashOutput               As Scripting.Dictionary
+Private objHashOutput2              As Scripting.Dictionary
+Private objHashOutput3              As Scripting.Dictionary
+Private strFormName                 As String
+Private lngFrameTime                As Long
+Private lngFrameCount               As Long
+Private lngBorderWidthX             As Long
+Private lngBorderWidthY             As Long
+Private mbOffSideButton             As Boolean      ' Флаг, указывающий что надо переходить на следующую строку при построении кнопок
+Private miOffSideCount              As Long         ' Кол-во переходов строк при построении кнопок
+Private mbDevParserRun              As Boolean      ' Флаг, указывающий что начата обработка пакета, защита от двойного нажатия
+Private mbBreakUpdateDBAll          As Boolean      ' Флаг, указывающий что нажата кнопка прерывания процесса групповой обработки пакетов
+Private strTTipTextHeaders          As String       ' Заголовок для Подсказки пакета драйверов
+Public mbIgnorStatusHwid            As Boolean
+Public mbDRVNotInstall              As Boolean
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
@@ -1476,7 +1476,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                 If DPInstExitCode <> 0 Then
                     If DPInstExitCode <> -2147483648# Then
                         If InStr(1, ReadExitCodeString, "Cancel or Nothing to Install", vbTextCompare) = 0 Then
-                            ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index
+                            ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index, True
                         End If
                     End If
                 End If
@@ -1565,7 +1565,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                                 ' Обрабатываем файл finish
                                 WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, strPathDRPList
                                 ' Обновление подсказки
-                                ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index
+                                ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index, True
                             End If
                         End If
                     End If
@@ -1941,7 +1941,7 @@ Private Function CalculateUnknownDrivers() As Long
 
     For ii = LBound(arrHwidsLocal) To UBound(arrHwidsLocal)
 
-        If arrHwidsLocal(ii).DRVExist = 0 Then
+        If LenB(arrHwidsLocal(ii).DPsList) = 0 Then
 
             ' Если это OEM-драйвер
             If InStr(1, arrHwidsLocal(ii).Provider, "microsoft", vbTextCompare) = 0 Then
@@ -4360,7 +4360,6 @@ ExitFromForNext_iii:
                         arrHwidsLocal(i).InfSection = strSection
                         strDevIDOrig = ParseDoubleHwid(arrHwidsLocal(i).HWIDOrig)
                         ' Для этого драйвера есть совпадение в пакете драйверов. Заносим признак и имя пакета
-                        arrHwidsLocal(i).DRVExist = 1
                         arrHwidsLocal(i).DPsList = AppendStr(arrHwidsLocal(i).DPsList, strPackFileName, " | ")
 
                         ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
@@ -4391,28 +4390,28 @@ ExitFromForNext_iii:
 
                             ' Заносим данные в глобальный массив массив
                             ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
-                            If lngDriversArrCount = lngMaxDriversArrCount Then
-                                lngMaxDriversArrCount = 2 * lngMaxDriversArrCount
+                            If lngArrDriversIndex = lngArrDriversListCountMax Then
+                                lngArrDriversListCountMax = 2 * lngArrDriversListCountMax
 
-                                ReDim Preserve arrDriversList(13, lngMaxDriversArrCount)
+                                ReDim Preserve arrDriversList(13, lngArrDriversListCountMax)
 
                             End If
 
-                            arrDriversList(0, lngDriversArrCount) = strDevID
-                            arrDriversList(1, lngDriversArrCount) = strDevPath
-                            arrDriversList(2, lngDriversArrCount) = strDevInf
-                            arrDriversList(3, lngDriversArrCount) = strDevVer
-                            arrDriversList(4, lngDriversArrCount) = strDevVerLocal
-                            arrDriversList(5, lngDriversArrCount) = strDevStatus
-                            arrDriversList(6, lngDriversArrCount) = strDevName
-                            arrDriversList(7, lngDriversArrCount) = strPriznakSravnenia
-                            arrDriversList(8, lngDriversArrCount) = strSection
-                            arrDriversList(9, lngDriversArrCount) = strDevIDOrig
-                            arrDriversList(10, lngDriversArrCount) = lngDriverScore
-                            arrDriversList(11, lngDriversArrCount) = strSectionUnsupported
-                            arrDriversList(12, lngDriversArrCount) = strCatFileExists
-                            arrDriversList(13, lngDriversArrCount) = strPackFileName
-                            lngDriversArrCount = lngDriversArrCount + 1
+                            arrDriversList(0, lngArrDriversIndex) = strDevID
+                            arrDriversList(1, lngArrDriversIndex) = strDevPath
+                            arrDriversList(2, lngArrDriversIndex) = strDevInf
+                            arrDriversList(3, lngArrDriversIndex) = strDevVer
+                            arrDriversList(4, lngArrDriversIndex) = strDevVerLocal
+                            arrDriversList(5, lngArrDriversIndex) = strDevStatus
+                            arrDriversList(6, lngArrDriversIndex) = strDevName
+                            arrDriversList(7, lngArrDriversIndex) = strPriznakSravnenia
+                            arrDriversList(8, lngArrDriversIndex) = strSection
+                            arrDriversList(9, lngArrDriversIndex) = strDevIDOrig
+                            arrDriversList(10, lngArrDriversIndex) = lngDriverScore
+                            arrDriversList(11, lngArrDriversIndex) = strSectionUnsupported
+                            arrDriversList(12, lngArrDriversIndex) = strCatFileExists
+                            arrDriversList(13, lngArrDriversIndex) = strPackFileName
+                            lngArrDriversIndex = lngArrDriversIndex + 1
                         End If
 
                         'Устанавливаем ширину колонок в таблице
@@ -4714,7 +4713,7 @@ Private Sub Form_Activate()
             SaveHWIDs2File
     
             ' Вывести в лог список всех драйверов
-            If lngDriversArrCount > 0 Then
+            If lngArrDriversIndex > 0 Then
                 PutAllDrivers2Log
             End If
     
@@ -5744,7 +5743,7 @@ BreakUnpack:
                         ' Обновление подсказки
                         For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
                             strPackFileName = acmdPackFiles(arrCheckDP(0, i)).Tag
-                            ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(arrCheckDP(0, i))
+                            ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(arrCheckDP(0, i)), True
                         Next
 
                     End If
@@ -5891,7 +5890,7 @@ Private Sub PutAllDrivers2Log()
 
     DebugMode "===============================List of all found a matched driver===================================" & vbNewLine & strTTipTextHeaders
 
-    ReDim Preserve arrDriversList(13, lngDriversArrCount - 1)
+    ReDim Preserve arrDriversList(13, lngArrDriversIndex - 1)
 
     QuickSortMDArray arrDriversList, 1, 0
 
@@ -5966,11 +5965,11 @@ Private Sub LoadButton()
     End If
 
     i = 0
-    ' массив со списокм драйверов для будущего использования для каждой кнопки
-    lngDriversArrCount = 0
-    lngMaxDriversArrCount = 100
+    ' массив со списком драйверов для будущего использования для каждой кнопки
+    lngArrDriversIndex = 0
+    lngArrDriversListCountMax = 100
 
-    ReDim Preserve arrDriversList(13, lngMaxDriversArrCount) As String
+    ReDim Preserve arrDriversList(13, lngArrDriversListCountMax) As String
 
     For i = 0 To cnt
         strPathFolderDRP = arrOSList(i).drpFolderFull
@@ -6599,7 +6598,7 @@ Private Sub mnuContextUpdStatus_Click()
     strPathDevDB = arrOSList(SSTab1.Tab).devIDFolderFull
     strPackFileName = acmdPackFiles(lngCurrentBtnIndex).Tag
     ' Обновление подсказки
-    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(lngCurrentBtnIndex)
+    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(lngCurrentBtnIndex), , True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -7962,7 +7961,6 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
 
                 ReDim Preserve arrTTip(Index)
 
-                'arrTTip(index) = strTTipText
                 arrTTip(Index) = strTTipTextOnlyDrivers
             Else
                 DebugMode str2VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & ":" & UBound(arrTTip) & vbNewLine & _
@@ -7971,7 +7969,12 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             End If
         End If
 
-        TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
+        If TT.Tools.Count >= Index Then
+            TT.Tools.Item(Index).Text = strTTipText
+        Else
+            TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
+        End If
+        
         TimeScriptFinish = GetTickCount
         DebugMode str2VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
     Else
@@ -9349,7 +9352,6 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
 
         For i = 0 To ButtIndex
             lngTabN = SSTab1.Tab
-            'If LenB(arrOSList(lngTabN).CntBtn) > 0 Then
             lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
 
             Do While i >= lngNumButtOnTab
@@ -9357,19 +9359,9 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
                 SSTab1.Tab = lngTabN
                 DoEvents
                 Sleep 100
-                'If LenB(arrOSList(SSTab1.Tab).CntBtn) > 0 Then
                 lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
-                'Else
-                'lngNumButtOnTab = 0
-                'End If
             Loop
 
-            'Else
-            '                lngTabN = lngTabN + 1
-            '                SSTab1.Tab = lngTabN
-            '                DoEvents
-            '                Sleep 100
-            'End If
             mbDpNoDBExist = True
             strPathDRP = arrOSList(lngTabN).drpFolderFull
             strPathDevDB = arrOSList(lngTabN).devIDFolderFull

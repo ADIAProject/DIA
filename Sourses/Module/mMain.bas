@@ -1,10 +1,10 @@
 Attribute VB_Name = "mMain"
 Option Explicit
 
-' Основные параметры программы
-Public Const strDateProgram         As String = "28/01/2014"
+'Основные параметры программы
+Public Const strDateProgram         As String = "03/02/2014"
 
-' Основные переменные проекта (название, версия и т.д)
+'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
 Public strProductVersion            As String
 Public Const strProjectName         As String = "DriversInstaller"
@@ -34,160 +34,145 @@ Public Const strUDI_Path            As String = "Tools\UDI\UnknownDeviceIdentifi
 Public Const strDoubleDriver_Path   As String = "Tools\DoubleDriver\dd.exe"
 Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDevices.exe"
 
+'Описание структуры массива информации по HWID
 Public Type arrHwidsStruct
-    HWID                                As String
-    DevName                             As String
-    Status                              As Long
-    VerLocal                            As String
-    HWIDOrig                            As String
-    Provider                            As String
-    HWIDCompat                          As String
-    Description                         As String
-    PriznakSravnenia                    As String
-    InfSection                          As String
-    HWIDCutting                         As String
-    HWIDMatches                         As String
-    InfName                             As String
-    DRVExist                            As Long
-    DPsList                             As String
-    DRVScore                            As Long
+    HWID                            As String           ' HWID устройства (обрезанный без "сессии" устройства)
+    HWIDOrig                        As String           ' HWID устройства полный
+    HWIDCutting                     As String           ' HWID устройства обрезанный до первой /
+    HWIDCompat                      As String           ' HWID Совместимый (другой вариант написания)
+    HWIDMatches                     As String           ' HWID Список подходящих (другие варианты написания в порядке совместимости)
+    DevName                         As String           ' Имя устройства
+    Provider                        As String           ' Производитель драйвера устройства
+    Status                          As Long             ' Статус устройства
+    VerLocal                        As String           ' Версия драйвера устройства
+    Description                     As String           ' Описание
+    PriznakSravnenia                As String           ' Результат сравнения драйверов по дате с базой индексов
+    InfSection                      As String           ' Секция inf-файла в которой найден HWID (используется для анализа совместимости)
+    InfName                         As String           ' Имя inf-файла драйвера
+    DPsList                         As String           ' Список пакетов драйверов в котором есть подходящий драйвер
+    DRVScore                        As Long             ' Балл найденного драйвера
 End Type
 
+'Описание структуры массива для поддерживаемой ОС
 Public Type arrOSStruct
-    Ver                                 As String
-    Name                                As String
-    drpFolder                           As String
-    drpFolderFull                       As String
-    devIDFolder                         As String
-    devIDFolderFull                     As String
-    is64bit                             As Long
-    DPFolderNotExist                    As Boolean
-    PathPhysX                           As String
-    PathLanguages                       As String
-    CntBtn                              As Long
-    ExcludeFileName                     As String
-    PathRuntimes                        As String
+    Ver                             As String           ' Версия ОС
+    Name                            As String           ' Имя ОС
+    is64bit                         As Long             ' 64-битная ОС
+    drpFolder                       As String           ' Каталог с пакетами драйверов (относительный путь)
+    drpFolderFull                   As String           ' Каталог с пакетами драйверов (полный путь)
+    devIDFolder                     As String           ' Каталог с базой индексов (относительный путь)
+    devIDFolderFull                 As String           ' Каталог с базой индексов  (полный путь)
+    DPFolderNotExist                As Boolean          ' Каталог не сущестует
+    PathPhysX                       As String           ' Путь до файла Physx
+    PathLanguages                   As String           ' Путь до файла Languages
+    PathRuntimes                    As String           ' Путь до файла Runtimes
+    CntBtn                          As Long             ' Количество пакетов в текущей ОС
+    ExcludeFileName                 As String           ' Исключаемые имена пакетов драйверов
 End Type
 
-' Массивы данных
-Public arrHwidsLocal()                   As arrHwidsStruct  ' Массив информации о драйверах устройств
-Public arrOSList()                       As arrOSStruct     ' Массив поддерживаемых ОС
-Public arrTTipStatusIcon()               As String          ' Массив статусных сообщений - подсказки к картинкам
-Public arrCheckDP()                      As String          ' Массив выделенных пакетов драйверов
-Public arrUtilsList()                    As String          ' Массив настраиваемых утилит
-Public arrTTip()                         As String          ' Массив подсказок для пакетов драйверов
-Public arrTTipSize()                     As String
-Public arrDevIDs()                       As String
-Public arrDriversList()                  As String
-Public lngMaxDriversArrCount             As Long
-Public lngDriversArrCount                As Long
+'Массивы данных
+Public arrHwidsLocal()              As arrHwidsStruct   ' Массив информации о драйверах устройств
+Public arrOSList()                  As arrOSStruct      ' Массив поддерживаемых ОС
+Public arrTTipStatusIcon()          As String           ' Массив статусных сообщений - подсказки к картинкам
+Public arrCheckDP()                 As String           ' Массив выделенных пакетов драйверов
+Public arrUtilsList()               As String           ' Массив настраиваемых утилит
+Public arrTTip()                    As String           ' Массив подсказок для пакетов драйверов
+Public arrTTipSize()                As String           ' Массив размеров колонок в таблице для подсказки
+Public arrDevIDs()                  As String           ' Меню для удаления драйверов устройств
+Public arrDriversList()             As String           ' Меню для копирования HWID драйверов устройств
+Public lngArrDriversListCountMax    As Long             ' Максимальная размерность массива HWID
+Public lngArrDriversIndex           As Long             ' Текущий максимальный индекс массива HWID
 
 'Пути до системных каталогов и других рабочих файлов
-Public strHwidsTxtPath                   As String
-Public strHwidsTxtPathView               As String
-Public strResultHwidsTxtPath             As String
-Public strResultHwidsExtTxtPath          As String
-Public strWorkTemp                       As String
-Public strWorkTempBackSL                 As String
-Public strWinTemp                        As String
-Public strWinDir                         As String
-Public strSysDir                         As String
-Public strSysDir64                       As String
-Public strSysDir86                       As String
-Public strSysDirCatRoot                  As String
-Public strSysDirDrivers                  As String
-Public strSysDirDrivers64                As String
-Public strSysDirDRVStore                 As String
-Public strSysDrive                       As String
-Public strWinDirHelp                     As String
-Public strInfDir                         As String
+Public strHwidsTxtPath              As String
+Public strHwidsTxtPathView          As String
+Public strResultHwidsTxtPath        As String
+Public strResultHwidsExtTxtPath     As String
+Public strWorkTemp                  As String           ' Рабочий временный каталог
+Public strWorkTempBackSL            As String           ' Рабочий временный каталог   + \
+Public strWinTemp                   As String           ' Системный временный каталог + \
+Public strWinDir                    As String           ' Системный каталог Windows   + \
+Public strSysDir                    As String           ' Системный каталог System32  + \
+Public strSysDir64                  As String           ' Системный каталог Windows\System32  + \
+Public strSysDir86                  As String           ' Системный каталог Windows\Wow64  + \
+Public strSysDirCatRoot             As String           ' c:\Windows\System32\catroot\
+Public strSysDirDrivers             As String           ' Системный каталог Windows\System32\drivers  + \
+Public strSysDirDrivers64           As String           ' Системный каталог Windows\Wow64\drivers  + \
+Public strSysDirDRVStore            As String           ' Системный каталог System32\DriverStore\
+Public strSysDrive                  As String           ' Системный диск
+Public strWinDirHelp                As String           ' c:\Windows\Help\
+Public strInfDir                    As String           ' c:\Windows\inf\
 
-' Переменные и маркеры используемые в коде программы
-Public mbFirstStart                      As Boolean
-Public mbIsDriveCDRoom                   As Boolean     ' Флаг, указывающий что рабочий диск является CDRoom
-Public mbAddInList                       As Boolean     ' режим работы с элементом listview - либо изменние либо добавление, для обмена между формами frmOptions,frmOSEdit,frmUtilsEdit
-Public lngLastIdOS                       As Long        ' номер последнего элемента в списке ОС, для обмена между формами frmOptions и frmOSEdit
-Public lngLastIdUtil                     As Long        ' номер последнего элемента в списке утилит
-Public lngCurrentBtnIndex                As Long        ' Текущая выделенная кнопка
-Public strPathDRPList                    As String
-Public mbooSelectInstall                 As Boolean
-Public mbCheckDRVOk                      As Boolean
-Public mbGroupTask                       As Boolean
-Public mbRestartProgram                  As Boolean     ' Маркер перезапуска программы
-Public mbOnlyUnpackDP                    As Boolean     ' Переменная для определения режима - только распаковка драйверов
-Public mbDeleteDriverByHwid              As Boolean     ' Флаг сообщает о том что драйвер был удален на форме frmListHwidAll
+'Переменные и маркеры используемые в коде программы
+Public mbFirstStart                 As Boolean          ' Флаг указывающий окочание запуска программы
+Public mbIsDriveCDRoom              As Boolean          ' Флаг, указывающий что рабочий диск является CDRoom
+Public mbAddInList                  As Boolean          ' режим работы с элементом listview - либо изменние либо добавление, для обмена между формами frmOptions,frmOSEdit,frmUtilsEdit
+Public lngLastIdOS                  As Long             ' номер последнего элемента в списке ОС, для обмена между формами frmOptions и frmOSEdit
+Public lngLastIdUtil                As Long             ' номер последнего элемента в списке утилит
+Public lngCurrentBtnIndex           As Long             ' Текущая выделенная кнопка
+Public strPathDRPList               As String           ' Список папок для распаковки
+Public mbooSelectInstall            As Boolean          ' Флаг указывающий выборочную установку
+Public mbCheckDRVOk                 As Boolean          ' Флаг, указывающий нажатие кнопки ОК на форме frmListHwid
+Public mbGroupTask                  As Boolean          ' Флаг указывающий групповую задачу
+Public mbRestartProgram             As Boolean          ' Маркер перезапуска программы
+Public mbOnlyUnpackDP               As Boolean          ' Переменная для определения режима - только распаковка драйверов
+Public mbDeleteDriverByHwid         As Boolean          ' Флаг сообщает о том что драйвер был удален на форме frmListHwidAll
+Public strCompModel                 As String           ' Модель компьютера/материнской платы
+Public strFrmMainCaptionTemp        As String           ' кэпшн основной формы
+Public strFrmMainCaptionTempDate    As String           ' кэпшн основной формы - дата релиза программы
 
-' Дефолтные значения размеров колонок в всплывающем сообщении
-' Расчитываются при старте исходя из длины наименования колонки
-Public lngSizeRow1                       As Long
-Public lngSizeRow2                       As Long
-Public lngSizeRow3                       As Long
-Public lngSizeRow4                       As Long
-Public lngSizeRow5                       As Long
-Public lngSizeRow6                       As Long
-Public lngSizeRow9                       As Long
-Public lngSizeRow13                      As Long
-Public maxSizeRowAllLine                 As Long
-
-' Максимальные значения размеров колонок в всплывающем сообщении
-Public lngSizeRowDPMax                   As Long
-Public lngSizeRow1Max                    As Long
-Public lngSizeRow2Max                    As Long
-Public lngSizeRow3Max                    As Long
-Public lngSizeRow4Max                    As Long
-Public lngSizeRow5Max                    As Long
-Public lngSizeRow6Max                    As Long
-Public lngSizeRow9Max                    As Long
-Public lngSizeRow13Max                   As Long
-Public maxSizeRowAllLineMax              As Long
-
-'strTableHwidHeader1    = "-HWID-"
-'strTableHwidHeader2    = "-Путь-"
-'strTableHwidHeader3    = "-Файл-"
-'strTableHwidHeader4    = "-Версия(БД)-"
-'strTableHwidHeader5    = "-Версия(PC)-"
-'strTableHwidHeader6    = "-Статус-"
-'strTableHwidHeader7    = "-Наименование устройства-"
-'strTableHwidHeader8    = "-Пакет драйверов-"
-'strTableHwidHeader9    = "!"
-'strTableHwidHeader10   = "Производитель"
-'strTableHwidHeader11   = "Совместимые HWID"
-'strTableHwidHeader12   = "Код устройства"
-Public strTableHwidHeader1               As String
-Public strTableHwidHeader2               As String
-Public strTableHwidHeader3               As String
-Public strTableHwidHeader4               As String
-Public strTableHwidHeader5               As String
-Public strTableHwidHeader6               As String
-Public strTableHwidHeader7               As String
-Public strTableHwidHeader8               As String
-Public strTableHwidHeader9               As String
-Public strTableHwidHeader10              As String
-Public strTableHwidHeader11              As String
-Public strTableHwidHeader12              As String
-Public strTableHwidHeader13              As String
-Public strTableHwidHeader14              As String
-Public lngTableHwidHeader1               As Long
-Public lngTableHwidHeader2               As Long
-Public lngTableHwidHeader3               As Long
-Public lngTableHwidHeader4               As Long
-Public lngTableHwidHeader5               As Long
-Public lngTableHwidHeader6               As Long
-Public lngTableHwidHeader7               As Long
-Public lngTableHwidHeader8               As Long
-Public lngTableHwidHeader9               As Long
-Public lngTableHwidHeader10              As Long
-Public lngTableHwidHeader11              As Long
-Public lngTableHwidHeader12              As Long
-Public lngTableHwidHeader13              As Long
-Public lngTableHwidHeader14              As Long
-
-' Переменные для определения модели компа
-Public strCompModel                      As String
-Public mbIsNotebok                       As Boolean
-Public mbCheckUpdNotEnd                  As Boolean
-Public strFrmMainCaptionTemp             As String  ' кэпшн основной формы
-Public strFrmMainCaptionTempDate         As String  ' кэпшн основной формы - дата релиза программы
+'Заголовки таблицы для подсказок
+Public strTableHwidHeader1          As String           ' "-HWID-"
+Public strTableHwidHeader2          As String           ' "-Путь-"
+Public strTableHwidHeader3          As String           ' "-Файл-"
+Public strTableHwidHeader4          As String           ' "-Версия(БД)-"
+Public strTableHwidHeader5          As String           ' "-Версия(PC)-"
+Public strTableHwidHeader6          As String           ' "-Статус-"
+Public strTableHwidHeader7          As String           ' "-Наименование устройства-"
+Public strTableHwidHeader8          As String           ' "-Пакет драйверов-"
+Public strTableHwidHeader9          As String           ' "!"
+Public strTableHwidHeader10         As String           ' "-Производитель-"
+Public strTableHwidHeader11         As String           ' "-Совместимые HWID-"
+Public strTableHwidHeader12         As String           ' "-Код устройства-"
+Public strTableHwidHeader13         As String           ' "-Секция-"
+Public strTableHwidHeader14         As String           ' "-Найден в пакете-"
+'Размеры заголовков таблицы для подсказок, высчитываем как Len()
+Public lngTableHwidHeader1          As Long
+Public lngTableHwidHeader2          As Long
+Public lngTableHwidHeader3          As Long
+Public lngTableHwidHeader4          As Long
+Public lngTableHwidHeader5          As Long
+Public lngTableHwidHeader6          As Long
+Public lngTableHwidHeader7          As Long
+Public lngTableHwidHeader8          As Long
+Public lngTableHwidHeader9          As Long
+Public lngTableHwidHeader10         As Long
+Public lngTableHwidHeader11         As Long
+Public lngTableHwidHeader12         As Long
+Public lngTableHwidHeader13         As Long
+Public lngTableHwidHeader14         As Long
+'Максимальные значения размеров колонок в всплывающем сообщении
+Public lngSizeRowDPMax              As Long
+Public lngSizeRow1Max               As Long
+Public lngSizeRow2Max               As Long
+Public lngSizeRow3Max               As Long
+Public lngSizeRow4Max               As Long
+Public lngSizeRow5Max               As Long
+Public lngSizeRow6Max               As Long
+Public lngSizeRow9Max               As Long
+Public lngSizeRow13Max              As Long
+Public maxSizeRowAllLineMax         As Long
+'Дефолтные значения размеров колонок в всплывающем сообщении
+'Расчитываются при старте исходя из длины наименования колонки
+Public lngSizeRow1                  As Long
+Public lngSizeRow2                  As Long
+Public lngSizeRow3                  As Long
+Public lngSizeRow4                  As Long
+Public lngSizeRow5                  As Long
+Public lngSizeRow6                  As Long
+Public lngSizeRow9                  As Long
+Public lngSizeRow13                 As Long
+Public maxSizeRowAllLine            As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Main

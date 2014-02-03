@@ -1,4 +1,4 @@
-Attribute VB_Name = "mOsVer"
+Attribute VB_Name = "mSysInfo"
 Option Explicit
 ' Получения подробной информации о версии операционной системы,
 ' а также модели компьтера/ноутбука/материнской платы
@@ -8,6 +8,7 @@ Public strOSArchitecture   As String        ' Архитетуктура ОС
 Public strOSCurrentVersion As String
 Public OSCurrVersionStruct As OSInfoStruct
 Public mbIsWin64           As Boolean
+Public mbIsNotebok         As Boolean
 
 Public Type OSInfoStruct
     Name As String

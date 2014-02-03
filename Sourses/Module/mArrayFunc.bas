@@ -77,7 +77,6 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
             strLine = AppendStr(strLine, .HWIDCutting, vbTab)
             strLine = AppendStr(strLine, .HWIDMatches, vbTab)
             strLine = AppendStr(strLine, .InfName, vbTab)
-            strLine = AppendStr(strLine, .DRVExist, vbTab)
             strLine = AppendStr(strLine, .DPsList, vbTab)
             strLine = AppendStr(strLine, .DRVScore, vbTab)
         End With
