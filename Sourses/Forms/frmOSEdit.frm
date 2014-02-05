@@ -460,6 +460,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private strFormName As String
+Private m_Caption   As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click
@@ -486,11 +487,6 @@ Private Sub FontCharsetChange()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdExit_Click
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdExit_Click
 '! Description (Описание)  :   [type_description_here]
@@ -539,11 +535,6 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Load
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Load
 '! Description (Описание)  :   [type_description_here]
@@ -582,7 +573,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Лэйблы
     lblOSVer.Caption = LocaliseString(StrPathFile, strFormName, "lblOSVer", lblOSVer.Caption)
     lblNameOS.Caption = LocaliseString(StrPathFile, strFormName, "lblNameOS", lblNameOS.Caption)
@@ -945,3 +936,15 @@ End Sub
 Private Sub ucRuntimesPath_LostFocus()
     HighlightActiveControl Me, ucRuntimesPath, False
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

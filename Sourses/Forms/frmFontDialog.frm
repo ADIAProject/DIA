@@ -228,18 +228,26 @@ Begin VB.Form frmFontDialog
       TabIndex        =   9
       Top             =   1860
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   1323
-      font            =   "frmFontDialog.frx":02DC
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Сохранить изменения и выйти"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3704
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   13
+      BackColor       =   12244692
+      Caption         =   "Сохранить изменения и выйти"
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
@@ -247,18 +255,26 @@ Begin VB.Form frmFontDialog
       TabIndex        =   10
       Top             =   1860
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   1323
-      font            =   "frmFontDialog.frx":0304
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Выход без сохранения"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      tooltipbackcolor=   0
-      colorscheme     =   3
+      _ExtentX        =   3704
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   13
+      BackColor       =   12244692
+      Caption         =   "Выход без сохранения"
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      CaptionEffects  =   0
+      TooltipBackColor=   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -280,7 +296,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":032C
+      Caption         =   "frmFontDialog.frx":02DC
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375
@@ -331,6 +347,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private strFormName As String
+Private m_Caption   As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkBold_Click
@@ -458,7 +475,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Лэйблы
     lblFontSize.Caption = LocaliseString(StrPathFile, strFormName, "lblFontSize", lblFontSize.Caption)
     lblFontColor.Caption = LocaliseString(StrPathFile, strFormName, "lblFontColor", lblFontColor.Caption)
@@ -588,3 +605,15 @@ End Sub
 Private Sub txtFontSize_TextChange()
     txtFont.Font.Size = txtFontSize.Value
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

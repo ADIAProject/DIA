@@ -41,6 +41,8 @@ Begin VB.Form frmCheckUpdate
          Strikethrough   =   0   'False
       EndProperty
       Style           =   2
+      Text            =   "frmCheckUpdate.frx":000C
+      CueBanner       =   "frmCheckUpdate.frx":002C
       Sorted          =   -1  'True
    End
    Begin prjDIADBS.ctlXpButton cmdExit 
@@ -121,7 +123,7 @@ Begin VB.Form frmCheckUpdate
    Begin prjDIADBS.ctlXpButton cmdUpdate 
       Height          =   750
       Left            =   120
-      TabIndex        =   3
+      TabIndex        =   4
       Top             =   5160
       Width           =   2175
       _ExtentX        =   3836
@@ -194,9 +196,9 @@ Begin VB.Form frmCheckUpdate
       MultiLine       =   -1  'True
       ScrollBars      =   2
       WantReturn      =   -1  'True
-      FileName        =   "frmCheckUpdate.frx":000C
-      Text            =   "frmCheckUpdate.frx":002C
-      TextRTF         =   "frmCheckUpdate.frx":004C
+      FileName        =   "frmCheckUpdate.frx":004C
+      Text            =   "frmCheckUpdate.frx":006C
+      TextRTF         =   "frmCheckUpdate.frx":008C
    End
    Begin prjDIADBS.LabelW lblWait 
       Height          =   375
@@ -294,6 +296,7 @@ Option Explicit
 
 Private mbFirstStartUpdate As Boolean
 Private strFormName        As String
+Private m_Caption         As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -686,7 +689,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
     cmdUpdate.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
     cmdUpdateFull.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
@@ -704,3 +707,15 @@ Private Sub Localise(ByVal StrPathFile As String)
     lblVersionList.Caption = LocaliseString(StrPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
     lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

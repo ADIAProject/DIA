@@ -312,6 +312,7 @@ Private miCurrentListCount  As Long
 Private lngFormWidthMin     As Long
 Private lngFormHeightMin    As Long
 Private strFormName         As String
+Private m_Caption           As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -644,7 +645,7 @@ Public Sub FormLoadAction()
             cmdOK.Caption = strCmdOKCaption2
         End If
 
-        Me.Caption = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.CaptionW = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     Else
         miCurrentListCount = LoadList_Folders(lngCurrentBtnIndex, True, CollectModeString)
         cmdExit.Visible = False
@@ -652,7 +653,7 @@ Public Sub FormLoadAction()
         lblInformation.Visible = False
         cmdCheckAll.Visible = False
         cmdUnCheckAll.Visible = False
-        Me.Caption = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.CaptionW = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     End If
 
 End Sub
@@ -940,10 +941,10 @@ Private Sub LoadListbyMode()
         End If
 
         cmdCheckAll_Click
-        Me.Caption = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.CaptionW = strMeCaptionView & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     Else
         miCurrentListCount = LoadList_Folders(lngCurrentBtnIndex, True, CollectModeString)
-        Me.Caption = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
+        Me.CaptionW = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     End If
 
     FindCheckCountList
@@ -1011,7 +1012,7 @@ Private Sub Form_Resize()
     With Me
 
         If .WindowState <> vbMinimized Then
-            If OsCurrVersionStruct.VerFull >= "6.0" Then
+            If OSCurrVersionStruct.VerFull >= "6.0" Then
                 miDeltaFrm = 125
             Else
 
@@ -1189,3 +1190,15 @@ Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Bool
 
     FindCheckCountList
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

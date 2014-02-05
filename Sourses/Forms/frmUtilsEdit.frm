@@ -237,6 +237,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private strFormName As String
+Private m_Caption   As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -254,28 +255,18 @@ Private Sub FontCharsetChange()
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdExit_Click
-'!  Переменные  :
-'!  Описание    :  нажали выход
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [нажали выход]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  cmdOK_Click
-'!  Переменные  :
-'!  Описание    :  нажали ок
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [нажали ок]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
@@ -307,14 +298,9 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  Form_Load
-'!  Переменные  :
-'!  Описание    :  обработка при загрузке формы
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [обработка при загрузке формы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Form_Load()
@@ -340,16 +326,6 @@ Private Sub Form_Load()
 
 End Sub
 
-'Private Sub Form_Terminate()
-'
-'    On Error Resume Next
-'
-'    If Forms.Count = 0 Then
-'        UnloadApp
-'
-'    End If
-'
-'End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Localise
 '! Description (Описание)  :   [type_description_here]
@@ -359,7 +335,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Лэйблы
     lblUtilName.Caption = LocaliseString(StrPathFile, strFormName, "lblUtilName", lblUtilName.Caption)
     lblPathUtil.Caption = LocaliseString(StrPathFile, strFormName, "lblPathUtil", lblPathUtil.Caption)
@@ -370,14 +346,9 @@ Private Sub Localise(ByVal StrPathFile As String)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  SaveOptions
-'!  Переменные  :
-'!  Описание    :  Сохранение настроек
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SaveOptions
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Сохранение настроек]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
@@ -481,11 +452,6 @@ Private Sub ucPathUtil_LostFocus()
     HighlightActiveControl Me, ucPathUtil, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucPathUtil64_Click
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucPathUtil64_Click
 '! Description (Описание)  :   [type_description_here]
@@ -536,11 +502,6 @@ Private Sub ucPathUtil64_PathChanged()
     cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  ucPathUtil_Click
-'!  Переменные  :
-'!  Описание    :
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucPathUtil_Click
 '! Description (Описание)  :   [type_description_here]
@@ -583,4 +544,3 @@ Public Property Get CaptionW() As String
     CaptionW = Space$(strLen)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
-

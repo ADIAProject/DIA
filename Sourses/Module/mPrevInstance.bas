@@ -7,14 +7,9 @@ Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmd
 Private Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function OpenIcon Lib "user32.dll" (ByVal hWnd As Long) As Long
 
-'! -----------------------------------------------------------
-'!  Функция     :  ShowPrevInstance
-'!  Переменные  :
-'!  Описание    :  Отобразить предыдущую копию программы, если программа запущена дважды
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowPrevInstance
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Отобразить предыдущую копию программы, если программа запущена дважды]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub ShowPrevInstance()

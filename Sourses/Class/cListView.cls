@@ -27,6 +27,7 @@ Private Declare Function ImageList_ReplaceIcon Lib "Comctl32.dll" (ByVal hIml As
 Private Declare Function ImageList_GetImageCount Lib "Comctl32.dll" (ByVal hIml As Long) As Long
 Private Declare Function ImageList_Remove Lib "Comctl32.dll" (ByVal hIml As Long, ByVal i As Long) As Long
 Private Declare Function ImageList_RemoveAll Lib "Comctl32.dll" (ByVal hIml As Long) As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 
 Public Enum eSortAsConst
     stText = 0
@@ -173,12 +174,12 @@ End Enum
 
 ' §§§§§§§§§§§§§§§§§§§§§§§§§§ Òèïû §§§§§§§§§§§§§§§§§§§§§§§§§§
 Private Type LVITEM
-    Mask                                    As Long
+    Mask                                As Long
     iItem                               As Long
     iSubItem                            As Long
     State                               As Long
     StateMask                           As Long
-    pszText                             As String
+    pszText                             As Long
     cchTextMax                          As Long
     iImage                              As Long
     lParam                              As Long
@@ -186,10 +187,10 @@ Private Type LVITEM
 End Type
 
 Private Type LVCOLUMN
-    Mask                                    As Long
+    Mask                                As Long
     fmt                                 As Long
     CX                                  As Long
-    pszText                             As String
+    pszText                             As Long
     cchTextMax                          As Long
     iSubItem                            As Long
     iImage                              As Long
@@ -197,7 +198,7 @@ Private Type LVCOLUMN
 End Type
 
 Private Type LVBKIMAGE
-    ulFlags                                 As Long
+    ulFlags                             As Long
     hBm                                 As Long
     pszImage                            As String
     cchImageMax                         As Long
@@ -206,7 +207,7 @@ Private Type LVBKIMAGE
 End Type
 
 Private Type LVTILEVIEWINFO
-    cbSize                                  As Long
+    cbSize                              As Long
     dwMask                              As Long
     dwFlags                             As Long
     SizeTile                            As POINT
@@ -215,14 +216,14 @@ Private Type LVTILEVIEWINFO
 End Type
 
 Private Type LVHITTESTINFO
-    PT                                      As POINT
+    PT                                  As POINT
     Flags                               As Long
     iItem                               As Long
     iSubItem                            As Long
 End Type
 
 Private Type LVGROUP
-    cbSize                                  As Long
+    cbSize                              As Long
     Mask                                As Long
     pszHeader                           As Long
     cchHeader                           As Long
@@ -257,11 +258,22 @@ Private Const LVM_SETBKCOLOR               As Long = (LVM_FIRST + 1)
 Private Const LVM_GETIMAGELIST             As Long = (LVM_FIRST + 2)
 Private Const LVM_SETIMAGELIST             As Long = (LVM_FIRST + 3)
 Private Const LVM_GETITEMCOUNT             As Long = (LVM_FIRST + 4)
-Private Const LVM_GETITEM                  As Long = (LVM_FIRST + 5)
-Private Const LVM_SETITEM                  As Long = (LVM_FIRST + 6)
+Private Const LVM_GETITEMA                 As Long = (LVM_FIRST + 5)
+Private Const LVM_GETITEMW                 As Long = (LVM_FIRST + 75)
+Private Const LVM_GETITEM                  As Long = LVM_GETITEMW
+Private Const LVM_SETITEMA                 As Long = (LVM_FIRST + 6)
+Private Const LVM_SETITEMW                 As Long = (LVM_FIRST + 76)
+Private Const LVM_SETITEM                  As Long = LVM_SETITEMW
 Private Const LVM_DELETEITEM               As Long = (LVM_FIRST + 8)
-Private Const LVM_INSERTITEM               As Long = (LVM_FIRST + 7)
 Private Const LVM_DELETEALLITEMS           As Long = (LVM_FIRST + 9)
+Private Const LVM_GETCALLBACKMASK          As Long = (LVM_FIRST + 10)
+Private Const LVM_SETCALLBACKMASK          As Long = (LVM_FIRST + 11)
+Private Const LVM_FINDITEMA                As Long = (LVM_FIRST + 13)
+Private Const LVM_FINDITEMW                As Long = (LVM_FIRST + 83)
+Private Const LVM_FINDITEM                 As Long = LVM_FINDITEMW
+Private Const LVM_INSERTITEMA              As Long = (LVM_FIRST + 7)
+Private Const LVM_INSERTITEMW              As Long = (LVM_FIRST + 77)
+Private Const LVM_INSERTITEM               As Long = LVM_INSERTITEMW
 Private Const LVM_GETNEXTITEM              As Long = (LVM_FIRST + 12)
 Private Const LVM_GETITEMRECT              As Long = (LVM_FIRST + 14)
 Private Const LVM_GETITEMPOSITION          As Long = (LVM_FIRST + 16)
@@ -291,8 +303,12 @@ Private Const LVM_GETORIGIN                As Long = (LVM_FIRST + 41)
 Private Const LVM_SETITEMSTATE             As Long = (LVM_FIRST + 43)
 Private Const LVM_UPDATE                   As Long = (LVM_FIRST + 42)
 Private Const LVM_GETITEMSTATE             As Long = (LVM_FIRST + 44)
-Private Const LVM_GETITEMTEXT              As Long = (LVM_FIRST + 45)
-Private Const LVM_SETITEMTEXT              As Long = (LVM_FIRST + 46)
+Private Const LVM_GETITEMTEXTA             As Long = (LVM_FIRST + 45)
+Private Const LVM_GETITEMTEXTW             As Long = (LVM_FIRST + 115)
+Private Const LVM_GETITEMTEXT              As Long = LVM_GETITEMTEXTW
+Private Const LVM_SETITEMTEXTA             As Long = (LVM_FIRST + 46)
+Private Const LVM_SETITEMTEXTW             As Long = (LVM_FIRST + 116)
+Private Const LVM_SETITEMTEXT              As Long = LVM_SETITEMTEXTW
 Private Const LVM_SETITEMCOUNT             As Long = (LVM_FIRST + 47)
 Private Const LVM_SETITEMPOSITION32        As Long = (LVM_FIRST + 49)
 Private Const LVM_GETSELECTEDCOUNT         As Long = (LVM_FIRST + 50)
@@ -704,14 +720,14 @@ Public Sub AddItem(ByVal sText As String, Optional ByVal lIndex As Long = &HFFFF
     Dim tLV As LVITEM
 
     If lIndex = &HFFFF Then lIndex = Count
-    tLV.pszText = sText & vbNullChar
-    tLV.cchTextMax = Len(tLV.pszText)
+    tLV.pszText = StrPtr(sText)
+    tLV.cchTextMax = Len(sText) + 1
     tLV.iImage = iIcon
     tLV.iIndent = iIndent
     tLV.lParam = lItemData
     tLV.iItem = lIndex
     tLV.Mask = LVIF_TEXT Or LVIF_PARAM Or LVIF_INDENT Or IIf(iIcon = &HFFFF, cNull, LVIF_IMAGE)
-    Call SendMessage(hListView, LVM_INSERTITEM, 0, tLV)
+    Call SendMessage(hListView, LVM_INSERTITEM, 0, ByVal VarPtr(tLV))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -727,12 +743,12 @@ Public Sub AddColumn(ByVal Index As Long, Optional ByVal sText As String = vbNul
 
     With LVC
         .Mask = LVCF_FMT Or LVCF_WIDTH Or LVCF_TEXT
-        .pszText = sText & vbNullChar
-        .cchTextMax = Len(.pszText)
+        .pszText = StrPtr(sText)
+        .cchTextMax = Len(sText) + 1
         .CX = lWidth
     End With
 
-    Call SendMessage(hListView, LVM_INSERTCOLUMN, Index, LVC)
+    Call SendMessage(hListView, LVM_INSERTCOLUMN, Index, ByVal VarPtr(LVC))
     Call Refresh
 End Sub
 
@@ -1005,7 +1021,7 @@ Public Property Get OriginX() As Long
 
     Dim tP As POINT
 
-    Call SendMessage(hListView, LVM_GETORIGIN, cNull, tP)
+    Call SendMessage(hListView, LVM_GETORIGIN, cNull, ByVal VarPtr(tP))
     OriginX = tP.X
 End Property
 
@@ -1018,7 +1034,7 @@ Public Property Get OriginY() As Long
 
     Dim tP As POINT
 
-    Call SendMessage(hListView, LVM_GETORIGIN, cNull, tP)
+    Call SendMessage(hListView, LVM_GETORIGIN, cNull, ByVal VarPtr(tP))
     OriginY = tP.Y
 End Property
 
@@ -1032,7 +1048,7 @@ Public Property Get ItemCaption(ByVal lIndex As Long) As String
     Dim LVI As LVITEM
 
     Call GetLVIStyle(lIndex, LVIF_TEXT, LVI)
-    ItemCaption = LVI.pszText
+    ItemCaption = TrimNull(LVI.pszText)
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1060,7 +1076,7 @@ Public Property Get SubItemCaption(ByVal lIndex As Long, ByVal lSubItemIndex As 
     Dim LVI As LVITEM
 
     Call GetLVIStyle(lIndex, LVIF_TEXT, LVI, lSubItemIndex)
-    SubItemCaption = LVI.pszText
+    SubItemCaption = TrimNull(LVI.pszText)
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1274,7 +1290,7 @@ Public Property Let ItemChecked(ByVal lIndex As Long, ByVal bState As Boolean)
     LVI.StateMask = &H3000&
     LVI.State = IIf(bState, &H2000&, &H1000&)
     '                       check,   uncheck
-    Call SendMessage(hListView, LVM_SETITEMSTATE, lIndex, LVI)
+    Call SendMessage(hListView, LVM_SETITEMSTATE, lIndex, ByVal VarPtr(LVI))
     Call SendMessage(hListView, LVM_SETHOTITEM, lIndex, ByVal cNull)
 End Property
 
@@ -1286,13 +1302,17 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ItemText(ByVal iSubItem As Long, ByVal lIndex As Long) As String
 
-    Dim lResult As Long, LVI                As LVITEM
+    Dim LVI As LVITEM
 
-    LVI.cchTextMax = 1024
-    LVI.pszText = String$(LVI.cchTextMax, cNull)
-    LVI.iSubItem = iSubItem
-    lResult = SendMessage(hListView, LVM_GETITEMTEXT, lIndex, LVI)
-    ItemText = Left$(LVI.pszText, lResult)
+    With LVI
+        Dim Buffer As String
+        Buffer = String(1024, vbNullChar)
+        .pszText = StrPtr(Buffer)
+        .cchTextMax = 1024
+        .iSubItem = iSubItem
+        SendMessage hListView, LVM_GETITEMTEXT, lIndex, ByVal VarPtr(LVI)
+        ItemText = TrimNull(Buffer)
+    End With
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1307,9 +1327,9 @@ Public Property Let ItemText(ByVal iSubItem As Long, ByVal lIndex As Long, ByVal
     Dim LVI As LVITEM
 
     LVI.iSubItem = iSubItem
-    LVI.pszText = sText & vbNullChar
-    LVI.cchTextMax = Len(LVI.pszText)
-    Call SendMessage(hListView, LVM_SETITEMTEXT, lIndex, LVI)
+    LVI.pszText = StrPtr(sText)
+    LVI.cchTextMax = Len(LVI.pszText) + 1
+    Call SendMessage(hListView, LVM_SETITEMTEXT, lIndex, ByVal VarPtr(LVI))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1418,7 +1438,7 @@ Public Property Get TileViewItemLines() As Long
 
     tLVI.cbSize = Len(tLVI)
     tLVI.dwMask = LVTVIM_COLUMNS
-    Call SendMessage(hListView, LVM_GETTILEVIEWINFO, cNull, tLVI)
+    Call SendMessage(hListView, LVM_GETTILEVIEWINFO, cNull, ByVal VarPtr(tLVI))
     TileViewItemLines = tLVI.cLines
 End Property
 
@@ -1433,9 +1453,9 @@ Public Property Let TileViewItemLines(ByVal lLines As Long)
 
     tLVI.cbSize = Len(tLVI)
     tLVI.dwMask = LVTVIM_COLUMNS
-    Call SendMessage(hListView, LVM_GETTILEVIEWINFO, cNull, tLVI)
+    Call SendMessage(hListView, LVM_GETTILEVIEWINFO, cNull, ByVal VarPtr(tLVI))
     tLVI.cLines = lLines
-    Call SendMessage(hListView, LVM_SETTILEVIEWINFO, cNull, tLVI)
+    Call SendMessage(hListView, LVM_SETTILEVIEWINFO, cNull, ByVal VarPtr(tLVI))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1486,7 +1506,7 @@ Public Property Get ItemPosX(ByVal iIndex As Long) As Long
 
     Dim PNT As POINT
 
-    Call SendMessage(hListView, LVM_GETITEMPOSITION, iIndex, PNT)
+    Call SendMessage(hListView, LVM_GETITEMPOSITION, iIndex, ByVal VarPtr(PNT))
     ItemPosX = PNT.X
 End Property
 
@@ -1499,7 +1519,7 @@ Public Property Get ItemPosY(ByVal iIndex As Long) As Long
 
     Dim PNT As POINT
 
-    Call SendMessage(hListView, LVM_GETITEMPOSITION, iIndex, PNT)
+    Call SendMessage(hListView, LVM_GETITEMPOSITION, iIndex, ByVal VarPtr(PNT))
     ItemPosY = PNT.Y
 End Property
 
@@ -1516,7 +1536,7 @@ Public Sub SetItemPosition(ByVal iIndex As Long, ByVal X As Long, ByVal Y As Lon
 
     PNT.X = X
     PNT.Y = Y
-    Call SendMessage(hListView, LVM_SETITEMPOSITION32, iIndex, PNT)
+    Call SendMessage(hListView, LVM_SETITEMPOSITION32, iIndex, ByVal VarPtr(PNT))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1534,7 +1554,7 @@ Public Sub GetItemRect(ByVal iIndex As Long, Flags As gbLVSIValues, Optional ByR
     Dim rct As RECT
 
     rct.Left = Flags
-    Call SendMessage(hListView, LVM_GETITEMRECT, iIndex, rct)
+    Call SendMessage(hListView, LVM_GETITEMRECT, iIndex, ByVal VarPtr(rct))
     lLeft = rct.Left
     lTop = rct.Top
     lBottom = rct.Bottom
@@ -1558,7 +1578,7 @@ Public Sub GetSubItemRect(ByVal iIndex As Long, ByVal iSubItem As Long, ByVal Fl
 
     rct.Top = iSubItem
     rct.Left = Flags
-    Call SendMessage(hListView, LVM_GETSUBITEMRECT, iIndex, rct)
+    Call SendMessage(hListView, LVM_GETSUBITEMRECT, iIndex, ByVal VarPtr(rct))
     lLeft = rct.Left
     lTop = rct.Top
     lBottom = rct.Bottom
@@ -1577,7 +1597,7 @@ Public Sub GetViewRect(Optional ByRef lLeft As Long, Optional ByRef lTop As Long
 
     Dim rct As RECT
 
-    Call SendMessage(hListView, LVM_GETVIEWRECT, cNull, rct)
+    Call SendMessage(hListView, LVM_GETVIEWRECT, cNull, ByVal VarPtr(rct))
     lLeft = rct.Left
     lTop = rct.Top
     lBottom = rct.Bottom
@@ -1601,11 +1621,11 @@ End Property
 Public Property Let BackColor(ByVal oColor As OLE_COLOR)
 
     If (oColor = &HFFFF) Then
-        Call SendMessage(hListView, LVM_SETBKCOLOR, cNull, ByVal oColor)
-        Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal oColor)
+        Call SendMessage(hListView, LVM_SETBKCOLOR, cNull, ByVal WinColor(oColor))
+        Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal WinColor(oColor))
     Else
-        Call SendMessage(hListView, LVM_SETBKCOLOR, cNull, ByVal oColor)
-        Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal oColor)
+        Call SendMessage(hListView, LVM_SETBKCOLOR, cNull, ByVal WinColor(oColor))
+        Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal WinColor(oColor))
     End If
 
 End Property
@@ -1625,7 +1645,7 @@ End Property
 '! Parameters  (Ïåðåìåííûå):   oColor (OLE_COLOR)
 '!--------------------------------------------------------------------------------
 Public Property Let TextBackColor(ByVal oColor As OLE_COLOR)
-    Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal oColor)
+    Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal WinColor(oColor))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1643,7 +1663,7 @@ End Property
 '! Parameters  (Ïåðåìåííûå):   oColor (OLE_COLOR)
 '!--------------------------------------------------------------------------------
 Public Property Let ForeColor(ByVal oColor As OLE_COLOR)
-    Call SendMessage(hListView, LVM_SETTEXTCOLOR, cNull, ByVal oColor)
+    Call SendMessage(hListView, LVM_SETTEXTCOLOR, cNull, ByVal WinColor(oColor))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1834,8 +1854,8 @@ Public Property Let BackPicture(ByVal sURL As String)
     tLBI.pszImage = sURL & vbNullChar
     tLBI.cchImageMax = Len(tLBI.pszImage)
     tLBI.ulFlags = LVBKIF_SOURCE_URL
-    Call SendMessage(hListView, LVM_SETBKIMAGE, cNull, tLBI)
-    Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, &HFFFF)
+    Call SendMessage(hListView, LVM_SETBKIMAGE, cNull, ByVal VarPtr(tLBI))
+    Call SendMessage(hListView, LVM_SETTEXTBKCOLOR, cNull, ByVal &HFFFF)
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1942,7 +1962,7 @@ Public Property Let GroupHeader(ByVal lPtrGroup As Long, ByVal sHeader As String
     tLVG.Mask = LVGF_HEADER
     tLVG.cchHeader = Len(sHeader)
     tLVG.pszHeader = StrPtr(sHeader)
-    Call SendMessage(hListView, LVM_SETGROUPINFO, lPtrGroup, tLVG)
+    Call SendMessage(hListView, LVM_SETGROUPINFO, lPtrGroup, ByVal VarPtr(tLVG))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1956,7 +1976,7 @@ Public Property Get GroupAlign(ByVal lPtrGroup As Long) As gbLVGroupAligin
 
     tLVG.cbSize = Len(tLVG)
     tLVG.Mask = LVGF_ALIGN
-    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, tLVG)
+    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, ByVal VarPtr(tLVG))
     GroupAlign = tLVG.uAlign
 End Property
 
@@ -1973,7 +1993,7 @@ Public Property Let GroupAlign(ByVal lPtrGroup As Long, ByVal eAlign As gbLVGrou
     tLVG.cbSize = Len(tLVG)
     tLVG.Mask = LVGF_ALIGN
     tLVG.uAlign = eAlign
-    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, tLVG)
+    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, ByVal VarPtr(tLVG))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1987,7 +2007,7 @@ Public Property Get GroupState(ByVal lPtrGroup As Long) As gbLVGroupState
 
     tLVG.cbSize = Len(tLVG)
     tLVG.Mask = LVGF_STATE
-    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, tLVG)
+    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, ByVal VarPtr(tLVG))
     GroupState = tLVG.State
 End Property
 
@@ -2004,7 +2024,7 @@ Public Property Let GroupState(ByVal lPtrGroup As Long, ByVal eState As gbLVGrou
     tLVG.cbSize = Len(tLVG)
     tLVG.Mask = LVGF_STATE
     tLVG.State = eState
-    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, tLVG)
+    Call SendMessage(hListView, LVM_GETGROUPINFO, lPtrGroup, ByVal VarPtr(tLVG))
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -2148,7 +2168,7 @@ Public Function HitTest(ByVal X As Long, ByVal Y As Long) As Long
 
     tLVHI.PT.X = X
     tLVHI.PT.Y = Y
-    HitTest = SendMessage(hListView, LVM_HITTEST, cNull, tLVHI)
+    HitTest = SendMessage(hListView, LVM_HITTEST, cNull, ByVal VarPtr(tLVHI))
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -2163,7 +2183,7 @@ Public Function SubItemHitTest(ByVal X As Long, ByVal Y As Long) As Long
 
     tLVHI.PT.X = X
     tLVHI.PT.Y = Y
-    SubItemHitTest = SendMessage(hListView, LVM_SUBITEMHITTEST, cNull, tLVHI)
+    SubItemHitTest = SendMessage(hListView, LVM_SUBITEMHITTEST, cNull, ByVal VarPtr(tLVHI))
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -2173,7 +2193,7 @@ End Function
 '                              CY (Integer)
 '!--------------------------------------------------------------------------------
 Public Sub SetIconsPacing(ByVal CX As Integer, ByVal CY As Integer)
-    Call SendMessage(hListView, LVM_SETICONSPACING, cNull, MakeDWord(CX, CY))
+    Call SendMessage(hListView, LVM_SETICONSPACING, cNull, ByVal MakeDWord(CX, CY))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -2187,7 +2207,7 @@ Public Sub ItemPosition(ByVal iIndex As Long, ByRef X As Long, ByRef Y As Long)
 
     Dim PNT As POINT
 
-    Call SendMessage(hListView, LVM_GETITEMPOSITION, iIndex, PNT)
+    Call SendMessage(hListView, LVM_GETITEMPOSITION, iIndex, ByVal VarPtr(PNT))
     X = PNT.X
     Y = PNT.Y
 End Sub
@@ -2226,7 +2246,7 @@ End Sub
 '! Parameters  (Ïåðåìåííûå):   lIndex (Long)
 '!--------------------------------------------------------------------------------
 Public Sub RemoveColumn(ByVal lIndex As Long)
-    Call SendMessage(hListView, LVM_DELETECOLUMN, lIndex, cNull)
+    Call SendMessage(hListView, LVM_DELETECOLUMN, lIndex, ByVal cNull)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -2344,22 +2364,19 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub GetLVIStyle(ByVal lIndex As Long, ByVal lMask As Long, ByRef m_tLV As LVITEM, Optional ByVal lSubItem As Long = cNull)
 
-    Dim lPos As Long
-
     m_tLV.Mask = lMask
 
     If (lMask And LVIF_TEXT) = LVIF_TEXT Then
-        m_tLV.pszText = String$(1024, 0)
+        m_tLV.pszText = StrPtr(String$(1024, 0))
         m_tLV.cchTextMax = 1024
     End If
 
     m_tLV.iItem = lIndex
     m_tLV.iSubItem = lSubItem
-    Call SendMessage(hListView, LVM_GETITEM, IIf(lSubItem = cNull, cNull, lIndex), m_tLV)
-    lPos = InStr(m_tLV.pszText, vbNullChar)
+    Call SendMessage(hListView, LVM_GETITEM, IIf(lSubItem = cNull, cNull, lIndex), ByVal VarPtr(m_tLV))
 
-    If lPos > 0 Then m_tLV.pszText = Left$(m_tLV.pszText, lPos - vbNull)
-    m_tLV.cchTextMax = Len(m_tLV.pszText)
+    'm_tLV.pszText = StrPtr(TrimNull(m_tLV.pszText))
+    'm_tLV.cchTextMax = Len(m_tLV.pszText)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -2374,16 +2391,14 @@ End Sub
 Private Sub SetLVIStyle(ByVal lIndex As Long, ByVal lMask As Long, m_tLV As LVITEM, Optional ByVal sText As String, Optional ByVal lSubItem As Long = 0)
 
     If ((lMask And LVIF_TEXT) = LVIF_TEXT) Then
-        m_tLV.pszText = String$(1024, cNull)
-        m_tLV.cchTextMax = 1024
-        LSet m_tLV.pszText = sText & vbNullChar
-        m_tLV.cchTextMax = Len(sText) + vbNull
+        m_tLV.pszText = StrPtr(sText)
+        m_tLV.cchTextMax = Len(sText) + 1
     End If
 
     m_tLV.iItem = lIndex
     m_tLV.iSubItem = lSubItem
     m_tLV.Mask = lMask
-    Call SendMessage(hListView, LVM_SETITEM, IIf(lSubItem = 0, cNull, lIndex), m_tLV)
+    Call SendMessage(hListView, LVM_SETITEM, IIf(lSubItem = 0, cNull, lIndex), ByVal VarPtr(m_tLV))
     Call UpdateWindow(hListView)
 End Sub
 
@@ -2428,7 +2443,7 @@ End Sub
 Private Function GetHeaderIInfo(ByVal lCol As Long, tHI As LVCOLUMN) As Boolean
     lCol = lCol - vbNull
     tHI.iSubItem = lCol
-    GetHeaderIInfo = Not (SendMessage(hListView, LVM_GETCOLUMN, lCol, tHI) = cNull)
+    GetHeaderIInfo = Not (SendMessage(hListView, LVM_GETCOLUMN, lCol, ByVal VarPtr(tHI)) = cNull)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -2440,7 +2455,7 @@ End Function
 Private Function SetHeaderIInfo(ByVal lCol As Long, tHI As LVCOLUMN) As Boolean
     lCol = lCol - vbNull
     tHI.iSubItem = lCol
-    SetHeaderIInfo = Not (SendMessage(hListView, LVM_SETCOLUMN, lCol, tHI) = cNull)
+    SetHeaderIInfo = Not (SendMessage(hListView, LVM_SETCOLUMN, lCol, ByVal VarPtr(tHI)) = cNull)
 End Function
 
 '!--------------------------------------------------------------------------------

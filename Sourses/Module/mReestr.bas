@@ -195,15 +195,9 @@ GetKeyError:
     ' Close Registry Key
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetRegString
-'!  Переменные  :  hKey As Long, strSubKey As String, strValueName As String
-'!  Возвр. знач.:  As String
-'!  Описание    :  Получение значение ключа из реестра
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetRegString
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение значение ключа из реестра]
 '! Parameters  (Переменные):   hkey (Long)
 '                              strSubKey (String)
 '                              strValueName (String)
@@ -232,15 +226,9 @@ Public Function GetRegString(hkey As Long, strSubKey As String, strValueName As 
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  IsAppPresent
-'!  Переменные  :  strSubKey$, strValueName$
-'!  Возвр. знач.:  As Boolean
-'!  Описание    :  Присутствует ли данное приложение в реестре
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IsAppPresent
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Присутствует ли данное приложение в реестре]
 '! Parameters  (Переменные):   strSubKey (String)
 '                              strValueName (String)
 '!--------------------------------------------------------------------------------

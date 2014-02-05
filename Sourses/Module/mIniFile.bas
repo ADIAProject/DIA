@@ -79,10 +79,9 @@ Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection 
     GetIniValueLong = LngValue
 End Function
 
-' Получение String значения переменной ini-файла с дефолтовым значением
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetIniValueString
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение String значения переменной ini-файла с дефолтовым значением]
 '! Parameters  (Переменные):   strIniPath (String)
 '                              strIniSection (String)
 '                              strIniValue (String)
@@ -101,21 +100,13 @@ Public Function GetIniValueString(ByVal strIniPath As String, ByVal strIniSectio
     GetIniValueString = strValue
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  GetSectionMass
-'!  Переменные  :  SekName As String, IniFileName As String, Optional FirstValue As Boolean
-'!                 SekName - имя секции (регистр не учитывается)
-'!                 FirstValue   - если требуется прочитать только первую строку в секции
-'!                 IniFileName - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
-'!  Возвр. знач.:  Малый буфер или Нет секции если есть ошибки в работе функции. Иначе возвращает массив переменная=значение
-'!  Описание    :  Читает имена значений и переменных в массив в указанной секции .INI
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetSectionMass
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   SekName (String)
-'                              IniFileName (String)
-'                              FirstValue (Boolean)
+'! Description (Описание)  :   [Читает имена значений и переменных в массив в указанной секции .INI]
+'! Parameters  (Переменные):   SekName (String) - имя секции (регистр не учитывается)
+'                              IniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
+'                              FirstValue (Boolean)   - если требуется прочитать только первую строку в секции
+'! Return Value:Возвр. знач.:  Малый буфер или Нет секции если есть ошибки в работе функции. Иначе возвращает массив переменная=значение
 '!--------------------------------------------------------------------------------
 Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As String, Optional ByVal FirstValue As Boolean)
 
@@ -261,20 +252,9 @@ Public Function IniDelAllKeyPrivate(SekName As String, IniFileName As String)
     nTemp = WritePrivateProfileString(SekName, vbNullString, vbNullString, IniFileName)
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  IniLongPrivate
-'!  Переменные  :  SekName As String, KeyName As String, IniFileName As String
-'!                 SekName - имя секции (регистр не учитывается)
-'!                 KeyName - имя ключа (регистр не учитывается)
-'!                 IniFileName - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
-'!  Возвр. знач.:  As Long
-'!                 9999    - возвращаемое функцией значение, если ключ не найден
-'!  Описание    :  Читает целый параметр из любого файла .INI
-'! -----------------------------------------------------------
-'--------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniLongPrivate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Читает целый параметр из любого файла .INI, возвращяет 9999, если ключ не найден]
 '! Parameters  (Переменные):   SekName (String)
 '                              KeyName (String)
 '                              IniFileName (String)
@@ -283,19 +263,9 @@ Public Function IniLongPrivate(ByVal SekName As String, ByVal KeyName As String,
     IniLongPrivate = GetPrivateProfileInt(SekName, KeyName, 9999, IniFileName)
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  IniStringPrivate
-'!  Переменные  :  SekName As String, KeyName As String, IniFileName As String
-'!                 SekName - имя секции (регистр не учитывается)
-'!                 KeyName - имя ключа (регистр не учитывается)
-'!                 IniFileName - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
-'!  Возвр. знач.:  As String
-'!                 "no_key"    - возвращаемое функцией значение, если ключ не найден
-'!  Описание    :  Читает строковый параметр из любого файла .INI
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniStringPrivate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Читает строковый параметр из любого файла .INI,"no_key" - возвращаемое функцией значение, если ключ не найден]
 '! Parameters  (Переменные):   SekName (String)
 '                              KeyName (String)
 '                              IniFileName (String)
@@ -314,19 +284,9 @@ Public Function IniStringPrivate(ByVal SekName As String, ByVal KeyName As Strin
     Erase sTemp
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  IniWriteStrPrivate
-'!  Переменные  :  SekName As String, KeyName As String, Param As String, IniFileName As String
-'!                 SekName - имя секции (регистр не учитывается)
-'!                 KeyName - имя ключа (регистр не учитывается)
-'!                 Param   - значение,записываемое в ключ (не пустая строка)
-'!                 IniFileName - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
-'!  Возвр. знач.:  As Long
-'!  Описание    :  Записывает строковый параметр в любой файл .INI
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub IniWriteStrPrivate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Записывает строковый параметр в любой файл .INI]
 '! Parameters  (Переменные):   SekName (String)
 '                              KeyName (String)
 '                              Param (String)
@@ -336,10 +296,9 @@ Public Sub IniWriteStrPrivate(ByVal SekName As String, ByVal KeyName As String, 
     WritePrivateProfileString SekName, KeyName, Param, IniFileName
 End Sub
 
-'sub to load all keys from an ini section into a listbox.
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function LoadIniSectionKeys
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [load all keys from an ini section]
 '! Parameters  (Переменные):   strSection (String)
 '                              strfullpath (String)
 '                              mbKeys (Boolean = True) As String()
@@ -403,14 +362,9 @@ Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strfullpath
     LoadIniSectionKeys = Z
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  NormFile
-'!  Переменные  :  sFileName As String
-'!  Описание    :  Привидение ини файла в "читабельный" вид
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub NormIniFile
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Привидение ини файла в "читабельный" вид]
 '! Parameters  (Переменные):   sFileName (String)
 '!--------------------------------------------------------------------------------
 Public Sub NormIniFile(ByVal sFileName As String)

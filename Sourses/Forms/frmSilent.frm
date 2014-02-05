@@ -173,6 +173,7 @@ Option Explicit
 
 Private miTimerSecond As Integer
 Private strFormName   As String
+Private m_Caption     As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -273,7 +274,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Лейблы
     lblTimerText.Caption = LocaliseString(StrPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
     lblTimeInSec.Caption = LocaliseString(StrPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
@@ -300,3 +301,15 @@ Private Sub tmrSilent_Timer()
     miTimerSecond = miTimerSecond - 1
     lblTimer.Caption = miTimerSecond
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

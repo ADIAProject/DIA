@@ -149,14 +149,9 @@ Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, ByVal dwLCType As Lo
 
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  LoadLanguageList
-'!  Переменные  :
-'!  Описание    :  Загрузка списка языков
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function LoadLanguageList
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Загрузка списка языков]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function LoadLanguageList() As Boolean

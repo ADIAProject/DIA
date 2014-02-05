@@ -3242,6 +3242,7 @@ Private strTableUtilHeader2 As String
 Private strTableUtilHeader3 As String
 Private strTableUtilHeader4 As String
 Private strFormName         As String
+Private m_Caption           As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -4199,7 +4200,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     frOptions.Caption = LocaliseString(StrPathFile, strFormName, "frOptions", frOptions.Caption)
     ' Описание режимов
     optRezim_Intellect.Caption = LocaliseString(StrPathFile, strFormNameMain, "RezimIntellect", optRezim_Intellect.Caption)
@@ -5572,3 +5573,15 @@ Dim strTTipTextTitle As String
         SetTTFontProperties TT
     End With
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

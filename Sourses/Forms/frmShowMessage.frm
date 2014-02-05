@@ -108,6 +108,7 @@ Option Explicit
 Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private strFormName      As String
+Private m_Caption        As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -212,7 +213,7 @@ Private Sub Form_Resize()
     With Me
 
         If .WindowState <> vbMinimized Then
-            If OsCurrVersionStruct.VerFull >= "6.0" Then
+            If OSCurrVersionStruct.VerFull >= "6.0" Then
                 miDeltaFrm = 125
             Else
 
@@ -254,3 +255,15 @@ Private Sub Form_Resize()
     End With
 
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

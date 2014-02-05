@@ -65,14 +65,9 @@ Public Function APIFunctionPresent(ByVal FunctionName As String, ByVal DLLName A
     DebugMode vbTab & "APIFunctionPresent: " & FunctionName & "=" & APIFunctionPresent, 2
 End Function
 
-'! -----------------------------------------------------------
-'!  Функция     :  DLLOCX
-'!  Переменные  :  ByVal hWnd As Long, ByVal Path As String, ByVal Register As Boolean
-'!  Описание    :  Регистрация компонента ActiveX при необходимости (файл берется из ресурсов)
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function DLLOCX
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Регистрация компонента ActiveX при необходимости (файл берется из ресурсов)]
 '! Parameters  (Переменные):   lngHWnd (Long)
 '                              Path (String)
 '                              mbRegister (Boolean)
@@ -164,14 +159,9 @@ Public Sub RegisterAddComponent()
     DebugMode "RegisterAddComponent - Finish"
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  RegOCX
-'!  Переменные  :  strPathOCX As String, strReference As String, strVerOcx
-'!  Описание    :  Функция регистрация внешнего компонента
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function RegOCX
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Функция регистрация внешнего компонента]
 '! Parameters  (Переменные):   strPathOcx (String)
 '                              strReference (String)
 '                              strVerOcx (String)
@@ -273,7 +263,7 @@ StartRegOCXForce:
 
                 'Прерываем обновление библиотеки, если винда выше 2003
                 If InStr(regParam, "vbscript.dll") Then
-                    If OsCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
+                    If OSCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
                         DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
 
                         Exit Function
@@ -323,7 +313,7 @@ StartRegOCXForce:
 
                 'Прерываем обновление библиотеки, если винда выше 2003 или 64x
                 If InStr(regParam, "vbscript.dll") Then
-                    If OsCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
+                    If OSCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
                         DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
 
                         Exit Function

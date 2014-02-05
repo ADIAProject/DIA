@@ -516,6 +516,7 @@ Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private lngDeviceCount   As Long
 Private strFormName      As String
+Private m_Caption        As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -793,7 +794,7 @@ Public Sub FormLoadAction()
     End If
 
     LoadList_Device False
-    Me.Caption = Me.Caption & " (Find: " & lvDevices.ListItems.Count & ")"
+    Me.CaptionW = Me.CaptionW & " (Find: " & lvDevices.ListItems.Count & ")"
     lngDeviceCount = lvDevices.ListItems.Count
     LoadListbyMode
     LoadFormCaption
@@ -810,7 +811,7 @@ Private Sub LoadFormCaption()
     Dim MeCaptionView As String
 
     MeCaptionView = LocaliseString(strPCLangCurrentPath, strFormName, strFormName, Me.Caption)
-    Me.Caption = MeCaptionView & " (" & lvDevices.ListItems.Count & " " & strMessages(124) & " " & lngDeviceCount & ")"
+    Me.CaptionW = MeCaptionView & " (" & lvDevices.ListItems.Count & " " & strMessages(124) & " " & lngDeviceCount & ")"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -850,7 +851,7 @@ Private Sub Form_Resize()
 
             Dim miDeltaFrm As Long
 
-            If OsCurrVersionStruct.VerFull >= "6.0" Then
+            If OSCurrVersionStruct.VerFull >= "6.0" Then
                 miDeltaFrm = 125
             Else
 
@@ -1157,7 +1158,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.Caption = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
@@ -1448,3 +1449,15 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
     End With
 
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

@@ -16,7 +16,7 @@ Private Const LVIF_INDENT     As Long = &H10
 Private Const LVM_GETITEMTEXT As Long = (LVM_FIRST + 45)
 
 Private Type LVITEM_lp
-    Mask                                    As Long
+    Mask                                As Long
     iItem                               As Long
     iSubItem                            As Long
     State                               As Long

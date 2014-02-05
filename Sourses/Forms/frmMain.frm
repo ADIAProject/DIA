@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.Ocx"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "Помощник установки драйверов (Drivers Installer Assistant)"
@@ -1296,10 +1296,7 @@ Public mbIgnorStatusHwid            As Boolean
 Public mbDRVNotInstall              As Boolean
 
 Private m_Caption                   As String
-Private Const WM_SETTEXT = &HC
-Private Const WM_GETTEXT = &HD
-Private Const WM_GETTEXTLENGTH = &HE
-Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
 '! Description (Описание)  :   [Обработка События нажатия кнопки]
@@ -3444,14 +3441,9 @@ Public Sub CreateProgressNew()
     DoEvents
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  DeleteUnUsedBase
-'!  Переменные  :
-'!  Описание    :  Очистка лишних файлов БД
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DeleteUnUsedBase
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Очистка лишних файлов БД]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub DeleteUnUsedBase()
@@ -6611,11 +6603,6 @@ Private Sub mnuHelp_Click()
     RunUtilsShell cmdString, False
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuHistory_Click
-'!  Переменные  :
-'!  Описание    :  Меню - История изменений
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuHistory_Click
 '! Description (Описание)  :   [Меню - История изменений]
@@ -6758,14 +6745,9 @@ Private Sub mnuLoadOtherPC_Click()
     frmEmulate.Show vbModal, Me
 End Sub
 
-'! -----------------------------------------------------------
-'!  Функция     :  mnuModulesVersion_Click
-'!  Переменные  :
-'!  Описание    :  Меню - Версии модулей
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuModulesVersion_Click
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Меню - Версии модулей]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuModulesVersion_Click()
@@ -7889,7 +7871,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             End If
         End If
 
-        If TT.Tools.Count >= Index Then
+        If TT.Tools.Count > 0 And TT.Tools.Count >= Index Then
             TT.Tools.Item(Index).Text = strTTipText
         Else
             TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
@@ -9957,6 +9939,3 @@ Public Property Get CaptionW() As String
     CaptionW = Space$(strLen)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
-
-
-
