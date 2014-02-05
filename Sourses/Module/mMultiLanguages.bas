@@ -19,6 +19,7 @@ Public strPCLangLocaliseName          As String
 Public strPCLangEngName               As String
 Public strPCLangCurrentPath           As String
 Public strPCLangCurrentID             As String
+Public strPCLangCurrentLangName       As String
 
 'язык программы при старте
 Public mbAutoLanguage                 As Boolean
@@ -220,6 +221,7 @@ Public Function LoadLanguageList() As Boolean
                 If InStr(1, strTemp, strPCLangID, vbTextCompare) Then
                     strPCLangCurrentPath = arrLanguage(1, ii + 1)
                     strPCLangCurrentID = strPCLangID
+                    strPCLangCurrentLangName = arrLanguage(2, ii + 1)
                     lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, ii + 1)))
                 End If
 
@@ -229,6 +231,7 @@ Public Function LoadLanguageList() As Boolean
                     If InStr(1, strTemp, strStartLanguageID, vbTextCompare) Then
                         strPCLangCurrentPath = arrLanguage(1, ii + 1)
                         strPCLangCurrentID = strStartLanguageID
+                        strPCLangCurrentLangName = arrLanguage(2, ii + 1)
                         lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, ii + 1)))
                     End If
                 End If

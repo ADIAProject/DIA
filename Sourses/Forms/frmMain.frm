@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.Ocx"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.OCX"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "Помощник установки драйверов (Drivers Installer Assistant)"
@@ -9,7 +9,7 @@ Begin VB.Form frmMain
    ClientWidth     =   11265
    DrawStyle       =   6  'Inside Solid
    BeginProperty Font 
-      Name            =   "Courier New"
+      Name            =   "Tahoma"
       Size            =   8.25
       Charset         =   204
       Weight          =   400
@@ -46,15 +46,6 @@ Begin VB.Form frmMain
       Align           =   2  'Align Bottom
       AutoSize        =   -1  'True
       BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   525
       Left            =   0
       ScaleHeight     =   525
@@ -765,15 +756,6 @@ Begin VB.Form frmMain
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
             DrawStyle       =   5  'Transparent
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   240
@@ -790,15 +772,6 @@ Begin VB.Form frmMain
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
             DrawStyle       =   5  'Transparent
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   510
             Left            =   6840
@@ -814,15 +787,6 @@ Begin VB.Form frmMain
             AutoRedraw      =   -1  'True
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   6000
@@ -838,15 +802,6 @@ Begin VB.Form frmMain
             AutoRedraw      =   -1  'True
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   5160
@@ -862,15 +817,6 @@ Begin VB.Form frmMain
             AutoRedraw      =   -1  'True
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   4320
@@ -886,15 +832,6 @@ Begin VB.Form frmMain
             AutoRedraw      =   -1  'True
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   3480
@@ -910,15 +847,6 @@ Begin VB.Form frmMain
             AutoRedraw      =   -1  'True
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   2640
@@ -934,15 +862,6 @@ Begin VB.Form frmMain
             AutoRedraw      =   -1  'True
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   1800
@@ -959,15 +878,6 @@ Begin VB.Form frmMain
             AutoSize        =   -1  'True
             BackColor       =   &H00F0D4C0&
             DrawStyle       =   5  'Transparent
-            BeginProperty Font 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
             ForeColor       =   &H80000008&
             Height          =   495
             Left            =   960
@@ -1385,6 +1295,11 @@ Private strTTipTextHeaders          As String       ' Заголовок для Подсказки па
 Public mbIgnorStatusHwid            As Boolean
 Public mbDRVNotInstall              As Boolean
 
+Private m_Caption                   As String
+Private Const WM_SETTEXT = &HC
+Private Const WM_GETTEXT = &HD
+Private Const WM_GETTEXTLENGTH = &HE
+Private Declare Function DefWindowProc Lib "user32" Alias "DefWindowProcW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
 '! Description (Описание)  :   [Обработка События нажатия кнопки]
@@ -1985,10 +1900,10 @@ Private Sub ChangeFrmMainCaption(Optional ByVal lngPercentage As Long)
     End If
 
     If LenB(strThisBuildBy) = 0 Then
-        Me.Caption = strProgressValue & strFrmMainCaptionTemp & " v." & strProductVersion & " @" & App.CompanyName
+        Me.CaptionW = strProgressValue & strFrmMainCaptionTemp & " v." & strProductVersion & " @" & App.CompanyName & " - " & strPCLangCurrentLangName
         ' & strProgressValue
     Else
-        Me.Caption = strProgressValue & strFrmMainCaptionTemp & " v." & strProductVersion & " " & strThisBuildBy
+        Me.CaptionW = strProgressValue & strFrmMainCaptionTemp & " v." & strProductVersion & " " & strThisBuildBy & " - " & strPCLangCurrentLangName
         ' & strProgressValue
     End If
 
@@ -6761,6 +6676,7 @@ Private Sub mnuLang_Click(Index As Integer)
     strPathLng = arrLanguage(1, i)
     strPCLangCurrentPath = strPathLng
     strPCLangCurrentIDTemp = arrLanguage(3, i)
+    strPCLangCurrentLangName = arrLanguage(2, i)
     lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, i)))
 
     If InStr(strPCLangCurrentIDTemp, ";") Then
@@ -6769,6 +6685,8 @@ Private Sub mnuLang_Click(Index As Integer)
     Else
         strPCLangCurrentID = strPCLangCurrentIDTemp
     End If
+    
+    
 
     ' Собственно локализация
     Localise strPCLangCurrentPath
@@ -6779,6 +6697,8 @@ Private Sub mnuLang_Click(Index As Integer)
         .Size = lngFontMainForm_Size
         .Charset = lngFont_Charset
     End With
+    
+    ChangeFrmMainCaption
 
     ChangeStatusTextAndDebug strMessages(142) & " " & arrLanguage(2, i), , , False
     FindCheckCount False
@@ -10026,4 +9946,17 @@ Private Function IsFormLoaded(FormName As String) As Boolean
 
     IsFormLoaded = False
 End Function
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+
 

@@ -1134,7 +1134,7 @@ Attribute ShowPrinter.VB_Description = "Displays the printer dialog box."
 Dim PDLG As PRINTDLG, DMODE As DEVMODE, DNAMES As DEVNAMES
 Dim lpDevMode As Long, lpDevNames As Long
 Dim ObjPrinter As VB.Printer, NewPrinterName As String, Buffer As String
-PDLG.lStructSize = Len(PDLG)
+PDLG.lStructSize = Len(PDLG) ' LenB() is not applicable due to padding bytes.
 If Not Screen.ActiveForm Is Nothing Then
     PDLG.hWndOwner = Screen.ActiveForm.hWnd
 Else
@@ -1165,7 +1165,6 @@ If VB.Printers.Count > 0 And (PDLG.Flags And CdlPDReturnDefault) = 0 Then
     DNAMES.wDefault = 0
     Buffer = Left$(.DriverName & vbNullChar & .DeviceName & vbNullChar & .Port & vbNullChar, CCHDEVNAMESEXTRA)
     CopyMemory DNAMES.wExtra(0), ByVal StrPtr(Buffer), LenB(Buffer)
-    PDLG.hDC = .hDC
     PDLG.nCopies = .Copies
     PDLG.hDevMode = GlobalAlloc(GMEM_MOVEABLE Or GMEM_ZEROINIT, LenB(DMODE))
     lpDevMode = GlobalLock(PDLG.hDevMode)
@@ -1196,25 +1195,32 @@ If RetVal <> 0 Then
     GlobalUnlock PDLG.hDevNames
     GlobalFree PDLG.hDevNames
     NewPrinterName = Left$(DMODE.DMDeviceName(), InStr(DMODE.DMDeviceName(), vbNullChar) - 1)
+    Dim PrinterFound As Boolean
     If StrComp(VB.Printer.DeviceName, NewPrinterName, vbTextCompare) <> 0 Then
         For Each ObjPrinter In VB.Printers
             If StrComp(ObjPrinter.DeviceName, NewPrinterName, vbTextCompare) = 0 Then
                 Set VB.Printer = ObjPrinter
+                PrinterFound = True
+                Exit For
             End If
         Next ObjPrinter
+    Else
+        PrinterFound = True
     End If
-    If PropPrinterDefault = True Then Call CheckPrinterDefault(NewPrinterName)
-    On Error Resume Next
-    With VB.Printer
-    .Copies = DMODE.DMCopies
-    .Duplex = DMODE.DMDuplex
-    .Orientation = DMODE.DMOrientation
-    .PaperSize = DMODE.DMPaperSize
-    .PrintQuality = DMODE.DMPrintQuality
-    .ColorMode = DMODE.DMColor
-    .PaperBin = DMODE.DMDefaultSource
-    End With
-    On Error GoTo 0
+    If PropPrinterDefault = True Then Call SetPrinterDefault(NewPrinterName)
+    If PrinterFound = True Then
+        On Error Resume Next
+        With VB.Printer
+        .Copies = DMODE.DMCopies
+        .Duplex = DMODE.DMDuplex
+        .Orientation = DMODE.DMOrientation
+        .PaperSize = DMODE.DMPaperSize
+        .PrintQuality = DMODE.DMPrintQuality
+        .ColorMode = DMODE.DMColor
+        .PaperBin = DMODE.DMDefaultSource
+        End With
+        On Error GoTo 0
+    End If
     PropFlags = PDLG.Flags
     If (PropFlags And CdlPDUseDevModeCopiesAndCollate) <> 0 Then
         If DMODE.DMCollate = 1 And (PropFlags And CdlPDCollate) = 0 Then PropFlags = PropFlags Or CdlPDCollate
@@ -1223,7 +1229,7 @@ If RetVal <> 0 Then
     PropToPage = CIntToUInt(PDLG.nToPage)
     PropMin = CIntToUInt(PDLG.nMinPage)
     PropMax = CIntToUInt(PDLG.nMaxPage)
-    If (PDLG.Flags And (CdlPDReturnDC Or CdlPDReturnIC)) <> 0 Then PropDC = PDLG.hDC
+    If (PropFlags And (CdlPDReturnDC Or CdlPDReturnIC)) <> 0 Then PropDC = PDLG.hDC
     ShowPrinter = True
 Else
     If PDLG.hDevMode <> 0 Then GlobalFree PDLG.hDevMode
@@ -1300,7 +1306,6 @@ If VB.Printers.Count > 0 And (PDLGEX.Flags And CdlPDReturnDefault) = 0 Then
     DNAMES.wDefault = 0
     Buffer = Left$(.DriverName & vbNullChar & .DeviceName & vbNullChar & .Port & vbNullChar, CCHDEVNAMESEXTRA)
     CopyMemory DNAMES.wExtra(0), ByVal StrPtr(Buffer), LenB(Buffer)
-    PDLGEX.hDC = .hDC
     PDLGEX.nCopies = .Copies
     PDLGEX.hDevMode = GlobalAlloc(GMEM_MOVEABLE Or GMEM_ZEROINIT, LenB(DMODE))
     lpDevMode = GlobalLock(PDLGEX.hDevMode)
@@ -1325,25 +1330,32 @@ If ErrVal = S_OK Then
         GlobalUnlock PDLGEX.hDevNames
         GlobalFree PDLGEX.hDevNames
         NewPrinterName = Left$(DMODE.DMDeviceName(), InStr(DMODE.DMDeviceName(), vbNullChar) - 1)
+        Dim PrinterFound As Boolean
         If StrComp(VB.Printer.DeviceName, NewPrinterName, vbTextCompare) <> 0 Then
             For Each ObjPrinter In VB.Printers
                 If StrComp(ObjPrinter.DeviceName, NewPrinterName, vbTextCompare) = 0 Then
                     Set VB.Printer = ObjPrinter
+                    PrinterFound = True
+                    Exit For
                 End If
             Next ObjPrinter
+        Else
+            PrinterFound = True
         End If
-        If PropPrinterDefault = True Then Call CheckPrinterDefault(NewPrinterName)
-        On Error Resume Next
-        With VB.Printer
-        .Copies = DMODE.DMCopies
-        .Duplex = DMODE.DMDuplex
-        .Orientation = DMODE.DMOrientation
-        .PaperSize = DMODE.DMPaperSize
-        .PrintQuality = DMODE.DMPrintQuality
-        .ColorMode = DMODE.DMColor
-        .PaperBin = DMODE.DMDefaultSource
-        End With
-        On Error GoTo 0
+        If PropPrinterDefault = True Then Call SetPrinterDefault(NewPrinterName)
+        If PrinterFound = True Then
+            On Error Resume Next
+            With VB.Printer
+            .Copies = DMODE.DMCopies
+            .Duplex = DMODE.DMDuplex
+            .Orientation = DMODE.DMOrientation
+            .PaperSize = DMODE.DMPaperSize
+            .PrintQuality = DMODE.DMPrintQuality
+            .ColorMode = DMODE.DMColor
+            .PaperBin = DMODE.DMDefaultSource
+            End With
+            On Error GoTo 0
+        End If
         PropFlags = PDLGEX.Flags
         If (PropFlags And CdlPDUseDevModeCopiesAndCollate) <> 0 Then
             If DMODE.DMCollate = 1 And (PropFlags And CdlPDCollate) = 0 Then PropFlags = PropFlags Or CdlPDCollate
@@ -1352,7 +1364,7 @@ If ErrVal = S_OK Then
         PropToPage = PPAGERANGE.nToPage
         PropMin = PDLGEX.nMinPage
         PropMax = PDLGEX.nMaxPage
-        If (PDLGEX.Flags And (CdlPDReturnDC Or CdlPDReturnIC)) <> 0 Then PropDC = PDLGEX.hDC
+        If (PropFlags And (CdlPDReturnDC Or CdlPDReturnIC)) <> 0 Then PropDC = PDLGEX.hDC
         ShowPrinterEx = PDLGEX.dwResultAction
     Else
         If PropCancelError = True Then Err.Raise Number:=CdlCancel, Description:="Cancel was selected."
@@ -1449,21 +1461,28 @@ If RetVal <> 0 Then
     GlobalUnlock PSDLG.hDevNames
     GlobalFree PSDLG.hDevNames
     NewPrinterName = Left$(DMODE.DMDeviceName(), InStr(DMODE.DMDeviceName(), vbNullChar) - 1)
+    Dim PrinterFound As Boolean
     If StrComp(VB.Printer.DeviceName, NewPrinterName, vbTextCompare) <> 0 Then
         For Each ObjPrinter In VB.Printers
             If StrComp(ObjPrinter.DeviceName, NewPrinterName, vbTextCompare) = 0 Then
                 Set VB.Printer = ObjPrinter
+                PrinterFound = True
+                Exit For
             End If
         Next ObjPrinter
+    Else
+        PrinterFound = True
     End If
-    If PropPrinterDefault = True Then Call CheckPrinterDefault(NewPrinterName)
-    On Error Resume Next
-    With VB.Printer
-    .Orientation = DMODE.DMOrientation
-    .PaperSize = DMODE.DMPaperSize
-    .PaperBin = DMODE.DMDefaultSource
-    End With
-    On Error GoTo 0
+    If PropPrinterDefault = True Then Call SetPrinterDefault(NewPrinterName)
+    If PrinterFound = True Then
+        On Error Resume Next
+        With VB.Printer
+        .Orientation = DMODE.DMOrientation
+        .PaperSize = DMODE.DMPaperSize
+        .PaperBin = DMODE.DMDefaultSource
+        End With
+        On Error GoTo 0
+    End If
     PropFlags = PSDLG.Flags
     PropPageLeftMargin = PSDLG.RCMargin.Left
     PropPageTopMargin = PSDLG.RCMargin.Top
@@ -1504,7 +1523,7 @@ Else
 End If
 End Function
 
-Private Sub CheckPrinterDefault(ByVal NewPrinterName As String)
+Private Sub SetPrinterDefault(ByVal NewPrinterName As String)
 Dim Length As Long
 GetDefaultPrinter 0, Length
 If Length > 0 Then

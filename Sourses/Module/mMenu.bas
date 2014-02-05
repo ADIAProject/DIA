@@ -10,7 +10,7 @@ Private Declare Function GetMenuItemCount Lib "user32.dll" (ByVal hMenu As Long)
 Private Declare Function GetMenuItemInfo Lib "user32.dll" Alias "GetMenuItemInfoA" (ByVal hMenu As Long, ByVal un As Long, ByVal B As Boolean, lpMenuItemInfo As MENUITEMINFO) As Boolean
 
 Private Type MENUITEMINFO
-    cbSize                                  As Long
+    cbSize                              As Long
     fMask                               As Long
     fType                               As Long
     fState                              As Long
@@ -23,14 +23,9 @@ Private Type MENUITEMINFO
     cch                                 As Long
 End Type
 
-'! -----------------------------------------------------------
-'!  Функция     :  OpenContextMenu
-'!  Переменные  :  FormName As Form, MenuName As Menu
-'!  Описание    :  вызов контекстного меню
-'! -----------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub OpenContextMenu
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [вызов контекстного меню]
 '! Parameters  (Переменные):   FormName (Form)
 '                              MenuName (Menu)
 '!--------------------------------------------------------------------------------

@@ -89,14 +89,14 @@ Private Declare Function GdipCreateImageAttributes Lib "gdiplus.dll" (ByRef imag
 Private Declare Function GdipDisposeImageAttributes Lib "gdiplus.dll" (ByVal imageattr As Long) As Long
 
 Private Type RECT
-    Left                                    As Long
+    Left                                As Long
     Top                                 As Long
     Right                               As Long
     Bottom                              As Long
 End Type
 
 Private Type MENUINFO
-    cbSize                                  As Long
+    cbSize                              As Long
     fMask                               As Long
     dwStyle                             As Long
     cyMax                               As Long
@@ -106,7 +106,7 @@ Private Type MENUINFO
 End Type
 
 Private Type MENUITEMINFO
-    cbSize                                  As Long
+    cbSize                              As Long
     fMask                               As Long
     fType                               As Long
     fState                              As Long
@@ -121,7 +121,7 @@ Private Type MENUITEMINFO
 End Type
 
 Private Type MEASUREITEMSTRUCT
-    CtlType                                 As Long
+    CtlType                             As Long
     CtlID                               As Long
     itemID                              As Long
     itemWidth                           As Long
@@ -130,7 +130,7 @@ Private Type MEASUREITEMSTRUCT
 End Type
 
 Private Type DRAWITEMSTRUCT
-    CtlType                                 As Long
+    CtlType                             As Long
     CtlID                               As Long
     itemID                              As Long
     itemAction                          As Long
@@ -142,7 +142,7 @@ Private Type DRAWITEMSTRUCT
 End Type
 
 Private Type ICONINFO
-    fIcon                                   As Long
+    fIcon                               As Long
     XHotspot                            As Long
     YHotspot                            As Long
     hBMMask                             As Long
@@ -150,13 +150,13 @@ Private Type ICONINFO
 End Type
 
 Private Type IconHeader
-    ihReserved                              As Integer
+    ihReserved                          As Integer
     ihType                              As Integer
     ihCount                             As Integer
 End Type
 
 Private Type IconEntry
-    ieWidth                                 As Byte
+    ieWidth                             As Byte
     ieHeight                            As Byte
     ieColorCount                        As Byte
     ieReserved                          As Byte
@@ -167,14 +167,14 @@ Private Type IconEntry
 End Type
 
 Private Type ARGB
-    Blue                                    As Byte
+    Blue                                As Byte
     Green                               As Byte
     Red                                 As Byte
     Alpha                               As Byte
 End Type
 
 Private Type BitmapData
-    Width                                   As Long
+    Width                               As Long
     Height                              As Long
     Stride                              As Long
     PixelFormat                         As Long
@@ -183,7 +183,7 @@ Private Type BitmapData
 End Type
 
 Private Type BITMAPINFOHEADER
-    biSize                                  As Long
+    biSize                              As Long
     biWidth                             As Long
     biHeight                            As Long
     biPlanes                            As Integer
@@ -213,7 +213,7 @@ Private Type COLORMATRIX
 End Type
 
 Private Type MemoDIB
-    hDC                                     As Long
+    hDC                                 As Long
     hDIB                                As Long
     Ptr                                 As Long
 End Type

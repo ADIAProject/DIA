@@ -572,3 +572,15 @@ End Sub
 Private Sub ucPathUtil_PathChanged()
     cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
 End Sub
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+

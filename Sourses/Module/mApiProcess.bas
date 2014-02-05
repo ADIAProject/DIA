@@ -24,3 +24,4 @@ Public Declare Function WriteProcessMemory Lib "kernel32.dll" (ByVal hProcess As
 Public Declare Function CloseHandle Lib "kernel32.dll" (ByVal hObject As Long) As Long
 Public Declare Function GetExitCodeProcess Lib "kernel32.dll" (ByVal hProcess As Long, ByRef lpExitCode As Long) As Long
 Public Declare Function GetCurrentProcess Lib "kernel32.dll" () As Long
+Public Declare Function DefWindowProc Lib "user32.dll" Alias "DefWindowProcW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long

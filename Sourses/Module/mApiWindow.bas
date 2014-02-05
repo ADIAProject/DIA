@@ -38,6 +38,8 @@ Public Const WM_NOTIFY          As Long = &H4E
 Public Const WM_NCACTIVATE      As Long = &H86
 Public Const WM_ACTIVATE        As Long = &H6
 Public Const WM_SETTEXT         As Long = &HC
+Public Const WM_GETTEXT         As Long = &HD
+Public Const WM_GETTEXTLENGTH   As Long = &HE
 Public Const WM_KILLFOCUS       As Long = &H8
 Public Const EM_SETREADONLY     As Long = &HCF
 Public Const EM_NOSETFOCUS      As Long = (&H1500 + 7)
@@ -137,6 +139,8 @@ Public Declare Function EnumChildWindows Lib "user32.dll" (ByVal hWndParent As L
 Public Declare Function GetClassLong Lib "user32.dll" Alias "GetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Public Declare Function SetClassLong Lib "user32.dll" Alias "SetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Public Declare Function SetWindowTextW Lib "user32" (ByVal hWnd As Long, ByVal lpString As Long) As Long
+
 'Public Declare Function GetActiveWindow Lib "user32" () As Long
 'Public Declare Function GetForegroundWindow Lib "user32" () As Long
 'Public Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long

@@ -937,10 +937,7 @@ End Sub
 
 Private Sub UserControl_Hide()
 On Error Resume Next
-If UserControl.Parent Is Nothing Then
-    Call RemoveVTableSubclassIRichEditOleCallback(Me)
-    Call DestroyRichTextBox
-End If
+If UserControl.Parent Is Nothing Then If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal 0&
 On Error GoTo 0
 End Sub
 

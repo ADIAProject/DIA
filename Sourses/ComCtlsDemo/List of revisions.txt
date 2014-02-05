@@ -1,5 +1,9 @@
 List of revisions:
 
+04-Feb-2014
+- Improved the bugfix concerning the UserControl_Terminate event in the RichTextBox control.
+  Also solves the issue that 'IRichEditOleCallback' gets broken when repeatedly loading a RichTextBox control.
+
 31-Jan-2014
 - Finally, the printer dialogs in the CommonDialog class are now unicode aware.
 - Included the PrinterDefault property to the CommonDialog class.
