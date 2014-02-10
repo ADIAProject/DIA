@@ -800,17 +800,6 @@ Public Property Let EnabledCtrl(ByVal New_Enabled As Boolean)
     Refresh
 End Property
 
-'Public Property Get Font() As Font
-'    Set Font = m_TextFont
-'
-'End Property
-'Public Property Set Font(ByVal New_Font As Font)
-'    Set m_TextFont = New_Font
-'    Set UserControl.Font = New_Font
-'    PropertyChanged "Font"
-'    UserControl_Resize
-'
-'End Property
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property Font
 '! Description (Описание)  :   [type_description_here]
