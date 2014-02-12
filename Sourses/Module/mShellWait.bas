@@ -147,7 +147,7 @@ End Enum
 '·······································    T Y P E   D E C L A R A T I O N S    ·······································
 '=======================================================================================================================
 '=======================================================================================================================
-Private Type POINT     'The POINT structure defines the x- and y- coordinates of a point.
+Private Type POINTAPI     'The POINT structure defines the x- and y- coordinates of a point.
     X                                       As Long       'The x-coordinate of the point.
     Y                                       As Long       'The y-coordinate of the point.
 End Type            'http://msdn.microsoft.com/en-us/library/dd162805(v=vs.85).aspx
@@ -162,8 +162,8 @@ Private Type Msg
     Message                                 As Long   'The message identifier. Applications can only use the low word; the high word is reserved by the system.
     wParam                                  As Long   'Additional information about the message. The exact meaning depends on the value of the message member.
     lParam                                  As Long   'Additional information about the message. The exact meaning depends on the value of the message member.
-    time                                    As Long   'The time at which the message was posted.
-    PT                                      As POINT  'The cursor position, in screen coordinates, when the message was posted.
+    Time                                    As Long   'The time at which the message was posted.
+    PT                                      As POINTAPI  'The cursor position, in screen coordinates, when the message was posted.
 End Type
 
 '=======================================================================================================================

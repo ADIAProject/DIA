@@ -97,11 +97,11 @@ Public Const TOOLTIPS_CLASSA     As String = "tooltips_class32"
 Public Const WM_GETMINMAXINFO    As Long = &H24
 
 Public Type MINMAXINFO
-    ptReserved                          As POINT
-    ptMaxSize                           As POINT
-    ptMaxPosition                       As POINT
-    ptMinTrackSize                      As POINT
-    ptMaxTrackSize                      As POINT
+    ptReserved                          As POINTAPI
+    ptMaxSize                           As POINTAPI
+    ptMaxPosition                       As POINTAPI
+    ptMinTrackSize                      As POINTAPI
+    ptMaxTrackSize                      As POINTAPI
 End Type
 
 Public Type Resize
@@ -135,13 +135,10 @@ Public Declare Function UpdateWindow Lib "user32.dll" (ByVal hWnd As Long) As Lo
 Public Declare Function FindWindowEx Lib "user32.dll" Alias "FindWindowExA" (ByVal hWnd1 As Long, ByVal hWnd2 As Long, ByVal lpsz1 As String, ByVal lpsz2 As String) As Long
 Public Declare Function EnumThreadWindows Lib "user32.dll" (ByVal dwThreadId As Long, ByVal lpfn As Long, ByVal lParam As Long) As Long
 Public Declare Function GetWindowThreadProcessId Lib "user32.dll" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
-Public Declare Function SetWindowText Lib "user32.dll" Alias "SetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String) As Long
-Public Declare Function GetWindowText Lib "user32.dll" Alias "GetWindowTextA" (ByVal hWnd As Long, ByVal lpString As String, ByVal cch As Long) As Long
 Public Declare Function EnumChildWindows Lib "user32.dll" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
 Public Declare Function GetClassLong Lib "user32.dll" Alias "GetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Public Declare Function SetClassLong Lib "user32.dll" Alias "SetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
-Public Declare Function SetWindowTextW Lib "user32" (ByVal hWnd As Long, ByVal lpString As Long) As Long
 
 'Public Declare Function GetActiveWindow Lib "user32" () As Long
 'Public Declare Function GetForegroundWindow Lib "user32" () As Long

@@ -127,7 +127,7 @@ Private Type RECT
     Bottom                              As Long
 End Type
 
-Private Type POINT
+Private Type POINTAPI
     X                                   As Long
     Y                                   As Long
 End Type
@@ -142,7 +142,7 @@ Private Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function GetSysColor Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function SetTextColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
-Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINT) As Long
+Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
 Private Declare Function SetCapture Lib "user32.dll" (ByVal hWnd As Long) As Long
 Private Declare Function WindowFromPoint Lib "user32.dll" (ByVal X As Long, ByVal Y As Long) As Long
@@ -1385,7 +1385,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-    Dim P As POINT
+    Dim P As POINTAPI
 
     GetCursorPos P
 
@@ -1417,7 +1417,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-    Dim P As POINT
+    Dim P As POINTAPI
 
     ReleaseCapture
 

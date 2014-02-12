@@ -32,8 +32,7 @@ Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long)
 
 ' ------------
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-
-'Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Sub CreateStreamOnHGlobal Lib "ole32.dll" (ByRef hGlobal As Any, ByVal fDeleteOnRelease As Long, ByRef ppstm As Any)
 Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function CallWindowProc Lib "user32.dll" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function VirtualAlloc Lib "kernel32.dll" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
@@ -48,8 +47,7 @@ Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
 Private Declare Function LoadImage Lib "user32.dll" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal dwImageType As Long, ByVal dwDesiredWidth As Long, ByVal dwDesiredHeight As Long, ByVal dwFlags As Long) As Long
 Private Declare Function GetIconInfo Lib "user32.dll" (ByVal hIcon As Long, ByRef pIconInfo As ICONINFO) As Long
 Private Declare Function DestroyIcon Lib "user32.dll" (ByVal hIcon As Long) As Long
-Private Declare Function VarPtrArray Lib "msvbvm60.dll" Alias "VarPtr" (Ptr() As Any) As Long
-Private Declare Sub CreateStreamOnHGlobal Lib "ole32.dll" (ByRef hGlobal As Any, ByVal fDeleteOnRelease As Long, ByRef ppstm As Any)
+Private Declare Function ArrPtr Lib "msvbvm60.dll" Alias "VarPtr" (ByRef Var() As Any) As Long
 Private Declare Function GetObjectType Lib "gdi32.dll" (ByVal hgdiobj As Long) As Long
 Private Declare Function SetMenuItemInfo Lib "user32.dll" Alias "SetMenuItemInfoA" (ByVal hMenu As Long, ByVal uItem As Long, ByVal fByPosition As Long, lpmii As MENUITEMINFO) As Long
 Private Declare Function GetMenuItemInfo Lib "user32.dll" Alias "GetMenuItemInfoA" (ByVal hMenu As Long, ByVal un As Long, ByVal B As Boolean, ByRef lpMenuItemInfo As MENUITEMINFO) As Long
@@ -110,7 +108,7 @@ Private Type MENUITEMINFO
     fMask                               As Long
     fType                               As Long
     fState                              As Long
-    wID                                 As Long
+    wid                                 As Long
     hSubMenu                            As Long
     hbmpChecked                         As Long
     hbmpUnchecked                       As Long
@@ -487,7 +485,7 @@ Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, P
 
     End If
 
-    sKey = hSubMenu & "-" & MII.wID
+    sKey = hSubMenu & "-" & MII.wid
 
     With MII
         '.cbSize = Len(MII)
@@ -542,7 +540,7 @@ Public Function PutImageToApiMenu(ByVal imageID As Long, ByVal hMenu As Long, By
 
     End If
 
-    sKey = hMenu & "-" & MII.wID
+    sKey = hMenu & "-" & MII.wid
 
     With MII
         .fMask = MIIM_BITMAP Or MIIM_DATA
@@ -881,7 +879,7 @@ Public Function AddImageFromStream(ByRef bvData() As Byte, Optional bGhosted As 
     Dim hIcon  As Long
     Dim hBmp   As Long
 
-    If Not IsArrayDim(VarPtrArray(bvData)) Then
+    If Not IsArrayDim(ArrPtr(bvData)) Then
 
         Exit Function
 

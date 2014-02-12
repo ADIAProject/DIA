@@ -1,5 +1,10 @@
 List of revisions:
 
+10-Feb-2014
+- Included the ShowFind/ShowReplace function in the CommonDialog class.
+- Fixed a bug in the DTPicker control concerning the handling of the DTN_DATETIMECHANGE notification.
+- Minor bug fix in the Find function on the RichTextBox control.
+
 04-Feb-2014
 - Improved the bugfix concerning the UserControl_Terminate event in the RichTextBox control.
   Also solves the issue that 'IRichEditOleCallback' gets broken when repeatedly loading a RichTextBox control.

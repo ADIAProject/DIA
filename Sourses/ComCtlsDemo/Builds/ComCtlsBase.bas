@@ -48,8 +48,29 @@ dwBuildNumber As Long
 dwPlatformID As Long
 szCSDVersion(0 To ((128 * 2) - 1)) As Byte
 End Type
+Private Type POINTAPI
+X As Long
+Y As Long
+End Type
+Private Type TMSG
+hWnd As Long
+Message As Long
+wParam As Long
+lParam As Long
+Time As Long
+PT As POINTAPI
+End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function SetWindowsHookEx Lib "user32" Alias "SetWindowsHookExW" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
+Private Declare Function UnhookWindowsHookEx Lib "user32" (ByVal hHook As Long) As Long
+Private Declare Function CallNextHookEx Lib "user32" (ByVal hHook As Long, ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function GetActiveWindow Lib "user32" () As Long
+Private Declare Function GetFocus Lib "user32" () As Long
+Private Declare Function GetTickCount Lib "kernel32" () As Long
+Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
+Private Declare Function GetAsyncKeyState Lib "user32" (ByVal VKey As Long) As Integer
+Private Declare Function IsDialogMessage Lib "user32" Alias "IsDialogMessageW" (ByVal hDialog As Long, ByRef lpMsg As TMSG) As Long
 Private Declare Function DllGetVersion Lib "comctl32" (ByRef pdvi As DLLVERSIONINFO) As Long
 Private Declare Function GetVersionEx Lib "kernel32" Alias "GetVersionExW" (ByRef lpVersionInfo As OSVERSIONINFO) As Long
 Private Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryW" (ByVal lpLibFileName As Long) As Long
@@ -81,6 +102,8 @@ Private Const WM_DESTROY As Long = &H2
 Private Const WM_NCDESTROY As Long = &H82
 Private Const WM_UAHDESTROYWINDOW As Long = &H90
 Private ShellModHandle As Long, ShellModCount As Long
+Private CdlShowFindReplaceHookHandle As Long
+Private CdlShowFindReplaceDialogHandle() As Long, CdlShowFindReplaceDialogCount As Long
 
 #If ImplementIDEStopProtection = True Then
 
@@ -461,6 +484,77 @@ End If
 CdlShowFolderCallback = 0
 End Function
 
+Public Sub CdlShowFindReplaceAddHook(ByVal hDialog As Long)
+If (CdlShowFindReplaceHookHandle Or CdlShowFindReplaceDialogCount) = 0 Then
+    Const WH_KEYBOARD As Long = 2
+    CdlShowFindReplaceHookHandle = SetWindowsHookEx(WH_KEYBOARD, AddressOf CdlShowFindReplaceKeyboardHookProc, 0, App.ThreadID)
+    ReDim CdlShowFindReplaceDialogHandle(0) As Long
+    CdlShowFindReplaceDialogHandle(0) = hDialog
+Else
+    ReDim Preserve CdlShowFindReplaceDialogHandle(0 To CdlShowFindReplaceDialogCount) As Long
+    CdlShowFindReplaceDialogHandle(CdlShowFindReplaceDialogCount) = hDialog
+End If
+CdlShowFindReplaceDialogCount = CdlShowFindReplaceDialogCount + 1
+End Sub
+
+Public Sub CdlShowFindReplaceReleaseHook(ByVal hDialog As Long)
+CdlShowFindReplaceDialogCount = CdlShowFindReplaceDialogCount - 1
+If CdlShowFindReplaceDialogCount = 0 And CdlShowFindReplaceHookHandle <> 0 Then
+    UnhookWindowsHookEx CdlShowFindReplaceHookHandle
+    CdlShowFindReplaceHookHandle = 0
+    Erase CdlShowFindReplaceDialogHandle()
+Else
+    If CdlShowFindReplaceDialogCount > 0 Then
+        Dim i As Long
+        For i = 0 To CdlShowFindReplaceDialogCount
+            If CdlShowFindReplaceDialogHandle(i) = hDialog And i < CdlShowFindReplaceDialogCount Then
+                CdlShowFindReplaceDialogHandle(i) = CdlShowFindReplaceDialogHandle(i + 1)
+            End If
+        Next i
+        ReDim Preserve CdlShowFindReplaceDialogHandle(0 To CdlShowFindReplaceDialogCount - 1) As Long
+    End If
+End If
+End Sub
+
+Private Function CdlShowFindReplaceKeyboardHookProc(ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Const HC_ACTION As Long = 0
+If nCode = HC_ACTION Then
+    Dim hWnd As Long, IsDialogWindow As Boolean
+    hWnd = GetActiveWindow()
+    If CdlShowFindReplaceDialogCount > 0 Then
+        Dim i As Long
+        For i = 0 To CdlShowFindReplaceDialogCount - 1
+            If hWnd = CdlShowFindReplaceDialogHandle(i) Then
+                IsDialogWindow = True
+                Exit For
+            End If
+        Next i
+    End If
+    If IsDialogWindow = True Then
+        Dim Msg As TMSG
+        With Msg
+        .hWnd = GetFocus()
+        .Time = GetTickCount()
+        GetCursorPos .PT
+        .wParam = wParam
+        .lParam = lParam
+        If (GetAsyncKeyState(wParam) And &H8000&) = &H8000& Then
+            Const WM_KEYDOWN = &H100
+            .Message = WM_KEYDOWN
+        Else
+            Const WM_KEYUP = &H101
+            .Message = WM_KEYUP
+        End If
+        End With
+        If IsDialogMessage(hWnd, Msg) <> 0 Then
+            CdlShowFindReplaceKeyboardHookProc = 1
+        Else
+            CdlShowFindReplaceKeyboardHookProc = CallNextHookEx(CdlShowFindReplaceHookHandle, nCode, wParam, lParam)
+        End If
+    End If
+End If
+End Function
+
 Public Sub ComCtlsInitIDEStopProtection()
 
 #If ImplementIDEStopProtection = True Then
@@ -515,6 +609,16 @@ For Each AppForm In Forms
         End Select
     Next CurrControl
 Next AppForm
+If CdlShowFindReplaceDialogCount > 0 Then
+    Dim DialogHandle() As Long
+    DialogHandle() = CdlShowFindReplaceDialogHandle()
+    Const WM_CLOSE As Long = &H10
+    Dim i As Long
+    For i = 0 To CdlShowFindReplaceDialogCount - 1
+        SendMessage DialogHandle(i), WM_CLOSE, 0, ByVal 0&
+        DoEvents
+    Next i
+End If
 End Sub
 
 Private Function HookIATEntry(ByVal Module As String, ByVal Lib As String, ByVal Fnc As String, ByVal NewAddr As Long) As Long

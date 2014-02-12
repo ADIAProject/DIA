@@ -96,12 +96,28 @@ Private Const notify_mode_wait As Integer = 2
 Private Const notify_mode_hide As Integer = 3
 
 Private notify_mode            As Long
+Private strFormName            As String
 
+'Api-Declare
 Private Const SW_SHOWNA        As Integer = 8
+Private Const GRADIENT_FILL_RECT_V As Long = &H1
 
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+Private Declare Function GradientFill Lib "msimg32.dll" (ByVal hDC As Long, pVertex As TRIVERTEX, ByVal dwNumVertex As Long, pMesh As GRADIENT_RECT, ByVal dwNumMesh As Long, ByVal dwMode As Long) As Long
 
-Private strFormName As String
+Private Type TRIVERTEX
+    X                                   As Long
+    Y                                   As Long
+    Red                                 As Integer    'ushort value
+    Green                               As Integer    'ushort value
+    Blue                                As Integer    'ushort value
+    Alpha                               As Integer    'ushort value
+End Type
+
+Private Type GRADIENT_RECT
+    UpperLeft                           As Long
+    LowerRight                          As Long
+End Type
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange

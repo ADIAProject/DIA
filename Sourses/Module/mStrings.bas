@@ -10,11 +10,13 @@ Private m_A()       As Long
 Private m_AP        As Long
 Private m_H(0 To 6) As Long
 Private m_HP        As Long
-Private Declare Sub GetMem4 Lib "msvbvm60" (ByVal Ptr As Long, Value As Long)
-Private Declare Sub PutMem4 Lib "msvbvm60" (ByVal Ptr As Long, ByVal Value As Long)
+Private Declare Sub GetMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, Value As Long)
+Private Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, ByVal Value As Long)
+Private Declare Function ArrPtr Lib "msvbvm60.dll" Alias "VarPtr" (ByRef Var() As Any) As Long
 Private Declare Function InitStringArray Lib "oleaut32.dll" Alias "SafeArrayCreate" (Optional ByVal VarType As VbVarType = vbString, Optional ByVal Dims As Integer = 1, Optional saBound As Currency) As Long
 Private Declare Function SysAllocStringByteLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
 Private Declare Function SysAllocStringLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property API

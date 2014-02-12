@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "10/02/2014"
+Public Const strDateProgram         As String = "12/02/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -227,7 +227,7 @@ Private Sub Main()
     ' Программа уже запущена???
     If App.PrevInstance And Not InIDE() Then
         MsgBoxEx "Found a running application 'Drivers Installer Assistant'. If you restart the program from the settings menu, then save the settings, the program waits until the previous session..." & str2vbNewLine & _
-                                    "This window will close automatically in 5 seconds. Please wait or click OK", 6, vbExclamation + vbSystemModal, strProductName
+                                    "This window will close automatically in 5 seconds. Please wait or click OK", vbExclamation + vbSystemModal, strProductName, 6
         ShowPrevInstance
     Else
         '******************************************

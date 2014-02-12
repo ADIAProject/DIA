@@ -638,9 +638,9 @@ Private m_Forecolor        As OLE_COLOR
 Private m_hWnd             As Long
 Private m_MultiSelect      As Boolean
 Private m_Path             As String
-Private m_Pnt              As POINT
+Private m_Pnt              As POINTAPI
 Private m_PrevBackColor    As OLE_COLOR
-Private m_PrevLoc          As POINT
+Private m_PrevLoc          As POINTAPI
 Private m_State            As pbStateEnum
 Private m_ToolTipText(2)   As String
 Private m_Theme            As pbThemeEnum
@@ -2152,9 +2152,9 @@ End Property
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Function GetCursorPosition() As POINT
+Private Function GetCursorPosition() As POINTAPI
 
-    Dim PT      As POINT
+    Dim PT      As POINTAPI
     Dim lWidth  As Long
     Dim lHeight As Long
 

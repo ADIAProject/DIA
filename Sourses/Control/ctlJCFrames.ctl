@@ -228,7 +228,7 @@ Private Type RECT
     Bottom                              As Long
 End Type
 
-Private Type POINT
+Private Type POINTAPI
     X                                   As Long
     Y                                   As Long
 End Type
@@ -270,7 +270,7 @@ Private Declare Function SetRect Lib "user32.dll" (lpRect As RECT, ByVal X1 As L
 Private Declare Function RoundRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal Left As Long, ByVal Top As Long, ByVal Right As Long, ByVal Bottom As Long, ByVal EllipseWidth As Long, ByVal EllipseHeight As Long) As Long
 Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
 Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
-Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINT) As Long
+Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
 Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
@@ -285,7 +285,7 @@ Private Declare Function CreateCompatibleBitmap Lib "gdi32.dll" (ByVal hDC As Lo
 Private Declare Function DrawIconEx Lib "user32.dll" (ByVal hDC As Long, ByVal XLeft As Long, ByVal YTop As Long, ByVal hIcon As Long, ByVal CXWidth As Long, ByVal CYWidth As Long, ByVal istepIfAniCur As Long, ByVal hbrFlickerFreeDraw As Long, ByVal diFlags As Long) As Long
 Private Declare Function BitBlt Lib "gdi32.dll" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal dwRop As Long) As Long
 Private Declare Function GetDIBits Lib "gdi32.dll" (ByVal aHDC As Long, ByVal hBitmap As Long, ByVal nStartScan As Long, ByVal nNumScans As Long, lpBits As Any, lpBI As BITMAPINFO, ByVal wUsage As Long) As Long
-Private Declare Function SetDIBitsToDevice Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal dx As Long, ByVal dy As Long, ByVal srcX As Long, ByVal srcY As Long, ByVal Scan As Long, ByVal NumScans As Long, Bits As Any, BitsInfo As BITMAPINFO, ByVal wUsage As Long) As Long
+Private Declare Function SetDIBitsToDevice Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal DX As Long, ByVal DY As Long, ByVal srcX As Long, ByVal srcY As Long, ByVal Scan As Long, ByVal NumScans As Long, Bits As Any, BitsInfo As BITMAPINFO, ByVal wUsage As Long) As Long
 Private Declare Function GetNearestColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
 
@@ -419,7 +419,7 @@ Private jcTextDrawParams         As Long
 Private jcColorTo                As OLE_COLOR
 Private jcColorFrom              As OLE_COLOR
 Private jcColorBorderPic         As OLE_COLOR
-Private jcLpp                    As POINT
+Private jcLpp                    As POINTAPI
 
 Private Const TEXT_INACTIVE      As Long = &H80000011    '&H6A6A6A
 Private Const m_Border_Inactive  As Long = &H8000000B
@@ -501,7 +501,7 @@ End Property
 Private Sub APILineEx(lhdcEx As Long, X1 As Long, Y1 As Long, X2 As Long, Y2 As Long, lColor As Long)
 
     'Use the API LineTo for Fast Drawing
-    Dim PT      As POINT
+    Dim PT      As POINTAPI
     Dim hPen    As Long
     Dim hPenOld As Long
 
@@ -528,7 +528,7 @@ Private Function APIRectangle(ByVal lngHDc As Long, ByVal X As Long, ByVal Y As 
     'Draw an api rectangle
     Dim hPen    As Long
     Dim hPenOld As Long
-    Dim PT      As POINT
+    Dim PT      As POINTAPI
 
     hPen = CreatePen(0, 1, lColor)
     hPenOld = SelectObject(lngHDc, hPen)
@@ -689,7 +689,7 @@ Private Sub Draw_InnerWedge(R_Caption As RECT)
     Dim R               As RECT
     Dim m_roundedRadius As Long
     Dim hFRgn           As Long
-    Dim poly(1 To 4)    As POINT
+    Dim poly(1 To 4)    As POINTAPI
     Dim NumCoords       As Long
     Dim hBrush          As Long
     Dim hRgn            As Long
@@ -836,7 +836,7 @@ Private Sub Draw_OuterWedge(R_Caption As RECT)
     Dim R               As RECT
     Dim r1              As RECT
     Dim m_roundedRadius As Long
-    Dim poly(1 To 4)    As POINT
+    Dim poly(1 To 4)    As POINTAPI
     Dim NumCoords       As Long
     Dim hBrush          As Long
     Dim hRgn            As Long

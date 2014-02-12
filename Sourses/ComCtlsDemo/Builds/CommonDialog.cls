@@ -13,7 +13,7 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 #If False Then
-Private CdlCancel, CdlBufferTooSmall, CdlInvalidFileName, CdlSubclassFailure, CdlMaxLessThanMin, CdlNoFonts, CdlPrinterNotFound, CdlCreateICFailure, CdlDndmMismatch, CdlNoDefaultPrn, CdlNoDevices, CdlInitFailure, CdlGetDevModeFail, CdlLoadDrvFailure, CdlRetDefFailure, CdlParseFailure, CdlHelp
+Private CdlCancel, CdlBufferTooSmall, CdlInvalidFileName, CdlSubclassFailure, CdlMaxLessThanMin, CdlNoFonts, CdlPrinterNotFound, CdlCreateICFailure, CdlDndmMismatch, CdlNoDefaultPrn, CdlNoDevices, CdlInitFailure, CdlGetDevModeFail, CdlLoadDrvFailure, CdlRetDefFailure, CdlParseFailure, CdlHelp, CdlBufferLengthZero
 Private CdlOFNReadOnly, CdlOFNOverwritePrompt, CdlOFNHideReadOnly, CdlOFNNoChangeDir, CdlOFNHelpButton, CdlOFNNoValidate, CdlOFNAllowMultiSelect, CdlOFNExtensionDifferent, CdlOFNPathMustExist, CdlOFNFileMustExist, CdlOFNCreatePrompt, CdlOFNShareAware, CdlOFNNoReadOnlyReturn, CdlOFNNoNetworkButton, CdlOFNExplorer, CdlOFNNoDereferenceLinks, CdlOFNDontAddToRecent, CdlOFNForcesShowHidden
 Private CdlCCRGBInit, CdlCCFullOpen, CdlCCPreventFullOpen, CdlCCHelpButton, CdlCCSolidColor, CdlCCAnyColor
 Private CdlCFScreenFonts, CdlCFPrinterFonts, CdlCFHelpButton, CdlCFEffects, CdlCFScriptsOnly, CdlCFNoVectorFonts, CdlCFLimitSize, CdlCFFixedPitchOnly, CdlCFForceFontExist, CdlCFScalableOnly, CdlCFTTOnly, CdlCFNoFaceSel, CdlCFNoStyleSel, CdlCFNoSizeSel, CdlCFSelectScript, CdlCFNoScriptSel, CdlCFNoVertFonts
@@ -22,6 +22,7 @@ Private CdlPDResultCancel, CdlPDResultPrint, CdlPDResultApply
 Private CdlHelpContext, CdlHelpQuit, CdlHelpIndex, CdlHelpContents, CdlHelpHelpOnHelp, CdlHelpSetIndex, CdlHelpSetContents, CdlHelpContextPopup, CdlHelpForceFile, CdlHelpKey, CdlHelpCommandHelp, CdlHelpPartialKey
 Private CdlPSDDefaultMinMargins, CdlPSDMinMargins, CdlPSDMargins, CdlPSDInThousandthsOfInches, CdlPSDInHundredthsOfMillimeters, CdlPSDDisableMargins, CdlPSDDisablePrinter, CdlPSDNoWarning, CdlPSDDisableOrientation, CdlPSDDisablePaper, CdlPSDReturnDefault, CdlPSDHelpButton, CdlPSDDisablePagePainting, CdlPSDNoNetworkButton
 Private CdlBIFReturnOnlyFSDirs, CdlBIFDontGoBelowDomain, CdlBIFReturnFSAncestors, CdlBIFEditBox, CdlBIFNewDialogStyle, CdlBIFBrowseIncludeURLs, CdlBIFUseNewUI, CdlBIFUAHint, CdlBIFNoNewFolderButton, CdlBIFNoTranslateTargets, CdlBIFBrowseForComputer, CdlBIFBrowseForPrinter, CdlBIFBrowseIncludeFiles, CdlBIFShareable, CdlBIFBrowseFileJunctions
+Private CdlFRDown, CdlFRWholeWord, CdlFRMatchCase, CdlFRFindNext, CdlFRReplace, CdlFRReplaceAll, CdlFRHelpButton, CdlFRNoUpDown, CdlFRNoMatchCase, CdlFRNoWholeWord, CdlFRHideUpDown, CdlFRHideMatchCase, CdlFRHideWholeWord
 #End If
 Private Const FNERR_BUFFERTOOSMALL As Long = &H3003
 Private Const FNERR_INVALIDFILENAME As Long = &H3002
@@ -38,6 +39,7 @@ Private Const PDERR_GETDEVMODEFAIL As Long = &H1005
 Private Const PDERR_LOADDRVFAILURE As Long = &H1004
 Private Const PDERR_RETDEFFAILURE As Long = &H1003
 Private Const PDERR_PARSEFAILURE As Long = &H1002
+Private Const FRERR_BUFFERLENGTHZERO As Long = &H4001
 Public Enum CdlErrorConstants
 CdlCancel = 32755
 CdlBufferTooSmall = 20476
@@ -56,6 +58,7 @@ CdlLoadDrvFailure = 28667
 CdlRetDefFailure = 28668
 CdlParseFailure = 28669
 CdlHelp = 32751
+CdlBufferLengthZero = 36848
 End Enum
 Private Const OFN_READONLY As Long = &H1
 Private Const OFN_OVERWRITEPROMPT As Long = &H2
@@ -112,6 +115,7 @@ End Enum
 Private Const CF_SCREENFONTS As Long = &H1
 Private Const CF_PRINTERFONTS As Long = &H2
 Private Const CF_SHOWHELP As Long = &H4
+Private Const CF_INITTOLOGFONTSTRUCT As Long = &H40 ' Internal use only
 Private Const CF_EFFECTS As Long = &H100
 Private Const CF_SCRIPTSONLY As Long = &H400
 Private Const CF_NOVECTORFONTS As Long = &H800
@@ -280,6 +284,35 @@ CdlBIFBrowseForPrinter = BIF_BROWSEFORPRINTER
 CdlBIFBrowseIncludeFiles = BIF_BROWSEINCLUDEFILES
 CdlBIFShareable = BIF_SHAREABLE
 CdlBIFBrowseFileJunctions = BIF_BROWSEFILEJUNCTIONS
+End Enum
+Private Const FR_DOWN As Long = &H1
+Private Const FR_WHOLEWORD As Long = &H2
+Private Const FR_MATCHCASE As Long = &H4
+Private Const FR_FINDNEXT As Long = &H8
+Private Const FR_REPLACE As Long = &H10
+Private Const FR_REPLACEALL As Long = &H20
+Private Const FR_DIALOGTERM As Long = &H40 ' Internal use only
+Private Const FR_SHOWHELP As Long = &H80
+Private Const FR_NOUPDOWN As Long = &H400
+Private Const FR_NOMATCHCASE As Long = &H800
+Private Const FR_NOWHOLEWORD As Long = &H1000
+Private Const FR_HIDEUPDOWN As Long = &H4000
+Private Const FR_HIDEMATCHCASE As Long = &H8000
+Private Const FR_HIDEWHOLEWORD As Long = &H10000
+Public Enum CdlFRConstants
+CdlFRDown = FR_DOWN
+CdlFRWholeWord = FR_WHOLEWORD
+CdlFRMatchCase = FR_MATCHCASE
+CdlFRFindNext = FR_FINDNEXT
+CdlFRReplace = FR_REPLACE
+CdlFRReplaceAll = FR_REPLACEALL
+CdlFRHelpButton = FR_SHOWHELP
+CdlFRNoUpDown = FR_NOUPDOWN
+CdlFRNoMatchCase = FR_NOMATCHCASE
+CdlFRNoWholeWord = FR_NOWHOLEWORD
+CdlFRHideUpDown = FR_HIDEUPDOWN
+CdlFRHideMatchCase = FR_HIDEMATCHCASE
+CdlFRHideWholeWord = FR_HIDEWHOLEWORD
 End Enum
 Private Type RECT
 Left As Long
@@ -489,8 +522,27 @@ lpfnCallback As Long
 lParam As Long
 iImage As Long
 End Type
+Private Type FINDREPLACE
+lStructSize As Long
+hWndOwner As Long
+hInstance As Long
+Flags As Long
+lpstrFindWhat As Long
+lpstrReplaceWith As Long
+wFindWhatLen As Integer
+wReplaceWithLen As Integer
+lCustData As Long
+lpfnHook As Long
+lpTemplateName As Long
+End Type
 Public Event Help(ByRef Handled As Boolean, ByVal Action As Integer, ByVal hDialog As Long)
 Attribute Help.VB_Description = "Occurs when the user clicks the Help button."
+Public Event FindNext()
+Attribute FindNext.VB_Description = "Occurs when the user clicked the find next button in a find or replace dialog box."
+Public Event Replace()
+Attribute Replace.VB_Description = "Occurs when the user clicked the replace button in a replace dialog box."
+Public Event ReplaceAll()
+Attribute ReplaceAll.VB_Description = "Occurs when the user clicked the replace all button in a replace dialog box."
 Private Declare Sub CoTaskMemFree Lib "ole32" (ByVal hMem As Long)
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function CommDlgExtendedError Lib "comdlg32" () As Long
@@ -501,6 +553,7 @@ Private Declare Function ChooseFont Lib "comdlg32" Alias "ChooseFontW" (ByRef lp
 Private Declare Function WinHelp Lib "user32" Alias "WinHelpW" (ByVal hWnd As Long, ByVal lpHelpFile As Long, ByVal wCommand As Long, ByVal dwData As Long) As Long
 Private Declare Function GetSysColor Lib "user32" (ByVal nIndex As Long) As Long
 Private Declare Function GetActiveWindow Lib "user32" () As Long
+Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
 Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Private Declare Function SHBrowseForFolder Lib "shell32" Alias "SHBrowseForFolderW" (ByRef lpBrowseInfo As BROWSEINFO) As Long
@@ -515,18 +568,27 @@ Private Declare Function PrintDialogEx Lib "comdlg32" Alias "PrintDlgExW" (ByRef
 Private Declare Function PageSetupDialog Lib "comdlg32" Alias "PageSetupDlgW" (ByRef lpPageSetupDlg As PAGESETUPDLG) As Long
 Private Declare Function GetDefaultPrinter Lib "winspool.drv" Alias "GetDefaultPrinterW" (ByVal lpszPrinterName As Long, ByRef cch As Long) As Long
 Private Declare Function SetDefaultPrinter Lib "winspool.drv" Alias "SetDefaultPrinterW" (ByVal lpszPrinterName As Long) As Long
+Private Declare Function FindText Lib "comdlg32" Alias "FindTextW" (ByRef lpFindReplace As FINDREPLACE) As Long
+Private Declare Function ReplaceText Lib "comdlg32" Alias "ReplaceTextW" (ByRef lpFindReplace As FINDREPLACE) As Long
+Private Declare Function lstrlen Lib "kernel32" Alias "lstrlenW" (ByVal lpString As Long) As Long
 Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
 Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
 Private Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
 Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
 Private Const HELPMSGSTRING As String = "commdlg_help"
+Private Const FINDMSGSTRING As String = "commdlg_FindReplace"
 Private Const GMEM_MOVEABLE As Long = &H2
 Private Const GMEM_ZEROINIT As Long = &H40
 Private Const MAX_PATH As Long = 260
 Private Const S_OK As Long = &H0
 Implements ISubclass
 Private CommonDialogHelpMsg As Long
+Private CommonDialogFindMsg As Long
+Private CommonDialogFR As FINDREPLACE
+Private CommonDialogFRDialogHandle As Long
+Private CommonDialogFRBufferFindWhat As String
+Private CommonDialogFRBufferReplaceWith As String
 Private PropCancelError As Boolean
 Private PropTag As String
 Private PropDC As Long
@@ -549,10 +611,24 @@ Private PropHelpFile As String
 Private PropHelpCommand As CdlHelpConstants
 Private PropHelpContext As Long
 Private PropHelpKey As String
+Private PropFindWhat As String
+Private PropReplaceWith As String
 
 Private Sub Class_Initialize()
 PropMaxFileSize = MAX_PATH
 Set PropFont = New StdFont
+End Sub
+
+Private Sub Class_Terminate()
+If CommonDialogFRDialogHandle <> 0 Then
+    If IsWindow(CommonDialogFRDialogHandle) = 0 Then
+        Call CdlShowFindReplaceReleaseHook(CommonDialogFRDialogHandle)
+    Else
+        Const WM_CLOSE As Long = &H10
+        SendMessage CommonDialogFRDialogHandle, WM_CLOSE, 0, ByVal 0&
+        DoEvents
+    End If
+End If
 End Sub
 
 Public Property Get Object() As Object
@@ -831,6 +907,24 @@ Public Property Let HelpKey(ByVal Value As String)
 PropHelpKey = Value
 End Property
 
+Public Property Get FindWhat() As String
+Attribute FindWhat.VB_Description = "Returns/sets the search string for the dialog box."
+FindWhat = PropFindWhat
+End Property
+
+Public Property Let FindWhat(ByVal Value As String)
+PropFindWhat = Value
+End Property
+
+Public Property Get ReplaceWith() As String
+Attribute ReplaceWith.VB_Description = "Returns/sets the replacement string for the dialog box."
+ReplaceWith = PropReplaceWith
+End Property
+
+Public Property Let ReplaceWith(ByVal Value As String)
+PropReplaceWith = Value
+End Property
+
 Public Property Get Action() As Integer
 Attribute Action.VB_Description = "Sets the type of dialog box to be displayed."
 Attribute Action.VB_UserMemId = 0
@@ -855,6 +949,10 @@ Select Case Value
         Me.ShowPageSetup
     Case 8
         Me.ShowFolder
+    Case 9
+        Me.ShowFind
+    Case 10
+        Me.ShowReplace
     Case Else
         Err.Raise 380
 End Select
@@ -1056,7 +1154,6 @@ End Function
 
 Public Function ShowFont() As Boolean
 Attribute ShowFont.VB_Description = "Displays the font dialog box."
-Const CF_INITTOLOGFONTSTRUCT As Long = &H40
 Dim CHFONT As TCHOOSEFONT, LF As LOGFONT
 Call OLEFontToLogFont(PropFont, LF)
 With CHFONT
@@ -1596,13 +1693,138 @@ Else
 End If
 End Function
 
+Public Function ShowFind() As Long
+Attribute ShowFind.VB_Description = "Displays the find dialog box."
+If CommonDialogFRDialogHandle <> 0 Then Exit Function
+Dim FR As FINDREPLACE
+LSet CommonDialogFR = FR
+With CommonDialogFR
+.lStructSize = LenB(CommonDialogFR)
+If Not Screen.ActiveForm Is Nothing Then
+    .hWndOwner = Screen.ActiveForm.hWnd
+Else
+    .hWndOwner = GetActiveWindow()
+End If
+.Flags = PropFlags
+CommonDialogFRBufferFindWhat = PropFindWhat
+If StrPtr(CommonDialogFRBufferFindWhat) = 0 Then CommonDialogFRBufferFindWhat = ""
+.lpstrFindWhat = StrPtr(CommonDialogFRBufferFindWhat)
+.wFindWhatLen = 256
+End With
+If (PropFlags And CdlFRHelpButton) = CdlFRHelpButton Then
+    If CommonDialogHelpMsg = 0 Then CommonDialogHelpMsg = RegisterWindowMessage(StrPtr(HELPMSGSTRING))
+End If
+If CommonDialogFindMsg = 0 Then CommonDialogFindMsg = RegisterWindowMessage(StrPtr(FINDMSGSTRING))
+CommonDialogFRDialogHandle = FindText(CommonDialogFR)
+If CommonDialogFRDialogHandle <> 0 Then
+    With CommonDialogFR
+    .lCustData = CommonDialogFRDialogHandle
+    Call ComCtlsSetSubclass(.hWndOwner, Me, 9, FINDMSGSTRING & "_9_" & CStr(.lCustData))
+    Call CdlShowFindReplaceAddHook(.lCustData)
+    ShowFind = .lCustData
+    End With
+Else
+    Dim ErrVal As Long
+    ErrVal = CommDlgExtendedError()
+    Select Case ErrVal
+        Case FRERR_BUFFERLENGTHZERO
+            Err.Raise Number:=CdlBufferLengthZero, Description:="The buffer at which the member LpstrFindWhat points is invalid."
+        Case Else
+            Err.Raise Number:=ErrVal, Description:="Unexpected error."
+    End Select
+End If
+End Function
+
+Public Function ShowReplace() As Long
+Attribute ShowReplace.VB_Description = "Displays the replace dialog box."
+If CommonDialogFRDialogHandle <> 0 Then Exit Function
+Dim FR As FINDREPLACE
+LSet CommonDialogFR = FR
+With CommonDialogFR
+.lStructSize = LenB(CommonDialogFR)
+If Not Screen.ActiveForm Is Nothing Then
+    .hWndOwner = Screen.ActiveForm.hWnd
+Else
+    .hWndOwner = GetActiveWindow()
+End If
+.Flags = PropFlags
+CommonDialogFRBufferFindWhat = PropFindWhat
+If StrPtr(CommonDialogFRBufferFindWhat) = 0 Then CommonDialogFRBufferFindWhat = ""
+.lpstrFindWhat = StrPtr(CommonDialogFRBufferFindWhat)
+CommonDialogFRBufferReplaceWith = PropReplaceWith
+If StrPtr(CommonDialogFRBufferReplaceWith) = 0 Then CommonDialogFRBufferReplaceWith = ""
+.lpstrReplaceWith = StrPtr(CommonDialogFRBufferReplaceWith)
+.wFindWhatLen = 256
+.wReplaceWithLen = 256
+End With
+If (PropFlags And CdlFRHelpButton) = CdlFRHelpButton Then
+    If CommonDialogHelpMsg = 0 Then CommonDialogHelpMsg = RegisterWindowMessage(StrPtr(HELPMSGSTRING))
+End If
+If CommonDialogFindMsg = 0 Then CommonDialogFindMsg = RegisterWindowMessage(StrPtr(FINDMSGSTRING))
+CommonDialogFRDialogHandle = ReplaceText(CommonDialogFR)
+If CommonDialogFRDialogHandle <> 0 Then
+    With CommonDialogFR
+    .lCustData = CommonDialogFRDialogHandle
+    Call ComCtlsSetSubclass(.hWndOwner, Me, 10, FINDMSGSTRING & "_10_" & CStr(.lCustData))
+    Call CdlShowFindReplaceAddHook(.lCustData)
+    ShowReplace = .lCustData
+    End With
+Else
+    Dim ErrVal As Long
+    ErrVal = CommDlgExtendedError()
+    Select Case ErrVal
+        Case FRERR_BUFFERLENGTHZERO
+            Err.Raise Number:=CdlBufferLengthZero, Description:="The buffer at which the member LpstrFindWhat and/or LpstrReplaceWith points is invalid."
+        Case Else
+            Err.Raise Number:=ErrVal, Description:="Unexpected error."
+    End Select
+End If
+End Function
+
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
-If wMsg = CommonDialogHelpMsg Then
-    Dim hWndFocus As Long, Handled As Boolean
+Dim hWndFocus As Long
+If wMsg = CommonDialogHelpMsg And CommonDialogHelpMsg <> 0 Then
+    Dim Handled As Boolean
     hWndFocus = GetFocus()
     RaiseEvent Help(Handled, CInt(dwRefData And &HFFFF&), wParam)
     If GetFocus() <> hWndFocus And hWndFocus <> 0 Then SetFocusAPI hWndFocus
     If Handled = False Then Me.ShowHelp
+End If
+If wMsg = CommonDialogFindMsg And CommonDialogFindMsg <> 0 Then
+    Dim FR As FINDREPLACE
+    CopyMemory ByVal VarPtr(FR), ByVal lParam, LenB(FR)
+    If (FR.lCustData = CommonDialogFRDialogHandle Or FR.lCustData = 0) And CommonDialogFRDialogHandle <> 0 Then
+        If (FR.Flags And FR_DIALOGTERM) = FR_DIALOGTERM Then
+            ISubclass_Message = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+            Call ComCtlsRemoveSubclass(hWnd, FINDMSGSTRING & "_" & CStr(dwRefData) & "_" & CStr(CommonDialogFRDialogHandle))
+            Call CdlShowFindReplaceReleaseHook(CommonDialogFRDialogHandle)
+            CommonDialogFRDialogHandle = 0
+            Exit Function
+        Else
+            PropFlags = FR.Flags
+            Dim Length As Long
+            If FR.lpstrFindWhat <> 0 Then
+                Length = lstrlen(FR.lpstrFindWhat)
+                PropFindWhat = String(Length, vbNullChar)
+                CopyMemory ByVal StrPtr(PropFindWhat), ByVal FR.lpstrFindWhat, Length * 2
+            End If
+            If FR.lpstrReplaceWith <> 0 Then
+                Length = lstrlen(FR.lpstrReplaceWith)
+                PropReplaceWith = String(Length, vbNullChar)
+                CopyMemory ByVal StrPtr(PropReplaceWith), ByVal FR.lpstrReplaceWith, Length * 2
+            End If
+            hWndFocus = GetFocus()
+            Select Case True
+                Case CBool((FR.Flags And CdlFRFindNext) = CdlFRFindNext)
+                    RaiseEvent FindNext
+                Case CBool((FR.Flags And CdlFRReplace) = CdlFRReplace)
+                    RaiseEvent Replace
+                Case CBool((FR.Flags And CdlFRReplaceAll) = CdlFRFindNext)
+                    RaiseEvent ReplaceAll
+            End Select
+            If GetFocus() <> hWndFocus And hWndFocus <> 0 Then SetFocusAPI hWndFocus
+        End If
+    End If
 End If
 ISubclass_Message = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function

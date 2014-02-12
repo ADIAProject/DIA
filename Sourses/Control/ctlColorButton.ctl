@@ -23,15 +23,6 @@ Begin VB.UserControl ctlColorButton
    Begin VB.PictureBox picDropDown 
       AutoRedraw      =   -1  'True
       BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       Height          =   1860
       Left            =   0
       ScaleHeight     =   124
@@ -1150,7 +1141,8 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Function VBColorToRGB(ByVal VBColor As Long) As Long
 
-    If OleTranslateColorByRef(VBColor, 0, VBColorToRGB) Then
+    If OleTranslateColor(VBColor, 0, ByVal VBColorToRGB) Then
+    'If OleTranslateColorByRef(VBColor, 0, VBColorToRGB) Then
         VBColorToRGB = VBColor
     End If
 

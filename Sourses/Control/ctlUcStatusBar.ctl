@@ -125,7 +125,7 @@ Private Type RECT
     Bottom                              As Long
 End Type
 
-Private Type POINT
+Private Type POINTAPI
     X                                   As Long
     Y                                   As Long
 End Type
@@ -167,7 +167,7 @@ Private Declare Function OleTranslateColorByRef Lib "oleaut32.dll" Alias "OleTra
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
-Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINT) As Long
+Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
 Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
@@ -182,14 +182,14 @@ Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, By
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
 Private Declare Function GetCurrentThemeName Lib "uxtheme.dll" (ByVal pszThemeFileName As Long, ByVal dwMaxNameChars As Long, ByVal pszColorBuff As Long, ByVal cchMaxColorChars As Long, ByVal pszSizeBuff As Long, ByVal cchMaxSizeChars As Long) As Long
 Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
-Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINT) As Long
+Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, ByRef qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function FillRect Lib "user32.dll" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal hBrush As Long) As Long
 Private Declare Function InflateRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function GetParent Lib "user32.dll" (ByVal hWnd As Long) As Long
 Private Declare Function SetParent Lib "user32.dll" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
-Private Declare Function ScreenToClient Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINT) As Long
+Private Declare Function ScreenToClient Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function CreateDIBSection8 Lib "gdi32.dll" Alias "CreateDIBSection" (ByVal hDC As Long, pBitmapInfo As BITMAPINFO8, ByVal un As Long, ByVal lplpVoid As Long, ByVal Handle As Long, ByVal dw As Long) As Long
 Private Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 Private Declare Function SetBkMode Lib "gdi32.dll" (ByVal hDC As Long, ByVal nBkMode As Long) As Long
@@ -1153,8 +1153,10 @@ Private Function AlphaBlend(ByVal FirstColor As Long, ByVal SecondColor As Long,
     Dim iForeColor As RGBQUAD
     Dim iBackColor As RGBQUAD
 
-    OleTranslateColorByRef FirstColor, 0, VarPtr(iForeColor)
-    OleTranslateColorByRef SecondColor, 0, VarPtr(iBackColor)
+    'OleTranslateColorByRef FirstColor, 0, VarPtr(iForeColor)
+    'OleTranslateColorByRef SecondColor, 0, VarPtr(iBackColor)
+    OleTranslateColor FirstColor, 0, ByVal VarPtr(iForeColor)
+    OleTranslateColor SecondColor, 0, ByVal VarPtr(iBackColor)
 
     With iForeColor
         .Red = (.Red * AlphaValue + iBackColor.Red * (255 - AlphaValue)) / 255
@@ -1177,7 +1179,7 @@ End Function
 Private Sub APILine(X1 As Long, Y1 As Long, X2 As Long, Y2 As Long, lColor As Long)
 
     'Use the API LineTo for Fast Drawing
-    Dim PT   As POINT
+    Dim PT   As POINTAPI
     Dim hPen As Long, hPenOld               As Long
 
     '   Handle Any Errors
@@ -1434,7 +1436,7 @@ End Property
 Private Function GetPanelIndex() As Long
 
     Dim i      As Long
-    Dim tPt    As POINT
+    Dim tPt    As POINTAPI
     Dim lpRect As RECT
 
     '   Handle Any Errors

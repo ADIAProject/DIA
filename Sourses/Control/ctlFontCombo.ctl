@@ -154,14 +154,14 @@ Dim TailleBuffer          As Long
 Dim Btn                   As RECT
 Dim uRct                  As RECT
 
-Private MouseCoords       As POINT
+Private MouseCoords       As POINTAPI
 
 Dim mXPStyle              As Boolean
 
 Private Declare Function PtInRect Lib "user32.dll" (ByRef lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
-Private Declare Function GetMessage Lib "user32.dll" Alias "GetMessageA" (lpMsg As tMSG, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
-Private Declare Function TranslateMessage Lib "user32.dll" (lpMsg As tMSG) As Long
-Private Declare Function DispatchMessage Lib "user32.dll" Alias "DispatchMessageA" (lpMsg As tMSG) As Long
+Private Declare Function GetMessage Lib "user32.dll" Alias "GetMessageA" (lpMsg As TMSG, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
+Private Declare Function TranslateMessage Lib "user32.dll" (lpMsg As TMSG) As Long
+Private Declare Function DispatchMessage Lib "user32.dll" Alias "DispatchMessageA" (lpMsg As TMSG) As Long
 Private Declare Function RegCreateKey Lib "advapi32.dll" Alias "RegCreateKeyA" (ByVal hkey As Long, ByVal lpSubKey As String, phkResult As Long) As Long
 Private Declare Function RegQueryValueEx Lib "advapi32.dll" Alias "RegQueryValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal lpReserved As Long, lpType As Long, lpData As Any, lpcbData As Long) As Long
 Private Declare Function RegSetValueEx Lib "advapi32.dll" Alias "RegSetValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal Reserved As Long, ByVal dwType As Long, lpData As Any, ByVal cbData As Long) As Long
@@ -230,21 +230,21 @@ Private Enum HkeyLoc
 End Enum
 
 Private Type tpRecents
-    fName                                   As String
+    fName                               As String
     fIndex                              As String
     fRecent                             As Boolean
 End Type
 
-Private Type tMSG
-    hWnd                                    As Long
+Private Type TMSG
+    hWnd                                As Long
     nMsg                                As Long
     wParam                              As Long
     lParam                              As Long
-    time                                As Long
-    PT                                  As POINT
+    Time                                As Long
+    PT                                  As POINTAPI
 End Type
 
-Private Msg As tMSG
+Private Msg As TMSG
 
 Public Event SelectedFontChanged(NewFontName As String)
 Public Event Click()
@@ -598,7 +598,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TmrOver_Timer()
 
-    Dim Pos As POINT
+    Dim Pos As POINTAPI
     Dim WFP As Long
 
     GetCursorPos Pos
@@ -1233,7 +1233,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub ShowFont(fName As String)
 
-    Dim tRc        As RECT
+    Dim TRC        As RECT
     Dim tStr       As String
 
     Static OldFont As String
@@ -1276,8 +1276,8 @@ Private Sub ShowFont(fName As String)
         PicPreview.Left = PicList.Left + PicList.Width
     End If
 
-    SetRect tRc, 0, 0, PicPreview.ScaleWidth, PicPreview.ScaleHeight
-    DrawTxt PicPreview.hDC, tStr, tRc, MiddleCenter, False, True, True
+    SetRect TRC, 0, 0, PicPreview.ScaleWidth, PicPreview.ScaleHeight
+    DrawTxt PicPreview.hDC, tStr, TRC, MiddleCenter, False, True, True
 
     If mShowFontName = True Then
         OleTranslateColor mComboForeColor, 0, tC
@@ -1287,9 +1287,9 @@ Private Sub ShowFont(fName As String)
         PicPreview.FontBold = False
         PicPreview.FontItalic = False
         PicPreview.Height = PicPreview.Height + (PicPreview.TextHeight("X") * Screen.TwipsPerPixelY)
-        SetRect tRc, -1, PicPreview.ScaleHeight - PicPreview.TextHeight("X") - 2, PicPreview.ScaleWidth + 1, PicPreview.ScaleHeight + 1
-        DrawTxt PicPreview.hDC, fName, tRc, MiddleCenter
-        FrameRect PicPreview.hDC, tRc, Br
+        SetRect TRC, -1, PicPreview.ScaleHeight - PicPreview.TextHeight("X") - 2, PicPreview.ScaleWidth + 1, PicPreview.ScaleHeight + 1
+        DrawTxt PicPreview.hDC, fName, TRC, MiddleCenter
+        FrameRect PicPreview.hDC, TRC, Br
         DeleteObject Br
     End If
 

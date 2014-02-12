@@ -1,6 +1,17 @@
 Attribute VB_Name = "mStringFunction"
 Option Explicit
 
+'******************************************************************************************************************************************************************
+' Not use in project
+' Сравнение строк с учетом регистра и без
+'Private Declare Function StrCmpI Lib "shlwapi.dll" Alias "StrCmpIW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
+'Private Declare Function StrCmp Lib "shlwapi.dll" Alias "StrCmpW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
+' конвертация строк с учетом регистра
+'Private Declare Function CharLower Lib "user32.dll" Alias "CharLowerA" (ByVal lpsz As String) As String
+'Private Declare Function CharUpper Lib "user32.dll" Alias "CharUpperA" (ByVal lpsz As String) As String
+'Private Declare Function lstrcat Lib "kernel32.dll" Alias "lstrcatA" (ByVal lpString1 As String, ByVal lpString2 As String) As Long
+'******************************************************************************************************************************************************************
+
 Public Const str2vbNullChar = vbNullChar & vbNullChar
 Public Const str2vbNewLine = vbNewLine & vbNewLine
 Public Const str2VbTab = vbTab & vbTab
@@ -12,16 +23,11 @@ Public Const str7VbTab = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const Percentage = "%"
 Public Const Kavichki = """" 'ChrW$(34)
 
-' Not use in project
-' Сравнение строк с учетм регистра и без
-'Private Declare Function StrCmpI Lib "shlwapi.dll" Alias "StrCmpIW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
-'Private Declare Function StrCmp Lib "shlwapi.dll" Alias "StrCmpW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
-' конвертация строк с учетом регистра
-'Private Declare Function CharLower Lib "user32.dll" Alias "CharLowerA" (ByVal lpsz As String) As String
-'Private Declare Function CharUpper Lib "user32.dll" Alias "CharUpperA" (ByVal lpsz As String) As String
-Public Declare Function lstrlenW Lib "kernel32.dll" (ByVal lpString As Long) As Long
-Public Declare Function lstrcat Lib "kernel32.dll" Alias "lstrcatA" (ByVal lpString1 As String, ByVal lpString2 As String) As Long
-Public Declare Function ArrPtr Lib "msvbvm60.dll" Alias "VarPtr" (Ptr() As Any) As Long
+Private Declare Function lstrlenW Lib "kernel32.dll" (ByVal lpString As Long) As Long
+Private Declare Function MultiByteToWideChar Lib "kernel32.dll" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As Long, ByVal cchMultiByte As Long, ByVal lpWideCharStr As Long, ByVal cchWideChar As Long) As Long
+Private Declare Function SysAllocStringLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
+Private Declare Function WideCharToMultiByte Lib "kernel32.dll" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpWideCharStr As Long, ByVal cchWideChar As Long, ByVal lpMultiByteStr As Long, ByVal cchMultiByte As Long, ByVal lpDefaultChar As Long, lpUsedDefaultChar As Long) As Long
+Private Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, ByVal Value As Long)
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function AppendStr
@@ -497,3 +503,34 @@ Public Function ReplaceBadSymbolInDate(strString As String) As String
     ReplaceBadSymbolInDate = strString
 End Function
 
+Public Function StrConvFromUTF8(Text As String) As String
+    ' get length
+    Dim lngLen As Long, lngPtr As Long: lngLen = LenB(Text)
+    ' has any?
+    If lngLen Then
+        ' create a BSTR over twice that length
+        lngPtr = SysAllocStringLen(0, lngLen * 1.25)
+        ' place it in output variable
+        PutMem4 VarPtr(StrConvFromUTF8), lngPtr
+        ' convert & get output length
+        lngLen = MultiByteToWideChar(65001, 0, ByVal StrPtr(Text), lngLen, ByVal lngPtr, LenB(StrConvFromUTF8))
+        ' resize the buffer
+        StrConvFromUTF8 = Left$(StrConvFromUTF8, lngLen)
+    End If
+End Function
+
+Public Function StrConvToUTF8(Text As String) As String
+    ' get length
+    Dim lngLen As Long, lngPtr As Long: lngLen = LenB(Text)
+    ' has any?
+    If lngLen Then
+        ' create a BSTR over twice that length
+        lngPtr = SysAllocStringLen(0, lngLen * 1.25)
+        ' place it in output variable
+        PutMem4 VarPtr(StrConvToUTF8), lngPtr
+        ' convert & get output length
+        lngLen = WideCharToMultiByte(65001, 0, ByVal StrPtr(Text), Len(Text), ByVal lngPtr, LenB(StrConvToUTF8), ByVal 0&, ByVal 0&)
+        ' resize the buffer
+        StrConvToUTF8 = LeftB$(StrConvToUTF8, lngLen)
+    End If
+End Function

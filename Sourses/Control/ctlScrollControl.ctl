@@ -39,7 +39,7 @@ Private Declare Function GetWindowRect Lib "user32.dll" (ByVal hWnd As Long, ByR
 Private Declare Function ExcludeClipRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Private Declare Function GetFocus Lib "user32.dll" () As Long
 Private Declare Function IsChild Lib "user32.dll" (ByVal hWndParent As Long, ByVal hWnd As Long) As Long
-Private Declare Function ClientToScreen Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINT) As Long
+Private Declare Function ClientToScreen Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function SetCursor Lib "user32.dll" (ByVal hCursor As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
@@ -60,7 +60,7 @@ Private Type RECT
     Bottom                              As Long
 End Type
 
-Private Type POINT
+Private Type POINTAPI
     X                                   As Long
     Y                                   As Long
 End Type
@@ -543,7 +543,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function GetChildRectOfMe(hWnd As Long, ByRef SrcRect As RECT)
 
-    Dim PT As POINT
+    Dim PT As POINTAPI
 
     ClientToScreen UserControl.hWnd, PT
     Call GetWindowRect(hWnd, SrcRect)

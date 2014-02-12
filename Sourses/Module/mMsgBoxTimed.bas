@@ -1,4 +1,4 @@
-Attribute VB_Name = "mTimedMsgBox"
+Attribute VB_Name = "mMsgBoxTimed"
 Option Explicit
 
 ' IMPORTANT NOTE:
@@ -12,6 +12,8 @@ Private Const WH_CBT        As Integer = 5
 Private Const HCBT_ACTIVATE As Integer = 5
 Private Const BN_CLICKED    As Integer = 0
 
+Private Const IDI_APPLICATION As Integer = 32512
+
 ' Used for storing information
 Private m_lMsgHandle        As Long
 Private m_TimeMsgBox        As Long
@@ -20,13 +22,15 @@ Private m_lhHook            As Long
 Private bTimedOut           As Boolean
 Private sMsgText            As String
 
-Private Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameA" (ByVal hWnd As Long, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
+Private Declare Function GetClassName Lib "user32.dll" Alias "GetClassNameW" (ByVal hWnd As Long, ByVal lpClassName As Long, ByVal nMaxCount As Long) As Long
 Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long, ByVal uElapse As Long, ByVal lpTimerFunc As Long) As Long
 Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
 Private Declare Function GetCurrentThreadId Lib "kernel32.dll" () As Long
 Private Declare Function UnhookWindowsHookEx Lib "user32.dll" (ByVal hHook As Long) As Long
-Private Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExA" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
+Private Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExW" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
 Private Declare Function GetDlgCtrlID Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function SetWindowText Lib "user32.dll" Alias "SetWindowTextW" (ByVal hWnd As Long, ByVal lpString As Long) As Long
+Private Declare Function GetWindowText Lib "user32.dll" Alias "GetWindowTextW" (ByVal hWnd As Long, ByVal lpString As Long, ByVal cch As Long) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function EnumChildWindowsProc
@@ -40,10 +44,10 @@ Private Function EnumChildWindowsProc(ByVal lngHWnd As Long, ByVal lParam As Lon
     Dim sClassName As String
 
     sClassName = String$(100, vbNullChar)
-    lRet = GetClassName(lngHWnd, sClassName, Len(sClassName))
+    lRet = GetClassName(lngHWnd, StrPtr(sClassName), 100)
     sClassName = Left$(sClassName, lRet)
 
-    If UCase$(sClassName) = UCase$("Button") Then
+    If StrComp(LCase(sClassName), "button") = 0 Then
         m_lNoHandle = lngHWnd
         EnumChildWindowsProc = 0
     Else
@@ -91,7 +95,7 @@ Private Sub MessageBoxTimerEvent()
     Else
         lButtonCommand = (BN_CLICKED * (2 ^ 16)) And &HFFFF
         lButtonCommand = lButtonCommand Or GetDlgCtrlID(m_lNoHandle)
-        SendMessage m_lMsgHandle, WM_COMMAND, lButtonCommand, m_lNoHandle
+        SendMessage m_lMsgHandle, WM_COMMAND, lButtonCommand, ByVal m_lNoHandle
     End If
 
     m_lMsgHandle = 0
@@ -113,14 +117,14 @@ Private Sub MessageBoxTimerUpdateEvent()
         m_TimeMsgBox = m_TimeMsgBox - 1
 
         If LenB(sMsgText) = 0 Then
-            sStr = Space$(255)
-            lRet = GetWindowText(m_lMsgHandle, sStr, 255)
+            sStr = String$(255, vbNullChar)
+            lRet = GetWindowText(m_lMsgHandle, StrPtr(sStr), 255)
             sStr = Left$(sStr, lRet)
             sMsgText = sStr
         End If
 
         sStr = sMsgText & " (Time left: " & m_TimeMsgBox & " seconds)"
-        SetWindowText m_lMsgHandle, sStr
+        SetWindowText m_lMsgHandle, StrPtr(sStr)
     End If
 
 End Sub
@@ -133,7 +137,7 @@ End Sub
 '                              Buttons (VbMsgBoxStyle = vbOKOnly)
 '                              sTitle (String = "Timed MessageBox Demo")
 '!--------------------------------------------------------------------------------
-Public Function MsgBoxEx(sMsgText As String, dwWait As Long, Optional Buttons As VbMsgBoxStyle = vbOKOnly, Optional sTitle As String = "Timed MessageBox") As VbMsgBoxResult
+Public Function MsgBoxEx(sMsgText As String, Optional Buttons As VbMsgBoxStyle = vbOKOnly, Optional sTitle As String = "Timed MessageBox", Optional dwWait As Long = 6) As VbMsgBoxResult
 
     Dim lTimer       As Long
     Dim lTimerUpdate As Long
@@ -143,7 +147,6 @@ Public Function MsgBoxEx(sMsgText As String, dwWait As Long, Optional Buttons As
     m_lhHook = SetWindowsHookEx(WH_CBT, AddressOf GetMessageBoxHandle, App.hInstance, GetCurrentThreadId())
     ' set the timer
     lTimer = SetTimer(0, 0, dwWait * 1000, AddressOf MessageBoxTimerEvent)
-    ' Set timer
     lTimerUpdate = SetTimer(0, 0, 1 * 1000, AddressOf MessageBoxTimerUpdateEvent)
     ' Set the flag to false
     bTimedOut = False

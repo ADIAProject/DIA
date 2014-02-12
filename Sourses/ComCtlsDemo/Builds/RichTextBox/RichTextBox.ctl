@@ -1744,10 +1744,6 @@ Public Property Let Modified(ByVal Value As Boolean)
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETMODIFY, IIf(Value = True, 1, 0), ByVal 0&
 End Property
 
-Public Sub Span(ByVal CharacterSet As String, Optional ByVal Forward As Variant, Optional ByVal Negate As Variant)
-'
-End Sub
-
 Public Function Find(ByVal Text As String, Optional ByVal Min As Variant, Optional ByVal Max As Variant, Optional ByVal Options As RtfFindOptionConstants) As Long
 Attribute Find.VB_Description = "Finds text within a rich text box control."
 If RichTextBoxHandle <> 0 Then
@@ -1789,7 +1785,7 @@ If RichTextBoxHandle <> 0 Then
     If (Options And RtfFindOptionWholeWord) <> 0 Then dwOptions = dwOptions Or FR_WHOLEWORD
     If (Options And RtfFindOptionMatchCase) <> 0 Then dwOptions = dwOptions Or FR_MATCHCASE
     Find = SendMessage(RichTextBoxHandle, EM_FINDTEXTEX, dwOptions, ByVal VarPtr(REFTEX))
-    If (Options And RtfFindOptionNoHighlight) = 0 Then SendMessage RichTextBoxHandle, EM_EXSETSEL, 0, ByVal VarPtr(.CharRangeText)
+    If (Options And RtfFindOptionNoHighlight) = 0 And Find <> -1 Then SendMessage RichTextBoxHandle, EM_EXSETSEL, 0, ByVal VarPtr(.CharRangeText)
     End With
 End If
 End Function

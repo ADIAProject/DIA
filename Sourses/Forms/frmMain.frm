@@ -930,7 +930,7 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuRezimBaseDrvUpdateNew 
          Caption         =   "Обновить базы только для НОВЫХ пакетов драйверов"
       End
-      Begin VB.Menu mnuSep2 
+      Begin VB.Menu mnuSep0 
          Caption         =   "-"
       End
       Begin VB.Menu mnuRezimBaseDrvClean 
@@ -939,7 +939,7 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuDelDuplicateOldDP 
          Caption         =   "Удалить устаревшие версии пакетов драйверов"
       End
-      Begin VB.Menu mnuSep26 
+      Begin VB.Menu mnuSep1 
          Caption         =   "-"
       End
       Begin VB.Menu mnuLoadOtherPC 
@@ -957,18 +957,14 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuShowHwidsXLS 
          Caption         =   "Показать HWIDs устройств компьютера (файл Excel)"
       End
-      Begin VB.Menu mnuSep3 
+      Begin VB.Menu mnuSep2 
          Caption         =   "-"
       End
       Begin VB.Menu mnuShowHwidsAll 
          Caption         =   "Показать ПОЛНЫЙ СПИСОК УСТРОЙСТВ компьютера"
          Shortcut        =   {F7}
       End
-      Begin VB.Menu mnuShowHwidsAllBase 
-         Caption         =   "Поиск по всей базе драйверов"
-         Visible         =   0   'False
-      End
-      Begin VB.Menu mnuSep4 
+      Begin VB.Menu mnuSep3 
          Caption         =   "-"
       End
       Begin VB.Menu mnuUpdateStatusAll 
@@ -979,7 +975,7 @@ Begin VB.Form frmMain
          Caption         =   "Обновить статус всех пакетов драйверов (текущая вкладка)"
          Shortcut        =   +{F6}
       End
-      Begin VB.Menu mnuSep21 
+      Begin VB.Menu mnuSep4 
          Caption         =   "-"
       End
       Begin VB.Menu mnuReCollectHWID 
@@ -1001,27 +997,27 @@ Begin VB.Form frmMain
          Caption         =   "Запустить тихую автоматическую установку драйверов"
          Shortcut        =   {F8}
       End
-      Begin VB.Menu mnuSep25 
+      Begin VB.Menu mnuSep6 
          Caption         =   "-"
       End
       Begin VB.Menu mnuCreateRestorePoint 
          Caption         =   "Создать точку восстановления системы"
          Shortcut        =   {F9}
       End
-      Begin VB.Menu mnuSep6 
+      Begin VB.Menu mnuSep7 
          Caption         =   "-"
       End
       Begin VB.Menu mnuCreateBackUp 
          Caption         =   "Создать резервную копию драйверов"
          Shortcut        =   {F12}
       End
-      Begin VB.Menu mnuSep22 
+      Begin VB.Menu mnuSep8 
          Caption         =   "-"
       End
       Begin VB.Menu mnuViewDPInstLog 
          Caption         =   "Просмотреть DPinst.log"
       End
-      Begin VB.Menu mnuSep7 
+      Begin VB.Menu mnuSep9 
          Caption         =   "-"
       End
       Begin VB.Menu mnuOptions 
@@ -1055,7 +1051,7 @@ Begin VB.Form frmMain
          Caption         =   "Unknown Devices"
          Shortcut        =   ^{F6}
       End
-      Begin VB.Menu mnuSep8 
+      Begin VB.Menu mnuSep10 
          Caption         =   "-"
       End
       Begin VB.Menu mnuUtils 
@@ -1076,7 +1072,7 @@ Begin VB.Form frmMain
          Caption         =   "Справка по работе"
          Shortcut        =   {F1}
       End
-      Begin VB.Menu mnuSep9 
+      Begin VB.Menu mnuSep11 
          Caption         =   "-"
       End
       Begin VB.Menu mnuHomePage1 
@@ -1091,19 +1087,19 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuDriverPacksOnMySite 
          Caption         =   "Скачать пакеты драйверов..."
       End
-      Begin VB.Menu mnuSep10 
+      Begin VB.Menu mnuSep12 
          Caption         =   "-"
       End
       Begin VB.Menu mnuCheckUpd 
          Caption         =   "Проверить обновление программы"
       End
-      Begin VB.Menu mnuSep11 
+      Begin VB.Menu mnuSep13 
          Caption         =   "-"
       End
       Begin VB.Menu mnuModulesVersion 
          Caption         =   "Модули..."
       End
-      Begin VB.Menu mnuSep12 
+      Begin VB.Menu mnuSep14 
          Caption         =   "-"
       End
       Begin VB.Menu mnuDonate 
@@ -1116,6 +1112,20 @@ Begin VB.Form frmMain
          Caption         =   "О программе..."
       End
    End
+   Begin VB.Menu mnuMainLang 
+      Caption         =   "Язык"
+      Begin VB.Menu mnuLangStart 
+         Caption         =   "Использовать выбранный язык при запуске (отмена автовыбора)"
+      End
+      Begin VB.Menu mnuSep15 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mnuLang 
+         Caption         =   ""
+         Index           =   0
+         Visible         =   0   'False
+      End
+   End
    Begin VB.Menu mnuContextMenu 
       Caption         =   "Контекстное меню"
       Begin VB.Menu mnuContextXLS 
@@ -1124,37 +1134,37 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuContextTxt 
          Caption         =   "Открыть файл базы данных в текстовом виде"
       End
-      Begin VB.Menu mnuSep13 
+      Begin VB.Menu mnuContextSep1 
          Caption         =   "-"
       End
       Begin VB.Menu mnuContextToolTip 
          Caption         =   "Показать список доступных драйверов для компьютера"
       End
-      Begin VB.Menu mnuSep14 
+      Begin VB.Menu mnuContextSep2 
          Caption         =   "-"
       End
       Begin VB.Menu mnuContextUpdStatus 
          Caption         =   "Обновить статус пакета драйверов"
       End
-      Begin VB.Menu mnuSep15 
+      Begin VB.Menu mnuContextSep3 
          Caption         =   "-"
       End
       Begin VB.Menu mnuContextEditDPName 
          Caption         =   "Изменить отображаемое имя пакета драйверов в программе"
       End
-      Begin VB.Menu mnuSep16 
+      Begin VB.Menu mnuContextSep4 
          Caption         =   "-"
       End
       Begin VB.Menu mnuContextTestDRP 
          Caption         =   "Протестировать данный пакет драйверов программой 7-zip"
       End
-      Begin VB.Menu mnuSep18 
+      Begin VB.Menu mnuContextSep5 
          Caption         =   "-"
       End
       Begin VB.Menu mnuContextDeleteDRP 
          Caption         =   "Удалить пакет драйверов"
       End
-      Begin VB.Menu mnuSep19 
+      Begin VB.Menu mnuContextSep6 
          Caption         =   "-"
       End
       Begin VB.Menu mnuContextDeleteDevIDs 
@@ -1163,7 +1173,7 @@ Begin VB.Form frmMain
             Caption         =   "Список драйверов доступных для удаления"
             Enabled         =   0   'False
          End
-         Begin VB.Menu mnuSep20 
+         Begin VB.Menu mnuContextSep7 
             Caption         =   "-"
          End
          Begin VB.Menu mnuContextDeleteDevID 
@@ -1178,7 +1188,7 @@ Begin VB.Form frmMain
             Caption         =   "Список доступных HWID"
             Enabled         =   0   'False
          End
-         Begin VB.Menu mnuSep23 
+         Begin VB.Menu mnuContextSep8 
             Caption         =   "-"
          End
          Begin VB.Menu mnuContextCopyHWID2Clipboard 
@@ -1219,20 +1229,6 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuContextInstall 
          Caption         =   "Распаковать в каталог - Выбрать драйвера..."
          Index           =   5
-      End
-   End
-   Begin VB.Menu mnuMainLang 
-      Caption         =   "Язык"
-      Begin VB.Menu mnuLangStart 
-         Caption         =   "Использовать выбранный язык при запуске (отмена автовыбора)"
-      End
-      Begin VB.Menu mnuSep17 
-         Caption         =   "-"
-      End
-      Begin VB.Menu mnuLang 
-         Caption         =   ""
-         Index           =   0
-         Visible         =   0   'False
       End
    End
 End
@@ -1799,7 +1795,7 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOLD.Enabled = mbBlock
+    imgOkAttentionOld.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
@@ -2019,7 +2015,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
                                 Set .Picture = Nothing
-                                Set .Picture = imgOkAttentionOLD.Picture
+                                Set .Picture = imgOkAttentionOld.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionOLD"
                             Else
                                 Set .Picture = Nothing
@@ -2052,7 +2048,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
                             Set .Picture = Nothing
-                            Set .Picture = imgOkAttentionOLD.Picture
+                            Set .Picture = imgOkAttentionOld.Picture
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionOLD"
                         Else
                             Set .Picture = Nothing
@@ -2192,11 +2188,11 @@ Private Sub CheckMenuUtilsPath()
 
     If mbIsWin64 Then
         If PathExists(PathCollect(strDevManView_Path64)) = False Then
-            mnuUtils_DevManView.Visible = False
+            mnuUtils_DevManView.Enabled = False
         End If
 
         If PathExists(PathCollect(strSIV_Path64)) = False Then
-            mnuUtils_SIV.Visible = False
+            mnuUtils_SIV.Enabled = False
             lblOsInfo.MousePointer = 0
             lblOsInfo.ToolTipText = vbNullString
         End If
@@ -2204,26 +2200,26 @@ Private Sub CheckMenuUtilsPath()
     Else
 
         If PathExists(PathCollect(strDevManView_Path)) = False Then
-            mnuUtils_DevManView.Visible = False
+            mnuUtils_DevManView.Enabled = False
         End If
 
         If PathExists(PathCollect(strSIV_Path)) = False Then
-            mnuUtils_SIV.Visible = False
+            mnuUtils_SIV.Enabled = False
             lblOsInfo.MousePointer = 0
             lblOsInfo.ToolTipText = vbNullString
         End If
     End If
 
     If PathExists(PathCollect(strDoubleDriver_Path)) = False Then
-        mnuUtils_DoubleDriver.Visible = False
+        mnuUtils_DoubleDriver.Enabled = False
     End If
 
     If PathExists(PathCollect(strUDI_Path)) = False Then
-        mnuUtils_UDI.Visible = False
+        mnuUtils_UDI.Enabled = False
     End If
 
     If PathExists(PathCollect(strUnknownDevices_Path)) = False Then
-        mnuUtils_UnknownDevices.Visible = False
+        mnuUtils_UnknownDevices.Enabled = False
     End If
 
 End Sub
@@ -3381,38 +3377,35 @@ Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub CreateMenuLngIndex
+'! Procedure   (Функция)   :   Sub CreateMenuLng
 '! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strName (String)
+'! Parameters  (Переменные):   strMenuCaption (String)
 '!--------------------------------------------------------------------------------
-Private Sub CreateMenuLngIndex(ByVal strName As String)
-
+Private Sub CreateMenuLng()
     Dim i As Long
-
+    
     On Error Resume Next
 
     If Not mnuLang(0).Visible Then
         'если меню еще не создано
         mnuLang(0).Visible = True
-        mnuLang(0).Caption = strName
-    Else
-        Load mnuLang(mnuLang.Count)
-        mnuLang(mnuLang.Count - 1).Visible = True
-
-        For i = mnuLang.UBound To mnuLang.LBound Step -1
-
-            If i = mnuLang.LBound Then
-                mnuLang(0).Caption = strName
-
-                Exit For
-
-            End If
-
-            mnuLang(i).Caption = mnuLang(i - 1).Caption
-        Next
-
     End If
-
+    
+    ' Создаем динамическое меню
+    For i = UBound(arrLanguage, 2) - 1 To 1 Step -1
+        Debug.Print mnuLang.Count
+        Load mnuLang(mnuLang.Count)
+        mnuLang(mnuLang.Count).Visible = True
+        mnuLang(mnuLang.Count).Caption = "Lang " & mnuLang.Count
+    Next i
+    
+    ' Присваиваем свойство Caption для меню
+    For i = 0 To UBound(arrLanguage, 2)
+        '4  mnuMainLang - "Язык"
+        ' 2    mnuLang - "" - Index0 - Visible'False
+        SetUniMenu 4, 2 + i, mnuLang(i), arrLanguage(2, i + 1)
+    Next i
+        
     On Error GoTo 0
 
 End Sub
@@ -4627,6 +4620,9 @@ Private Sub Form_Activate()
             SetTabsNameAndCurrTab True
             DoEvents
             BlockControl True
+            ' Активация меню языков и локализации приложения
+            mnuMainLang.Enabled = mbMultiLanguage
+    
             FindCheckCount
             frTabPanel.Visible = True
     
@@ -4862,11 +4858,14 @@ Private Sub Form_Load()
     ' информация о системе свернута
     frInfo.Collapsado = False
     frTabPanel.Visible = False
-    mnuContextMenu.Visible = False
-    mnuContextMenu2.Visible = False
-    mnuContextMenu3.Visible = False
+    
+    'Устанавливаем неактичность элементов управления
     BlockControl False
+    
+    ' Проверка доступности стандартных дополнительных утилит
     CheckMenuUtilsPath
+    
+    ' Начальные позиции некоторых элементов управления
     frTabPanel.Top = 3100
     frTabPanel.Left = 75
     lblOsInfo.Left = 75
@@ -4920,21 +4919,21 @@ Private Sub Form_Load()
     End If
 
     ' Загрузка меню языков и локализация приложения
-    mnuMainLang.Visible = mbMultiLanguage
-
     If mbMultiLanguage Then
-        DebugMode "CreateLangList: " & UBound(arrLanguage)
+        DebugMode "CreateLangList: " & UBound(arrLanguage) + 1
 
-        For i = UBound(arrLanguage, 2) To 1 Step -1
-            CreateMenuLngIndex arrLanguage(2, i)
-        Next
-
+        ' Создаем меню поддержки языков
+        CreateMenuLng
+        
+        ' Локализация приложения
         Localise strPCLangCurrentPath
-
+        
+        ' Устанавливаем галочку на активном языке
         For ii = mnuLang.LBound To mnuLang.UBound
             mnuLang(ii).Checked = arrLanguage(1, ii + 1) = strPCLangCurrentPath
         Next
-
+        
+        ' Устанавливаем галочку на автовыборе языка
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
@@ -4958,7 +4957,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -5192,8 +5191,8 @@ Public Sub Form_Resize()
         imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
         imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
         imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
+        imgOkAttentionOld.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
+        imgNo.Left = imgOkAttentionOld.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
         lblOsInfo.Width = frInfo.Width - 200
@@ -5762,7 +5761,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lblOsInfo_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-    If mnuUtils_SIV.Visible Then mnuUtils_SIV_Click
+    If mnuUtils_SIV.Enabled Then mnuUtils_SIV_Click
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5984,7 +5983,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -6085,115 +6084,66 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' изменяем шрифт
     FontCharsetChange
     'Frame
-    frRezim.Caption = LocaliseString(StrPathFile, strFormName, "frRezim", frRezim.Caption)
-    frDescriptionIco.Caption = LocaliseString(StrPathFile, strFormName, "frDescriptionIco", frDescriptionIco.Caption)
-    frRunChecked.Caption = LocaliseString(StrPathFile, strFormName, "frRunChecked", frRunChecked.Caption)
-    frCheck.Caption = LocaliseString(StrPathFile, strFormName, "frCheck", frCheck.Caption)
-    frInfo.Caption = LocaliseString(StrPathFile, strFormName, "frInfo", frInfo.Caption)
+    frRezim.Caption = LocaliseString(strPathFile, strFormName, "frRezim", frRezim.Caption)
+    frDescriptionIco.Caption = LocaliseString(strPathFile, strFormName, "frDescriptionIco", frDescriptionIco.Caption)
+    frRunChecked.Caption = LocaliseString(strPathFile, strFormName, "frRunChecked", frRunChecked.Caption)
+    frCheck.Caption = LocaliseString(strPathFile, strFormName, "frCheck", frCheck.Caption)
+    frInfo.Caption = LocaliseString(strPathFile, strFormName, "frInfo", frInfo.Caption)
     ' Описание режимов
-    optRezim_Intellect.Caption = LocaliseString(StrPathFile, strFormName, "RezimIntellect", optRezim_Intellect.Caption)
-    optRezim_Ust.Caption = LocaliseString(StrPathFile, strFormName, "RezimUst", optRezim_Ust.Caption)
-    optRezim_Upd.Caption = LocaliseString(StrPathFile, strFormName, "RezimUpd", optRezim_Upd.Caption)
-    optRezim_Intellect.ToolTipText = LocaliseString(StrPathFile, strFormName, "RezimIntellectTip", optRezim_Intellect.ToolTipText)
-    optRezim_Ust.ToolTipText = LocaliseString(StrPathFile, strFormName, "RezimUstTip", optRezim_Ust.ToolTipText)
-    optRezim_Upd.ToolTipText = LocaliseString(StrPathFile, strFormName, "RezimUpdTip", optRezim_Upd.ToolTipText)
+    optRezim_Intellect.Caption = LocaliseString(strPathFile, strFormName, "RezimIntellect", optRezim_Intellect.Caption)
+    optRezim_Ust.Caption = LocaliseString(strPathFile, strFormName, "RezimUst", optRezim_Ust.Caption)
+    optRezim_Upd.Caption = LocaliseString(strPathFile, strFormName, "RezimUpd", optRezim_Upd.Caption)
+    optRezim_Intellect.ToolTipText = LocaliseString(strPathFile, strFormName, "RezimIntellectTip", optRezim_Intellect.ToolTipText)
+    optRezim_Ust.ToolTipText = LocaliseString(strPathFile, strFormName, "RezimUstTip", optRezim_Ust.ToolTipText)
+    optRezim_Upd.ToolTipText = LocaliseString(strPathFile, strFormName, "RezimUpdTip", optRezim_Upd.ToolTipText)
     ' Меню
-    mnuRezim.Caption = LocaliseString(StrPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
-    mnuRezimBaseDrvUpdateALL.Caption = LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
-    mnuRezimBaseDrvUpdateNew.Caption = LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
-    mnuRezimBaseDrvClean.Caption = LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
-    mnuService.Caption = LocaliseString(StrPathFile, strFormName, "mnuService", mnuService.Caption)
-    mnuShowHwidsTxt.Caption = LocaliseString(StrPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
-    mnuShowHwidsXLS.Caption = LocaliseString(StrPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
-    mnuShowHwidsAll.Caption = LocaliseString(StrPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
-    mnuUpdateStatusAll.Caption = LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
-    mnuReCollectHWID.Caption = LocaliseString(StrPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
-    mnuAutoInfoAfterDelDRV.Caption = LocaliseString(StrPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
-    mnuRunSilentMode.Caption = LocaliseString(StrPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
-    mnuViewDPInstLog.Caption = LocaliseString(StrPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
-    mnuOptions.Caption = LocaliseString(StrPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
-    mnuMainUtils.Caption = LocaliseString(StrPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
-    mnuUtils_devmgmt.Caption = LocaliseString(StrPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
-    mnuMainAbout.Caption = LocaliseString(StrPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
-    mnuLinks.Caption = LocaliseString(StrPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
-    mnuHistory.Caption = LocaliseString(StrPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
-    mnuHelp.Caption = LocaliseString(StrPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
-    mnuHomePage.Caption = LocaliseString(StrPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
-    mnuHomePage1.Caption = LocaliseString(StrPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
-    mnuDriverPacks.Caption = LocaliseString(StrPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
-    mnuCreateRestorePoint.Caption = LocaliseString(StrPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
-    mnuUpdateStatusTab.Caption = LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
-    mnuReCollectHWIDTab.Caption = LocaliseString(StrPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
-    mnuDriverPacksOnMySite.Caption = LocaliseString(StrPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
-    mnuCheckUpd.Caption = LocaliseString(StrPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
-    mnuDonate.Caption = LocaliseString(StrPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
-    mnuLicence.Caption = LocaliseString(StrPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
-    mnuAbout.Caption = LocaliseString(StrPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
-    mnuModulesVersion.Caption = LocaliseString(StrPathFile, strFormName, "mnuModulesVersion", mnuUtils_devmgmt.Caption)
-    mnuContextXLS.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
-    mnuContextTxt.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
-    mnuContextToolTip.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
-    mnuContextUpdStatus.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
-    mnuContextEditDPName.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextEditDPName", mnuContextEditDPName.Caption)
-    mnuContextDeleteDRP.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
-    mnuContextTestDRP.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
-    mnuContextDeleteDevIDs.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
-    mnuContextLegendIco.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
-    mnuMainLang.Caption = LocaliseString(StrPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
-    mnuLangStart.Caption = LocaliseString(StrPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
-    strContextInstall1 = LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", "Обычная установка")
-    strContextInstall2 = LocaliseString(StrPathFile, strFormName, "mnuContextInstall2", "Выборочная установка")
-    strContextInstall3 = LocaliseString(StrPathFile, strFormName, "mnuContextInstall3", "Распаковать драйвера в каталог - Все подобранные")
-    strContextInstall4 = LocaliseString(StrPathFile, strFormName, "mnuContextInstall4", "Распаковать драйвера в каталог - Выбрать...")
-    mnuContextInstall(0).Caption = LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
-    mnuContextInstall(2).Caption = LocaliseString(StrPathFile, strFormName, "mnuContextInstall2", mnuContextInstall(1).Caption)
-    mnuContextInstall(4).Caption = LocaliseString(StrPathFile, strFormName, "mnuContextInstall3", mnuContextInstall(3).Caption)
-    mnuContextInstall(5).Caption = LocaliseString(StrPathFile, strFormName, "mnuContextInstall4", mnuContextInstall(4).Caption)
-    mnuCreateBackUp.Caption = LocaliseString(StrPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
-    mnuContextCopyHWIDs.Caption = LocaliseString(StrPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
+    '  Вызов основной функции для вывода Caption меню с поддержкой Unicode
+    Call LocaliseMenu(strPathFile)
+    '  Прочие меню и переменные, которые будут использоваться при создании/изменении меню
     mnuContextCopyHWIDDesc.Caption = "HWID" & vbTab & "Device Name"
-    mnuDelDuplicateOldDP.Caption = LocaliseString(StrPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
-    mnuLoadOtherPC.Caption = LocaliseString(StrPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
-    mnuSaveInfoPC.Caption = LocaliseString(StrPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
+    strContextInstall1 = LocaliseString(strPathFile, strFormName, "mnuContextInstall1", "Обычная установка")
+    strContextInstall2 = LocaliseString(strPathFile, strFormName, "mnuContextInstall2", "Выборочная установка")
+    strContextInstall3 = LocaliseString(strPathFile, strFormName, "mnuContextInstall3", "Распаковать драйвера в каталог - Все подобранные")
+    strContextInstall4 = LocaliseString(strPathFile, strFormName, "mnuContextInstall4", "Распаковать драйвера в каталог - Выбрать...")
     'Кнопки
-    cmdRunTask.Caption = LocaliseString(StrPathFile, strFormName, "cmdRunTask", cmdRunTask.Caption)
-    cmdCheck.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheck", cmdCheck.Caption)
-    cmdBreakUpdateDB.Caption = LocaliseString(StrPathFile, strFormName, "cmdBreakUpdateDB", cmdBreakUpdateDB.Caption)
-    cmdViewAllDevice.Caption = LocaliseString(StrPathFile, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
+    cmdRunTask.Caption = LocaliseString(strPathFile, strFormName, "cmdRunTask", cmdRunTask.Caption)
+    cmdCheck.Caption = LocaliseString(strPathFile, strFormName, "cmdCheck", cmdCheck.Caption)
+    cmdBreakUpdateDB.Caption = LocaliseString(strPathFile, strFormName, "cmdBreakUpdateDB", cmdBreakUpdateDB.Caption)
+    cmdViewAllDevice.Caption = LocaliseString(strPathFile, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
     ' Лейблы
-    lblPCInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblPCInfo", lblPCInfo.Caption) & " " & strCompModel
-    lblNoDP4Mode.Caption = LocaliseString(StrPathFile, strFormName, "lblNoDP4Mode", lblNoDP4Mode.Caption)
-    lblNoDPInProgram.Caption = LocaliseString(StrPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
+    lblPCInfo.Caption = LocaliseString(strPathFile, strFormName, "lblPCInfo", lblPCInfo.Caption) & " " & strCompModel
+    lblNoDP4Mode.Caption = LocaliseString(strPathFile, strFormName, "lblNoDP4Mode", lblNoDP4Mode.Caption)
+    lblNoDPInProgram.Caption = LocaliseString(strPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
     ' Другие параметры
-    strTableHwidHeader1 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader1", "-HWID-")
-    strTableHwidHeader2 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader2", "-Путь-")
-    strTableHwidHeader3 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader3", "-Файл-")
-    strTableHwidHeader4 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
-    strTableHwidHeader5 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
-    strTableHwidHeader6 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader6", "-Статус-")
-    strTableHwidHeader7 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader7", "-Наименование устройства-")
-    strTableHwidHeader8 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader8", "-Пакет драйверов-")
-    strTableHwidHeader9 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader9", "-!-")
-    strTableHwidHeader10 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader10", "-Производитель-")
-    strTableHwidHeader11 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader11", "-Совместимый HWID-")
-    strTableHwidHeader12 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader12", "-Код устройства-")
-    strTableHwidHeader13 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader13", "-Секция-")
-    strTableHwidHeader14 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader14", "Найден в пакете")
-    strTTipTextTitle = LocaliseString(StrPathFile, strFormName, "ToolTipTextTitle", "Файл пакета драйверов:")
-    strTTipTextFileSize = LocaliseString(StrPathFile, strFormName, "ToolTipTextFileSize", "Размер файла:")
-    strTTipTextClassDRV = LocaliseString(StrPathFile, strFormName, "ToolTipTextClassDRV", "Класс драйверов:")
-    strTTipTextDrv2Install = LocaliseString(StrPathFile, strFormName, "ToolTipTextDrv2Install", "ДРАЙВЕРА ДОСТУПНЫЕ ДЛЯ УСТАНОВКИ:")
-    strTTipTextDrv4UnsupOS = LocaliseString(StrPathFile, strFormName, "ToolTipTextDrv4UnsupportedOS", "ВНИМАНИЕ! ДРАЙВЕРА ДЛЯ ДРУГОЙ ОС." & vbNewLine & "ОБАБОТКА ВКЛАДКИ ВЫКЛЮЧЕНА В НАСТРОЙКАХ")
-    strTTipTextTitleStatus = LocaliseString(StrPathFile, strFormName, "ToolTipTextTitleStatus", "Подробное описание:")
-    strSSTabTypeDPTab1 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab1", "Все драйверпаки")
-    strSSTabTypeDPTab2 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab2", "Доступно обновление")
-    strSSTabTypeDPTab3 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab3", "Неустановленные")
-    strSSTabTypeDPTab4 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab4", "Установленные")
-    strSSTabTypeDPTab5 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab5", "БД не создана")
+    strTableHwidHeader1 = LocaliseString(strPathFile, strFormName, "TableHwidHeader1", "-HWID-")
+    strTableHwidHeader2 = LocaliseString(strPathFile, strFormName, "TableHwidHeader2", "-Путь-")
+    strTableHwidHeader3 = LocaliseString(strPathFile, strFormName, "TableHwidHeader3", "-Файл-")
+    strTableHwidHeader4 = LocaliseString(strPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
+    strTableHwidHeader5 = LocaliseString(strPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
+    strTableHwidHeader6 = LocaliseString(strPathFile, strFormName, "TableHwidHeader6", "-Статус-")
+    strTableHwidHeader7 = LocaliseString(strPathFile, strFormName, "TableHwidHeader7", "-Наименование устройства-")
+    strTableHwidHeader8 = LocaliseString(strPathFile, strFormName, "TableHwidHeader8", "-Пакет драйверов-")
+    strTableHwidHeader9 = LocaliseString(strPathFile, strFormName, "TableHwidHeader9", "-!-")
+    strTableHwidHeader10 = LocaliseString(strPathFile, strFormName, "TableHwidHeader10", "-Производитель-")
+    strTableHwidHeader11 = LocaliseString(strPathFile, strFormName, "TableHwidHeader11", "-Совместимый HWID-")
+    strTableHwidHeader12 = LocaliseString(strPathFile, strFormName, "TableHwidHeader12", "-Код устройства-")
+    strTableHwidHeader13 = LocaliseString(strPathFile, strFormName, "TableHwidHeader13", "-Секция-")
+    strTableHwidHeader14 = LocaliseString(strPathFile, strFormName, "TableHwidHeader14", "Найден в пакете")
+    strTTipTextTitle = LocaliseString(strPathFile, strFormName, "ToolTipTextTitle", "Файл пакета драйверов:")
+    strTTipTextFileSize = LocaliseString(strPathFile, strFormName, "ToolTipTextFileSize", "Размер файла:")
+    strTTipTextClassDRV = LocaliseString(strPathFile, strFormName, "ToolTipTextClassDRV", "Класс драйверов:")
+    strTTipTextDrv2Install = LocaliseString(strPathFile, strFormName, "ToolTipTextDrv2Install", "ДРАЙВЕРА ДОСТУПНЫЕ ДЛЯ УСТАНОВКИ:")
+    strTTipTextDrv4UnsupOS = LocaliseString(strPathFile, strFormName, "ToolTipTextDrv4UnsupportedOS", "ВНИМАНИЕ! ДРАЙВЕРА ДЛЯ ДРУГОЙ ОС." & vbNewLine & "ОБАБОТКА ВКЛАДКИ ВЫКЛЮЧЕНА В НАСТРОЙКАХ")
+    strTTipTextTitleStatus = LocaliseString(strPathFile, strFormName, "ToolTipTextTitleStatus", "Подробное описание:")
+    strSSTabTypeDPTab1 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab1", "Все драйверпаки")
+    strSSTabTypeDPTab2 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab2", "Доступно обновление")
+    strSSTabTypeDPTab3 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab3", "Неустановленные")
+    strSSTabTypeDPTab4 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab4", "Установленные")
+    strSSTabTypeDPTab5 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab5", "БД не создана")
     ' Прописываем как константу длину названия колонок
     lngTableHwidHeader1 = Len(strTableHwidHeader1)
     lngTableHwidHeader2 = Len(strTableHwidHeader2)
@@ -6217,7 +6167,7 @@ Private Sub Localise(ByVal StrPathFile As String)
     ChangeFrmMainCaption
     ' Перегрузка ToolTipStatus
     ToolTipStatusLoad
-    ' Изменение меню кнопок
+    ' Изменение контекстного меню кнопок
     ChangeMenuCaption
     ' Изменение кнопки RunTask
     LoadCmdRunTask
@@ -6243,6 +6193,178 @@ Private Sub Localise(ByVal StrPathFile As String)
         ToolTipBtnReLoad
     End If
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LocaliseMenu
+'! Description (Описание)  :   [Загрузка текста меню с поддеркой Unicode]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub LocaliseMenu(ByVal strPathFile As String)
+    ' Меню должно быть видимым, так как для невидимого не применяется изменение свойства
+    ' Поэтому просто изменяем у них свойство caption, и делаем меню неактивным
+    mnuContextMenu.Caption = "Drivers"
+    mnuContextMenu2.Caption = "Installer"
+    mnuContextMenu3.Caption = "Assistant"
+    mnuContextMenu.Enabled = False
+    mnuContextMenu2.Enabled = False
+    mnuContextMenu3.Enabled = False
+    
+'0  mnuRezim - "Обновление баз данных"
+' 0    mnuRezimBaseDrvUpdateALL - "Обновить базы для ВСЕХ пакетов драйверов"
+' 1    mnuRezimBaseDrvUpdateNew - "Обновить базы только для НОВЫХ пакетов драйверов"
+' 2    mnuSep0 - "-"
+' 3    mnuRezimBaseDrvClean - "Удалить файлы баз данных отсутствующих пакетов драйверов"
+' 4    mnuDelDuplicateOldDP - "Удалить устаревшие версии пакетов драйверов"
+' 5    mnuSep1 - "-"
+' 6    mnuLoadOtherPC - "Загрузить информацию другого ПК (Эмуляция работы)"
+' 7    mnuSaveInfoPC - "Сохранить информацию об устройствах для эмуляции на другом ПК"
+    SetUniMenu -1, 0, mnuRezim, LocaliseString(strPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
+    SetUniMenu 0, 0, mnuRezimBaseDrvUpdateALL, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
+    SetUniMenu 0, 1, mnuRezimBaseDrvUpdateNew, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
+    SetUniMenu 0, 3, mnuRezimBaseDrvClean, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
+    SetUniMenu 0, 4, mnuDelDuplicateOldDP, LocaliseString(strPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
+    SetUniMenu 0, 6, mnuLoadOtherPC, LocaliseString(strPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
+    SetUniMenu 0, 7, mnuSaveInfoPC, LocaliseString(strPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
+    
+'1  mnuService - "Сервис"
+' 0    mnuShowHwidsTxt - "Показать HWIDs устройств компьютера (текстовый файл)"
+' 1    mnuShowHwidsXLS - "Показать HWIDs устройств компьютера (файл Excel)"
+' 2    mnuSep2 - "-"
+' 3    mnuShowHwidsAll - "Показать ПОЛНЫЙ СПИСОК УСТРОЙСТВ компьютера" - Shortcut{F7}
+' 4    mnuSep3 - "-"
+' 5    mnuUpdateStatusAll - "Обновить статус всех пакетов драйверов" - Shortcut{F6}
+' 6    mnuUpdateStatusTab - "Обновить статус всех пакетов драйверов (текущая вкладка)" - Shortcut+{F6}
+' 7    mnuSep4 - "-"
+' 8    mnuReCollectHWID - "Обновить конфигурацию оборудования" - Shortcut{F5}
+' 9   mnuReCollectHWIDTab - "Обновить конфигурацию оборудования (текущая вкладка)" - Shortcut+{F5}
+' 10   mnuAutoInfoAfterDelDRV - "Автообновление конфигурации при удалении драйверов" - Checked -1  'True
+' 11   mnuSep5 - "-"
+' 12   mnuRunSilentMode - "Запустить тихую автоматическую установку драйверов" - Shortcut{F8}
+' 13   mnuSep6 - "-"
+' 14   mnuCreateRestorePoint - "Создать точку восстановления системы" - Shortcut{F9}
+' 15   mnuSep7 - "-"
+' 16   mnuCreateBackUp - "Создать резервную копию драйверов" - Shortcut{F12}
+' 17   mnuSep8 - "-"
+' 18   mnuViewDPInstLog - "Просмотреть DPinst.log"
+' 19   mnuSep9 - "-"
+' 20   mnuOptions - "Параметры" - Shortcut^O
+    SetUniMenu -1, 1, mnuService, LocaliseString(strPathFile, strFormName, "mnuService", mnuService.Caption)
+    SetUniMenu 1, 0, mnuShowHwidsTxt, LocaliseString(strPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
+    SetUniMenu 1, 1, mnuShowHwidsXLS, LocaliseString(strPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
+    SetUniMenu 1, 3, mnuShowHwidsAll, LocaliseString(strPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
+    SetUniMenu 1, 5, mnuUpdateStatusAll, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
+    SetUniMenu 1, 6, mnuUpdateStatusTab, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
+    SetUniMenu 1, 8, mnuReCollectHWID, LocaliseString(strPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
+    SetUniMenu 1, 9, mnuReCollectHWIDTab, LocaliseString(strPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
+    SetUniMenu 1, 10, mnuAutoInfoAfterDelDRV, LocaliseString(strPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
+    SetUniMenu 1, 12, mnuRunSilentMode, LocaliseString(strPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
+    SetUniMenu 1, 14, mnuCreateRestorePoint, LocaliseString(strPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
+    SetUniMenu 1, 16, mnuCreateBackUp, LocaliseString(strPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
+    SetUniMenu 1, 18, mnuViewDPInstLog, LocaliseString(strPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
+    SetUniMenu 1, 20, mnuOptions, LocaliseString(strPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
+    
+'2  mnuMainUtils - "Утилиты"
+' 0    mnuUtils_devmgmt - "Диспетчер устройств Windows" - Shortcut^{F1}
+' 1    mnuUtils_DevManView - "DevManView" - Shortcut^{F2}
+' 2    mnuUtils_DoubleDriver - "DoubleDriver" - Shortcut^{F3}
+' 3    mnuUtils_SIV - "System Information Viewer" - Shortcut^{F4}
+' 4    mnuUtils_UDI - "Unknown Device Identifier" - Shortcut^{F5}
+' 5    mnuUtils_UnknownDevices - "Unknown Devices" - Shortcut^{F6}
+' 6    mnuSep10 - "-"
+' 7    mnuUtils - "" - Index   0 - Visible'False
+    SetUniMenu -1, 2, mnuMainUtils, LocaliseString(strPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
+    SetUniMenu 2, 0, mnuUtils_devmgmt, LocaliseString(strPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
+    SetUniMenu 2, 1, mnuUtils_DevManView, LocaliseString(strPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption)
+    SetUniMenu 2, 2, mnuUtils_DoubleDriver, LocaliseString(strPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption)
+    SetUniMenu 2, 3, mnuUtils_SIV, LocaliseString(strPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption)
+    SetUniMenu 2, 4, mnuUtils_UDI, LocaliseString(strPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption)
+    SetUniMenu 2, 5, mnuUtils_UnknownDevices, LocaliseString(strPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption)
+    
+'3  mnuMainAbout - "Справка"
+' 0    mnuLinks - "Ссылки"
+' 1    mnuHistory - "История изменения"
+' 2    mnuHelp - "Справка по работе" - Shortcut{F1}
+' 3    mnuSep11 - "-"
+' 4    mnuHomePage1 - "Домашная страница программы"
+' 5    mnuHomePage - "Обсуждение программы на OsZone.net"
+' 6    mnuDriverPacks - "Посетить сайт driverpacks.net"
+' 7    mnuDriverPacksOnMySite - "Скачать пакеты драйверов..."
+' 8    mnuSep12 - "-"
+' 9    mnuCheckUpd - "Проверить обновление программы"
+' 10   mnuSep13 - "-"
+' 11   mnuModulesVersion - "Модули..."
+' 12   mnuSep14 - "-"
+' 13   mnuDonate - "Поблагодарить автора..."
+' 14   mnuLicence - "Лицензионное соглашение..."
+' 15   mnuAbout - "О программе..."
+    SetUniMenu -1, 3, mnuMainAbout, LocaliseString(strPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
+    SetUniMenu 3, 0, mnuLinks, LocaliseString(strPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
+    SetUniMenu 3, 1, mnuHistory, LocaliseString(strPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
+    SetUniMenu 3, 2, mnuHelp, LocaliseString(strPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
+    SetUniMenu 3, 4, mnuHomePage1, LocaliseString(strPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
+    SetUniMenu 3, 5, mnuHomePage, LocaliseString(strPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
+    SetUniMenu 3, 6, mnuDriverPacks, LocaliseString(strPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
+    SetUniMenu 3, 7, mnuDriverPacksOnMySite, LocaliseString(strPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
+    SetUniMenu 3, 9, mnuCheckUpd, LocaliseString(strPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
+    SetUniMenu 3, 11, mnuModulesVersion, LocaliseString(strPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
+    SetUniMenu 3, 13, mnuDonate, LocaliseString(strPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
+    SetUniMenu 3, 14, mnuLicence, LocaliseString(strPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
+    SetUniMenu 3, 15, mnuAbout, LocaliseString(strPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
+    
+'4  mnuMainLang - "Язык"
+' 0    mnuLangStart - "Использовать выбранный язык при запуске (отмена автовыбора)"
+' 1    mnuSep15 - "-"
+' 2    mnuLang - "" - Index0 - Visible'False
+    SetUniMenu -1, 4, mnuMainLang, LocaliseString(strPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
+    SetUniMenu 4, 0, mnuLangStart, LocaliseString(strPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
+    
+'5  mnuContextMenu - "Контекстное меню"
+' 0    mnuContextXLS - "Открыть файл базы данных в программе Excel"
+' 1    mnuContextTxt - "Открыть файл базы данных в текстовом виде"
+' 2    mnuContextSep1 - "-"
+' 3    mnuContextToolTip - "Показать список доступных драйверов для компьютера"
+' 4    mnuContextSep2 - "-"
+' 5    mnuContextUpdStatus - "Обновить статус пакета драйверов"
+' 6    mnuContextSep3 - "-"
+' 7    mnuContextEditDPName - "Изменить отображаемое имя пакета драйверов в программе"
+' 8    mnuContextSep4 - "-"
+' 9    mnuContextTestDRP - "Протестировать данный пакет драйверов программой 7-zip"
+' 10       mnuContextSep5 - "-"
+' 11       mnuContextDeleteDRP - "Удалить пакет драйверов"
+' 12       mnuContextSep6 - "-"
+' 13       mnuContextDeleteDevIDs - "Удалить драйвера устройств:"
+'  0          mnuContextDeleteDevIDDesc - "Список драйверов доступных для удаления" -    Enabled'False
+'  1          mnuContextSep7 - "-"
+'  2          mnuContextDeleteDevID - "Список устройств" -    Index0 - Visible'False
+' 14       mnuContextCopyHWIDs - "Скопировать HWID в буфер обмена:"
+'  0          mnuContextCopyHWIDDesc - "Список доступных HWID" -    Enabled'False
+'  1          mnuContextSep8 - "-"
+'  2          mnuContextCopyHWID2Clipboard - "Список устройств" -    Index0 -    Visible'False
+    SetUniMenu 5, 0, mnuContextXLS, LocaliseString(strPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
+    SetUniMenu 5, 1, mnuContextTxt, LocaliseString(strPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
+    SetUniMenu 5, 3, mnuContextToolTip, LocaliseString(strPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
+    SetUniMenu 5, 5, mnuContextUpdStatus, LocaliseString(strPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
+    SetUniMenu 5, 9, mnuContextTestDRP, LocaliseString(strPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
+    SetUniMenu 5, 11, mnuContextDeleteDRP, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
+    SetUniMenu 5, 13, mnuContextDeleteDevIDs, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
+    SetUniMenu 5, 14, mnuContextCopyHWIDs, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
+
+'6  mnuContextMenu2 - "Контекстное меню2"
+' 0    mnuContextLegendIco - "Просмотреть описание всех обозначений"
+    SetUniMenu 6, 0, mnuContextLegendIco, LocaliseString(strPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
+    
+'7  mnuContextMenu3 - "Контекстное меню3"
+' 0    mnuContextInstall - "Обычная установка" - Index0
+' 1    mnuContextInstall - "-" - Index1
+' 2    mnuContextInstall - "Выборочная установка" - Index2
+' 3    mnuContextInstall - "-" - Index3
+' 4    mnuContextInstall - "Распаковать в каталог - Все подобранные драйвера" - Index4
+' 5    mnuContextInstall - "Распаковать в каталог - Выбрать драйвера..." - Index5
+    SetUniMenu 7, 0, mnuContextInstall(0), LocaliseString(strPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
+    SetUniMenu 7, 2, mnuContextInstall(2), LocaliseString(strPathFile, strFormName, "mnuContextInstall2", mnuContextInstall(2).Caption)
+    SetUniMenu 7, 4, mnuContextInstall(4), LocaliseString(strPathFile, strFormName, "mnuContextInstall3", mnuContextInstall(4).Caption)
+    SetUniMenu 7, 5, mnuContextInstall(5), LocaliseString(strPathFile, strFormName, "mnuContextInstall4", mnuContextInstall(5).Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8634,7 +8756,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                 Case 2
 
                     If acmdPackFiles(i).Picture = imgOkAttention.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionOld.Picture Or _
                        acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
@@ -8644,7 +8766,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                 Case 3
 
                     If acmdPackFiles(i).Picture = imgOK.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionOld.Picture Or _
                        acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Or _
                        acmdPackFiles(i).Picture = imgOkNew.Picture Or _
                        acmdPackFiles(i).Picture = imgOkOld.Picture Then
@@ -8895,7 +9017,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
