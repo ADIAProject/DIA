@@ -1336,6 +1336,15 @@ Public Property Let Height(ByVal Value As Single)
 Extender.Height = Value
 End Property
 
+Public Property Get Visible() As Boolean
+Attribute Visible.VB_Description = "Returns/sets a value that determines whether an object is visible or hidden."
+Visible = Extender.Visible
+End Property
+
+Public Property Let Visible(ByVal Value As Boolean)
+Extender.Visible = Value
+End Property
+
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_Description = "Returns a handle to a control."
 Attribute hWnd.VB_UserMemId = -515
@@ -2507,7 +2516,9 @@ If Value Is Nothing Then
         SendMessage ListViewHandle, LVM_SETBKIMAGE, 0, ByVal VarPtr(LVBKI)
     End If
 Else
-    Set PropPicture = Value
+    Set UserControl.Picture = Value
+    Set PropPicture = UserControl.Picture
+    Set UserControl.Picture = Nothing
     If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
         .hBmp = 0
         .ulFlags = LVBKIF_SOURCE_NONE

@@ -107,9 +107,9 @@ End Sub
 '                              mnuParentItem (Long)
 '                              IsDefault (Boolean)
 '!--------------------------------------------------------------------------------
-Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal mnu As Menu, ByVal sCaption As String, Optional IsDefault As Boolean = False)
+Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal mnuSubItem As Long, ByVal mnu As Menu, ByVal sCaption As String, Optional IsDefault As Boolean = False)
 
-    Dim hMenu  As Long
+    Dim hMenu As Long
     Dim mInfo  As MENUITEMINFO
     
     If mnuParentItem = -1 Then
@@ -117,16 +117,44 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
     Else
         hMenu = GetSubMenu(GetMenu(mnu.Parent.hWnd), mnuParentItem)
     End If
+        
+    If hMenu <> 0 Then
+        With mInfo
+            If mnuSubItem <> -1 Then
+                'DropDown Submenu Type with IdNumber
+                .fMask = MIIM_SUBMENU Or MIIM_ID
+                .dwTypeData = StrPtr(String$(255, vbNullChar))
+                .cch = 255
+                .cbSize = Len(mInfo)
+                ' MenuItem Number
+                .wid = mnuSubItem
+                
+                'Get DropDown Submenu Info handle
+                GetMenuItemInfo hMenu, mnuItem, True, mInfo
+                'Get DropDown Submenu handle
+                hMenu = .hSubMenu
+            End If
+            
+            If hMenu <> 0 Then
+                .cbSize = Len(mInfo)
+                .fMask = MIIM_STRING
+                .dwTypeData = StrPtr(sCaption)
+                
+                If mnuSubItem = -1 Then
+                ' Not DropDown Submenu
+                    SetMenuItemInfo hMenu, mnuItem, True, mInfo
+                    If IsDefault Then SetMenuDefaultItem hMenu, mnuItem, True
+                Else
+                    SetMenuItemInfo hMenu, mnuSubItem, True, mInfo
+                    If IsDefault Then SetMenuDefaultItem hMenu, mnuSubItem, True
+                End If
+            Else
+                mnu.Caption = sCaption
+            End If
+        End With
+    Else
+        mnu.Caption = sCaption
+    End If
     
-    If IsDefault Then SetMenuDefaultItem hMenu, mnuItem, 1
-    
-    With mInfo
-        .cbSize = Len(mInfo)
-        '.fType = MFT_RADIOCHECK
-        .fMask = MIIM_STRING 'MIIM_TYPE
-        .dwTypeData = StrPtr(sCaption)
-    End With
-    
-    SetMenuItemInfo hMenu, mnuItem, True, mInfo
 End Sub
 

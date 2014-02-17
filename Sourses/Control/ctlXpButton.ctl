@@ -240,8 +240,8 @@ Public Sub AddMenu(ByVal sCaption As String)
     'проверяем количество меню
     iCount = mnuMenu.Count
     'загружаем данные и показываем меню
-    mnuMenu(iCount - 1).Caption = sCaption
     mnuMenu(iCount - 1).Visible = True
+    mnuMenu(iCount - 1).Caption = sCaption
     'загрузка следующего меню, но невидимая
     Load mnuMenu(iCount)
     mnuMenu(iCount).Visible = False

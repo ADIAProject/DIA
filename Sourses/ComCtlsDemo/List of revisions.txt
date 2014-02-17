@@ -1,5 +1,11 @@
 List of revisions:
 
+12-Feb-2014
+- Improved the Picture property of the ListView control. (Passing the '.Image' of a PictureBox is now working properly)
+- The Visible property is now also available when setting to a shadow object. ('Set' command)
+- Fixed a bug in the MaxSelCount property of the MonthView control.
+- Fixed a bug in the MonthView control concerning the handling of the MCN_SELECT and MCN_SELCHANGE notification.
+
 10-Feb-2014
 - Included the ShowFind/ShowReplace function in the CommonDialog class.
 - Fixed a bug in the DTPicker control concerning the handling of the DTN_DATETIMECHANGE notification.

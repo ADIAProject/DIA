@@ -1795,7 +1795,7 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOld.Enabled = mbBlock
+    imgOkAttentionOLD.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
@@ -2015,8 +2015,8 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
                                 Set .Picture = Nothing
-                                Set .Picture = imgOkAttentionOld.Picture
-                                DebugMode str3VbTab & "ImageForButton: imgOkAttentionOLD"
+                                Set .Picture = imgOkAttentionOLD.Picture
+                                DebugMode str3VbTab & "ImageForButton: imgOkAttentionOld"
                             Else
                                 Set .Picture = Nothing
                                 Set .Picture = imgOkAttention.Picture
@@ -2048,8 +2048,8 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
                             Set .Picture = Nothing
-                            Set .Picture = imgOkAttentionOld.Picture
-                            DebugMode str3VbTab & "ImageForButton: imgOkAttentionOLD"
+                            Set .Picture = imgOkAttentionOLD.Picture
+                            DebugMode str3VbTab & "ImageForButton: imgOkAttentionOld"
                         Else
                             Set .Picture = Nothing
                             Set .Picture = imgOkAttention.Picture
@@ -3393,7 +3393,6 @@ Private Sub CreateMenuLng()
     
     ' Создаем динамическое меню
     For i = UBound(arrLanguage, 2) - 1 To 1 Step -1
-        Debug.Print mnuLang.Count
         Load mnuLang(mnuLang.Count)
         mnuLang(mnuLang.Count).Visible = True
         mnuLang(mnuLang.Count).Caption = "Lang " & mnuLang.Count
@@ -3403,7 +3402,7 @@ Private Sub CreateMenuLng()
     For i = 0 To UBound(arrLanguage, 2)
         '4  mnuMainLang - "Язык"
         ' 2    mnuLang - "" - Index0 - Visible'False
-        SetUniMenu 4, 2 + i, mnuLang(i), arrLanguage(2, i + 1)
+        SetUniMenu 4, 2 + i, -1, mnuLang(i), arrLanguage(2, i + 1)
     Next i
         
     On Error GoTo 0
@@ -4957,7 +4956,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOld.BorderStyle = 0
+    imgOkAttentionOLD.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -5191,8 +5190,8 @@ Public Sub Form_Resize()
         imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
         imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
         imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOld.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOld.Left + ImgWidth + imgWidthDelta
+        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
+        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
         lblOsInfo.Width = frInfo.Width - 200
@@ -5983,7 +5982,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -6082,7 +6081,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Localise
 '! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
+'! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
 Private Sub Localise(ByVal strPathFile As String)
     ' изменяем шрифт
@@ -6104,7 +6103,7 @@ Private Sub Localise(ByVal strPathFile As String)
     '  Вызов основной функции для вывода Caption меню с поддержкой Unicode
     Call LocaliseMenu(strPathFile)
     '  Прочие меню и переменные, которые будут использоваться при создании/изменении меню
-    mnuContextCopyHWIDDesc.Caption = "HWID" & vbTab & "Device Name"
+    'mnuContextCopyHWIDDesc.Caption = "HWID" & vbTab & "Device Name"
     strContextInstall1 = LocaliseString(strPathFile, strFormName, "mnuContextInstall1", "Обычная установка")
     strContextInstall2 = LocaliseString(strPathFile, strFormName, "mnuContextInstall2", "Выборочная установка")
     strContextInstall3 = LocaliseString(strPathFile, strFormName, "mnuContextInstall3", "Распаковать драйвера в каталог - Все подобранные")
@@ -6198,7 +6197,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LocaliseMenu
 '! Description (Описание)  :   [Загрузка текста меню с поддеркой Unicode]
-'! Parameters  (Переменные):   StrPathFile (String)
+'! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
 Private Sub LocaliseMenu(ByVal strPathFile As String)
     ' Меню должно быть видимым, так как для невидимого не применяется изменение свойства
@@ -6219,13 +6218,13 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 5    mnuSep1 - "-"
 ' 6    mnuLoadOtherPC - "Загрузить информацию другого ПК (Эмуляция работы)"
 ' 7    mnuSaveInfoPC - "Сохранить информацию об устройствах для эмуляции на другом ПК"
-    SetUniMenu -1, 0, mnuRezim, LocaliseString(strPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
-    SetUniMenu 0, 0, mnuRezimBaseDrvUpdateALL, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
-    SetUniMenu 0, 1, mnuRezimBaseDrvUpdateNew, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
-    SetUniMenu 0, 3, mnuRezimBaseDrvClean, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
-    SetUniMenu 0, 4, mnuDelDuplicateOldDP, LocaliseString(strPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
-    SetUniMenu 0, 6, mnuLoadOtherPC, LocaliseString(strPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
-    SetUniMenu 0, 7, mnuSaveInfoPC, LocaliseString(strPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
+    SetUniMenu -1, 0, -1, mnuRezim, LocaliseString(strPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
+    SetUniMenu 0, 0, -1, mnuRezimBaseDrvUpdateALL, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
+    SetUniMenu 0, 1, -1, mnuRezimBaseDrvUpdateNew, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
+    SetUniMenu 0, 3, -1, mnuRezimBaseDrvClean, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
+    SetUniMenu 0, 4, -1, mnuDelDuplicateOldDP, LocaliseString(strPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
+    SetUniMenu 0, 6, -1, mnuLoadOtherPC, LocaliseString(strPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
+    SetUniMenu 0, 7, -1, mnuSaveInfoPC, LocaliseString(strPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
     
 '1  mnuService - "Сервис"
 ' 0    mnuShowHwidsTxt - "Показать HWIDs устройств компьютера (текстовый файл)"
@@ -6249,20 +6248,20 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 18   mnuViewDPInstLog - "Просмотреть DPinst.log"
 ' 19   mnuSep9 - "-"
 ' 20   mnuOptions - "Параметры" - Shortcut^O
-    SetUniMenu -1, 1, mnuService, LocaliseString(strPathFile, strFormName, "mnuService", mnuService.Caption)
-    SetUniMenu 1, 0, mnuShowHwidsTxt, LocaliseString(strPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
-    SetUniMenu 1, 1, mnuShowHwidsXLS, LocaliseString(strPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
-    SetUniMenu 1, 3, mnuShowHwidsAll, LocaliseString(strPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
-    SetUniMenu 1, 5, mnuUpdateStatusAll, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
-    SetUniMenu 1, 6, mnuUpdateStatusTab, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
-    SetUniMenu 1, 8, mnuReCollectHWID, LocaliseString(strPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
-    SetUniMenu 1, 9, mnuReCollectHWIDTab, LocaliseString(strPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
-    SetUniMenu 1, 10, mnuAutoInfoAfterDelDRV, LocaliseString(strPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
-    SetUniMenu 1, 12, mnuRunSilentMode, LocaliseString(strPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
-    SetUniMenu 1, 14, mnuCreateRestorePoint, LocaliseString(strPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
-    SetUniMenu 1, 16, mnuCreateBackUp, LocaliseString(strPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
-    SetUniMenu 1, 18, mnuViewDPInstLog, LocaliseString(strPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
-    SetUniMenu 1, 20, mnuOptions, LocaliseString(strPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
+    SetUniMenu -1, 1, -1, mnuService, LocaliseString(strPathFile, strFormName, "mnuService", mnuService.Caption)
+    SetUniMenu 1, 0, -1, mnuShowHwidsTxt, LocaliseString(strPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
+    SetUniMenu 1, 1, -1, mnuShowHwidsXLS, LocaliseString(strPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
+    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(strPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
+    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
+    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
+    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(strPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
+    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(strPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
+    SetUniMenu 1, 10, -1, mnuAutoInfoAfterDelDRV, LocaliseString(strPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
+    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(strPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
+    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(strPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
+    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(strPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
+    SetUniMenu 1, 18, -1, mnuViewDPInstLog, LocaliseString(strPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
+    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(strPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
     
 '2  mnuMainUtils - "Утилиты"
 ' 0    mnuUtils_devmgmt - "Диспетчер устройств Windows" - Shortcut^{F1}
@@ -6273,13 +6272,13 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 5    mnuUtils_UnknownDevices - "Unknown Devices" - Shortcut^{F6}
 ' 6    mnuSep10 - "-"
 ' 7    mnuUtils - "" - Index   0 - Visible'False
-    SetUniMenu -1, 2, mnuMainUtils, LocaliseString(strPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
-    SetUniMenu 2, 0, mnuUtils_devmgmt, LocaliseString(strPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
-    SetUniMenu 2, 1, mnuUtils_DevManView, LocaliseString(strPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption)
-    SetUniMenu 2, 2, mnuUtils_DoubleDriver, LocaliseString(strPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption)
-    SetUniMenu 2, 3, mnuUtils_SIV, LocaliseString(strPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption)
-    SetUniMenu 2, 4, mnuUtils_UDI, LocaliseString(strPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption)
-    SetUniMenu 2, 5, mnuUtils_UnknownDevices, LocaliseString(strPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption)
+    SetUniMenu -1, 2, -1, mnuMainUtils, LocaliseString(strPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
+    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(strPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
+    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(strPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption)
+    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(strPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption)
+    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(strPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption)
+    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(strPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption)
+    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(strPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption)
     
 '3  mnuMainAbout - "Справка"
 ' 0    mnuLinks - "Ссылки"
@@ -6298,26 +6297,26 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 13   mnuDonate - "Поблагодарить автора..."
 ' 14   mnuLicence - "Лицензионное соглашение..."
 ' 15   mnuAbout - "О программе..."
-    SetUniMenu -1, 3, mnuMainAbout, LocaliseString(strPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
-    SetUniMenu 3, 0, mnuLinks, LocaliseString(strPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
-    SetUniMenu 3, 1, mnuHistory, LocaliseString(strPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
-    SetUniMenu 3, 2, mnuHelp, LocaliseString(strPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
-    SetUniMenu 3, 4, mnuHomePage1, LocaliseString(strPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
-    SetUniMenu 3, 5, mnuHomePage, LocaliseString(strPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
-    SetUniMenu 3, 6, mnuDriverPacks, LocaliseString(strPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
-    SetUniMenu 3, 7, mnuDriverPacksOnMySite, LocaliseString(strPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
-    SetUniMenu 3, 9, mnuCheckUpd, LocaliseString(strPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
-    SetUniMenu 3, 11, mnuModulesVersion, LocaliseString(strPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
-    SetUniMenu 3, 13, mnuDonate, LocaliseString(strPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
-    SetUniMenu 3, 14, mnuLicence, LocaliseString(strPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
-    SetUniMenu 3, 15, mnuAbout, LocaliseString(strPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
+    SetUniMenu -1, 3, -1, mnuMainAbout, LocaliseString(strPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
+    SetUniMenu 3, 0, -1, mnuLinks, LocaliseString(strPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
+    SetUniMenu 3, 1, -1, mnuHistory, LocaliseString(strPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
+    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(strPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
+    SetUniMenu 3, 4, -1, mnuHomePage1, LocaliseString(strPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
+    SetUniMenu 3, 5, -1, mnuHomePage, LocaliseString(strPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
+    SetUniMenu 3, 6, -1, mnuDriverPacks, LocaliseString(strPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
+    SetUniMenu 3, 7, -1, mnuDriverPacksOnMySite, LocaliseString(strPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
+    SetUniMenu 3, 9, -1, mnuCheckUpd, LocaliseString(strPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
+    SetUniMenu 3, 11, -1, mnuModulesVersion, LocaliseString(strPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
+    SetUniMenu 3, 13, -1, mnuDonate, LocaliseString(strPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
+    SetUniMenu 3, 14, -1, mnuLicence, LocaliseString(strPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
+    SetUniMenu 3, 15, -1, mnuAbout, LocaliseString(strPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
     
 '4  mnuMainLang - "Язык"
 ' 0    mnuLangStart - "Использовать выбранный язык при запуске (отмена автовыбора)"
 ' 1    mnuSep15 - "-"
 ' 2    mnuLang - "" - Index0 - Visible'False
-    SetUniMenu -1, 4, mnuMainLang, LocaliseString(strPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
-    SetUniMenu 4, 0, mnuLangStart, LocaliseString(strPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
+    SetUniMenu -1, 4, -1, mnuMainLang, LocaliseString(strPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
+    SetUniMenu 4, 0, -1, mnuLangStart, LocaliseString(strPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
     
 '5  mnuContextMenu - "Контекстное меню"
 ' 0    mnuContextXLS - "Открыть файл базы данных в программе Excel"
@@ -6341,18 +6340,21 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 '  0          mnuContextCopyHWIDDesc - "Список доступных HWID" -    Enabled'False
 '  1          mnuContextSep8 - "-"
 '  2          mnuContextCopyHWID2Clipboard - "Список устройств" -    Index0 -    Visible'False
-    SetUniMenu 5, 0, mnuContextXLS, LocaliseString(strPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
-    SetUniMenu 5, 1, mnuContextTxt, LocaliseString(strPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
-    SetUniMenu 5, 3, mnuContextToolTip, LocaliseString(strPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
-    SetUniMenu 5, 5, mnuContextUpdStatus, LocaliseString(strPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
-    SetUniMenu 5, 9, mnuContextTestDRP, LocaliseString(strPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
-    SetUniMenu 5, 11, mnuContextDeleteDRP, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
-    SetUniMenu 5, 13, mnuContextDeleteDevIDs, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
-    SetUniMenu 5, 14, mnuContextCopyHWIDs, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
+    SetUniMenu 5, 0, -1, mnuContextXLS, LocaliseString(strPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
+    SetUniMenu 5, 1, -1, mnuContextTxt, LocaliseString(strPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
+    SetUniMenu 5, 3, -1, mnuContextToolTip, LocaliseString(strPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
+    SetUniMenu 5, 5, -1, mnuContextUpdStatus, LocaliseString(strPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
+    SetUniMenu 5, 7, -1, mnuContextEditDPName, LocaliseString(strPathFile, strFormName, "mnuContextEditDPName", mnuContextEditDPName.Caption)
+    SetUniMenu 5, 9, -1, mnuContextTestDRP, LocaliseString(strPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
+    SetUniMenu 5, 11, -1, mnuContextDeleteDRP, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
+    SetUniMenu 5, 13, -1, mnuContextDeleteDevIDs, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
+    SetUniMenu 5, 13, 0, mnuContextDeleteDevIDDesc, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDDesc", mnuContextDeleteDevIDDesc.Caption)
+    SetUniMenu 5, 14, -1, mnuContextCopyHWIDs, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
+    SetUniMenu 5, 14, 0, mnuContextCopyHWIDDesc, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDDesc", mnuContextCopyHWIDDesc.Caption)
 
 '6  mnuContextMenu2 - "Контекстное меню2"
 ' 0    mnuContextLegendIco - "Просмотреть описание всех обозначений"
-    SetUniMenu 6, 0, mnuContextLegendIco, LocaliseString(strPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
+    SetUniMenu 6, 0, -1, mnuContextLegendIco, LocaliseString(strPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
     
 '7  mnuContextMenu3 - "Контекстное меню3"
 ' 0    mnuContextInstall - "Обычная установка" - Index0
@@ -6361,10 +6363,10 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 3    mnuContextInstall - "-" - Index3
 ' 4    mnuContextInstall - "Распаковать в каталог - Все подобранные драйвера" - Index4
 ' 5    mnuContextInstall - "Распаковать в каталог - Выбрать драйвера..." - Index5
-    SetUniMenu 7, 0, mnuContextInstall(0), LocaliseString(strPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
-    SetUniMenu 7, 2, mnuContextInstall(2), LocaliseString(strPathFile, strFormName, "mnuContextInstall2", mnuContextInstall(2).Caption)
-    SetUniMenu 7, 4, mnuContextInstall(4), LocaliseString(strPathFile, strFormName, "mnuContextInstall3", mnuContextInstall(4).Caption)
-    SetUniMenu 7, 5, mnuContextInstall(5), LocaliseString(strPathFile, strFormName, "mnuContextInstall4", mnuContextInstall(5).Caption)
+    SetUniMenu 7, 0, -1, mnuContextInstall(0), LocaliseString(strPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
+    SetUniMenu 7, 2, -1, mnuContextInstall(2), LocaliseString(strPathFile, strFormName, "mnuContextInstall2", mnuContextInstall(2).Caption)
+    SetUniMenu 7, 4, -1, mnuContextInstall(4), LocaliseString(strPathFile, strFormName, "mnuContextInstall3", mnuContextInstall(4).Caption)
+    SetUniMenu 7, 5, -1, mnuContextInstall(5), LocaliseString(strPathFile, strFormName, "mnuContextInstall4", mnuContextInstall(5).Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8756,7 +8758,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                 Case 2
 
                     If acmdPackFiles(i).Picture = imgOkAttention.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionOld.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
                        acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
@@ -8766,7 +8768,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                 Case 3
 
                     If acmdPackFiles(i).Picture = imgOK.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionOld.Picture Or _
+                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
                        acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Or _
                        acmdPackFiles(i).Picture = imgOkNew.Picture Or _
                        acmdPackFiles(i).Picture = imgOkOld.Picture Then
@@ -9017,7 +9019,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
