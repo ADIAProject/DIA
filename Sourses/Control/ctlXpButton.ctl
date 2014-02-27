@@ -112,7 +112,7 @@ Private m_TextColor        As OLE_COLOR
 
 Private Const mvarPadding  As Byte = 4
 
-Dim dtDefTextDrawParams    As Long
+Private dtDefTextDrawParams    As Long
 
 Private Type RGB
     Red                                 As Byte
@@ -513,7 +513,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get CheckExist() As Boolean
-    CheckExist = m_MenuExist
+    CheckExist = m_CheckExist
 End Property
 
 '!--------------------------------------------------------------------------------

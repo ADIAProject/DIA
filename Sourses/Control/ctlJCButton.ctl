@@ -80,6 +80,10 @@ Option Explicit
 '*   such, and must not be misrepresented as being the original software.   *
 '****************************************************************************
 '* N'joy ;)
+' Fix by Romeo91
+' added unicode support for Caption
+' delete tooltip event declaration
+' added rightbuttonmenu
 '==========================================================================================================================================================================================================================================================================================
 ' Subclassing Declares
 Private Enum MsgWhen
@@ -199,30 +203,6 @@ End Enum
 #If False Then
 
     Private epLeftEdge, epLeftOfCaption, epRightEdge, epRightOfCaption, epBackGround, epTopEdge, epTopOfCaption, epBottomEdge, epBottomOfCaption
-#End If
-
-' --Tooltip Icons
-Public Enum enumIconType
-    TTNoIcon
-    TTIconInfo
-    TTIconWarning
-    TTIconError
-End Enum
-
-#If False Then
-
-    Private TTNoIcon, TTIconInfo, TTIconWarning, TTIconError
-#End If
-
-' --Tooltip [ Balloon / Standard ]
-Public Enum enumTooltipStyle
-    TooltipStandard
-    TooltipBalloon
-End Enum
-
-#If False Then
-
-    Private TooltipStandard, TooltipBalloon
 #End If
 
 ' --Caption effects
@@ -362,24 +342,16 @@ Private m_lDX                As Single
 Private m_lDY                As Single
 
 ' --Popup menu variables
-Private m_bPopupEnabled      As Boolean    'Popus is enabled
-Private m_bPopupShown        As Boolean    'Popupmenu is shown
-Private m_bPopupInit         As Boolean              'Flag to prevent WM_MOUSLEAVE to redraw the button
-Private DropDownMenu         As VB.Menu    'Popupmenu to be shown
+Private m_bPopupEnabled      As Boolean         'Popus is enabled
+Private m_bPopupShown        As Boolean         'Popupmenu is shown
+Private m_bPopupInit         As Boolean         'Flag to prevent WM_MOUSLEAVE to redraw the button
+Private mnuDropDown          As VB.Menu         'Popupmenu to be shown
+Private mnuRightButton       As VB.Menu         'Default menu in the popupmenu
 Private MenuAlign            As enumMenuAlign    'PopupMenu Alignments
-Private MenuFlags            As Long    'PopupMenu Flags
-Private DefaultMenu          As VB.Menu    'Default menu in the popupmenu
+Private MenuFlags            As Long            'PopupMenu Flags
 
 ' --Tooltip variables
-Private m_sTooltipText       As String
-Private m_sTooltiptitle      As String
-Private m_lToolTipIcon       As enumIconType
-Private m_lTooltipType       As enumTooltipStyle
-Private m_lttBackColor       As Long
-Private m_lttCentered        As Boolean
-Private m_bttRTL             As Boolean    'Right to Left reading
-Private m_lttHwnd            As Long
-Private m_hMode              As Long    'Added this, as tooltips
+Private m_hMode              As Long ' Xp Style
 
 ' --Caption variables
 Private lpSignRect           As RECT    'Drop down Symbol rect
@@ -413,6 +385,10 @@ Private Const DIB_RGB_COLORS As Long = 0
 Private m_PicRect            As RECT    'Picture drawing area
 Private lh                   As Long    'ScaleHeight of button
 Private lw                   As Long    'ScaleWidth of button
+
+Private m_CheckExist         As Boolean
+Private m_DropDownEnable     As Boolean
+Private dtDefTextDrawParams  As Long
 
 '*************************************************************
 '   API DECLARATION
@@ -490,53 +466,6 @@ Private Const BF_BOTTOM            As Long = &H8
 Private Const BF_RECT              As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
 Private Const BDR_SUNKEN95         As Long = &HA
 Private Const BDR_RAISED95         As Long = &H5
-
-'Tooltip Window Constants
-Private Const TOOLTIPS_CLASSA      As String = "tooltips_class32"
-Private Const WM_USER              As Long = &H400
-Private Const TTS_NOPREFIX         As Long = &H2
-Private Const TTF_TRANSPARENT      As Long = &H100
-Private Const TTF_IDISHWND         As Long = &H1
-Private Const TTF_CENTERTIP        As Long = &H2
-Private Const TTM_ADDTOOLA         As Long = (WM_USER + 4)
-Private Const TTM_ADDTOOLW         As Long = (WM_USER + 50)
-Private Const TTM_ACTIVATE         As Long = WM_USER + 1
-Private Const TTM_UPDATETIPTEXTA   As Long = (WM_USER + 12)
-Private Const TTM_SETMAXTIPWIDTH   As Long = (WM_USER + 24)
-Private Const TTM_SETTIPBKCOLOR    As Long = (WM_USER + 19)
-Private Const TTM_SETTIPTEXTCOLOR  As Long = (WM_USER + 20)
-Private Const TTM_SETTITLE         As Long = (WM_USER + 32)
-Private Const TTM_SETTITLEW        As Long = (WM_USER + 33)
-Private Const TTS_BALLOON          As Long = &H40
-Private Const TTS_ALWAYSTIP        As Long = &H1
-Private Const TTF_SUBCLASS         As Long = &H10
-
-'Maximum width (in pixels) for custom-built tooltips
-Private Const PD_MAX_TOOLTIP_WIDTH As Long = 400
-
-'Tooltip Window Types
-Private Type TOOLINFO
-    lSize                               As Long
-    lFlags                              As Long
-    lhWnd                               As Long
-    lID                                 As Long
-    lpRect                              As RECT
-    hInstance                           As Long
-    lpStr                               As String
-    lParam                              As Long
-End Type
-
-'Tooltip Window Types [for UNICODE support]
-Private Type TOOLINFOW
-    lSize                               As Long
-    lFlags                              As Long
-    lhWnd                               As Long
-    lID                                 As Long
-    lpRect                              As RECT
-    hInstance                           As Long
-    lpStrW                              As Long
-    lParam                              As Long
-End Type
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
 Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
@@ -654,7 +583,7 @@ Private Const DT_SINGLELINE    As Long = &H20
 Private Const DT_WORD_ELLIPSIS As Long = &H40000
 Private Const DT_MULTILINE = (&H1)
 Private Const DT_NOPREFIX = &H800
-Private Const DT_DRAWFLAG As Long = DT_CENTER Or DT_WORDBREAK Or DT_MULTILINE Or DT_NOPREFIX
+Private Const DT_DRAWFLAG As Long = DT_WORDBREAK Or DT_MULTILINE Or DT_NOPREFIX
 
 Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
 Private Declare Function DrawText Lib "user32.dll" Alias "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
@@ -1684,6 +1613,7 @@ Private Sub DrawPicwithCaption()
     Dim lpRect     As RECT
     Dim pRect      As RECT
     Dim lShadowClr As Long
+    Dim dtTextDrawParams As Long
 
     'Dim lPixelClr        As Long
     'RECT to draw caption
@@ -1730,12 +1660,12 @@ Private Sub DrawPicwithCaption()
             SetRect m_TextRect, 0, 0, lw - 20, lh
         Else
 
-            'SetRect m_TextRect, 0, 0, lw - 16, lh
             If Not m_Picture Is Nothing Then
-                SetRect m_TextRect, PicW + 4, 0, lw - 20, lh
+                SetRect m_TextRect, PicW + 4, 0, lw - 20 - PicW, lh
             Else
                 SetRect m_TextRect, 0, 0, lw - 20, lh
             End If
+                    
         End If
 
     ElseIf m_PictureAlign = epLeftEdge And (m_CaptionAlign = ecLeftAlign) Then
@@ -1745,17 +1675,31 @@ Private Sub DrawPicwithCaption()
         If m_PictureAlign = epRightEdge Or m_PictureAlign = epRightOfCaption Then
             SetRect m_TextRect, 0, 0, lw - PicW, lh
         ElseIf m_PictureAlign = epLeftEdge Or m_PictureAlign = epLeftOfCaption Then
-            SetRect m_TextRect, 0, 0, lw - PicW, lh
+            If m_CheckExist Then
+                SetRect m_TextRect, 0, 0, lw - PicW - 16 - 4, lh
+            Else
+                SetRect m_TextRect, 0, 0, lw - PicW - 4, lh
+            End If
         Else
             SetRect m_TextRect, 0, 0, lw - 8, lh
         End If
+        
     End If
-
+    
+    Select Case m_CaptionAlign
+        Case ecLeftAlign
+            dtTextDrawParams = dtDefTextDrawParams Or DT_LEFT
+        Case ecCenterAlign
+            dtTextDrawParams = dtDefTextDrawParams Or DT_CENTER
+        Case ecRightAlign
+            dtTextDrawParams = dtDefTextDrawParams Or DT_RIGHT
+    End Select
+    
     ' --Calc rects for multiline
     If m_WindowsNT Then
-        DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, m_TextRect, DT_CALCRECT Or DT_DRAWFLAG Or IIf(m_bRTL, DT_RTLREADING, 0)
+        DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, m_TextRect, DT_CALCRECT Or dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     Else
-        DrawText hDC, m_Caption, -1, m_TextRect, DT_CALCRECT Or DT_DRAWFLAG Or IIf(m_bRTL, DT_RTLREADING, 0)
+        DrawText hDC, m_Caption, -1, m_TextRect, DT_CALCRECT Or dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     End If
 
     ' --Copy rect into temp var
@@ -1766,10 +1710,6 @@ Private Sub DrawPicwithCaption()
 
         Case ecLeftAlign
             OffsetRect lpRect, 2, (lh - lpRect.Bottom) \ 2
-
-            If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                'OffsetRect lpRect, -10, 0
-            End If
 
         Case ecCenterAlign
             OffsetRect lpRect, (lw - lpRect.Right + PicW + 4) \ 2, (lh - lpRect.Bottom) \ 2
@@ -1789,19 +1729,9 @@ Private Sub DrawPicwithCaption()
             Select Case m_PictureAlign
 
                 Case epLeftEdge, epLeftOfCaption
-                    '                    If m_CaptionAlign = ecCenterAlign Then
-                    'If .Left < PicW + 6 Then
-                    '.Left = PicW + 6
-                    '.Right = .Right - PicW
-                    'Else
-                    'If .Left < PicW + 6 Then
                     .Left = PicW + 4
-
-                    '.Right = .Right - PicW - 4
-                    'End If
-                    'End If
-                    'ElseIf m_CaptionAlign = ecRightAlign Then
-                    'End If
+                    .Right = lw - 4
+                    
                 Case epRightEdge, epRightOfCaption
 
                     If .Right > lw - PicW - 4 Then
@@ -1832,9 +1762,13 @@ Private Sub DrawPicwithCaption()
             If .Left < 4 Then
                 .Left = 4
             End If
+            
+            If m_CheckExist Then
+                .Left = .Left + 16
+            End If
 
-            If .Right > ScaleWidth - 4 Then
-                .Right = ScaleWidth - 4
+            If .Right > lw - 4 Then
+                .Right = lw - 4
             End If
         End If
 
@@ -1850,21 +1784,21 @@ Private Sub DrawPicwithCaption()
             If .Left < 4 Then
                 .Left = 4
             End If
-
-            If .Right > ScaleWidth - 4 Then
-                .Right = ScaleWidth - 4
+            
+            If m_CheckExist Then
+                .Left = .Left + 16
             End If
 
-            If m_bDropDownSep Then
-                '.Right = .Right - 8
+            If .Right > lw - 4 Then
+                .Right = lw - 4
             End If
 
             If .Top < 4 Then
                 .Top = 4
             End If
 
-            If .Bottom > ScaleHeight - 4 Then
-                .Bottom = ScaleHeight - 4
+            If .Bottom > lh - 4 Then
+                .Bottom = lh - 4
             End If
 
         Else
@@ -1985,6 +1919,11 @@ Private Sub CalcPicRects()
                         .Left = 4
                         .Top = (lh - PicH) \ 2
 
+                        If m_CheckExist Then
+                            .Left = .Left + 16
+                            '.Right = .Right - m_PictureWidth - 13
+                        End If
+            
                         If m_PicRect.Left < 0 Then
                             OffsetRect m_PicRect, PicW, 0
                             OffsetRect m_TextRect, PicW, 0
@@ -2068,7 +2007,6 @@ Private Sub CalcPicRects()
             .Bottom = .Top + PicH
         End With
 
-        'M_PICRECT
     End If
 
 End Sub
@@ -2187,6 +2125,7 @@ Private Sub DrawCaptionEx(lpRect As RECT, lColor As Long, OffsetX As Long, Offse
 
     Dim tRect         As RECT
     Dim lOldForeColor As Long
+    Dim dtTextDrawParams As Long
 
     ' --Get current forecolor
     lOldForeColor = GetTextColor(hDC)
@@ -2194,10 +2133,19 @@ Private Sub DrawCaptionEx(lpRect As RECT, lColor As Long, OffsetX As Long, Offse
     OffsetRect tRect, OffsetX, OffsetY
     SetTextColor hDC, lColor
 
+    Select Case m_CaptionAlign
+        Case ecLeftAlign
+            dtTextDrawParams = dtDefTextDrawParams Or DT_LEFT
+        Case ecCenterAlign
+            dtTextDrawParams = dtDefTextDrawParams Or DT_CENTER
+        Case ecRightAlign
+            dtTextDrawParams = dtDefTextDrawParams Or DT_RIGHT
+    End Select
+    
     If m_WindowsNT Then
-        DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, tRect, DT_DRAWFLAG Or IIf(m_bRTL, DT_RTLREADING, 0)
+        DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, tRect, dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     Else
-        DrawText hDC, m_Caption, -1, tRect, DT_DRAWFLAG Or IIf(m_bRTL, DT_RTLREADING, 0)
+        DrawText hDC, m_Caption, -1, tRect, dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     End If
 
     ' --Restore previous forecolor
@@ -2740,8 +2688,6 @@ End Sub
 Private Sub DrawButton_OfficeXP(ByVal vState As enumButtonStates)
 
     Dim lpRect      As RECT
-
-    'Dim pRect            As RECT
     Dim bColor      As Long
     Dim oColor      As Long
     Dim BorderColor As Long
@@ -3340,69 +3286,68 @@ Private Sub ShowPopupMenu()
     '* Inspired from Noel Dacara's dcbutton
     Const TPM_BOTTOMALIGN As Long = &H20&
 
-    Dim Menu              As VB.Menu
     Dim Align             As enumMenuAlign
     Dim X                 As Long
     Dim Y                 As Long
     Dim lpPoint           As POINTAPI
 
-    Set Menu = DropDownMenu
-    Align = MenuAlign
-    lh = ScaleHeight
-    lw = ScaleWidth
-    m_bPopupInit = True
-
-    ' --Set the drop down menu position
-    Select Case Align
-
-        Case edaBottom
-            Y = lh
-
-        Case edaLeft, edaBottomLeft
-            MenuFlags = MenuFlags Or vbPopupMenuRightAlign
-
-            If MenuAlign = edaBottomLeft Then
+    If m_DropDownEnable Then
+        Align = MenuAlign
+        lh = ScaleHeight
+        lw = ScaleWidth
+        m_bPopupInit = True
+    
+        ' --Set the drop down menu position
+        Select Case Align
+    
+            Case edaBottom
                 Y = lh
-            End If
-
-        Case edaRight, edaBottomRight
-            X = lw
-
-            If MenuAlign = edaBottomRight Then
-                Y = lh
-            End If
-
-        Case edaTop, edaTopRight, edaTopLeft
-            MenuFlags = TPM_BOTTOMALIGN
-
-            If MenuAlign = edaTopRight Then
-                X = lw
-            ElseIf (MenuAlign = edaTopLeft) Then
+    
+            Case edaLeft, edaBottomLeft
                 MenuFlags = MenuFlags Or vbPopupMenuRightAlign
+    
+                If MenuAlign = edaBottomLeft Then
+                    Y = lh
+                End If
+    
+            Case edaRight, edaBottomRight
+                X = lw
+    
+                If MenuAlign = edaBottomRight Then
+                    Y = lh
+                End If
+    
+            Case edaTop, edaTopRight, edaTopLeft
+                MenuFlags = TPM_BOTTOMALIGN
+    
+                If MenuAlign = edaTopRight Then
+                    X = lw
+                ElseIf (MenuAlign = edaTopLeft) Then
+                    MenuFlags = MenuFlags Or vbPopupMenuRightAlign
+                End If
+    
+            Case Else
+                m_bPopupInit = False
+        End Select
+    
+        If m_bPopupInit Then
+            ' /--Show the dropdown menu
+            UserControl.PopupMenu mnuDropDown, MenuFlags, X, Y
+            GetCursorPos lpPoint
+    
+            If (WindowFromPoint(lpPoint.X, lpPoint.Y) = UserControl.hWnd) Then
+                m_bPopupShown = True
+            Else
+                m_bIsDown = False
+                m_bMouseInCtl = False
+                m_bIsSpaceBarDown = False
+                m_Buttonstate = eStateNormal
+                m_bPopupShown = False
+                m_bPopupInit = False
+                RedrawButton
             End If
-
-        Case Else
-            m_bPopupInit = False
-    End Select
-
-    If m_bPopupInit Then
-        ' /--Show the dropdown menu
-        UserControl.PopupMenu DropDownMenu, MenuFlags, X, Y
-        GetCursorPos lpPoint
-
-        If (WindowFromPoint(lpPoint.X, lpPoint.Y) = UserControl.hWnd) Then
-            m_bPopupShown = True
-        Else
-            m_bIsDown = False
-            m_bMouseInCtl = False
-            m_bIsSpaceBarDown = False
-            m_Buttonstate = eStateNormal
-            m_bPopupShown = False
-            m_bPopupInit = False
-            RedrawButton
         End If
     End If
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3416,13 +3361,9 @@ Private Sub ShowPopupMenuRBT()
     '* Inspired from Noel Dacara's dcbutton
     Const TPM_BOTTOMALIGN As Long = &H20&
 
-    Dim DefaultMenuRBT    As VB.Menu
-
-    Set DefaultMenuRBT = DefaultMenu
-
     ' /--Show the dropdown menu
-    If Not (DefaultMenuRBT Is Nothing) Then
-        UserControl.PopupMenu DefaultMenuRBT
+    If Not (mnuRightButton Is Nothing) Then
+        UserControl.PopupMenu mnuRightButton
     End If
 
     Dim lpPoint As POINTAPI
@@ -3627,15 +3568,6 @@ Private Sub UserControl_GotFocus()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Hide
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Hide()
-    UserControl.Extender.ToolTipText = m_sTooltipText
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_Initialize
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -3653,6 +3585,7 @@ Private Sub UserControl_Initialize()
     ' --Get the operating system version for text drawing purposes.
     m_hMode = LoadLibrary(StrPtr("shell32.dll"))
     m_WindowsNT = IsWinXPOrLater
+    dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3898,7 +3831,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
         SetCursor m_lCursor
     End If
 
-    If Button = vbLeftButton Or m_bPopupShown Then
+    If Button = vbLeftButton Then
         m_bHasFocus = True
         m_bIsDown = True
 
@@ -3909,7 +3842,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
             End If
         End If
 
-        If Not m_bPopupEnabled Then
+        If Not m_bPopupEnabled And Not m_DropDownEnable Then
             RaiseEvent MouseDown(Button, Shift, X, Y)
         Else
 
@@ -3918,7 +3851,7 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
             End If
         End If
 
-    ElseIf Button = vbRightButton Or m_bPopupShown Then
+    ElseIf Button = vbRightButton Then
         m_bHasFocus = True
 
         If Not m_bPopupEnabled Then
@@ -3928,127 +3861,6 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
             If Not m_bPopupShown Then
                 ShowPopupMenuRBT
             End If
-        End If
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub CreateToolTip
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub CreateToolTip()
-
-    '****************************************************************************
-    '* A very nice and flexible sub to create balloon tool tips
-    '* Author :- Fred.CPP
-    '* Added as requested by many users
-    '* Modified by me to support unicode
-    '* Thanks Alfredo ;)
-    '****************************************************************************
-    Dim lpRect    As RECT
-    Dim lWinStyle As Long
-    Dim lPtr      As Long
-    Dim ttip      As TOOLINFO
-    Dim ttipW     As TOOLINFOW
-
-    ' --Dont show tooltips if disabled
-    If Not (Not m_bEnabled) Or m_bPopupShown Or m_Buttonstate = eStateDown Then
-
-        ' --Destroy any previous tooltip
-        If m_lttHwnd <> 0 Then
-            DestroyWindow m_lttHwnd
-        End If
-
-        lWinStyle = TTS_ALWAYSTIP Or TTS_NOPREFIX
-
-        ''create baloon style if desired
-        If m_lTooltipType = TooltipBalloon Then
-            lWinStyle = lWinStyle Or TTS_BALLOON
-        End If
-
-        If m_bttRTL Then
-            m_lttHwnd = CreateWindowEx(WS_EX_LAYOUTRTL, StrPtr(TOOLTIPS_CLASSA), StrPtr(vbNullString), lWinStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, UserControl.hWnd, 0&, App.hInstance, ByVal 0&)
-        Else
-            m_lttHwnd = CreateWindowEx(0&, StrPtr(TOOLTIPS_CLASSA), StrPtr(vbNullString), lWinStyle, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, UserControl.hWnd, 0&, App.hInstance, ByVal 0&)
-        End If
-
-        SetClassLong m_lttHwnd, GCL_STYLE, GetClassLong(m_lttHwnd, GCL_STYLE) Or CS_DROPSHADOW
-        'make our tooltip window a topmost window
-        ' This is creating some problems as noted by K-Zero
-        'SetWindowPos m_lttHwnd, HWND_TOPMOST, 0&, 0&, 0&, 0&, SWP_NOACTIVATE Or SWP_NOSIZE Or SWP_NOMOVE
-        ''get the rect of the parent control
-        GetClientRect UserControl.hWnd, lpRect
-
-        If m_WindowsNT Then
-
-            ' --set our tooltip info structure  for UNICODE SUPPORT >> WinNT
-            With ttipW
-
-                ' --if we want it centered, then set that flag
-                If m_lttCentered Then
-                    .lFlags = TTF_SUBCLASS Or TTF_CENTERTIP Or TTF_IDISHWND
-                Else
-                    .lFlags = TTF_SUBCLASS Or TTF_IDISHWND
-                End If
-
-                ' --set the hwnd prop to our parent control's hwnd
-                .lhWnd = UserControl.hWnd
-                .lID = hWnd
-                .lSize = Len(ttipW)
-                .hInstance = App.hInstance
-                .lpStrW = StrPtr(m_sTooltipText)
-                .lpRect = lpRect
-            End With
-
-            ' --add the tooltip structure
-            SendMessage m_lttHwnd, TTM_ADDTOOLW, 0&, ttipW
-        Else
-
-            ' --set our tooltip info structure for << WinNT
-            With ttip
-
-                ''if we want it centered, then set that flag
-                If m_lttCentered Then
-                    .lFlags = TTF_SUBCLASS Or TTF_CENTERTIP
-                Else
-                    .lFlags = TTF_SUBCLASS
-                End If
-
-                ' --set the hwnd prop to our parent control's hwnd
-                .lhWnd = UserControl.hWnd
-                .lID = hWnd
-                .lSize = Len(ttip)
-                .hInstance = App.hInstance
-                .lpStr = m_sTooltipText
-                .lpRect = lpRect
-            End With
-
-            'TTIP
-            ' --add the tooltip structure
-            SendMessage m_lttHwnd, TTM_ADDTOOLA, 0&, ttip
-        End If
-
-        'if we want a title or we want an icon
-        If LenB(m_sTooltiptitle) > 0 Or m_lToolTipIcon <> TTNoIcon Then
-            If m_WindowsNT Then
-                lPtr = StrPtr(m_sTooltiptitle)
-
-                If lPtr Then
-                    SendMessage m_lttHwnd, TTM_SETTITLEW, m_lToolTipIcon, ByVal lPtr
-                End If
-
-            Else
-                SendMessage m_lttHwnd, TTM_SETTITLE, CLng(m_lToolTipIcon), ByVal m_sTooltiptitle
-            End If
-        End If
-
-        'for Multiline capability
-        SendMessage m_lttHwnd, TTM_SETMAXTIPWIDTH, 0, ByVal PD_MAX_TOOLTIP_WIDTH
-
-        If m_lttBackColor <> Empty Then
-            SendMessage m_lttHwnd, TTM_SETTIPBKCOLOR, TranslateColor(m_lttBackColor), 0&
         End If
     End If
 
@@ -4227,11 +4039,6 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
             If m_Buttonstate <> eStateOver Then
                 m_Buttonstate = eStateOver
                 RedrawButton
-
-                ' --Create Tooltip Here
-                If m_Buttonstate <> eStateDown Then
-                    CreateToolTip
-                End If
             End If
         End If
 
@@ -4243,7 +4050,6 @@ Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Sing
         End If
     End If
 
-    'RaiseEvent MouseMove(Button, Shift, x, Y)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4261,7 +4067,7 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
     End If
 
     ' --Popupmenu enabled
-    If m_bPopupEnabled Then
+    If m_bPopupEnabled And m_DropDownEnable Then
         m_bIsDown = False
         m_bPopupShown = False
         m_Buttonstate = eStateNormal
@@ -4332,10 +4138,9 @@ Private Sub UserControl_Paint()
     RedrawButton
 End Sub
 
-'Load property values from storage
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_ReadProperties
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Load property values from storage]
 '! Parameters  (Переменные):   PropBag (PropertyBag)
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
@@ -4343,6 +4148,8 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     With PropBag
         Set mFont = .ReadProperty("Font", Ambient.Font)
         Set UserControl.Font = mFont
+        m_CheckExist = .ReadProperty("CheckExist", False)
+        m_DropDownEnable = .ReadProperty("DropDownEnable", False)
         m_ButtonStyle = .ReadProperty("ButtonStyle", eFlat)
         m_bShowFocus = .ReadProperty("ShowFocusRect", False)
         m_bColors.tBackColor = .ReadProperty("BackColor", GetSysColor(COLOR_BTNFACE))
@@ -4372,13 +4179,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         m_bColors.tForeColorOver = .ReadProperty("ForeColorHover", TranslateColor(vbButtonText))
         UserControl.ForeColor = m_bColors.tForeColor
         m_bDropDownSep = .ReadProperty("DropDownSeparator", False)
-        m_sTooltiptitle = .ReadProperty("TooltipTitle", vbNullString)
-        m_sTooltipText = .ReadProperty("ToolTip", vbNullString)
-        m_lToolTipIcon = .ReadProperty("TooltipIcon", TTNoIcon)
-        m_lTooltipType = .ReadProperty("TooltipType", TooltipStandard)
-        m_lttBackColor = .ReadProperty("TooltipBackColor", TranslateColor(vbInfoBackground))
         m_bRTL = .ReadProperty("RightToLeft", False)
-        m_bttRTL = .ReadProperty("RightToLeft", False)
         m_DropDownSymbol = .ReadProperty("DropDownSymbol", ebsNone)
         m_lXPColor = .ReadProperty("ColorScheme", ecsBlue)
         UserControl.Enabled = m_bEnabled
@@ -4437,18 +4238,8 @@ H:
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Show
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Show()
-    UserControl.Extender.ToolTipText = vbNullString
-End Sub
-
-'A nice place to stop subclasser
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_Terminate
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [A nice place to stop subclasser]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
@@ -4467,6 +4258,7 @@ Private Sub UserControl_Terminate()
     End If
 
     UnsetPopupMenu
+    UnsetPopupMenuRBT
 
     If Ambient.UserMode Then
         Subclass_Terminate
@@ -4487,10 +4279,13 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     With PropBag
         .WriteProperty "Font", mFont, Ambient.Font
         .WriteProperty "ButtonStyle", m_ButtonStyle, eFlat
+        .WriteProperty "CheckExist", m_CheckExist, False
         .WriteProperty "ShowFocusRect", m_bShowFocus, False
         .WriteProperty "Enabled", m_bEnabled, True
         .WriteProperty "BackColor", m_bColors.tBackColor, GetSysColor(COLOR_BTNFACE)
         .WriteProperty "Caption", m_Caption, "ctlJCbutton1"
+        .WriteProperty "CaptionEffects", m_CaptionEffects, vbNullString
+        .WriteProperty "CaptionAlign", m_CaptionAlign, ecCenterAlign
         .WriteProperty "ForeColor", m_bColors.tForeColor, TranslateColor(vbButtonText)
         .WriteProperty "ForeColorHover", m_bColors.tForeColorOver, TranslateColor(vbButtonText)
         .WriteProperty "Mode", m_ButtonMode, ebmCommandButton
@@ -4509,18 +4304,12 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
         .WriteProperty "PictureOpacity", m_PictureOpacity, 255
         .WriteProperty "PictureOpacityOnOver", m_PicOpacityOnOver, 255
         .WriteProperty "DisabledPictureMode", m_PicDisabledMode, edpBlended
-        .WriteProperty "CaptionEffects", m_CaptionEffects, vbNullString
         .WriteProperty "UseMaskColor", m_bUseMaskColor, True
         .WriteProperty "MaskColor", m_lMaskColor, &HE0E0E0
-        .WriteProperty "CaptionAlign", m_CaptionAlign, ecCenterAlign
-        .WriteProperty "ToolTip", m_sTooltipText, vbNullString
-        .WriteProperty "TooltipType", m_lTooltipType, TooltipStandard
-        .WriteProperty "TooltipIcon", m_lToolTipIcon, TTNoIcon
-        .WriteProperty "TooltipTitle", m_sTooltiptitle, vbNullString
-        .WriteProperty "TooltipBackColor", m_lttBackColor, TranslateColor(vbInfoBackground)
         .WriteProperty "RightToLeft", m_bRTL, False
         .WriteProperty "DropDownSymbol", m_DropDownSymbol, ebsNone
         .WriteProperty "DropDownSeparator", m_bDropDownSep, False
+        .WriteProperty "DropDownEnable", m_DropDownEnable, False
         .WriteProperty "ColorScheme", m_lXPColor, ecsBlue
     End With
 
@@ -4714,17 +4503,15 @@ End Sub
 '! Parameters  (Переменные):   Menu (Object)
 '                              Align (enumMenuAlign)
 '                              Flags (enumMenuAlign)
-'                              MenuRBT (enumMenuAlign)
 '!--------------------------------------------------------------------------------
-Public Sub SetPopupMenu(ByVal Menu As Object, Optional Align As enumMenuAlign, Optional Flags = 0, Optional MenuRBT = Nothing)
+Public Sub SetPopupMenu(ByVal Menu As Object, Optional Align As enumMenuAlign, Optional Flags = 0)
 Attribute SetPopupMenu.VB_Description = "Sets a dropdown menu to the button."
 
     If Not (Menu Is Nothing) Then
         If (TypeOf Menu Is VB.Menu) Then
-            Set DropDownMenu = Menu
+            Set mnuDropDown = Menu
             MenuAlign = Align
             MenuFlags = Flags
-            SetPopupMenuRBT MenuRBT
             m_bPopupEnabled = True
         End If
     End If
@@ -4741,14 +4528,15 @@ Attribute SetPopupMenuRBT.VB_UserMemId = 1610809444
 
     If Not (Menu Is Nothing) Then
         If (TypeOf Menu Is VB.Menu) Then
-            Set DefaultMenu = Menu
+            Set mnuRightButton = Menu
+            m_bPopupEnabled = True
         End If
     End If
 
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UnsetPopupMenu
+'! Procedure   (Функция)   :   Sub UnsetPopupMenuRBT
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
@@ -4756,11 +4544,25 @@ Public Sub UnsetPopupMenu()
 Attribute UnsetPopupMenu.VB_Description = "Unsets a popupmenu that was previously set for that button."
 Attribute UnsetPopupMenu.VB_UserMemId = 1610809445
 
-    ' --Free the popup menu
-    If Not DropDownMenu Is Nothing Then Set DropDownMenu = Nothing
-    If Not DefaultMenu Is Nothing Then Set DefaultMenu = Nothing
+    ' --Free the popup menu DropDown
+    If Not mnuDropDown Is Nothing Then Set mnuDropDown = Nothing
     m_bPopupEnabled = False
     m_bPopupShown = False
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UnsetPopupMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub UnsetPopupMenuRBT()
+
+    ' --Free the popup menu RBT
+    If Not mnuRightButton Is Nothing Then Set mnuRightButton = Nothing
+    m_bPopupEnabled = False
+    m_bPopupShown = False
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4876,6 +4678,25 @@ Attribute CaptionAlign.VB_UserMemId = 1745027101
     m_CaptionAlign = New_CaptionAlign
     RedrawButton
     PropertyChanged "CaptionAlign"
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property DropDownEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get DropDownEnable() As Boolean
+    DropDownEnable = m_DropDownEnable
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property DropDownEnable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewParam (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let DropDownEnable(ByVal NewParam As Boolean)
+    m_DropDownEnable = NewParam
+    PropertyChanged "DropDownEnable"
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -5138,8 +4959,8 @@ Attribute Mode.VB_ProcData.VB_Invoke_PropertyPut = ";Behavior"
     m_ButtonMode = New_mode
 
     If m_ButtonMode = ebmCommandButton Then
-        m_Buttonstate = eStateNormal
         'Force Normal State for command buttons
+        m_Buttonstate = eStateNormal
     End If
 
     RedrawButton
@@ -5472,7 +5293,6 @@ Public Property Let RightToLeft(ByVal Value As Boolean)
 Attribute RightToLeft.VB_Description = "Returns/Sets a value to determine whether to display text in RTL mode."
 Attribute RightToLeft.VB_ProcData.VB_Invoke_PropertyPut = ";Text"
 Attribute RightToLeft.VB_UserMemId = -611
-    m_bttRTL = Value
     m_bRTL = Value
     RedrawButton
     PropertyChanged "RightToLeft"
@@ -5582,114 +5402,6 @@ Attribute Value.VB_ProcData.VB_Invoke_PropertyPut = ";Behavior"
 End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property TooltipTitle
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get TooltipTitle() As String
-    TooltipTitle = m_sTooltiptitle
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property TooltipTitle
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   New_title (String)
-'!--------------------------------------------------------------------------------
-Public Property Let TooltipTitle(ByVal New_title As String)
-Attribute TooltipTitle.VB_Description = "Returns/Sets the text displayed in the title of the tooltip."
-    m_sTooltiptitle = New_title
-    RedrawButton
-    PropertyChanged "TooltipTitle"
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ToolTip
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get ToolTip() As String
-    ToolTip = m_sTooltipText
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ToolTip
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   New_Tooltip (String)
-'!--------------------------------------------------------------------------------
-Public Property Let ToolTip(ByVal New_Tooltip As String)
-Attribute ToolTip.VB_Description = "Returns/Sets the text displayed when mouse is paused over the control."
-Attribute ToolTip.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
-    m_sTooltipText = New_Tooltip
-    RedrawButton
-    PropertyChanged "ToolTip"
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property TooltipBackColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get TooltipBackColor() As OLE_COLOR
-    TooltipBackColor = m_lttBackColor
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property TooltipBackColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   New_Color (OLE_COLOR)
-'!--------------------------------------------------------------------------------
-Public Property Let TooltipBackColor(ByVal New_Color As OLE_COLOR)
-Attribute TooltipBackColor.VB_Description = "Returns/Sets color to be displayed in the tooltip."
-Attribute TooltipBackColor.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
-    m_lttBackColor = New_Color
-    RedrawButton
-    PropertyChanged "TooltipBackcolor"
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ToolTipIcon
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get ToolTipIcon() As enumIconType
-    ToolTipIcon = m_lToolTipIcon
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ToolTipIcon
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lTooltipIcon (enumIconType)
-'!--------------------------------------------------------------------------------
-Public Property Let ToolTipIcon(lTooltipIcon As enumIconType)
-Attribute ToolTipIcon.VB_Description = "Returns/Sets an icon value to be displayed in the tooltip."
-    m_lToolTipIcon = lTooltipIcon
-    RedrawButton
-    PropertyChanged "TooltipIcon"
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ToolTipType
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get ToolTipType() As enumTooltipStyle
-    ToolTipType = m_lTooltipType
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ToolTipType
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lNewTTType (enumTooltipStyle)
-'!--------------------------------------------------------------------------------
-Public Property Let ToolTipType(ByVal lNewTTType As enumTooltipStyle)
-Attribute ToolTipType.VB_Description = "Returns/Sets the Style of the tooltip."
-Attribute ToolTipType.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
-    m_lTooltipType = lNewTTType
-    RedrawButton
-    PropertyChanged "ToolTipType"
-End Property
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property ColorScheme
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -5710,6 +5422,26 @@ Attribute ColorScheme.VB_ProcData.VB_Invoke_PropertyPut = ";Appearance"
     SetThemeColors
     RedrawButton
     PropertyChanged "ColorScheme"
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property CheckExist
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get CheckExist() As Boolean
+    CheckExist = m_CheckExist
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property CheckExist
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_CheckExist (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let CheckExist(ByVal New_CheckExist As Boolean)
+    m_CheckExist = New_CheckExist
+    PropertyChanged "CheckExist"
+    RedrawButton
 End Property
 
 '======================================================================================================
@@ -5754,7 +5486,6 @@ Private Function Subclass_Index(ByVal lhWnd As Long, Optional ByVal bAdd As Bool
 
     Next
 
-    'Subclass_Index
     If Not bAdd Then
         Debug.Assert False
     End If

@@ -72,11 +72,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Сохранить изменения и выйти"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdExit 
          Height          =   735
@@ -98,11 +97,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Выход без сохранения"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ListView lvOptions 
          Height          =   2895
@@ -126,14 +124,13 @@ Begin VB.Form frmOptions
          ColumnHeaderIcons=   "frmOptions.frx":0616
          BorderStyle     =   1
          View            =   2
-         Arrange         =   1
+         Arrange         =   3
          LabelEdit       =   2
          LabelWrap       =   0   'False
          HideSelection   =   0   'False
          ClickableColumnHeaders=   0   'False
          TrackSizeColumnHeaders=   0   'False
          ResizableColumnHeaders=   0   'False
-         PictureAlignment=   4
       End
    End
    Begin prjDIADBS.ctlJCFrames frMain 
@@ -391,12 +388,11 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   14935011
          Caption         =   "Установка (Совместимые драйвера)"
+         CaptionEffects  =   0
          Mode            =   2
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
          ColorScheme     =   3
       End
       Begin prjDIADBS.ctlJCbutton optRezim_Upd 
@@ -419,12 +415,11 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   14935011
          Caption         =   "Создание или обновление базы драйверов"
+         CaptionEffects  =   0
          Mode            =   2
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
          ColorScheme     =   3
       End
       Begin prjDIADBS.ctlJCbutton optRezim_Ust 
@@ -447,12 +442,11 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   14935011
          Caption         =   "Установка (Полная - весь пакет)"
+         CaptionEffects  =   0
          Mode            =   2
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
          ColorScheme     =   3
       End
       Begin prjDIADBS.LabelW lblPauseAfterSearch 
@@ -862,11 +856,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Сбросить настройки расположения утилит"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.LabelW lblDevCon64 
          Height          =   315
@@ -1099,11 +1092,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Добавить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdEditUtil 
          Height          =   750
@@ -1125,11 +1117,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Изменить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdDelUtil 
          Height          =   750
@@ -1151,11 +1142,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Удалить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
    End
    Begin prjDIADBS.ctlJCFrames frOS 
@@ -1296,11 +1286,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Добавить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdEditOS 
          Height          =   750
@@ -1322,11 +1311,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Изменить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdDelOS 
          Height          =   750
@@ -1348,11 +1336,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Удалить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.LabelW lblExcludeHWID 
          Height          =   255
@@ -1697,11 +1684,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Установить цвет и шрифт текста кнопки"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.CheckBoxW chkButtonDisable 
          Height          =   450
@@ -1770,11 +1756,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Установить цвет и шрифт текста подсказок"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ToolTip TT 
          Left            =   7320
@@ -2189,11 +2174,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Установить цвет и шрифт текста закладки"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabDrivers 
          Height          =   795
@@ -2215,11 +2199,10 @@ Begin VB.Form frmOptions
          ButtonStyle     =   8
          BackColor       =   16765357
          Caption         =   "Установить цвет и шрифт текста закладки"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
       End
       Begin prjDIADBS.LabelW lblTabPerRowCount 
          Height          =   225
@@ -4035,6 +4018,7 @@ Private Sub Form_Load()
     LoadIconImage2BtnJC cmdFontColorTabOS, "BTN_FONT", strPathImageMainWork
     LoadIconImage2BtnJC cmdFontColorTabDrivers, "BTN_FONT", strPathImageMainWork
     LoadIconImage2BtnJC cmdFontColorToolTip, "BTN_FONT", strPathImageMainWork
+    ' Действия при загрузке формы
     FormLoadAction
 End Sub
 
@@ -4916,28 +4900,42 @@ Private Sub LoadList_lvOptions()
     
     ' Загружаем картинки в ImageList
     With ImageListOptions.ListImages
-        .Add 1, "OPT_MAIN", LoadIconImageFromPath("OPT_MAIN", strPathImageMainWork)
-        .Add 2, "OPT_MAIN2", LoadIconImageFromPath("OPT_MAIN2", strPathImageMainWork)
-        .Add 3, "OPT_OSLIST", LoadIconImageFromPath("OPT_OSLIST", strPathImageMainWork)
-        .Add 4, "OPT_TOOLS_MAIN", LoadIconImageFromPath("OPT_TOOLS_MAIN", strPathImageMainWork)
-        .Add 5, "OPT_TOOLS_OTHER", LoadIconImageFromPath("OPT_TOOLS_OTHER", strPathImageMainWork)
-        .Add 6, "OPT_DESIGN", LoadIconImageFromPath("OPT_DESIGN", strPathImageMainWork)
-        .Add 7, "OPT_DESIGN2", LoadIconImageFromPath("OPT_DESIGN2", strPathImageMainWork)
-        .Add 8, "OPT_DPINST", LoadIconImageFromPath("OPT_DPINST", strPathImageMainWork)
-        .Add 9, "OPT_DEVPARSER", LoadIconImageFromPath("OPT_DEVPARSER", strPathImageMainWork)
+        If .Count = 0 Then
+            .Add 1, , LoadIconImageFromPath("OPT_MAIN", strPathImageMainWork)
+            .Add 2, , LoadIconImageFromPath("OPT_MAIN2", strPathImageMainWork)
+            .Add 3, , LoadIconImageFromPath("OPT_OSLIST", strPathImageMainWork)
+            .Add 4, , LoadIconImageFromPath("OPT_TOOLS_MAIN", strPathImageMainWork)
+            .Add 5, , LoadIconImageFromPath("OPT_TOOLS_OTHER", strPathImageMainWork)
+            .Add 6, , LoadIconImageFromPath("OPT_DESIGN", strPathImageMainWork)
+            .Add 7, , LoadIconImageFromPath("OPT_DESIGN2", strPathImageMainWork)
+            .Add 8, , LoadIconImageFromPath("OPT_DPINST", strPathImageMainWork)
+            .Add 9, , LoadIconImageFromPath("OPT_DEVPARSER", strPathImageMainWork)
+        End If
     End With
         
     ' Заполняем ListView названием опций программы
     With lvOptions.ListItems
-        .Add 1, "OPT_MAIN", strItemOptions1, 1, 1
-        .Add 2, "OPT_MAIN2", strItemOptions8, 2, 2
-        .Add 3, "OPT_OSLIST", strItemOptions2, 3, 3
-        .Add 4, "OPT_TOOLS_MAIN", strItemOptions3, 4, 4
-        .Add 5, "OPT_TOOLS_OTHER", strItemOptions4, 5, 5
-        .Add 6, "OPT_DESIGN", strItemOptions5, 6, 6
-        .Add 7, "OPT_DESIGN2", strItemOptions9, 7, 7
-        .Add 8, "OPT_DPINST", strItemOptions6, 8, 8
-        .Add 9, "OPT_DEVPARSER", strItemOptions10, 9, 9
+        If .Count = 0 Then
+            .Add 1, , strItemOptions1, , 1
+            .Add 2, , strItemOptions8, , 2
+            .Add 3, , strItemOptions2, , 3
+            .Add 4, , strItemOptions3, , 4
+            .Add 5, , strItemOptions4, , 5
+            .Add 6, , strItemOptions5, , 6
+            .Add 7, , strItemOptions9, , 7
+            .Add 8, , strItemOptions6, , 8
+            .Add 9, , strItemOptions10, , 9
+        Else
+            .Item(1).Text = strItemOptions1
+            .Item(2).Text = strItemOptions8
+            .Item(3).Text = strItemOptions2
+            .Item(4).Text = strItemOptions3
+            .Item(5).Text = strItemOptions4
+            .Item(6).Text = strItemOptions5
+            .Item(7).Text = strItemOptions9
+            .Item(8).Text = strItemOptions6
+            .Item(9).Text = strItemOptions10
+        End If
     End With
     
 End Sub

@@ -26,7 +26,7 @@ Begin VB.Form frmMain
       Align           =   2  'Align Bottom
       Height          =   705
       Left            =   0
-      TabIndex        =   18
+      TabIndex        =   17
       Top             =   9870
       Width           =   11265
       _ExtentX        =   19870
@@ -69,7 +69,7 @@ Begin VB.Form frmMain
       Begin prjDIADBS.ctlJCbutton cmdBreakUpdateDB 
          Height          =   385
          Left            =   4200
-         TabIndex        =   26
+         TabIndex        =   25
          Top             =   75
          Visible         =   0   'False
          Width           =   3015
@@ -87,11 +87,10 @@ Begin VB.Form frmMain
          ButtonStyle     =   8
          BackColor       =   12244692
          Caption         =   "Прервать выполнения задания"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
          ColorScheme     =   3
       End
    End
@@ -149,7 +148,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255
             Left            =   75
-            TabIndex        =   31
+            TabIndex        =   30
             Top             =   850
             Width           =   10995
             _ExtentX        =   19394
@@ -169,7 +168,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.LabelW lblOsInfo 
             Height          =   255
             Left            =   75
-            TabIndex        =   30
+            TabIndex        =   29
             ToolTipText     =   "Starting ""System Information Viewer"""
             Top             =   480
             Width           =   10995
@@ -215,8 +214,8 @@ Begin VB.Form frmMain
          Begin prjDIADBS.CheckBoxW chkPackFiles 
             Height          =   210
             Index           =   0
-            Left            =   200
-            TabIndex        =   4
+            Left            =   180
+            TabIndex        =   3
             TabStop         =   0   'False
             Top             =   4380
             Visible         =   0   'False
@@ -235,6 +234,33 @@ Begin VB.Form frmMain
             Caption         =   "frmMain.frx":000C
             Transparent     =   -1  'True
          End
+         Begin prjDIADBS.ctlJCbutton acmdPackFiles 
+            Height          =   555
+            Index           =   0
+            Left            =   120
+            TabIndex        =   31
+            Top             =   4200
+            Width           =   2055
+            _ExtentX        =   3625
+            _ExtentY        =   979
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   13
+            CheckExist      =   -1  'True
+            BackColor       =   0
+            Caption         =   "Кнопка пакета драйверов"
+            CaptionEffects  =   0
+            PictureNormal   =   "frmMain.frx":002C
+            PictureAlign    =   0
+            PicturePushOnHover=   -1  'True
+         End
          Begin TabDlg.SSTab SSTab1 
             Height          =   4155
             Left            =   0
@@ -250,7 +276,7 @@ Begin VB.Form frmMain
             ShowFocusRect   =   0   'False
             Enabled         =   0   'False
             ForeColor       =   -2147483630
-            MouseIcon       =   "frmMain.frx":002C
+            MouseIcon       =   "frmMain.frx":0906
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -261,7 +287,7 @@ Begin VB.Form frmMain
                Strikethrough   =   0   'False
             EndProperty
             TabCaption(0)   =   "OSName_1"
-            TabPicture(0)   =   "frmMain.frx":0048
+            TabPicture(0)   =   "frmMain.frx":0922
             Tab(0).ControlEnabled=   -1  'True
             Tab(0).Control(0)=   "lblNoDPInProgram"
             Tab(0).Control(0).Enabled=   0   'False
@@ -269,15 +295,15 @@ Begin VB.Form frmMain
             Tab(0).Control(1).Enabled=   0   'False
             Tab(0).ControlCount=   2
             TabCaption(1)   =   "OSName_2"
-            TabPicture(1)   =   "frmMain.frx":0064
+            TabPicture(1)   =   "frmMain.frx":093E
             Tab(1).ControlEnabled=   0   'False
             Tab(1).ControlCount=   0
             TabCaption(2)   =   "OSName_3"
-            TabPicture(2)   =   "frmMain.frx":0080
+            TabPicture(2)   =   "frmMain.frx":095A
             Tab(2).ControlEnabled=   0   'False
             Tab(2).ControlCount=   0
             TabCaption(3)   =   "OSName_4"
-            TabPicture(3)   =   "frmMain.frx":009C
+            TabPicture(3)   =   "frmMain.frx":0976
             Tab(3).ControlEnabled=   0   'False
             Tab(3).ControlCount=   0
             Begin TabDlg.SSTab SSTab2 
@@ -305,7 +331,7 @@ Begin VB.Form frmMain
                   Strikethrough   =   0   'False
                EndProperty
                TabCaption(0)   =   "Все драйверпаки"
-               TabPicture(0)   =   "frmMain.frx":00B8
+               TabPicture(0)   =   "frmMain.frx":0992
                Tab(0).ControlEnabled=   -1  'True
                Tab(0).Control(0)=   "lblNoDP4Mode"
                Tab(0).Control(0).Enabled=   0   'False
@@ -313,22 +339,22 @@ Begin VB.Form frmMain
                Tab(0).Control(1).Enabled=   0   'False
                Tab(0).ControlCount=   2
                TabCaption(1)   =   "Доступно обновление"
-               TabPicture(1)   =   "frmMain.frx":00D4
+               TabPicture(1)   =   "frmMain.frx":09AE
                Tab(1).ControlEnabled=   0   'False
                Tab(1).Control(0)=   "ctlScrollControlTab1(0)"
                Tab(1).ControlCount=   1
                TabCaption(2)   =   "Неустановленные"
-               TabPicture(2)   =   "frmMain.frx":00F0
+               TabPicture(2)   =   "frmMain.frx":09CA
                Tab(2).ControlEnabled=   0   'False
                Tab(2).Control(0)=   "ctlScrollControlTab2(0)"
                Tab(2).ControlCount=   1
                TabCaption(3)   =   "Установленные"
-               TabPicture(3)   =   "frmMain.frx":010C
+               TabPicture(3)   =   "frmMain.frx":09E6
                Tab(3).ControlEnabled=   0   'False
                Tab(3).Control(0)=   "ctlScrollControlTab3(0)"
                Tab(3).ControlCount=   1
                TabCaption(4)   =   "БД не создана"
-               TabPicture(4)   =   "frmMain.frx":0128
+               TabPicture(4)   =   "frmMain.frx":0A02
                Tab(4).ControlEnabled=   0   'False
                Tab(4).Control(0)=   "ctlScrollControlTab4(0)"
                Tab(4).ControlCount=   1
@@ -336,7 +362,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   25
-                  TabIndex        =   22
+                  TabIndex        =   21
                   Top             =   350
                   Width           =   4155
                   _ExtentX        =   7329
@@ -347,7 +373,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   -74975
-                  TabIndex        =   24
+                  TabIndex        =   23
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -358,7 +384,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   -74975
-                  TabIndex        =   21
+                  TabIndex        =   20
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -369,7 +395,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   -74975
-                  TabIndex        =   23
+                  TabIndex        =   22
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -380,7 +406,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   -74975
-                  TabIndex        =   25
+                  TabIndex        =   24
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -390,7 +416,7 @@ Begin VB.Form frmMain
                Begin prjDIADBS.LabelW lblNoDP4Mode 
                   Height          =   285
                   Left            =   105
-                  TabIndex        =   28
+                  TabIndex        =   27
                   Top             =   2460
                   Visible         =   0   'False
                   Width           =   10590
@@ -413,7 +439,7 @@ Begin VB.Form frmMain
             Begin prjDIADBS.LabelW lblNoDPInProgram 
                Height          =   285
                Left            =   120
-               TabIndex        =   29
+               TabIndex        =   28
                Top             =   3600
                Visible         =   0   'False
                Width           =   10920
@@ -433,35 +459,6 @@ Begin VB.Form frmMain
                Caption         =   "Программа не обнаружила пакетов драйверов, или не верно настроены пути"
                AutoSize        =   -1  'True
             End
-         End
-         Begin prjDIADBS.ctlXpButton acmdPackFiles 
-            Height          =   555
-            Index           =   0
-            Left            =   120
-            TabIndex        =   3
-            Top             =   4200
-            Visible         =   0   'False
-            Width           =   1830
-            _ExtentX        =   3228
-            _ExtentY        =   979
-            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-               Name            =   "Tahoma"
-               Size            =   8.25
-               Charset         =   204
-               Weight          =   400
-               Underline       =   0   'False
-               Italic          =   0   'False
-               Strikethrough   =   0   'False
-            EndProperty
-            Caption         =   "Кнопка пакета драйверов"
-            ButtonStyle     =   3
-            PictureWidth    =   32
-            PictureHeight   =   32
-            ShowFocusRect   =   0   'False
-            XPColor_Pressed =   15116940
-            XPColor_Hover   =   4692449
-            TextColor       =   0
-            MenuExist       =   -1  'True
          End
       End
       Begin prjDIADBS.ctlJCFrames frRunChecked 
@@ -514,7 +511,7 @@ Begin VB.Form frmMain
             Begin prjDIADBS.ComboBoxW cmbCheckButton 
                Height          =   330
                Left            =   120
-               TabIndex        =   5
+               TabIndex        =   4
                Top             =   480
                Width           =   3075
                _ExtentX        =   5424
@@ -528,14 +525,14 @@ Begin VB.Form frmMain
                   Italic          =   0   'False
                   Strikethrough   =   0   'False
                EndProperty
-               Text            =   "frmMain.frx":0144
-               CueBanner       =   "frmMain.frx":0180
+               Text            =   "frmMain.frx":0A1E
+               CueBanner       =   "frmMain.frx":0A5A
                Sorted          =   -1  'True
             End
             Begin prjDIADBS.ctlJCbutton cmdCheck 
                Height          =   390
                Left            =   120
-               TabIndex        =   6
+               TabIndex        =   5
                Top             =   840
                Width           =   3075
                _ExtentX        =   5424
@@ -552,18 +549,17 @@ Begin VB.Form frmMain
                ButtonStyle     =   8
                BackColor       =   12244692
                Caption         =   "Выделить"
+               CaptionEffects  =   0
                PictureAlign    =   0
                PicturePushOnHover=   -1  'True
                PictureShadow   =   -1  'True
-               CaptionEffects  =   0
-               TooltipBackColor=   0
                ColorScheme     =   3
             End
          End
          Begin prjDIADBS.ctlJCbutton cmdRunTask 
             Height          =   675
             Left            =   120
-            TabIndex        =   27
+            TabIndex        =   26
             Top             =   420
             Width           =   3120
             _ExtentX        =   4524
@@ -580,10 +576,9 @@ Begin VB.Form frmMain
             ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Выполнить задание для выбранных пакетов драйверов"
+            CaptionEffects  =   0
             PictureAlign    =   0
             PicturePushOnHover=   -1  'True
-            CaptionEffects  =   0
-            TooltipBackColor=   0
             ColorScheme     =   3
          End
       End
@@ -614,8 +609,8 @@ Begin VB.Form frmMain
          Begin prjDIADBS.ctlJCbutton cmdViewAllDevice 
             Height          =   510
             Left            =   120
-            TabIndex        =   7
-            Top             =   925
+            TabIndex        =   6
+            Top             =   930
             Width           =   7575
             _ExtentX        =   13361
             _ExtentY        =   900
@@ -631,17 +626,16 @@ Begin VB.Form frmMain
             ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Список всех устройств вашего компьютера + Поиск драйвера в интернете по HWID"
+            CaptionEffects  =   0
             PictureAlign    =   0
             PicturePushOnHover=   -1  'True
             PictureShadow   =   -1  'True
-            CaptionEffects  =   0
-            TooltipBackColor=   0
             ColorScheme     =   3
          End
          Begin prjDIADBS.ctlJCbutton optRezim_Intellect 
             Height          =   510
             Left            =   120
-            TabIndex        =   8
+            TabIndex        =   7
             Top             =   350
             Width           =   2415
             _ExtentX        =   4260
@@ -658,19 +652,18 @@ Begin VB.Form frmMain
             ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Установка (Совместимые драйвера)"
+            CaptionEffects  =   0
             Mode            =   2
             Value           =   -1  'True
             PictureAlign    =   0
             PicturePushOnHover=   -1  'True
             PictureShadow   =   -1  'True
-            CaptionEffects  =   0
-            TooltipBackColor=   0
             ColorScheme     =   3
          End
          Begin prjDIADBS.ctlJCbutton optRezim_Upd 
             Height          =   510
             Left            =   5280
-            TabIndex        =   9
+            TabIndex        =   8
             Top             =   350
             Width           =   2415
             _ExtentX        =   4260
@@ -687,18 +680,17 @@ Begin VB.Form frmMain
             ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Создание или обновление базы драйверов"
+            CaptionEffects  =   0
             Mode            =   2
             PictureAlign    =   0
             PicturePushOnHover=   -1  'True
             PictureShadow   =   -1  'True
-            CaptionEffects  =   0
-            TooltipBackColor=   0
             ColorScheme     =   3
          End
          Begin prjDIADBS.ctlJCbutton optRezim_Ust 
             Height          =   510
             Left            =   2640
-            TabIndex        =   10
+            TabIndex        =   9
             Top             =   350
             Width           =   2535
             _ExtentX        =   4471
@@ -715,12 +707,11 @@ Begin VB.Form frmMain
             ButtonStyle     =   8
             BackColor       =   12244692
             Caption         =   "Установка (Полная - весь пакет)"
+            CaptionEffects  =   0
             Mode            =   2
             PictureAlign    =   0
             PicturePushOnHover=   -1  'True
             PictureShadow   =   -1  'True
-            CaptionEffects  =   0
-            TooltipBackColor=   0
             ColorScheme     =   3
          End
       End
@@ -761,7 +752,7 @@ Begin VB.Form frmMain
             Left            =   240
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   19
+            TabIndex        =   18
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -777,7 +768,7 @@ Begin VB.Form frmMain
             Left            =   6840
             ScaleHeight     =   480
             ScaleWidth      =   480
-            TabIndex        =   17
+            TabIndex        =   16
             TabStop         =   0   'False
             Top             =   350
             Width           =   510
@@ -792,7 +783,7 @@ Begin VB.Form frmMain
             Left            =   6000
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   16
+            TabIndex        =   15
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -807,7 +798,7 @@ Begin VB.Form frmMain
             Left            =   5160
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   15
+            TabIndex        =   14
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -822,7 +813,7 @@ Begin VB.Form frmMain
             Left            =   4320
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   14
+            TabIndex        =   13
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -837,7 +828,7 @@ Begin VB.Form frmMain
             Left            =   3480
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   20
+            TabIndex        =   19
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -852,7 +843,7 @@ Begin VB.Form frmMain
             Left            =   2640
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   13
+            TabIndex        =   12
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -867,7 +858,7 @@ Begin VB.Form frmMain
             Left            =   1800
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   12
+            TabIndex        =   11
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -883,12 +874,28 @@ Begin VB.Form frmMain
             Left            =   960
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   11
+            TabIndex        =   10
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
          End
       End
+   End
+   Begin prjDIADBS.ToolTip TTOtherControl 
+      Left            =   1500
+      Top             =   9000
+      _ExtentX        =   450
+      _ExtentY        =   450
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Lucida Console"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Title           =   "frmMain.frx":0A7A
    End
    Begin prjDIADBS.ToolTip TTStatusIcon 
       Left            =   900
@@ -904,7 +911,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":01A0
+      Title           =   "frmMain.frx":0A9A
    End
    Begin prjDIADBS.ToolTip TT 
       Left            =   300
@@ -920,7 +927,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":01C0
+      Title           =   "frmMain.frx":0ABA
    End
    Begin VB.Menu mnuRezim 
       Caption         =   "Обновление баз данных"
@@ -1206,27 +1213,54 @@ Begin VB.Form frmMain
    End
    Begin VB.Menu mnuContextMenu3 
       Caption         =   "Контекстное меню3"
-      Begin VB.Menu mnuContextInstall 
+      Begin VB.Menu mnuContextInstallGroupDP 
          Caption         =   "Обычная установка"
          Index           =   0
       End
-      Begin VB.Menu mnuContextInstall 
+      Begin VB.Menu mnuContextInstallGroupDP 
          Caption         =   "-"
          Index           =   1
       End
-      Begin VB.Menu mnuContextInstall 
+      Begin VB.Menu mnuContextInstallGroupDP 
          Caption         =   "Выборочная установка"
          Index           =   2
       End
-      Begin VB.Menu mnuContextInstall 
+      Begin VB.Menu mnuContextInstallGroupDP 
          Caption         =   "-"
          Index           =   3
       End
-      Begin VB.Menu mnuContextInstall 
+      Begin VB.Menu mnuContextInstallGroupDP 
          Caption         =   "Распаковать в каталог - Все подобранные драйвера"
          Index           =   4
       End
-      Begin VB.Menu mnuContextInstall 
+      Begin VB.Menu mnuContextInstallGroupDP 
+         Caption         =   "Распаковать в каталог - Выбрать драйвера..."
+         Index           =   5
+      End
+   End
+   Begin VB.Menu mnuContextMenu4 
+      Caption         =   "Контекстное меню4"
+      Begin VB.Menu mnuContextInstallSingleDP 
+         Caption         =   "Обычная установка"
+         Index           =   0
+      End
+      Begin VB.Menu mnuContextInstallSingleDP 
+         Caption         =   "-"
+         Index           =   1
+      End
+      Begin VB.Menu mnuContextInstallSingleDP 
+         Caption         =   "Выборочная установка"
+         Index           =   2
+      End
+      Begin VB.Menu mnuContextInstallSingleDP 
+         Caption         =   "-"
+         Index           =   3
+      End
+      Begin VB.Menu mnuContextInstallSingleDP 
+         Caption         =   "Распаковать в каталог - Все подобранные драйвера"
+         Index           =   4
+      End
+      Begin VB.Menu mnuContextInstallSingleDP 
          Caption         =   "Распаковать в каталог - Выбрать драйвера..."
          Index           =   5
       End
@@ -1239,13 +1273,35 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Private strFormName                 As String
+Private m_Caption                   As String
+
 Private lngCntBtn                   As Long
+Private lngSSTabCurrentOS           As Long
+Private lngFirstActiveTabIndex      As Long
+Private lngNotFinedDriversInDP      As Long
+Private lngFrameTime                As Long
+Private lngFrameCount               As Long
+Private lngBorderWidthX             As Long
+Private lngBorderWidthY             As Long
+Private lngOffSideCount             As Long         ' Кол-во переходов строк при построении кнопок
+
 Private mbNextTab                   As Boolean
-Private strCurSelButtonPath         As String
 Private mbStatusHwid                As Boolean
 Private mbStatusNewer               As Boolean
 Private mbStatusOlder               As Boolean
-Private lngSSTabCurrentOS           As Long
+Private mbUnpackAdditionalFile      As Boolean
+Private mbNoSupportedOS             As Boolean
+Private mbNotSupportedDevDB         As Boolean
+Private mbLoadAppEnd                As Boolean
+Private mbSet2UpdateFromTab4        As Boolean
+Private mbOffSideButton             As Boolean      ' Флаг, указывающий что надо переходить на следующую строку при построении кнопок
+Private mbDevParserRun              As Boolean      ' Флаг, указывающий что начата обработка пакета, защита от двойного нажатия
+Private mbBreakUpdateDBAll          As Boolean      ' Флаг, указывающий что нажата кнопка прерывания процесса групповой обработки пакетов
+Private mbIgnorStatusHwid           As Boolean
+Private mbDRVNotInstall             As Boolean
+
+Private strCurSelButtonPath         As String
 Private strSSTabCurrentOSList       As String
 Private strCmbChkBtnListElement1    As String
 Private strCmbChkBtnListElement2    As String
@@ -1263,35 +1319,16 @@ Private strTTipTextClassDRV         As String
 Private strTTipTextDrv2Install      As String
 Private strTTipTextDrv4UnsupOS      As String
 Private strTTipTextTitleStatus      As String
-Private mbUnpackAdditionalFile      As Boolean
-Private lngFirstActiveTabIndex      As Long
-Private mbNoSupportedOS             As Boolean
-Private mbNotSupportedDevDB         As Boolean
 Private strSSTabTypeDPTab1          As String
 Private strSSTabTypeDPTab2          As String
 Private strSSTabTypeDPTab3          As String
 Private strSSTabTypeDPTab4          As String
 Private strSSTabTypeDPTab5          As String
-Private mbSet2UpdateFromTab4        As Boolean
-Private lngNotFinedDriversInDP      As Long
-Private mbLoadAppEnd                As Boolean
+Private strTTipTextHeaders          As String       ' Заголовок для Подсказки пакета драйверов
+
 Private objHashOutput               As Scripting.Dictionary
 Private objHashOutput2              As Scripting.Dictionary
 Private objHashOutput3              As Scripting.Dictionary
-Private strFormName                 As String
-Private lngFrameTime                As Long
-Private lngFrameCount               As Long
-Private lngBorderWidthX             As Long
-Private lngBorderWidthY             As Long
-Private mbOffSideButton             As Boolean      ' Флаг, указывающий что надо переходить на следующую строку при построении кнопок
-Private miOffSideCount              As Long         ' Кол-во переходов строк при построении кнопок
-Private mbDevParserRun              As Boolean      ' Флаг, указывающий что начата обработка пакета, защита от двойного нажатия
-Private mbBreakUpdateDBAll          As Boolean      ' Флаг, указывающий что нажата кнопка прерывания процесса групповой обработки пакетов
-Private strTTipTextHeaders          As String       ' Заголовок для Подсказки пакета драйверов
-Public mbIgnorStatusHwid            As Boolean
-Public mbDRVNotInstall              As Boolean
-
-Private m_Caption                   As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub acmdPackFiles_Click
@@ -1328,7 +1365,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
         'Если пакет драйверов реальный, то....
         If LenB(strPackFileName) > 0 Then
             FlatBorderButton acmdPackFiles(Index).hWnd
-            acmdPackFiles(Index).Refresh
+            'acmdPackFiles(Index).Refresh
             strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
             strPathDevDB = arrOSList(SSTab1.Tab).devIDFolderFull
             mbDevParserRun = True
@@ -1344,7 +1381,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     TimeScriptRun = 0
                     TimeScriptFinish = 0
                     AllTimeScriptRun = vbNullString
-                    Set acmdPackFiles(Index).Picture = imgUpdBD.Picture
+                    Set acmdPackFiles(Index).PictureNormal = imgUpdBD.Picture
                     ' изменение положения прогресс-анимации
                     ChangeStatusTextAndDebug strMessages(61) & " " & strPackFileName, , , , strMessages(128)
                     TimeScriptRun = GetTickCount
@@ -1412,7 +1449,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     If Not mbCheckDRVOk Then
                         mbDevParserRun = False
                         FlatBorderButton acmdPackFiles(Index).hWnd, False
-                        acmdPackFiles(Index).Refresh
+                        'acmdPackFiles(Index).Refresh
                         BlockControl True
                         ChangeStatusTextAndDebug strMessages(65) & " " & strPackFileName
                         cmdRunTask.Enabled = FindCheckCount(False)
@@ -1499,33 +1536,9 @@ Private Sub acmdPackFiles_Click(Index As Integer)
 
         ' Проверка выделенных пакетов
         cmdRunTask.Enabled = FindCheckCount(False)
-        acmdPackFiles(Index).Refresh
     End If
 
     DebugMode "acmdPackFiles_Click-End"
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub acmdPackFiles_ClickMenu
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Integer)
-'                              mnuIndex (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub acmdPackFiles_ClickMenu(Index As Integer, mnuIndex As Integer)
-    mbGroupTask = False
-
-    Select Case mnuIndex
-
-        Case 0
-            mbooSelectInstall = False
-            acmdPackFiles_Click Index
-
-        Case 2
-            lngCurrentBtnIndex = Index
-            mbooSelectInstall = True
-            acmdPackFiles_Click Index
-    End Select
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1578,14 +1591,14 @@ Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift A
             CreateMenuDevIDIndexCopyMenu arrDevIDs(Index)
         End If
 
-        If acmdPackFiles(Index).Picture = imgNo.Picture Then
+        If acmdPackFiles(Index).PictureNormal = imgNo.Picture Then
             mnuContextToolTip.Enabled = False
             mnuContextDeleteDevIDs.Enabled = False
             mnuContextCopyHWIDs.Enabled = False
         End If
 
         lngCurrentBtnIndex = Index
-        OpenContextMenu Me, Me.mnuContextMenu
+        'OpenContextMenu Me, Me.mnuContextMenu
     End If
 
 End Sub
@@ -1688,7 +1701,7 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
             End If
 
             If mbOnlyNew Then
-                If acmdPackFiles(i).Picture = imgNoDB.Picture Then
+                If acmdPackFiles(i).PictureNormal = imgNoDB.Picture Then
                     mbDpNoDBExist = True
                     acmdPackFiles_Click i
                     miPbNext = miPbNext + miPbInterval
@@ -1729,7 +1742,7 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
     Else
 
         If mbOnlyNew Then
-            If acmdPackFiles(0).Picture = imgNoDB.Picture Then
+            If acmdPackFiles(0).PictureNormal = imgNoDB.Picture Then
                 acmdPackFiles_Click 0
                 mbDpNoDBExist = True
             End If
@@ -1903,40 +1916,6 @@ Private Sub ChangeFrmMainCaption(Optional ByVal lngPercentage As Long)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ChangeMenuCaption
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub ChangeMenuCaption()
-
-    Dim ButtIndex As Long
-    Dim i         As Long
-
-    ButtIndex = acmdPackFiles.UBound
-
-    If ButtIndex > 0 Then
-
-        For i = 0 To ButtIndex
-
-            With acmdPackFiles(i)
-
-                If .MenuCount > 0 Then
-                    .MenuCaption(0) = strContextInstall1
-                    .MenuCaption(2) = strContextInstall2
-                    '.MenuCaption(4) = strContextInstall3
-                    '.MenuCaption(6) = strContextInstall4
-                    .Refresh
-                End If
-
-            End With
-
-        Next
-
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ChangeStatusAndPictureButton
 '! Description (Описание)  :   [Присваиваем картинку в соответсвии с наличием БД к файлу]
 '! Parameters  (Переменные):   strPathDevDB (String)
@@ -1992,16 +1971,16 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
 
                 If mbStatusHwid Then
                     If mbStatusNewer Then
-                        Set .Picture = Nothing
-                        Set .Picture = imgOkNew.Picture
+                        Set .PictureNormal = Nothing
+                        Set .PictureNormal = imgOkNew.Picture
                         DebugMode str3VbTab & "*ImageForButton: imgOkNew"
                     ElseIf mbStatusOlder Then
-                        Set .Picture = Nothing
-                        Set .Picture = imgOkOld.Picture
+                        Set .PictureNormal = Nothing
+                        Set .PictureNormal = imgOkOld.Picture
                         DebugMode str3VbTab & "ImageForButton: imgOkOld"
                     Else
-                        Set .Picture = Nothing
-                        Set .Picture = imgOK.Picture
+                        Set .PictureNormal = Nothing
+                        Set .PictureNormal = imgOK.Picture
                         DebugMode str3VbTab & "ImageForButton: imgOK"
                     End If
 
@@ -2010,32 +1989,32 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                     If mbIgnorStatusHwid Then
                         If mbDRVNotInstall Then
                             If mbStatusNewer Then
-                                Set .Picture = Nothing
-                                Set .Picture = imgOkAttentionNew.Picture
+                                Set .PictureNormal = Nothing
+                                Set .PictureNormal = imgOkAttentionNew.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
-                                Set .Picture = Nothing
-                                Set .Picture = imgOkAttentionOLD.Picture
+                                Set .PictureNormal = Nothing
+                                Set .PictureNormal = imgOkAttentionOLD.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttentionOld"
                             Else
-                                Set .Picture = Nothing
-                                Set .Picture = imgOkAttention.Picture
+                                Set .PictureNormal = Nothing
+                                Set .PictureNormal = imgOkAttention.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkAttention"
                             End If
 
                         Else
 
                             If mbStatusNewer Then
-                                Set .Picture = Nothing
-                                Set .Picture = imgOkNew.Picture
+                                Set .PictureNormal = Nothing
+                                Set .PictureNormal = imgOkNew.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkNew"
                             ElseIf mbStatusOlder Then
-                                Set .Picture = Nothing
-                                Set .Picture = imgOkOld.Picture
+                                Set .PictureNormal = Nothing
+                                Set .PictureNormal = imgOkOld.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOkOld"
                             Else
-                                Set .Picture = Nothing
-                                Set .Picture = imgOK.Picture
+                                Set .PictureNormal = Nothing
+                                Set .PictureNormal = imgOK.Picture
                                 DebugMode str3VbTab & "ImageForButton: imgOK"
                             End If
                         End If
@@ -2043,33 +2022,30 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                     Else
 
                         If mbStatusNewer Then
-                            Set .Picture = Nothing
-                            Set .Picture = imgOkAttentionNew.Picture
+                            Set .PictureNormal = Nothing
+                            Set .PictureNormal = imgOkAttentionNew.Picture
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
-                            Set .Picture = Nothing
-                            Set .Picture = imgOkAttentionOLD.Picture
+                            Set .PictureNormal = Nothing
+                            Set .PictureNormal = imgOkAttentionOLD.Picture
                             DebugMode str3VbTab & "ImageForButton: imgOkAttentionOld"
                         Else
-                            Set .Picture = Nothing
-                            Set .Picture = imgOkAttention.Picture
+                            Set .PictureNormal = Nothing
+                            Set .PictureNormal = imgOkAttention.Picture
                             DebugMode str3VbTab & "ImageForButton: imgOkAttention"
                         End If
                     End If
                 End If
 
-                If .MenuCount = 0 Then
-                    .AddMenu strContextInstall1
-                    .AddMenu "-"
-                    .AddMenu strContextInstall2
-                End If
-
-                .MenuExist = optRezim_Intellect.Value
+                .DropDownEnable = optRezim_Intellect.Value
+                .SetPopupMenu mnuContextMenu4
+                .SetPopupMenuRBT mnuContextMenu
             Else
-                Set .Picture = Nothing
-                Set .Picture = imgNo.Picture
+                Set .PictureNormal = Nothing
+                Set .PictureNormal = imgNo.Picture
                 DebugMode str3VbTab & "ImageForButton: imgNo"
-                .MenuExist = False
+                .DropDownEnable = False
+                '.UnsetPopupMenu
 
                 If mbUnSuppOS Then
                     ChangeStatusAndPictureButton = "Unsupported"
@@ -2077,10 +2053,11 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
             End If
 
         Else
-            Set .Picture = Nothing
-            Set .Picture = imgNoDB.Picture
+            Set .PictureNormal = Nothing
+            Set .PictureNormal = imgNoDB.Picture
             DebugMode str3VbTab & "ImageForButton: imgNoDB"
-            .MenuExist = False
+            .DropDownEnable = False
+            '.UnsetPopupMenu
         End If
 
     End With
@@ -2097,16 +2074,18 @@ Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
 
     Dim i As Long
 
-    For i = acmdPackFiles.LBound To acmdPackFiles.UBound
-
-        If Not (acmdPackFiles(i).Picture Is Nothing) Then
-            If acmdPackFiles(i).Visible Then
-                chkPackFiles(i).Value = mbCheckAll
+    With acmdPackFiles
+        For i = .LBound To .UBound
+    
+            If Not (.Item(i).PictureNormal Is Nothing) Then
+                If .Item(i).Visible Then
+                    chkPackFiles(i).Value = mbCheckAll
+                End If
             End If
-        End If
-
-    Next
-
+    
+        Next
+    End With
+    
     FindCheckCount
 End Sub
 
@@ -2193,8 +2172,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path64)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOsInfo.MousePointer = 0
-            lblOsInfo.ToolTipText = vbNullString
+            lblOSInfo.MousePointer = 0
+            lblOSInfo.ToolTipText = vbNullString
         End If
 
     Else
@@ -2205,8 +2184,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOsInfo.MousePointer = 0
-            lblOsInfo.ToolTipText = vbNullString
+            lblOSInfo.MousePointer = 0
+            lblOSInfo.ToolTipText = vbNullString
         End If
     End If
 
@@ -2222,6 +2201,10 @@ Private Sub CheckMenuUtilsPath()
         mnuUtils_UnknownDevices.Enabled = False
     End If
 
+End Sub
+
+Private Sub acmdPackFiles_MouseEnter(Index As Integer)
+        lngCurrentBtnIndex = Index
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -2329,7 +2312,7 @@ Private Sub cmdCheck_Click()
 
                     With acmdPackFiles(i)
 
-                        If Not (.Picture Is Nothing) Then
+                        If Not (.PictureNormal Is Nothing) Then
                             If .Visible Then
                                 If .Left > 0 Then
                                     chkPackFiles(i).Value = True
@@ -2346,17 +2329,19 @@ Private Sub cmdCheck_Click()
             '"Все новые"
         Case strCmbChkBtnListElement4
 
-            For i = acmdPackFiles.LBound To acmdPackFiles.UBound
-
-                If Not (acmdPackFiles(i).Picture Is Nothing) Then
-                    If acmdPackFiles(i).Picture = imgNoDB.Picture Then
-                        If acmdPackFiles(i).Visible Then
-                            chkPackFiles(i).Value = True
+            With acmdPackFiles
+                For i = .LBound To .UBound
+    
+                    If Not (.Item(i).PictureNormal Is Nothing) Then
+                        If .Item(i).PictureNormal = imgNoDB.Picture Then
+                            If .Item(i).Visible Then
+                                chkPackFiles(i).Value = True
+                            End If
                         End If
                     End If
-                End If
-
-            Next
+    
+                Next
+            End With
 
             '"Неустановленные"
         Case strCmbChkBtnListElement5
@@ -2366,8 +2351,8 @@ Private Sub cmdCheck_Click()
                 With acmdPackFiles(i)
 
                     If .Left > 0 Then
-                        If Not (.Picture Is Nothing) Then
-                            If .Picture = imgOkAttention.Picture Then
+                        If Not (.PictureNormal Is Nothing) Then
+                            If .PictureNormal = imgOkAttention.Picture Then
                                 If .Visible Then
                                     chkPackFiles(i).Value = True
                                 End If
@@ -2386,26 +2371,26 @@ Private Sub cmdCheck_Click()
 
                 With acmdPackFiles(i)
 
-                    If Not (.Picture Is Nothing) Then
+                    If Not (.PictureNormal Is Nothing) Then
                         If .Left > 0 Then
                             If .Visible Then
                                 chkPackFiles(i).Value = True
                             End If
 
-                            If .Picture = imgNo.Picture Then
+                            If .PictureNormal = imgNo.Picture Then
                                 chkPackFiles(i).Value = False
                             End If
 
-                            If .Picture = imgNoDB.Picture Then
+                            If .PictureNormal = imgNoDB.Picture Then
                                 chkPackFiles(i).Value = False
                             End If
 
-                            If .Picture = imgOK.Picture Then
+                            If .PictureNormal = imgOK.Picture Then
                                 chkPackFiles(i).Value = False
                             End If
 
                             If mbCompareDrvVerByDate Then
-                                If .Picture = imgOkOld.Picture Then
+                                If .PictureNormal = imgOkOld.Picture Then
                                     chkPackFiles(i).Value = False
                                 End If
                             End If
@@ -2965,7 +2950,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
     Dim TabHeight            As Long
     Dim ii                   As Long
     Dim strFileList_x()      As String
-    Dim miOffSideCountTemp   As Long
+    Dim lngOffSideCountTemp   As Long
     Dim strPhysXPath         As String
     Dim strLangPath          As String
     Dim strRuntimes          As String
@@ -3113,7 +3098,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
 
                         If NextPositionTop > TabHeight Then
                             mbOffSideButton = True
-                            miOffSideCountTemp = miOffSideCountTemp + 1
+                            lngOffSideCountTemp = lngOffSideCountTemp + 1
                         End If
 
                         mbStep = False
@@ -3207,8 +3192,8 @@ NextFiles:
 ExitSub:
     arrOSList(tabN).CntBtn = lngCntBtn
 
-    If miOffSideCountTemp > miOffSideCount Then
-        miOffSideCount = miOffSideCountTemp
+    If lngOffSideCountTemp > lngOffSideCount Then
+        lngOffSideCount = lngOffSideCountTemp
     End If
 
     On Error GoTo 0
@@ -3890,37 +3875,37 @@ Private Function FindCheckCount(Optional ByVal mbMsgStatus As Boolean = True) As
 
     Next
 
-    'cmdRunTask.EnabledCtrl = miCount > 0
-    cmdRunTask.Enabled = miCount > 0
-
-    If optRezim_Upd.Value Then
-        cmdRunTask.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", cmdRunTask.Caption)
-    Else
-        cmdRunTask.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", cmdRunTask.Caption)
-    End If
-
-    If mbLoadAppEnd Then
+    With cmdRunTask
+        .Enabled = miCount > 0
+    
         If optRezim_Upd.Value Then
-            ctlUcStatusBar1.PanelText(1) = strMessages(128)
+            .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", .Caption)
         Else
-            ctlUcStatusBar1.PanelText(1) = strMessages(129)
+            .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
         End If
-
-        If miCount > 0 Then
-            cmdRunTask.Caption = cmdRunTask.Caption & " (" & miCount & ")   "
-
-            'ctlJCbutton1.Caption = cmdRunTask.Caption & " (" & miCount & ")"
-            If mbMsgStatus Then
-                ChangeStatusTextAndDebug strMessages(104) & " " & miCount, , , False
+    
+        If mbLoadAppEnd Then
+            If optRezim_Upd.Value Then
+                ctlUcStatusBar1.PanelText(1) = strMessages(128)
+            Else
+                ctlUcStatusBar1.PanelText(1) = strMessages(129)
             End If
-
-        Else
-
-            If mbMsgStatus Then
-                ChangeStatusTextAndDebug strMessages(105), , , False
+    
+            If miCount > 0 Then
+                .Caption = .Caption & " (" & miCount & ")   "
+    
+                If mbMsgStatus Then
+                    ChangeStatusTextAndDebug strMessages(104) & " " & miCount, , , False
+                End If
+    
+            Else
+    
+                If mbMsgStatus Then
+                    ChangeStatusTextAndDebug strMessages(105), , , False
+                End If
             End If
         End If
-    End If
+    End With
 
     FindCheckCount = miCount
 End Function
@@ -4502,15 +4487,17 @@ Private Function FindNoDBCount() As Long
     Dim miCount As Integer
     Dim i       As Integer
 
-    For i = acmdPackFiles.LBound To acmdPackFiles.UBound
-
-        If Not (acmdPackFiles(i).Picture Is Nothing) Then
-            If acmdPackFiles(i).Picture = imgNoDB.Picture Then
-                miCount = miCount + 1
+    With acmdPackFiles
+        For i = .LBound To .UBound
+    
+            If Not (.Item(i).PictureNormal Is Nothing) Then
+                If .Item(i).PictureNormal = imgNoDB.Picture Then
+                    miCount = miCount + 1
+                End If
             End If
-        End If
-
-    Next
+    
+        Next
+    End With
 
     FindNoDBCount = miCount
 End Function
@@ -4867,7 +4854,7 @@ Private Sub Form_Load()
     ' Начальные позиции некоторых элементов управления
     frTabPanel.Top = 3100
     frTabPanel.Left = 75
-    lblOsInfo.Left = 75
+    lblOSInfo.Left = 75
 
     With acmdPackFiles(0)
         .Left = lngButtonLeft
@@ -4886,7 +4873,7 @@ Private Sub Form_Load()
 
     ' Устанавливаем шрифт кнопок
     SetBtnFontProperties acmdPackFiles(0)
-    acmdPackFiles(0).TextColor = lngFontBtn_Color
+    acmdPackFiles(0).ForeColor = lngFontBtn_Color
     ' Устанавливаем шрифт закладок
     SetTabProperties
     SetTabPropertiesTabDrivers
@@ -4936,7 +4923,7 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    DebugMode "OsInfo: " & lblOsInfo.Caption & vbNewLine & _
+    DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & _
               "PCModel: " & lblPCInfo.Caption
     ' Выставляем шрифт
     FontCharsetChange
@@ -4960,7 +4947,6 @@ Private Sub Form_Load()
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
-    cmdRunTask.Enabled = False
     'загрузка меню кнопки CmdRunTask
     LoadCmdRunTask
     'заполнение списка на выделение
@@ -4969,13 +4955,13 @@ Private Sub Form_Load()
 
     If mbIsWin64 Then
         If PathExists(PathCollect("Tools\SIV\SIV64X.exe")) Then
-            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
         End If
 
     Else
 
         If PathExists(PathCollect("Tools\SIV\SIV32X.exe")) Then
-            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
         End If
     End If
 
@@ -5194,7 +5180,7 @@ Public Sub Form_Resize()
         imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
-        lblOsInfo.Width = frInfo.Width - 200
+        lblOSInfo.Width = frInfo.Width - 200
         lblPCInfo.Width = frInfo.Width - 200
         cmdViewAllDevice.Width = optRezim_Upd.Left + optRezim_Upd.Width - cmdViewAllDevice.Left
         ' Удаление иконки в трее если есть
@@ -5496,7 +5482,7 @@ Private Sub GroupInstallDP()
 
             With acmdPackFiles(arrCheckDP(0, i))
                 FlatBorderButton .hWnd
-                .Refresh
+                '.Refresh
 
                 ' Прерываем процесс распаковки
                 If mbBreakUpdateDBAll Then
@@ -5520,7 +5506,7 @@ Private Sub GroupInstallDP()
                 End If
 
                 FlatBorderButton .hWnd, False
-                .Refresh
+                '.Refresh
             End With
 
             miPbNext = miPbNext + miPbInterval
@@ -5745,9 +5731,9 @@ Private Sub lblOsInfoChange()
         str64bit = " x86 Edition"
     End If
 
-    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOsInfo.Caption)
+    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOSInfo.Caption)
     'lblOsInfo.Caption = lblOsInfoCaption & " " & OSInfoWMI(0) & " " & " (" & OSInfoWMI(4) & "." & OSInfoWMI(1) & " " & OSInfoWMI(2) & ")" & str64bit
-    lblOsInfo.Caption = lblOsInfoCaption & " " & OSInfo.Name & " " & " (" & OSInfo.VerFullwBuild & " " & OSInfo.ServicePack & ")" & str64bit
+    lblOSInfo.Caption = lblOsInfoCaption & " " & OSInfo.Name & " " & " (" & OSInfo.VerFullwBuild & " " & OSInfo.ServicePack & ")" & str64bit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5946,7 +5932,9 @@ End Sub
 Private Sub LoadCmdRunTask()
 
     With cmdRunTask
+        .Enabled = False
         .SetPopupMenu mnuContextMenu3
+        .DropDownEnable = True
         .DropDownSeparator = True
         .DropDownSymbol = 6
     End With
@@ -5963,10 +5951,10 @@ Public Sub LoadCmdViewAllDeviceCaption()
 
     If lngNotFinedDriversInDP > 0 Then
         cmdViewAllDevice.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption) & vbNewLine & strMessages(122) & " " & lngNotFinedDriversInDP
-        'cmdViewAllDevice.TextColor = vbRed
+        cmdViewAllDevice.ForeColor = vbRed
     Else
         cmdViewAllDevice.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
-        'cmdViewAllDevice.TextColor = cmdRunTask.TextColor
+        cmdViewAllDevice.ForeColor = cmdRunTask.ForeColor
     End If
 
 End Sub
@@ -5988,7 +5976,6 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
     LoadIconImage2Object imgUpdBD, "BTN_UPD_DRV", strPathImageStatusButtonWork
     '--------------------- Остальные Иконки
-    'LoadIconImage2Btn cmdRunTask, "BTN_RUNTASK", strPathImageMainWork
     LoadIconImage2BtnJC cmdRunTask, "BTN_RUNTASK", strPathImageMainWork
     LoadIconImage2BtnJC cmdBreakUpdateDB, "BTN_BREAK_UPDATE", strPathImageMainWork
     LoadIconImage2BtnJC cmdViewAllDevice, "BTN_VIEW_SEARCH", strPathImageMainWork
@@ -6083,66 +6070,57 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
     ' изменяем шрифт
     FontCharsetChange
     'Frame
-    frRezim.Caption = LocaliseString(strPathFile, strFormName, "frRezim", frRezim.Caption)
-    frDescriptionIco.Caption = LocaliseString(strPathFile, strFormName, "frDescriptionIco", frDescriptionIco.Caption)
-    frRunChecked.Caption = LocaliseString(strPathFile, strFormName, "frRunChecked", frRunChecked.Caption)
-    frCheck.Caption = LocaliseString(strPathFile, strFormName, "frCheck", frCheck.Caption)
-    frInfo.Caption = LocaliseString(strPathFile, strFormName, "frInfo", frInfo.Caption)
+    frRezim.Caption = LocaliseString(StrPathFile, strFormName, "frRezim", frRezim.Caption)
+    frDescriptionIco.Caption = LocaliseString(StrPathFile, strFormName, "frDescriptionIco", frDescriptionIco.Caption)
+    frRunChecked.Caption = LocaliseString(StrPathFile, strFormName, "frRunChecked", frRunChecked.Caption)
+    frCheck.Caption = LocaliseString(StrPathFile, strFormName, "frCheck", frCheck.Caption)
+    frInfo.Caption = LocaliseString(StrPathFile, strFormName, "frInfo", frInfo.Caption)
     ' Описание режимов
-    optRezim_Intellect.Caption = LocaliseString(strPathFile, strFormName, "RezimIntellect", optRezim_Intellect.Caption)
-    optRezim_Ust.Caption = LocaliseString(strPathFile, strFormName, "RezimUst", optRezim_Ust.Caption)
-    optRezim_Upd.Caption = LocaliseString(strPathFile, strFormName, "RezimUpd", optRezim_Upd.Caption)
-    optRezim_Intellect.ToolTipText = LocaliseString(strPathFile, strFormName, "RezimIntellectTip", optRezim_Intellect.ToolTipText)
-    optRezim_Ust.ToolTipText = LocaliseString(strPathFile, strFormName, "RezimUstTip", optRezim_Ust.ToolTipText)
-    optRezim_Upd.ToolTipText = LocaliseString(strPathFile, strFormName, "RezimUpdTip", optRezim_Upd.ToolTipText)
+    optRezim_Intellect.Caption = LocaliseString(StrPathFile, strFormName, "RezimIntellect", optRezim_Intellect.Caption)
+    optRezim_Ust.Caption = LocaliseString(StrPathFile, strFormName, "RezimUst", optRezim_Ust.Caption)
+    optRezim_Upd.Caption = LocaliseString(StrPathFile, strFormName, "RezimUpd", optRezim_Upd.Caption)
     ' Меню
     '  Вызов основной функции для вывода Caption меню с поддержкой Unicode
-    Call LocaliseMenu(strPathFile)
-    '  Прочие меню и переменные, которые будут использоваться при создании/изменении меню
-    'mnuContextCopyHWIDDesc.Caption = "HWID" & vbTab & "Device Name"
-    strContextInstall1 = LocaliseString(strPathFile, strFormName, "mnuContextInstall1", "Обычная установка")
-    strContextInstall2 = LocaliseString(strPathFile, strFormName, "mnuContextInstall2", "Выборочная установка")
-    strContextInstall3 = LocaliseString(strPathFile, strFormName, "mnuContextInstall3", "Распаковать драйвера в каталог - Все подобранные")
-    strContextInstall4 = LocaliseString(strPathFile, strFormName, "mnuContextInstall4", "Распаковать драйвера в каталог - Выбрать...")
+    Call LocaliseMenu(StrPathFile)
     'Кнопки
-    cmdRunTask.Caption = LocaliseString(strPathFile, strFormName, "cmdRunTask", cmdRunTask.Caption)
-    cmdCheck.Caption = LocaliseString(strPathFile, strFormName, "cmdCheck", cmdCheck.Caption)
-    cmdBreakUpdateDB.Caption = LocaliseString(strPathFile, strFormName, "cmdBreakUpdateDB", cmdBreakUpdateDB.Caption)
-    cmdViewAllDevice.Caption = LocaliseString(strPathFile, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
+    cmdRunTask.Caption = LocaliseString(StrPathFile, strFormName, "cmdRunTask", cmdRunTask.Caption)
+    cmdCheck.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheck", cmdCheck.Caption)
+    cmdBreakUpdateDB.Caption = LocaliseString(StrPathFile, strFormName, "cmdBreakUpdateDB", cmdBreakUpdateDB.Caption)
+    cmdViewAllDevice.Caption = LocaliseString(StrPathFile, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
     ' Лейблы
-    lblPCInfo.Caption = LocaliseString(strPathFile, strFormName, "lblPCInfo", lblPCInfo.Caption) & " " & strCompModel
-    lblNoDP4Mode.Caption = LocaliseString(strPathFile, strFormName, "lblNoDP4Mode", lblNoDP4Mode.Caption)
-    lblNoDPInProgram.Caption = LocaliseString(strPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
+    lblPCInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblPCInfo", lblPCInfo.Caption) & " " & strCompModel
+    lblNoDP4Mode.Caption = LocaliseString(StrPathFile, strFormName, "lblNoDP4Mode", lblNoDP4Mode.Caption)
+    lblNoDPInProgram.Caption = LocaliseString(StrPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
     ' Другие параметры
-    strTableHwidHeader1 = LocaliseString(strPathFile, strFormName, "TableHwidHeader1", "-HWID-")
-    strTableHwidHeader2 = LocaliseString(strPathFile, strFormName, "TableHwidHeader2", "-Путь-")
-    strTableHwidHeader3 = LocaliseString(strPathFile, strFormName, "TableHwidHeader3", "-Файл-")
-    strTableHwidHeader4 = LocaliseString(strPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
-    strTableHwidHeader5 = LocaliseString(strPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
-    strTableHwidHeader6 = LocaliseString(strPathFile, strFormName, "TableHwidHeader6", "-Статус-")
-    strTableHwidHeader7 = LocaliseString(strPathFile, strFormName, "TableHwidHeader7", "-Наименование устройства-")
-    strTableHwidHeader8 = LocaliseString(strPathFile, strFormName, "TableHwidHeader8", "-Пакет драйверов-")
-    strTableHwidHeader9 = LocaliseString(strPathFile, strFormName, "TableHwidHeader9", "-!-")
-    strTableHwidHeader10 = LocaliseString(strPathFile, strFormName, "TableHwidHeader10", "-Производитель-")
-    strTableHwidHeader11 = LocaliseString(strPathFile, strFormName, "TableHwidHeader11", "-Совместимый HWID-")
-    strTableHwidHeader12 = LocaliseString(strPathFile, strFormName, "TableHwidHeader12", "-Код устройства-")
-    strTableHwidHeader13 = LocaliseString(strPathFile, strFormName, "TableHwidHeader13", "-Секция-")
-    strTableHwidHeader14 = LocaliseString(strPathFile, strFormName, "TableHwidHeader14", "Найден в пакете")
-    strTTipTextTitle = LocaliseString(strPathFile, strFormName, "ToolTipTextTitle", "Файл пакета драйверов:")
-    strTTipTextFileSize = LocaliseString(strPathFile, strFormName, "ToolTipTextFileSize", "Размер файла:")
-    strTTipTextClassDRV = LocaliseString(strPathFile, strFormName, "ToolTipTextClassDRV", "Класс драйверов:")
-    strTTipTextDrv2Install = LocaliseString(strPathFile, strFormName, "ToolTipTextDrv2Install", "ДРАЙВЕРА ДОСТУПНЫЕ ДЛЯ УСТАНОВКИ:")
-    strTTipTextDrv4UnsupOS = LocaliseString(strPathFile, strFormName, "ToolTipTextDrv4UnsupportedOS", "ВНИМАНИЕ! ДРАЙВЕРА ДЛЯ ДРУГОЙ ОС." & vbNewLine & "ОБАБОТКА ВКЛАДКИ ВЫКЛЮЧЕНА В НАСТРОЙКАХ")
-    strTTipTextTitleStatus = LocaliseString(strPathFile, strFormName, "ToolTipTextTitleStatus", "Подробное описание:")
-    strSSTabTypeDPTab1 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab1", "Все драйверпаки")
-    strSSTabTypeDPTab2 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab2", "Доступно обновление")
-    strSSTabTypeDPTab3 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab3", "Неустановленные")
-    strSSTabTypeDPTab4 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab4", "Установленные")
-    strSSTabTypeDPTab5 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab5", "БД не создана")
+    strTableHwidHeader1 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader1", "-HWID-")
+    strTableHwidHeader2 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader2", "-Путь-")
+    strTableHwidHeader3 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader3", "-Файл-")
+    strTableHwidHeader4 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
+    strTableHwidHeader5 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
+    strTableHwidHeader6 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader6", "-Статус-")
+    strTableHwidHeader7 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader7", "-Наименование устройства-")
+    strTableHwidHeader8 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader8", "-Пакет драйверов-")
+    strTableHwidHeader9 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader9", "-!-")
+    strTableHwidHeader10 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader10", "-Производитель-")
+    strTableHwidHeader11 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader11", "-Совместимый HWID-")
+    strTableHwidHeader12 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader12", "-Код устройства-")
+    strTableHwidHeader13 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader13", "-Секция-")
+    strTableHwidHeader14 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader14", "Найден в пакете")
+    strTTipTextTitle = LocaliseString(StrPathFile, strFormName, "ToolTipTextTitle", "Файл пакета драйверов:")
+    strTTipTextFileSize = LocaliseString(StrPathFile, strFormName, "ToolTipTextFileSize", "Размер файла:")
+    strTTipTextClassDRV = LocaliseString(StrPathFile, strFormName, "ToolTipTextClassDRV", "Класс драйверов:")
+    strTTipTextDrv2Install = LocaliseString(StrPathFile, strFormName, "ToolTipTextDrv2Install", "ДРАЙВЕРА ДОСТУПНЫЕ ДЛЯ УСТАНОВКИ:")
+    strTTipTextDrv4UnsupOS = LocaliseString(StrPathFile, strFormName, "ToolTipTextDrv4UnsupportedOS", "ВНИМАНИЕ! ДРАЙВЕРА ДЛЯ ДРУГОЙ ОС." & vbNewLine & "ОБАБОТКА ВКЛАДКИ ВЫКЛЮЧЕНА В НАСТРОЙКАХ")
+    strTTipTextTitleStatus = LocaliseString(StrPathFile, strFormName, "ToolTipTextTitleStatus", "Подробное описание:")
+    strSSTabTypeDPTab1 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab1", "Все драйверпаки")
+    strSSTabTypeDPTab2 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab2", "Доступно обновление")
+    strSSTabTypeDPTab3 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab3", "Неустановленные")
+    strSSTabTypeDPTab4 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab4", "Установленные")
+    strSSTabTypeDPTab5 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab5", "БД не создана")
     ' Прописываем как константу длину названия колонок
     lngTableHwidHeader1 = Len(strTableHwidHeader1)
     lngTableHwidHeader2 = Len(strTableHwidHeader2)
@@ -6164,12 +6142,9 @@ Private Sub Localise(ByVal strPathFile As String)
     LoadListChecked
     ' Перегрузка FrmMainCaption
     ChangeFrmMainCaption
-    ' Перегрузка ToolTipStatus
+    ' Перегрузка ToolTip
     ToolTipStatusLoad
-    ' Изменение контекстного меню кнопок
-    ChangeMenuCaption
-    ' Изменение кнопки RunTask
-    LoadCmdRunTask
+    ToolTipOtherControlReLoad
     ' Изменение SSTab2
     LoadSSTab2Desc
     ' Перегрузка сообщений
@@ -6199,15 +6174,17 @@ End Sub
 '! Description (Описание)  :   [Загрузка текста меню с поддеркой Unicode]
 '! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub LocaliseMenu(ByVal strPathFile As String)
+Private Sub LocaliseMenu(ByVal StrPathFile As String)
     ' Меню должно быть видимым, так как для невидимого не применяется изменение свойства
     ' Поэтому просто изменяем у них свойство caption, и делаем меню неактивным
     mnuContextMenu.Caption = "Drivers"
     mnuContextMenu2.Caption = "Installer"
     mnuContextMenu3.Caption = "Assistant"
+    mnuContextMenu4.Caption = "v." & strProductVersion
     mnuContextMenu.Enabled = False
     mnuContextMenu2.Enabled = False
     mnuContextMenu3.Enabled = False
+    mnuContextMenu4.Enabled = False
     
 '0  mnuRezim - "Обновление баз данных"
 ' 0    mnuRezimBaseDrvUpdateALL - "Обновить базы для ВСЕХ пакетов драйверов"
@@ -6218,13 +6195,13 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 5    mnuSep1 - "-"
 ' 6    mnuLoadOtherPC - "Загрузить информацию другого ПК (Эмуляция работы)"
 ' 7    mnuSaveInfoPC - "Сохранить информацию об устройствах для эмуляции на другом ПК"
-    SetUniMenu -1, 0, -1, mnuRezim, LocaliseString(strPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
-    SetUniMenu 0, 0, -1, mnuRezimBaseDrvUpdateALL, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
-    SetUniMenu 0, 1, -1, mnuRezimBaseDrvUpdateNew, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
-    SetUniMenu 0, 3, -1, mnuRezimBaseDrvClean, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
-    SetUniMenu 0, 4, -1, mnuDelDuplicateOldDP, LocaliseString(strPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
-    SetUniMenu 0, 6, -1, mnuLoadOtherPC, LocaliseString(strPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
-    SetUniMenu 0, 7, -1, mnuSaveInfoPC, LocaliseString(strPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
+    SetUniMenu -1, 0, -1, mnuRezim, LocaliseString(StrPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
+    SetUniMenu 0, 0, -1, mnuRezimBaseDrvUpdateALL, LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
+    SetUniMenu 0, 1, -1, mnuRezimBaseDrvUpdateNew, LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
+    SetUniMenu 0, 3, -1, mnuRezimBaseDrvClean, LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
+    SetUniMenu 0, 4, -1, mnuDelDuplicateOldDP, LocaliseString(StrPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
+    SetUniMenu 0, 6, -1, mnuLoadOtherPC, LocaliseString(StrPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
+    SetUniMenu 0, 7, -1, mnuSaveInfoPC, LocaliseString(StrPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
     
 '1  mnuService - "Сервис"
 ' 0    mnuShowHwidsTxt - "Показать HWIDs устройств компьютера (текстовый файл)"
@@ -6248,20 +6225,20 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 18   mnuViewDPInstLog - "Просмотреть DPinst.log"
 ' 19   mnuSep9 - "-"
 ' 20   mnuOptions - "Параметры" - Shortcut^O
-    SetUniMenu -1, 1, -1, mnuService, LocaliseString(strPathFile, strFormName, "mnuService", mnuService.Caption)
-    SetUniMenu 1, 0, -1, mnuShowHwidsTxt, LocaliseString(strPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
-    SetUniMenu 1, 1, -1, mnuShowHwidsXLS, LocaliseString(strPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
-    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(strPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
-    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
-    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
-    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(strPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
-    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(strPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
-    SetUniMenu 1, 10, -1, mnuAutoInfoAfterDelDRV, LocaliseString(strPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
-    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(strPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
-    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(strPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
-    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(strPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
-    SetUniMenu 1, 18, -1, mnuViewDPInstLog, LocaliseString(strPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
-    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(strPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
+    SetUniMenu -1, 1, -1, mnuService, LocaliseString(StrPathFile, strFormName, "mnuService", mnuService.Caption)
+    SetUniMenu 1, 0, -1, mnuShowHwidsTxt, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
+    SetUniMenu 1, 1, -1, mnuShowHwidsXLS, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
+    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
+    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
+    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
+    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
+    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
+    SetUniMenu 1, 10, -1, mnuAutoInfoAfterDelDRV, LocaliseString(StrPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
+    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(StrPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
+    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(StrPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
+    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(StrPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
+    SetUniMenu 1, 18, -1, mnuViewDPInstLog, LocaliseString(StrPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
+    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(StrPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
     
 '2  mnuMainUtils - "Утилиты"
 ' 0    mnuUtils_devmgmt - "Диспетчер устройств Windows" - Shortcut^{F1}
@@ -6272,13 +6249,13 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 5    mnuUtils_UnknownDevices - "Unknown Devices" - Shortcut^{F6}
 ' 6    mnuSep10 - "-"
 ' 7    mnuUtils - "" - Index   0 - Visible'False
-    SetUniMenu -1, 2, -1, mnuMainUtils, LocaliseString(strPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
-    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(strPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
-    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(strPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption)
-    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(strPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption)
-    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(strPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption)
-    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(strPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption)
-    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(strPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption)
+    SetUniMenu -1, 2, -1, mnuMainUtils, LocaliseString(StrPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
+    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(StrPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
+    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(StrPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption)
+    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(StrPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption)
+    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(StrPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption)
+    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(StrPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption)
+    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(StrPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption)
     
 '3  mnuMainAbout - "Справка"
 ' 0    mnuLinks - "Ссылки"
@@ -6297,26 +6274,26 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 ' 13   mnuDonate - "Поблагодарить автора..."
 ' 14   mnuLicence - "Лицензионное соглашение..."
 ' 15   mnuAbout - "О программе..."
-    SetUniMenu -1, 3, -1, mnuMainAbout, LocaliseString(strPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
-    SetUniMenu 3, 0, -1, mnuLinks, LocaliseString(strPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
-    SetUniMenu 3, 1, -1, mnuHistory, LocaliseString(strPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
-    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(strPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
-    SetUniMenu 3, 4, -1, mnuHomePage1, LocaliseString(strPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
-    SetUniMenu 3, 5, -1, mnuHomePage, LocaliseString(strPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
-    SetUniMenu 3, 6, -1, mnuDriverPacks, LocaliseString(strPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
-    SetUniMenu 3, 7, -1, mnuDriverPacksOnMySite, LocaliseString(strPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
-    SetUniMenu 3, 9, -1, mnuCheckUpd, LocaliseString(strPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
-    SetUniMenu 3, 11, -1, mnuModulesVersion, LocaliseString(strPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
-    SetUniMenu 3, 13, -1, mnuDonate, LocaliseString(strPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
-    SetUniMenu 3, 14, -1, mnuLicence, LocaliseString(strPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
-    SetUniMenu 3, 15, -1, mnuAbout, LocaliseString(strPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
+    SetUniMenu -1, 3, -1, mnuMainAbout, LocaliseString(StrPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
+    SetUniMenu 3, 0, -1, mnuLinks, LocaliseString(StrPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
+    SetUniMenu 3, 1, -1, mnuHistory, LocaliseString(StrPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
+    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(StrPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
+    SetUniMenu 3, 4, -1, mnuHomePage1, LocaliseString(StrPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
+    SetUniMenu 3, 5, -1, mnuHomePage, LocaliseString(StrPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
+    SetUniMenu 3, 6, -1, mnuDriverPacks, LocaliseString(StrPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
+    SetUniMenu 3, 7, -1, mnuDriverPacksOnMySite, LocaliseString(StrPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
+    SetUniMenu 3, 9, -1, mnuCheckUpd, LocaliseString(StrPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
+    SetUniMenu 3, 11, -1, mnuModulesVersion, LocaliseString(StrPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
+    SetUniMenu 3, 13, -1, mnuDonate, LocaliseString(StrPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
+    SetUniMenu 3, 14, -1, mnuLicence, LocaliseString(StrPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
+    SetUniMenu 3, 15, -1, mnuAbout, LocaliseString(StrPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
     
 '4  mnuMainLang - "Язык"
 ' 0    mnuLangStart - "Использовать выбранный язык при запуске (отмена автовыбора)"
 ' 1    mnuSep15 - "-"
 ' 2    mnuLang - "" - Index0 - Visible'False
-    SetUniMenu -1, 4, -1, mnuMainLang, LocaliseString(strPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
-    SetUniMenu 4, 0, -1, mnuLangStart, LocaliseString(strPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
+    SetUniMenu -1, 4, -1, mnuMainLang, LocaliseString(StrPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
+    SetUniMenu 4, 0, -1, mnuLangStart, LocaliseString(StrPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
     
 '5  mnuContextMenu - "Контекстное меню"
 ' 0    mnuContextXLS - "Открыть файл базы данных в программе Excel"
@@ -6340,33 +6317,44 @@ Private Sub LocaliseMenu(ByVal strPathFile As String)
 '  0          mnuContextCopyHWIDDesc - "Список доступных HWID" -    Enabled'False
 '  1          mnuContextSep8 - "-"
 '  2          mnuContextCopyHWID2Clipboard - "Список устройств" -    Index0 -    Visible'False
-    SetUniMenu 5, 0, -1, mnuContextXLS, LocaliseString(strPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
-    SetUniMenu 5, 1, -1, mnuContextTxt, LocaliseString(strPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
-    SetUniMenu 5, 3, -1, mnuContextToolTip, LocaliseString(strPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
-    SetUniMenu 5, 5, -1, mnuContextUpdStatus, LocaliseString(strPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
-    SetUniMenu 5, 7, -1, mnuContextEditDPName, LocaliseString(strPathFile, strFormName, "mnuContextEditDPName", mnuContextEditDPName.Caption)
-    SetUniMenu 5, 9, -1, mnuContextTestDRP, LocaliseString(strPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
-    SetUniMenu 5, 11, -1, mnuContextDeleteDRP, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
-    SetUniMenu 5, 13, -1, mnuContextDeleteDevIDs, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
-    SetUniMenu 5, 13, 0, mnuContextDeleteDevIDDesc, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDDesc", mnuContextDeleteDevIDDesc.Caption)
-    SetUniMenu 5, 14, -1, mnuContextCopyHWIDs, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
-    SetUniMenu 5, 14, 0, mnuContextCopyHWIDDesc, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDDesc", mnuContextCopyHWIDDesc.Caption)
+    SetUniMenu 5, 0, -1, mnuContextXLS, LocaliseString(StrPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
+    SetUniMenu 5, 1, -1, mnuContextTxt, LocaliseString(StrPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
+    SetUniMenu 5, 3, -1, mnuContextToolTip, LocaliseString(StrPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
+    SetUniMenu 5, 5, -1, mnuContextUpdStatus, LocaliseString(StrPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
+    SetUniMenu 5, 7, -1, mnuContextEditDPName, LocaliseString(StrPathFile, strFormName, "mnuContextEditDPName", mnuContextEditDPName.Caption)
+    SetUniMenu 5, 9, -1, mnuContextTestDRP, LocaliseString(StrPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
+    SetUniMenu 5, 11, -1, mnuContextDeleteDRP, LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
+    SetUniMenu 5, 13, -1, mnuContextDeleteDevIDs, LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
+    SetUniMenu 5, 13, 0, mnuContextDeleteDevIDDesc, LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDevIDDesc", mnuContextDeleteDevIDDesc.Caption)
+    SetUniMenu 5, 14, -1, mnuContextCopyHWIDs, LocaliseString(StrPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
+    SetUniMenu 5, 14, 0, mnuContextCopyHWIDDesc, LocaliseString(StrPathFile, strFormName, "mnuContextCopyHWIDDesc", mnuContextCopyHWIDDesc.Caption)
 
 '6  mnuContextMenu2 - "Контекстное меню2"
 ' 0    mnuContextLegendIco - "Просмотреть описание всех обозначений"
-    SetUniMenu 6, 0, -1, mnuContextLegendIco, LocaliseString(strPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
+    SetUniMenu 6, 0, -1, mnuContextLegendIco, LocaliseString(StrPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
     
 '7  mnuContextMenu3 - "Контекстное меню3"
-' 0    mnuContextInstall - "Обычная установка" - Index0
-' 1    mnuContextInstall - "-" - Index1
-' 2    mnuContextInstall - "Выборочная установка" - Index2
-' 3    mnuContextInstall - "-" - Index3
-' 4    mnuContextInstall - "Распаковать в каталог - Все подобранные драйвера" - Index4
-' 5    mnuContextInstall - "Распаковать в каталог - Выбрать драйвера..." - Index5
-    SetUniMenu 7, 0, -1, mnuContextInstall(0), LocaliseString(strPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
-    SetUniMenu 7, 2, -1, mnuContextInstall(2), LocaliseString(strPathFile, strFormName, "mnuContextInstall2", mnuContextInstall(2).Caption)
-    SetUniMenu 7, 4, -1, mnuContextInstall(4), LocaliseString(strPathFile, strFormName, "mnuContextInstall3", mnuContextInstall(4).Caption)
-    SetUniMenu 7, 5, -1, mnuContextInstall(5), LocaliseString(strPathFile, strFormName, "mnuContextInstall4", mnuContextInstall(5).Caption)
+' 0    mnuContextInstallGroupDP - "Обычная установка" - Index0
+' 1    mnuContextInstallGroupDP - "-" - Index1
+' 2    mnuContextInstallGroupDP - "Выборочная установка" - Index2
+' 3    mnuContextInstallGroupDP - "-" - Index3
+' 4    mnuContextInstallGroupDP - "Распаковать в каталог - Все подобранные драйвера" - Index4
+' 5    mnuContextInstallGroupDP - "Распаковать в каталог - Выбрать драйвера..." - Index5
+    SetUniMenu 7, 0, -1, mnuContextInstallGroupDP(0), LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstallGroupDP(0).Caption)
+    SetUniMenu 7, 2, -1, mnuContextInstallGroupDP(2), LocaliseString(StrPathFile, strFormName, "mnuContextInstall2", mnuContextInstallGroupDP(2).Caption)
+    SetUniMenu 7, 4, -1, mnuContextInstallGroupDP(4), LocaliseString(StrPathFile, strFormName, "mnuContextInstall3", mnuContextInstallGroupDP(4).Caption)
+    SetUniMenu 7, 5, -1, mnuContextInstallGroupDP(5), LocaliseString(StrPathFile, strFormName, "mnuContextInstall4", mnuContextInstallGroupDP(5).Caption)
+'8  mnuContextMenu4 - "Контекстное меню3"
+' 0    mnuContextInstallSingleDP - "Обычная установка" - Index0
+' 1    mnuContextInstallSingleDP - "-" - Index1
+' 2    mnuContextInstallSingleDP - "Выборочная установка" - Index2
+' 3    mnuContextInstallSingleDP - "-" - Index3
+' 4    mnuContextInstallSingleDP - "Распаковать в каталог - Все подобранные драйвера" - Index4
+' 5    mnuContextInstallSingleDP - "Распаковать в каталог - Выбрать драйвера..." - Index5    SetUniMenu 8, 0, -1, mnuContextInstall(0), LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
+    SetUniMenu 8, 0, -1, mnuContextInstallSingleDP(0), LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstallSingleDP(0).Caption)
+    SetUniMenu 8, 2, -1, mnuContextInstallSingleDP(2), LocaliseString(StrPathFile, strFormName, "mnuContextInstall2", mnuContextInstallSingleDP(2).Caption)
+    SetUniMenu 8, 4, -1, mnuContextInstallSingleDP(4), LocaliseString(StrPathFile, strFormName, "mnuContextInstall3", mnuContextInstallSingleDP(4).Caption)
+    SetUniMenu 8, 5, -1, mnuContextInstallSingleDP(5), LocaliseString(StrPathFile, strFormName, "mnuContextInstall4", mnuContextInstallSingleDP(5).Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6516,7 +6504,7 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Index (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub mnuContextInstall_Click(Index As Integer)
+Private Sub mnuContextInstallGroupDP_Click(Index As Integer)
     mbGroupTask = True
     mbOnlyUnpackDP = False
 
@@ -6540,6 +6528,40 @@ Private Sub mnuContextInstall_Click(Index As Integer)
     End Select
 
     GroupInstallDP
+    mbGroupTask = False
+    BlockControl True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuContextInstall_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub mnuContextInstallSingleDP_Click(Index As Integer)
+    mbGroupTask = False
+    mbOnlyUnpackDP = False
+
+    Select Case Index
+
+        Case 0
+            mbooSelectInstall = False
+            mbOnlyUnpackDP = False
+
+        Case 2
+            mbooSelectInstall = True
+            mbOnlyUnpackDP = False
+
+        Case 4
+            mbooSelectInstall = False
+            mbOnlyUnpackDP = True
+
+        Case 5
+            mbooSelectInstall = True
+            mbOnlyUnpackDP = True
+    End Select
+
+    acmdPackFiles_Click CInt(lngCurrentBtnIndex)
+    
     mbGroupTask = False
     BlockControl True
 End Sub
@@ -7320,16 +7342,16 @@ Private Sub optRezim_Intellect_Click()
 
                 With acmdPackFiles(i)
 
-                    If Not (.Picture Is Nothing) Then
-                        If .Picture = imgNo.Picture Or .Picture = imgNoDB.Picture Then
-                            If .EnabledCtrl Then
-                                .EnabledCtrl = False
+                    If Not (.PictureNormal Is Nothing) Then
+                        If .PictureNormal = imgNo.Picture Or .PictureNormal = imgNoDB.Picture Then
+                            If .Enabled Then
+                                .Enabled = False
                                 chkPackFiles(i).Enabled = False
                             End If
 
-                            .MenuExist = False
+                            .DropDownEnable = False
                         Else
-                            .MenuExist = True
+                            .DropDownEnable = True
                         End If
                     End If
 
@@ -7340,16 +7362,16 @@ Private Sub optRezim_Intellect_Click()
                 With acmdPackFiles(0)
 
                     If .Visible Then
-                        If Not (.Picture Is Nothing) Then
-                            If .Picture = imgNo.Picture Or .Picture = imgNoDB.Picture Then
-                                If .EnabledCtrl Then
-                                    .EnabledCtrl = False
+                        If Not (.PictureNormal Is Nothing) Then
+                            If .PictureNormal = imgNo.Picture Or .PictureNormal = imgNoDB.Picture Then
+                                If .Enabled Then
+                                    .Enabled = False
                                     chkPackFiles(0).Enabled = False
                                 End If
 
-                                .MenuExist = False
+                                .DropDownEnable = False
                             Else
-                                .MenuExist = True
+                                .DropDownEnable = True
                             End If
                         End If
                     End If
@@ -7395,11 +7417,13 @@ Private Sub optRezim_Intellect_Click()
 
     End With
 
-    'SSTab1
-    cmdRunTask.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", cmdRunTask.Caption)
-    cmdRunTask.SetPopupMenu mnuContextMenu3
-    cmdRunTask.DropDownSeparator = True
-    cmdRunTask.DropDownSymbol = 6
+    With cmdRunTask
+        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
+        .DropDownEnable = True
+        .DropDownSeparator = True
+        .DropDownSymbol = 6
+    End With
+    
     'заполнение списка на выделение
     FindCheckCount
     LoadListChecked
@@ -7451,39 +7475,44 @@ Private Sub optRezim_Upd_Click()
 
     If Not mbFirstStart Then
 
-        For i = 0 To acmdPackFiles.UBound
-
-            If Not acmdPackFiles(i).EnabledCtrl Then
-                acmdPackFiles(i).EnabledCtrl = True
-                chkPackFiles(i).Enabled = True
-            End If
-
-            acmdPackFiles(i).MenuExist = False
-        Next
+        With acmdPackFiles
+            For i = 0 To .UBound
+    
+                If Not .Item(i).Enabled Then
+                    .Item(i).Enabled = True
+                    chkPackFiles(i).Enabled = True
+                End If
+    
+                .Item(i).DropDownEnable = False
+            Next
+        End With
 
     End If
 
     If mbTabBlock Then
 
-        For i = 0 To SSTab1.Tabs - 1
-
-            If Not arrOSList(i).DPFolderNotExist Then
-                If arrOSList(i).CntBtn = 0 Then
-                    SSTab1.TabEnabled(i) = False
+        With SSTab1
+        
+            For i = 0 To .Tabs - 1
+    
+                If Not arrOSList(i).DPFolderNotExist Then
+                    If arrOSList(i).CntBtn = 0 Then
+                        .TabEnabled(i) = False
+                    Else
+    
+                        If Not .TabVisible(i) Then .TabVisible(i) = True
+                        If Not .TabEnabled(i) Then .TabEnabled(i) = True
+                    End If
+    
                 Else
-
-                    If Not SSTab1.TabVisible(i) Then SSTab1.TabVisible(i) = True
-                    If Not SSTab1.TabEnabled(i) Then SSTab1.TabEnabled(i) = True
+    
+                    If mbTabHide Then
+                        .TabVisible(i) = False
+                    End If
                 End If
-
-            Else
-
-                If mbTabHide Then
-                    SSTab1.TabVisible(i) = False
-                End If
-            End If
-
-        Next
+    
+            Next
+        End With
 
     End If
 
@@ -7512,10 +7541,13 @@ Private Sub optRezim_Upd_Click()
         End If
     End If
 
-    cmdRunTask.UnsetPopupMenu
-    cmdRunTask.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", cmdRunTask.Caption)
-    cmdRunTask.DropDownSeparator = False
-    cmdRunTask.DropDownSymbol = 0
+    With cmdRunTask
+        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", .Caption)
+        .DropDownEnable = False
+        .DropDownSeparator = False
+        .DropDownSymbol = 0
+    End With
+    
     'заполнение списка на выделение
     FindCheckCount
     LoadListChecked
@@ -7574,21 +7606,21 @@ Private Sub optRezim_Ust_Click()
 
                 With acmdPackFiles(i)
 
-                    If .Picture = imgNoDB.Picture Then
-                        If .EnabledCtrl Then
-                            .EnabledCtrl = False
+                    If .Enabled = imgNoDB.Picture Then
+                        If .Enabled Then
+                            .Enabled = False
                             chkPackFiles(i).Enabled = False
                         End If
 
                     Else
 
-                        If Not .EnabledCtrl Then
-                            .EnabledCtrl = True
+                        If Not .Enabled Then
+                            .Enabled = True
                             chkPackFiles(i).Enabled = True
                         End If
                     End If
 
-                    .MenuExist = False
+                    .DropDownEnable = False
                 End With
 
             End If
@@ -7630,10 +7662,13 @@ Private Sub optRezim_Ust_Click()
 
     End With
 
-    cmdRunTask.Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", cmdRunTask.Caption)
-    cmdRunTask.UnsetPopupMenu
-    cmdRunTask.DropDownSeparator = False
-    cmdRunTask.DropDownSymbol = 0
+    With cmdRunTask
+        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
+        .DropDownEnable = False
+        .DropDownSeparator = False
+        .DropDownSymbol = 0
+    End With
+    
     'заполнение списка на выделение
     FindCheckCount
     LoadListChecked
@@ -8738,7 +8773,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
     For i = lngBtnPrevCnt To lngBtnTabCnt
 
-        If Not (acmdPackFiles(i).Picture Is Nothing) Then
+        If Not (acmdPackFiles(i).PictureNormal Is Nothing) Then
 
             Select Case lngTab2Tab
 
@@ -8748,8 +8783,8 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     
                 Case 1
 
-                    If acmdPackFiles(i).Picture = imgOkNew.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgOkNew.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8757,9 +8792,9 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 2
 
-                    If acmdPackFiles(i).Picture = imgOkAttention.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgOkAttention.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8767,11 +8802,11 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 3
 
-                    If acmdPackFiles(i).Picture = imgOK.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionOLD.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkAttentionNew.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkNew.Picture Or _
-                       acmdPackFiles(i).Picture = imgOkOld.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgOK.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkNew.Picture Or _
+                       acmdPackFiles(i).PictureNormal = imgOkOld.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8779,7 +8814,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 4
 
-                    If acmdPackFiles(i).Picture = imgNoDB.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgNoDB.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8929,14 +8964,11 @@ Private Sub TabStopParam()
 
     lngCntBtnTab = arrOSList(lngSSTab1Tab).CntBtn - 1
 
-    For i = acmdPackFiles.LBound To acmdPackFiles.UBound
-
-        With acmdPackFiles(i)
-            .TabStop = i >= lngCntBtnPrevious And i <= lngCntBtnTab
-        End With
-
-    Next
-
+    With acmdPackFiles
+        For i = .LBound To .UBound
+            .Item(i).TabStop = i >= lngCntBtnPrevious And i <= lngCntBtnTab
+        Next
+    End With
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9035,7 +9067,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ToolTipBtnReLoad()
-    DebugMode str2VbTab & "ReloadToolTip-Start"
+    DebugMode str2VbTab & "ToolTipBtnReLoad-Start"
 
     'Если подсказки уже созданы, то очистка
     If TT.Tools.Count > 0 Then
@@ -9045,7 +9077,31 @@ Private Sub ToolTipBtnReLoad()
 
     ' Обновляем всплывающую подсказку
     UpdateStatusButtonAll True
-    DebugMode str2VbTab & "ReloadToolTip-End"
+    DebugMode str2VbTab & "ToolTipBtnReLoad-End"
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ToolTipBtnReLoad
+'! Description (Описание)  :   [Перезагрузка всплывающих подсказок для остальных контролов]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ToolTipOtherControlReLoad()
+    DebugMode str2VbTab & "ToolTipOtherControlReLoad-Start"
+
+    With TTOtherControl
+    'Если подсказки уже созданы, то очистка
+        If .Tools.Count > 0 Then
+            .Tools.Clear
+            .Font.Name = strFontMainForm_Name
+            .Font.Size = lngFontMainForm_Size
+        End If
+        ' Обновляем всплывающую подсказку
+        .Tools.Add optRezim_Intellect.hWnd, , LocaliseString(strPCLangCurrentPath, strFormName, "RezimIntellectTip", optRezim_Intellect.ToolTipText)
+        .Tools.Add optRezim_Ust.hWnd, , LocaliseString(strPCLangCurrentPath, strFormName, "RezimUstTip", optRezim_Ust.ToolTipText)
+        .Tools.Add optRezim_Upd.hWnd, , LocaliseString(strPCLangCurrentPath, strFormName, "RezimUpdTip", optRezim_Upd.ToolTipText)
+    End With
+
+    DebugMode str2VbTab & "ToolTipOtherControlReLoad-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9396,16 +9452,16 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
 
                 If Not mbReloadTT Then
                     ' Кнопка выглядит нажатой
-                    Set .Picture = imgUpdBD.Picture
+                    Set .PictureNormal = imgUpdBD.Picture
                     FlatBorderButton .hWnd
-                    .Refresh
+                    '.Refresh
                     strPackFileName = .Tag
                     ChangeStatusTextAndDebug "(" & i + 1 & " " & strMessages(124) & " " & ButtCount & "): " & strMessages(89) & " " & strPackFileName
                     ' Обновление подсказки
                     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                     ' Кнопка выглядит отжатой
                     FlatBorderButton .hWnd, False
-                    .Refresh
+                    '.Refresh
                 Else
                     strPackFileName = .Tag
                     ' Обновление подсказки
@@ -9520,16 +9576,16 @@ Public Sub UpdateStatusButtonTAB()
 
             With acmdPackFiles(i)
                 ' Кнопка выглядит нажатой
-                Set .Picture = imgUpdBD.Picture
+                Set .PictureNormal = imgUpdBD.Picture
                 FlatBorderButton .hWnd
-                .Refresh
+                '.Refresh
                 strPackFileName = .Tag
                 ChangeStatusTextAndDebug "(" & lngCurrBtn & " " & strMessages(124) & " " & lngSummBtn & "): " & strMessages(89) & " " & strPackFileName
                 ' Обновление подсказки
                 ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                 ' Кнопка выглядит отжатой
                 FlatBorderButton .hWnd, False
-                .Refresh
+                '.Refresh
             End With
 
             miPbNext = miPbNext + miPbInterval
@@ -10063,3 +10119,4 @@ Public Property Get CaptionW() As String
     CaptionW = Space$(strLen)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
+

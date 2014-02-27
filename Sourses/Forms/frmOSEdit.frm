@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmOSEdit 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Редактирование записи"
-   ClientHeight    =   5925
+   ClientHeight    =   5970
    ClientLeft      =   45
    ClientTop       =   645
    ClientWidth     =   8355
@@ -20,7 +20,7 @@ Begin VB.Form frmOSEdit
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5925
+   ScaleHeight     =   5970
    ScaleWidth      =   8355
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
@@ -45,12 +45,12 @@ Begin VB.Form frmOSEdit
       CueBanner       =   "frmOSEdit.frx":002C
    End
    Begin prjDIADBS.FrameW frExcludeFileName 
-      Height          =   1175
+      Height          =   1250
       Left            =   120
       Top             =   3850
       Width           =   8175
-      _ExtentX        =   0
-      _ExtentY        =   0
+      _ExtentX        =   14420
+      _ExtentY        =   2196
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -66,7 +66,7 @@ Begin VB.Form frmOSEdit
          Height          =   850
          Left            =   120
          TabIndex        =   1
-         Top             =   240
+         Top             =   280
          Width           =   7935
          _ExtentX        =   0
          _ExtentY        =   0
@@ -236,7 +236,7 @@ Begin VB.Form frmOSEdit
       Height          =   255
       Left            =   120
       TabIndex        =   5
-      Top             =   5080
+      Top             =   5150
       Width           =   4215
       _ExtentX        =   7435
       _ExtentY        =   450
@@ -276,7 +276,7 @@ Begin VB.Form frmOSEdit
       Height          =   255
       Left            =   120
       TabIndex        =   8
-      Top             =   5475
+      Top             =   5500
       Width           =   4215
       _ExtentX        =   7435
       _ExtentY        =   450
@@ -321,7 +321,7 @@ Begin VB.Form frmOSEdit
       Height          =   750
       Left            =   6420
       TabIndex        =   11
-      Top             =   5080
+      Top             =   5150
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1323
@@ -337,18 +337,17 @@ Begin VB.Form frmOSEdit
       ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
       Left            =   4500
       TabIndex        =   7
-      Top             =   5080
+      Top             =   5150
       Width           =   1815
       _ExtentX        =   3201
       _ExtentY        =   1296
@@ -364,11 +363,10 @@ Begin VB.Form frmOSEdit
       ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.LabelW lblPathDB 
