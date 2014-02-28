@@ -25,6 +25,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'Note: this file has been modified for use within Drivers Installer Assistant.
+
+'This code was originally written by Juned Chhipa.
+
+'You may download the original version of this code from the following link (good as of June '12):
+' http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=71482&lngWId=1
+
+' Many thanks to Juned for his excellent custom button, which PhotoDemon uses in a variety of ways.
+
 Option Explicit
 
 '***************************************************************************
@@ -80,10 +89,12 @@ Option Explicit
 '*   such, and must not be misrepresented as being the original software.   *
 '****************************************************************************
 '* N'joy ;)
-' Fix by Romeo91
+' Fix by Romeo91 (adia-project.net) Last Edit 2014-02-28
 ' added unicode support for Caption
-' delete tooltip event declaration
+' delete tooltip event declaration (i used 3d-party control for this)
 ' added rightbuttonmenu
+' added checkexist property (need if you put checkboxes on the button)
+' added dropdownenable property (need if want to disable dropdownmenu, but wasn't unset from control)
 '==========================================================================================================================================================================================================================================================================================
 ' Subclassing Declares
 Private Enum MsgWhen
@@ -583,7 +594,7 @@ Private Const DT_SINGLELINE    As Long = &H20
 Private Const DT_WORD_ELLIPSIS As Long = &H40000
 Private Const DT_MULTILINE = (&H1)
 Private Const DT_NOPREFIX = &H800
-Private Const DT_DRAWFLAG As Long = DT_WORDBREAK Or DT_MULTILINE Or DT_NOPREFIX
+Private Const DT_DRAWFLAG As Long = DT_WORDBREAK Or DT_MULTILINE Or DT_NOPREFIX Or DT_VCENTER
 
 Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
 Private Declare Function DrawText Lib "user32.dll" Alias "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
@@ -704,7 +715,6 @@ Private Sub DrawRectangle(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As Lo
     Dim brect  As RECT
     Dim hBrush As Long
 
-    'Dim ret              As Long
     With brect
         .Left = X
         .Top = Y
@@ -712,7 +722,6 @@ Private Sub DrawRectangle(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As Lo
         .Bottom = Y + lngHeight
     End With
 
-    'BRECT
     hBrush = CreateSolidBrush(Color)
     FrameRect hDC, brect, hBrush
     DeleteObject hBrush
@@ -1712,7 +1721,11 @@ Private Sub DrawPicwithCaption()
             OffsetRect lpRect, 2, (lh - lpRect.Bottom) \ 2
 
         Case ecCenterAlign
-            OffsetRect lpRect, (lw - lpRect.Right + PicW + 4) \ 2, (lh - lpRect.Bottom) \ 2
+            If (lh - lpRect.Bottom) < 0 Then
+                OffsetRect lpRect, (lw - lpRect.Right + PicW + 4) \ 2, 1
+            Else
+                OffsetRect lpRect, (lw - lpRect.Right + PicW + 4) \ 2, (lh - lpRect.Bottom) \ 2
+            End If
 
             If m_PictureAlign = epBottomEdge Or m_PictureAlign = epBottomOfCaption Or m_PictureAlign = epTopOfCaption Or m_PictureAlign = epTopEdge Then
                 OffsetRect lpRect, -(PicW \ 2), 0
@@ -1725,7 +1738,7 @@ Private Sub DrawPicwithCaption()
     With lpRect
 
         If Not m_Picture Is Nothing Then
-
+            
             Select Case m_PictureAlign
 
                 Case epLeftEdge, epLeftOfCaption
@@ -1756,6 +1769,10 @@ Private Sub DrawPicwithCaption()
                     End If
 
             End Select
+            
+            If m_CheckExist Then
+                .Left = .Left + 16
+            End If
 
         Else
 
@@ -1763,13 +1780,15 @@ Private Sub DrawPicwithCaption()
                 .Left = 4
             End If
             
-            If m_CheckExist Then
-                .Left = .Left + 16
-            End If
-
             If .Right > lw - 4 Then
                 .Right = lw - 4
             End If
+            
+            If m_CheckExist Then
+                .Left = 16
+                .Right = lw - 4
+            End If
+            
         End If
 
         If m_CaptionAlign = ecRightAlign Then

@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "17/02/2014"
+Public Const strDateProgram         As String = "28/02/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -13,10 +13,10 @@ Public Const strUrl_MainWWWForum    As String = "http://adia-project.net/forum/i
 Public Const strUrlOsZoneNetThread  As String = "http://forum.oszone.net/thread-139908.html" ' Топик программы на сайте Oszone.net
 
 'Константы путей основных каталогов и файла настроек (вынесены отдельно для универсальности кода под разные проекты)
-Public Const strToolsLang_Path      As String = "Tools\Lang"            ' Каталог с языковыми файлами
-Public Const strToolsDocs_Path      As String = "Tools\Docs"            ' Каталог с документацией на программу
-Public Const strToolsGraphics_Path  As String = "Tools\Graphics"        ' Каталог с графическими ресурсами программы
-Public Const strSettingIniFile      As String = "DriversInstaller.ini"  ' INI-Файл настроек программы
+Public Const strToolsLang_Path      As String = "Tools\DIA\Lang"            ' Каталог с языковыми файлами
+Public Const strToolsDocs_Path      As String = "Tools\DIA\Docs"            ' Каталог с документацией на программу
+Public Const strToolsGraphics_Path  As String = "Tools\DIA\Graphics"        ' Каталог с графическими ресурсами программы
+Public Const strSettingIniFile      As String = "DIA.ini"  ' INI-Файл настроек программы
 
 ' Версии лицензионного соглашения и файла Donate
 Public Const strEULA_Version        As String = "02/02/2010"
@@ -213,7 +213,8 @@ Private Sub Main()
     If PathExists(strWinTemp) = False Then
         MsgBox "Windows TempPath not Exist or Environ %TMP% undefined. Program is exit!!!", vbInformation, strProductName
 
-        End
+        'End
+        GoTo ExitSub
 
     End If
 
@@ -240,7 +241,17 @@ Private Sub Main()
     If PathExists(strAppPathBackSL & "Tools\") = False Then
         MsgBox "Not found the main program subfolder '.\Tools'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
 
-        End
+        'End
+        GoTo ExitSub
+
+    End If
+    
+    ' Если каталог tools недоступен
+    If PathExists(strAppPathBackSL & "Tools\DIA\") = False Then
+        MsgBox "Not found the main program subfolder '.\Tools\DIA'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
+
+        'End
+        GoTo ExitSub
 
     End If
 
@@ -386,7 +397,8 @@ Private Sub Main()
         MsgBox strMessages(6), vbCritical + vbApplicationModal, strProductName
         DebugMode strMessages(6)
 
-        End
+        'End
+        GoTo ExitSub
 
     End If
 
@@ -436,6 +448,8 @@ Private Sub Main()
         'Открываем основную форму
         frmMain.Show vbModeless
     End If
+
+ExitSub:
 
 End Sub
 

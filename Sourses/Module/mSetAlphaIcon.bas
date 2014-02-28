@@ -19,7 +19,7 @@ Private Const WM_SETICON = &H80
 Private Const ICON_SMALL = 0
 Private Const ICON_BIG = 1
 
-Private Declare Function LoadImageAsString Lib "user32.dll" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal uType As Long, ByVal cxDesired As Long, ByVal cyDesired As Long, ByVal fuLoad As Long) As Long
+Private Declare Function LoadImage Lib "user32.dll" Alias "LoadImageW" (ByVal hInst As Long, ByVal lpsz As Long, ByVal dwImageType As Long, ByVal dwDesiredWidth As Long, ByVal dwDesiredHeight As Long, ByVal dwFlags As Long) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SetIcon
@@ -53,22 +53,22 @@ Public Sub SetIcon(ByVal hWnd As Long, ByVal sIconResName As String, Optional By
 
     End If
 
-    CX = GetSystemMetrics(SM_CXICON)
-    CY = GetSystemMetrics(SM_CYICON)
-    hIconLarge = LoadImageAsString(App.hInstance, sIconResName, IMAGE_ICON, CX, CY, LR_SHARED)
+    'CX = GetSystemMetrics(SM_CXICON)
+    'CY = GetSystemMetrics(SM_CYICON)
+    hIconLarge = LoadImage(App.hInstance, StrPtr(sIconResName & vbNullChar), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR)
 
     If (bSetAsAppIcon) Then
-        SendMessageLong lhWndTop, WM_SETICON, ICON_BIG, hIconLarge
+        SendMessage lhWndTop, WM_SETICON, ICON_BIG, ByVal hIconLarge
     End If
-
-    SendMessageLong hWnd, WM_SETICON, ICON_BIG, hIconLarge
-    CX = GetSystemMetrics(SM_CXSMICON)
-    CY = GetSystemMetrics(SM_CYSMICON)
-    hIconSmall = LoadImageAsString(App.hInstance, sIconResName, IMAGE_ICON, CX, CY, LR_SHARED)
+    SendMessage hWnd, WM_SETICON, ICON_BIG, ByVal hIconLarge
+    
+    'CX = GetSystemMetrics(SM_CXSMICON)
+    'CY = GetSystemMetrics(SM_CYSMICON)
+    hIconSmall = LoadImage(App.hInstance, StrPtr(sIconResName & vbNullChar), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR)
 
     If (bSetAsAppIcon) Then
-        SendMessageLong lhWndTop, WM_SETICON, ICON_SMALL, hIconSmall
+        SendMessage lhWndTop, WM_SETICON, ICON_SMALL, ByVal hIconSmall
     End If
 
-    SendMessageLong hWnd, WM_SETICON, ICON_SMALL, hIconSmall
+    SendMessage hWnd, WM_SETICON, ICON_SMALL, ByVal hIconSmall
 End Sub

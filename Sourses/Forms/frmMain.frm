@@ -155,7 +155,7 @@ Begin VB.Form frmMain
             _ExtentY        =   450
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
-               Size            =   8.25
+               Size            =   9
                Charset         =   204
                Weight          =   400
                Underline       =   0   'False
@@ -176,7 +176,7 @@ Begin VB.Form frmMain
             _ExtentY        =   450
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
-               Size            =   8.25
+               Size            =   9
                Charset         =   204
                Weight          =   400
                Underline       =   0   'False
@@ -240,26 +240,28 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   31
             Top             =   4200
-            Width           =   2055
-            _ExtentX        =   3625
+            Width           =   2175
+            _ExtentX        =   3836
             _ExtentY        =   979
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
-               Size            =   8.25
+               Size            =   9
                Charset         =   0
                Weight          =   400
                Underline       =   0   'False
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
-            ButtonStyle     =   13
+            ButtonStyle     =   8
             CheckExist      =   -1  'True
-            BackColor       =   0
+            BackColor       =   14933984
             Caption         =   "Кнопка пакета драйверов"
             CaptionEffects  =   0
-            PictureNormal   =   "frmMain.frx":002C
             PictureAlign    =   0
+            PictureEffectOnOver=   0
+            PictureEffectOnDown=   0
             PicturePushOnHover=   -1  'True
+            ColorScheme     =   2
          End
          Begin TabDlg.SSTab SSTab1 
             Height          =   4155
@@ -276,7 +278,7 @@ Begin VB.Form frmMain
             ShowFocusRect   =   0   'False
             Enabled         =   0   'False
             ForeColor       =   -2147483630
-            MouseIcon       =   "frmMain.frx":0906
+            MouseIcon       =   "frmMain.frx":002C
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -287,7 +289,7 @@ Begin VB.Form frmMain
                Strikethrough   =   0   'False
             EndProperty
             TabCaption(0)   =   "OSName_1"
-            TabPicture(0)   =   "frmMain.frx":0922
+            TabPicture(0)   =   "frmMain.frx":0048
             Tab(0).ControlEnabled=   -1  'True
             Tab(0).Control(0)=   "lblNoDPInProgram"
             Tab(0).Control(0).Enabled=   0   'False
@@ -295,15 +297,15 @@ Begin VB.Form frmMain
             Tab(0).Control(1).Enabled=   0   'False
             Tab(0).ControlCount=   2
             TabCaption(1)   =   "OSName_2"
-            TabPicture(1)   =   "frmMain.frx":093E
+            TabPicture(1)   =   "frmMain.frx":0064
             Tab(1).ControlEnabled=   0   'False
             Tab(1).ControlCount=   0
             TabCaption(2)   =   "OSName_3"
-            TabPicture(2)   =   "frmMain.frx":095A
+            TabPicture(2)   =   "frmMain.frx":0080
             Tab(2).ControlEnabled=   0   'False
             Tab(2).ControlCount=   0
             TabCaption(3)   =   "OSName_4"
-            TabPicture(3)   =   "frmMain.frx":0976
+            TabPicture(3)   =   "frmMain.frx":009C
             Tab(3).ControlEnabled=   0   'False
             Tab(3).ControlCount=   0
             Begin TabDlg.SSTab SSTab2 
@@ -331,7 +333,7 @@ Begin VB.Form frmMain
                   Strikethrough   =   0   'False
                EndProperty
                TabCaption(0)   =   "Все драйверпаки"
-               TabPicture(0)   =   "frmMain.frx":0992
+               TabPicture(0)   =   "frmMain.frx":00B8
                Tab(0).ControlEnabled=   -1  'True
                Tab(0).Control(0)=   "lblNoDP4Mode"
                Tab(0).Control(0).Enabled=   0   'False
@@ -339,22 +341,22 @@ Begin VB.Form frmMain
                Tab(0).Control(1).Enabled=   0   'False
                Tab(0).ControlCount=   2
                TabCaption(1)   =   "Доступно обновление"
-               TabPicture(1)   =   "frmMain.frx":09AE
+               TabPicture(1)   =   "frmMain.frx":00D4
                Tab(1).ControlEnabled=   0   'False
                Tab(1).Control(0)=   "ctlScrollControlTab1(0)"
                Tab(1).ControlCount=   1
                TabCaption(2)   =   "Неустановленные"
-               TabPicture(2)   =   "frmMain.frx":09CA
+               TabPicture(2)   =   "frmMain.frx":00F0
                Tab(2).ControlEnabled=   0   'False
                Tab(2).Control(0)=   "ctlScrollControlTab2(0)"
                Tab(2).ControlCount=   1
                TabCaption(3)   =   "Установленные"
-               TabPicture(3)   =   "frmMain.frx":09E6
+               TabPicture(3)   =   "frmMain.frx":010C
                Tab(3).ControlEnabled=   0   'False
                Tab(3).Control(0)=   "ctlScrollControlTab3(0)"
                Tab(3).ControlCount=   1
                TabCaption(4)   =   "БД не создана"
-               TabPicture(4)   =   "frmMain.frx":0A02
+               TabPicture(4)   =   "frmMain.frx":0128
                Tab(4).ControlEnabled=   0   'False
                Tab(4).Control(0)=   "ctlScrollControlTab4(0)"
                Tab(4).ControlCount=   1
@@ -512,7 +514,7 @@ Begin VB.Form frmMain
                Height          =   330
                Left            =   120
                TabIndex        =   4
-               Top             =   480
+               Top             =   410
                Width           =   3075
                _ExtentX        =   5424
                _ExtentY        =   556
@@ -525,18 +527,18 @@ Begin VB.Form frmMain
                   Italic          =   0   'False
                   Strikethrough   =   0   'False
                EndProperty
-               Text            =   "frmMain.frx":0A1E
-               CueBanner       =   "frmMain.frx":0A5A
+               Text            =   "frmMain.frx":0144
+               CueBanner       =   "frmMain.frx":0180
                Sorted          =   -1  'True
             End
             Begin prjDIADBS.ctlJCbutton cmdCheck 
-               Height          =   390
+               Height          =   430
                Left            =   120
                TabIndex        =   5
-               Top             =   840
+               Top             =   800
                Width           =   3075
                _ExtentX        =   5424
-               _ExtentY        =   688
+               _ExtentY        =   767
                BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                   Name            =   "Tahoma"
                   Size            =   8.25
@@ -575,10 +577,13 @@ Begin VB.Form frmMain
             EndProperty
             ButtonStyle     =   8
             BackColor       =   12244692
-            Caption         =   "Выполнить задание для выбранных пакетов драйверов"
+            Caption         =   "Выполнить задание для выбранных пакетов драйверов на вкладке"
             CaptionEffects  =   0
             PictureAlign    =   0
             PicturePushOnHover=   -1  'True
+            DropDownSymbol  =   6
+            DropDownSeparator=   -1  'True
+            DropDownEnable  =   -1  'True
             ColorScheme     =   3
          End
       End
@@ -895,7 +900,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":0A7A
+      Title           =   "frmMain.frx":01A0
    End
    Begin prjDIADBS.ToolTip TTStatusIcon 
       Left            =   900
@@ -911,7 +916,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":0A9A
+      Title           =   "frmMain.frx":01C0
    End
    Begin prjDIADBS.ToolTip TT 
       Left            =   300
@@ -927,7 +932,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":0ABA
+      Title           =   "frmMain.frx":01E0
    End
    Begin VB.Menu mnuRezim 
       Caption         =   "Обновление баз данных"
@@ -4800,7 +4805,7 @@ Private Sub Form_Load()
     With Me
         ' изменяем иконки формы и приложения
         ' Icon for Exe-file
-        SetIcon .hWnd, "APPICON", True
+        SetIcon .hWnd, "APPICOTAB", True
         SetIcon .hWnd, "FRMMAIN", False
         ' Смена заголовка формы
         strFormName = .Name
@@ -4993,6 +4998,13 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         End If
     End If
 
+    
+    Dim i As Long
+    For i = acmdPackFiles.LBound To acmdPackFiles.UBound
+        acmdPackFiles(i).UnsetPopupMenu
+        acmdPackFiles(i).UnsetPopupMenuRBT
+    Next i
+    
     ' сохранение параметров при выходе
     If mbSaveSizeOnExit Then
         FRMStateSave
@@ -7321,6 +7333,27 @@ Private Sub OpenTxtInExcel(ByVal strPathTxt As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub optRezim_CaptionBold
+'! Description (Описание)  :   [Made Bold caption for Active Rezim Mode]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub optRezim_CaptionBold(lngCurrMode As Long)
+    Select Case lngCurrMode
+    Case 1
+        optRezim_Intellect.Font.Bold = True
+        optRezim_Ust.Font.Bold = False
+        optRezim_Upd.Font.Bold = False
+    Case 2
+        optRezim_Intellect.Font.Bold = False
+        optRezim_Ust.Font.Bold = True
+        optRezim_Upd.Font.Bold = False
+    Case 3
+        optRezim_Intellect.Font.Bold = False
+        optRezim_Ust.Font.Bold = False
+        optRezim_Upd.Font.Bold = True
+    End Select
+End Sub
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub optRezim_Intellect_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -7418,10 +7451,10 @@ Private Sub optRezim_Intellect_Click()
     End With
 
     With cmdRunTask
-        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
         .DropDownEnable = True
         .DropDownSeparator = True
         .DropDownSymbol = 6
+        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
     End With
     
     'заполнение списка на выделение
@@ -7459,6 +7492,9 @@ Private Sub optRezim_Intellect_Click()
         Next
 
     End If
+    
+    'BoldCaption
+    optRezim_CaptionBold 1
 
 End Sub
 
@@ -7542,10 +7578,10 @@ Private Sub optRezim_Upd_Click()
     End If
 
     With cmdRunTask
-        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", .Caption)
         .DropDownEnable = False
         .DropDownSeparator = False
         .DropDownSymbol = 0
+        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", .Caption)
     End With
     
     'заполнение списка на выделение
@@ -7582,6 +7618,9 @@ Private Sub optRezim_Upd_Click()
     End If
 
     mbSet2UpdateFromTab4 = False
+    
+    'BoldCaption
+    optRezim_CaptionBold 3
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -7663,10 +7702,10 @@ Private Sub optRezim_Ust_Click()
     End With
 
     With cmdRunTask
-        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
         .DropDownEnable = False
         .DropDownSeparator = False
         .DropDownSymbol = 0
+        .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask1", .Caption)
     End With
     
     'заполнение списка на выделение
@@ -7705,6 +7744,8 @@ Private Sub optRezim_Ust_Click()
 
     End If
 
+    'BoldCaption
+    optRezim_CaptionBold 2
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8030,11 +8071,15 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             End If
         End If
 
-        If TT.Tools.Count > 0 And TT.Tools.Count >= Index Then
-            TT.Tools.Item(Index).Text = strTTipText
-        Else
-            TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
-        End If
+        TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
+        'With TT.Tools
+            'If .Count > 0 And .Count >= Index Then
+            'If .Count > 0 And .Count >= Index Then
+                '.Item(Index).Text = strTTipText
+            'Else
+                '.Add acmdPackFiles(Index).hWnd, , strTTipText, True
+            'End If
+        'End With
         
         TimeScriptFinish = GetTickCount
         DebugMode str2VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
