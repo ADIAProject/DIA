@@ -242,11 +242,10 @@ Begin VB.Form frmFontDialog
       ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
@@ -269,11 +268,10 @@ Begin VB.Form frmFontDialog
       ButtonStyle     =   13
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.OptionButtonW optControl 
@@ -375,7 +373,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ctlFontColor_Click()
-    txtFont.ForeColor = ctlFontColor.BackColor
+    txtFont.ForeColor = ctlFontColor.Value
 End Sub
 
 '!--------------------------------------------------------------------------------
