@@ -48,11 +48,11 @@ Public mbFontTT_Strikethru   As Boolean
 Public mbFontTT_Bold         As Boolean
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub SetBtnFontProperties
-'! Description (Описание)  :   [Установка свойств шрифта для Объекта (кнопки)]
+'! Procedure   (Функция)   :   Sub SetBtnStatusFontProperties
+'! Description (Описание)  :   [Установка свойств шрифта для Объекта (кнопка пакета)]
 '! Parameters  (Переменные):   ctlObject (Object)
 '!--------------------------------------------------------------------------------
-Public Sub SetBtnFontProperties(ctlObject As Object)
+Public Sub SetBtnStatusFontProperties(ctlObject As Object)
 
     With ctlObject
         .Font.Name = strFontBtn_Name
@@ -61,6 +61,21 @@ Public Sub SetBtnFontProperties(ctlObject As Object)
         .Font.Strikethrough = mbFontBtn_Strikethru
         .Font.Bold = mbFontBtn_Bold
         .Font.Italic = mbFontBtn_Italic
+        .Font.Charset = lngFont_Charset
+    End With
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetBtnFontProperties
+'! Description (Описание)  :   [Установка свойств шрифта для Объекта (прочие кнопки)]
+'! Parameters  (Переменные):   ctlObject (Object)
+'!--------------------------------------------------------------------------------
+Public Sub SetBtnFontProperties(ctlObject As Object)
+
+    With ctlObject
+        .Font.Name = strFontMainForm_Name
+        .Font.Size = lngFontMainForm_Size
         .Font.Charset = lngFont_Charset
     End With
 
@@ -81,6 +96,7 @@ Public Sub SetTTFontProperties(ctlObject As Object)
         .Font.Bold = mbFontTT_Bold
         .Font.Italic = mbFontTT_Italic
         .Font.Charset = lngFont_Charset
+        .ForeColor = lngFontTT_Color
     End With
 
 End Sub

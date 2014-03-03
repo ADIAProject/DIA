@@ -228,25 +228,17 @@ Begin VB.Form frmFontDialog
       TabIndex        =   9
       Top             =   1860
       Width           =   2100
-      _ExtentX        =   3704
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   13
-      BackColor       =   12244692
-      Caption         =   "Сохранить изменения и выйти"
-      CaptionEffects  =   0
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      ColorScheme     =   3
+      _extentx        =   3704
+      _extenty        =   1323
+      font            =   "frmFontDialog.frx":02DC
+      buttonstyle     =   13
+      backcolor       =   12244692
+      caption         =   "Сохранить изменения и выйти"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Height          =   750
@@ -254,25 +246,17 @@ Begin VB.Form frmFontDialog
       TabIndex        =   10
       Top             =   1860
       Width           =   2100
-      _ExtentX        =   3704
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   13
-      BackColor       =   12244692
-      Caption         =   "Выход без сохранения"
-      CaptionEffects  =   0
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      ColorScheme     =   3
+      _extentx        =   3704
+      _extenty        =   1323
+      font            =   "frmFontDialog.frx":0304
+      buttonstyle     =   13
+      backcolor       =   12244692
+      caption         =   "Выход без сохранения"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -294,7 +278,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":02DC
+      Caption         =   "frmFontDialog.frx":032C
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375
@@ -481,6 +465,8 @@ Private Sub Localise(ByVal StrPathFile As String)
     chkItalic.Caption = LocaliseString(StrPathFile, strFormName, "chkItalic", chkItalic.Caption)
     chkUnderline.Caption = LocaliseString(StrPathFile, strFormName, "chkUnderline", chkUnderline.Caption)
     txtFont.Text = LocaliseString(StrPathFile, strFormName, "txtFont", txtFont.Text)
+    ctlFontColor.DropDownCaption = LocaliseString(StrPathFile, strFormName, "ctlFontColor", ctlFontColor.DropDownCaption)
+    
     'Кнопки
     cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
@@ -577,9 +563,9 @@ Private Sub SaveOptions()
             mbFontBtn_Bold = .Font.Bold
             mbFontBtn_Italic = .Font.Italic
             lngFontBtn_Color = .ForeColor
-            SetBtnFontProperties frmOptions.cmdFutureButton
-            frmOptions.cmdFutureButton.TextColor = .ForeColor
-            frmOptions.cmdFutureButton.Refresh
+            SetBtnStatusFontProperties frmOptions.cmdFutureButton
+            frmOptions.cmdFutureButton.ForeColor = .ForeColor
+            
         End If
 
     End With

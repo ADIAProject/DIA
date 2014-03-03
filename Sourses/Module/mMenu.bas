@@ -107,7 +107,7 @@ End Sub
 '                              mnuParentItem (Long)
 '                              IsDefault (Boolean)
 '!--------------------------------------------------------------------------------
-Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal mnuSubItem As Long, ByVal mnu As Menu, ByVal sCaption As String, Optional IsDefault As Boolean = False)
+Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal mnuSubItem As Long, ByVal mnu As Menu, ByVal sCaption As String, Optional IsDefault As Boolean = False, Optional strShortcut As String = vbNullString)
 
     Dim hMenu As Long
     Dim mInfo  As MENUITEMINFO
@@ -116,8 +116,12 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
         hMenu = GetMenu(mnu.Parent.hWnd)
     Else
         hMenu = GetSubMenu(GetMenu(mnu.Parent.hWnd), mnuParentItem)
+        'Shortcut to Menu
+        If LenB(strShortcut) > 0 Then
+            sCaption = sCaption & vbTab & strShortcut
+        End If
     End If
-        
+    
     If hMenu <> 0 Then
         With mInfo
             If mnuSubItem <> -1 Then
@@ -128,7 +132,6 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
                 .cbSize = Len(mInfo)
                 ' MenuItem Number
                 .wid = mnuSubItem
-                
                 'Get DropDown Submenu Info handle
                 GetMenuItemInfo hMenu, mnuItem, True, mInfo
                 'Get DropDown Submenu handle
@@ -138,7 +141,10 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
             If hMenu <> 0 Then
                 .cbSize = Len(mInfo)
                 .fMask = MIIM_STRING
+                'mnu
                 .dwTypeData = StrPtr(sCaption)
+                
+
                 
                 If mnuSubItem = -1 Then
                 ' Not DropDown Submenu

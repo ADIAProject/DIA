@@ -240,6 +240,7 @@ Begin VB.Form frmMain
             Left            =   120
             TabIndex        =   31
             Top             =   4200
+            Visible         =   0   'False
             Width           =   2175
             _ExtentX        =   3836
             _ExtentY        =   979
@@ -4877,7 +4878,7 @@ Private Sub Form_Load()
     End With
 
     ' Устанавливаем шрифт кнопок
-    SetBtnFontProperties acmdPackFiles(0)
+    SetBtnStatusFontProperties acmdPackFiles(0)
     acmdPackFiles(0).ForeColor = lngFontBtn_Color
     ' Устанавливаем шрифт закладок
     SetTabProperties
@@ -6240,17 +6241,17 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
     SetUniMenu -1, 1, -1, mnuService, LocaliseString(StrPathFile, strFormName, "mnuService", mnuService.Caption)
     SetUniMenu 1, 0, -1, mnuShowHwidsTxt, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
     SetUniMenu 1, 1, -1, mnuShowHwidsXLS, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
-    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption)
-    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption)
-    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption)
-    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption)
-    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption)
+    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption), , "F7"
+    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption), , "F6"
+    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption), , "Shift+F7"
+    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption), , "F5"
+    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption), , "Shift+F5"
     SetUniMenu 1, 10, -1, mnuAutoInfoAfterDelDRV, LocaliseString(StrPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
-    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(StrPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption)
-    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(StrPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption)
-    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(StrPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption)
+    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(StrPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption), , "F8"
+    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(StrPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption), , "F9"
+    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(StrPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption), , "F12"
     SetUniMenu 1, 18, -1, mnuViewDPInstLog, LocaliseString(StrPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
-    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(StrPathFile, strFormName, "mnuOptions", mnuOptions.Caption)
+    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(StrPathFile, strFormName, "mnuOptions", mnuOptions.Caption), , "Ctrl+O"
     
 '2  mnuMainUtils - "Утилиты"
 ' 0    mnuUtils_devmgmt - "Диспетчер устройств Windows" - Shortcut^{F1}
@@ -6262,12 +6263,12 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 6    mnuSep10 - "-"
 ' 7    mnuUtils - "" - Index   0 - Visible'False
     SetUniMenu -1, 2, -1, mnuMainUtils, LocaliseString(StrPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
-    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(StrPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption)
-    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(StrPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption)
-    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(StrPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption)
-    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(StrPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption)
-    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(StrPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption)
-    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(StrPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption)
+    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(StrPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption), , "Ctrl+F1"
+    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(StrPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption), , "Ctrl+F2"
+    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(StrPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption), , "Ctrl+F3"
+    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(StrPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption), , "Ctrl+F4"
+    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(StrPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption), , "Ctrl+F5"
+    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(StrPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption), , "Ctrl+F6"
     
 '3  mnuMainAbout - "Справка"
 ' 0    mnuLinks - "Ссылки"
@@ -6289,7 +6290,7 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
     SetUniMenu -1, 3, -1, mnuMainAbout, LocaliseString(StrPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
     SetUniMenu 3, 0, -1, mnuLinks, LocaliseString(StrPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
     SetUniMenu 3, 1, -1, mnuHistory, LocaliseString(StrPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
-    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(StrPathFile, strFormName, "mnuHelp", mnuHelp.Caption)
+    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(StrPathFile, strFormName, "mnuHelp", mnuHelp.Caption), , "F1"
     SetUniMenu 3, 4, -1, mnuHomePage1, LocaliseString(StrPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
     SetUniMenu 3, 5, -1, mnuHomePage, LocaliseString(StrPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
     SetUniMenu 3, 6, -1, mnuDriverPacks, LocaliseString(StrPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)

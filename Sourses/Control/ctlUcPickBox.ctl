@@ -749,10 +749,19 @@ Private bTrack       As Boolean
 Private bTrackUser32 As Boolean
 Private bInCtrl      As Boolean
 
-'Track the mouse leaving the indicated window
+Implements OLEGuids.IOleInPlaceActiveObjectVB
+
+Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
+    On Error Resume Next
+    Dim This As OLEGuids.IOleInPlaceActiveObjectVB
+    
+    Set This = UserControl.ActiveControl.Object
+    This.TranslateAccelerator Handled, RetVal, wMsg, wParam, lParam, Shift
+End Sub
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub TrackMouseLeave
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Track the mouse leaving the indicated window]
 '! Parameters  (Переменные):   lng_hWnd (Long)
 '!--------------------------------------------------------------------------------
 Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)

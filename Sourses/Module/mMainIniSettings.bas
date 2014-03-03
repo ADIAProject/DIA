@@ -235,7 +235,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "MainForm", "HighlightColor", "32896", strSysIni
         'Секция Buttons
         IniWriteStrPrivate "Button", "FontName", "Tahoma", strSysIni
-        IniWriteStrPrivate "Button", "FontSize", "8", strSysIni
+        IniWriteStrPrivate "Button", "FontSize", "9", strSysIni
         IniWriteStrPrivate "Button", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "Button", "FontStrikethru", "0", strSysIni
         IniWriteStrPrivate "Button", "FontItalic", "0", strSysIni
