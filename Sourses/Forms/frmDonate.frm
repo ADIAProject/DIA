@@ -22,13 +22,14 @@ Begin VB.Form frmDonate
    ScaleWidth      =   9480
    ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
-   Begin prjDIADBS.ctlXpButton cmdExit 
+   Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   850
       Left            =   7320
       TabIndex        =   0
       Top             =   5400
-      Width           =   2055
-      _ExtentX        =   3625
+      Width           =   2000
+      _ExtentX        =   3519
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
@@ -39,13 +40,12 @@ Begin VB.Form frmDonate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Закрыть"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PicturePushOnHover=   -1  'True
+      ColorScheme     =   3
    End
    Begin prjDIADBS.RichTextBox DonateRTF 
       Height          =   5250
@@ -74,13 +74,13 @@ Begin VB.Form frmDonate
       Text            =   "frmDonate.frx":002C
       TextRTF         =   "frmDonate.frx":004C
    End
-   Begin prjDIADBS.ctlXpButton cmdSMSCoin 
+   Begin prjDIADBS.ctlJCbutton cmdSMSCoin 
       Height          =   850
       Left            =   120
       TabIndex        =   2
       Top             =   5400
-      Width           =   2055
-      _ExtentX        =   3625
+      Width           =   2000
+      _ExtentX        =   3519
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
@@ -91,24 +91,23 @@ Begin VB.Form frmDonate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Donate via SMSCoin"
-      PicturePosition =   2
-      ButtonStyle     =   3
-      Picture         =   "frmDonate.frx":01A8
-      PictureWidth    =   48
-      PictureHeight   =   48
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureNormal   =   "frmDonate.frx":01A8
+      PictureAlign    =   2
+      PicturePushOnHover=   -1  'True
       MaskColor       =   16645372
+      ColorScheme     =   3
    End
-   Begin prjDIADBS.ctlXpButton cmdPayPal 
+   Begin prjDIADBS.ctlJCbutton cmdPayPal 
       Height          =   850
       Left            =   2280
       TabIndex        =   3
       Top             =   5400
-      Width           =   2175
-      _ExtentX        =   3836
+      Width           =   2000
+      _ExtentX        =   3519
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
@@ -119,24 +118,23 @@ Begin VB.Form frmDonate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Donate via"
-      PicturePosition =   2
-      ButtonStyle     =   3
-      Picture         =   "frmDonate.frx":0B11
-      PictureWidth    =   73
-      PictureHeight   =   38
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureNormal   =   "frmDonate.frx":0B11
+      PictureAlign    =   8
+      PicturePushOnHover=   -1  'True
       MaskColor       =   16777215
+      ColorScheme     =   3
    End
-   Begin prjDIADBS.ctlXpButton cmdYandexMoney 
-      Height          =   850
-      Left            =   4560
+   Begin prjDIADBS.ctlJCbutton cmdYandexMoney 
+      Height          =   855
+      Left            =   4440
       TabIndex        =   4
       Top             =   5400
-      Width           =   2175
-      _ExtentX        =   3836
+      Width           =   1995
+      _ExtentX        =   3519
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
@@ -147,16 +145,15 @@ Begin VB.Form frmDonate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Donate via"
-      PicturePosition =   2
-      ButtonStyle     =   3
-      Picture         =   "frmDonate.frx":2C0B
-      PictureWidth    =   61
-      PictureHeight   =   32
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureNormal   =   "frmDonate.frx":2C0B
+      PictureAlign    =   8
+      PicturePushOnHover=   -1  'True
       MaskColor       =   16185078
+      ColorScheme     =   3
    End
 End
 Attribute VB_Name = "frmDonate"
@@ -325,7 +322,7 @@ Private Sub Form_Load()
         lngFormHeightMin = .Height
     End With
 
-    LoadIconImage2Btn cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
     DonateRTF.Visible = False
 
     ' Локализациz приложения

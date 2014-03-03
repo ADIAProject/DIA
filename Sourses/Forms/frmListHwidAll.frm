@@ -41,11 +41,10 @@ Begin VB.Form frmListHwidAll
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выход"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdReNewHW 
@@ -68,11 +67,10 @@ Begin VB.Form frmListHwidAll
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Обновить конфигурацию оборудования"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdBackUpDrivers 
@@ -95,11 +93,10 @@ Begin VB.Form frmListHwidAll
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Создать резервную копию драйверов"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdCheckAll 
@@ -123,11 +120,10 @@ Begin VB.Form frmListHwidAll
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выделить всё"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdUnCheckAll 
@@ -151,11 +147,10 @@ Begin VB.Form frmListHwidAll
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Снять выделение"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCFrames frGroup 
@@ -410,11 +405,10 @@ Begin VB.Form frmListHwidAll
          ButtonStyle     =   8
          BackColor       =   12244692
          Caption         =   "Выделить"
+         CaptionEffects  =   0
          PictureAlign    =   0
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
-         CaptionEffects  =   0
-         TooltipBackColor=   0
          ColorScheme     =   3
       End
    End

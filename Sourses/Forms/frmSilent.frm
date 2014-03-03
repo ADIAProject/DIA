@@ -46,14 +46,13 @@ Begin VB.Form frmSilent
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ButtonStyle     =   13
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
@@ -73,14 +72,13 @@ Begin VB.Form frmSilent
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ButtonStyle     =   13
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.LabelW lblTimeInSec 

@@ -228,35 +228,52 @@ Begin VB.Form frmFontDialog
       TabIndex        =   9
       Top             =   1860
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   1323
-      font            =   "frmFontDialog.frx":02DC
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Сохранить изменения и выйти"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      colorscheme     =   3
+      _ExtentX        =   3704
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
+      Caption         =   "Сохранить изменения и выйти"
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   750
       Left            =   60
       TabIndex        =   10
       Top             =   1860
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   1323
-      font            =   "frmFontDialog.frx":0304
-      buttonstyle     =   13
-      backcolor       =   12244692
-      caption         =   "Выход без сохранения"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      colorscheme     =   3
+      _ExtentX        =   3704
+      _ExtentY        =   1323
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
+      Caption         =   "Выход без сохранения"
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      ColorScheme     =   3
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -278,7 +295,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":032C
+      Caption         =   "frmFontDialog.frx":02DC
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375

@@ -45,7 +45,8 @@ Begin VB.Form frmCheckUpdate
       CueBanner       =   "frmCheckUpdate.frx":002C
       Sorted          =   -1  'True
    End
-   Begin prjDIADBS.ctlXpButton cmdExit 
+   Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   750
       Left            =   9345
       TabIndex        =   0
@@ -62,15 +63,14 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Закрыть"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      ColorScheme     =   3
    End
-   Begin prjDIADBS.ctlXpButton cmdHistory 
+   Begin prjDIADBS.ctlJCbutton cmdHistory 
       Height          =   750
       Left            =   4700
       TabIndex        =   1
@@ -87,15 +87,14 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "История изменений"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      ColorScheme     =   3
    End
-   Begin prjDIADBS.ctlXpButton cmdUpdateFull 
+   Begin prjDIADBS.ctlJCbutton cmdUpdateFull 
       Height          =   750
       Left            =   2415
       TabIndex        =   2
@@ -112,15 +111,15 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Скачать дистрибутив"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      DropDownEnable  =   -1  'True
+      ColorScheme     =   3
    End
-   Begin prjDIADBS.ctlXpButton cmdUpdate 
+   Begin prjDIADBS.ctlJCbutton cmdUpdate 
       Height          =   750
       Left            =   120
       TabIndex        =   4
@@ -137,15 +136,15 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Скачать обновление"
-      ButtonStyle     =   3
-      PictureWidth    =   0
-      PictureHeight   =   0
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      DropDownEnable  =   -1  'True
+      ColorScheme     =   3
    End
-   Begin prjDIADBS.ctlXpButton cmdDonate 
+   Begin prjDIADBS.ctlJCbutton cmdDonate 
       Height          =   750
       Left            =   6990
       TabIndex        =   5
@@ -162,15 +161,12 @@ Begin VB.Form frmCheckUpdate
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
       Caption         =   "Поддержать проект"
-      ButtonStyle     =   3
-      PictureWidth    =   51
-      PictureHeight   =   28
-      ShowFocusRect   =   0   'False
-      XPColor_Pressed =   15116940
-      XPColor_Hover   =   4692449
-      TextColor       =   0
-      MenuCaption0    =   "#"
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      ColorScheme     =   3
    End
    Begin prjDIADBS.RichTextBox rtfDescription 
       Height          =   4275
@@ -535,11 +531,11 @@ Private Sub Form_Load()
     DoEvents
     lblWait.Left = 100
     lblWait.Width = Me.Width - 200
-    LoadIconImage2Btn cmdExit, "BTN_EXIT", strPathImageMainWork
-    LoadIconImage2Btn cmdUpdate, "BTN_UPDATE", strPathImageMainWork
-    LoadIconImage2Btn cmdUpdateFull, "BTN_UPDATEFULL", strPathImageMainWork
-    LoadIconImage2Btn cmdHistory, "BTN_HISTORY", strPathImageMainWork
-    LoadIconImage2Btn cmdDonate, "BTN_DONATE", strPathImageMainWork
+    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2BtnJC cmdUpdate, "BTN_UPDATE", strPathImageMainWork
+    LoadIconImage2BtnJC cmdUpdateFull, "BTN_UPDATEFULL", strPathImageMainWork
+    LoadIconImage2BtnJC cmdHistory, "BTN_HISTORY", strPathImageMainWork
+    LoadIconImage2BtnJC cmdDonate, "BTN_DONATE", strPathImageMainWork
 
     ' Локализациz приложения
     If mbMultiLanguage Then
@@ -576,7 +572,7 @@ End Sub
 '! Parameters  (Переменные):   ButtonName (ctlXpButton)
 '                              strMassivLink() (String)
 '!--------------------------------------------------------------------------------
-Private Sub LoadButtonLink(ButtonName As ctlXpButton, strMassivLink() As String)
+Private Sub LoadButtonLink(ButtonName As Object, strMassivLink() As String)
 
     Dim strMirrorText As String
 
@@ -595,51 +591,51 @@ Private Sub LoadButtonLink(ButtonName As ctlXpButton, strMassivLink() As String)
         With ButtonName
 
             If InStr(1, strMassivLink(cmbVersions.ListIndex, 0), "http", vbTextCompare) Then
-                .MenuExist = True
+                '.MenuExist = True
             ElseIf InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) Then
-                .MenuExist = True
+                '.MenuExist = True
             Else
-                .MenuExist = False
+                '.MenuExist = False
             End If
 
-            If .MenuExist Then
-                If .MenuCount = 0 Then
-                    .AddMenu strMirrorText & " 1"
-                    .AddMenu "-"
-                    .AddMenu strMirrorText & " 2"
-                    .AddMenu "-"
-                    .AddMenu strMirrorText & " 3"
-                End If
-
-                If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
-                    .MenuEnabled(2) = False
-                End If
-
-                If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
-                    .MenuEnabled(4) = False
-                End If
-
-                If LenB(strMassivLink(cmbVersions.ListIndex, 1)) = 0 Then
-                    .MenuVisible(0) = False
-                    .MenuVisible(1) = False
-                Else
-                    .MenuCaption(0) = strMassivLink(cmbVersions.ListIndex, 1)
-                End If
-
-                If LenB(strMassivLink(cmbVersions.ListIndex, 3)) = 0 Then
-                    .MenuVisible(1) = False
-                    .MenuVisible(2) = False
-                Else
-                    .MenuCaption(2) = strMassivLink(cmbVersions.ListIndex, 3)
-                End If
-
-                If LenB(strMassivLink(cmbVersions.ListIndex, 5)) = 0 Then
-                    .MenuVisible(3) = False
-                    .MenuVisible(4) = False
-                Else
-                    .MenuCaption(4) = strMassivLink(cmbVersions.ListIndex, 5)
-                End If
-            End If
+'            If .MenuExist Then
+'                If .MenuCount = 0 Then
+'                    .AddMenu strMirrorText & " 1"
+'                    .AddMenu "-"
+'                    .AddMenu strMirrorText & " 2"
+'                    .AddMenu "-"
+'                    .AddMenu strMirrorText & " 3"
+'                End If
+'
+'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
+'                    .MenuEnabled(2) = False
+'                End If
+'
+'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
+'                    .MenuEnabled(4) = False
+'                End If
+'
+'                If LenB(strMassivLink(cmbVersions.ListIndex, 1)) = 0 Then
+'                    .MenuVisible(0) = False
+'                    .MenuVisible(1) = False
+'                Else
+'                    .MenuCaption(0) = strMassivLink(cmbVersions.ListIndex, 1)
+'                End If
+'
+'                If LenB(strMassivLink(cmbVersions.ListIndex, 3)) = 0 Then
+'                    .MenuVisible(1) = False
+'                    .MenuVisible(2) = False
+'                Else
+'                    .MenuCaption(2) = strMassivLink(cmbVersions.ListIndex, 3)
+'                End If
+'
+'                If LenB(strMassivLink(cmbVersions.ListIndex, 5)) = 0 Then
+'                    .MenuVisible(3) = False
+'                    .MenuVisible(4) = False
+'                Else
+'                    .MenuCaption(4) = strMassivLink(cmbVersions.ListIndex, 5)
+'                End If
+'            End If
 
         End With
 

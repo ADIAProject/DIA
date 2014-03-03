@@ -114,6 +114,7 @@ Begin VB.Form frmEmulate
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   750
       Left            =   6420
       TabIndex        =   1

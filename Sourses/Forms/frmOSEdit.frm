@@ -334,7 +334,7 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ButtonStyle     =   13
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Сохранить изменения и выйти"
       CaptionEffects  =   0
@@ -360,7 +360,7 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      ButtonStyle     =   13
+      ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выход без сохранения"
       CaptionEffects  =   0
