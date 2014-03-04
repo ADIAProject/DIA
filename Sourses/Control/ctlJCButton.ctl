@@ -31,8 +31,19 @@ Attribute VB_Exposed = False
 
 'You may download the original version of this code from the following link (good as of June '12):
 ' http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=71482&lngWId=1
-
 ' Many thanks to Juned for his excellent custom button, which PhotoDemon uses in a variety of ways.
+
+' Modified by tannerhelland https://github.com/tannerhelland/PhotoDemon
+' Change subsclasser to class cSelfSubHookCallback
+' Fix Ambient.Usermode
+'*********************************
+' Modified by Romeo91 (adia-project.net) Last Edit 2014-03-04
+'*********************************
+' added unicode support for Caption
+' delete tooltip event declaration (i used 3d-party control for this)
+' added rightbuttonmenu
+' added checkexist property (need if you put checkboxes on the button)
+' added dropdownenable property (need if want to disable dropdownmenu, but wasn't unset from control)
 
 Option Explicit
 
@@ -89,58 +100,8 @@ Option Explicit
 '*   such, and must not be misrepresented as being the original software.   *
 '****************************************************************************
 '* N'joy ;)
-' Fix by Romeo91 (adia-project.net) Last Edit 2014-02-28
-' added unicode support for Caption
-' delete tooltip event declaration (i used 3d-party control for this)
-' added rightbuttonmenu
-' added checkexist property (need if you put checkboxes on the button)
-' added dropdownenable property (need if want to disable dropdownmenu, but wasn't unset from control)
+
 '==========================================================================================================================================================================================================================================================================================
-' Subclassing Declares
-Private Enum MsgWhen
-    'Message calls back after the original (previous) WndProc
-    MSG_AFTER = 1
-    'Message calls back before the original (previous) WndProc
-    MSG_BEFORE = 2
-    'Message calls back before and after the original (previous) WndProc
-    MSG_BEFORE_AND_AFTER = MSG_AFTER Or MSG_BEFORE
-End Enum
-
-#If False Then
-    Private MSG_AFTER, MSG_BEFORE, MSG_BEFORE_AND_AFTER
-#End If
-#If False Then
-
-    Private TME_HOVER, TME_LEAVE, TME_QUERY, TME_CANCEL
-#End If
-
-'for subclass
-Private Type SubClassDatatype
-    hWnd                                As Long
-    nAddrSclass                         As Long
-    nAddrOrig                           As Long
-    nMsgCountA                          As Long
-    nMsgCountB                          As Long
-    aMsgTabelA()                        As Long
-    aMsgTabelB()                        As Long
-End Type
-
-Private Const GMEM_FIXED As Long = 0    'Fixed memory GlobalAlloc flag
-Private Const PATCH_04   As Long = 88   'Table B (before) address patch offset
-Private Const PATCH_05   As Long = 93   'Table B (before) entry count patch offset
-Private Const PATCH_08   As Long = 132  'Table A (after) address patch offset
-Private Const PATCH_09   As Long = 137  'Table A (after) entry count patch offset
-
-'for subclass
-Private SubClassData()   As SubClassDatatype    'Subclass data array
-Private TrackUser32      As Boolean
-
-'Kernel32 declares used by the Subclasser
-Private Declare Function GlobalAlloc Lib "kernel32.dll" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
-Private Declare Function GlobalFree Lib "kernel32.dll" (ByVal hMem As Long) As Long
-
-'  End of Subclassing Declares
-'==========================================================================================================================================================================================================================================================================================================
 '[Enumerations]
 Public Enum enumButtonStlyes
     [eStandard]                 '1) Standard VB Button
@@ -557,6 +518,7 @@ Private Const WM_THEMECHANGED   As Long = &H31A
 Private Const WM_SYSCOLORCHANGE As Long = &H15
 Private Const WM_NCACTIVATE     As Long = &H86
 Private Const WM_ACTIVATE       As Long = &H6
+Private Const WM_SETCURSOR As Long = &H20
 
 Private Enum TRACKMOUSEEVENT_FLAGS
     TME_HOVER = &H1&
@@ -571,6 +533,8 @@ Private Type TRACKMOUSEEVENT_STRUCT
     hWndTrack                           As Long
     dwHoverTime                         As Long
 End Type
+
+Private TrackUser32     As Boolean
 
 Private Declare Function TrackMouseEvent Lib "user32.dll" (ByRef lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
@@ -657,6 +621,12 @@ Public Event KeyPress(KeyAcsii As Integer)
 Attribute KeyPress.VB_Description = "Occurs when the user presses and releases an ANSI key."
 Attribute KeyPress.VB_UserMemId = -603
 
+Private Enum eParamUser
+    exParentForm = 1
+    exUserControl = 2
+End Enum
+
+Private m_NGSubclass                                    As cSelfSubHookCallback
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawLineApi
 '! Description (Описание)  :   [draw lines]
@@ -3556,6 +3526,8 @@ Private Sub UserControl_Initialize()
     m_hMode = LoadLibrary(StrPtr("shell32.dll"))
     m_WindowsNT = IsWinXPOrLater
     dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
+
+    Set m_NGSubclass = New cSelfSubHookCallback
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4166,37 +4138,40 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
     On Error GoTo H
 
-    If Ambient.UserMode Then
+    If g_UserModeFix Then
+    
         'If we're not in design mode
         TrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
 
         If Not TrackUser32 Then
             APIFunctionPresent "_TrackMouseEvent", "comctl32.dll"
         End If
-
-        'OS supports mouse leave so subclass for it
-        With UserControl
-            'Start subclassing the UserControl
-            Subclass_Initialize .hWnd
-            Subclass_Initialize m_lParenthWnd
-            Subclass_AddMsg .hWnd, WM_MOUSELEAVE, MSG_AFTER
-            Subclass_AddMsg .hWnd, WM_THEMECHANGED, MSG_AFTER
-
-            If IsThemed Then
-                Subclass_AddMsg .hWnd, WM_SYSCOLORCHANGE, MSG_AFTER
+        
+        With m_NGSubclass
+            If .ssc_Subclass(UserControl.hWnd, ByVal exUserControl, 1, Me) Then
+                .ssc_AddMsg UserControl.hWnd, MSG_AFTER, WM_MOUSELEAVE, WM_THEMECHANGED, WM_SETCURSOR
+                If IsThemed Then
+                    .ssc_AddMsg UserControl.hWnd, MSG_AFTER, WM_SYSCOLORCHANGE
+                End If
             End If
 
             On Error Resume Next
+                If App.LogMode Then
+                    If UserControl.Parent.MDIChild Then
+                        If .ssc_Subclass(m_lParenthWnd, ByVal exParentForm, 1, Me) Then
+                            .ssc_AddMsg m_lParenthWnd, MSG_AFTER, WM_NCACTIVATE
+                            'pdMsgBox "m_lParenthWnd_WM_NCACTIVATE"
+                        End If
+                    Else
+                        If .ssc_Subclass(m_lParenthWnd, ByVal exParentForm, 1, Me) Then
+                            .ssc_AddMsg m_lParenthWnd, MSG_AFTER, WM_ACTIVATE
+                            'pdMsgBox "m_lParenthWnd_WM_ACTIVATE"
+                        End If
+                    End If
+                End If
+            End With
 
-            If .Parent.MDIChild Then
-                Subclass_AddMsg m_lParenthWnd, WM_NCACTIVATE, MSG_AFTER
-            Else
-                Subclass_AddMsg m_lParenthWnd, WM_ACTIVATE, MSG_AFTER
-            End If
-
-        End With
-
-    End If
+        End If
 
 H:
 
@@ -4227,10 +4202,8 @@ Private Sub UserControl_Terminate()
     UnsetPopupMenu
     UnsetPopupMenuRBT
 
-    If Ambient.UserMode Then
-        Subclass_Terminate
-        Subclass_Terminate
-    End If
+    m_NGSubclass.ssc_Terminate
+    Set m_NGSubclass = Nothing
 
 Crash:
 End Sub
@@ -4321,103 +4294,6 @@ Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
             TrackMouseEventComCtl TME
         End If
     End If
-
-End Sub
-
-'=========================================================================
-'PUBLIC ROUTINES including subclassing & public button properties
-' CREDITS: Paul Caton
-'======================================================================================================
-'Subclass handler - MUST be the first Public routine in this file. That includes public properties also
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_WndProc
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   bBefore (Boolean)
-'                              bHandled (Boolean)
-'                              lReturn (Long)
-'                              lhWnd (Long)
-'                              uMsg (Long)
-'                              wParam (Long)
-'                              lParam (Long)
-'!--------------------------------------------------------------------------------
-Public Sub Subclass_WndProc(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByRef lhWnd As Long, ByRef uMsg As Long, ByRef wParam As Long, ByRef lParam As Long)
-
-    'Parameters:
-    'bBefore  - Indicates whether the the message is being processed before or after the default handler - only really needed if a message is set to callback both before & after.
-    'bHandled - Set this variable to True in a 'before' callback to prevent the message being subsequently processed by the default handler... and if set, an 'after' callback
-    'lReturn  - Set this variable as per your intentions and requirements, see the MSDN documentation for each individual message value.
-    'hWnd     - The window handle
-    'uMsg     - The message number
-    'wParam   - Message related data
-    'lParam   - Message related data
-    'Notes:
-    'If you really know what you're doing, it's possible to change the values of the
-    'hWnd, uMsg, wParam and lParam parameters in a 'before' callback so that different
-    'values get passed to the default handler.. and optionaly, the 'after' callback
-    'Static bMoving As Boolean
-    Select Case uMsg
-
-        Case WM_MOUSELEAVE
-            m_bMouseInCtl = False
-
-            If m_bPopupEnabled Then
-                If m_bPopupInit Then
-                    m_bPopupInit = False
-                    m_bPopupShown = True
-
-                    Exit Sub
-
-                Else
-                    m_bPopupShown = False
-                End If
-            End If
-
-            If m_bIsSpaceBarDown Then
-
-                Exit Sub
-
-            End If
-
-            If m_Buttonstate <> eStateNormal Then
-                m_Buttonstate = eStateNormal
-                RedrawButton
-            End If
-
-            RaiseEvent MouseLeave
-
-        Case WM_NCACTIVATE, WM_ACTIVATE
-
-            If wParam Then
-                m_bParentActive = True
-
-                If m_Buttonstate <> eStateNormal Then
-                    m_Buttonstate = eStateNormal
-                End If
-
-                If m_bDefault Then
-                    RedrawButton
-                End If
-
-                RedrawButton
-            Else
-                m_bIsDown = False
-                m_bIsSpaceBarDown = False
-                m_bHasFocus = False
-                m_bParentActive = False
-
-                If m_Buttonstate <> eStateNormal Then
-                    m_Buttonstate = eStateNormal
-                End If
-
-                RedrawButton
-            End If
-
-        Case WM_THEMECHANGED
-            RedrawButton
-
-        Case WM_SYSCOLORCHANGE
-            RedrawButton
-    End Select
 
 End Sub
 
@@ -5399,288 +5275,97 @@ End Property
 
 '======================================================================================================
 'Subclass code - The programmer may call any of the following Subclass_??? routines
-'Stop subclassing the passed window handle
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function Subclass_AddrFunc
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sDLL (String)
-'                              sProc (String)
-'!--------------------------------------------------------------------------------
-Private Function Subclass_AddrFunc(ByVal sDLL As String, ByVal sProc As String) As Long
-    Subclass_AddrFunc = GetProcAddress(GetModuleHandle(StrPtr(sDLL)), sProc)
-    Debug.Assert Subclass_AddrFunc
-End Function
+'- callback, usually ordinal #1, the last method in this source file----------------------
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function Subclass_Index
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lhWnd (Long)
-'                              bAdd (Boolean)
-'!--------------------------------------------------------------------------------
-Private Function Subclass_Index(ByVal lhWnd As Long, Optional ByVal bAdd As Boolean) As Long
+Private Sub myWndProc(ByVal bBefore As Boolean, _
+                      ByRef bHandled As Boolean, _
+                      ByRef lReturn As Long, _
+                      ByVal lng_hWnd As Long, _
+                      ByVal uMsg As Long, _
+                      ByVal wParam As Long, _
+                      ByVal lParam As Long, _
+                      ByRef lParamUser As Long)
 
-    For Subclass_Index = UBound(SubClassData) To 0 Step -1
+'Parameters:
+'bBefore  - Indicates whether the the message is being processed before or after the default handler - only really needed if a message is set to callback both before & after.
+'bHandled - Set this variable to True in a 'before' callback to prevent the message being subsequently processed by the default handler... and if set, an 'after' callback
+'lReturn  - Set this variable as per your intentions and requirements, see the MSDN documentation for each individual message value.
+'hWnd     - The window handle
+'uMsg     - The message number
+'wParam   - Message related data
+'lParam   - Message related data
+'Notes:
+'If you really know what you're doing, it's possible to change the values of the
+'hWnd, uMsg, wParam and lParam parameters in a 'before' callback so that different
+'values get passed to the default handler.. and optionaly, the 'after' callback
 
-        If SubClassData(Subclass_Index).hWnd = lhWnd Then
-            If Not bAdd Then
+'Static bMoving As Boolean
 
-                Exit Function
+    Select Case lParamUser
 
+    Case exUserControl
+
+        Select Case uMsg
+
+        Case WM_MOUSELEAVE
+
+            m_bMouseInCtl = False
+            If m_bPopupEnabled Then
+                If m_bPopupInit Then
+                    m_bPopupInit = False
+                    m_bPopupShown = True
+                    Exit Sub
+                Else
+                    m_bPopupShown = False
+                End If
             End If
 
-        ElseIf SubClassData(Subclass_Index).hWnd = 0 Then
-
-            If bAdd Then
-
-                Exit Function
-
+            If m_bIsSpaceBarDown Then Exit Sub
+            If m_Buttonstate <> eStateNormal Then
+                m_Buttonstate = eStateNormal
+                RedrawButton
             End If
-        End If
+            RaiseEvent MouseLeave
 
-    Next
+        Case WM_THEMECHANGED
+            RedrawButton
 
-    If Not bAdd Then
-        Debug.Assert False
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function Subclass_InIDE
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Function Subclass_InIDE() As Boolean
-    Debug.Assert Subclass_SetTrue(Subclass_InIDE)
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function Subclass_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lhWnd (Long)
-'!--------------------------------------------------------------------------------
-Private Function Subclass_Initialize(ByVal lhWnd As Long) As Long
-
-    Const CODE_LEN                  As Long = 200
-    Const PATCH_01                  As Long = 18
-    Const PATCH_02                  As Long = 68
-    Const PATCH_03                  As Long = 78
-    Const PATCH_06                  As Long = 116
-    Const PATCH_07                  As Long = 121
-    Const PATCH_0A                  As Long = 186
-    Const FUNC_CWP                  As String = "CallWindowProcA"
-    Const FUNC_EBM                  As String = "EbMode"
-    Const FUNC_SWL                  As String = "SetWindowLongW"
-    Const MOD_USER                  As String = "user32.dll"
-    Const MOD_VBA5                  As String = "vba5"
-    Const MOD_VBA6                  As String = "vba6"
-
-    Static bytBuffer(1 To CODE_LEN) As Byte
-    Static lngCWP                   As Long
-    Static lngEbMode                As Long
-    Static lngSWL                   As Long
-
-    Dim lngCount                    As Long
-    Dim lngIndex                    As Long
-    Dim strHex                      As String
-
-    If bytBuffer(1) Then
-        lngIndex = Subclass_Index(lhWnd, True)
-
-        If lngIndex = -1 Then
-            lngIndex = UBound(SubClassData()) + 1
-
-            ReDim Preserve SubClassData(lngIndex) As SubClassDatatype
-
-        End If
-
-        Subclass_Initialize = lngIndex
-    Else
-        strHex = "5589E583C4F85731C08945FC8945F8EB0EE80000000083F802742185C07424E830000000837DF800750AE838000000E84D0000005F8B45FCC9C21000E826000000EBF168000000006AFCFF7508E800000000EBE031D24ABF00000000B900000000E82D000000C3FF7514FF7510FF750CFF75086800000000E8000000008945FCC331D2BF00000000B900000000E801000000C3E33209C978078B450CF2AF75278D4514508D4510508D450C508D4508508D45FC508D45F85052B800000000508B00FF90A4070000C3"
-
-        For lngCount = 1 To CODE_LEN
-            bytBuffer(lngCount) = Val("&H" & Left$(strHex, 2))
-            strHex = Mid$(strHex, 3)
-        Next
-
-        If Subclass_InIDE Then
-            bytBuffer(16) = &H90
-            bytBuffer(17) = &H90
-            lngEbMode = Subclass_AddrFunc(MOD_VBA6, FUNC_EBM)
-
-            If lngEbMode = 0 Then
-                lngEbMode = Subclass_AddrFunc(MOD_VBA5, FUNC_EBM)
+        Case WM_SYSCOLORCHANGE
+            RedrawButton
+            
+        Case WM_SETCURSOR
+            If m_bHandPointer Then
+               'Tanner edit: manage the hand cursor myself, rather than having each button do it separately
+               SetCursor LoadCursor(0, IDC_HAND)
+               bHandled = True
             End If
-        End If
+            
+        End Select
+        
 
-        lngCWP = Subclass_AddrFunc(MOD_USER, FUNC_CWP)
-        lngSWL = Subclass_AddrFunc(MOD_USER, FUNC_SWL)
+    Case exParentForm
 
-        ReDim SubClassData(0) As SubClassDatatype
+        Select Case uMsg
 
-    End If
-
-    With SubClassData(lngIndex)
-        .hWnd = lhWnd
-        .nAddrSclass = GlobalAlloc(GMEM_FIXED, CODE_LEN)
-        .nAddrOrig = SetWindowLong(.hWnd, GWL_WNDPROC, .nAddrSclass)
-        CopyMemory ByVal .nAddrSclass, bytBuffer(1), CODE_LEN
-        Subclass_PatchRel .nAddrSclass, PATCH_01, lngEbMode
-        Subclass_PatchVal .nAddrSclass, PATCH_02, .nAddrOrig
-        Subclass_PatchRel .nAddrSclass, PATCH_03, lngSWL
-        Subclass_PatchVal .nAddrSclass, PATCH_06, .nAddrOrig
-        Subclass_PatchRel .nAddrSclass, PATCH_07, lngCWP
-        Subclass_PatchVal .nAddrSclass, PATCH_0A, ObjPtr(Me)
-    End With
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function Subclass_SetTrue
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   bValue (Boolean)
-'!--------------------------------------------------------------------------------
-Private Function Subclass_SetTrue(ByRef bValue As Boolean) As Boolean
-    Subclass_SetTrue = True
-    bValue = True
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_AddMsg
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lhWnd (Long)
-'                              uMsg (Long)
-'                              When (MsgWhen = MSG_AFTER)
-'!--------------------------------------------------------------------------------
-Private Sub Subclass_AddMsg(ByVal lhWnd As Long, ByVal uMsg As Long, Optional ByVal When As MsgWhen = MSG_AFTER)
-
-    With SubClassData(Subclass_Index(lhWnd))
-
-        If When And MSG_BEFORE Then
-            Subclass_DoAddMsg uMsg, .aMsgTabelB, .nMsgCountB, MSG_BEFORE, .nAddrSclass
-        End If
-
-        If When And MSG_AFTER Then
-            Subclass_DoAddMsg uMsg, .aMsgTabelA, .nMsgCountA, MSG_AFTER, .nAddrSclass
-        End If
-
-    End With
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_DoAddMsg
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   uMsg (Long)
-'                              aMsgTabel() (Long)
-'                              nMsgCount (Long)
-'                              When (MsgWhen)
-'                              nAddr (Long)
-'!--------------------------------------------------------------------------------
-Private Sub Subclass_DoAddMsg(ByVal uMsg As Long, ByRef aMsgTabel() As Long, ByRef nMsgCount As Long, ByVal When As MsgWhen, ByVal nAddr As Long)
-
-    Dim lngEntry As Long
-
-    ReDim lngOffset(1) As Long
-
-    If uMsg = ALL_MESSAGES Then
-        nMsgCount = ALL_MESSAGES
-    Else
-
-        For lngEntry = 1 To nMsgCount - 1
-
-            If aMsgTabel(lngEntry) = 0 Then
-                aMsgTabel(lngEntry) = uMsg
-                GoTo ExitSub
-            ElseIf aMsgTabel(lngEntry) = uMsg Then
-                GoTo ExitSub
+        Case WM_NCACTIVATE, WM_ACTIVATE
+            If wParam Then
+                m_bParentActive = True
+                If m_Buttonstate <> eStateNormal Then m_Buttonstate = eStateNormal
+                If m_bDefault Then
+                    RedrawButton
+                End If
+                RedrawButton
+            Else
+                m_bIsDown = False
+                m_bIsSpaceBarDown = False
+                m_bHasFocus = False
+                m_bParentActive = False
+                If m_Buttonstate <> eStateNormal Then m_Buttonstate = eStateNormal
+                RedrawButton
             End If
+        End Select
 
-        Next
-
-        nMsgCount = nMsgCount + 1
-
-        ReDim Preserve aMsgTabel(1 To nMsgCount) As Long
-
-        aMsgTabel(nMsgCount) = uMsg
-    End If
-
-    If When = MSG_BEFORE Then
-        lngOffset(0) = PATCH_04
-        lngOffset(1) = PATCH_05
-    Else
-        lngOffset(0) = PATCH_08
-        lngOffset(1) = PATCH_09
-    End If
-
-    If uMsg <> ALL_MESSAGES Then
-        Subclass_PatchVal nAddr, lngOffset(0), VarPtr(aMsgTabel(1))
-    End If
-
-    Subclass_PatchVal nAddr, lngOffset(1), nMsgCount
-    
-ExitSub:
-    Erase lngOffset
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_PatchRel
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   nAddr (Long)
-'                              nOffset (Long)
-'                              nTargetAddr (Long)
-'!--------------------------------------------------------------------------------
-Private Sub Subclass_PatchRel(ByVal nAddr As Long, ByVal nOffset As Long, ByVal nTargetAddr As Long)
-    CopyMemory ByVal nAddr + nOffset, nTargetAddr - nAddr - nOffset - 4, 4
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_PatchVal
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   nAddr (Long)
-'                              nOffset (Long)
-'                              nValue (Long)
-'!--------------------------------------------------------------------------------
-Private Sub Subclass_PatchVal(ByVal nAddr As Long, ByVal nOffset As Long, ByVal nValue As Long)
-    CopyMemory ByVal nAddr + nOffset, nValue, 4
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_Stop
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lhWnd (Long)
-'!--------------------------------------------------------------------------------
-Private Sub Subclass_Stop(ByVal lhWnd As Long)
-
-    With SubClassData(Subclass_Index(lhWnd))
-        SetWindowLong .hWnd, GWL_WNDPROC, .nAddrOrig
-        Subclass_PatchVal .nAddrSclass, PATCH_05, 0
-        Subclass_PatchVal .nAddrSclass, PATCH_09, 0
-        GlobalFree .nAddrSclass
-        .hWnd = 0
-        .nMsgCountA = 0
-        .nMsgCountB = 0
-        Erase .aMsgTabelA, .aMsgTabelB
-    End With
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Subclass_Terminate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Subclass_Terminate()
-
-    Dim lngCount As Long
-
-    For lngCount = UBound(SubClassData) To 0 Step -1
-
-        If SubClassData(lngCount).hWnd Then
-            Subclass_Stop SubClassData(lngCount).hWnd
-        End If
-
-    Next
+    End Select
 
 End Sub
 

@@ -440,6 +440,9 @@ Private Sub Main()
         End If
     End If
     
+    'Because Ambient.UserMode does not report IDE behavior properly, we use our own UserMode tracker.  Many thanks to
+    ' Kroc of camendesign.com for suggesting this fix.
+    g_UserModeFix=true
 
     If mbShowFormLicence Then
         'Открываем форму лицензионного соглашения

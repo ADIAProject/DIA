@@ -101,6 +101,20 @@ Public Function IsWinVistaOrLater() As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsWin7OrLater
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function IsWin7OrLater() As Boolean
+
+    If Not OSCurrVersionStruct.IsInitialize Then
+        OSCurrVersionStruct = OSInfo
+    End If
+
+    IsWin7OrLater = OSCurrVersionStruct.VerFull >= "6.1"
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IsWow64
 '! Description (Описание)  :   [Проверяет является ли запущенный процесс 64-битным]
 '! Parameters  (Переменные):
