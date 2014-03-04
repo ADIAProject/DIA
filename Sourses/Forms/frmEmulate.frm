@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmEmulate 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Режим эмуляции работы программы для другого ПК"
-   ClientHeight    =   5205
+   ClientHeight    =   5055
    ClientLeft      =   45
    ClientTop       =   435
    ClientWidth     =   8310
@@ -19,7 +19,7 @@ Begin VB.Form frmEmulate
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5205
+   ScaleHeight     =   5055
    ScaleWidth      =   8310
    ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
@@ -87,13 +87,13 @@ Begin VB.Form frmEmulate
       End
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   650
       Left            =   4380
       TabIndex        =   0
       Top             =   4320
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -115,13 +115,13 @@ Begin VB.Form frmEmulate
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True
-      Height          =   750
+      Height          =   650
       Left            =   6420
       TabIndex        =   1
       Top             =   4320
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

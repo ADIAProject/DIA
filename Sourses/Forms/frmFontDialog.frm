@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmFontDialog 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Locate Font and Color ..."
-   ClientHeight    =   2670
+   ClientHeight    =   2595
    ClientLeft      =   45
    ClientTop       =   405
    ClientWidth     =   4425
@@ -19,7 +19,7 @@ Begin VB.Form frmFontDialog
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   2670
+   ScaleHeight     =   2595
    ScaleWidth      =   4425
    ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
@@ -223,57 +223,41 @@ Begin VB.Form frmFontDialog
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   650
       Left            =   2280
       TabIndex        =   9
       Top             =   1860
       Width           =   2100
-      _ExtentX        =   3704
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Сохранить изменения и выйти"
-      CaptionEffects  =   0
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      ColorScheme     =   3
+      _extentx        =   3704
+      _extenty        =   1138
+      font            =   "frmFontDialog.frx":02DC
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Сохранить изменения и выйти"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True
-      Height          =   750
+      Height          =   650
       Left            =   60
       TabIndex        =   10
       Top             =   1860
       Width           =   2100
-      _ExtentX        =   3704
-      _ExtentY        =   1323
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ButtonStyle     =   8
-      BackColor       =   12244692
-      Caption         =   "Выход без сохранения"
-      CaptionEffects  =   0
-      PictureAlign    =   0
-      PicturePushOnHover=   -1  'True
-      PictureShadow   =   -1  'True
-      ColorScheme     =   3
+      _extentx        =   3704
+      _extenty        =   1138
+      font            =   "frmFontDialog.frx":0304
+      buttonstyle     =   8
+      backcolor       =   12244692
+      caption         =   "Выход без сохранения"
+      pictureshadow   =   -1  'True
+      picturepushonhover=   -1  'True
+      captioneffects  =   0
+      picturealign    =   0
+      colorscheme     =   3
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -295,7 +279,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":02DC
+      Caption         =   "frmFontDialog.frx":032C
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375

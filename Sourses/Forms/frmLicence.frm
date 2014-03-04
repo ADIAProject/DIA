@@ -44,7 +44,7 @@ Begin VB.Form frmLicence
       Height          =   5415
       Left            =   60
       TabIndex        =   0
-      Top             =   0
+      Top             =   60
       Width           =   9300
       _ExtentX        =   16404
       _ExtentY        =   9551
@@ -68,13 +68,13 @@ Begin VB.Form frmLicence
       TextRTF         =   "frmLicence.frx":00C2
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   700
+      Height          =   650
       Left            =   7560
       TabIndex        =   2
-      Top             =   5520
+      Top             =   5570
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1244
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -94,13 +94,13 @@ Begin VB.Form frmLicence
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
-      Height          =   700
+      Height          =   650
       Left            =   5640
       TabIndex        =   3
-      Top             =   5520
+      Top             =   5570
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1244
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

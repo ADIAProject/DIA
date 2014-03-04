@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin VB.Form frmShowMessage 
    Caption         =   "Сообщение программы"
-   ClientHeight    =   4935
+   ClientHeight    =   4830
    ClientLeft      =   120
    ClientTop       =   420
    ClientWidth     =   8910
@@ -17,7 +17,7 @@ Begin VB.Form frmShowMessage
    Icon            =   "frmShowMessage.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4935
+   ScaleHeight     =   4830
    ScaleWidth      =   8910
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.TextBoxW txtMessageText 
@@ -44,13 +44,13 @@ Begin VB.Form frmShowMessage
       CueBanner       =   "frmShowMessage.frx":003E
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   650
       Left            =   7020
       TabIndex        =   1
       Top             =   4080
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -70,13 +70,13 @@ Begin VB.Form frmShowMessage
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
-      Height          =   750
+      Height          =   650
       Left            =   5100
       TabIndex        =   2
       Top             =   4080
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1296
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmCheckUpdate 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Обновление: Обнаружена новая версия программы"
-   ClientHeight    =   6000
+   ClientHeight    =   5895
    ClientLeft      =   45
    ClientTop       =   540
    ClientWidth     =   11340
@@ -20,7 +20,7 @@ Begin VB.Form frmCheckUpdate
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   6000
+   ScaleHeight     =   5895
    ScaleWidth      =   11340
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ComboBoxW cmbVersions 
@@ -47,13 +47,13 @@ Begin VB.Form frmCheckUpdate
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True
-      Height          =   750
+      Height          =   650
       Left            =   9345
       TabIndex        =   0
       Top             =   5160
       Width           =   1935
       _ExtentX        =   3413
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -71,13 +71,13 @@ Begin VB.Form frmCheckUpdate
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdHistory 
-      Height          =   750
+      Height          =   650
       Left            =   4700
       TabIndex        =   1
       Top             =   5160
       Width           =   2175
       _ExtentX        =   3836
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -95,13 +95,13 @@ Begin VB.Form frmCheckUpdate
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdUpdateFull 
-      Height          =   750
+      Height          =   650
       Left            =   2415
       TabIndex        =   2
       Top             =   5160
       Width           =   2175
       _ExtentX        =   3836
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -120,13 +120,13 @@ Begin VB.Form frmCheckUpdate
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdUpdate 
-      Height          =   750
+      Height          =   650
       Left            =   120
       TabIndex        =   4
       Top             =   5160
       Width           =   2175
       _ExtentX        =   3836
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -145,13 +145,13 @@ Begin VB.Form frmCheckUpdate
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdDonate 
-      Height          =   750
+      Height          =   650
       Left            =   6990
       TabIndex        =   5
       Top             =   5160
       Width           =   2220
       _ExtentX        =   3916
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

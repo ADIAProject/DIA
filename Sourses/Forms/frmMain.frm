@@ -512,10 +512,10 @@ Begin VB.Form frmMain
             Alignment       =   0
             GradientHeaderStyle=   1
             Begin prjDIADBS.ComboBoxW cmbCheckButton 
-               Height          =   330
+               Height          =   315
                Left            =   120
                TabIndex        =   4
-               Top             =   410
+               Top             =   405
                Width           =   3075
                _ExtentX        =   5424
                _ExtentY        =   556
@@ -528,9 +528,9 @@ Begin VB.Form frmMain
                   Italic          =   0   'False
                   Strikethrough   =   0   'False
                EndProperty
+               Style           =   2
                Text            =   "frmMain.frx":0144
                CueBanner       =   "frmMain.frx":0180
-               Sorted          =   -1  'True
             End
             Begin prjDIADBS.ctlJCbutton cmdCheck 
                Height          =   430
@@ -4863,11 +4863,19 @@ Private Sub Form_Load()
     lblOSInfo.Left = 75
 
     With acmdPackFiles(0)
+        .ButtonStyle = lngStatusBtnStyle
+        .ColorScheme = lngStatusBtnStyleColor
+        If lngStatusBtnStyleColor = 3 Then
+            .BackColor = lngStatusBtnBackColor
+        End If
         .Left = lngButtonLeft
         .Top = lngButtonTop
         .Width = lngButtonWidth
         .Height = lngButtonHeight
         .CheckExist = True
+        .ForeColor = lngFontBtn_Color
+        ' Устанавливаем шрифт кнопок
+        SetBtnStatusFontProperties acmdPackFiles(0)
     End With
 
     With chkPackFiles(0)
@@ -4877,9 +4885,6 @@ Private Sub Form_Load()
         .Top = lngButtonTop + 30
     End With
 
-    ' Устанавливаем шрифт кнопок
-    SetBtnStatusFontProperties acmdPackFiles(0)
-    acmdPackFiles(0).ForeColor = lngFontBtn_Color
     ' Устанавливаем шрифт закладок
     SetTabProperties
     SetTabPropertiesTabDrivers
@@ -5248,19 +5253,17 @@ Public Sub Form_Resize()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub frDescriptionIco_MouseMove
-'! Description (Описание)  :   [type_description_here]
+'! Procedure   (Функция)   :   Sub frDescriptionIco_MouseDown
+'! Description (Описание)  :   [Контектсное меню для формы со списком обозначений кнопок]
 '! Parameters  (Переменные):   Button (Integer)
 '                              Shift (Integer)
 '                              X (Single)
 '                              Y (Single)
 '!--------------------------------------------------------------------------------
-Private Sub frDescriptionIco_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
+Private Sub frDescriptionIco_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single, PanelArea As m_PanelArea)
     If Button = vbRightButton Then
         OpenContextMenu Me, Me.mnuContextMenu2
     End If
-
 End Sub
 
 '!--------------------------------------------------------------------------------

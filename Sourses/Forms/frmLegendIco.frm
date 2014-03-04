@@ -121,13 +121,13 @@ Begin VB.Form frmLegendIco
       Width           =   495
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   705
+      Height          =   650
       Left            =   9900
       TabIndex        =   8
       Top             =   7140
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1244
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

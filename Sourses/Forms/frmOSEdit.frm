@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmOSEdit 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Редактирование записи"
-   ClientHeight    =   5970
+   ClientHeight    =   5895
    ClientLeft      =   45
    ClientTop       =   645
    ClientWidth     =   8355
@@ -20,7 +20,7 @@ Begin VB.Form frmOSEdit
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   5970
+   ScaleHeight     =   5895
    ScaleWidth      =   8355
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
@@ -318,13 +318,13 @@ Begin VB.Form frmOSEdit
       Filters         =   "Supported files|*.*|All Files (*.*)"
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   650
       Left            =   6420
       TabIndex        =   11
       Top             =   5150
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -344,13 +344,13 @@ Begin VB.Form frmOSEdit
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
-      Height          =   750
+      Height          =   650
       Left            =   4500
       TabIndex        =   7
       Top             =   5150
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1296
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

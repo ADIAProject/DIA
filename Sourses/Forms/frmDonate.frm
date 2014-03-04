@@ -24,11 +24,11 @@ Begin VB.Form frmDonate
    StartUpPosition =   2  'CenterScreen
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True
-      Height          =   850
-      Left            =   7320
+      Height          =   855
+      Left            =   7425
       TabIndex        =   0
       Top             =   5400
-      Width           =   2000
+      Width           =   1995
       _ExtentX        =   3519
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
@@ -102,8 +102,8 @@ Begin VB.Form frmDonate
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdPayPal 
-      Height          =   850
-      Left            =   2280
+      Height          =   855
+      Left            =   2220
       TabIndex        =   3
       Top             =   5400
       Width           =   2000
@@ -122,19 +122,20 @@ Begin VB.Form frmDonate
       BackColor       =   12244692
       Caption         =   "Donate via"
       CaptionEffects  =   0
-      PictureNormal   =   "frmDonate.frx":0B11
-      PictureAlign    =   8
+      CaptionAlign    =   2
+      PictureNormal   =   "frmDonate.frx":1E82
+      PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16777215
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdYandexMoney 
       Height          =   855
-      Left            =   4440
+      Left            =   4380
       TabIndex        =   4
       Top             =   5400
-      Width           =   1995
-      _ExtentX        =   3519
+      Width           =   1815
+      _ExtentX        =   3201
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
@@ -149,8 +150,9 @@ Begin VB.Form frmDonate
       BackColor       =   12244692
       Caption         =   "Donate via"
       CaptionEffects  =   0
-      PictureNormal   =   "frmDonate.frx":2C0B
-      PictureAlign    =   8
+      CaptionAlign    =   2
+      PictureNormal   =   "frmDonate.frx":3F7C
+      PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16185078
       ColorScheme     =   3

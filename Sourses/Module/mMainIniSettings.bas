@@ -72,6 +72,9 @@ Public lngButtonLeft                     As Long        ' Отступ слева для кнопк
 Public lngButtonTop                      As Long        ' Отступ сверху для кнопки
 Public lngBtn2BtnLeft                    As Long        ' Интервал между кнопками по горизонтали
 Public lngBtn2BtnTop                     As Long        ' Интервал между кнопками по вертикали
+Public lngStatusBtnStyle                 As Long        ' Стиль кнопки пакета драйверов
+Public lngStatusBtnStyleColor            As Long        ' Цвет оформления кнопки пакета драйверов
+Public lngStatusBtnBackColor             As Long        ' Цвет оформления кнопки пакета драйверов
 'Public strImageMenuName                  As String
 'Public mbExMenu                           As Boolean ' Расширенное меню
 
@@ -249,6 +252,9 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Button", "Btn2BtnTop", lngBtn2BtnTopDef, strSysIni
         IniWriteStrPrivate "Button", "TextUpCase", "0", strSysIni
         IniWriteStrPrivate "Button", "IconStatusSkin", "Standart", strSysIni
+        IniWriteStrPrivate "Button", "Style", "8", strSysIni
+        IniWriteStrPrivate "Button", "StyleColor", "2", strSysIni
+        IniWriteStrPrivate "Button", "BackColor", "14933984", strSysIni
         'Секция Tab
         IniWriteStrPrivate "Tab", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Tab", "FontSize", "8", strSysIni
@@ -743,6 +749,9 @@ Public Sub GetMainIniParam()
     mbFontBtn_Strikethru = GetIniValueBoolean(strSysIni, "Button", "FontStrikethru", 0)
     lngFontBtn_Color = GetIniValueLong(strSysIni, "Button", "FontColor", 0)
     strImageStatusButtonName = GetIniValueString(strSysIni, "Button", "IconStatusSkin", "Standart")
+    lngStatusBtnStyle = GetIniValueLong(strSysIni, "Button", "Style", "8")
+    lngStatusBtnStyleColor = GetIniValueLong(strSysIni, "Button", "StyleColor", "2")
+    lngStatusBtnBackColor = GetIniValueLong(strSysIni, "Button", "BackColor", "14933984")
     '[Tab]
     ' Шрифт и настройки ЗАКЛАДОК
     strFontTab_Name = GetIniValueString(strSysIni, "Tab", "FontName", "Tahoma")

@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmSilent 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "¬ÍÎ˛˜ÂÌ “»’»… –≈∆»Ã"
-   ClientHeight    =   2400
+   ClientHeight    =   2310
    ClientLeft      =   45
    ClientTop       =   435
    ClientWidth     =   4680
@@ -20,7 +20,7 @@ Begin VB.Form frmSilent
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   2400
+   ScaleHeight     =   2310
    ScaleWidth      =   4680
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
@@ -30,13 +30,13 @@ Begin VB.Form frmSilent
       Top             =   1080
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   650
       Left            =   2400
       TabIndex        =   0
       Top             =   1560
       Width           =   2205
       _ExtentX        =   3889
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -56,13 +56,13 @@ Begin VB.Form frmSilent
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
-      Height          =   735
+      Height          =   650
       Left            =   60
       TabIndex        =   1
       Top             =   1560
       Width           =   2200
       _ExtentX        =   3889
-      _ExtentY        =   1296
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25

@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin VB.Form frmListHwid 
    Caption         =   "Список доступных драйверов"
-   ClientHeight    =   4890
+   ClientHeight    =   5040
    ClientLeft      =   120
    ClientTop       =   420
    ClientWidth     =   11760
@@ -17,7 +17,7 @@ Begin VB.Form frmListHwid
    Icon            =   "frmListHwid.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   4890
+   ScaleHeight     =   5040
    ScaleWidth      =   11760
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ListView lvFolders 
@@ -159,13 +159,13 @@ Begin VB.Form frmListHwid
       End
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   645
       Left            =   9840
       TabIndex        =   4
-      Top             =   4080
+      Top             =   4300
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -178,21 +178,20 @@ Begin VB.Form frmListHwid
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "ОК"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
-      Height          =   750
+      Height          =   645
       Left            =   7920
       TabIndex        =   5
-      Top             =   4080
+      Top             =   4300
       Width           =   1815
       _ExtentX        =   3201
-      _ExtentY        =   1296
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -205,22 +204,21 @@ Begin VB.Form frmListHwid
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выход"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdCheckAll 
-      Height          =   360
+      Height          =   435
       Left            =   60
       TabIndex        =   6
-      Top             =   4080
+      Top             =   4500
       Visible         =   0   'False
       Width           =   2055
       _ExtentX        =   3625
-      _ExtentY        =   635
+      _ExtentY        =   767
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -233,22 +231,21 @@ Begin VB.Form frmListHwid
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Выделить всё"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdUnCheckAll 
-      Height          =   360
-      Left            =   60
+      Height          =   435
+      Left            =   2220
       TabIndex        =   7
       Top             =   4500
       Visible         =   0   'False
       Width           =   2055
       _ExtentX        =   3625
-      _ExtentY        =   635
+      _ExtentY        =   767
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -261,22 +258,21 @@ Begin VB.Form frmListHwid
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Снять выделение"
+      CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
       PictureShadow   =   -1  'True
-      CaptionEffects  =   0
-      TooltipBackColor=   0
       ColorScheme     =   3
    End
    Begin prjDIADBS.LabelW lblInformation 
-      Height          =   675
-      Left            =   2310
+      Height          =   375
+      Left            =   120
       TabIndex        =   9
-      Top             =   4155
+      Top             =   4000
       Visible         =   0   'False
-      Width           =   5460
-      _ExtentX        =   9631
-      _ExtentY        =   1191
+      Width           =   11520
+      _ExtentX        =   20320
+      _ExtentY        =   661
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -1046,7 +1042,12 @@ Private Sub Form_Resize()
             cmdExit.Left = cmdOK.Left - cmdExit.Width - 110
             cmdExit.Top = cmdOK.Top
             lngLVTop = (frGroup.Top + frGroup.Height) + 5 * Screen.TwipsPerPixelX
-            lngLVHeight = ((cmdExit.Top - miDeltaFrm - 100)) - lngLVTop
+            If mbooSelectInstall Then
+                lngLVHeight = ((cmdExit.Top - miDeltaFrm - 300)) - lngLVTop
+            Else
+                lngLVHeight = ((cmdExit.Top - miDeltaFrm - 100)) - lngLVTop
+            End If
+            
             lngLVWidht = ((.Width - miDeltaFrm)) - 18 * Screen.TwipsPerPixelX
 
             If Not (lvFolders Is Nothing) Then
@@ -1054,12 +1055,13 @@ Private Sub Form_Resize()
                 lvFolders.Refresh
             End If
 
-            cmdCheckAll.Top = cmdExit.Top
-            cmdUnCheckAll.Top = cmdCheckAll.Top + cmdCheckAll.Height + 50
+            cmdCheckAll.Top = cmdExit.Top + 200
+            cmdUnCheckAll.Top = cmdCheckAll.Top
             cmdCheckAll.Left = miDeltaFrm + 60
-            cmdUnCheckAll.Left = cmdCheckAll.Left
-            lblInformation.Top = cmdExit.Top
-            lblInformation.Width = cmdExit.Left - cmdCheckAll.Left - cmdCheckAll.Width - 200
+            cmdUnCheckAll.Left = cmdCheckAll.Left + cmdCheckAll.Width + 200
+            lblInformation.Top = cmdCheckAll.Top - 500
+            lblInformation.Left = cmdCheckAll.Left
+            lblInformation.Width = lngLVWidht
         End If
 
     End With

@@ -62,5 +62,7 @@
 
 2013_12_27=Added in section 	[frmOptions]		cmdFontColorToolTip
 
-2014_03_03=Added in section 	[frmMain]		mnuContextDeleteDevIDDesc;mnuContextCopyHWIDDesc
+2014_03_04=Added in section 	[frmMain]		mnuContextDeleteDevIDDesc;mnuContextCopyHWIDDesc
 	   Added in section 	[frmFontDialog]		ctlFontColor
+	   Added in section 	[frmOptions]		ctlStatusBtnBackColor;lblButtonStyle;lblButtonStyleColor
+

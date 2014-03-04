@@ -1,7 +1,7 @@
 Attribute VB_Name = "mFontProp"
 Option Explicit
 
-'Переменная, хранящая значение кодировки шрифта, считывается из языкового файла
+'Переменная, хранящая значение кодировки шрифта, считывается из языкового файла, применяется ко всем элементам интерфейса
 Public lngFont_Charset       As Long
 
 ' Шрифт основной формы и шрифта подсказок
@@ -55,6 +55,7 @@ Public mbFontTT_Bold         As Boolean
 Public Sub SetBtnStatusFontProperties(ctlObject As Object)
 
     With ctlObject
+        .ForeColor = lngFontBtn_Color
         .Font.Name = strFontBtn_Name
         .Font.Size = miFontBtn_Size
         .Font.Underline = mbFontBtn_Underline
@@ -89,14 +90,16 @@ End Sub
 Public Sub SetTTFontProperties(ctlObject As Object)
 
     With ctlObject
-        .Font.Name = strFontTT_Name
-        .Font.Size = miFontTT_Size
-        .Font.Underline = mbFontTT_Underline
-        .Font.Strikethrough = mbFontTT_Strikethru
-        .Font.Bold = mbFontTT_Bold
-        .Font.Italic = mbFontTT_Italic
-        .Font.Charset = lngFont_Charset
         .ForeColor = lngFontTT_Color
+        With .Font
+            .Name = strFontTT_Name
+            .Size = miFontTT_Size
+            .Underline = mbFontTT_Underline
+            .Strikethrough = mbFontTT_Strikethru
+            .Bold = mbFontTT_Bold
+            .Italic = mbFontTT_Italic
+            .Charset = lngFont_Charset
+        End With
     End With
 
 End Sub

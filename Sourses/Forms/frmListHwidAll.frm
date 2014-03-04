@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin VB.Form frmListHwidAll 
    Caption         =   "Список всех устройств вашего компьютера"
-   ClientHeight    =   6405
+   ClientHeight    =   6300
    ClientLeft      =   120
    ClientTop       =   720
    ClientWidth     =   11760
@@ -18,17 +18,17 @@ Begin VB.Form frmListHwidAll
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    MinButton       =   0   'False
-   ScaleHeight     =   6405
+   ScaleHeight     =   6300
    ScaleWidth      =   11760
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   750
+      Height          =   650
       Left            =   9120
       TabIndex        =   0
       Top             =   5580
       Width           =   2505
       _ExtentX        =   4419
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -48,13 +48,13 @@ Begin VB.Form frmListHwidAll
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdReNewHW 
-      Height          =   750
+      Height          =   650
       Left            =   6480
       TabIndex        =   1
       Top             =   5595
       Width           =   2505
       _ExtentX        =   4419
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -74,13 +74,13 @@ Begin VB.Form frmListHwidAll
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdBackUpDrivers 
-      Height          =   750
+      Height          =   650
       Left            =   3840
       TabIndex        =   2
       Top             =   5595
       Width           =   2500
       _ExtentX        =   4419
-      _ExtentY        =   1323
+      _ExtentY        =   1138
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   8.25
@@ -103,7 +103,7 @@ Begin VB.Form frmListHwidAll
       Height          =   300
       Left            =   60
       TabIndex        =   3
-      Top             =   5580
+      Top             =   5520
       Visible         =   0   'False
       Width           =   2055
       _ExtentX        =   3625
@@ -130,7 +130,7 @@ Begin VB.Form frmListHwidAll
       Height          =   300
       Left            =   60
       TabIndex        =   4
-      Top             =   6000
+      Top             =   5940
       Visible         =   0   'False
       Width           =   2055
       _ExtentX        =   3625
@@ -471,7 +471,7 @@ Begin VB.Form frmListHwidAll
       Height          =   795
       Left            =   2160
       TabIndex        =   17
-      Top             =   5520
+      Top             =   5400
       Visible         =   0   'False
       Width           =   1635
       _ExtentX        =   2884
