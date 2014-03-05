@@ -1514,7 +1514,9 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                         If DPInstExitCode <> -2147483648# Then
                             If InStr(1, ReadExitCodeString, "Cancel or Nothing to Install", vbTextCompare) = 0 Then
                                 ' Обрабатываем файл finish
-                                WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, strPathDRPList
+                                If mbLoadFinishFile Then
+                                    WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, strPathDRPList
+                                End If
                                 ' Обновление подсказки
                                 ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index, True
                             End If
@@ -3050,7 +3052,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             strPackFileName = Replace$(strFileList_x(0, ii), BackslashAdd2Path(strDrpPath), vbNullString, , , vbTextCompare)
             DebugMode "====================================================================================================" & vbNewLine & _
                       str2VbTab & "Work with File: " & strPackFileName
-            ChangeStatusTextAndDebug strMessages(69) & " " & strDrpPath & " " & vbNewLine & strMessages(70) & "(" & (ii + 1) & " " & strMessages(124) & " " & lngFileCount & "):" & strPackFileName
+            ChangeStatusTextAndDebug strMessages(69) & " " & strDrpPath & " " & vbNewLine & strMessages(70) & "(" & (ii + 1) & " " & strMessages(124) & " " & lngFileCount & "): " & strPackFileName
             mbStatusHwid = True
 
             If Not mbDP_Is_aFolder Then
@@ -4808,6 +4810,7 @@ Private Sub Form_Load()
         ' Icon for Exe-file
         SetIcon .hWnd, "APPICOTAB", True
         SetIcon .hWnd, "FRMMAIN", False
+        DoEvents
         ' Смена заголовка формы
         strFormName = .Name
         ChangeFrmMainCaption
@@ -5640,12 +5643,14 @@ BreakUnpack:
                     If InStr(1, ReadExitCodeString, "Cancel or Nothing to Install", vbTextCompare) = 0 Then
 
                         ' Обрабатываем файл finish
-                        For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                            strPackFileName = acmdPackFiles(arrCheckDP(0, i)).Tag
-                            strPackFileName_woExt = FileName_woExt(strPackFileName)
-                            ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
-                            WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, arrCheckDP(1, i)
-                        Next
+                        If mbLoadFinishFile Then
+                            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                                strPackFileName = acmdPackFiles(arrCheckDP(0, i)).Tag
+                                strPackFileName_woExt = FileName_woExt(strPackFileName)
+                                ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
+                                WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, arrCheckDP(1, i)
+                            Next
+                        End If
 
                         ' Обновление подсказки
                         For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)

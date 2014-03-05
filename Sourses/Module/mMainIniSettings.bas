@@ -159,10 +159,10 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS", "Recursion", "1", strSysIni
         IniWriteStrPrivate "OS", "TabBlock", "1", strSysIni
         IniWriteStrPrivate "OS", "TabHide", 0, strSysIni
-        IniWriteStrPrivate "OS", "LoadFinishFile", "1", strSysIni
-        IniWriteStrPrivate "OS", "ReadClasses", "1", strSysIni
-        IniWriteStrPrivate "OS", "ReadDPName", "1", strSysIni
-        IniWriteStrPrivate "OS", "ConvertDPName", "1", strSysIni
+        IniWriteStrPrivate "OS", "LoadFinishFile", "0", strSysIni
+        IniWriteStrPrivate "OS", "ReadClasses", "0", strSysIni
+        IniWriteStrPrivate "OS", "ReadDPName", "0", strSysIni
+        IniWriteStrPrivate "OS", "ConvertDPName", "0", strSysIni
         IniWriteStrPrivate "OS", "ExcludeHWID", "USB\ROOT_HUB*;ROOT\*;STORAGE\*;USBSTOR\*;PCIIDE\IDECHANNEL;PCI\CC_0604", strSysIni
         IniWriteStrPrivate "OS", "CompareDrvVerByDate", "1", strSysIni
         IniWriteStrPrivate "OS", "DateFormatRus", "0", strSysIni
@@ -717,13 +717,13 @@ Public Sub GetMainIniParam()
     mbButtonTextUpCase = GetIniValueBoolean(strSysIni, "Button", "TextUpCase", 0)
     '[OS]
     ' Обрабатывать файлы Finish
-    mbLoadFinishFile = GetIniValueBoolean(strSysIni, "OS", "LoadFinishFile", 1)
+    mbLoadFinishFile = GetIniValueBoolean(strSysIni, "OS", "LoadFinishFile", 0)
     ' Считывать класс пакета из файла Finish
-    mbReadClasses = GetIniValueBoolean(strSysIni, "OS", "ReadClasses", 1)
+    mbReadClasses = GetIniValueBoolean(strSysIni, "OS", "ReadClasses", 0)
     ' Считывать имя пакета
-    mbReadDPName = GetIniValueBoolean(strSysIni, "OS", "ReadDPName", 1)
+    mbReadDPName = GetIniValueBoolean(strSysIni, "OS", "ReadDPName", 0)
     ' Преобразовывать имена пакетов
-    mbConvertDPName = GetIniValueBoolean(strSysIni, "OS", "ConvertDPName", 1)
+    mbConvertDPName = GetIniValueBoolean(strSysIni, "OS", "ConvertDPName", 0)
     ' Исключаемые HWID из обработки
     strExcludeHWID = GetIniValueString(strSysIni, "OS", "ExcludeHWID", "USB\ROOT_HUB*;ROOT\*;STORAGE\*;USBSTOR\*;PCIIDE\IDECHANNEL;PCI\CC_0604")
     ' Сравнение версий драйверов

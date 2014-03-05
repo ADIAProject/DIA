@@ -21,6 +21,8 @@ Public Declare Sub Sleep Lib "kernel32.dll" (ByVal dwMilliseconds As Long)
 Public Declare Function IsUserAnAdmin Lib "shell32.dll" () As Long
 Public Declare Function MessageBox Lib "user32.dll" Alias "MessageBoxA" (ByVal hWnd As Long, ByVal lpText As String, ByVal lpCaption As String, ByVal wType As Long) As Long
 Public Declare Function PlaySound Lib "winmm.dll" Alias "PlaySoundA" (ByVal lpszName As String, ByVal hModule As Long, ByVal dwFlags As Long) As Long
+'The GetInputState() API call will First check if there are any events and what-not that your application may have queued up waiting to be processed. Below is the declare for that function…
+Public Declare Function GetInputState Lib "user32" () As Long
 
 Public Const SND_ASYNC    As Long = &H1    'play asynchronously
 Public Const SND_FILENAME As Long = &H20000    'sound is file name

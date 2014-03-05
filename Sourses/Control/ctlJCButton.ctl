@@ -626,7 +626,7 @@ Private Enum eParamUser
     exUserControl = 2
 End Enum
 
-Private m_NGSubclass                                    As cSelfSubHookCallback
+Private m_cSubclass                                    As cSelfSubHookCallback
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawLineApi
 '! Description (Описание)  :   [draw lines]
@@ -3527,7 +3527,7 @@ Private Sub UserControl_Initialize()
     m_WindowsNT = IsWinXPOrLater
     dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
 
-    Set m_NGSubclass = New cSelfSubHookCallback
+    Set m_cSubclass = New cSelfSubHookCallback
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4147,7 +4147,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
             APIFunctionPresent "_TrackMouseEvent", "comctl32.dll"
         End If
         
-        With m_NGSubclass
+        With m_cSubclass
             If .ssc_Subclass(UserControl.hWnd, ByVal exUserControl, 1, Me) Then
                 .ssc_AddMsg UserControl.hWnd, MSG_AFTER, WM_MOUSELEAVE, WM_THEMECHANGED, WM_SETCURSOR
                 If IsThemed Then
@@ -4160,12 +4160,10 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
                     If UserControl.Parent.MDIChild Then
                         If .ssc_Subclass(m_lParenthWnd, ByVal exParentForm, 1, Me) Then
                             .ssc_AddMsg m_lParenthWnd, MSG_AFTER, WM_NCACTIVATE
-                            'pdMsgBox "m_lParenthWnd_WM_NCACTIVATE"
                         End If
                     Else
                         If .ssc_Subclass(m_lParenthWnd, ByVal exParentForm, 1, Me) Then
                             .ssc_AddMsg m_lParenthWnd, MSG_AFTER, WM_ACTIVATE
-                            'pdMsgBox "m_lParenthWnd_WM_ACTIVATE"
                         End If
                     End If
                 End If
@@ -4202,8 +4200,8 @@ Private Sub UserControl_Terminate()
     UnsetPopupMenu
     UnsetPopupMenuRBT
 
-    m_NGSubclass.ssc_Terminate
-    Set m_NGSubclass = Nothing
+    m_cSubclass.ssc_Terminate
+    Set m_cSubclass = Nothing
 
 Crash:
 End Sub
@@ -5272,6 +5270,7 @@ Public Property Let CheckExist(ByVal New_CheckExist As Boolean)
     PropertyChanged "CheckExist"
     RedrawButton
 End Property
+
 
 '======================================================================================================
 'Subclass code - The programmer may call any of the following Subclass_??? routines

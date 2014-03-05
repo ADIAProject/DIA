@@ -52,6 +52,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strInfPathTemp            As String
     Dim cmdString                 As String
     Dim i                         As Long
+    Dim InfNumber                 As Long
     Dim InfCount                  As Long
     Dim strValuer                 As String
     Dim strDevName                As String
@@ -111,6 +112,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strArchCatFileListContent As String
     Dim strVarname_x()            As String
     Dim ii                        As Long
+    Dim strUnpackMask             As String
 
     DebugMode "DevParserByRegExp-Start"
     
@@ -126,6 +128,13 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Set RegExpDevID = New RegExp
     Set RegExpDevSect = New RegExp
     Set objHashOutput = New Scripting.Dictionary
+    
+    ' Должно ускорить распаковку, если выключено чтение файла finish.ini
+    If Not mbLoadFinishFile Then
+        strUnpackMask = " *.inf"
+    Else
+        strUnpackMask = " *.inf DriverPack*.ini"
+    End If
     
     'Имя папки с распакованными драйверами
     strPackFileName_woExt = FileName_woExt(FileNameFromPath(strPackFileName))
@@ -149,7 +158,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     If Not mbDP_Is_aFolder Then
         ' Запуск распаковки
-        cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strInfPathTemp & Kavichki & " -r " & Kavichki & strPathDRP & strPackFileName & Kavichki & " *.inf DriverPack*.ini"
+        cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strInfPathTemp & Kavichki & " -r " & Kavichki & strPathDRP & strPackFileName & Kavichki & strUnpackMask
         ChangeStatusTextAndDebug strMessages(72) & " " & strPackFileName
 
         If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
@@ -164,7 +173,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             ' Создаем спсиок файлов *.cat в архиве
             strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
             cmdString = "cmd.exe /c " & Kavichki & Kavichki & strArh7zExePATH & Kavichki & " l " & Kavichki & strPathDRP & strPackFileName & Kavichki & " -yr *.cat >" & Kavichki & strArchCatFileList & Kavichki
-
             If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
                 DebugMode strMessages(13) & str2vbNewLine & cmdString
             End If
@@ -292,9 +300,26 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     ReDim strLinesArr(200000) As String
     ReDim strLinesArrHwid(200000) As String
+    
+    ' Чтение списка содержимого архива *.Cat
+    strArchCatFileListContent = vbNullString
 
-    For InfCount = LBound(strInfPathTempList_x, 2) To UBound(strInfPathTempList_x, 2)
-        strInfFullname = strInfPathTempList_x(0, InfCount)
+    If PathExists(strArchCatFileList) Then
+        If GetFileSizeByPath(strArchCatFileList) > 0 Then
+            Set objCatFile = objFSO.OpenTextFile(strArchCatFileList, ForReading, False, TristateUseDefault)
+            strArchCatFileListContent = objCatFile.ReadAll()
+            objCatFile.Close
+        Else
+            DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strArchCatFileList
+        End If
+    End If
+        
+    InfCount = (UBound(strInfPathTempList_x, 2) - LBound(strInfPathTempList_x, 2) + 1)
+    ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " (" & InfCount & " inf-files)"
+    
+    ' Запускаем цикл обработки inf-файлов
+    For InfNumber = LBound(strInfPathTempList_x, 2) To UBound(strInfPathTempList_x, 2)
+        strInfFullname = strInfPathTempList_x(0, InfNumber)
         ' полный путь к файлу inf
         strInfPath = PathNameFromPath(strInfFullname)
         'If InIDE() Then
@@ -303,7 +328,11 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         ' Имя inf файла
         strInfFileName = LCase$(FileNameFromPath(strInfFullname))
         'Debug.Print strInfFileName
-        ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " " & strMessages(124) & " (" & InfCount & " " & strMessages(124) & " " & (UBound(strInfPathTempList_x, 2) - LBound(strInfPathTempList_x, 2) + 1) & ": " & strInfFileName & ")"
+        Debug.Print InfCount Mod 10
+        'End If
+        
+        If Not GetInputState = 0 Then DoEvents
+        'ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " (" & InfNumber & " " & strMessages(124) & " " & InfCount & ": " & strInfFileName & ")"
 
         ' путь к файлу inf для записи в параметры
         If Not mbDP_Is_aFolder Then
@@ -314,7 +343,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
         ' Read INF file
         FileContent = vbNullString
-        strFileDBSize = strInfPathTempList_x(1, InfCount)
+        strFileDBSize = strInfPathTempList_x(1, InfNumber)
 
         If InStr(strFileDBSize, "0 ") = 1 Then
             DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfFullname
@@ -332,18 +361,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                 FileContent = Replace$(FileContent, vbTab, vbNullString)
             End If
 
-            ' Чтение списка содержимого архива *.Cat
-            strArchCatFileListContent = vbNullString
-
-            If PathExists(strArchCatFileList) Then
-                If GetFileSizeByPath(strArchCatFileList) > 0 Then
-                    Set objCatFile = objFSO.OpenTextFile(strArchCatFileList, ForReading, False, TristateUseDefault)
-                    strArchCatFileListContent = objCatFile.ReadAll()
-                    objCatFile.Close
-                Else
-                    DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strArchCatFileList
-                End If
-            End If
         End If
 
         ' Find [strings] section

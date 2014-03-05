@@ -34,7 +34,7 @@ Begin VB.UserControl ctlColorButton
       Width           =   2310
    End
    Begin VB.Image imgIcon 
-      Height          =   240
+      Height          =   225
       Left            =   0
       Picture         =   "ctlColorButton.ctx":00FA
       Top             =   0
@@ -44,7 +44,7 @@ Begin VB.UserControl ctlColorButton
    Begin VB.Image imgDropDown 
       Height          =   45
       Left            =   360
-      Picture         =   "ctlColorButton.ctx":0244
+      Picture         =   "ctlColorButton.ctx":0670
       Top             =   120
       Visible         =   0   'False
       Width           =   75

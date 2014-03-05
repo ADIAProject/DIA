@@ -158,7 +158,7 @@ Begin VB.Form frmFontDialog
          Italic          =   -1  'True
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":0256
+      Caption         =   "frmFontDialog.frx":0682
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.CheckBoxW chkBold 
@@ -178,7 +178,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":0282
+      Caption         =   "frmFontDialog.frx":06AE
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlFontCombo ctlFontCombo 
@@ -219,7 +219,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":02AA
+      Caption         =   "frmFontDialog.frx":06D6
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
@@ -228,17 +228,25 @@ Begin VB.Form frmFontDialog
       TabIndex        =   9
       Top             =   1860
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   1138
-      font            =   "frmFontDialog.frx":02DC
-      buttonstyle     =   8
-      backcolor       =   12244692
-      caption         =   "Сохранить изменения и выйти"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      colorscheme     =   3
+      _ExtentX        =   3704
+      _ExtentY        =   1138
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
+      Caption         =   "Сохранить изменения и выйти"
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True
@@ -247,17 +255,25 @@ Begin VB.Form frmFontDialog
       TabIndex        =   10
       Top             =   1860
       Width           =   2100
-      _extentx        =   3704
-      _extenty        =   1138
-      font            =   "frmFontDialog.frx":0304
-      buttonstyle     =   8
-      backcolor       =   12244692
-      caption         =   "Выход без сохранения"
-      pictureshadow   =   -1  'True
-      picturepushonhover=   -1  'True
-      captioneffects  =   0
-      picturealign    =   0
-      colorscheme     =   3
+      _ExtentX        =   3704
+      _ExtentY        =   1138
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
+      Caption         =   "Выход без сохранения"
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      ColorScheme     =   3
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -279,7 +295,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":032C
+      Caption         =   "frmFontDialog.frx":0708
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375
@@ -396,13 +412,15 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
-    ctlFontCombo.SelectedFont = txtFont.Font.Name
-    txtFontSize.Value = txtFont.Font.Size
-    ctlFontCombo.PreviewText = txtFont.Text
-    ctlFontCombo.AddToUsedList txtFont.Font.Name
-    chkBold.Value = txtFont.Font.Bold
-    chkItalic.Value = txtFont.Font.Italic
-    chkUnderline.Value = txtFont.Font.Underline
+    With txtFont
+        ctlFontCombo.PreviewText = .Text
+        ctlFontCombo.SelectedFont = .Font.Name
+        ctlFontCombo.AddToUsedList .Font.Name
+        txtFontSize.Value = .Font.Size
+        chkBold.Value = .Font.Bold
+        chkItalic.Value = .Font.Italic
+        chkUnderline.Value = .Font.Underline
+    End With
 End Sub
 
 '!--------------------------------------------------------------------------------

@@ -61,7 +61,6 @@ Begin VB.Form frmEmulate
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
-         ToolTipText1    =   "Click Here to Locate File"
          UseDialogText   =   0   'False
       End
       Begin prjDIADBS.LabelW lblInfo 
