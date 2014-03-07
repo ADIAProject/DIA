@@ -472,12 +472,12 @@ Private Sub Form_Load()
 
     lblNameProg.Caption = strFrmMainCaptionTemp & vbNewLine & " v." & strProductVersion & vbNewLine & strFrmMainCaptionTempDate & strDateProgram & ")"
 
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdDonate, "BTN_DONATE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdCheckUpd, "BTN_UPDATE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdHomePage, "BTN_HOME", strPathImageMainWork
-    LoadIconImage2BtnJC cmdOsZoneNet, "BTN_HOME", strPathImageMainWork
-    LoadIconImage2BtnJC cmdLicence, "BTN_LICENCE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdDonate, "BTN_DONATE", strPathImageMainWork
+    LoadIconImage2Object cmdCheckUpd, "BTN_UPDATE", strPathImageMainWork
+    LoadIconImage2Object cmdHomePage, "BTN_HOME", strPathImageMainWork
+    LoadIconImage2Object cmdOsZoneNet, "BTN_HOME", strPathImageMainWork
+    LoadIconImage2Object cmdLicence, "BTN_LICENCE", strPathImageMainWork
 
     Select Case strPCLangCurrentID
 
@@ -591,24 +591,24 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdCheckUpd.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheckUpd", cmdCheckUpd.Caption)
-    cmdLicence.Caption = LocaliseString(StrPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
-    cmdHomePage.Caption = LocaliseString(StrPathFile, strFormName, "cmdHomePage", cmdHomePage.Caption)
-    cmdOsZoneNet.Caption = LocaliseString(StrPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdCheckUpd.Caption = LocaliseString(strPathFile, strFormName, "cmdCheckUpd", cmdCheckUpd.Caption)
+    cmdLicence.Caption = LocaliseString(strPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
+    cmdHomePage.Caption = LocaliseString(strPathFile, strFormName, "cmdHomePage", cmdHomePage.Caption)
+    cmdOsZoneNet.Caption = LocaliseString(strPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
-    lblMailTo.Caption = LocaliseString(StrPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
-    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblMailTo.Caption = LocaliseString(strPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
+    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
     ' Перевод программы
-    strTranslatorName = LocaliseString(StrPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
-    strTranslatorUrl = LocaliseString(StrPathFile, "Lang", "TranslatorUrl", vbNullString)
+    strTranslatorName = LocaliseString(strPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
+    strTranslatorUrl = LocaliseString(strPathFile, "Lang", "TranslatorUrl", vbNullString)
     LoadTranslator
 End Sub
 

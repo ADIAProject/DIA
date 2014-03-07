@@ -15,6 +15,7 @@ Begin VB.Form frmEmulate
       Italic          =   0   'False
       Strikethrough   =   0   'False
    EndProperty
+   Icon            =   "frmEmulate.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
@@ -180,8 +181,8 @@ Begin VB.Form frmEmulate
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmEmulate.frx":0000
-         CueBanner       =   "frmEmulate.frx":0040
+         Text            =   "frmEmulate.frx":000C
+         CueBanner       =   "frmEmulate.frx":004C
       End
       Begin prjDIADBS.ComboBoxW cmbOS 
          Height          =   330
@@ -201,8 +202,8 @@ Begin VB.Form frmEmulate
             Strikethrough   =   0   'False
          EndProperty
          Locked          =   -1  'True
-         Text            =   "frmEmulate.frx":0060
-         CueBanner       =   "frmEmulate.frx":0080
+         Text            =   "frmEmulate.frx":006C
+         CueBanner       =   "frmEmulate.frx":008C
       End
       Begin prjDIADBS.CheckBoxW chk64bit 
          Height          =   255
@@ -221,7 +222,7 @@ Begin VB.Form frmEmulate
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmEmulate.frx":00A0
+         Caption         =   "frmEmulate.frx":00AC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkIsNotebook 
@@ -241,7 +242,7 @@ Begin VB.Form frmEmulate
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmEmulate.frx":00DE
+         Caption         =   "frmEmulate.frx":00EA
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblOSInfo 
@@ -263,7 +264,7 @@ Begin VB.Form frmEmulate
          EndProperty
          Alignment       =   2
          BackStyle       =   0
-         Caption         =   $"frmEmulate.frx":0112
+         Caption         =   $"frmEmulate.frx":011E
       End
    End
 End
@@ -442,8 +443,8 @@ Private Sub Form_Load()
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
 
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
 
     ' Локализациz приложения
     If mbMultiLanguage Then

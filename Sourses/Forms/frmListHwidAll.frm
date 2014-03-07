@@ -743,12 +743,12 @@ Private Sub Form_Load()
     End With
 
     mnuContext.Visible = False
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdCheckAll, "BTN_CHECKMARK", strPathImageMainWork
-    LoadIconImage2BtnJC cmdUnCheckAll, "BTN_UNCHECKMARK", strPathImageMainWork
-    LoadIconImage2BtnJC cmdGoSite, "BTN_VIEW_SEARCH", strPathImageMainWork
-    LoadIconImage2BtnJC cmdReNewHW, "BTN_RENEWHW", strPathImageMainWork
-    LoadIconImage2BtnJC cmdBackUpDrivers, "BTN_BACKUP", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdCheckAll, "BTN_CHECKMARK", strPathImageMainWork
+    LoadIconImage2Object cmdUnCheckAll, "BTN_UNCHECKMARK", strPathImageMainWork
+    LoadIconImage2Object cmdGoSite, "BTN_VIEW_SEARCH", strPathImageMainWork
+    LoadIconImage2Object cmdReNewHW, "BTN_RENEWHW", strPathImageMainWork
+    LoadIconImage2Object cmdBackUpDrivers, "BTN_BACKUP", strPathImageMainWork
     ' все остальные процедуры
     FormLoadDefaultParam
     FormLoadAction
@@ -1148,24 +1148,24 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
-    frFindDrvInternet.Caption = LocaliseString(StrPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
-    chkParseHwid.Caption = LocaliseString(StrPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
-    cmdGoSite.Caption = LocaliseString(StrPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
-    optGrp1.Caption = LocaliseString(StrPathFile, strFormName, "optGrp1", optGrp1.Caption)
-    optGrp2.Caption = LocaliseString(StrPathFile, strFormName, "optGrp2", optGrp2.Caption)
-    optGrp3.Caption = LocaliseString(StrPathFile, strFormName, "optGrp3", optGrp3.Caption)
-    optGrp4.Caption = LocaliseString(StrPathFile, strFormName, "optGrp4", optGrp4.Caption)
-    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
-    cmdReNewHW.Caption = LocaliseString(StrPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
-    cmdBackUpDrivers.Caption = LocaliseString(StrPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
+    frFindDrvInternet.Caption = LocaliseString(strPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
+    chkParseHwid.Caption = LocaliseString(strPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
+    cmdGoSite.Caption = LocaliseString(strPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
+    optGrp1.Caption = LocaliseString(strPathFile, strFormName, "optGrp1", optGrp1.Caption)
+    optGrp2.Caption = LocaliseString(strPathFile, strFormName, "optGrp2", optGrp2.Caption)
+    optGrp3.Caption = LocaliseString(strPathFile, strFormName, "optGrp3", optGrp3.Caption)
+    optGrp4.Caption = LocaliseString(strPathFile, strFormName, "optGrp4", optGrp4.Caption)
+    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
+    cmdReNewHW.Caption = LocaliseString(strPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
+    cmdBackUpDrivers.Caption = LocaliseString(strPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------

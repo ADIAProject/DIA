@@ -246,8 +246,8 @@ Private Sub Form_Load()
     End With
 
     'Me
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
 
     ' Локализациz приложения
     If mbMultiLanguage Then
@@ -268,18 +268,18 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     ' Лейблы
-    lblTimerText.Caption = LocaliseString(StrPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
-    lblTimeInSec.Caption = LocaliseString(StrPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
-    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblTimerText.Caption = LocaliseString(strPathFile, strFormName, "lblTimerText", lblTimerText.Caption)
+    lblTimeInSec.Caption = LocaliseString(strPathFile, strFormName, "lblTimeInSec", lblTimeInSec.Caption)
+    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------

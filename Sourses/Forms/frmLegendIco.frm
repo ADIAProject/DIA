@@ -457,7 +457,7 @@ Private Sub Form_Load()
         FontCharsetChange
     End If
 
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
 
     For i = 0 To 7
         lblDescription(i).Caption = arrTTipStatusIcon(i)
@@ -470,13 +470,13 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

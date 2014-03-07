@@ -27,7 +27,7 @@ Begin VB.Form frmOptions
       Top             =   5520
       _ExtentX        =   1005
       _ExtentY        =   1005
-      InitListImages  =   "frmOptions.frx":058A
+      InitListImages  =   "frmOptions.frx":000C
    End
    Begin prjDIADBS.ctlJCFrames frOptions 
       Height          =   5300
@@ -119,9 +119,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Icons           =   "frmOptions.frx":05AA
-         SmallIcons      =   "frmOptions.frx":05D6
-         ColumnHeaderIcons=   "frmOptions.frx":0616
+         Icons           =   "frmOptions.frx":002C
+         SmallIcons      =   "frmOptions.frx":0058
+         ColumnHeaderIcons=   "frmOptions.frx":0098
          BorderStyle     =   1
          View            =   2
          Arrange         =   3
@@ -173,7 +173,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0642
+         Caption         =   "frmOptions.frx":00C4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkUpdate 
@@ -193,7 +193,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":06BA
+         Caption         =   "frmOptions.frx":013C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkReadDPName 
@@ -213,7 +213,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0716
+         Caption         =   "frmOptions.frx":0198
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkConvertDPName 
@@ -233,7 +233,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":078A
+         Caption         =   "frmOptions.frx":020C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkHideOtherProcess 
@@ -253,7 +253,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":085A
+         Caption         =   "frmOptions.frx":02DC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkTempPath 
@@ -273,7 +273,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":08C0
+         Caption         =   "frmOptions.frx":0342
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkUpdateBeta 
@@ -293,7 +293,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0910
+         Caption         =   "frmOptions.frx":0392
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSilentDll 
@@ -313,7 +313,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0986
+         Caption         =   "frmOptions.frx":0408
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSearchOnStart 
@@ -333,7 +333,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0A22
+         Caption         =   "frmOptions.frx":04A4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtPauseAfterSearch 
@@ -583,7 +583,7 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          Value           =   0   'False
-         Caption         =   "frmOptions.frx":0AA0
+         Caption         =   "frmOptions.frx":0522
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optCompareByDate 
@@ -603,7 +603,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0B22
+         Caption         =   "frmOptions.frx":05A4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.TextBoxW txtCompareVersionDRV 
@@ -626,11 +626,11 @@ Begin VB.Form frmOptions
          BackColor       =   -2147483633
          ForeColor       =   255
          BorderStyle     =   0
-         Text            =   "frmOptions.frx":0BD0
+         Text            =   "frmOptions.frx":0652
          Locked          =   -1  'True
          MultiLine       =   -1  'True
          ScrollBars      =   2
-         CueBanner       =   "frmOptions.frx":0DC4
+         CueBanner       =   "frmOptions.frx":0846
       End
       Begin prjDIADBS.CheckBoxW chkDateFormatRus 
          Height          =   210
@@ -649,7 +649,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0DE4
+         Caption         =   "frmOptions.frx":0866
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkCreateRP 
@@ -669,7 +669,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0E5E
+         Caption         =   "frmOptions.frx":08E0
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkCompatiblesHWID 
@@ -689,7 +689,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0EE6
+         Caption         =   "frmOptions.frx":0968
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblCompareVersionDRV 
@@ -1056,9 +1056,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Icons           =   "frmOptions.frx":0F60
-         SmallIcons      =   "frmOptions.frx":0F8C
-         ColumnHeaderIcons=   "frmOptions.frx":0FB8
+         Icons           =   "frmOptions.frx":09E2
+         SmallIcons      =   "frmOptions.frx":0A0E
+         ColumnHeaderIcons=   "frmOptions.frx":0A3A
          View            =   3
          Arrange         =   1
          AllowColumnReorder=   -1  'True
@@ -1188,9 +1188,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Icons           =   "frmOptions.frx":0FE4
-         SmallIcons      =   "frmOptions.frx":1010
-         ColumnHeaderIcons=   "frmOptions.frx":103C
+         Icons           =   "frmOptions.frx":0A66
+         SmallIcons      =   "frmOptions.frx":0A92
+         ColumnHeaderIcons=   "frmOptions.frx":0ABE
          View            =   3
          Arrange         =   1
          AllowColumnReorder=   -1  'True
@@ -1221,10 +1221,10 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1068
+         Text            =   "frmOptions.frx":0AEA
          MultiLine       =   -1  'True
          ScrollBars      =   2
-         CueBanner       =   "frmOptions.frx":1088
+         CueBanner       =   "frmOptions.frx":0B0A
       End
       Begin prjDIADBS.CheckBoxW chkLoadFinishFile 
          Height          =   345
@@ -1243,7 +1243,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":10A8
+         Caption         =   "frmOptions.frx":0B2A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkRecursion 
@@ -1263,7 +1263,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1174
+         Caption         =   "frmOptions.frx":0BF6
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdAddOS 
@@ -1394,7 +1394,7 @@ Begin VB.Form frmOptions
          Width           =   525
          _ExtentX        =   926
          _ExtentY        =   582
-         Icon            =   "frmOptions.frx":120C
+         Icon            =   "frmOptions.frx":0C8E
          BackColor       =   14016736
       End
       Begin prjDIADBS.ComboBoxW cmbButtonStyleColor 
@@ -1415,8 +1415,8 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          Style           =   2
-         Text            =   "frmOptions.frx":1792
-         CueBanner       =   "frmOptions.frx":17B2
+         Text            =   "frmOptions.frx":1214
+         CueBanner       =   "frmOptions.frx":1234
          Sorted          =   -1  'True
       End
       Begin prjDIADBS.ComboBoxW cmbButtonStyle 
@@ -1437,8 +1437,8 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          Style           =   2
-         Text            =   "frmOptions.frx":17D2
-         CueBanner       =   "frmOptions.frx":17F2
+         Text            =   "frmOptions.frx":1254
+         CueBanner       =   "frmOptions.frx":1274
          Sorted          =   -1  'True
       End
       Begin VB.PictureBox imgOK 
@@ -1475,7 +1475,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1812
+         Caption         =   "frmOptions.frx":1294
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ComboBoxW cmbImageMain 
@@ -1496,8 +1496,8 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          Locked          =   -1  'True
-         Text            =   "frmOptions.frx":1832
-         CueBanner       =   "frmOptions.frx":1852
+         Text            =   "frmOptions.frx":12B4
+         CueBanner       =   "frmOptions.frx":12D4
          Sorted          =   -1  'True
       End
       Begin prjDIADBS.ComboBoxW cmbImageStatus 
@@ -1518,8 +1518,8 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          Locked          =   -1  'True
-         Text            =   "frmOptions.frx":1872
-         CueBanner       =   "frmOptions.frx":1892
+         Text            =   "frmOptions.frx":12F4
+         CueBanner       =   "frmOptions.frx":1314
          Sorted          =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkButtonTextUpCase 
@@ -1539,7 +1539,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":18B2
+         Caption         =   "frmOptions.frx":1334
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtButtonHeight 
@@ -1704,7 +1704,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1926
+         Caption         =   "frmOptions.frx":13A8
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorToolTip 
@@ -1814,7 +1814,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Title           =   "frmOptions.frx":199C
+         Title           =   "frmOptions.frx":141E
       End
       Begin prjDIADBS.LabelW lblTheme 
          Height          =   225
@@ -2087,7 +2087,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":19BC
+         Caption         =   "frmOptions.frx":143E
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkTabHide 
@@ -2107,7 +2107,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1A7E
+         Caption         =   "frmOptions.frx":1500
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkLoadUnSupportedOS 
@@ -2127,7 +2127,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1B2C
+         Caption         =   "frmOptions.frx":15AE
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabOS 
@@ -2198,7 +2198,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1BA8
+         Caption         =   "frmOptions.frx":162A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtFormHeight 
@@ -2259,7 +2259,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1C0E
+         Caption         =   "frmOptions.frx":1690
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblSizeForm 
@@ -2492,9 +2492,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1C72
+         Text            =   "frmOptions.frx":16F4
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":1C92
+         CueBanner       =   "frmOptions.frx":1714
       End
       Begin prjDIADBS.CheckBoxW chkLegacyMode 
          Height          =   210
@@ -2513,7 +2513,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1CB2
+         Caption         =   "frmOptions.frx":1734
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkPromptIfDriverIsNotBetter 
@@ -2533,7 +2533,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1CE6
+         Caption         =   "frmOptions.frx":1768
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkForceIfDriverIsNotBetter 
@@ -2553,7 +2553,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1D38
+         Caption         =   "frmOptions.frx":17BA
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSuppressAddRemovePrograms 
@@ -2574,7 +2574,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1D88
+         Caption         =   "frmOptions.frx":180A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSuppressWizard 
@@ -2594,7 +2594,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1DDA
+         Caption         =   "frmOptions.frx":185C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkQuietInstall 
@@ -2614,7 +2614,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1E16
+         Caption         =   "frmOptions.frx":1898
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkScanHardware 
@@ -2634,7 +2634,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":1E4E
+         Caption         =   "frmOptions.frx":18D0
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblCmdStringDPInst 
@@ -2837,7 +2837,7 @@ Begin VB.Form frmOptions
             Strikethrough   =   0   'False
          EndProperty
          BackStyle       =   0
-         Caption         =   $"frmOptions.frx":1E86
+         Caption         =   $"frmOptions.frx":1908
       End
    End
    Begin prjDIADBS.ctlJCFrames frDebug 
@@ -2880,8 +2880,8 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1F84
-         CueBanner       =   "frmOptions.frx":1FC8
+         Text            =   "frmOptions.frx":1A06
+         CueBanner       =   "frmOptions.frx":1A4A
       End
       Begin prjDIADBS.TextBoxW txtMacrosDateDebug 
          Height          =   255
@@ -2900,9 +2900,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":1FE8
+         Text            =   "frmOptions.frx":1A6A
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":2014
+         CueBanner       =   "frmOptions.frx":1A96
       End
       Begin prjDIADBS.TextBoxW txtMacrosOSBITDebug 
          Height          =   255
@@ -2921,9 +2921,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":2034
+         Text            =   "frmOptions.frx":1AB6
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":2062
+         CueBanner       =   "frmOptions.frx":1AE4
       End
       Begin prjDIADBS.TextBoxW txtMacrosOSVERDebug 
          Height          =   255
@@ -2942,9 +2942,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":2082
+         Text            =   "frmOptions.frx":1B04
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":20B0
+         CueBanner       =   "frmOptions.frx":1B32
       End
       Begin prjDIADBS.TextBoxW txtMacrosPCModelDebug 
          Height          =   255
@@ -2963,9 +2963,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":20D0
+         Text            =   "frmOptions.frx":1B52
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":2102
+         CueBanner       =   "frmOptions.frx":1B84
       End
       Begin prjDIADBS.TextBoxW txtMacrosPCNameDebug 
          Height          =   255
@@ -2984,9 +2984,9 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOptions.frx":2122
+         Text            =   "frmOptions.frx":1BA4
          Locked          =   -1  'True
-         CueBanner       =   "frmOptions.frx":2152
+         CueBanner       =   "frmOptions.frx":1BD4
       End
       Begin prjDIADBS.CheckBoxW chkDebug 
          Height          =   210
@@ -3005,7 +3005,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":2172
+         Caption         =   "frmOptions.frx":1BF4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDebugLogPath 
@@ -3038,7 +3038,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":21C2
+         Caption         =   "frmOptions.frx":1C44
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkDebugTime2File 
@@ -3058,7 +3058,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":2242
+         Caption         =   "frmOptions.frx":1CC4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtDebugLogLevel 
@@ -4224,18 +4224,18 @@ Private Sub Form_Load()
     txtButtonHeight.Min = lngButtonHeightMin
     txtButtonWidth.Min = lngButtonWidthMin
     ' Устанавливаем картинки кнопок и убираем описание кнопок
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdAddUtil, "BTN_ADD", strPathImageMainWork
-    LoadIconImage2BtnJC cmdEditUtil, "BTN_EDIT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdDelUtil, "BTN_DELETE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdAddOS, "BTN_ADD", strPathImageMainWork
-    LoadIconImage2BtnJC cmdEditOS, "BTN_EDIT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdDelOS, "BTN_DELETE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdFontColorButton, "BTN_FONT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdFontColorTabOS, "BTN_FONT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdFontColorTabDrivers, "BTN_FONT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdFontColorToolTip, "BTN_FONT", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdAddUtil, "BTN_ADD", strPathImageMainWork
+    LoadIconImage2Object cmdEditUtil, "BTN_EDIT", strPathImageMainWork
+    LoadIconImage2Object cmdDelUtil, "BTN_DELETE", strPathImageMainWork
+    LoadIconImage2Object cmdAddOS, "BTN_ADD", strPathImageMainWork
+    LoadIconImage2Object cmdEditOS, "BTN_EDIT", strPathImageMainWork
+    LoadIconImage2Object cmdDelOS, "BTN_DELETE", strPathImageMainWork
+    LoadIconImage2Object cmdFontColorButton, "BTN_FONT", strPathImageMainWork
+    LoadIconImage2Object cmdFontColorTabOS, "BTN_FONT", strPathImageMainWork
+    LoadIconImage2Object cmdFontColorTabDrivers, "BTN_FONT", strPathImageMainWork
+    LoadIconImage2Object cmdFontColorToolTip, "BTN_FONT", strPathImageMainWork
     'загружаем список стилей кнопок
     LoadComboBtnStyle
     ' Действия при загрузке формы

@@ -176,12 +176,12 @@ Private m_Caption        As String
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub CheckEditDonate(StrPathFile As String)
+Private Sub CheckEditDonate(strPathFile As String)
 
     Dim strMD5TextRtf         As String
     Dim strDONATE_MD5RTF_temp As String
 
-    strMD5TextRtf = GetMD5(StrPathFile)
+    strMD5TextRtf = GetMD5(strPathFile)
     DebugMode "DonateInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -324,7 +324,7 @@ Private Sub Form_Load()
         lngFormHeightMin = .Height
     End With
 
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
     DonateRTF.Visible = False
 
     ' Локализациz приложения
@@ -439,13 +439,13 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

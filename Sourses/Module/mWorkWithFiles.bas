@@ -769,15 +769,15 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
+Public Sub ResetReadOnly4File(ByVal strPathFile As String)
 
-    If PathExists(StrPathFile) Then
-        If FileisReadOnly(StrPathFile) Then
-            SetAttr StrPathFile, vbNormal
+    If PathExists(strPathFile) Then
+        If FileisReadOnly(strPathFile) Then
+            SetAttr strPathFile, vbNormal
         End If
 
-        If FileisSystemAttr(StrPathFile) Then
-            SetAttr StrPathFile, vbNormal
+        If FileisSystemAttr(strPathFile) Then
+            SetAttr strPathFile, vbNormal
         End If
     End If
 
@@ -1250,7 +1250,7 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
 
     If InStr(strFileName, Percentage) Then
         ' Макроподстановка версия ОС %OSVer%
-        str_OSVer = "wnt" & Left$(strOsCurrentVersion, 1)
+        str_OSVer = "wnt" & Left$(strOSCurrentVersion, 1)
 
         ' Макроподстановка битность ОС %OSBit%
         If mbIsWin64 Then

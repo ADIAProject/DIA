@@ -15,10 +15,21 @@ Private Const vbDot            As Integer = 46
 
 Private fp                     As FILE_PARAMS    'holds search parameters
 Private fp2                    As FOLDER_PARAMS  'holds search parameters
-Private sResultFileList()      As String
+'Private sResultFileList()      As String
+Private sResultFileList()      As FindFileListStruct
 Private sResultFileListCount   As Long
 Private sResultFolderList()    As String
 Private sResultFolderListCount As Long
+
+Public Type FindFileListStruct
+    Path As String
+    Name As String
+    FullPath As String
+    NameLcase As String
+    NameWoExt As String
+    Size As Long
+    SizeInString As String
+End Type
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileSizeApi
@@ -157,7 +168,7 @@ End Function
 '                              mbDelete (Boolean = False)
 '                              mbSort (Boolean = False)
 '!--------------------------------------------------------------------------------
-Public Function SearchFilesInRoot(strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional mbDelete As Boolean = False, Optional mbSort As Boolean = False)
+Public Function SearchFilesInRoot(strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional mbDelete As Boolean = False, Optional mbSort As Boolean = False) As FindFileListStruct()
 
     With fp
         .sFileRoot = BackslashAdd2Path(strRootDir)
@@ -169,12 +180,13 @@ Public Function SearchFilesInRoot(strRootDir As String, ByVal strSearchMask As S
 
     If Not mbDelete Then
         If mbOnlyFirstFile Then
-            SearchFilesInRoot = sResultFileList(0, 0)
+            ReDim Preserve sResultFileList(0)
+            SearchFilesInRoot = sResultFileList
         Else
 
-            If mbSort Then
-                QuickSortMDArray sResultFileList, 1, 0
-            End If
+            'If mbSort Then
+                'QuickSortMDArray sResultFileList, 1, 0
+            'End If
 
             SearchFilesInRoot = sResultFileList
         End If
@@ -229,11 +241,13 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
         If mbInitial Then
             sResultFileListCount = 0
 
-            ReDim sResultFileList(1, miMaxCountArr)
+            'ReDim sResultFileList(5, miMaxCountArr)
+            ReDim sResultFileList(miMaxCountArr)
 
         Else
 
-            ReDim Preserve sResultFileList(1, miMaxCountArr)
+            'ReDim Preserve sResultFileList(5, miMaxCountArr)
+            ReDim Preserve sResultFileList(miMaxCountArr)
 
         End If
     End If
@@ -264,16 +278,32 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
                         If sResultFileListCount = miMaxCountArr Then
                             miMaxCountArr = 2 * miMaxCountArr
 
-                            ReDim Preserve sResultFileList(1, miMaxCountArr)
+                            'ReDim Preserve sResultFileList(5, miMaxCountArr)
+                            ReDim Preserve sResultFileList(miMaxCountArr)
 
                         End If
 
                         ' Полный путь файла
-                        sResultFileList(0, sResultFileListCount) = sRoot & strFileName
-                        ' размер файла
+                        'sResultFileList(0, sResultFileListCount) = sRoot & strFileName
+                        sResultFileList(sResultFileListCount).FullPath = sRoot & strFileName
+                        ' размер файла числовой в байтах
+                        sResultFileList(sResultFileListCount).Size = wfd.nFileSizeLow
+                        ' размер файла строковый форматированный учитывая региональные настройки в байт/кбайт/мбайт и т.д
                         sSize = String$(30, vbNullChar)
                         StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
-                        sResultFileList(1, sResultFileListCount) = TrimNull(sSize)
+                        'sResultFileList(1, sResultFileListCount) = TrimNull(sSize)
+                        sResultFileList(sResultFileListCount).SizeInString = TrimNull(sSize)
+                        ' Путь до файла
+                        'sResultFileList(2, sResultFileListCount) = sRoot
+                        sResultFileList(sResultFileListCount).Path = sRoot
+                        ' Имя файла
+                        'sResultFileList(3, sResultFileListCount) = strFileName
+                        sResultFileList(sResultFileListCount).Name = strFileName
+                        ' Имя файла smallcase
+                        'sResultFileList(4, sResultFileListCount) = LCase$(strFileName)
+                        sResultFileList(sResultFileListCount).NameLcase = LCase$(strFileName)
+                        'sResultFileList(5, sResultFileListCount) = FileName_woExt(strFileName)
+                        sResultFileList(sResultFileListCount).NameWoExt = FileName_woExt(strFileName)
                         sResultFileListCount = sResultFileListCount + 1
                     End If
                 End If
@@ -290,11 +320,13 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
         If mbInitial Then
             If sResultFileListCount > 0 Then
 
-                ReDim Preserve sResultFileList(1, sResultFileListCount - 1)
+                'ReDim Preserve sResultFileList(5, sResultFileListCount - 1)
+                ReDim Preserve sResultFileList(sResultFileListCount - 1)
 
             Else
 
-                ReDim Preserve sResultFileList(1, sResultFileListCount)
+                'ReDim Preserve sResultFileList(5, sResultFileListCount)
+                ReDim Preserve sResultFileList(sResultFileListCount)
 
             End If
         End If

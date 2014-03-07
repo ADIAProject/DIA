@@ -55,17 +55,6 @@ Begin VB.Form frmMain
       Top             =   9345
       Visible         =   0   'False
       Width           =   11265
-      Begin prjDIADBS.ProgressBar ctlProgressBar1 
-         Height          =   375
-         Left            =   120
-         Top             =   60
-         Width           =   3315
-         _ExtentX        =   5847
-         _ExtentY        =   661
-         Max             =   1000
-         Value           =   100
-         Step            =   10
-      End
       Begin prjDIADBS.ctlJCbutton cmdBreakUpdateDB 
          Height          =   385
          Left            =   4200
@@ -92,6 +81,17 @@ Begin VB.Form frmMain
          PicturePushOnHover=   -1  'True
          PictureShadow   =   -1  'True
          ColorScheme     =   3
+      End
+      Begin prjDIADBS.ProgressBar ctlProgressBar1 
+         Height          =   375
+         Left            =   120
+         Top             =   60
+         Width           =   3315
+         _ExtentX        =   5847
+         _ExtentY        =   661
+         Max             =   1000
+         Value           =   100
+         Step            =   10
       End
    End
    Begin prjDIADBS.ctlJCFrames frMainPanel 
@@ -1696,7 +1696,7 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
             Do While i >= lngNumButtOnTab
                 SSTab1.Tab = SSTab1.Tab + 1
                 DoEvents
-                Sleep 100
+                'Sleep 100
                 lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
             Loop
 
@@ -1790,7 +1790,7 @@ TheEnd:
     mbTasks = False
     SSTab1.Tab = lngSStabStart
     DoEvents
-    Sleep 100
+    'Sleep 100
     DebugMode "BaseUpdateOrRunTask-End"
 End Sub
 
@@ -2248,9 +2248,9 @@ Private Sub cmbCheckButton_Click()
     strTextforCheck = cmbCheckButton.Text
 
     If StrComp(strTextforCheck, strCmbChkBtnListElement2, vbTextCompare) = 0 Then
-        LoadIconImage2BtnJC cmdCheck, "BTN_UNCHECKMARK", strPathImageMainWork
+        LoadIconImage2Object cmdCheck, "BTN_UNCHECKMARK", strPathImageMainWork
     Else
-        LoadIconImage2BtnJC cmdCheck, "BTN_CHECKMARK", strPathImageMainWork
+        LoadIconImage2Object cmdCheck, "BTN_CHECKMARK", strPathImageMainWork
     End If
 
 End Sub
@@ -2957,7 +2957,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
     Dim tabN                 As Long
     Dim TabHeight            As Long
     Dim ii                   As Long
-    Dim strFileList_x()      As String
+    Dim strFileList_x()      As FindFileListStruct
     Dim lngOffSideCountTemp   As Long
     Dim strPhysXPath         As String
     Dim strLangPath          As String
@@ -2973,7 +2973,7 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
     If PathExists(strDrpPath) Then
         tabN = miTabIndex
         TabHeight = SSTab1.Height
-        Sleep 200
+        'Sleep 200
         DoEvents
         SSTab1.Tab = tabN
         StartPositionLeft = lngButtonLeft
@@ -3020,10 +3020,10 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             End If
         End If
 
-        DebugMode str2VbTab & "CreateButtonsonSSTab: FileCount: " & UBound(strFileList_x, 2)
+        DebugMode str2VbTab & "CreateButtonsonSSTab: FileCount: " & UBound(strFileList_x)
 
-        If UBound(strFileList_x, 2) = 0 Then
-            If LenB(strFileList_x(0, 0)) = 0 Then
+        If UBound(strFileList_x) = 0 Then
+            If LenB(strFileList_x(0).FullPath) = 0 Then
                 SSTab1.TabEnabled(tabN) = False
 
                 If mbTabHide Then
@@ -3045,18 +3045,18 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
         strLangPath = FileNameFromPath(arrOSList(tabN).PathLanguages)
         strRuntimes = FileNameFromPath(arrOSList(tabN).PathRuntimes)
         strExcludeFileName = arrOSList(tabN).ExcludeFileName
-        lngFileCount = UBound(strFileList_x, 2) - LBound(strFileList_x, 2) + 1
+        lngFileCount = UBound(strFileList_x) - LBound(strFileList_x) + 1
         pbProgressBar.Refresh
 
-        For ii = LBound(strFileList_x, 2) To UBound(strFileList_x, 2)
-            strPackFileName = Replace$(strFileList_x(0, ii), BackslashAdd2Path(strDrpPath), vbNullString, , , vbTextCompare)
+        For ii = LBound(strFileList_x) To UBound(strFileList_x)
+            strPackFileName = Replace$(strFileList_x(ii).FullPath, BackslashAdd2Path(strDrpPath), vbNullString, , , vbTextCompare)
             DebugMode "====================================================================================================" & vbNewLine & _
                       str2VbTab & "Work with File: " & strPackFileName
             ChangeStatusTextAndDebug strMessages(69) & " " & strDrpPath & " " & vbNewLine & strMessages(70) & "(" & (ii + 1) & " " & strMessages(124) & " " & lngFileCount & "): " & strPackFileName
             mbStatusHwid = True
 
             If Not mbDP_Is_aFolder Then
-                strButtonName = FileNameFromPath(strPackFileName)
+                strButtonName = strFileList_x(ii).Name
             Else
                 strButtonName = strPackFileName
             End If
@@ -3438,8 +3438,9 @@ Private Sub DeleteUnUsedBase()
     Dim ii                     As Integer
     Dim strPathDRP             As String
     Dim strPathDevDB           As String
-    Dim strFileListTXT_x()     As String
-    Dim strFileListDRP_x()     As String
+    Dim strFileListTXT_x()     As FindFileListStruct
+    Dim strFileListDRP_x()     As FindFileListStruct
+    Dim strFileListTXT()       As String
     Dim strFileListDBExists    As String
     Dim strFileListDBNotExists As String
     Dim strDRPFilename         As String
@@ -3474,8 +3475,9 @@ Private Sub DeleteUnUsedBase()
             strFileListTXT_x = SearchFilesInRoot(strPathDevDB, "*DP*.txt;*DP*.ini;*DP*.hwid;*DevDBVersions*.ini", False, False)
 
             ' Проверка на существование БД
-            For ii = LBound(strFileListDRP_x, 2) To UBound(strFileListDRP_x, 2)
-                strDRPFilename = FileNameFromPath(strFileListDRP_x(0, ii))
+            For ii = LBound(strFileListDRP_x) To UBound(strFileListDRP_x)
+                'strDRPFilename = FileNameFromPath(strFileListDRP_x(0, ii))
+                strDRPFilename = strFileListDRP_x(ii).Name
 
                 If CheckExistDB(strPathDevDB, strDRPFilename) Then
                     If InStr(1, strDRPFilename, ".zip", vbTextCompare) Then
@@ -3501,11 +3503,11 @@ Private Sub DeleteUnUsedBase()
             strFileListDBExists = IIf(LenB(strFileListDBExists) > 0, strFileListDBExists & vbTab, vbNullString) & strFileDBVerIniPath
 
             'Строим список удаляемых файлов для несуществующих пакетов
-            For ii = LBound(strFileListTXT_x, 2) To UBound(strFileListTXT_x, 2)
+            For ii = LBound(strFileListTXT_x) To UBound(strFileListTXT_x)
 
-                If InStr(1, strFileListDBExists, strFileListTXT_x(0, ii), vbTextCompare) = 0 Then
-                    If PathExists(strFileListTXT_x(0, ii)) Then
-                        strFileListDBNotExists = IIf(LenB(strFileListDBNotExists) > 0, strFileListDBNotExists & vbNewLine, vbNullString) & Replace$(strFileListTXT_x(0, ii), strAppPath, vbNullString, , , vbTextCompare)
+                If InStr(1, strFileListDBExists, strFileListTXT_x(ii).FullPath, vbTextCompare) = 0 Then
+                    If PathExists(strFileListTXT_x(ii).FullPath) Then
+                        strFileListDBNotExists = IIf(LenB(strFileListDBNotExists) > 0, strFileListDBNotExists & vbNewLine, vbNullString) & Replace$(strFileListTXT_x(ii).FullPath, strAppPath, vbNullString, , , vbTextCompare)
                         'Удаление секции о данном пакете из ini-файла
                         'IniDelAllKeyPrivate FileName_woExt(FileNameFromPath(strFileListTXT_x(0, ii))), strFileDBVerIniPath
                     End If
@@ -3519,11 +3521,11 @@ Private Sub DeleteUnUsedBase()
             ChangeStatusTextAndDebug strMessages(71)
 
             If ShowMsbBoxForm(strFileListDBNotExists, strMessages(28), strMessages(29)) = vbYes Then
-                strFileListTXT_x = Split(strFileListDBNotExists, vbNewLine)
+                strFileListTXT = Split(strFileListDBNotExists, vbNewLine)
 
                 'удаление файлов для несуществующих пакетов
-                For ii = LBound(strFileListTXT_x) To UBound(strFileListTXT_x)
-                    strFileName2Del = PathCollect(strFileListTXT_x(ii))
+                For ii = LBound(strFileListTXT) To UBound(strFileListTXT)
+                    strFileName2Del = PathCollect(strFileListTXT(ii))
 
                     If PathExists(strFileName2Del) Then
                         DeleteFiles strFileName2Del
@@ -3536,7 +3538,7 @@ Private Sub DeleteUnUsedBase()
                             lngFileDBVerIniSize = GetFileSizeByPath(strFileDBVerIniPath)
 
                             If lngFileDBVerIniSize > 0 Then
-                                IniDelAllKeyPrivate FileName_woExt(FileNameFromPath(strFileListTXT_x(ii))), strFileDBVerIniPath
+                                IniDelAllKeyPrivate FileName_woExt(FileNameFromPath(strFileListTXT(ii))), strFileDBVerIniPath
                             Else
                                 DebugMode str2VbTab & "DeleteUnUsedBase: Delete - file is zero = 0 bytes: " & strFileDBVerIniPath
                                 DeleteFiles strFileDBVerIniPath
@@ -4552,7 +4554,7 @@ Private Sub Form_Activate()
 
         ' Создаем элемент ProgressBar
         CreateProgressNew
-        Sleep 300
+        'Sleep 300
         DoEvents
 
         ' поиск устройств при запуске
@@ -4661,7 +4663,7 @@ Private Sub Form_Activate()
             'ExMenuEnable
             'End If
             Me.Refresh
-            Sleep 400
+            'Sleep 400
     
             If mbRunWithParam Then
                 ChangeStatusTextAndDebug strMessages(60), "Program start in silentMode"
@@ -4774,7 +4776,13 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
                 ' CTRL+Break (Прерывание групповой обработки)
                 If cmdBreakUpdateDB.Visible Then
-                    cmdBreakUpdateDB_Click
+                    mbBreakUpdateDBAll = True
+                End If
+            
+            Case 88
+                ' Ctrl+X (Прерывание групповой обработки в IDE)
+                If cmdBreakUpdateDB.Visible Then
+                    mbBreakUpdateDBAll = True
                 End If
 
         End Select
@@ -5483,6 +5491,7 @@ Private Sub GroupInstallDP()
         ' Отображаем ProgressBar
         CreateProgressNew
         cmdBreakUpdateDB.Visible = True
+        DoEvents
         ' Начальные пременные прогрессбара
         lngFindCheckCountTemp = FindCheckCount
 
@@ -5721,7 +5730,7 @@ Private Sub InsOrUpdSelectedDP(ByVal mbInstallMode As Boolean)
 
             mbGroupTask = True
             mbooSelectInstall = False
-            Sleep 200
+            'Sleep 200
             GroupInstallDP
             mbGroupTask = False
         Else
@@ -5997,12 +6006,12 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
     LoadIconImage2Object imgUpdBD, "BTN_UPD_DRV", strPathImageStatusButtonWork
     '--------------------- Остальные Иконки
-    LoadIconImage2BtnJC cmdRunTask, "BTN_RUNTASK", strPathImageMainWork
-    LoadIconImage2BtnJC cmdBreakUpdateDB, "BTN_BREAK_UPDATE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdViewAllDevice, "BTN_VIEW_SEARCH", strPathImageMainWork
-    LoadIconImage2BtnJC cmdCheck, "BTN_CHECKMARK", strPathImageMainWork
+    LoadIconImage2Object cmdRunTask, "BTN_RUNTASK", strPathImageMainWork
+    LoadIconImage2Object cmdBreakUpdateDB, "BTN_BREAK_UPDATE", strPathImageMainWork
+    LoadIconImage2Object cmdViewAllDevice, "BTN_VIEW_SEARCH", strPathImageMainWork
+    LoadIconImage2Object cmdCheck, "BTN_CHECKMARK", strPathImageMainWork
     '--------------------- Группы
-    LoadIconImage2FrameJC frRezim, "FRAME_GROUP", strPathImageMainWork
+    LoadIconImage2Object frRezim, "FRAME_GROUP", strPathImageMainWork
     DebugMode "LoadIconImage-End"
 End Sub
 
@@ -6021,44 +6030,36 @@ Private Sub LoadListChecked()
     strCmbChkBtnListElement4 = LocaliseString(strPCLangCurrentPath, strFormName, "cmbCheckButtonListElement4", "Все новые")
     strCmbChkBtnListElement5 = LocaliseString(strPCLangCurrentPath, strFormName, "cmbCheckButtonListElement5", "Неустановленные")
     strCmbChkBtnListElement6 = LocaliseString(strPCLangCurrentPath, strFormName, "cmbCheckButtonListElement6", "Рекомендуемые")
-
-    If optRezim_Upd.Value Then
-
-        With cmbCheckButton
+    
+    With cmbCheckButton
+        If optRezim_Upd.Value Then
+    
             .AddItem strCmbChkBtnListElement1, 0
             .AddItem strCmbChkBtnListElement2, 1
             .AddItem strCmbChkBtnListElement3, 2
             .AddItem strCmbChkBtnListElement4, 3
             .ListIndex = 3
-
             ' Подсчитываем кол-во пакетов не имеющих БД, и если их нет то ставим "Все новые"
             If FindNoDBCount = 0 Then .ListIndex = 2
-        End With
-
-        'cmbCheckButton
-    ElseIf optRezim_Ust.Value Then
-
-        With cmbCheckButton
+    
+        ElseIf optRezim_Ust.Value Then
+    
             .AddItem strCmbChkBtnListElement2, 0
             .AddItem strCmbChkBtnListElement5, 1
             .AddItem strCmbChkBtnListElement6, 2
             .AddItem strCmbChkBtnListElement1, 3
             .ListIndex = 1
-        End With
-
-        'CMBCHECKBUTTON
-    Else
-
-        With cmbCheckButton
+    
+        Else
             .AddItem strCmbChkBtnListElement2, 0
             .AddItem strCmbChkBtnListElement5, 1
             .AddItem strCmbChkBtnListElement6, 2
             .AddItem strCmbChkBtnListElement1, 3
             .ListIndex = 1
-        End With
-
-    End If
-
+    
+        End If
+    End With
+        
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6991,7 +6992,11 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuRezimBaseDrvUpdateALL_Click()
-    BaseUpdateOrRunTask False
+    
+    SilentCheckNoDB
+    ' возвращаяем обратно стартовый режим
+    SelectStartMode
+    'BaseUpdateOrRunTask False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8148,7 +8153,7 @@ Private Sub SelectAllOnTabDP(Optional ByVal mbIntellectMode As Boolean = True)
 
     If SSTab1.Enabled Then
         'MsgBox "Выбираем нужный режим установки"
-        Sleep 100
+        'Sleep 100
 
         If mbIntellectMode Then
             SelectStartMode 1, False
@@ -8159,7 +8164,7 @@ Private Sub SelectAllOnTabDP(Optional ByVal mbIntellectMode As Boolean = True)
         cmbCheckButton.ListIndex = 3
         cmbCheckButton.Refresh
         DoEvents
-        Sleep 200
+        'Sleep 200
         cmdCheck_Click
     End If
 
@@ -8209,7 +8214,7 @@ End Sub
 Private Sub SelectNotInstalledDP(Optional ByVal mbIntellectMode As Boolean = True)
 
     If SSTab1.Enabled Then
-        Sleep 100
+        'Sleep 100
 
         If mbIntellectMode Then
             SelectStartMode 1, False
@@ -8220,7 +8225,7 @@ Private Sub SelectNotInstalledDP(Optional ByVal mbIntellectMode As Boolean = Tru
         cmbCheckButton.ListIndex = 1
         cmbCheckButton.Refresh
         DoEvents
-        Sleep 200
+        'Sleep 200
         cmdCheck_Click
     End If
 
@@ -8235,7 +8240,7 @@ Private Sub SelectRecommendedDP(Optional ByVal mbIntellectMode As Boolean = True
 
     If SSTab1.Enabled Then
         'MsgBox "Выбираем нужный режим установки"
-        Sleep 100
+        'Sleep 100
 
         If mbIntellectMode Then
             SelectStartMode 1, False
@@ -8246,7 +8251,7 @@ Private Sub SelectRecommendedDP(Optional ByVal mbIntellectMode As Boolean = True
         cmbCheckButton.ListIndex = 2
         cmbCheckButton.Refresh
         DoEvents
-        Sleep 200
+        'Sleep 200
         cmdCheck_Click
     End If
 
@@ -8591,19 +8596,44 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SilentCheckNoDB()
-    Sleep 200
+    'Sleep 200
+    DoEvents
     SelectStartMode 3, False
     'Выбираем всё рекомендованное для установки
     cmbCheckButton.ListIndex = 3
     cmbCheckButton.Refresh
     DoEvents
-    Sleep 200
+    'Sleep 200
     cmdCheck_Click
     'Собственно запускаем сам процесс создания БД
     mbGroupTask = True
     mbooSelectInstall = False
-    Sleep 200
+    DoEvents
+    'Sleep 200
     cmdRunTask_Click
+    FindNoDBCount
+    mbGroupTask = False
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SilentReindexAllDB
+'! Description (Описание)  :   [Сценарий запуска полной реиндексации]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub SilentReindexAllDB()
+    'Устанавливаем режим обновления
+    DoEvents
+    SelectStartMode 3, False
+    
+    'Выбираем все пакеты драйверов
+    CheckAllButton True
+    DoEvents
+    
+    'Собственно запускаем сам процесс создания БД
+    mbGroupTask = True
+    mbooSelectInstall = False
+    cmdRunTask_Click
+    DoEvents
     FindNoDBCount
     mbGroupTask = False
 End Sub
@@ -8658,7 +8688,8 @@ Private Sub SilentInstall()
     'MsgBox "Собственно запускаем сам процесс установки"
     mbGroupTask = True
     mbooSelectInstall = False
-    Sleep 200
+    'Sleep 200
+    DoEvents
     GroupInstallDP
     mbGroupTask = False
     DebugMode "SilentInstall-End"
@@ -8761,7 +8792,7 @@ Private Sub StartReOrderBtnOnTab2(ByVal miIndex As Integer, ByVal miPrevTab As I
             End If
 
             DoEvents
-            Sleep 100
+            'Sleep 100
 
             Select Case SSTab2(miIndex).Tab
 
@@ -9326,33 +9357,26 @@ End Function
 Private Sub UnPackDPFileAdd(ByVal strPathAddFile As String, ByVal strPathDRP As String, ByVal strArchTempPath As String)
 
     Dim cmdString As String
+    Dim strPathAddFilePath As String
 
-    If InStr(strPathAddFile, vbBackslash) = 0 Then
-        strPathAddFile = BackslashAdd2Path(strPathDRP) & strPathAddFile
-    End If
+    strPathAddFilePath = PathCombine(strPathDRP, strPathAddFile)
 
-    If PathExists(strPathAddFile) = False Then
-        If Not PathIsAFolder(strPathAddFile) Then
-            strPathAddFile = SearchFilesInRoot(PathNameFromPath(strPathAddFile), FileNameFromPath(strPathAddFile), False, True)
-        End If
-    End If
-
-    If PathExists(strPathAddFile) Then
-        If Not PathIsAFolder(strPathAddFile) Then
-            cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strArchTempPath & Kavichki & " -r " & Kavichki & strPathAddFile & Kavichki & " *.*"
-            ChangeStatusTextAndDebug strMessages(98) & " " & strPathAddFile, "Extract: " & cmdString
+    If PathExists(strPathAddFilePath) Then
+        If Not PathIsAFolder(strPathAddFilePath) Then
+            cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strArchTempPath & Kavichki & " -r " & Kavichki & strPathAddFilePath & Kavichki & " *.*"
+            ChangeStatusTextAndDebug strMessages(98) & " " & strPathAddFilePath, "Extract: " & cmdString
 
             If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
                 If Not mbSilentRun Then
                     MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
                 End If
 
-                ChangeStatusTextAndDebug strMessages(13) & " " & strPathAddFile, "Error on run : " & cmdString
+                ChangeStatusTextAndDebug strMessages(13) & " " & strPathAddFilePath, "Error on run : " & cmdString
             Else
 
                 ' Архиватор отработал на все 100%? Если нет то сообщаем
                 If lngExitProc = 2 Or lngExitProc = 7 Or lngExitProc = 255 Then
-                    ChangeStatusTextAndDebug strMessages(13) & " " & strPathAddFile
+                    ChangeStatusTextAndDebug strMessages(13) & " " & strPathAddFilePath
 
                     If Not mbSilentRun Then
                         MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
@@ -9470,7 +9494,7 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
     End If
 
     BlockControl False
-    Sleep 100
+    'Sleep 100
     DoEvents
     SSTab1.Tab = i_Tab
     TimeScriptRun = 0
@@ -9494,7 +9518,7 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
                 lngTabN = lngTabN + 1
                 SSTab1.Tab = lngTabN
                 DoEvents
-                Sleep 100
+                'Sleep 100
                 lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
             Loop
 
@@ -9592,7 +9616,7 @@ Public Sub UpdateStatusButtonTAB()
     DebugMode "UpdateStatusButtonTAB-Start"
     BlockControl False
     ctlUcStatusBar1.PanelText(1) = strMessages(127)
-    Sleep 100
+    'Sleep 100
     DoEvents
     AllTimeScriptRun = vbNullString
     TimeScriptRun = GetTickCount

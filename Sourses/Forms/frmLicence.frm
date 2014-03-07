@@ -138,12 +138,12 @@ Private m_Caption        As String
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub CheckEditLicense(StrPathFile As String)
+Private Sub CheckEditLicense(strPathFile As String)
 
     Dim strMD5TextRtf       As String
     Dim strEULA_MD5RTF_temp As String
 
-    strMD5TextRtf = GetMD5(StrPathFile)
+    strMD5TextRtf = GetMD5(strPathFile)
     DebugMode "LicenceInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -269,8 +269,8 @@ Private Sub Form_Load()
         chkAgreeLicence.Visible = False
     End If
 
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
     
     ' Локализациz приложения
     If mbMultiLanguage Then
@@ -451,16 +451,16 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     ' Чекбокс
-    chkAgreeLicence.Caption = LocaliseString(StrPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
+    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

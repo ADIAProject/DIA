@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "04/03/2014"
+Public Const strDateProgram         As String = "06/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -442,7 +442,7 @@ Private Sub Main()
     
     'Because Ambient.UserMode does not report IDE behavior properly, we use our own UserMode tracker.  Many thanks to
     ' Kroc of camendesign.com for suggesting this fix.
-    g_UserModeFix=true
+    g_UserModeFix = True
 
     If mbShowFormLicence Then
         'Открываем форму лицензионного соглашения
@@ -468,9 +468,6 @@ End Sub
 Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional strDebugText As String, Optional ByVal mbEqual As Boolean = False, Optional ByVal mbDoEvents As Boolean = True, Optional strPanel1Text As String)
 
     If LenB(strPanel2Text) > 0 Then
-        If mbDoEvents Then
-            DoEvents
-        End If
 
         If frmMain.ctlUcStatusBar1.PanelCount >= 2 Then
             frmMain.ctlUcStatusBar1.PanelText(2) = strPanel2Text
@@ -480,6 +477,10 @@ Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional s
 
         If LenB(strPanel1Text) > 0 Then
             frmMain.ctlUcStatusBar1.PanelText(1) = strPanel1Text
+        End If
+        
+        If mbDoEvents Then
+            DoEvents
         End If
     End If
 

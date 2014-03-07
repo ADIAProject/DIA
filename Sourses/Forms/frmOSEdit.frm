@@ -548,8 +548,8 @@ Private Sub Form_Load()
     End With
 
     ' Устанавливаем картинки кнопок
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
 
     ' Локализациz приложения
     If mbMultiLanguage Then

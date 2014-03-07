@@ -531,11 +531,11 @@ Private Sub Form_Load()
     DoEvents
     lblWait.Left = 100
     lblWait.Width = Me.Width - 200
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
-    LoadIconImage2BtnJC cmdUpdate, "BTN_UPDATE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdUpdateFull, "BTN_UPDATEFULL", strPathImageMainWork
-    LoadIconImage2BtnJC cmdHistory, "BTN_HISTORY", strPathImageMainWork
-    LoadIconImage2BtnJC cmdDonate, "BTN_DONATE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdUpdate, "BTN_UPDATE", strPathImageMainWork
+    LoadIconImage2Object cmdUpdateFull, "BTN_UPDATEFULL", strPathImageMainWork
+    LoadIconImage2Object cmdHistory, "BTN_HISTORY", strPathImageMainWork
+    LoadIconImage2Object cmdDonate, "BTN_DONATE", strPathImageMainWork
 
     ' Локализациz приложения
     If mbMultiLanguage Then
@@ -681,27 +681,27 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdUpdate.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
-    cmdUpdateFull.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
-    cmdHistory.Caption = LocaliseString(StrPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
-    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdUpdate.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
+    cmdUpdateFull.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
+    cmdHistory.Caption = LocaliseString(strPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
+    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
-    lblVersion.Caption = LocaliseString(StrPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
+    lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
 
     If InStr(1, strRelease, "beta", vbTextCompare) Then
         lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"
         lblVersion.ForeColor = vbRed
     End If
 
-    lblVersionList.Caption = LocaliseString(StrPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
-    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
+    lblVersionList.Caption = LocaliseString(strPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
+    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

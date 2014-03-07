@@ -15,6 +15,7 @@ Begin VB.Form frmFontDialog
       Italic          =   0   'False
       Strikethrough   =   0   'False
    EndProperty
+   Icon            =   "frmFontDialog.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
@@ -40,9 +41,9 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Text            =   "frmFontDialog.frx":0000
+      Text            =   "frmFontDialog.frx":000C
       Alignment       =   2
-      CueBanner       =   "frmFontDialog.frx":0052
+      CueBanner       =   "frmFontDialog.frx":005E
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -64,7 +65,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":0072
+      Caption         =   "frmFontDialog.frx":007E
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -86,7 +87,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":009E
+      Caption         =   "frmFontDialog.frx":00AA
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -107,7 +108,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":00D2
+      Caption         =   "frmFontDialog.frx":00DE
    End
    Begin prjDIADBS.SpinBox txtFontSize 
       Height          =   315
@@ -139,7 +140,7 @@ Begin VB.Form frmFontDialog
       Width           =   525
       _ExtentX        =   926
       _ExtentY        =   582
-      Icon            =   "frmFontDialog.frx":00FC
+      Icon            =   "frmFontDialog.frx":0108
    End
    Begin prjDIADBS.CheckBoxW chkItalic 
       Height          =   315
@@ -158,7 +159,7 @@ Begin VB.Form frmFontDialog
          Italic          =   -1  'True
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":0682
+      Caption         =   "frmFontDialog.frx":068E
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.CheckBoxW chkBold 
@@ -178,7 +179,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":06AE
+      Caption         =   "frmFontDialog.frx":06BA
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlFontCombo ctlFontCombo 
@@ -219,7 +220,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":06D6
+      Caption         =   "frmFontDialog.frx":06E2
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
@@ -295,7 +296,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":0708
+      Caption         =   "frmFontDialog.frx":0714
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375
@@ -453,8 +454,8 @@ Private Sub Form_Load()
     End With
 
     ' Устанавливаем картинки кнопок и убираем описание кнопок
-    LoadIconImage2BtnJC cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2BtnJC cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
 
     ' Локализациz приложения
     If mbMultiLanguage Then
