@@ -1531,7 +1531,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
             BlockControl True
             FlatBorderButton acmdPackFiles(Index).hWnd, False
 
-            If Not optRezim_Upd.Value Then
+            'If Not optRezim_Upd.Value Then
                 ' Удаление временных файлов
                 strPackFileName_woExt = FileName_woExt(strPackFileName)
                 ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
@@ -1539,7 +1539,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                 If PathExists(ArchTempPath) Then
                     DelRecursiveFolder ArchTempPath
                 End If
-            End If
+            'End If
         End If
 
         ' Проверка выделенных пакетов
@@ -6993,9 +6993,9 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuRezimBaseDrvUpdateALL_Click()
     
-    SilentCheckNoDB
+    SilentReindexAllDB
     ' возвращаяем обратно стартовый режим
-    SelectStartMode
+    'SelectStartMode
     'BaseUpdateOrRunTask False
 End Sub
 

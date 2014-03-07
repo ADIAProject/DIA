@@ -78,11 +78,6 @@ End Type
 Private Const MEM_COMMIT             As Long = &H1000
 Private Const PAGE_EXECUTE_READWRITE As Long = &H40
 Private Const MEM_RELEASE            As Long = &H8000&
-Private Const WM_MOUSEWHEEL          As Long = &H20A
-Private Const WM_VSCROLL             As Long = &H115
-Private Const WM_HSCROLL             As Long = &H114
-Private Const WM_NCPAINT             As Long = &H85
-Private Const WM_DESTROY             As Long = &H2
 Private Const GWL_WNDPROC            As Long = -4
 Private Const GWL_STYLE              As Long = (-16)
 Private Const WS_VSCROLL             As Long = &H200000
@@ -109,9 +104,6 @@ Public Enum EnuBorderStyle
 End Enum
 
 Private SI                  As SCROLLINFO
-Private pASMWrapper         As Long
-Private PrevWndProc         As Long
-Private hSubclassedWnd      As Long
 Private mBorderSize         As Long
 Private OldPosH             As Long
 Private OldPosV             As Long
@@ -121,176 +113,62 @@ Private m_UseHandsCursor    As Boolean
 Private m_HScrollVisible    As Boolean
 Private m_VScrollVisible    As Boolean
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Ôóíêöèÿ)   :   Function WindowProc
-'! Description (Îïèñàíèå)  :   [type_description_here]
-'! Parameters  (Ïåðåìåííûå):   hWnd (Long)
-'                              uMsg (Long)
-'                              wParam (Long)
-'                              lParam (Long)
-'!--------------------------------------------------------------------------------
-Public Function WindowProc(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-    WindowProc = CallWindowProc(PrevWndProc, hWnd, uMsg, wParam, lParam)
+'*************************************************************
+'   Windows Messages
+'*************************************************************
+Private Const WM_THEMECHANGED   As Long = &H31A
+Private Const WM_SYSCOLORCHANGE As Long = &H15
+Private Const WM_NCACTIVATE     As Long = &H86
+Private Const WM_ACTIVATE       As Long = &H6
+Private Const WM_SETCURSOR As Long = &H20
+Private Const WM_SIZING         As Long = &H214
+Private Const WM_NCPAINT        As Long = &H85
+Private Const WM_MOVING         As Long = &H216
+Private Const WM_EXITSIZEMOVE   As Long = &H232
+Private Const WM_MOUSEWHEEL          As Long = &H20A
+Private Const WM_VSCROLL             As Long = &H115
+Private Const WM_HSCROLL             As Long = &H114
+Private Const WM_DESTROY             As Long = &H2
 
-    Select Case uMsg
+'*************************************************************
+'   TRACK MOUSE
+'*************************************************************
+Public Event MouseEnter()
+Public Event MouseLeave()
 
-        Case WM_DESTROY
-            Call StopSubclassing
+Private Const WM_MOUSELEAVE     As Long = &H2A3
+Private Const WM_MOUSEMOVE      As Long = &H200
 
-        Case WM_VSCROLL, WM_HSCROLL
+Private Enum TRACKMOUSEEVENT_FLAGS
+    TME_HOVER = &H1&
+    TME_LEAVE = &H2&
+    TME_QUERY = &H40000000
+    TME_CANCEL = &H80000000
+End Enum
 
-            Dim xScroll As Long
+Private Type TRACKMOUSEEVENT_STRUCT
+    cbSize                              As Long
+    dwFlags                             As TRACKMOUSEEVENT_FLAGS
+    hWndTrack                           As Long
+    dwHoverTime                         As Long
+End Type
 
-            xScroll = IIf(uMsg = WM_VSCROLL, SB_VERT, SB_HORZ)
-            GetScrollInfo hWnd, xScroll, SI
+Private bTrack       As Boolean
+Private bTrackUser32 As Boolean
+Private bInCtrl      As Boolean
 
-            Select Case LoWord(wParam)
+Private Declare Function TrackMouseEvent Lib "user32.dll" (ByRef lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 
-                Case SB_LINEDOWN
-                    SI.nPos = SI.nPos + 10
+'*************************************************************
+'   Subsclass
+'*************************************************************
+Private m_cSubclass                                    As cSelfSubHookCallback
 
-                Case SB_LINEUP
-                    SI.nPos = SI.nPos - 10
-
-                Case SB_PAGEDOWN
-                    SI.nPos = SI.nPos + SI.nPage
-
-                Case SB_PAGEUP
-                    SI.nPos = SI.nPos - SI.nPage
-
-                Case SB_THUMBTRACK
-                    SI.nPos = HiWord(wParam)
-
-                Case SB_ENDSCROLL
-
-                    '
-                Case SB_LEFT
-                    SI.nPos = SI.nMin
-
-                Case SB_RIGHT
-                    SI.nPos = SI.nMax
-            End Select
-
-            SetScrollInfo hWnd, xScroll, SI, True
-            GetScrollInfo hWnd, xScroll, SI
-
-            If uMsg = WM_VSCROLL Then
-                ScrollVerticalWindow -SI.nPos
-            Else
-                ScrollHorizontalWindow -SI.nPos
-            End If
-
-        Case WM_MOUSEWHEEL
-
-            If m_VScrollVisible Then
-                xScroll = SB_VERT
-            Else
-
-                If m_HScrollVisible Then
-                    xScroll = SB_HORZ
-                Else
-
-                    Exit Function
-
-                End If
-            End If
-
-            GetScrollInfo hWnd, xScroll, SI
-
-            If wParam < 0 Then
-                SI.nPos = SI.nPos + 10
-            Else
-                SI.nPos = SI.nPos - 10
-            End If
-
-            SetScrollInfo hWnd, xScroll, SI, True
-            GetScrollInfo hWnd, xScroll, SI
-
-            If xScroll = SB_VERT Then
-                ScrollVerticalWindow -SI.nPos
-            Else
-                ScrollHorizontalWindow -SI.nPos
-            End If
-
-        Case WM_NCPAINT
-
-            If UserControl.BorderStyle = vbFixedSingle Then
-
-                Dim Rec     As RECT
-                Dim ClipRec As RECT
-                Dim hTheme  As Long
-                Dim DC      As Long
-
-                DC = GetWindowDC(hWnd)
-                GetWindowRect UserControl.hWnd, Rec
-                Rec.Right = Rec.Right - Rec.Left
-                Rec.Bottom = Rec.Bottom - Rec.Top
-                Rec.Left = 0
-                Rec.Top = 0
-                hTheme = OpenThemeData(UserControl.hWnd, StrPtr("Edit"))
-
-                If hTheme Then
-                    ExcludeClipRect DC, mBorderSize, mBorderSize, Rec.Right - mBorderSize, Rec.Bottom - mBorderSize
-
-                    If DrawThemeBackground(hTheme, DC, 0, 0, Rec, Rec) = 0 Then
-                    End If
-
-                    Call CloseThemeData(hTheme)
-                End If
-
-                ReleaseDC hWnd, DC
-            End If
-
-        Case Else
-
-            On Error Resume Next
-
-            Dim hFocus As Long
-
-            If m_AutoScrollToFocus = False Then
-
-                Exit Function
-
-            End If
-
-            hFocus = GetFocus
-
-            If Not hFocus = m_hFocus Then
-                If IsChildOfMe(hFocus) Then
-                    m_hFocus = hFocus
-                    Call GetChildRectOfMe(hFocus, Rec)
-                    GetScrollInfo UserControl.hWnd, SB_VERT, SI
-
-                    If Rec.Bottom > SI.nPos + SI.nPage Then
-                        SI.nPos = Rec.Bottom - SI.nPage
-                    Else
-
-                        If Rec.Top < SI.nPos Then
-                            SI.nPos = Rec.Top
-                        End If
-                    End If
-
-                    SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
-                    '----------
-                    GetScrollInfo UserControl.hWnd, SB_HORZ, SI
-
-                    If Rec.Right > SI.nPos + SI.nPage Then
-                        SI.nPos = Rec.Right - SI.nPage
-                    Else
-
-                        If Rec.Left < SI.nPos Then
-                            SI.nPos = Rec.Left
-                        End If
-                    End If
-
-                    SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
-                    CheckScroll
-                End If
-            End If
-
-    End Select
-
-End Function
+Private Enum eParamUser
+    exParentForm = 1
+    exUserControl = 2
+End Enum
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Ôóíêöèÿ)   :   Property BackColor
@@ -512,10 +390,39 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         Me.Enabled = .ReadProperty("Enabled", True)
     End With
 
-    If Ambient.UserMode Then
-        SetSubclassing UserControl.hWnd
+    'If we're not in design mode
+    On Error GoTo H
+
+    'If we're not in design mode
+    If g_UserModeFix Then
+        
+        bTrack = True
+        bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
+
+        If Not bTrackUser32 Then
+            If Not APIFunctionPresent("_TrackMouseEvent", "comctl32") Then
+                bTrack = False
+            End If
+        End If
+
+        If bTrack Then
+                
+            'Add the messages that we're interested in
+            With m_cSubclass
+                '   Start Subclassing using our Handle
+                If .ssc_Subclass(UserControl.hWnd, ByVal exUserControl, 1, Me) Then
+                    .ssc_AddMsg UserControl.hWnd, MSG_AFTER, WM_VSCROLL, WM_HSCROLL, WM_MOUSEWHEEL, WM_NCPAINT, WM_THEMECHANGED, WM_SYSCOLORCHANGE
+                End If
+    
+            End With
+        End If
+
     End If
 
+H:
+
+    On Error GoTo 0
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -582,48 +489,6 @@ Private Function IsChildOfMe(hWnd As Long) As Boolean
 
 End Function
 
-' ActiveVB
-'!--------------------------------------------------------------------------------
-'! Procedure   (Ôóíêöèÿ)   :   Function SetSubclassing
-'! Description (Îïèñàíèå)  :   [type_description_here]
-'! Parameters  (Ïåðåìåííûå):   hWnd (Long)
-'!--------------------------------------------------------------------------------
-Private Function SetSubclassing(ByVal hWnd As Long) As Boolean
-
-    'Setzt Subclassing, sofern nicht schon gesetzt
-    If PrevWndProc = 0 Then
-        If pASMWrapper <> 0 Then
-            PrevWndProc = SetWindowLong(hWnd, GWL_WNDPROC, pASMWrapper)
-
-            If PrevWndProc <> 0 Then
-                hSubclassedWnd = hWnd
-                SetSubclassing = True
-            End If
-        End If
-    End If
-
-End Function
-
-' ActiveVB
-'!--------------------------------------------------------------------------------
-'! Procedure   (Ôóíêöèÿ)   :   Function StopSubclassing
-'! Description (Îïèñàíèå)  :   [type_description_here]
-'! Parameters  (Ïåðåìåííûå):
-'!--------------------------------------------------------------------------------
-Private Function StopSubclassing() As Boolean
-
-    'Stopt Subclassing, sofern gesetzt
-    If hSubclassedWnd <> 0 Then
-        If PrevWndProc <> 0 Then
-            Call SetWindowLong(hSubclassedWnd, GWL_WNDPROC, PrevWndProc)
-            hSubclassedWnd = 0
-            PrevWndProc = 0
-            StopSubclassing = True
-        End If
-    End If
-
-End Function
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Ôóíêöèÿ)   :   Sub UserControl_Initialize
 '! Description (Îïèñàíèå)  :   [type_description_here]
@@ -631,160 +496,11 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Initialize()
 
-    Dim ASM(0 To 104)    As Byte
-    Dim pVar             As Long
-    Dim ThisClass        As Long
-    Dim CallbackFunction As Long
-    Dim pVirtualFree
-
     SI.cbSize = Len(SI)
     SI.fMask = SIF_ALL
     mBorderSize = GetSystemMetrics(SM_CYBORDER)
-    'www.ActiveVB.net
-    'Virtuellen Speicher anfordern
-    pASMWrapper = VirtualAlloc(ByVal 0&, 104, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-
-    If pASMWrapper <> 0 Then
-        'Instanzzeiger der Klasse auslesen
-        ThisClass = ObjPtr(Me)
-        'Zeiger auf die Callback-Funktion auslesen
-        Call CopyMemory(pVar, ByVal ThisClass, 4)
-        Call CopyMemory(CallbackFunction, ByVal (pVar + 1956), 4)
-        'Zeiger auf die VirtualFree-Funktion ermitteln
-        pVirtualFree = GetProcAddress(GetModuleHandle(StrPtr("kernel32.dll")), "VirtualFree")
-        'ASM-Wrapper mit Maschinencode befüllen
-        ASM(0) = &H90
-        '&Hcc int 3 (Software Interrupt zum debuggen), &H90=nop (No Operation Point)
-        ASM(1) = &HFF
-        'inc (Zähler)
-        ASM(2) = &H5
-        ASM(7) = &H6A
-        'push 0
-        ASM(8) = &H0
-        ASM(9) = &H54
-        'push esp
-        ASM(10) = &HFF
-        'push (esp+18h) (laram)
-        ASM(11) = &H74
-        ASM(12) = &H24
-        ASM(13) = &H18
-        ASM(14) = &HFF
-        'push (esp+18h) (wParam)
-        ASM(15) = &H74
-        ASM(16) = &H24
-        ASM(17) = &H18
-        ASM(18) = &HFF
-        'push (esp+18h) (msg)
-        ASM(19) = &H74
-        ASM(20) = &H24
-        ASM(21) = &H18
-        ASM(22) = &HFF
-        'push (esp+18h) (hwnd)
-        ASM(23) = &H74
-        ASM(24) = &H24
-        ASM(25) = &H18
-        ASM(26) = &H68
-        'push Instanzzeiger
-        ASM(31) = &HB8
-        'mov eax, Adresse WindowProc
-        ASM(36) = &HFF
-        'call eax
-        ASM(37) = &HD0
-        ASM(38) = &HFF
-        'dec (Zähler)
-        ASM(39) = &HD
-        ASM(44) = &HA1
-        'mov eax, (Signal)
-        ASM(49) = &H85
-        'test eax, eax
-        ASM(50) = &HC0
-        ASM(51) = &H75
-        'jne
-        ASM(52) = &H4
-        ASM(53) = &H58
-        'pop eax (Rückgabewert)
-        ASM(54) = &HC2
-        'ret &H10
-        ASM(55) = &H10
-        ASM(56) = &H0
-        ASM(57) = &HA1
-        'mov eax, (Zähler)
-        ASM(62) = &H85
-        'test eax, eax
-        ASM(63) = &HC0
-        ASM(64) = &H74
-        'je
-        ASM(65) = &H4
-        ASM(66) = &H58
-        'pop eax (Rückgabewert)
-        ASM(67) = &HC2
-        'ret &H10
-        ASM(68) = &H10
-        ASM(69) = &H0
-        ASM(70) = &H58
-        'pop eax retval
-        ASM(71) = &H59
-        'pop ecx (Rücksprungzeiger)
-        ASM(72) = &H58
-        'pop eax hwnd
-        ASM(73) = &H58
-        'pop eax msg
-        ASM(74) = &H58
-        'pop eax wparam
-        ASM(75) = &H58
-        'pop eax lparam
-        ASM(76) = &H68
-        'push MEM_RELEASE
-        ASM(77) = &H0
-        ASM(78) = &H80
-        ASM(79) = &H0
-        ASM(80) = &H0
-        ASM(81) = &H6A
-        'push 0
-        ASM(82) = &H0
-        ASM(83) = &H68
-        'push Zeiger auf den Wrapper
-        ASM(88) = &H51
-        'push ecx (Rücksprungzeiger)
-        ASM(89) = &HB8
-        'mov eax, VirtualFree Adresse
-        ASM(94) = &HFF
-        'jmp eax
-        ASM(95) = &HE0
-        ASM(96) = &H0
-        'Speicher für Zähler
-        ASM(97) = &H0
-        ASM(98) = &H0
-        ASM(99) = &H0
-        ASM(100) = &H0
-        'Speicher für Signal
-        ASM(101) = &H0
-        ASM(102) = &H0
-        ASM(103) = &H0
-        'Zähler Variable setzen
-        pVar = pASMWrapper + 96
-        Call CopyMemory(ASM(3), pVar, 4)
-        Call CopyMemory(ASM(40), pVar, 4)
-        Call CopyMemory(ASM(58), pVar, 4)
-        'Flag Variable setzen
-        pVar = pASMWrapper + 100
-        Call CopyMemory(ASM(45), pVar, 4)
-        'Wrapper Adresse setzen
-        pVar = pASMWrapper
-        Call CopyMemory(ASM(84), pVar, 4)
-        'Instanzzeiger setzen
-        pVar = ThisClass
-        Call CopyMemory(ASM(27), pVar, 4)
-        'Funktionszeiger setzen
-        pVar = CallbackFunction
-        Call CopyMemory(ASM(32), pVar, 4)
-        'VirtualFree Adresse setzen
-        pVar = pVirtualFree
-        Call CopyMemory(ASM(90), pVar, 4)
-        'fertigen Wrapper in DEP-kompatiblen Speicher kopieren
-        Call CopyMemory(ByVal pASMWrapper, ASM(0), 104)
-    End If
-
+    
+    Set m_cSubclass = New cSelfSubHookCallback
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -935,32 +651,239 @@ Private Sub UserControl_Show()
     CheckScroll
 End Sub
 
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Ôóíêöèÿ)   :   Sub UserControl_Terminate
-'! Description (Îïèñàíèå)  :   [type_description_here]
+'! Description (Îïèñàíèå)  :   [The control is terminating - a good place to stop the subclasser]
 '! Parameters  (Ïåðåìåííûå):
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
 
-    'Veranlasst das Freigeben des virtuellen Speichers
-    Dim Counter As Long
-    Dim Flag    As Long
-
     On Error Resume Next
 
-    If pASMWrapper <> 0 Then
-        Call StopSubclassing
-        'Zähler auslesen
-        Call CopyMemory(Counter, ByVal (pASMWrapper + 104), 4)
+    'Terminate all subclassing
+    m_cSubclass.ssc_Terminate
+    Set m_cSubclass = Nothing
+    
+End Sub
 
-        If Counter = 0 Then
-            'Wrapper kann von VB aus gelöscht werden
-            Call VirtualFree(ByVal pASMWrapper, 0, MEM_RELEASE)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Ôóíêöèÿ)   :   Sub TrackMouseLeave
+'! Description (Îïèñàíèå)  :   [Track the mouse leaving the indicated window]
+'! Parameters  (Ïåðåìåííûå):   lng_hWnd (Long)
+'!--------------------------------------------------------------------------------
+Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
+
+    Dim TME As TRACKMOUSEEVENT_STRUCT
+
+    If bTrack Then
+
+        With TME
+            .cbSize = LenB(TME)
+            .dwFlags = TME_LEAVE
+            .hWndTrack = lng_hWnd
+            .dwHoverTime = 1
+        End With
+
+        If bTrackUser32 Then
+            TrackMouseEvent TME
         Else
-            'Wrapper befindet sich noch innerhalb einer Rekursion und muss sich selbst löschen; Flag setzen
-            Flag = 1
-            Call CopyMemory(ByVal (pASMWrapper + 108), Flag, 4)
+            TrackMouseEventComCtl TME
         End If
     End If
 
 End Sub
+
+'======================================================================================================
+'-Subclass callback, usually ordinal #1, the last method in this source file----------------------
+'!--------------------------------------------------------------------------------
+'! Procedure   (Ôóíêöèÿ)   :   Sub zWndProc1
+'! Description (Îïèñàíèå)  :   [type_description_here]
+'! Parameters  (Ïåðåìåííûå):   bBefore (Boolean)
+'                              bHandled (Boolean)
+'                              lReturn (Long)
+'                              lng_hWnd (Long)
+'                              uMsg (Long)
+'                              wParam (Long)
+'                              lParam (Long)
+'                              lParamUser (Long)
+'!--------------------------------------------------------------------------------
+Private Sub zWndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByRef lParamUser As Long)
+
+    '*************************************************************************************************
+    '* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
+    '*              you will know unless the callback for the uMsg value is specified as
+    '*              MSG_BEFORE_AFTER (both before and after the original WndProc).
+    '* bHandled   - In a before original WndProc callback, setting bHandled to True will prevent the
+    '*              message being passed to the original WndProc and (if set to do so) the after
+    '*              original WndProc callback.
+    '* lReturn    - WndProc return value. Set as per the MSDN documentation for the message value,
+    '*              and/or, in an after the original WndProc callback, act on the return value as set
+    '*              by the original WndProc.
+    '* lng_hWnd   - Window handle.
+    '* uMsg       - Message value.
+    '* wParam     - Message related data.
+    '* lParam     - Message related data.
+    '* lParamUser - User-defined callback parameter
+    '*************************************************************************************************
+    'If you really know what you're doing, it's possible to change the values of the
+    'hWnd, uMsg, wParam and lParam parameters in a 'before' callback so that different
+    'values get passed to the default handler.. and optionaly, the 'after' callback
+    
+    Select Case uMsg
+
+        Case WM_VSCROLL, WM_HSCROLL
+
+            Dim xScroll As Long
+
+            xScroll = IIf(uMsg = WM_VSCROLL, SB_VERT, SB_HORZ)
+            GetScrollInfo hWnd, xScroll, SI
+
+            Select Case LoWord(wParam)
+
+                Case SB_LINEDOWN
+                    SI.nPos = SI.nPos + 10
+
+                Case SB_LINEUP
+                    SI.nPos = SI.nPos - 10
+
+                Case SB_PAGEDOWN
+                    SI.nPos = SI.nPos + SI.nPage
+
+                Case SB_PAGEUP
+                    SI.nPos = SI.nPos - SI.nPage
+
+                Case SB_THUMBTRACK
+                    SI.nPos = HiWord(wParam)
+
+                Case SB_ENDSCROLL
+
+                    '
+                Case SB_LEFT
+                    SI.nPos = SI.nMin
+
+                Case SB_RIGHT
+                    SI.nPos = SI.nMax
+            End Select
+
+            SetScrollInfo hWnd, xScroll, SI, True
+            GetScrollInfo hWnd, xScroll, SI
+
+            If uMsg = WM_VSCROLL Then
+                ScrollVerticalWindow -SI.nPos
+            Else
+                ScrollHorizontalWindow -SI.nPos
+            End If
+
+        Case WM_MOUSEWHEEL
+
+            If m_VScrollVisible Then
+                xScroll = SB_VERT
+            Else
+
+                If m_HScrollVisible Then
+                    xScroll = SB_HORZ
+                Else
+
+                    Exit Sub
+
+                End If
+            End If
+
+            GetScrollInfo hWnd, xScroll, SI
+
+            If wParam < 0 Then
+                SI.nPos = SI.nPos + 10
+            Else
+                SI.nPos = SI.nPos - 10
+            End If
+
+            SetScrollInfo hWnd, xScroll, SI, True
+            GetScrollInfo hWnd, xScroll, SI
+
+            If xScroll = SB_VERT Then
+                ScrollVerticalWindow -SI.nPos
+            Else
+                ScrollHorizontalWindow -SI.nPos
+            End If
+
+        Case WM_NCPAINT
+
+            If UserControl.BorderStyle = vbFixedSingle Then
+
+                Dim Rec     As RECT
+                Dim ClipRec As RECT
+                Dim hTheme  As Long
+                Dim DC      As Long
+
+                DC = GetWindowDC(hWnd)
+                GetWindowRect UserControl.hWnd, Rec
+                Rec.Right = Rec.Right - Rec.Left
+                Rec.Bottom = Rec.Bottom - Rec.Top
+                Rec.Left = 0
+                Rec.Top = 0
+                hTheme = OpenThemeData(UserControl.hWnd, StrPtr("Edit"))
+
+                If hTheme Then
+                    ExcludeClipRect DC, mBorderSize, mBorderSize, Rec.Right - mBorderSize, Rec.Bottom - mBorderSize
+
+                    If DrawThemeBackground(hTheme, DC, 0, 0, Rec, Rec) = 0 Then
+                    End If
+
+                    Call CloseThemeData(hTheme)
+                End If
+
+                ReleaseDC hWnd, DC
+            End If
+
+        Case Else
+
+            On Error Resume Next
+
+            Dim hFocus As Long
+
+            If m_AutoScrollToFocus = False Then
+
+                Exit Sub
+
+            End If
+
+            hFocus = GetFocus
+
+            If Not hFocus = m_hFocus Then
+                If IsChildOfMe(hFocus) Then
+                    m_hFocus = hFocus
+                    Call GetChildRectOfMe(hFocus, Rec)
+                    GetScrollInfo UserControl.hWnd, SB_VERT, SI
+
+                    If Rec.Bottom > SI.nPos + SI.nPage Then
+                        SI.nPos = Rec.Bottom - SI.nPage
+                    Else
+
+                        If Rec.Top < SI.nPos Then
+                            SI.nPos = Rec.Top
+                        End If
+                    End If
+
+                    SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
+                    '----------
+                    GetScrollInfo UserControl.hWnd, SB_HORZ, SI
+
+                    If Rec.Right > SI.nPos + SI.nPage Then
+                        SI.nPos = Rec.Right - SI.nPage
+                    Else
+
+                        If Rec.Left < SI.nPos Then
+                            SI.nPos = Rec.Left
+                        End If
+                    End If
+
+                    SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
+                    CheckScroll
+                End If
+            End If
+
+    End Select
+
+End Sub
+
