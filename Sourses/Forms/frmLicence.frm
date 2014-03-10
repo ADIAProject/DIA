@@ -138,12 +138,12 @@ Private m_Caption        As String
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub CheckEditLicense(strPathFile As String)
+Private Sub CheckEditLicense(StrPathFile As String)
 
     Dim strMD5TextRtf       As String
     Dim strEULA_MD5RTF_temp As String
 
-    strMD5TextRtf = GetMD5(strPathFile)
+    strMD5TextRtf = GetMD5(StrPathFile)
     DebugMode "LicenceInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -230,6 +230,15 @@ Private Sub cmdOK_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Activate()
+    LoadLicence
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
 '! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
@@ -279,8 +288,6 @@ Private Sub Form_Load()
         ' Выставляем шрифт
         FontCharsetChange
     End If
-    
-    LoadLicence
 
 End Sub
 
@@ -435,6 +442,7 @@ Private Sub LoadLicence()
         
         ' Проверка лицензии на неправомерное изменение
         CheckEditLicense strPathLicence
+        LicenceRTF.SetFocus
     Else
 
         If Not mbSilentRun Then
@@ -451,16 +459,16 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     ' Чекбокс
-    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
+    chkAgreeLicence.Caption = LocaliseString(StrPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

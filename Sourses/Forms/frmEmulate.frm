@@ -222,6 +222,7 @@ Begin VB.Form frmEmulate
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmEmulate.frx":00AC
          Transparent     =   -1  'True
       End
@@ -242,6 +243,7 @@ Begin VB.Form frmEmulate
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmEmulate.frx":00EA
          Transparent     =   -1  'True
       End

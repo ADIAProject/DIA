@@ -1,5 +1,13 @@
 List of revisions:
 
+06-Mar-2014
+- Fixed a bug (Applies to Win XP only) that the UserControl_Terminate event did not fire in the RichTextBox control.
+- Eliminated the exposed OLEGuids interfaces in the RichTextBox.
+- Fixed the 'garbled' bug in the TabStrip control.
+
+21-Feb-2014
+- Fixed a bug in updating of the panels in the StatusBar control.
+
 12-Feb-2014
 - Improved the Picture property of the ListView control. (Passing the '.Image' of a PictureBox is now working properly)
 - The Visible property is now also available when setting to a shadow object. ('Set' command)

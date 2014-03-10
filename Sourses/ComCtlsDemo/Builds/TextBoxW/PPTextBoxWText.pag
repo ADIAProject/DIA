@@ -5,6 +5,7 @@ Begin VB.PropertyPage PPTextBoxWText
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   5925
+   LockControls    =   -1  'True
    PaletteMode     =   0  'Halftone
    ScaleHeight     =   3450
    ScaleWidth      =   5925
@@ -43,7 +44,6 @@ End With
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()
-Dim i As Long
 FreezeChanged = True
 With PropertyPage.SelectedControls(0)
 If Not TextObject Is Nothing Then

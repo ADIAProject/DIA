@@ -194,6 +194,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Value           =   0   'False
          Caption         =   "frmListHwidAll.frx":000C
          Transparent     =   -1  'True
@@ -215,6 +216,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmListHwidAll.frx":0054
          Transparent     =   -1  'True
       End
@@ -235,6 +237,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmListHwidAll.frx":007A
          Transparent     =   -1  'True
       End
@@ -255,6 +258,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmListHwidAll.frx":00AC
          Transparent     =   -1  'True
       End
@@ -320,6 +324,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmListHwidAll.frx":0112
          Transparent     =   -1  'True
       End
@@ -340,6 +345,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Value           =   0   'False
          Caption         =   "frmListHwidAll.frx":0184
          Transparent     =   -1  'True
@@ -361,6 +367,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Value           =   0   'False
          Caption         =   "frmListHwidAll.frx":01B8
          Transparent     =   -1  'True
@@ -382,6 +389,7 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         BackColor       =   15783104
          Caption         =   "frmListHwidAll.frx":01F2
          Transparent     =   -1  'True
       End
@@ -709,6 +717,12 @@ Private Sub FindCheckCountList()
 
     End If
 
+End Sub
+
+Private Sub Form_Activate()
+    
+    'On Error Resume Next
+    lvDevices.SetFocus
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1148,24 +1162,24 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
-    frFindDrvInternet.Caption = LocaliseString(strPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
-    chkParseHwid.Caption = LocaliseString(strPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
-    cmdGoSite.Caption = LocaliseString(strPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
-    optGrp1.Caption = LocaliseString(strPathFile, strFormName, "optGrp1", optGrp1.Caption)
-    optGrp2.Caption = LocaliseString(strPathFile, strFormName, "optGrp2", optGrp2.Caption)
-    optGrp3.Caption = LocaliseString(strPathFile, strFormName, "optGrp3", optGrp3.Caption)
-    optGrp4.Caption = LocaliseString(strPathFile, strFormName, "optGrp4", optGrp4.Caption)
-    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
-    cmdReNewHW.Caption = LocaliseString(strPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
-    cmdBackUpDrivers.Caption = LocaliseString(strPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
+    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
+    frFindDrvInternet.Caption = LocaliseString(StrPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
+    chkParseHwid.Caption = LocaliseString(StrPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
+    cmdGoSite.Caption = LocaliseString(StrPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
+    optGrp1.Caption = LocaliseString(StrPathFile, strFormName, "optGrp1", optGrp1.Caption)
+    optGrp2.Caption = LocaliseString(StrPathFile, strFormName, "optGrp2", optGrp2.Caption)
+    optGrp3.Caption = LocaliseString(StrPathFile, strFormName, "optGrp3", optGrp3.Caption)
+    optGrp4.Caption = LocaliseString(StrPathFile, strFormName, "optGrp4", optGrp4.Caption)
+    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
+    cmdReNewHW.Caption = LocaliseString(StrPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
+    cmdBackUpDrivers.Caption = LocaliseString(StrPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------

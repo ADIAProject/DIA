@@ -26,7 +26,7 @@ Begin VB.Form frmDonate
       Default         =   -1  'True
       Height          =   855
       Left            =   7425
-      TabIndex        =   0
+      TabIndex        =   1
       Top             =   5400
       Width           =   1995
       _ExtentX        =   3519
@@ -50,7 +50,7 @@ Begin VB.Form frmDonate
    Begin prjDIADBS.RichTextBox DonateRTF 
       Height          =   5250
       Left            =   75
-      TabIndex        =   1
+      TabIndex        =   0
       Top             =   75
       Width           =   9330
       _ExtentX        =   16457
@@ -176,12 +176,12 @@ Private m_Caption        As String
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub CheckEditDonate(strPathFile As String)
+Private Sub CheckEditDonate(StrPathFile As String)
 
     Dim strMD5TextRtf         As String
     Dim strDONATE_MD5RTF_temp As String
 
-    strMD5TextRtf = GetMD5(strPathFile)
+    strMD5TextRtf = GetMD5(StrPathFile)
     DebugMode "DonateInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -432,6 +432,7 @@ Private Sub LoadDonate()
 
     ' Проверка файла Donate на неправомерное изменение
     CheckEditDonate strPathDonate
+    DonateRTF.SetFocus
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -439,13 +440,13 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

@@ -937,7 +937,10 @@ End Sub
 
 Private Sub UserControl_Hide()
 On Error Resume Next
-If UserControl.Parent Is Nothing Then If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal 0&
+If UserControl.Parent Is Nothing Then
+    If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal 0&
+    Call DestroyRichTextBox
+End If
 On Error GoTo 0
 End Sub
 
@@ -2855,24 +2858,25 @@ End If
 UserControl.PropertyChanged "ZoomFactor"
 End Property
 
-Public Function GetOLEInterface() As OLEGuids.IRichEditOle
+Public Function GetOLEInterface() As IUnknown
 Attribute GetOLEInterface.VB_Description = "Retrieves an IRichEditOle object that a client can use to access the COM functionality."
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_GETOLEINTERFACE, 0, GetOLEInterface
 End Function
 
-Public Sub OLEObjectsAdd(ByVal OLEObj As OLEGuids.IOleObject)
+Public Sub OLEObjectsAdd(ByVal LpOleObject As Long)
 Attribute OLEObjectsAdd.VB_Description = "Inserts an OLE object into a rich text box control."
 If RichTextBoxHandle <> 0 Then
     Dim OLEInstance As OLEGuids.IRichEditOle
     Set OLEInstance = Me.GetOLEInterface
     If Not OLEInstance Is Nothing Then
-        Dim PropClientSite As OLEGuids.IOleClientSite, PropStorage As OLEGuids.IStorage
+        Dim PropOleObject As OLEGuids.IOleObject, PropClientSite As OLEGuids.IOleClientSite, PropStorage As OLEGuids.IStorage
+        Set PropOleObject = PtrToObj(LpOleObject)
         Set PropClientSite = OLEInstance.GetClientSite
         StgCreateDocFile 0, STGM_CREATE Or STGM_READWRITE Or STGM_SHARE_EXCLUSIVE Or STGM_DELETEONRELEASE, 0, PropStorage
         Const IID_IOleObject As String = "{00000112-0000-0000-C000-000000000046}"
         Dim IID As OLEGuids.OLECLSID
         CLSIDFromString StrPtr(IID_IOleObject), IID
-        OleSetContainedObject OLEObj, 1
+        OleSetContainedObject PropOleObject, 1
         Dim REOBJ As REOBJECT
         With REOBJ
         .cbStruct = LenB(REOBJ)
@@ -2885,14 +2889,14 @@ If RichTextBoxHandle <> 0 Then
         .dwUser = 0
         Set .pStorage = PropStorage
         Set .pOleSite = PropClientSite
-        Set .pOleObject = OLEObj
+        Set .pOleObject = PropOleObject
         End With
         OLEInstance.InsertObject REOBJ
     End If
 End If
 End Sub
 
-Public Function OLEObjectsGet(ByVal IndexObj As Long, Optional ByVal CharPos As Long) As OLEGuids.IOleObject
+Public Function OLEObjectsGet(ByVal IndexObj As Long, Optional ByVal CharPos As Long) As Long
 Attribute OLEObjectsGet.VB_Description = "Retrieves an OLE object in a rich text box control."
 If RichTextBoxHandle <> 0 Then
     Dim OLEInstance As OLEGuids.IRichEditOle
@@ -2902,7 +2906,7 @@ If RichTextBoxHandle <> 0 Then
         REOBJ.cbStruct = LenB(REOBJ)
         If IndexObj = REO_IOB_USE_CP Then REOBJ.CharPos = CharPos
         OLEInstance.GetObject IndexObj, REOBJ, REO_GETOBJ_POLEOBJ
-        Set OLEObjectsGet = REOBJ.pOleObject
+        OLEObjectsGet = ObjPtr(REOBJ.pOleObject)
     End If
 End If
 End Function
