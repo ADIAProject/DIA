@@ -884,6 +884,7 @@ End If
 End Property
 
 Public Property Let Text(ByVal Value As String)
+If Me.Text = Value Then Exit Property
 PropText = Value
 If TextBoxHandle <> 0 Then SendMessage TextBoxHandle, WM_SETTEXT, 0, ByVal StrPtr(PropText)
 UserControl.PropertyChanged "Text"
@@ -1114,21 +1115,7 @@ If PropWantReturn = Value Then Exit Property
 PropWantReturn = Value
 If TextBoxHandle <> 0 And Ambient.UserMode = True Then
     ' It is not possible (in VB6) to achieve this when specifying ES_WANTRETURN.
-    Dim PropOleObject As OLEGuids.IOleObject
-    Dim PropClientSite As OLEGuids.IOleClientSite
-    Dim PropUnknown As IUnknown
-    Dim PropControlSite As OLEGuids.IOleControlSite
-    On Error Resume Next
-    Set PropOleObject = Me
-    Set PropClientSite = PropOleObject.GetClientSite
-    Set PropUnknown = PropClientSite
-    Set PropControlSite = PropUnknown
-    PropControlSite.OnControlInfoChanged
-    If GetFocus() = TextBoxHandle Then
-        ' If focus is on the control then force the change immediately.
-        PropControlSite.OnFocus 1
-    End If
-    On Error GoTo 0
+    Call OnControlInfoChanged(Me, CBool(GetFocus() = TextBoxHandle))
 End If
 UserControl.PropertyChanged "WantReturn"
 End Property
@@ -1202,7 +1189,6 @@ Private Sub ReCreateTextBox()
 If Ambient.UserMode = True Then
     Dim Visible As Boolean
     Visible = Extender.Visible
-    With Me
     If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
     Dim SelStart As Long, SelEnd As Long
     Dim ScrollPosHorz As Integer, ScrollPosVert As Integer
@@ -1230,8 +1216,7 @@ If Ambient.UserMode = True Then
         If ScrollPosVert > 0 Then SendMessage TextBoxHandle, WM_VSCROLL, MakeDWord(SB_THUMBPOSITION, ScrollPosVert), ByVal 0&
     End If
     If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
-    .Refresh
-    End With
+    Me.Refresh
 Else
     Call DestroyTextBox
     Call CreateTextBox

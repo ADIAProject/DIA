@@ -12,11 +12,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Implements OLEGuids.IEnumerationVB
 Private ShadowListView As ListView
 Private PropIndex As Long
 Private PropPtr As Long
 Private PropListSubItem As Collection
+Private WithEvents PropEnumeration As Enumeration
+Attribute PropEnumeration.VB_VarHelpID = -1
 
 Private Sub Class_Initialize()
 Set PropListSubItem = New Collection
@@ -32,29 +33,27 @@ End With
 Set PropListSubItem = Nothing
 End Sub
 
-Private Sub IEnumerationVB_Cleanup(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long)
-End Sub
-
-Private Sub IEnumerationVB_GetNextItem(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long, ByRef VNextItem As Variant, ByRef NoMoreItems As Boolean)
+Private Sub PropEnumeration_GetNextItem(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long, ByRef VNextItem As Variant, ByRef NoMoreItems As Boolean)
 Dim ListItem As LvwListItem
 Set ListItem = PtrToObj(PropPtr)
 ShadowListView.FListSubItemsNextItem ListItem, Index, Control, Data, VNextItem, NoMoreItems
+If NoMoreItems = True Then Set PropEnumeration = Nothing
 End Sub
 
-Private Sub IEnumerationVB_Reset(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long)
+Private Sub PropEnumeration_Reset(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long)
 Index = -1
 Control = ShadowListView.FListItemsControl()
 End Sub
 
-Private Sub IEnumerationVB_Skip(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long, ByVal SkipCount As Long, ByRef SkippedAll As Boolean)
+Private Sub PropEnumeration_Skip(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long, ByVal SkipCount As Long, ByRef SkippedAll As Boolean)
 Index = Index + SkipCount
 End Sub
 
 Public Function NewEnum() As IEnumVARIANT
 Attribute NewEnum.VB_UserMemId = -4
 Attribute NewEnum.VB_MemberFlags = "40"
-Dim ThisEnum As New Enumeration
-Set NewEnum = ThisEnum.GetEnum(Me, ShadowListView.FListItemsControl())
+Set PropEnumeration = New Enumeration
+Set NewEnum = PropEnumeration.GetEnum(ShadowListView.FListItemsControl())
 End Function
 
 Friend Sub FInit(ByVal Object As ListView, ByVal Ptr As Long, ByVal Index As Long)

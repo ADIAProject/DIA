@@ -735,6 +735,7 @@ End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Long)
+If Me.Value = NewValue Then Exit Property
 PropValue = NewValue
 If Me.Max > Me.Min Then
     If PropValue > Me.Max Then

@@ -255,7 +255,7 @@ If Not VTableSubclassControl Is Nothing Then
 End If
 End Sub
 
-Public Sub OnControlInfoChanged(ByVal This As Object)
+Public Sub OnControlInfoChanged(ByVal This As Object, Optional ByVal OnFocus As Boolean)
 Dim PropOleObject As OLEGuids.IOleObject
 Dim PropClientSite As OLEGuids.IOleClientSite
 Dim PropUnknown As IUnknown
@@ -266,6 +266,7 @@ Set PropClientSite = PropOleObject.GetClientSite
 Set PropUnknown = PropClientSite
 Set PropControlSite = PropUnknown
 PropControlSite.OnControlInfoChanged
+If OnFocus = True Then PropControlSite.OnFocus 1
 End Sub
 
 Private Function IOleControl_GetControlInfo(ByVal This As Object, ByRef CI As OLEGuids.OLECONTROLINFO) As Long
@@ -345,9 +346,9 @@ End Sub
 
 Public Function GetDispID(ByVal This As Object, ByRef MethodName As String) As Long
 Dim IDispatch As OLEGuids.IDispatch
-Dim IID_Null As OLEGuids.OLECLSID
+Dim IID_NULL As OLEGuids.OLECLSID
 Set IDispatch = This
-IDispatch.GetIDsOfNames IID_Null, StrConv(MethodName, vbUnicode), 1, 0, GetDispID
+IDispatch.GetIDsOfNames IID_NULL, StrConv(MethodName, vbUnicode), 1, 0, GetDispID
 End Function
 
 Private Function IPPB_GetDisplayString(ByVal This As Object, ByVal DispID As Long, ByVal lpDisplayName As Long) As Long
@@ -381,8 +382,7 @@ If VarPtr(pCaStringsOut) = 0 Or VarPtr(pCaCookiesOut) = 0 Then
     IPPB_GetPredefinedStrings = E_POINTER
     Exit Function
 End If
-Dim cElems As Long
-Dim pElems As Long
+Dim cElems As Long, pElems As Long
 Dim nElemCount As Integer
 Dim lpString As Long
 ReDim StringsOutArray(0) As String
@@ -457,7 +457,7 @@ Call InitSafeArray(VarPtr(VntArray), VntCount)
 Set ThisEnum = This
 For i = 0 To VntCount - 1
     ThisEnum.GetNextItem VariantArray(i), NoMoreItems
-    If NoMoreItems Then Exit For
+    If NoMoreItems = True Then Exit For
     liFetched = liFetched + 1
 Next i
 If liFetched = VntCount Then
@@ -507,12 +507,11 @@ Private Sub InitSafeArray(ByVal Addr As Long, ByVal cElt As Long)
 Const FADF_STATIC As Long = &H2
 Const FADF_FIXEDSIZE As Long = &H10
 Const FADF_VARIANT As Long = &H800
-Const FADF_Flags As Long = FADF_STATIC Or FADF_FIXEDSIZE Or FADF_VARIANT
 With SAHeader
 If .cDims = 0 Then
     .cbElements = 16
     .cDims = 1
-    .fFeatures = FADF_Flags
+    .fFeatures = FADF_STATIC Or FADF_FIXEDSIZE Or FADF_VARIANT
     CopyMemory ByVal ArrPtr(VariantArray), VarPtr(SAHeader), 4
 End If
 .Bounds(0).cElements = cElt + 1

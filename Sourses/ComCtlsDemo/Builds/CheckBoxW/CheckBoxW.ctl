@@ -678,6 +678,7 @@ End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Integer)
+If Me.Value = NewValue Then Exit Property
 Select Case NewValue
     Case vbUnchecked, vbChecked, vbGrayed
         PropValue = NewValue

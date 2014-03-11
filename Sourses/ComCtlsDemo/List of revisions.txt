@@ -1,5 +1,9 @@
 List of revisions:
 
+10-Mar-2014
+- Minor bugfix in the TextBoxW control.
+- Some component modifications. (it is recommended to replace everything)
+
 06-Mar-2014
 - Fixed a bug (Applies to Win XP only) that the UserControl_Terminate event did not fire in the RichTextBox control.
 - Eliminated the exposed OLEGuids interfaces in the RichTextBox.

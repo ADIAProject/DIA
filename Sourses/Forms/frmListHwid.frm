@@ -1076,10 +1076,6 @@ Private Sub Form_Resize()
 
 End Sub
 
-Private Sub frGroup_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-End Sub
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lvFolders_ColumnClick
 '! Description (Описание)  :   [type_description_here]

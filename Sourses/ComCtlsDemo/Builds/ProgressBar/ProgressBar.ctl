@@ -577,6 +577,7 @@ End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Long)
+If Me.Value = NewValue Then Exit Property
 PropValue = NewValue
 Select Case PropValue
     Case PropRange.Min To PropRange.Max
@@ -779,11 +780,13 @@ End Sub
 
 Private Sub ReCreateProgressBar()
 If Ambient.UserMode = True Then
-    SendMessageLong UserControl.hWnd, WM_SETREDRAW, 0, 0
+    Dim Visible As Boolean
+    Visible = Extender.Visible
+    If Visible = True Then SendMessageLong UserControl.hWnd, WM_SETREDRAW, 0, 0
     Call DestroyProgressBar
     Call CreateProgressBar
     Call UserControl_Resize
-    SendMessageLong UserControl.hWnd, WM_SETREDRAW, 1, 0
+    If Visible = True Then SendMessageLong UserControl.hWnd, WM_SETREDRAW, 1, 0
     Me.Refresh
 Else
     Call DestroyProgressBar

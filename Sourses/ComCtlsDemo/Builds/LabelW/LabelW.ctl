@@ -594,8 +594,7 @@ Caption = PropCaption
 End Property
 
 Public Property Let Caption(ByVal Value As String)
-Dim RaiseChange As Boolean
-RaiseChange = Not CBool(PropCaption = Value)
+If PropCaption = Value Then Exit Property
 PropCaption = Value
 If PropUseMnemonic = True Then
     UserControl.AccessKeys = ChrW(AccelCharCode(PropCaption))
@@ -605,7 +604,7 @@ End If
 LabelAutoSizeFlag = PropAutoSize
 Me.Refresh
 UserControl.PropertyChanged "Caption"
-If RaiseChange = True Then RaiseEvent Change
+RaiseEvent Change
 End Property
 
 Public Property Get Default() As String
@@ -625,7 +624,13 @@ End Property
 
 Public Property Let UseMnemonic(ByVal Value As Boolean)
 PropUseMnemonic = Value
-Me.Caption = PropCaption
+If PropUseMnemonic = True Then
+    UserControl.AccessKeys = ChrW(AccelCharCode(PropCaption))
+Else
+    UserControl.AccessKeys = vbNullString
+End If
+LabelAutoSizeFlag = PropAutoSize
+Me.Refresh
 UserControl.PropertyChanged "UseMnemonic"
 End Property
 

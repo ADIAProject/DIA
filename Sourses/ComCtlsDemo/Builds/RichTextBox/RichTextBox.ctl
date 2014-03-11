@@ -1629,7 +1629,6 @@ If Me.TextMode = RtfTextModeRichText Then Flags = SF_RTF Else Flags = SF_TEXT Or
 If Ambient.UserMode = True Then
     Dim Visible As Boolean
     Visible = Extender.Visible
-    With Me
     If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
     Dim RECR As RECHARRANGE, P As POINTAPI
     If RichTextBoxHandle <> 0 Then
@@ -1646,8 +1645,7 @@ If Ambient.UserMode = True Then
         SendMessage RichTextBoxHandle, EM_SETSCROLLPOS, 0, ByVal VarPtr(P)
     End If
     If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
-    .Refresh
-    End With
+    Me.Refresh
 Else
     StreamStringOut Buffer, Flags
     Call DestroyRichTextBox
