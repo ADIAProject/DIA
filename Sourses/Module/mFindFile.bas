@@ -25,6 +25,7 @@ Public Type FindFileListStruct
     Path As String
     Name As String
     FullPath As String
+    RelativePath As String
     NameLcase As String
     NameWoExt As String
     Size As Long
@@ -223,7 +224,7 @@ End Function
 '                              miMaxCountArr (Long)
 '                              mbDelete (Boolean = False)
 '!--------------------------------------------------------------------------------
-Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCountArr As Long, Optional mbDelete As Boolean = False)
+Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCountArr As Long, Optional mbDelete As Boolean = False, Optional sRootInit As String = vbNullString)
 
     Dim wfd         As WIN32_FIND_DATA
     Dim hFile       As Long
@@ -243,6 +244,7 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
 
             'ReDim sResultFileList(5, miMaxCountArr)
             ReDim sResultFileList(miMaxCountArr)
+            sRootInit = sRoot
 
         Else
 
@@ -262,7 +264,7 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
             If (wfd.dwFileAttributes And vbDirectory) Then
                 If Asc(strFileName) <> vbDot Then
                     If fp.bRecurse Then
-                        SearchForFiles sRoot & strFileName & vbBackslash, False, miMaxCountArr, mbDelete
+                        SearchForFiles sRoot & strFileName & vbBackslash, False, miMaxCountArr, mbDelete, sRootInit
                     End If
                 End If
 
@@ -296,6 +298,9 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
                         ' Путь до файла
                         'sResultFileList(2, sResultFileListCount) = sRoot
                         sResultFileList(sResultFileListCount).Path = sRoot
+                        If Not mbInitial Then
+                            sResultFileList(sResultFileListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
+                        End If
                         ' Имя файла
                         'sResultFileList(3, sResultFileListCount) = strFileName
                         sResultFileList(sResultFileListCount).Name = strFileName

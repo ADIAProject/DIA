@@ -1,9 +1,9 @@
-Attribute VB_Name = "mStrings"
+Attribute VB_Name = "mSplit"
 Option Explicit
 
 Public Enum SplitCompareMethod
-    [Split BinaryCompare] = VbCompareMethod.vbBinaryCompare         ' InStrB
-    [Split CharacterCompare] = VbCompareMethod.vbDatabaseCompare    ' InStr(BinaryCompare)
+    [SplitBinaryCompare] = VbCompareMethod.vbBinaryCompare         ' InStrB
+    [SplitCharacterCompare] = VbCompareMethod.vbDatabaseCompare    ' InStr(BinaryCompare)
 End Enum
 
 Private m_A()       As Long
@@ -17,14 +17,13 @@ Private Declare Function InitStringArray Lib "oleaut32.dll" Alias "SafeArrayCrea
 Private Declare Function SysAllocStringByteLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
 Private Declare Function SysAllocStringLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property API
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Module (String)
 '                              Procedure (String)
 '!--------------------------------------------------------------------------------
-Private Property Get API(Module As String, Procedure As String) As Long
+Private Property Get API(ByVal Module As String, ByVal Procedure As String) As Long
 
     Dim Handle    As Long
     Dim lngStrPtr As Long
@@ -99,8 +98,8 @@ End Property
 '                              Compare (SplitCompareMethod) As String()
 '!--------------------------------------------------------------------------------
 Public Function Split(Expression As String, Optional Delimiter As String = " ", Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As String()
-    Procedure(AddressOf mStrings.Split) = Procedure(AddressOf mStrings.z_Split)
-    Split = mStrings.Split(Expression, Delimiter, Limit, Compare)
+    Procedure(AddressOf mSplit.Split) = Procedure(AddressOf mSplit.z_Split)
+    Split = mSplit.Split(Expression, Delimiter, Limit, Compare)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -168,7 +167,7 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = " "
 
                 ' find the first item
                 If Limit > 1 Then
-                    If Compare = [Split BinaryCompare] Then
+                    If Compare = [SplitBinaryCompare] Then
 
                         Do
                             i = InStrB(i + 1, Expression, Delimiter)
@@ -199,7 +198,7 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = " "
                     End If
 
                     ' InStrB?
-                    If Compare = [Split BinaryCompare] Then
+                    If Compare = [SplitBinaryCompare] Then
 
                         For C = 0 To Limit
 
@@ -314,6 +313,7 @@ End Function
 '                              Value (Long)
 '!--------------------------------------------------------------------------------
 Public Sub PutLong(ByVal Ptr As Long, ByVal Value As Long)
-    Procedure(AddressOf mStrings.PutLong) = API("msvbvm60", "PutMem4")
+    Procedure(AddressOf mSplit.PutLong) = API("msvbvm60", "PutMem4")
     PutLong Ptr, Value
 End Sub
+

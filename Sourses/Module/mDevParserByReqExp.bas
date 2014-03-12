@@ -182,7 +182,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         'Построение списка inf файлов в рабочем каталоге
         strInfPathTempList_x = SearchFilesInRoot(strInfPathTemp, "*.inf", True, False)
     Else
-        ' Создаем спсиок файлов *.cat в архиве
+        ' Создаем список файлов *.cat в архиве
         strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
         cmdString = "cmd.exe /c Dir " & Kavichki & strPathDRP & strPackFileName & "\*.cat" & Kavichki & " /B /S >" & Kavichki & strArchCatFileList & Kavichki
 
@@ -321,8 +321,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     For infNumber = LBound(strInfPathTempList_x) To UBound(strInfPathTempList_x)
         ' полный путь к файлу inf
         strInfFullname = strInfPathTempList_x(infNumber).FullPath
-        ' Каталог где лежит файл
-        strInfPath = strInfPathTempList_x(infNumber).Path
         ' Имя inf файла
         strInfFileName = strInfPathTempList_x(infNumber).NameLcase
         
@@ -332,11 +330,12 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             If Not GetInputState = 0 Then DoEvents
         End If
 
-        ' путь к файлу inf для записи в параметры
+        ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
         If Not mbDP_Is_aFolder Then
-            strInfPath = Replace$(strInfPath, strWorkDir, vbNullString, , , vbTextCompare)
+            'strInfPath = Replace$(strInfPath, strWorkDir, vbNullString, , , vbTextCompare)
+            strInfPath = strInfPathTempList_x(infNumber).RelativePath
         Else
-            strInfPath = Replace$(strInfPath, BackslashAdd2Path(strPathDRP & strPackFileName), vbNullString, , , vbTextCompare)
+            strInfPath = Replace$(strInfPathTempList_x(infNumber).Path, BackslashAdd2Path(strPathDRP & strPackFileName), vbNullString, , , vbTextCompare)
         End If
 
         If strInfPathTempList_x(infNumber).Size > 0 Then

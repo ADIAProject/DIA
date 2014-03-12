@@ -7,11 +7,14 @@ Public Const MAX_PATH_B            As Long = 4000 * 2 - 1
 Public Const MAXDWORD              As Long = &HFFFFFFFF
 
 'Константы для CreateFile
-Public Const INVALID_HANDLE_VALUE  As Integer = -1
+Public Const INVALID_HANDLE_VALUE  As Long = (-1)
 Public Const FILE_ATTRIBUTE_NORMAL As Long = &H80
 Public Const GENERIC_WRITE         As Long = &H40000000
 Public Const GENERIC_READ          As Long = &H80000000
 Public Const OPEN_EXISTING         As Long = 3
+Public Const FILE_SHARE_READ       As Long = &H1
+Public Const CREATE_ALWAYS         As Long = 2
+Public Const FILE_FLAG_SEQUENTIAL_SCAN As Long = &H8000000
 
 'Строковые константы частоиспользуемых функций
 Public Const vbBackslash           As String = "\"
@@ -69,7 +72,9 @@ Public Declare Function PathAddBackslash Lib "shlwapi.dll" Alias "PathAddBacksla
 Public Declare Function PathRemoveBackslash Lib "shlwapi.dll" Alias "PathRemoveBackslashA" (ByVal Path As String) As Long
 Public Declare Function MoveFile Lib "kernel32.dll" Alias "MoveFileA" (ByVal lpExistingFileName As String, ByVal lpNewFileName As String) As Long
 Public Declare Function CreateFile Lib "kernel32.dll" Alias "CreateFileW" (ByVal lpFileName As Long, ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, ByVal lpSecurityAttributes As Long, ByVal dwCreationDisposition As Long, ByVal dwFlagsAndAttributes As Long, ByVal hTemplateFile As Long) As Long
+Public Declare Function WriteFile Lib "kernel32" (ByVal hFile As Long, ByVal lpBuffer As Long, ByVal NumberOfBytesToWrite As Long, ByRef NumberOfBytesWritten As Long, ByVal lpOverlapped As Long) As Long
 Public Declare Function ReadFile Lib "kernel32.dll" (ByVal hFile As Long, lpBuffer As Any, ByVal nNumberOfBytesToRead As Long, lpNumberOfBytesRead As Long, ByVal lpOverlapped As Any) As Long
+Public Declare Function FlushFileBuffers Lib "kernel32" (ByVal hFile As Long) As Long
 Public Declare Function GetFileSize Lib "kernel32.dll" (ByVal hFile As Long, lpFileSizeHigh As Long) As Long
 Public Declare Function StrFormatByteSize Lib "shlwapi.dll" Alias "StrFormatByteSizeA" (ByVal dw As Long, ByVal pszBuf As String, ByVal cchBuf As Long) As Long
 Public Declare Function StrFormatByteSizeW Lib "shlwapi.dll" (ByVal qdwLow As Long, ByVal qdwHigh As Long, pwszBuf As Any, ByVal cchBuf As Long) As Long

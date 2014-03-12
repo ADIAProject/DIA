@@ -258,6 +258,7 @@ Begin VB.Form frmMain
             BackColor       =   14933984
             Caption         =   "Кнопка пакета драйверов"
             CaptionEffects  =   0
+            Mode            =   2
             PictureAlign    =   0
             PictureEffectOnOver=   0
             PictureEffectOnDown=   0
@@ -1370,8 +1371,8 @@ Private Sub acmdPackFiles_Click(Index As Integer)
 
         'Если пакет драйверов реальный, то....
         If LenB(strPackFileName) > 0 Then
-            FlatBorderButton acmdPackFiles(Index).hWnd
-            'acmdPackFiles(Index).Refresh
+            'FlatBorderButton acmdPackFiles(Index).hWnd
+            acmdPackFiles(Index).Value = True
             strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
             strPathDevDB = arrOSList(SSTab1.Tab).devIDFolderFull
             mbDevParserRun = True
@@ -1398,6 +1399,11 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     TimeScriptFinish = GetTickCount
                     AllTimeScriptRun = CalculateTime(TimeScriptRun, TimeScriptFinish, True)
                     ChangeStatusTextAndDebug strMessages(62) & " " & AllTimeScriptRun, "DevParserByRegExp: All time for create Base for file finish: " & strPackFileName
+                    
+                    If Not mbGroupTask Then
+                        ' Обновить список неизвестных дров и описание для кнопки
+                        LoadCmdViewAllDeviceCaption
+                    End If
                 End If
 
                 '------------------------------------------------------
@@ -1454,7 +1460,8 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     ' если на форме нажали отмену или закрыли ее, то завершаем обработку
                     If Not mbCheckDRVOk Then
                         mbDevParserRun = False
-                        FlatBorderButton acmdPackFiles(Index).hWnd, False
+                        'FlatBorderButton acmdPackFiles(Index).hWnd, False
+                        acmdPackFiles(Index).Value = False
                         'acmdPackFiles(Index).Refresh
                         BlockControl True
                         ChangeStatusTextAndDebug strMessages(65) & " " & strPackFileName
@@ -1529,7 +1536,8 @@ Private Sub acmdPackFiles_Click(Index As Integer)
 
             mbDevParserRun = False
             BlockControl True
-            FlatBorderButton acmdPackFiles(Index).hWnd, False
+            'FlatBorderButton acmdPackFiles(Index).hWnd, False
+            acmdPackFiles(Index).Value = False
 
             'If Not optRezim_Upd.Value Then
                 ' Удаление временных файлов
@@ -1696,7 +1704,6 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
             Do While i >= lngNumButtOnTab
                 SSTab1.Tab = SSTab1.Tab + 1
                 DoEvents
-                'Sleep 100
                 lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
             Loop
 
@@ -1786,11 +1793,16 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
     ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
     cmdBreakUpdateDB.Visible = False
     BlockControl True
+    
 TheEnd:
+    If mbTasks Then
+        ' Обновить список неизвестных дров и описание для кнопки
+        LoadCmdViewAllDeviceCaption
+    End If
+        
     mbTasks = False
     SSTab1.Tab = lngSStabStart
     DoEvents
-    'Sleep 100
     DebugMode "BaseUpdateOrRunTask-End"
 End Sub
 
@@ -2435,9 +2447,11 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdRunTask_Click()
     mbooSelectInstall = False
+    mbGroupTask = True
     BaseUpdateOrRunTask False, True
     BlockControl True
     cmdRunTask.Enabled = FindCheckCount(False)
+    mbGroupTask = False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -2973,7 +2987,6 @@ Private Sub CreateButtonsonSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
     If PathExists(strDrpPath) Then
         tabN = miTabIndex
         TabHeight = SSTab1.Height
-        'Sleep 200
         DoEvents
         SSTab1.Tab = tabN
         StartPositionLeft = lngButtonLeft
@@ -4554,7 +4567,6 @@ Private Sub Form_Activate()
 
         ' Создаем элемент ProgressBar
         CreateProgressNew
-        'Sleep 300
         DoEvents
 
         ' поиск устройств при запуске
@@ -4651,6 +4663,7 @@ Private Sub Form_Activate()
     
             ' подсчитываем кол-во неизвестных драйверов и изменяем текст кнопки
             LoadCmdViewAllDeviceCaption
+            
             ' Загружаем описание значков иконок
             ToolTipStatusLoad
             Unload frmLicence
@@ -4662,8 +4675,7 @@ Private Sub Form_Activate()
             'If mbExMenu Then
             'ExMenuEnable
             'End If
-            Me.Refresh
-            'Sleep 400
+            'Me.Refresh
     
             If mbRunWithParam Then
                 ChangeStatusTextAndDebug strMessages(60), "Program start in silentMode"
@@ -5509,7 +5521,8 @@ Private Sub GroupInstallDP()
         For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
 
             With acmdPackFiles(arrCheckDP(0, i))
-                FlatBorderButton .hWnd
+                'FlatBorderButton .hWnd
+                .Value = True
                 '.Refresh
 
                 ' Прерываем процесс распаковки
@@ -5533,7 +5546,8 @@ Private Sub GroupInstallDP()
                     chkPackFiles(arrCheckDP(0, i)).Value = False
                 End If
 
-                FlatBorderButton .hWnd, False
+                'FlatBorderButton .hWnd, False
+                .Value = False
                 '.Refresh
             End With
 
@@ -5730,7 +5744,6 @@ Private Sub InsOrUpdSelectedDP(ByVal mbInstallMode As Boolean)
 
             mbGroupTask = True
             mbooSelectInstall = False
-            'Sleep 200
             GroupInstallDP
             mbGroupTask = False
         Else
@@ -6994,9 +7007,10 @@ End Sub
 Private Sub mnuRezimBaseDrvUpdateALL_Click()
     
     SilentReindexAllDB
+    ' Обновить список неизвестных дров и описание для кнопки
+    LoadCmdViewAllDeviceCaption
     ' возвращаяем обратно стартовый режим
-    'SelectStartMode
-    'BaseUpdateOrRunTask False
+    SelectStartMode , True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -7008,6 +7022,8 @@ Private Sub mnuRezimBaseDrvUpdateNew_Click()
 
     If FindNoDBCount > 0 Then
         SilentCheckNoDB
+        ' Обновить список неизвестных дров и описание для кнопки
+        LoadCmdViewAllDeviceCaption
         ' возвращаяем обратно стартовый режим
         SelectStartMode
     Else
@@ -7308,7 +7324,8 @@ Private Sub NoSupportOSorNoDevBD()
             ' собственно запуск создания БД
             SilentCheckNoDB
             ' возвращаяем обратно стартовый режим
-            SelectStartMode
+            SSTab2(SSTab1.Tab).Tab = 0
+            SelectStartMode , True
         End If
     End If
 
@@ -8153,8 +8170,6 @@ Private Sub SelectAllOnTabDP(Optional ByVal mbIntellectMode As Boolean = True)
 
     If SSTab1.Enabled Then
         'MsgBox "Выбираем нужный режим установки"
-        'Sleep 100
-
         If mbIntellectMode Then
             SelectStartMode 1, False
         Else
@@ -8164,7 +8179,6 @@ Private Sub SelectAllOnTabDP(Optional ByVal mbIntellectMode As Boolean = True)
         cmbCheckButton.ListIndex = 3
         cmbCheckButton.Refresh
         DoEvents
-        'Sleep 200
         cmdCheck_Click
     End If
 
@@ -8214,7 +8228,6 @@ End Sub
 Private Sub SelectNotInstalledDP(Optional ByVal mbIntellectMode As Boolean = True)
 
     If SSTab1.Enabled Then
-        'Sleep 100
 
         If mbIntellectMode Then
             SelectStartMode 1, False
@@ -8225,7 +8238,6 @@ Private Sub SelectNotInstalledDP(Optional ByVal mbIntellectMode As Boolean = Tru
         cmbCheckButton.ListIndex = 1
         cmbCheckButton.Refresh
         DoEvents
-        'Sleep 200
         cmdCheck_Click
     End If
 
@@ -8240,7 +8252,6 @@ Private Sub SelectRecommendedDP(Optional ByVal mbIntellectMode As Boolean = True
 
     If SSTab1.Enabled Then
         'MsgBox "Выбираем нужный режим установки"
-        'Sleep 100
 
         If mbIntellectMode Then
             SelectStartMode 1, False
@@ -8251,7 +8262,6 @@ Private Sub SelectRecommendedDP(Optional ByVal mbIntellectMode As Boolean = True
         cmbCheckButton.ListIndex = 2
         cmbCheckButton.Refresh
         DoEvents
-        'Sleep 200
         cmdCheck_Click
     End If
 
@@ -8596,20 +8606,17 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SilentCheckNoDB()
-    'Sleep 200
     DoEvents
     SelectStartMode 3, False
     'Выбираем всё рекомендованное для установки
     cmbCheckButton.ListIndex = 3
     cmbCheckButton.Refresh
     DoEvents
-    'Sleep 200
     cmdCheck_Click
     'Собственно запускаем сам процесс создания БД
     mbGroupTask = True
     mbooSelectInstall = False
     DoEvents
-    'Sleep 200
     cmdRunTask_Click
     FindNoDBCount
     mbGroupTask = False
@@ -8688,7 +8695,6 @@ Private Sub SilentInstall()
     'MsgBox "Собственно запускаем сам процесс установки"
     mbGroupTask = True
     mbooSelectInstall = False
-    'Sleep 200
     DoEvents
     GroupInstallDP
     mbGroupTask = False
@@ -8792,7 +8798,6 @@ Private Sub StartReOrderBtnOnTab2(ByVal miIndex As Integer, ByVal miPrevTab As I
             End If
 
             DoEvents
-            'Sleep 100
 
             Select Case SSTab2(miIndex).Tab
 
@@ -9494,7 +9499,6 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
     End If
 
     BlockControl False
-    'Sleep 100
     DoEvents
     SSTab1.Tab = i_Tab
     TimeScriptRun = 0
@@ -9518,7 +9522,6 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
                 lngTabN = lngTabN + 1
                 SSTab1.Tab = lngTabN
                 DoEvents
-                'Sleep 100
                 lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
             Loop
 
@@ -9531,14 +9534,16 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
                 If Not mbReloadTT Then
                     ' Кнопка выглядит нажатой
                     Set .PictureNormal = imgUpdBD.Picture
-                    FlatBorderButton .hWnd
+                    'FlatBorderButton .hWnd
+                    .Value = True
                     '.Refresh
                     strPackFileName = .Tag
                     ChangeStatusTextAndDebug "(" & i + 1 & " " & strMessages(124) & " " & ButtCount & "): " & strMessages(89) & " " & strPackFileName
                     ' Обновление подсказки
                     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                     ' Кнопка выглядит отжатой
-                    FlatBorderButton .hWnd, False
+                    'FlatBorderButton .hWnd, False
+                    .Value = False
                     '.Refresh
                 Else
                     strPackFileName = .Tag
@@ -9616,7 +9621,6 @@ Public Sub UpdateStatusButtonTAB()
     DebugMode "UpdateStatusButtonTAB-Start"
     BlockControl False
     ctlUcStatusBar1.PanelText(1) = strMessages(127)
-    'Sleep 100
     DoEvents
     AllTimeScriptRun = vbNullString
     TimeScriptRun = GetTickCount
@@ -9655,14 +9659,16 @@ Public Sub UpdateStatusButtonTAB()
             With acmdPackFiles(i)
                 ' Кнопка выглядит нажатой
                 Set .PictureNormal = imgUpdBD.Picture
-                FlatBorderButton .hWnd
+                'FlatBorderButton .hWnd
+                .Value = True
                 '.Refresh
                 strPackFileName = .Tag
                 ChangeStatusTextAndDebug "(" & lngCurrBtn & " " & strMessages(124) & " " & lngSummBtn & "): " & strMessages(89) & " " & strPackFileName
                 ' Обновление подсказки
                 ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                 ' Кнопка выглядит отжатой
-                FlatBorderButton .hWnd, False
+                'FlatBorderButton .hWnd, False
+                .Value = False
                 '.Refresh
             End With
 
@@ -9834,7 +9840,9 @@ Private Sub SelectStartMode(Optional miModeTemp As Long = 0, Optional mbTab2 As 
 
                     ' Если вкладка активна, то выставляем начальную
                     If SSTab2(i_i).TabEnabled(lngStartModeTab2) = True Then
-                        SSTab2(i_i).Tab = lngStartModeTab2
+                        If SSTab2(i_i).Tab <> lngStartModeTab2 Then
+                            SSTab2(i_i).Tab = lngStartModeTab2
+                        End If
                     Else
                         SSTab2(i_i).Tab = 0
                     End If

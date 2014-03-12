@@ -2099,16 +2099,13 @@ Private Sub UncheckAllValues()
             ' Is the button in the same container?
             With objButton
 
+                ' is the button type Option?
                 If .Mode = [ebmOptionButton] Then
                     If .Container.hWnd = UserControl.ContainerHwnd Then
-
-                        ' is the button type Option?
-                        If .Mode = [ebmOptionButton] Then
-
-                            ' is it not this button
-                            If Not .hWnd = UserControl.hWnd Then
-                                .Value = False
-                            End If
+                        
+                        ' is it not this button
+                        If Not .hWnd = UserControl.hWnd Then
+                            .Value = False
                         End If
                     End If
                 End If

@@ -4,8 +4,10 @@ Option Explicit
 '******************************************************************************************************************************************************************
 ' Not use in project
 ' Сравнение строк с учетом регистра и без
-'Private Declare Function StrCmpI Lib "shlwapi.dll" Alias "StrCmpIW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
-'Private Declare Function StrCmp Lib "shlwapi.dll" Alias "StrCmpW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
+'Public Declare Function StrCmpI Lib "shlwapi.dll" Alias "StrCmpIW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
+'Public Declare Function StrCmp Lib "shlwapi.dll" Alias "StrCmpW" (ByVal ptr1 As Long, ByVal ptr2 As Long) As Long
+'Public Declare Function lstrcmp Lib "kernel32" Alias "lstrcmpW" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long
+'Public Declare Function lstrcmpi Lib "kernel32" Alias "lstrcmpiW" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long
 ' конвертация строк с учетом регистра
 'Private Declare Function CharLower Lib "user32.dll" Alias "CharLowerA" (ByVal lpsz As String) As String
 'Private Declare Function CharUpper Lib "user32.dll" Alias "CharUpperA" (ByVal lpsz As String) As String
@@ -534,3 +536,13 @@ Public Function StrConvToUTF8(Text As String) As String
         StrConvToUTF8 = LeftB$(StrConvToUTF8, lngLen)
     End If
 End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Str2ByteArray
+'! Description (Описание)  :   [Проверка на соответствие условиям поиска]
+'! Parameters  (Переменные):   StringIn (String)
+'                              ByteArray() (Byte)
+'!--------------------------------------------------------------------------------
+Public Sub Str2ByteArray(StringIn As String, ByteArray() As Byte)
+    ByteArray = StrConv(StringIn, vbFromUnicode)
+End Sub

@@ -9,7 +9,7 @@ End Enum
 
 'VB lacks any support for procedure calling using an address, but the good ol'
 'CallWindowProc will do just fine!
-Private Declare Function CompareValues Lib "user32.dll" Alias "CallWindowProcA" (ByVal CompareFunc As Long, ByVal First As Long, ByVal Second As Long, ByVal unused1 As Long, ByVal unused2 As Long) As eCompareResult
+Private Declare Function CompareValues Lib "user32.dll" Alias "CallWindowProcW" (ByVal CompareFunc As Long, ByVal First As Long, ByVal Second As Long, ByVal unused1 As Long, ByVal unused2 As Long) As eCompareResult
 
 'General purpose CopyMemory, but optimized for our purposes using byval longs
 'since we are working with pointers
@@ -102,5 +102,6 @@ Public Function CompareString(First As String, Second As String, unused1 As Long
 End Function
 
 'Public Function CompareStringApi(First As String, Second As String, unused1 As Long, unused2 As Long) As eCompareResult
-'    CompareStringApi = StrCmpI(StrPtr(First & vbNullChar), StrPtr(Second & vbNullChar))
+'    'CompareStringApi = StrCmp(StrPtr(First), StrPtr(Second))
+'    CompareStringApi = lstrcmp(StrPtr(First), StrPtr(Second))
 'End Function

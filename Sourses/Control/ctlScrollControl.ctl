@@ -266,6 +266,15 @@ Public Property Let Enabled(ByVal Value As Boolean)
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property hWnd
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get hWnd()
+    hWnd = UserControl.hWnd
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_InitProperties
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):

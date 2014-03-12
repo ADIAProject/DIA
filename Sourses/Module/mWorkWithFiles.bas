@@ -1,6 +1,11 @@
 Attribute VB_Name = "mWorkWithFiles"
 Option Explicit
 
+
+
+
+
+
 ' Переменные для работы с файловой системой
 Public objFSO              As Scripting.FileSystemObject
 
@@ -15,6 +20,40 @@ Private xFile              As File
 
 ' Переменная
 Public strFileListInFolder As String
+
+#Const mbIDE_DBSProject = False
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CompareFilesByHashCAPICOM
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFirstFile (String)
+'                              strSecondFile (String)
+'!--------------------------------------------------------------------------------
+' Not add to project (if not DBS) - option for compile
+#If mbIDE_DBSProject Then
+    Public Function CompareFilesByHashCAPICOM(ByVal strFirstFile As String, ByVal strSecondFile As String) As Boolean
+    
+        Dim strDataSHAFirst  As String
+        Dim strDataSHASecond As String
+        Dim lngResult        As Long
+    
+        If PathExists(strFirstFile) Then
+            strDataSHAFirst = CalcHashFile(strFirstFile, CAPICOM_HASH_ALGORITHM_SHA1)
+        End If
+    
+        If PathExists(strSecondFile) Then
+            strDataSHASecond = CalcHashFile(strSecondFile, CAPICOM_HASH_ALGORITHM_SHA1)
+        End If
+    
+        lngResult = StrComp(strDataSHAFirst, strDataSHASecond, vbTextCompare)
+    
+        If lngResult = 0 Then
+            CompareFilesByHashCAPICOM = True
+        Else
+            CompareFilesByHashCAPICOM = False
+        End If
+    
+    End Function
+#End If
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function BacklashDelFromPath
@@ -36,36 +75,6 @@ Public Function BackslashAdd2Path(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathAddBackslash strPath
     BackslashAdd2Path = TrimNull(strPath)
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function CompareFilesByHashCAPICOM
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strFirstFile (String)
-'                              strSecondFile (String)
-'!--------------------------------------------------------------------------------
-Public Function CompareFilesByHashCAPICOM(ByVal strFirstFile As String, ByVal strSecondFile As String) As Boolean
-
-    Dim strDataSHAFirst  As String
-    Dim strDataSHASecond As String
-    Dim lngResult        As Long
-
-    If PathExists(strFirstFile) Then
-        strDataSHAFirst = CalcHashFile(strFirstFile, CAPICOM_HASH_ALGORITHM_SHA1)
-    End If
-
-    If PathExists(strSecondFile) Then
-        strDataSHASecond = CalcHashFile(strSecondFile, CAPICOM_HASH_ALGORITHM_SHA1)
-    End If
-
-    lngResult = StrComp(strDataSHAFirst, strDataSHASecond, vbTextCompare)
-
-    If lngResult = 0 Then
-        CompareFilesByHashCAPICOM = True
-    Else
-        CompareFilesByHashCAPICOM = False
-    End If
-
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -769,15 +778,15 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Public Sub ResetReadOnly4File(ByVal strPathFile As String)
+Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
 
-    If PathExists(strPathFile) Then
-        If FileisReadOnly(strPathFile) Then
-            SetAttr strPathFile, vbNormal
+    If PathExists(StrPathFile) Then
+        If FileisReadOnly(StrPathFile) Then
+            SetAttr StrPathFile, vbNormal
         End If
 
-        If FileisSystemAttr(strPathFile) Then
-            SetAttr strPathFile, vbNormal
+        If FileisSystemAttr(StrPathFile) Then
+            SetAttr StrPathFile, vbNormal
         End If
     End If
 
@@ -1376,3 +1385,29 @@ Public Function GetFileSizeByPath(ByVal strPath As String) As Long
     End If
 
 End Function
+
+Private Sub WriteData2File(sFilePath As String, strData As String)
+    Dim fHandle As Long
+    Dim fSuccess As Long
+    Dim lBytesWritten As Long
+    Dim BytesToWrite As Long
+    Dim anArray() As Byte
+    
+    Str2ByteArray strData, anArray
+    'Get the length of data to write
+    BytesToWrite = (UBound(anArray) + 1) * LenB(anArray(0))
+    'Get a handle to a file Fname.
+    fHandle = CreateFile(StrPtr(sFilePath), GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0)
+    'Here you should test to see if you get a file handle or not.
+    'CreateFile returns INVALID_HANDLE_VALUE if it fails.
+    If fHandle <> INVALID_HANDLE_VALUE Then
+        fSuccess = WriteFile(fHandle, anArray(0), BytesToWrite, lBytesWritten, 0)
+        'Check to see if you were successful writing the data
+        If fSuccess <> 0 Then
+            'Flush the file buffers to force writing of the data.
+            fSuccess = FlushFileBuffers(fHandle)
+            'Close the file.
+            fSuccess = CloseHandle(fHandle)
+        End If
+    End If
+End Sub
