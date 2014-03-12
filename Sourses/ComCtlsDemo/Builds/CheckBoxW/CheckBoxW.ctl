@@ -942,6 +942,10 @@ ShowWindow CheckBoxHandle, SW_HIDE
 SetParent CheckBoxHandle, 0
 DestroyWindow CheckBoxHandle
 CheckBoxHandle = 0
+If CheckBoxFontHandle <> 0 Then
+    DeleteObject CheckBoxFontHandle
+    CheckBoxFontHandle = 0
+End If
 If CheckBoxAcceleratorHandle <> 0 Then
     DestroyAcceleratorTable CheckBoxAcceleratorHandle
     CheckBoxAcceleratorHandle = 0

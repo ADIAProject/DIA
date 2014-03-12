@@ -1,5 +1,8 @@
 List of revisions:
 
+12-Mar-2014
+- Fixed a GDI leak on all controls that have a Font property.
+
 10-Mar-2014
 - Minor bugfix in the TextBoxW control.
 - Some component modifications. (it is recommended to replace everything)

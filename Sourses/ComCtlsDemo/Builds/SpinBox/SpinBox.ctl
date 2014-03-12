@@ -1043,6 +1043,10 @@ DestroyWindow SpinBoxUpDownHandle
 DestroyWindow SpinBoxEditHandle
 SpinBoxUpDownHandle = 0
 SpinBoxEditHandle = 0
+If SpinBoxFontHandle <> 0 Then
+    DeleteObject SpinBoxFontHandle
+    SpinBoxFontHandle = 0
+End If
 End Sub
 
 Public Sub Refresh()

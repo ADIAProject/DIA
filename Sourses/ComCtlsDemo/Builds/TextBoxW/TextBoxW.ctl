@@ -1232,6 +1232,10 @@ ShowWindow TextBoxHandle, SW_HIDE
 SetParent TextBoxHandle, 0
 DestroyWindow TextBoxHandle
 TextBoxHandle = 0
+If TextBoxFontHandle <> 0 Then
+    DeleteObject TextBoxFontHandle
+    TextBoxFontHandle = 0
+End If
 End Sub
 
 Public Sub Refresh()

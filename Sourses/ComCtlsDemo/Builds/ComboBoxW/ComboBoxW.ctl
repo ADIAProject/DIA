@@ -1325,6 +1325,10 @@ SetParent ComboBoxHandle, 0
 DestroyWindow ComboBoxHandle
 ComboBoxHandle = 0
 ComboBoxEditHandle = 0
+If ComboBoxFontHandle <> 0 Then
+    DeleteObject ComboBoxFontHandle
+    ComboBoxFontHandle = 0
+End If
 If ComboBoxListBackColorBrush <> 0 Then
     DeleteObject ComboBoxListBackColorBrush
     ComboBoxListBackColorBrush = 0

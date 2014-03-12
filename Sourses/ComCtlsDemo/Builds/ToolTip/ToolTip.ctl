@@ -691,6 +691,10 @@ SetParent ToolTipHandle, 0
 DestroyWindow ToolTipHandle
 ToolTipHandle = 0
 ToolTipParentHandle = 0
+If ToolTipFontHandle <> 0 Then
+    DeleteObject ToolTipFontHandle
+    ToolTipFontHandle = 0
+End If
 End Sub
 
 Public Sub SetDelayTime(ByVal dwType As TipDelayTimeConstants, ByVal Milliseconds As Long)

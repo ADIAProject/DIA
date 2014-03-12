@@ -1667,6 +1667,10 @@ ShowWindow RichTextBoxHandle, SW_HIDE
 SetParent RichTextBoxHandle, 0
 DestroyWindow RichTextBoxHandle
 RichTextBoxHandle = 0
+If RichTextBoxFontHandle <> 0 Then
+    DeleteObject RichTextBoxFontHandle
+    RichTextBoxFontHandle = 0
+End If
 End Sub
 
 Public Sub Refresh()

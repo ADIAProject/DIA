@@ -1,11 +1,6 @@
 Attribute VB_Name = "mWorkWithFiles"
 Option Explicit
 
-
-
-
-
-
 ' Переменные для работы с файловой системой
 Public objFSO              As Scripting.FileSystemObject
 

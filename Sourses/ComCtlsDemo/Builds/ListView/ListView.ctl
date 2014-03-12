@@ -3657,6 +3657,22 @@ SetParent ListViewHandle, 0
 DestroyWindow ListViewHandle
 ListViewHandle = 0
 ListViewHeaderHandle = 0
+If ListViewFontHandle <> 0 Then
+    DeleteObject ListViewFontHandle
+    ListViewFontHandle = 0
+End If
+If ListViewBoldFontHandle <> 0 Then
+    DeleteObject ListViewBoldFontHandle
+    ListViewBoldFontHandle = 0
+End If
+If ListViewUnderlineFontHandle <> 0 Then
+    DeleteObject ListViewUnderlineFontHandle
+    ListViewUnderlineFontHandle = 0
+End If
+If ListViewBoldUnderlineFontHandle <> 0 Then
+    DeleteObject ListViewBoldUnderlineFontHandle
+    ListViewBoldUnderlineFontHandle = 0
+End If
 End Sub
 
 Public Sub Refresh()

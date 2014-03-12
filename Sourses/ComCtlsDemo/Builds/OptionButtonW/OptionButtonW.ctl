@@ -849,6 +849,10 @@ ShowWindow OptionButtonHandle, SW_HIDE
 SetParent OptionButtonHandle, 0
 DestroyWindow OptionButtonHandle
 OptionButtonHandle = 0
+If OptionButtonFontHandle <> 0 Then
+    DeleteObject OptionButtonFontHandle
+    OptionButtonFontHandle = 0
+End If
 If OptionButtonTransparentBrush <> 0 Then
     DeleteObject OptionButtonTransparentBrush
     OptionButtonTransparentBrush = 0

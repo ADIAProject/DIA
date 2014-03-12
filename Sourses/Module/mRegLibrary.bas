@@ -1,6 +1,8 @@
 Attribute VB_Name = "mRegLibrary"
 Option Explicit
 
+#Const mbIDE_DBSProject = False
+
 ' Переменные регистрации внешних компонентов
 'TabCtl32.ocx
 Private Const strTabCtl32Reference As String = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}"
@@ -12,19 +14,18 @@ Private Const strMSFLXGRDReference As String = "{5E9E78A0-531B-11CF-91F6-C2863C3
 Private Const strMSFLXGRDVer       As String = "1.0"
 Private Const strMSFLXGRDVerDll    As String = "6.1.98.14"
 
-'RICHTX32.ocx
-'Private Const strRICHTX32Reference      As String = "{3B7C8863-D78F-101B-B9B5-04021C009402}"
-'Private Const strRICHTX32Ver            As String = "1.2"
-'Private Const strRICHTX32VerDll         As String = "6.1.98.16"
 'VBScript.dll
 Private Const strVBScriptReference As String = "{3F4DACA7-160D-11D2-A8E9-00104B365C9F}"
 Private Const strVBScriptVer       As String = "5.5"
 Private Const strVBScriptVerDll    As String = "5.8.6001.18700"
 
-'Capicom.dll
-Private Const strCAPICOMReference  As String = "{BD26B198-EE42-4725-9B23-AFA912434229}"
-Private Const strCAPICOMVer        As String = "2.1"
-Private Const strCAPICOMVerDll     As String = "2.1.0.2"
+' Not add to project (if not DBS) - option for compile
+#If mbIDE_DBSProject Then
+    'Capicom.dll
+    Private Const strCAPICOMReference  As String = "{BD26B198-EE42-4725-9B23-AFA912434229}"
+    Private Const strCAPICOMVer        As String = "2.1"
+    Private Const strCAPICOMVerDll     As String = "2.1.0.2"
+#End If
 
 'Windows Script 5.7
 'XP - http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=47809025-d896-482e-a0d6-524e7e844d81
@@ -103,10 +104,9 @@ FreeLib:
 
 End Function
 
-' Регистрация внешних компонент
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub RegisterAddComponent
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Регистрация внешних компонент]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub RegisterAddComponent()
@@ -130,15 +130,6 @@ Public Sub RegisterAddComponent()
         End If
     End If
 
-    '    DebugMode "RegisterAddComponent - *****************Check Next File********************"
-    '
-    '    If RegOCX(strWorkTempBackSL & "RICHTX32.OCX", strRICHTX32Reference, strRICHTX32Ver, strRICHTX32VerDll) = False Then
-    '        If MsgBox("System OCX or DLL: 'RICHTX32.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
-    '            End
-    '
-    '        End If
-    '
-    '    End If
     DebugMode "RegisterAddComponent - *****************Check Next File********************"
 
     If RegOCX(strWorkTempBackSL & "vbscript.dll", strVBScriptReference, strVBScriptVer, strVBScriptVerDll) = False Then
@@ -149,13 +140,16 @@ Public Sub RegisterAddComponent()
         End If
     End If
 
-    '    DebugMode "RegisterAddComponent - *****************Check Next File********************"
-    '
-    '    If RegOCX(strWorkTempBackSL & "capicom.dll", strCAPICOMReference, strCAPICOMVer, strCAPICOMVerDll) = False Then
-    '        If MsgBox("System DLL: 'capicom.dll'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
-    '            End
-    '        End If
-    '    End If
+    ' Not add to project (if not DBS) - option for compile
+    #If mbIDE_DBSProject Then
+        DebugMode "RegisterAddComponent - *****************Check Next File********************"
+    
+        If RegOCX(strWorkTempBackSL & "capicom.dll", strCAPICOMReference, strCAPICOMVer, strCAPICOMVerDll) = False Then
+            If MsgBox("System DLL: 'capicom.dll'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
+                End
+            End If
+        End If
+    #End If
     DebugMode "RegisterAddComponent - Finish"
 End Sub
 

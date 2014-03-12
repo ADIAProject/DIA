@@ -642,6 +642,10 @@ ShowWindow FrameGroupBoxHandle, SW_HIDE
 SetParent FrameGroupBoxHandle, 0
 DestroyWindow FrameGroupBoxHandle
 FrameGroupBoxHandle = 0
+If FrameFontHandle <> 0 Then
+    DeleteObject FrameFontHandle
+    FrameFontHandle = 0
+End If
 If FrameTransparentBrush <> 0 Then
     DeleteObject FrameTransparentBrush
     FrameTransparentBrush = 0
