@@ -4861,7 +4861,7 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Debug", "Detailmode", txtDebugLogLevel.Text, strSysIniTemp
     strLogNameTemp = "DIA-LOG_%DATE%.txt"
 
-    If LenB(txtDebugLogName.Text) > 0 Then
+    If LenB(txtDebugLogName.Text) Then
         If InStr(txtDebugLogName.Text, ".") Then
             strLogNameTemp = txtDebugLogName.Text
         End If
@@ -5221,7 +5221,7 @@ Private Sub ucArchPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucArchPath.Path = strTempPath
     End If
 
@@ -5262,7 +5262,7 @@ Private Sub ucCmdDevconPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucCmdDevconPath.Path = strTempPath
     End If
 
@@ -5303,7 +5303,7 @@ Private Sub ucDebugLogPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucDebugLogPath.Path = strTempPath
     End If
 
@@ -5326,7 +5326,7 @@ Private Sub ucDevCon64Path_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucDevCon64Path.Path = strTempPath
     End If
 
@@ -5368,7 +5368,7 @@ Private Sub ucDevCon86Path_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucDevCon86Path.Path = strTempPath
     End If
 
@@ -5409,7 +5409,7 @@ Private Sub ucDevCon86Pathw2k_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucDevCon86Pathw2k.Path = strTempPath
     End If
 
@@ -5450,7 +5450,7 @@ Private Sub ucDPInst64Path_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucDPInst64Path.Path = strTempPath
     End If
 
@@ -5491,7 +5491,7 @@ Private Sub ucDPInst86Path_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucDPInst86Path.Path = strTempPath
     End If
 
@@ -5532,7 +5532,7 @@ Private Sub ucTempPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucTempPath.Path = strTempPath
     End If
 

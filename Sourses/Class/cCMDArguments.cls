@@ -69,7 +69,7 @@ Public Function Arguments() As Collection
     cmdLine = cFm_CommandLine
     lngRet = CommandLineToArgvW(StrPtr(cmdLine & vbNullChar), retCount)
 
-    If retCount > 0 Then
+    If retCount Then
 
         For i = 0 To retCount - 1
             CopyMemoryLong VarPtr(sPtr), lngRet + i * 4, 4

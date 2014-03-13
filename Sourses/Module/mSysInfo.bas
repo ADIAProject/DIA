@@ -436,11 +436,11 @@ Public Function GetMBInfo() As String
     strMB_Manufacturer = GetMB_Manufacturer()
     strMB_Model = GetMB_Model()
 
-    If LenB(strMB_Manufacturer) > 0 And LenB(strMB_Model) > 0 Then
+    If LenB(strMB_Manufacturer) And LenB(strMB_Model) Then
         GetMBInfo = strMB_Manufacturer & "_" & strMB_Model
-    ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) > 0 Then
+    ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) Then
         GetMBInfo = strMB_Model
-    ElseIf LenB(strMB_Manufacturer) > 0 And LenB(strMB_Model) = 0 Then
+    ElseIf LenB(strMB_Manufacturer) And LenB(strMB_Model) = 0 Then
         GetMBInfo = strMB_Manufacturer
     Else
         GetMBInfo = "Unknown"

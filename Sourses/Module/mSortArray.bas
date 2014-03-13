@@ -7,12 +7,10 @@ Public Enum eCompareResult
     crGreater = 1&
 End Enum
 
-'VB lacks any support for procedure calling using an address, but the good ol'
-'CallWindowProc will do just fine!
+'VB lacks any support for procedure calling using an address, but the good ol - CallWindowProc will do just fine!
 Private Declare Function CompareValues Lib "user32.dll" Alias "CallWindowProcW" (ByVal CompareFunc As Long, ByVal First As Long, ByVal Second As Long, ByVal unused1 As Long, ByVal unused2 As Long) As eCompareResult
 
-'General purpose CopyMemory, but optimized for our purposes using byval longs
-'since we are working with pointers
+'General purpose CopyMemory, but optimized for our purposes using byval longs - since we are working with pointers
 Private Declare Sub CopyMemoryByVal Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Dst As Long, ByVal Src As Long, ByVal ByteCount As Long)
 
 '!--------------------------------------------------------------------------------

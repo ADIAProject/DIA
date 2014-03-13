@@ -402,7 +402,7 @@ Public Sub ShowMessage(ByVal sMsg As String, Optional img As StdPicture, Optiona
 
         'ready to go, so first play
         'the notification sound
-        If LenB(sSound) > 0 Then
+        If LenB(sSound) Then
             PlaySound sSound, ByVal 0&, SND_FILENAME Or SND_ASYNC
         End If
 

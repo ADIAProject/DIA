@@ -40,8 +40,8 @@ Private Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, ByVal Value A
 '!--------------------------------------------------------------------------------
 Public Function AppendStr(ByVal strHead As String, ByVal strAdd As String, Optional ByVal strSep As String = " ") As String
 
-    If LenB(strAdd) > 0 Then
-        If LenB(strHead) > 0 Then
+    If LenB(strAdd) Then
+        If LenB(strHead) Then
             AppendStr = strHead & (strSep & strAdd)
         Else
             AppendStr = strAdd
@@ -80,7 +80,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
 
     If InStr(strVersionBD, "unknown") = 0 Then
         If InStr(strVersionLocal, "unknown") = 0 Then
-            If miDimension > 0 Then
+            If miDimension Then
                 strDevVer_xx = Trim$(strDevVer_x(1))
             Else
                 ResultTemp = "<"
@@ -90,7 +90,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
             strDevVerLocal_x = Split(Trim$(strVersionLocal), ",")
             miDimensionLocal = UBound(strDevVerLocal_x)
 
-            If miDimensionLocal > 0 Then
+            If miDimensionLocal Then
                 strDevVerLocal_xx = Trim$(strDevVerLocal_x(1))
             Else
                 ResultTemp = ">"
@@ -108,7 +108,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
             strVersionBD_x = Split(strDevVer_xx, ".")
             strVersionLocal_x = Split(strDevVerLocal_xx, ".")
 
-            If LenB(Trim$(strDevVerLocal_xx)) > 0 Then
+            If LenB(Trim$(strDevVerLocal_xx)) Then
                 If UBound(strVersionBD_x) > UBound(strVersionLocal_x) Then
 
                     For i = LBound(strVersionLocal_x) To UBound(strVersionLocal_x)
@@ -203,7 +203,7 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
     Dim objMatch   As Match
     Dim objMatches As MatchCollection
 
-    If LenB(dtDate) > 0 Then
+    If LenB(dtDate) Then
         If InStr(dtDate, "unknown") = 0 Then
             Set objRegExp = New RegExp
 
@@ -218,7 +218,7 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
 
             With objMatches
 
-                If .Count > 0 Then
+                If .Count Then
                     Set objMatch = .Item(0)
                     MM = Format$(objMatch.SubMatches(0), "00")
                     DD = Format$(objMatch.SubMatches(1), "00")
@@ -288,7 +288,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
 
         With objMatches
 
-            If .Count > 0 Then
+            If .Count Then
                 Set objMatch = .Item(0)
                 m1 = objMatch.SubMatches(0)
                 d1 = objMatch.SubMatches(1)
@@ -302,7 +302,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
 
         With objMatches
 
-            If .Count > 0 Then
+            If .Count Then
                 Set objMatch = .Item(0)
                 M2 = objMatch.SubMatches(0)
                 d2 = objMatch.SubMatches(1)
@@ -395,7 +395,7 @@ Public Sub ConvertVerByDate(ByRef strVersion1 As String)
     Dim strVer     As String
     Dim strVer_x() As String
 
-    If LenB(strVersion1) > 0 Then
+    If LenB(strVersion1) Then
         If InStr(strVersion1, "unknown") = 0 Then
             If InStr(strVersion1, ",") Then
                 strVer_x = Split(strVersion1, ",")
@@ -415,7 +415,7 @@ End Sub
 '! Description (Описание)  :   [Удаляем лишние символы из строки]
 '! Parameters  (Переменные):   strString (String)
 '!--------------------------------------------------------------------------------
-Public Function ReplaceBadSymbol(ByVal strString As String) As String
+Public Sub ReplaceBadSymbol(ByRef strString As String)
 
     ' Убираем символ ","
     If InStr(strString, ",") Then
@@ -477,8 +477,8 @@ Public Function ReplaceBadSymbol(ByVal strString As String) As String
         strString = Replace$(strString, "  ", " ")
     End If
 
-    ReplaceBadSymbol = Trim$(strString)
-End Function
+    strString = Trim$(strString)
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ReplaceBadSymbolInDate
@@ -546,3 +546,27 @@ End Function
 Public Sub Str2ByteArray(StringIn As String, ByteArray() As Byte)
     ByteArray = StrConv(StringIn, vbFromUnicode)
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub RemoveUni
+'! Description (Описание)  :   [Удаление Unicode символов]
+'! Parameters  (Переменные):   s (String)
+'                              ReplaceWith (Byte)
+'!--------------------------------------------------------------------------------
+Public Function RemoveUni(ByVal sStr As String, ByVal sReplaceWith As Byte) As String
+   Dim i                As Long
+   Dim bLen             As Long
+   Dim Map()            As Byte
+ 
+   If LenB(sStr) Then
+      Map = sStr
+      bLen = UBound(Map)
+      For i = 1 To bLen Step 2
+         If Map(i) Then  'Is Unicode
+            Map(i) = 0 'Clear upper byte
+            Map(i - 1) = sReplaceWith 'Replace low byte
+         End If
+      Next
+   End If
+   RemoveUni = Map
+End Function

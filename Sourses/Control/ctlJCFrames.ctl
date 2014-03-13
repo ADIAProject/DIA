@@ -657,7 +657,7 @@ Private Sub Draw_Header(R_Caption As RECT)
     'TranslateColor(&H80000015)&H808080
     APILineEx UserControl.hDC, 0&, jcTextBoxCenter + 1, UserControl.ScaleWidth, jcTextBoxCenter + 1, vbWhite
 
-    If LenB(m_Caption) <> 0 Then
+    If LenB(m_Caption) Then
         If m_Alignment = vbLeftJustify Then
             'm_Indentation
         ElseIf m_Alignment = vbRightJustify Then
@@ -1046,7 +1046,7 @@ Private Sub Draw_XPDefault(R_Caption As RECT)
     SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
     DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, R
 
-    If LenB(m_Caption) <> 0 Then
+    If LenB(m_Caption) Then
         If m_Alignment = vbLeftJustify Then
             p_left = m_Indentation
         ElseIf m_Alignment = vbRightJustify Then
@@ -1721,7 +1721,7 @@ Private Sub PaintFrame()
     UserControl.Cls
 
     'Set caption height and width
-    If LenB(m_Caption) <> 0 Then
+    If LenB(m_Caption) Then
         m_TextWidth = UserControl.TextWidth(m_Caption)
         m_TextHeight = UserControl.TextHeight(m_Caption)
         jcTextBoxCenter = m_TextHeight / 2
@@ -1818,7 +1818,7 @@ Private Sub PaintFrame()
     End If
 
     'Draw caption
-    If LenB(m_Caption) <> 0 Then
+    If LenB(m_Caption) Then
         'Set text color
         m_caption_aux = TrimWord(m_Caption, R_Caption.Right - R_Caption.Left)
         'Draw text

@@ -13,6 +13,8 @@ Public Const GENERIC_WRITE         As Long = &H40000000
 Public Const GENERIC_READ          As Long = &H80000000
 Public Const OPEN_EXISTING         As Long = 3
 Public Const FILE_SHARE_READ       As Long = &H1
+Public Const FILE_SHARE_WRITE      As Long = &H2
+Public Const FILE_SHARE_DELETE     As Long = &H4
 Public Const CREATE_ALWAYS         As Long = 2
 Public Const FILE_FLAG_SEQUENTIAL_SCAN As Long = &H8000000
 

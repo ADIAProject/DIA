@@ -67,7 +67,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strDrvDate                As String
     Dim strDrvVersion             As String
     Dim strDrvCatFileName         As String
-    Dim strCatFileExists          As String
+    Dim lngCatFileExists          As Long
     Dim strValval                 As String
     Dim Strings                   As String
     Dim strRegEx_mansect          As String
@@ -198,9 +198,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     If UBound(strInfPathTempList_x) = 0 Then
         If LenB(strInfPathTempList_x(0).FullPath) = 0 Then
-
             Exit Sub
-
         End If
     End If
 
@@ -305,7 +303,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     strArchCatFileListContent = vbNullString
 
     If PathExists(strArchCatFileList) Then
-        If GetFileSizeByPath(strArchCatFileList) > 0 Then
+        If GetFileSizeByPath(strArchCatFileList) Then
             Set objCatFile = objFSO.OpenTextFile(strArchCatFileList, ForReading, False, TristateUseDefault)
             strArchCatFileListContent = objCatFile.ReadAll()
             objCatFile.Close
@@ -324,10 +322,12 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         ' Имя inf файла
         strInfFileName = strInfPathTempList_x(infNumber).NameLcase
         
-        If (infNumber Mod 10) = 0 Then
+        If (infNumber Mod 20) = 0 Then
             ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " (" & infNumber & " " & strMessages(124) & " " & infCount & ": " & strInfFileName & ")"
         Else
-            If Not GetInputState = 0 Then DoEvents
+            If GetInputState Then
+                DoEvents
+            End If
         End If
 
         ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
@@ -338,10 +338,11 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             strInfPath = Replace$(strInfPathTempList_x(infNumber).Path, BackslashAdd2Path(strPathDRP & strPackFileName), vbNullString, , , vbTextCompare)
         End If
 
-        If strInfPathTempList_x(infNumber).Size > 0 Then
+        If strInfPathTempList_x(infNumber).Size Then
             ' Read INF file
             FileContent = vbNullString
             
+            'Set objInfFile = objFSO.OpenTextFile(strInfFullname, ForReading, False, TristateUseDefault)
             Set objInfFile = objFSO.OpenTextFile(strInfFullname, ForReading, False, TristateUseDefault)
             FileContent = objInfFile.ReadAll()
             objInfFile.Close
@@ -395,10 +396,10 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     strVarname = Left$(strDrvDate, InStrRev(strDrvDate, Percentage))
                     strValval = objStringHash.Item(strVarname)
     
-                    If LenB(strValval) = 0 Then
-                        DebugMode "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                    Else
+                    If LenB(strValval) Then
                         strDrvDate = Replace$(strDrvDate, strVarname, strValval)
+                    Else
+                        DebugMode "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
                     End If
                 End If
     
@@ -409,18 +410,18 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, Percentage))
                     strValval = objStringHash.Item(strVarname)
     
-                    If LenB(strValval) = 0 Then
-                        DebugMode "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                    Else
+                    If LenB(strValval) Then
                         strDrvVersion = Replace$(strDrvVersion, strVarname, strValval)
+                    Else
+                        DebugMode "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
                     End If
                 End If
     
-                If LenB(strDrvVersion) > 0 Then
+                If LenB(strDrvVersion) Then
                     strVer = strDrvDate & "," & strDrvVersion
                 Else
     
-                    If LenB(strDrvDate) > 0 Then
+                    If LenB(strDrvDate) Then
                         strVer = strDrvDate
                     Else
                         strVer = "unknown"
@@ -445,29 +446,29 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, Percentage))
                     strValval = objStringHash.Item(strVarname)
     
-                    If LenB(strValval) = 0 Then
-                        DebugMode "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                    Else
+                    If LenB(strValval) Then
                         strDrvCatFileName = Replace$(strDrvCatFileName, strVarname, strValval)
+                    Else
+                        DebugMode "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
                     End If
                 End If
     
                 ' Если ли файл *.cat в списке файлов архива?
                 If InStr(1, strDrvCatFileName, ".cat", vbTextCompare) Then
                     If InStr(1, strArchCatFileListContent, strInfPath & strDrvCatFileName, vbTextCompare) Then
-                        strCatFileExists = 1
+                        lngCatFileExists = 1
                     Else
-                        strCatFileExists = 0
+                        lngCatFileExists = 0
                     End If
     
                 Else
-                    strCatFileExists = 0
+                    lngCatFileExists = 0
                 End If
     
             Else
                 DebugMode "DevParserbyRegExp: Error in inf: Section [CatalogeFile] not found: " & strInfFullname
                 strDrvCatFileName = vbNullString
-                strCatFileExists = 0
+                lngCatFileExists = 0
             End If
     
             ' Find [manufacturer] section
@@ -554,11 +555,11 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                             strDevName = Trim$(objMatch.SubMatches(0))
     
                             'Debug.Print strDevName
-                            If LenB(strDevName) > 0 Then
+                            If LenB(strDevName) Then
                                 Pos = InStr(strDevName, Percentage)
                                 strValval = vbNullString
     
-                                If Pos > 0 Then
+                                If Pos Then
                                     PosRev = InStrRev(strDevName, Percentage)
     
                                     If Pos <> PosRev Then
@@ -596,16 +597,10 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                 End If
     
                                 ' На случай если есть юникодовые символы в имени устройства
-                                a = vbNullString
+                                strDevName = RemoveUni(strDevName, 63)
     
-                                For k1 = 1 To Len(strDevName)
-                                    t = Asc(Mid$(strDevName, k1, 1))
-                                    a = a + Chr$(t)
-                                Next
-    
-                                '
                                 ' Если требуется то удаление лишних символов
-                                strDevName = ReplaceBadSymbol(a)
+                                ReplaceBadSymbol strDevName
                             Else
                                 DebugMode "Error in inf: " & strInfFullname & " (Variable not defined: " & objMatch.SubMatches(0) & ")"
                                 strDevName = "not defined in the inf"
@@ -650,7 +645,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                         strVer = Replace$(strVer, " ", vbNullString)
                                     End If
     
-                                    strLinesArr(lngNumLines) = ss & (vbTab & strVer & vbTab & strSectNoCompatVerOSList & vbTab & strCatFileExists & vbTab & strDevName)
+                                    strLinesArr(lngNumLines) = ss & (vbTab & strVer & vbTab & strSectNoCompatVerOSList & vbTab & lngCatFileExists & vbTab & strDevName)
                                     strLinesArrHwid(lngNumLines) = strDevID
                                     lngNumLines = lngNumLines + 1
                                 End If
@@ -688,7 +683,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     DebugMode "DevParserByRegExp-Time to Create Index Data: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
 
     ' Если данные найдены, то выводим итог в файл
-    If lngNumLines > 0 Then
+    If lngNumLines Then
 
         ReDim Preserve strLinesArr(lngNumLines - 1)
         ReDim Preserve strLinesArrHwid(lngNumLines - 1)
@@ -710,10 +705,12 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         End If
 
         'Debug.Print strLinesArr(lngNumLines)
-        Set objRezultFile = objFSO.CreateTextFile(strRezultTxt, True)
-        objRezultFile.Write Join(strLinesArr(), vbNewLine)
-        Set objRezultFileHWID = objFSO.CreateTextFile(strRezultTxtHwid, True)
-        objRezultFileHWID.Write Join(strLinesArrHwid(), vbNewLine)
+        'Set objRezultFile = objFSO.CreateTextFile(strRezultTxt, True)
+        WriteData2File strRezultTxt, Join(strLinesArr(), vbNewLine)
+        'objRezultFile.Write Join(strLinesArr(), vbNewLine)
+        'Set objRezultFileHWID = objFSO.CreateTextFile(strRezultTxtHwid, True)
+        'objRezultFileHWID.Write Join(strLinesArrHwid(), vbNewLine)
+        WriteData2File strRezultTxtHwid, Join(strLinesArrHwid(), vbNewLine)
         TimeScriptFinish = GetTickCount
         DebugMode "DevParserByRegExp-Time to Save Index 2 File: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True), 1
         ' Удаление массива, т.е освобождение памяти
@@ -757,13 +754,13 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         End If
     End If
 
-    If Not (objRezultFile Is Nothing) Then
-        objRezultFile.Close
-    End If
-
-    If Not (objRezultFileHWID Is Nothing) Then
-        objRezultFileHWID.Close
-    End If
+'    If Not (objRezultFile Is Nothing) Then
+'        objRezultFile.Close
+'    End If
+'
+'    If Not (objRezultFileHWID Is Nothing) Then
+'        objRezultFileHWID.Close
+'    End If
 
     DebugMode "DevParserByRegExp-End"
 End Sub

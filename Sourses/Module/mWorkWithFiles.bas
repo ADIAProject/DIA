@@ -238,7 +238,7 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
         SearchFilesInRoot Root, ALL_FILES, True, False, True
         Set xFOL = objFSO.GetFolder(Root)
 
-        If xFOL.Files.Count > 0 Then
+        If xFOL.Files.Count Then
 
             For Each xFile In xFOL.Files
                 DeleteFiles xFile.Path
@@ -315,7 +315,7 @@ Private Function DelTree(ByVal strDir As String) As Long
 
     strDir = Trim$(strDir)
 
-    If LenB(strDir) > 0 Then
+    If LenB(strDir) Then
         If Right$(strDir, 1) = vbBackslash Then
             strDir = Left$(strDir, Len(strDir) - 1)
         End If
@@ -414,7 +414,7 @@ Public Function ExtFromFileName(ByVal FileName As String) As String
 
     intLastSeparator = InStrRev(FileName, ".")
 
-    If intLastSeparator > 0 Then
+    If intLastSeparator Then
         ExtFromFileName = Right$(FileName, Len(FileName) - intLastSeparator)
     Else
         ExtFromFileName = vbNullString
@@ -451,10 +451,10 @@ Public Function FileName_woExt(ByVal FileName As String) As String
 
     FileName_woExt = FileName
 
-    If LenB(FileName) > 0 Then
+    If LenB(FileName) Then
         intLastSeparator = InStrRev(FileName, ".")
 
-        If intLastSeparator > 0 Then
+        If intLastSeparator Then
             FileName_woExt = Left$(FileName, intLastSeparator - 1)
         End If
     End If
@@ -472,7 +472,7 @@ Public Function FileNameFromPath(ByVal FilePath As String) As String
 
     FileNameFromPath = FilePath
 
-    If LenB(FilePath) > 0 Then
+    If LenB(FilePath) Then
         intLastSeparator = InStrRev(FilePath, vbBackslash)
 
         If intLastSeparator >= 0 Then
@@ -496,11 +496,11 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
 
     strNumPosition = InStr(strEnv, Percentage)
 
-    If strNumPosition > 0 Then
+    If strNumPosition Then
         strTemp = Mid$(strEnv, strNumPosition + 1, Len(strEnv) - strNumPosition)
         strNumPosition = InStr(strTemp, Percentage)
 
-        If strNumPosition > 0 Then
+        If strNumPosition Then
             strTemp = Left$(strTemp, strNumPosition - 1)
         End If
     End If
@@ -690,7 +690,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     FileContent = vbNullString
     lngFileDBSize = GetFileSizeByPath(strInfFilePath)
 
-    If lngFileDBSize > 0 Then
+    If lngFileDBSize Then
         Set objInfFile = objFSO.OpenTextFile(strInfFilePath, ForReading, False, TristateUseDefault)
         FileContent = objInfFile.ReadAll()
         objInfFile.Close
@@ -731,7 +731,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     ' Собственно ищем саму переменную
     Pos = InStr(strSearchString, Percentage)
 
-    If Pos > 0 Then
+    If Pos Then
         varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, Percentage))
         valval = StringHash.Item(varname)
 
@@ -755,7 +755,7 @@ Public Function PathNameFromPath(FilePath As String) As String
 
     intLastSeparator = InStrRev(FilePath, vbBackslash)
 
-    If intLastSeparator > 0 Then
+    If intLastSeparator Then
         If intLastSeparator < Len(FilePath) Then
             PathNameFromPath = Left$(FilePath, intLastSeparator)
         Else
@@ -1143,7 +1143,7 @@ Public Function PathCollect(Path As String) As String
                         PathCollect = GetEnviron(Path, True)
                     Else
 
-                        If LenB(ExtFromFileName(Path)) > 0 Then
+                        If LenB(ExtFromFileName(Path)) Then
                             If FileNameFromPath(Path) = Path Then
                                 PathCollect = Path
                             Else
@@ -1199,7 +1199,7 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
                         PathCollect4Dest = GetEnviron(Path, True)
                     Else
 
-                        If LenB(ExtFromFileName(Path)) > 0 Then
+                        If LenB(ExtFromFileName(Path)) Then
                             If FileNameFromPath(Path) = Path Then
                                 PathCollect4Dest = Path
                             Else
@@ -1288,7 +1288,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function CreateIfNotExistPath(strFolderPath As String) As Boolean
 
-    If LenB(strFolderPath) > 0 Then
+    If LenB(strFolderPath) Then
 
         ' Если нет, то создаем каталог
         If PathExists(strFolderPath) = False Then
@@ -1381,28 +1381,97 @@ Public Function GetFileSizeByPath(ByVal strPath As String) As Long
 
 End Function
 
-Private Sub WriteData2File(sFilePath As String, strData As String)
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function WriteData2FileUni
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sFilePath (String)
+'                              strData (String)
+'!--------------------------------------------------------------------------------
+Public Sub WriteData2FileUni(ByVal sFilePath As String, ByVal strData As String)
     Dim fHandle As Long
     Dim fSuccess As Long
     Dim lBytesWritten As Long
     Dim BytesToWrite As Long
     Dim anArray() As Byte
+    Dim lngFilePathPtr As Long
+    Dim lngStringSize As Long
     
-    Str2ByteArray strData, anArray
+    ' Convert to byte
+    'Str2ByteArray strData, anArray
+    lngStringSize = LenB(strData)
+    ReDim anArray(0 To lngStringSize)
+    CopyMemory anArray(0), ByVal StrPtr(strData), lngStringSize
     'Get the length of data to write
     BytesToWrite = (UBound(anArray) + 1) * LenB(anArray(0))
+    
+    'Get a pointer to a string with file name.
+    If PathIsValidUNC(sFilePath) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & sFilePath & vbNullChar)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFilePath, Len(sFilePath) - 2) & vbNullChar)
+    End If
     'Get a handle to a file Fname.
-    fHandle = CreateFile(StrPtr(sFilePath), GENERIC_WRITE, FILE_SHARE_READ, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0)
-    'Here you should test to see if you get a file handle or not.
+    fHandle = CreateFile(lngFilePathPtr, GENERIC_WRITE Or GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE Or FILE_SHARE_DELETE, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0)
+    
     'CreateFile returns INVALID_HANDLE_VALUE if it fails.
     If fHandle <> INVALID_HANDLE_VALUE Then
-        fSuccess = WriteFile(fHandle, anArray(0), BytesToWrite, lBytesWritten, 0)
+        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
         'Check to see if you were successful writing the data
         If fSuccess <> 0 Then
             'Flush the file buffers to force writing of the data.
-            fSuccess = FlushFileBuffers(fHandle)
+            FlushFileBuffers fHandle
             'Close the file.
-            fSuccess = CloseHandle(fHandle)
+            CloseHandle fHandle
+        Else
+            DebugMode str2VbTab & "WriteData2File: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
         End If
+    Else
+        DebugMode str2VbTab & "WriteData2File: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+    End If
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function WriteData2File
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sFilePath (String)
+'                              strData (String)
+'!--------------------------------------------------------------------------------
+Public Sub WriteData2File(ByVal sFilePath As String, ByVal strData As String)
+    Dim fHandle As Long
+    Dim fSuccess As Long
+    Dim lBytesWritten As Long
+    Dim BytesToWrite As Long
+    Dim anArray() As Byte
+    Dim lngFilePathPtr As Long
+    
+    ' Convert to byte
+    Str2ByteArray strData, anArray
+    BytesToWrite = UBound(anArray) + 1
+    
+    'Get a pointer to a string with file name.
+    If PathIsValidUNC(sFilePath) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & sFilePath & vbNullChar)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFilePath, Len(sFilePath) - 2) & vbNullChar)
+    End If
+    'Get a handle to a file Fname.
+    fHandle = CreateFile(lngFilePathPtr, GENERIC_WRITE Or GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE Or FILE_SHARE_DELETE, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0)
+    
+    'CreateFile returns INVALID_HANDLE_VALUE if it fails.
+    If fHandle <> INVALID_HANDLE_VALUE Then
+        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
+        'Check to see if you were successful writing the data
+        If fSuccess <> 0 Then
+            'Flush the file buffers to force writing of the data.
+            FlushFileBuffers fHandle
+            'Close the file.
+            CloseHandle fHandle
+        Else
+            DebugMode str2VbTab & "WriteData2File: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        End If
+    Else
+        DebugMode str2VbTab & "WriteData2File: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
     End If
 End Sub

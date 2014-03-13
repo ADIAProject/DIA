@@ -140,8 +140,8 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = " "
     End If
 
     ' validate lengths and limit
-    If LE > 0 Then
-        If LD > 0 Then
+    If LE Then
+        If LD Then
             If Limit >= 0 Then
 
                 ' pointer to R array

@@ -13,13 +13,12 @@ Option Explicit
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Private Const vbDot            As Integer = 46
 
-Private fp                     As FILE_PARAMS    'holds search parameters
-Private fp2                    As FOLDER_PARAMS  'holds search parameters
-'Private sResultFileList()      As String
-Private sResultFileList()      As FindFileListStruct
-Private sResultFileListCount   As Long
-Private sResultFolderList()    As String
-Private sResultFolderListCount As Long
+Private fp                       As FILE_PARAMS    'holds search parameters
+Private fp2                      As FOLDER_PARAMS  'holds search parameters
+Private sResultFileList()        As FindFileListStruct
+Private lngResultFileListCount   As Long
+Private sResultFolderList()      As String
+Private lngResultFolderListCount As Long
 
 Public Type FindFileListStruct
     Path As String
@@ -72,7 +71,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function MatchSpec(sFile As String, sSpec As String) As Boolean
 
-    If LenB(sSpec) > 0 Then
+    If LenB(sSpec) Then
         MatchSpec = PathMatchSpec(StrPtr(sFile & vbNullChar), StrPtr(sSpec & vbNullChar))
     End If
 
@@ -240,7 +239,7 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
 
     If Not mbDelete Then
         If mbInitial Then
-            sResultFileListCount = 0
+            lngResultFileListCount = 0
 
             'ReDim sResultFileList(5, miMaxCountArr)
             ReDim sResultFileList(miMaxCountArr)
@@ -277,7 +276,7 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
                     Else
 
                         ' Переопределение массива если превышаем заданную размерность
-                        If sResultFileListCount = miMaxCountArr Then
+                        If lngResultFileListCount = miMaxCountArr Then
                             miMaxCountArr = 2 * miMaxCountArr
 
                             'ReDim Preserve sResultFileList(5, miMaxCountArr)
@@ -286,30 +285,24 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
                         End If
 
                         ' Полный путь файла
-                        'sResultFileList(0, sResultFileListCount) = sRoot & strFileName
-                        sResultFileList(sResultFileListCount).FullPath = sRoot & strFileName
+                        sResultFileList(lngResultFileListCount).FullPath = sRoot & strFileName
                         ' размер файла числовой в байтах
-                        sResultFileList(sResultFileListCount).Size = wfd.nFileSizeLow
+                        sResultFileList(lngResultFileListCount).Size = wfd.nFileSizeLow
                         ' размер файла строковый форматированный учитывая региональные настройки в байт/кбайт/мбайт и т.д
                         sSize = String$(30, vbNullChar)
                         StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
-                        'sResultFileList(1, sResultFileListCount) = TrimNull(sSize)
-                        sResultFileList(sResultFileListCount).SizeInString = TrimNull(sSize)
+                        sResultFileList(lngResultFileListCount).SizeInString = TrimNull(sSize)
                         ' Путь до файла
-                        'sResultFileList(2, sResultFileListCount) = sRoot
-                        sResultFileList(sResultFileListCount).Path = sRoot
+                        sResultFileList(lngResultFileListCount).Path = sRoot
                         If Not mbInitial Then
-                            sResultFileList(sResultFileListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
+                            sResultFileList(lngResultFileListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
                         End If
                         ' Имя файла
-                        'sResultFileList(3, sResultFileListCount) = strFileName
-                        sResultFileList(sResultFileListCount).Name = strFileName
+                        sResultFileList(lngResultFileListCount).Name = strFileName
                         ' Имя файла smallcase
-                        'sResultFileList(4, sResultFileListCount) = LCase$(strFileName)
-                        sResultFileList(sResultFileListCount).NameLcase = LCase$(strFileName)
-                        'sResultFileList(5, sResultFileListCount) = FileName_woExt(strFileName)
-                        sResultFileList(sResultFileListCount).NameWoExt = FileName_woExt(strFileName)
-                        sResultFileListCount = sResultFileListCount + 1
+                        sResultFileList(lngResultFileListCount).NameLcase = LCase$(strFileName)
+                        sResultFileList(lngResultFileListCount).NameWoExt = FileName_woExt(strFileName)
+                        lngResultFileListCount = lngResultFileListCount + 1
                     End If
                 End If
             End If
@@ -323,16 +316,10 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
     ' Переопределение массива на реальное кол-во записей
     If Not mbDelete Then
         If mbInitial Then
-            If sResultFileListCount > 0 Then
-
-                'ReDim Preserve sResultFileList(5, sResultFileListCount - 1)
-                ReDim Preserve sResultFileList(sResultFileListCount - 1)
-
+            If lngResultFileListCount Then
+                ReDim Preserve sResultFileList(lngResultFileListCount - 1)
             Else
-
-                'ReDim Preserve sResultFileList(5, sResultFileListCount)
-                ReDim Preserve sResultFileList(sResultFileListCount)
-
+                ReDim Preserve sResultFileList(lngResultFileListCount)
             End If
         End If
     End If
@@ -360,7 +347,7 @@ Private Sub SearchForFolders(sRoot As String, ByVal mbInitial As Boolean, miMaxC
     End If
 
     If mbInitial Then
-        sResultFolderListCount = 0
+        lngResultFolderListCount = 0
 
         ReDim sResultFolderList(1, miMaxCountArr)
 
@@ -382,7 +369,7 @@ Private Sub SearchForFolders(sRoot As String, ByVal mbInitial As Boolean, miMaxC
                     If MatchSpec(strFindData, fp2.sFileNameExt) Then
 
                         ' Переопределение массива если превышаем заданную размерность
-                        If sResultFolderListCount = miMaxCountArr Then
+                        If lngResultFolderListCount = miMaxCountArr Then
                             miMaxCountArr = 2 * miMaxCountArr
 
                             ReDim Preserve sResultFolderList(1, miMaxCountArr)
@@ -390,10 +377,10 @@ Private Sub SearchForFolders(sRoot As String, ByVal mbInitial As Boolean, miMaxC
                         End If
 
                         ' Полный путь файла
-                        sResultFolderList(0, sResultFolderListCount) = sRoot & strFindData
-                        'sResultFolderList(1, sResultFolderListCount) = Left$(strFindData, InStrRev(strFindData, "_", , vbTextCompare) - 1)
-                        sResultFolderList(1, sResultFolderListCount) = strFindData
-                        sResultFolderListCount = sResultFolderListCount + 1
+                        sResultFolderList(0, lngResultFolderListCount) = sRoot & strFindData
+                        'sResultFolderList(1, lngResultFolderListCount) = Left$(strFindData, InStrRev(strFindData, "_", , vbTextCompare) - 1)
+                        sResultFolderList(1, lngResultFolderListCount) = strFindData
+                        lngResultFolderListCount = lngResultFolderListCount + 1
                     End If
 
                     If fp2.bRecurse Then
@@ -410,13 +397,13 @@ Private Sub SearchForFolders(sRoot As String, ByVal mbInitial As Boolean, miMaxC
 
     ' Переопределение массива на реальное кол-во записей
     If mbInitial Then
-        If sResultFolderListCount > 0 Then
+        If lngResultFolderListCount Then
 
-            ReDim Preserve sResultFolderList(1, sResultFolderListCount - 1)
+            ReDim Preserve sResultFolderList(1, lngResultFolderListCount - 1)
 
         Else
 
-            ReDim Preserve sResultFolderList(1, sResultFolderListCount)
+            ReDim Preserve sResultFolderList(1, lngResultFolderListCount)
 
         End If
     End If
@@ -433,7 +420,7 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
     Dim wfd   As WIN32_FIND_DATA
     Dim hFile As Long
 
-    If LenB(sRoot) > 0 Then
+    If LenB(sRoot) Then
         sRoot = BackslashAdd2Path(sRoot)
 
         If PathIsValidUNC(sRoot) = False Then
@@ -479,7 +466,7 @@ Public Function FolderContainsFiles(sRoot As String) As Boolean
     Dim wfd   As WIN32_FIND_DATA
     Dim hFile As Long
 
-    If LenB(sRoot) > 0 Then
+    If LenB(sRoot) Then
         sRoot = BackslashAdd2Path(sRoot)
 
         If PathIsValidUNC(sRoot) = False Then

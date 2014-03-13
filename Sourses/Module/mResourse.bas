@@ -21,7 +21,7 @@ Public Function GetBinaryFileFromResource(ByVal File_Path As String, ByVal ID As
 
     BinaryData = LoadResData(ID, Resource)
 
-    If LenB(BinaryData(1)) > 0 Then
+    If LenB(BinaryData(1)) Then
         'Если что - то есть, то все гуд
         Open File_Path For Binary Access Write As #iFile
         'запись в файл
@@ -158,7 +158,7 @@ Public Sub ExtractrResToFolder(strArg As String)
     strPathToTemp = strArg
 
     ' Проверяем существоание каталога
-    If LenB(strPathToTemp) > 0 Then
+    If LenB(strPathToTemp) Then
         If PathExists(strPathToTemp) = False Then
             CreateNewDirectory strPathToTemp
         End If

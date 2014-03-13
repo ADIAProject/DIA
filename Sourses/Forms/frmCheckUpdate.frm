@@ -670,7 +670,7 @@ Private Sub LoadDescriptionAndLinks()
     LoadButtonLink cmdUpdateFull, strLinkFull
 
     ' Описание изменений
-    If LenB(strDescriptionTemp) > 0 Then
+    If LenB(strDescriptionTemp) Then
         rtfDescription.TextRTF = strDescriptionTemp
     Else
         rtfDescription.TextRTF = "Error on load ChangeLog. Please inform the developer"

@@ -5,8 +5,7 @@ Option Explicit
 Public Const DONT_RESOLVE_DLL_REFERENCES As Long = &H1
 Public Const GMEM_FIXED                  As Long = 0    'Fixed memory GlobalAlloc flag
 
-Public Declare Sub RtlMoveMemory Lib "kernel32.dll" (Destination As Any, Source As Any, ByVal Length As Long)
-Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Public Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Public Declare Sub CopyMemoryLong Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
 Public Declare Sub ExitProcess Lib "kernel32.dll" (ByVal uExitCode As Long)
 Public Declare Sub CoTaskMemFree Lib "ole32.dll" (ByVal hMem As Long)

@@ -9,16 +9,16 @@ Option Explicit
 '!--------------------------------------------------------------------------------
 Public Function CompareDevDBVersion(strDevDBFullFileName As String, Optional ByVal strPathDRP As String) As Boolean
 
-    Dim LngValue          As Long
+    Dim lngValue          As Long
     Dim strFilePath_woExt As String
 
     strFilePath_woExt = FileName_woExt(strDevDBFullFileName)
-    LngValue = IniLongPrivate(FileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(PathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
+    lngValue = IniLongPrivate(FileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(PathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
 
-    If LngValue = 9999 Then
+    If lngValue = 9999 Then
         CompareDevDBVersion = False
     Else
-        CompareDevDBVersion = Not (LngValue <> lngDevDBVersion)
+        CompareDevDBVersion = Not (lngValue <> lngDevDBVersion)
     End If
 
 End Function
@@ -114,7 +114,7 @@ Public Sub DevParserLocalHwids2()
                             miStatus = 1
                         End If
 
-                        If LenB(strName) > 0 Then
+                        If LenB(strName) Then
                             strName_x = Split(strName, vbNewLine)
                             strName = strName_x(0)
                         End If
@@ -141,7 +141,7 @@ Public Sub DevParserLocalHwids2()
                         miStatus = 1
                     End If
 
-                    If LenB(strName) > 0 Then
+                    If LenB(strName) Then
                         strName_x = Split(strName, vbNewLine)
                         strName = strName_x(0)
                     End If
@@ -166,7 +166,7 @@ Public Sub DevParserLocalHwids2()
             Next
 
             ' ѕереобъ€вл€ем массив на реальное кол-во записей
-            If RecCountArr > 0 Then
+            If RecCountArr Then
 
                 ReDim Preserve arrHwidsLocal(RecCountArr - 1)
 
@@ -202,7 +202,7 @@ Public Function ParseDoubleHwid(ByVal strValuer As String) As String
     Dim miMI          As Long
     Dim miCC          As Long
 
-    If LenB(strValuer) > 0 Then
+    If LenB(strValuer) Then
 
         ' разбиваем по "\" - оставл€ем только xxx\yyy
         If InStr(strValuer, vbBackslash) Then
@@ -357,7 +357,7 @@ Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
         strDevConTemp = strDevConExePath64
     Else
 
-        If strOsCurrentVersion = "5.0" Then
+        If strOSCurrentVersion = "5.0" Then
             strDevConTemp = strDevConExePathW2k
         Else
             strDevConTemp = strDevConExePath

@@ -270,7 +270,7 @@ Private Function strFormatCaption(ByVal strCaption As String, Optional ByVal bEr
 
     ' The formatted caption
     ' Set the caption to either input parm or the application name
-    If LenB(Trim$(strCaption)) > 0 Then
+    If LenB(Trim$(strCaption)) Then
         strNewCaption = Trim$(strCaption)
     Else
         ' Set the caption default

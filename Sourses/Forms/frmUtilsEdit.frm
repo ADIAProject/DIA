@@ -410,7 +410,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub txtUtilName_Change()
-    cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
+    cmdOK.Enabled = LenB(Trim$(txtUtilName)) And LenB(Trim$(ucPathUtil.Path))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -466,7 +466,7 @@ Private Sub ucPathUtil64_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucPathUtil64.Path = strTempPath
     End If
 
@@ -496,7 +496,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucPathUtil64_PathChanged()
-    cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
+    cmdOK.Enabled = LenB(Trim$(txtUtilName)) And LenB(Trim$(ucPathUtil.Path))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -516,7 +516,7 @@ Private Sub ucPathUtil_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucPathUtil.Path = strTempPath
     End If
 
@@ -528,7 +528,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucPathUtil_PathChanged()
-    cmdOK.Enabled = LenB(Trim$(txtUtilName)) > 0 And LenB(Trim$(ucPathUtil.Path)) > 0
+    cmdOK.Enabled = LenB(Trim$(txtUtilName)) And LenB(Trim$(ucPathUtil.Path))
 End Sub
 
 Public Property Let CaptionW(ByVal NewValue As String)

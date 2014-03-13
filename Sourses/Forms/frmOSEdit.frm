@@ -726,7 +726,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub txtOSVer_Change()
-    cmdOK.Enabled = LenB(Trim$(txtOSVer)) > 0 And LenB(Trim$(ucPathDRP.Path)) > 0
+    cmdOK.Enabled = LenB(Trim$(txtOSVer)) And LenB(Trim$(ucPathDRP.Path))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -746,7 +746,7 @@ Private Sub ucLangPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucLangPath.Path = strTempPath
     End If
 
@@ -787,7 +787,7 @@ Private Sub ucPathDB_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucPathDB.Path = strTempPath
     End If
 
@@ -828,7 +828,7 @@ Private Sub ucPathDRP_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucPathDRP.Path = strTempPath
     End If
 
@@ -869,7 +869,7 @@ Private Sub ucPhysXPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucPhysXPath.Path = strTempPath
     End If
 
@@ -910,7 +910,7 @@ Private Sub ucRuntimesPath_Click()
         End If
     End If
 
-    If LenB(strTempPath) > 0 Then
+    If LenB(strTempPath) Then
         ucRuntimesPath.Path = strTempPath
     End If
 

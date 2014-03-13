@@ -206,7 +206,7 @@ Public Function LoadLanguageList() As Boolean
 
             Else
 
-                If LenB(strStartLanguageID) > 0 Then
+                If LenB(strStartLanguageID) Then
                     If InStr(1, strTemp, strStartLanguageID, vbTextCompare) Then
                         strPCLangCurrentPath = arrLanguage(1, jj)
                         strPCLangCurrentLangName = arrLanguage(2, jj)
@@ -233,12 +233,12 @@ End Function
 '! Description (Описание)  :   [Локализация сообщений программы]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Public Sub LocaliseMessage(strPathFile As String)
+Public Sub LocaliseMessage(StrPathFile As String)
 
     Dim i As Integer
 
     For i = 1 To UBound(strMessages)
-        strMessages(i) = LocaliseString(strPathFile, "Messages", "strMessages" & i, "strMessages" & i)
+        strMessages(i) = LocaliseString(StrPathFile, "Messages", "strMessages" & i, "strMessages" & i)
     Next i
 
 End Sub
@@ -251,11 +251,11 @@ End Sub
 '                              strParam (String)
 '                              strDefValue (String)
 '!--------------------------------------------------------------------------------
-Public Function LocaliseString(ByVal strPathFile As String, ByVal strSection As String, ByVal strParam As String, ByVal strDefValue As String) As String
+Public Function LocaliseString(ByVal StrPathFile As String, ByVal strSection As String, ByVal strParam As String, ByVal strDefValue As String) As String
 
     Dim strTemp As String
 
-    strTemp = IniStringPrivate(strSection, strParam, strPathFile)
+    strTemp = IniStringPrivate(strSection, strParam, StrPathFile)
 
     If strTemp <> "no_key" Then
         LocaliseString = ConvertString(Trim$(strTemp))

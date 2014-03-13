@@ -32,7 +32,7 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
         strResultAll = AppendStr(strResultAll, strLine, vbNewLine)
     Next
 
-    If LenB(strResultAll) > 0 Then
+    If LenB(strResultAll) Then
         '---------------Âûגמהטל טעמד ג פאיכ-----
         Set objRezultFile = objFSO.CreateTextFile(StrPathFile, True, True)
         objRezultFile.Write (strResultAll)
@@ -84,7 +84,7 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
         strResultAll = AppendStr(strResultAll, strLine, vbNewLine)
     Next
 
-    If LenB(strResultAll) > 0 Then
+    If LenB(strResultAll) Then
         '---------------Âûגמהטל טעמד ג פאיכ-----
         Set objRezultFile = objFSO.CreateTextFile(StrPathFile, True, True)
         objRezultFile.Write (strResultAll)

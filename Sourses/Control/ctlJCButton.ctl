@@ -1839,7 +1839,7 @@ Private Sub CalcPicRects()
 
         With m_PicRect
 
-            If LenB(Trim$(m_Caption)) > 0 And m_PictureAlign <> epBackGround Then
+            If LenB(Trim$(m_Caption)) And m_PictureAlign <> epBackGround Then
 
                 Select Case m_PictureAlign
 

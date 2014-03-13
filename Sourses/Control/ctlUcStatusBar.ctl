@@ -1273,7 +1273,7 @@ Private Sub PaintPanels()
                 .ItemRect.Bottom = ScaleHeight - 5
 
                 '   Use a default for blank text
-                If LenB(.Text) > 0 Then
+                If LenB(.Text) Then
                     lX = .ItemRect.Right
                 Else
                     lX = lX + 20

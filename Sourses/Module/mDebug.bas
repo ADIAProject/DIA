@@ -35,7 +35,7 @@ Public Sub DebugMode(ByVal Msg As String, Optional ByVal lngDetailModeTemp As Lo
     If mbDebugEnable Then
         If Not mbLogNotOnCDRoom Then
             If lngDetailModeTemp <= lngDetailMode Then
-                If LenB(Msg) > 0 Then
+                If LenB(Msg) Then
                     If objFSO.FileExists(strDebugLogFullPath) Then
                         Set tsLogFile = objFSO.OpenTextFile(strDebugLogFullPath, ForAppending, False, TristateTrue)
                     Else

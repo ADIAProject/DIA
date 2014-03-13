@@ -57,11 +57,11 @@ Public Sub CmdLineParsing()
         iArgRavno = InStr(strArg, "=")
         iArgDvoetoch = InStr(strArg, ":")
 
-        If iArgRavno > 0 Then
+        If iArgRavno Then
             strArg_x = Split(strArg, "=")
             strArg = strArg_x(0)
             strArgParam = strArg_x(1)
-        ElseIf iArgDvoetoch > 0 Then
+        ElseIf iArgDvoetoch Then
             'strArg_x = Split(strArg, ":")
             strArg = Left$(argRetCMD(i), iArgDvoetoch - 1)
             strArgParam = Right$(argRetCMD(i), Len(argRetCMD(i)) - iArgDvoetoch)
@@ -170,7 +170,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SaveReport(ByVal strFilePathTo As String)
 
-    If LenB(strFilePathTo) > 0 Then
+    If LenB(strFilePathTo) Then
         If PathExists(strResultHwidsExtTxtPath) Then
             CopyFileTo strResultHwidsExtTxtPath, strFilePathTo
         Else

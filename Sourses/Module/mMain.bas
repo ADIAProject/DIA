@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "11/03/2014"
+Public Const strDateProgram         As String = "13/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -289,7 +289,7 @@ Private Sub Main()
             ' Reload Main ini
             strSysIniTMP = GetSetting(App.ProductName, "Settings", "LOAD_INI_TMP_PATH", vbNullString)
 
-            If LenB(strSysIniTMP) > 0 Then
+            If LenB(strSysIniTMP) Then
                 If PathExists(strSysIniTMP) Then
                     strSysIni = strSysIniTMP
                     ' Собственно перезагрузка настроек
@@ -322,7 +322,7 @@ Private Sub Main()
     GetWorkArea
     
     ' Проверяем на запуск с параметрами
-    If LenB(Command) > 0 Then
+    If LenB(Command) Then
         ' Запуск парсинга строки запуска
         CmdLineParsing
     End If
@@ -467,7 +467,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional strDebugText As String, Optional ByVal mbEqual As Boolean = False, Optional ByVal mbDoEvents As Boolean = True, Optional strPanel1Text As String)
 
-    If LenB(strPanel2Text) > 0 Then
+    If LenB(strPanel2Text) Then
 
         If frmMain.ctlUcStatusBar1.PanelCount >= 2 Then
             frmMain.ctlUcStatusBar1.PanelText(2) = strPanel2Text
@@ -475,7 +475,7 @@ Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional s
             frmMain.ctlUcStatusBar1.PanelText(1) = strPanel2Text
         End If
 
-        If LenB(strPanel1Text) > 0 Then
+        If LenB(strPanel1Text) Then
             frmMain.ctlUcStatusBar1.PanelText(1) = strPanel1Text
         End If
         
@@ -484,9 +484,9 @@ Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional s
         End If
     End If
 
-    If LenB(strDebugText) > 0 Then
+    If LenB(strDebugText) Then
         If mbEqual Then
-            If LenB(strPanel1Text) > 0 Then
+            If LenB(strPanel1Text) Then
                 DebugMode strPanel1Text & ": " & strPanel2Text
             Else
                 DebugMode strPanel2Text
@@ -499,7 +499,7 @@ Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional s
     Else
 
         If mbEqual Then
-            If LenB(strPanel1Text) > 0 Then
+            If LenB(strPanel1Text) Then
                 DebugMode strPanel1Text & ": " & strPanel2Text
             Else
                 DebugMode strPanel2Text

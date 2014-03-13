@@ -21,10 +21,9 @@ Private Declare Function CryptCreateHash Lib "advapi32.dll" (ByVal hProv As Long
 Private Declare Function CryptHashData Lib "advapi32.dll" (ByVal hHash As Long, pbData As Any, ByVal dwDataLen As Long, ByVal dwFlags As Long) As Long
 Private Declare Function CryptGetHashParam Lib "advapi32.dll" (ByVal pCryptHash As Long, ByVal dwParam As Long, ByRef pbData As Any, ByRef pcbData As Long, ByVal dwFlags As Long) As Long
 
-'Расчет хэш-суммы MD5 файла
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetMD5
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Расчет хэш-суммы MD5 файла]
 '! Parameters  (Переменные):   sFile (String)
 '!--------------------------------------------------------------------------------
 Public Function GetMD5(sFile As String) As String
@@ -38,17 +37,25 @@ Public Function GetMD5(sFile As String) As String
     Dim hCrypt           As Long
     Dim hHash            As Long
     Dim sMD5             As String
-
+    Dim lngFilePathPtr   As Long
+    
+    'Get a pointer to a string with file name.
+    If PathIsValidUNC(sFile) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & sFile & vbNullChar)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFile, Len(sFile) - 2) & vbNullChar)
+    End If
     'Get a handle to the file
-    hFile = CreateFile(StrPtr(sFile & vbNullChar), GENERIC_READ, FILE_SHARE_READ, ByVal 0&, OPEN_EXISTING, ByVal 0&, ByVal 0&)
+    hFile = CreateFile(lngFilePathPtr, GENERIC_READ, FILE_SHARE_READ, ByVal 0&, OPEN_EXISTING, ByVal 0&, ByVal 0&)
 
     'Check if file opened successfully
-    If hFile > 0 Then
+    If hFile Then
         'Get the file size
         lFileSize = GetFileSize(hFile, ByVal 0&)
 
         'File size must be greater than 0
-        If lFileSize > 0 Then
+        If lFileSize Then
 
             'Prepare the buffer
             ReDim uBuffer(lFileSize - 1) As Byte

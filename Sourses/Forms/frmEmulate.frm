@@ -389,7 +389,7 @@ Private Sub ucFilePath_Click()
         strFilePath = ucFilePath.FileName
     End If
 
-    If LenB(strFilePath) > 0 Then
+    If LenB(strFilePath) Then
         ucFilePath.Path = strFilePath
         ' активация кнопки старт
         EnablerCmdOK

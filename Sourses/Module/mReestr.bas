@@ -146,7 +146,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
             Do Until LenB(tmpVal) = 0
                 intTempSmallBuff = InStrRev(tmpVal, vbNullChar)
 
-                If intTempSmallBuff > 0 Then
+                If intTempSmallBuff Then
                     intTemp = InStr(tmpVal, vbNullChar)
                     strstr = Left$(tmpVal, intTemp)
                     GetKeyValueMultiSZ(Index) = TrimNull(strstr)
@@ -162,8 +162,8 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
 
             For i = LBound(GetKeyValueMultiSZ) To UBound(GetKeyValueMultiSZ) - 1
 
-                If LenB(sKeyVal) > 0 Then
-                    If LenB(GetKeyValueMultiSZ(i)) > 0 Then
+                If LenB(sKeyVal) Then
+                    If LenB(GetKeyValueMultiSZ(i)) Then
                         sKeyVal = sKeyVal & " | " & GetKeyValueMultiSZ(i)
                     End If
 
@@ -314,14 +314,10 @@ Public Function ListKey(ByVal hkey, ByVal Key, Optional ByVal mbReadKeyRights As
     End If
 
     ' »тоговое переобъ€вление массива на реальное кол-во записей
-    If lCurIdx > 0 Then
-
+    If lCurIdx Then
         ReDim Preserve K(lCurIdx - 1) As String
-
     Else
-
         ReDim Preserve K(0)
-
     End If
 
     ListKey = K

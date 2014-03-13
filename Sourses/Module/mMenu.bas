@@ -117,7 +117,7 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
     Else
         hMenu = GetSubMenu(GetMenu(mnu.Parent.hWnd), mnuParentItem)
         'Shortcut to Menu
-        If LenB(strShortcut) > 0 Then
+        If LenB(strShortcut) Then
             sCaption = sCaption & vbTab & strShortcut
         End If
     End If

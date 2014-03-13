@@ -301,7 +301,7 @@ StartRegOCXForce:
         RegOCX = True
 
         If PathExists(regParam) Then
-            If LenB(regParam) > 0 Then
+            If LenB(regParam) Then
                 ' Сравниваем версии библиотек
                 strVersionFile = objFSO.GetFileVersion(regParam)
 

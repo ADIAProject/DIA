@@ -12,10 +12,9 @@ Private Declare Function GetPrivateProfileString Lib "kernel32.dll" Alias "GetPr
 Private Declare Function GetPrivateProfileStringW Lib "kernel32.dll" (ByVal lpApplicationName As Long, ByVal lpKeyName As Long, ByVal lpDefault As Long, ByVal lpReturnedString As Long, ByVal nSize As Long, ByVal lpFileName As Long) As Long
 Private Declare Function WritePrivateProfileString Lib "kernel32.dll" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal lpString As Any, ByVal lpFileName As String) As Long
 
-'sub to load all keys from an ini section into a listbox.
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckIniSectionExists
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [sub to load all keys from an ini section into a listbox]
 '! Parameters  (Переменные):   strSection (String)
 '                              strfullpath (String)
 '!--------------------------------------------------------------------------------
@@ -27,18 +26,13 @@ Public Function CheckIniSectionExists(ByVal strSection As String, ByVal strfullp
     strBuffer = String$(5 * 1024, vbNullChar)
     nTemp = GetPrivateProfileSection(strSection, strBuffer, Len(strBuffer), strfullpath)
 
-    If nTemp > 0 Then
-        CheckIniSectionExists = True
-    Else
-        CheckIniSectionExists = False
-    End If
+    CheckIniSectionExists = nTemp
 
 End Function
 
-' Получение Boolean значения переменной ini-файла с дефолтовым значением
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetIniValueBoolean
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение Boolean значения переменной ini-файла с дефолтовым значением]
 '! Parameters  (Переменные):   strIniPath (String)
 '                              strIniSection (String)
 '                              strIniValue (String)
@@ -46,21 +40,20 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueBoolean(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Boolean
 
-    Dim LngValue As Long
+    Dim lngValue As Long
 
-    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If LngValue = 9999 Then
-        LngValue = lngValueDefault
+    If lngValue = 9999 Then
+        lngValue = lngValueDefault
     End If
 
-    GetIniValueBoolean = CBool(LngValue)
+    GetIniValueBoolean = CBool(lngValue)
 End Function
 
-' Получение Long значения переменной ini-файла с дефолтовым значением
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetIniValueLong
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение Long значения переменной ini-файла с дефолтовым значением]
 '! Parameters  (Переменные):   strIniPath (String)
 '                              strIniSection (String)
 '                              strIniValue (String)
@@ -68,15 +61,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Long
 
-    Dim LngValue As Long
+    Dim lngValue As Long
 
-    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If LngValue = 9999 Then
-        LngValue = lngValueDefault
+    If lngValue = 9999 Then
+        lngValue = lngValueDefault
     End If
 
-    GetIniValueLong = LngValue
+    GetIniValueLong = lngValue
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -164,7 +157,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
         End If
     End If
 
-    If LenB(strTemp) > 0 Then
+    If LenB(strTemp) Then
         lpKeyValue = Split(strTemp, vbNullChar)
 
         ReDim arrSection(UBound(lpKeyValue), 2) As String
@@ -234,16 +227,11 @@ PROC_ERR:
 
 End Function
 
-'Удаляет все ключи в заданной секции в приватном файле .INI
-'заодно удаляет и саму секцию!
-'-------------------------------------------------
-'SekName - имя секции (регистр не учитывается)
-'IniFileName - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniDelAllKeyPrivate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   SekName (String)
-'                              IniFileName (String)
+'! Description (Описание)  :   [Удаляет все ключи в заданной секции в приватном файле .INI - заодно удаляет и саму секцию!?]
+'! Parameters  (Переменные):   SekName (String) - имя секции (регистр не учитывается)
+'                              IniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
 '!--------------------------------------------------------------------------------
 Public Function IniDelAllKeyPrivate(SekName As String, IniFileName As String)
 
@@ -407,10 +395,9 @@ Public Sub NormIniFile(ByVal sFileName As String)
 
 End Sub
 
-'# use to read/write ini/inf file #
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ReadFromINI
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [use to read/write ini/inf file]
 '! Parameters  (Переменные):   strSection (String)
 '                              strKey (String)
 '                              strfullpath (String)
@@ -424,10 +411,9 @@ Public Function ReadFromINI(ByVal strSection As String, ByVal strKey As String, 
     ReadFromINI = Left$(strBuffer, GetPrivateProfileString(strSection, ByVal LCase$(strKey), strDefault, strBuffer, Len(strBuffer), strfullpath))
 End Function
 
-' Проверка на то что секция пустая
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniSectionIsEmpty
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка на то что секция пустая]
 '! Parameters  (Переменные):   strSection (String)
 '                              strIni (String)
 '!--------------------------------------------------------------------------------
@@ -441,10 +427,9 @@ Public Function IniSectionIsEmpty(strSection As String, strIni As String) As Boo
     IniSectionIsEmpty = nTemp = 0
 End Function
 
-' Получение списка пустых секций из полученного ранее списка секций
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetIniEmptySectionFromList
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение списка пустых секций из полученного ранее списка секций]
 '! Parameters  (Переменные):   strSectionList (String)
 '                              strIniPath (String)
 '!--------------------------------------------------------------------------------
@@ -461,7 +446,7 @@ Public Function GetIniEmptySectionFromList(strSectionList As String, strIniPath 
         strManufSection = strSectionList_x(i_i)
 
         If IniSectionIsEmpty(strManufSection, strIniPath) Then
-            If LenB(strTmp) > 0 Then
+            If LenB(strTmp) Then
                 strTmp = strTmp & "," & strManufSection
             Else
                 strTmp = strManufSection
@@ -470,7 +455,7 @@ Public Function GetIniEmptySectionFromList(strSectionList As String, strIniPath 
 
     Next
 
-    If LenB(strTmp) > 0 Then
+    If LenB(strTmp) Then
         GetIniEmptySectionFromList = strTmp
     Else
         GetIniEmptySectionFromList = "-"

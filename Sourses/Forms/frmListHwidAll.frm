@@ -705,7 +705,7 @@ Private Sub FindCheckCountList()
 
     Next
 
-    If miCount > 0 Then
+    If miCount Then
 
         With cmdOK
 
@@ -965,7 +965,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
         strStrDescription = arrHwidsLocal(ii).Description
 
         If StrComp(strDevName, strStrDescription, vbTextCompare) <> 0 Then
-            If LenB(strStrDescription) > 0 Then
+            If LenB(strStrDescription) Then
                 If InStr(strStrDescription, "unknown") = 0 Then
                     strDevName = strStrDescription
                 End If
@@ -1337,25 +1337,25 @@ Private Function ParseHwid(strValuer As String) As String
             strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
             miSubSys = InStr(strValuer, "&SUBSYS")
 
-            If miSubSys > 0 Then
+            If miSubSys Then
                 strValuer = Left$(strValuer, miSubSys - 1)
             End If
 
             miREV = InStr(strValuer, "&REV_")
 
-            If miREV > 0 Then
+            If miREV Then
                 strValuer = Left$(strValuer, miREV - 1)
             End If
 
             miMI = InStr(strValuer, "&MI_")
 
-            If miMI > 0 Then
+            If miMI Then
                 strValuer = Left$(strValuer, miMI - 1)
             End If
 
             miCC = InStr(strValuer, "&CC_")
 
-            If miCC > 0 Then
+            If miCC Then
                 strValuer = Left$(strValuer, miCC - 1)
             End If
         End If

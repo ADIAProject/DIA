@@ -999,7 +999,7 @@ Private Sub cmdPick_Click()
 
                 End With
 
-                If LenB(sFolder) > 0 Then
+                If LenB(sFolder) Then
                     m_Path = QualifyPath(sFolder)
                     PropertyChanged "Path"
 
@@ -2237,7 +2237,7 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
         .sFile = FileDialog.sFile & String$(2048, vbNullChar)
         .nFileSize = Len(FileDialog.sFile)
 
-        If LenB(sInitPath) > 0 Then
+        If LenB(sInitPath) Then
             .sInitDir = sInitPath
         Else
             .sInitDir = strAppPath

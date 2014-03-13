@@ -39,14 +39,14 @@ Public Sub CollectHwidFromReestr()
         strCompatID = UCase$(GetKeyValue(HKEY_LOCAL_MACHINE, regNameEnum, "HardwareID", True))
         strCompatibleIDs = UCase$(GetKeyValue(HKEY_LOCAL_MACHINE, regNameEnum, "CompatibleIDs", True))
 
-        If LenB(strCompatibleIDs) > 0 Then
-            If LenB(strCompatID) > 0 Then
+        If LenB(strCompatibleIDs) Then
+            If LenB(strCompatID) Then
                 strCompatID = strCompatID & (" | " & strCompatibleIDs)
             End If
         End If
 
         ' Убираем глюк с появлением &CTLR_ в HWID устройства
-        If LenB(strCompatID) > 0 Then
+        If LenB(strCompatID) Then
             If InStr(strCompatID, "&CTLR_") Then
                 DebugMode vbTab & "CollectHwidFromReestr-Start - !!! Replace for HWID: " & strID & " in CompatibleIDs '&CTLR_' ---> &_", 1
                 strCompatID = Replace$(strCompatID, "&CTLR_", "&_")
@@ -58,7 +58,7 @@ Public Sub CollectHwidFromReestr()
         regDriverClass = GetKeyValue(HKEY_LOCAL_MACHINE, regNameEnum, "Driver", True)
 
         ' Получаем данные о драйвере
-        If LenB(regDriverClass) > 0 Then
+        If LenB(regDriverClass) Then
             regNameClass = "SYSTEM\CurrentControlSet\Control\Class\" & regDriverClass & vbBackslash
             'SYSTEM\CurrentControlSet\Control\Class\"+pos+"\\"
             ' Получаем данные о драйвере
@@ -88,47 +88,47 @@ Public Sub CollectHwidFromReestr()
         'var tmp2 = RegRead(pos + "InfSection");
         'var tmp3 = RegRead(pos + "InfSectionExt");
         ' если необходимо конвертировать дату в формат dd/mm/yyyy, а также в формат русского
-        If LenB(strDateDRV) > 0 Then
+        If LenB(strDateDRV) Then
             ConvertDate2Rus strDateDRV
         End If
 
-        If LenB(strDateDRV) > 0 And LenB(strVersionDRV) > 0 Then
+        If LenB(strDateDRV) And LenB(strVersionDRV) Then
             strVersionDRV = strDateDRV & "," & strVersionDRV
         Else
             strVersionDRV = "unknown"
         End If
 
-        If LenB(strVersionDRV) > 0 Then
+        If LenB(strVersionDRV) Then
             arrHwidsLocal(i).VerLocal = Trim$(strVersionDRV)
         Else
             arrHwidsLocal(i).VerLocal = "unknown"
         End If
 
-        If LenB(strProviderName) > 0 Then
+        If LenB(strProviderName) Then
             arrHwidsLocal(i).Provider = Trim$(strProviderName)
         Else
             arrHwidsLocal(i).Provider = "unknown"
         End If
 
-        If LenB(strCompatID) > 0 Then
+        If LenB(strCompatID) Then
             arrHwidsLocal(i).HWIDCompat = Trim$(strCompatID)
         Else
             arrHwidsLocal(i).HWIDCompat = "UNKNOWN"
         End If
 
-        If LenB(strStrDescription) > 0 Then
+        If LenB(strStrDescription) Then
             arrHwidsLocal(i).Description = Trim$(strStrDescription)
         Else
             arrHwidsLocal(i).Description = "unknown"
         End If
 
-        If LenB(strInfName) > 0 Then
+        If LenB(strInfName) Then
             arrHwidsLocal(i).HWIDMatches = UCase$(Trim$(strMatchesID))
         Else
             arrHwidsLocal(i).HWIDMatches = "UNKNOWN"
         End If
 
-        If LenB(strInfName) > 0 Then
+        If LenB(strInfName) Then
             arrHwidsLocal(i).InfName = Trim$(strInfName)
         Else
             arrHwidsLocal(i).InfName = "unknown"

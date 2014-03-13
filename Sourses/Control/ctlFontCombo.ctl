@@ -965,12 +965,12 @@ End Sub
 Private Sub UserControl_Resize()
 
     Dim tBdr As Single
-    Dim V    As Integer
+    Dim v    As Integer
 
     On Error Resume Next
 
     If mXPStyle = False Then
-        V = 0
+        v = 0
 
         Select Case mBorderStyle
 
@@ -985,14 +985,14 @@ Private Sub UserControl_Resize()
         End Select
 
     Else
-        V = 2
+        v = 2
         tBdr = 1
     End If
 
-    UserControl.Height = ScaleY(TextHeight("X") + (tBdr * 2) + 4 + V, vbPixels, vbTwips)
+    UserControl.Height = ScaleY(TextHeight("X") + (tBdr * 2) + 4 + v, vbPixels, vbTwips)
 
     If UserControl.Width < 600 Then UserControl.Width = 600
-    FocusBox.Move tBdr + 1, tBdr + 1, UserControl.ScaleWidth - tBdr - 20 + V, UserControl.ScaleHeight - (tBdr * 2) - 1
+    FocusBox.Move tBdr + 1, tBdr + 1, UserControl.ScaleWidth - tBdr - 20 + v, UserControl.ScaleHeight - (tBdr * 2) - 1
     SetRect uRct, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight
     SetRect Btn, UserControl.ScaleWidth - tBdr - 17, tBdr, UserControl.ScaleWidth - tBdr, UserControl.ScaleHeight - tBdr
     DrawControl bUp, True
@@ -1367,33 +1367,33 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mgSort(ByVal pStart As Long, ByVal pEnd As Long)
 
-    Dim m     As Long
+    Dim M     As Long
     Dim n     As Long
     Dim tStr1 As String
 
-    m = pStart
+    M = pStart
     n = pEnd
     tStr1 = LCase$(mListFont((pStart + pEnd) \ 2))
 
     Do
-        Do While LCase$(mListFont(m)) < tStr1
-            m = m + 1
+        Do While LCase$(mListFont(M)) < tStr1
+            M = M + 1
         Loop
 
         Do While LCase$(mListFont(n)) > tStr1
             n = n - 1
         Loop
 
-        If m <= n Then
-            SwapStrings mListFont(m), mListFont(n)
-            m = m + 1
+        If M <= n Then
+            SwapStrings mListFont(M), mListFont(n)
+            M = M + 1
             n = n - 1
         End If
 
-    Loop Until m > n
+    Loop Until M > n
 
     If pStart < n Then Call mgSort(pStart, n)
-    If m < pEnd Then Call mgSort(m, pEnd)
+    If M < pEnd Then Call mgSort(M, pEnd)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1449,7 +1449,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Integer)
 
-    Dim m         As Integer
+    Dim M         As Integer
     Dim n         As Integer
     Dim TmpLast() As tpRecents
     Dim a%, B%
@@ -1479,7 +1479,7 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
         For n = 1 To mRecentMax
             myLast = mRecent(n - 1)
 
-            If LenB(Trim$(myLast.fName)) > 0 Then
+            If LenB(Trim$(myLast.fName)) Then
                 TmpLast(n) = myLast
             End If
 
@@ -1493,7 +1493,7 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
         For B% = 0 To mRecentMax
 
             If B% <> a% Then
-                If LenB(TmpLast(a%).fName) > 0 Then
+                If LenB(TmpLast(a%).fName) Then
                     If TmpLast(a%).fName = TmpLast(B%).fName Then
                         TmpLast(B%).fName = ""
                         B% = B% - 1
@@ -1504,22 +1504,22 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
         Next
     Next
 
-    m = 0
+    M = 0
 
     ReDim mRecent(mRecentMax)
 
     For n = 0 To mRecentMax - 1
 
-        If LenB(Trim$(TmpLast(n).fName)) > 0 Then
-            mRecent(m).fName = TmpLast(n).fName
-            mRecent(m).fIndex = TmpLast(n).fIndex
-            mRecent(m).fRecent = True
-            m = m + 1
+        If LenB(Trim$(TmpLast(n).fName)) Then
+            mRecent(M).fName = TmpLast(n).fName
+            mRecent(M).fIndex = TmpLast(n).fIndex
+            mRecent(M).fRecent = True
+            M = M + 1
         End If
 
     Next
 
-    mRecentCount = m
+    mRecentCount = M
 End Sub
 
 '!--------------------------------------------------------------------------------
