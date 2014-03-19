@@ -84,7 +84,7 @@ ErrCode:
     Debug.Print Err.Number & " " & Err.Description & " " & Err.LastDllError
 
     If errNum <> 0 Then
-        DebugMode str5VbTab & "CheckConnection2Server: " & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError) & vbNewLine & _
+        If mbDebugStandart Then DebugMode str5VbTab & "CheckConnection2Server: " & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError) & vbNewLine & _
                   str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
     End If
 
@@ -127,7 +127,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
     Dim strUrl_Request          As String
     
 
-    DebugMode "CheckUpd-Start" & vbNewLine & _
+    If mbDebugStandart Then DebugMode "CheckUpd-Start" & vbNewLine & _
                vbTab & "CheckUpd-Options: " & Start
     
     ' Маркер окончания процесса проверки обновления
@@ -218,7 +218,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 
                         If StrComp(strRelease, "beta", vbTextCompare) = 0 Then
                             If Not mbUpdateCheckBeta Then
-                                DebugMode vbTab & "The version on the site is Beta. In options check for beta are disable. Break function!!!"
+                                If mbDebugStandart Then DebugMode vbTab & "The version on the site is Beta. In options check for beta are disable. Break function!!!"
                                 ChangeStatusTextAndDebug strMessages(56)
 
                                 If Not Start Then
@@ -274,7 +274,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
             End If
 
         Else
-            DebugMode vbTab & "CheckUPD-Site: " & strMessages(53) & vbNewLine & "Error: " & strUrl_Test_Site_Result
+            If mbDebugStandart Then DebugMode vbTab & "CheckUPD-Site: " & strMessages(53) & vbNewLine & "Error: " & strUrl_Test_Site_Result
             ChangeStatusTextAndDebug strMessages(143)
 
             If Not Start Then
@@ -284,7 +284,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 
     ' на 99% интернет отсутствует
     Else
-        DebugMode vbTab & "CheckUPD-Inet: " & strMessages(53) & vbNewLine & "Error: " & strUrl_TestWWW_Result
+        If mbDebugStandart Then DebugMode vbTab & "CheckUPD-Inet: " & strMessages(53) & vbNewLine & "Error: " & strUrl_TestWWW_Result
         ChangeStatusTextAndDebug strMessages(53)
 
         If Not Start Then
@@ -299,7 +299,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 
     On Error GoTo 0
 
-    DebugMode "CheckUpd-End"
+    If mbDebugStandart Then DebugMode "CheckUpd-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -358,9 +358,9 @@ Public Sub LoadUpdateData()
                 strVersionsTemp = xmlNode.childNodes(miNodeIndex).Text
                 strUpdVersions = Split(strVersionsTemp, ";")
 
-                ReDim strUpdDescription(UBound(strUpdVersions), 2) As String
-                ReDim strLink(UBound(strUpdVersions), 6) As String
-                ReDim strLinkFull(UBound(strUpdVersions), 6) As String
+                ReDim strUpdDescription(UBound(strUpdVersions), 2)
+                ReDim strLink(UBound(strUpdVersions), 6)
+                ReDim strLinkFull(UBound(strUpdVersions), 6)
 
                 ' Данные из файла %ver%.xml - Загрузка описаний изменений
                 For i = LBound(strUpdVersions) To UBound(strUpdVersions)

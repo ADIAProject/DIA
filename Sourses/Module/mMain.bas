@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "13/03/2014"
+Public Const strDateProgram         As String = "19/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -314,8 +314,6 @@ Private Sub Main()
     strPathImageMain = strAppPathBackSL & strToolsGraphics_Path & "\Main\"
     'strPathImageMenu = strAppPathBackSL & strToolsGraphics_Path & "\Menu\"
     LoadIconImagePath
-    ' Находится ли лог на CD
-    mbLogNotOnCDRoom = LogNotOnCDRoom
     ' Очищаем лог-историю
     MakeCleanHistory
     ' Получаем размеры рабочей области программы
@@ -334,10 +332,10 @@ Private Sub Main()
     End If
 
     If Not mbDebugTime2File Then
-        DebugMode "Current Date: " & Now()
+        If mbDebugStandart Then DebugMode "Current Date: " & Now()
     End If
 
-    DebugMode "Version: " & strProductName & vbNewLine & _
+    If mbDebugStandart Then DebugMode "Version: " & strProductName & vbNewLine & _
               "Build: " & strDateProgram & vbNewLine & _
               "ExeName: " & App.EXEName & ".exe" & vbNewLine & _
               "AppWork: " & strAppPath & vbNewLine & _
@@ -345,7 +343,7 @@ Private Sub Main()
 
     If mbIsUserAnAdmin Then
         ' записываем в реестр мой сертификат, для ЭЦП на exe-файлы
-        DebugMode "SaveSert2Reestr"
+        If mbDebugStandart Then DebugMode "SaveSert2Reestr"
         SaveSert2Reestr
     Else
 
@@ -358,7 +356,7 @@ Private Sub Main()
         End If
     End If
 
-    DebugMode "WinDir: " & strWinDir & vbNewLine & _
+    If mbDebugStandart Then DebugMode "WinDir: " & strWinDir & vbNewLine & _
               "TmpDir: " & strWinTemp & vbNewLine & _
               "WorkTemp: " & strWorkTemp & vbNewLine & _
               "IsDriveCDRoom: " & mbIsDriveCDRoom
@@ -366,7 +364,7 @@ Private Sub Main()
     If strOSCurrentVersion > "5.0" Then
         ' Определение windows x64
         mbIsWin64 = IsWow64
-        DebugMode "IsWow64: " & mbIsWin64
+        If mbDebugStandart Then DebugMode "IsWow64: " & mbIsWin64
 
         If mbIsWin64 Then
             Win64ReloadOptions
@@ -385,7 +383,7 @@ Private Sub Main()
     ' Регистрация внешних компонент
     RegisterAddComponent
 
-    DebugMode "OsCurrentVersion: " & strOSCurrentVersion & vbNewLine & _
+    If mbDebugStandart Then DebugMode "OsCurrentVersion: " & strOSCurrentVersion & vbNewLine & _
               "Architecture: " & strOSArchitecture & vbNewLine & _
               "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
 
@@ -395,7 +393,7 @@ Private Sub Main()
     ' Если не существует каталогов с драйверами прописанных в настройках, то выводим сообщение
     If mbAllFolderDRVNotExist Then
         MsgBox strMessages(6), vbCritical + vbApplicationModal, strProductName
-        DebugMode strMessages(6)
+        If mbDebugStandart Then DebugMode strMessages(6)
 
         'End
         GoTo ExitSub
@@ -404,18 +402,18 @@ Private Sub Main()
 
     If APIFunctionPresent("IsAppThemed", "uxtheme.dll") Then
         mbAppThemed = IsAppThemed
-        DebugMode "IsAppThemed: " & mbAppThemed
+        If mbDebugStandart Then DebugMode "IsAppThemed: " & mbAppThemed
     End If
 
     mbAeroEnabled = IsAeroEnabled
-    DebugMode "IsAeroEnabled : " & mbAeroEnabled
+    If mbDebugStandart Then DebugMode "IsAeroEnabled : " & mbAeroEnabled
     ' изменяем разрешающую способность экрана монитора при необходимости
     SetVideoMode
     GetWorkArea
     
     ' Получаем имя производителя материнской платы/ноутбука
     strCompModel = GetMBInfo()
-    DebugMode "isNotebook: " & mbIsNotebok & vbNewLine & _
+    If mbDebugStandart Then DebugMode "isNotebook: " & mbIsNotebok & vbNewLine & _
               "Notebook/Motherboard Model: " & strCompModel
               
     ' Маркер указывающий что это "первый" запуск программы, нужен для события активации формы и других процедур
@@ -435,7 +433,7 @@ Private Sub Main()
         ' Если не поддерживается всыпылваюющие подсказки
         If Not CheckBallonTip Then
             If MsgBox(strMessages(9), vbYesNo + vbQuestion, strMessages(10)) = vbNo Then
-                End
+                GoTo ExitSub
             End If
         End If
     End If
@@ -465,7 +463,7 @@ End Sub
 '                              mbDoEvents (Boolean = True)
 '                              strPanel1Text (String)
 '!--------------------------------------------------------------------------------
-Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional strDebugText As String, Optional ByVal mbEqual As Boolean = False, Optional ByVal mbDoEvents As Boolean = True, Optional strPanel1Text As String)
+Public Sub ChangeStatusTextAndDebug(ByVal strPanel2Text As String, Optional ByVal strPanel1Text As String = vbNullString, Optional ByVal mbDoEvents As Boolean = True)
 
     If LenB(strPanel2Text) Then
 
@@ -483,30 +481,6 @@ Public Sub ChangeStatusTextAndDebug(Optional strPanel2Text As String, Optional s
             DoEvents
         End If
     End If
-
-    If LenB(strDebugText) Then
-        If mbEqual Then
-            If LenB(strPanel1Text) Then
-                DebugMode strPanel1Text & ": " & strPanel2Text
-            Else
-                DebugMode strPanel2Text
-            End If
-
-        Else
-            DebugMode strDebugText
-        End If
-
-    Else
-
-        If mbEqual Then
-            If LenB(strPanel1Text) Then
-                DebugMode strPanel1Text & ": " & strPanel2Text
-            Else
-                DebugMode strPanel2Text
-            End If
-        End If
-    End If
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -579,7 +553,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Win64ReloadOptions()
-    DebugMode "Win64ReloadOptions"
+    If mbDebugStandart Then DebugMode "Win64ReloadOptions"
     strDPInstExePath = strDPInstExePath64
 End Sub
 
@@ -609,5 +583,5 @@ Private Function CheckBallonTip() As Boolean
         CheckBallonTip = regParam = "1"
     End If
 
-    DebugMode "EnableBalloonTips: " & regParam & "(" & CheckBallonTip & ")"
+    If mbDebugStandart Then DebugMode "EnableBalloonTips: " & regParam & "(" & CheckBallonTip & ")"
 End Function

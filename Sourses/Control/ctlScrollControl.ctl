@@ -20,13 +20,19 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'Note: this file has been modified for use within Drivers Installer Assistant.
+'This code was originally written by Leandro I. Ascierto
+'You may download the original version of this code from the following link (good as of 21 Mar '10):
+'http://leandroascierto.com/blog/scrollcontrol/
+'---------------------------------------------------------
+
+'*********************************
+' Modified by Romeo91 (adia-project.net) Last Edit 2014-03-04
+'*********************************
+' Change subsclasser to class cSelfSubHookCallback
+
 Option Explicit
 
-' ------------------------------------------------------
-' Autor:    Leandro I. Ascierto
-' Web:      www.leandroascierto.com.ar
-' Fecha:    21 de Marzo de 2010
-' ------------------------------------------------------
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function VirtualAlloc Lib "kernel32.dll" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
@@ -169,6 +175,10 @@ Private Enum eParamUser
     exParentForm = 1
     exUserControl = 2
 End Enum
+
+'*************************************************************
+Private mY As Single
+Private mX As Single
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property BackColor
@@ -334,9 +344,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-    Static mY As Single
-    Static mX As Single
-
     If m_UseHandsCursor = False Then
 
         Exit Sub
@@ -399,7 +406,6 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         Me.Enabled = .ReadProperty("Enabled", True)
     End With
 
-    'If we're not in design mode
     On Error GoTo H
 
     'If we're not in design mode
@@ -783,6 +789,7 @@ Private Sub zWndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef
             Else
                 ScrollHorizontalWindow -SI.nPos
             End If
+            Me.Refresh
 
         Case WM_MOUSEWHEEL
 

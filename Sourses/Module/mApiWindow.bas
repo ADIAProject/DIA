@@ -133,7 +133,7 @@ Public Declare Function SetFocusAPI Lib "user32.dll" Alias "SetFocus" (ByVal hWn
 Public Declare Function GetFocus Lib "user32.dll" () As Long
 Public Declare Function UpdateWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
 Public Declare Function FindWindowEx Lib "user32.dll" Alias "FindWindowExA" (ByVal hWnd1 As Long, ByVal hWnd2 As Long, ByVal lpsz1 As String, ByVal lpsz2 As String) As Long
-Public Declare Function EnumThreadWindows Lib "user32.dll" (ByVal dwThreadId As Long, ByVal lpfn As Long, ByVal lParam As Long) As Long
+Public Declare Function EnumThreadWindows Lib "user32.dll" (ByVal dwThreadID As Long, ByVal lpfn As Long, ByVal lParam As Long) As Long
 Public Declare Function GetWindowThreadProcessId Lib "user32.dll" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
 Public Declare Function EnumChildWindows Lib "user32.dll" (ByVal hWndParent As Long, ByVal lpEnumFunc As Long, ByVal lParam As Long) As Long
 Public Declare Function GetClassLong Lib "user32.dll" Alias "GetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
@@ -145,3 +145,22 @@ Public Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hD
 'Public Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As Long
 'Public Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 'Public Declare Function FindWindow Lib "user32" Alias "FindWindowW" (ByVal lpClassName As Long, ByVal lpWindowName As Long) As Long
+
+Public Function IsChildOfControl(ByVal hWndControl As Long, ByVal hWndParentControl As Long) As Boolean
+
+    Dim hParent As Long
+
+    hParent = GetParent(hWndControl)
+
+    Do While hParent <> 0
+
+        If hParent = hWndParentControl Then
+            IsChildOfControl = True
+            Exit Do
+        End If
+
+        hParent = GetParent(hParent)
+    Loop
+
+End Function
+

@@ -96,12 +96,12 @@ Public Function CopyFileTo(ByVal PathFrom As String, ByVal PathTo As String) As 
         Else
             CopyFileTo = False
             MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError), vbExclamation, strProductName
-            DebugMode vbTab & "Copy file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "Copy file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
 
     Else
         CopyFileTo = False
-        DebugMode vbTab & "Copy file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode vbTab & "Copy file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
     End If
 
 End Function
@@ -141,7 +141,7 @@ Public Sub CreateNewDirectory(ByVal NewDirectory As String)
             retLasrErr = Err.LastDllError
 
             If PathExists(sTempDir) = False Then
-                DebugMode vbTab & "CreateDirectory: False : " & sTempDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
+                If mbDebugStandart Then DebugMode vbTab & "CreateDirectory: False : " & sTempDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
             End If
         End If
 
@@ -176,14 +176,14 @@ Public Function DeleteFiles(ByVal PathFile As String) As Boolean
         End If
 
         If PathExists(PathFile) Then
-            DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
     End If
 
     Exit Function
 
 errhandler:
-    DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description & vbNewLine & _
+    If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description & vbNewLine & _
               vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
     Err.Clear
 
@@ -202,7 +202,7 @@ Public Sub DelFolderBackUp(ByVal strFolderPath As String)
 
     On Error Resume Next
 
-    DebugMode "DelFolder-Start: " & strFolderPath
+    If mbDebugStandart Then DebugMode "DelFolder-Start: " & strFolderPath
 
     If PathExists(strFolderPath) Then
         DelRecursiveFolder strFolderPath
@@ -212,13 +212,13 @@ Public Sub DelFolderBackUp(ByVal strFolderPath As String)
         ret = RemoveDirectory(strFolderPath)
 
         If ret = 0 Then
-            DebugMode vbTab & "RemoveDirectory: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "RemoveDirectory: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
     End If
 
     On Error GoTo 0
 
-    DebugMode "DelFolder-End"
+    If mbDebugStandart Then DebugMode "DelFolder-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -232,7 +232,7 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
     Dim retStrMsg As String
 
     Root = BacklashDelFromPath(Folder)
-    DebugMode vbTab & "DeleteFolder: " & Root
+    If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: " & Root
 
     If PathExists(Root) Then
         SearchFilesInRoot Root, ALL_FILES, True, False, True
@@ -250,7 +250,7 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
         If PathExists(Root) Then
             retDelete = DelTree(Root)
 
-            If mbDebugEnable Then
+            If mbDebugStandart Then
 
                 Select Case retDelete
 
@@ -264,7 +264,7 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
                         retStrMsg = "An Error was occured"
                 End Select
 
-                DebugMode vbTab & "DeleteFolder: " & " Result: " & retStrMsg
+                If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: " & " Result: " & retStrMsg
             End If
         End If
     End If
@@ -278,9 +278,13 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub DelTemp()
 
+    Dim TimeScriptRun As Long
+    Dim TimeScriptFinish As Long
+
     On Error Resume Next
 
-    DebugMode "DelTemp-Start"
+    If mbDebugDetail Then DebugMode "DelTemp-Start"
+    TimeScriptRun = GetTickCount
 
     If PathExists(strWorkTemp) Then
         DelRecursiveFolder strWorkTemp
@@ -292,7 +296,8 @@ Public Sub DelTemp()
 
     On Error GoTo 0
 
-    DebugMode "DelTemp-End"
+    TimeScriptFinish = GetTickCount
+    If mbDebugStandart Then DebugMode "DelTemp-End: Time to Delete: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -381,7 +386,7 @@ Private Function DelTree(ByVal strDir As String) As Long
                     retLasrErr = Err.LastDllError
 
                     If PathExists(strDir) = False Then
-                        DebugMode vbTab & "RemoveDirectory: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
+                        If mbDebugStandart Then DebugMode vbTab & "RemoveDirectory: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
                     End If
 
                     DelTree = retLasrErr
@@ -513,7 +518,7 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
         GetEnviron = strTempEnv
     End If
 
-    DebugMode str2VbTab & "GetEnviron: %" & strTemp & "%=" & strTempEnv & vbNewLine & _
+    If mbDebugStandart Then DebugMode str2VbTab & "GetEnviron: %" & strTemp & "%=" & strTempEnv & vbNewLine & _
               str2VbTab & "GetEnviron-End"
 End Function
 
@@ -614,16 +619,16 @@ Public Function MoveFileTo(PathFrom As String, PathTo As String) As Boolean
             Else
                 MoveFileTo = False
                 MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError), vbExclamation, strProductName
-                DebugMode vbTab & "Move file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+                If mbDebugStandart Then DebugMode vbTab & "Move file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
             End If
 
         Else
             MoveFileTo = False
-            DebugMode vbTab & "Move file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "Move file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
 
     Else
-        DebugMode vbTab & "Move file: Source and Destination are identicaly (" & PathFrom & " ; " & PathTo & ")"
+        If mbDebugStandart Then DebugMode vbTab & "Move file: Source and Destination are identicaly (" & PathFrom & " ; " & PathTo & ")"
     End If
 
 End Function
@@ -695,7 +700,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
         FileContent = objInfFile.ReadAll()
         objInfFile.Close
     Else
-        DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfFilePath
+        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfFilePath
     End If
 
     ' Find [strings] section
@@ -736,7 +741,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
         valval = StringHash.Item(varname)
 
         If LenB(valval) = 0 Then
-            DebugMode "ParserInf4Strings: Error in inf: Cannot find '" & strSearchString & "'"
+            If mbDebugDetail Then DebugMode "ParserInf4Strings: Error in inf: Cannot find '" & strSearchString & "'"
         Else
             ParserInf4Strings = Replace$(strSearchString, varname, valval)
         End If
@@ -1382,12 +1387,12 @@ Public Function GetFileSizeByPath(ByVal strPath As String) As Long
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function WriteData2FileUni
+'! Procedure   (Функция)   :   Function FileWriteDataUni
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sFilePath (String)
 '                              strData (String)
 '!--------------------------------------------------------------------------------
-Public Sub WriteData2FileUni(ByVal sFilePath As String, ByVal strData As String)
+Public Sub FileWriteDataUni(ByVal sFilePath As String, ByVal strData As String)
     Dim fHandle As Long
     Dim fSuccess As Long
     Dim lBytesWritten As Long
@@ -1424,26 +1429,26 @@ Public Sub WriteData2FileUni(ByVal sFilePath As String, ByVal strData As String)
             'Close the file.
             CloseHandle fHandle
         Else
-            DebugMode str2VbTab & "WriteData2File: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
         End If
     Else
-        DebugMode str2VbTab & "WriteData2File: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
     End If
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function WriteData2File
+'! Procedure   (Функция)   :   Function FileWriteData
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sFilePath (String)
 '                              strData (String)
 '!--------------------------------------------------------------------------------
-Public Sub WriteData2File(ByVal sFilePath As String, ByVal strData As String)
-    Dim fHandle As Long
-    Dim fSuccess As Long
-    Dim lBytesWritten As Long
-    Dim BytesToWrite As Long
-    Dim anArray() As Byte
-    Dim lngFilePathPtr As Long
+Public Sub FileWriteData(ByVal sFilePath As String, ByVal strData As String)
+    Dim fHandle         As Long
+    Dim fSuccess        As Long
+    Dim lBytesWritten   As Long
+    Dim BytesToWrite    As Long
+    Dim anArray()       As Byte
+    Dim lngFilePathPtr  As Long
     
     ' Convert to byte
     Str2ByteArray strData, anArray
@@ -1469,9 +1474,64 @@ Public Sub WriteData2File(ByVal sFilePath As String, ByVal strData As String)
             'Close the file.
             CloseHandle fHandle
         Else
-            DebugMode str2VbTab & "WriteData2File: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
         End If
     Else
-        DebugMode str2VbTab & "WriteData2File: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
     End If
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileReadData
+'! Description (Описание)  :   [Read data from file with check for unicode yes/no]
+'! Parameters  (Переменные):   sFileName (String)
+'                              LocaleID (Long)
+'!--------------------------------------------------------------------------------
+Public Function FileReadData(ByVal sFileName As String, Optional ByVal LocaleID As Long = 1033) As String
+
+    Dim sText As String
+    Dim fNum As Long
+    Dim B1(0 To 1) As Byte
+    
+    fNum = FreeFile
+
+    Open sFileName For Binary Access Read As fNum
+    ' read first 2 byte, for check on Unicode
+    Get #fNum, 1, B1()
+    
+    ' Если Unicode &HFF and &HFE 255-254
+    If B1(0) = &HFF And B1(1) = &HFE Then
+        sText = Space$(LOF(fNum) - 2)
+        Seek #fNum, 3
+        Get #fNum, , sText
+        FileReadData = StrConv(sText, vbFromUnicode, LocaleID)
+    ' Если ANSI
+    Else
+        sText = Space$(LOF(fNum))
+        Seek #fNum, 1
+        Get #fNum, , sText
+        FileReadData = sText
+    End If
+    
+    Close #fNum
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileReadData
+'! Description (Описание)  :   [Read data from file with check for unicode yes/no]
+'! Parameters  (Переменные):   sFileName (String)
+'                              LocaleID (Long)
+'!--------------------------------------------------------------------------------
+Public Sub FileWriteData2(ByVal sFileName As String, Optional ByVal sStringOut As String)
+
+    Dim fNum As Long
+    
+    fNum = FreeFile
+
+    Open sFileName For Binary Access Write As fNum
+    Put #fNum, , sStringOut
+    Close #fNum
+
+End Sub
+

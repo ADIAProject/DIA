@@ -288,6 +288,7 @@ Private Declare Function SysReAllocString Lib "oleaut32.dll" (ByVal pBSTR As Lon
 Private Declare Function SysReAllocStringLen Lib "oleaut32.dll" (ByVal pBSTR As Long, Optional ByVal pszStrPtr As Long, Optional ByVal Length As Long) As Long
 Private Declare Function WaitForSingleObject Lib "kernel32.dll" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
 
+Private Busy  As Boolean
 '=======================================================================================================================
 '··········································    P U B L I C   M E T H O D S    ··········································
 '=======================================================================================================================
@@ -309,8 +310,7 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
     Const WAIT_TIMEOUT = &H102&
     'Posted to the installing thread's message queue when a timer expires.
     Const WM_TIMER = &H113&
-    Dim TimedOut As Boolean, Tmr1 As Long, Tmr2 As Long, m As Msg, SEI As SHELLEXECUTEINFO
-    Static Busy  As Boolean
+    Dim TimedOut As Boolean, Tmr1 As Long, Tmr2 As Long, M As Msg, SEI As SHELLEXECUTEINFO
     
     'Reset Err object everytime this function is called
     Err.Clear
@@ -389,8 +389,8 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                             If Tmr1 Then
 
                                 'Check the message queue for WM_TIMER messages only
-                                If PeekMessageW(m, -l, WM_TIMER, WM_TIMER, PM_QS_POSTMESSAGE) Then
-                                    If m.wParam = Tmr1 Then Err.Clear
+                                If PeekMessageW(M, -l, WM_TIMER, WM_TIMER, PM_QS_POSTMESSAGE) Then
+                                    If M.wParam = Tmr1 Then Err.Clear
 
                                     Exit Do
                                 

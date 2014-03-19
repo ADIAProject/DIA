@@ -136,6 +136,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Debug", "DetailMode", "1", strSysIni
         IniWriteStrPrivate "Debug", "DebugLog2AppPath", "0", strSysIni
         IniWriteStrPrivate "Debug", "Time2File", "0", strSysIni
+        
         'Секция DPInst
         IniWriteStrPrivate "DPInst", "PathExe", "Tools\DPInst\DPInst.exe", strSysIni
         IniWriteStrPrivate "DPInst", "PathExe64", "Tools\DPInst\DPInst64.exe", strSysIni
@@ -146,13 +147,16 @@ Public Sub CreateIni()
         IniWriteStrPrivate "DPInst", "SuppressWizard", 0, strSysIni
         IniWriteStrPrivate "DPInst", "QuietInstall", 0, strSysIni
         IniWriteStrPrivate "DPInst", "ScanHardware", 1, strSysIni
+        
         'Секция Arc
         IniWriteStrPrivate "Arc", "PathExe", "Tools\Arc\7za.exe", strSysIni
+        
         'Секция Devcon
         IniWriteStrPrivate "Devcon", "PathExe", "Tools\Devcon\devcon.exe", strSysIni
         IniWriteStrPrivate "Devcon", "PathExe64", "Tools\Devcon\devcon64.exe", strSysIni
         IniWriteStrPrivate "Devcon", "PathExeW2K", "Tools\Devcon\devconw2k.exe", strSysIni
         IniWriteStrPrivate "Devcon", "CollectHwidsCmd", "Tools\Devcon\devcon_c.cmd", strSysIni
+        
         'Секция OS
         IniWriteStrPrivate "OS", "OSCount", "4", strSysIni
         IniWriteStrPrivate "OS", "OSCountPerRow", "4", strSysIni
@@ -228,6 +232,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Utils_3", "Name", "Remove BugFix with Installation of Video Drivers Nvidia", strSysIni
         IniWriteStrPrivate "Utils_3", "Path", "Tools\Nvidia\PatchPostInstall.cmd", strSysIni
         IniWriteStrPrivate "Utils_3", "Params", vbNullString, strSysIni
+        
         'Секция MainForm
         IniWriteStrPrivate "MainForm", "Width", CStr(lngMainFormWidthDef), strSysIni
         IniWriteStrPrivate "MainForm", "Height", CStr(lngMainFormHeightDef), strSysIni
@@ -236,6 +241,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "MainForm", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "MainForm", "FontSize", "8", strSysIni
         IniWriteStrPrivate "MainForm", "HighlightColor", "32896", strSysIni
+        
         'Секция Buttons
         IniWriteStrPrivate "Button", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Button", "FontSize", "9", strSysIni
@@ -255,6 +261,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Button", "Style", "8", strSysIni
         IniWriteStrPrivate "Button", "StyleColor", "2", strSysIni
         IniWriteStrPrivate "Button", "BackColor", "14933984", strSysIni
+        
         'Секция Tab
         IniWriteStrPrivate "Tab", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Tab", "FontSize", "8", strSysIni
@@ -263,6 +270,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Tab", "FontItalic", "0", strSysIni
         IniWriteStrPrivate "Tab", "FontBold", "0", strSysIni
         IniWriteStrPrivate "Tab", "FontColor", "0", strSysIni
+        
         'Секция Tab2
         IniWriteStrPrivate "Tab2", "StartMode", "1", strSysIni
         IniWriteStrPrivate "Tab2", "FontName", "Tahoma", strSysIni
@@ -272,6 +280,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Tab2", "FontItalic", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontBold", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontColor", "&H8000000D", strSysIni
+        
         'Секция ToolTip
         'IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
         IniWriteStrPrivate "ToolTip", "FontName", "Lucida Console", strSysIni
@@ -281,9 +290,8 @@ Public Sub CreateIni()
         IniWriteStrPrivate "ToolTip", "FontItalic", "0", strSysIni
         IniWriteStrPrivate "ToolTip", "FontBold", "0", strSysIni
         IniWriteStrPrivate "ToolTip", "FontColor", "0", strSysIni
+        
         'Секция NotebookVendor
-        IniWriteStrPrivate "NotebookVendor", "FilterCount", "22", strSysIni
-        'Секция "NotebookVendor"
         IniWriteStrPrivate "NotebookVendor", "FilterCount", UBound(arrNotebookFilterListDef), strSysIni
 
         For cnt = 0 To UBound(arrNotebookFilterListDef) - 1
@@ -292,11 +300,6 @@ Public Sub CreateIni()
 
         ' Приводим Ini файл к читабельному виду
         NormIniFile strSysIni
-        ' Активация отладки после создания ini-файла
-        mbDebugEnable = True
-        mbCleanHistory = True
-        strDebugLogPathTemp = "%SYSTEMDRIVE%"
-        strDebugLogNameTemp = "DIA-LOG_%DATE%.txt"
     End If
 
 End Sub
@@ -312,7 +315,6 @@ Public Sub GetMainIniParam()
     Dim mbAllFolderDRVNotExistCount As Integer
     Dim cntOsInIni                  As Integer
     Dim cntUtilsInIni               As Integer
-    Dim strDebugLogPathFolder       As String
     Dim NotebookFilterCount         As Long
     Dim numFilter                   As Long
 
@@ -321,54 +323,66 @@ Public Sub GetMainIniParam()
     '[Description]
     strThisBuildBy = GetIniValueString(strSysIni, "Description", "BuildBy", vbNullString)
     'strThisBuildBy = "www.SamLab.Ws"
+    
     '[Debug]
-    ' Активация отладки
-    mbDebugEnable = GetIniValueBoolean(strSysIni, "Debug", "DebugEnable", 0)
-    ' Очистка истории
-    mbCleanHistory = GetIniValueBoolean(strSysIni, "Debug", "CleenHistory", 1)
     ' Путь до лог файла
     strDebugLogPathTemp = PathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%"))
     strDebugLogPath = PathCollect(PathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%")))
     ' Имя лог-файла
     strDebugLogNameTemp = GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt")
     strDebugLogName = ExpandFileNamebyEnvironment(GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt"))
-    ' Деталировка отладки - по умолчанию=1
-    lngDetailMode = GetIniValueLong(strSysIni, "Debug", "DetailMode", 1)
     ' Записывать время в лог-файл
     mbDebugTime2File = GetIniValueBoolean(strSysIni, "Debug", "Time2File", 0)
     ' Создавать лог-файл в подпапке "logs" программы
     mbDebugLog2AppPath = GetIniValueBoolean(strSysIni, "Debug", "DebugLog2AppPath", 0)
+    ' Активация отладки
+    mbDebugStandart = GetIniValueBoolean(strSysIni, "Debug", "DebugEnable", 0)
+    ' Очистка истории
+    mbCleanHistory = GetIniValueBoolean(strSysIni, "Debug", "CleenHistory", 1)
 
     If Not mbDebugLog2AppPath Then
         strDebugLogFullPath = strDebugLogPath & strDebugLogName
 
-        If mbDebugEnable Then
-            strDebugLogPathFolder = strDebugLogPath
-
-            If PathExists(strDebugLogPathFolder) = False Then
-                CreateNewDirectory strDebugLogPathFolder
+        If mbDebugStandart Then
+            If Not LogNotOnCDRoom Then
+                If PathExists(strDebugLogPath) = False Then
+                    CreateNewDirectory strDebugLogPath
+                End If
+            Else
+                mbDebugStandart = False
             End If
         End If
 
     Else
         strDebugLogFullPath = strAppPathBackSL & "logs\" & strDebugLogName
 
-        If Not LogNotOnCDRoom Then
-            If mbDebugEnable Then
+        If mbDebugStandart Then
+            If Not LogNotOnCDRoom(strAppPathBackSL) Then
                 If PathExists(strAppPathBackSL & "logs\") = False Then
                     CreateNewDirectory strAppPathBackSL & "logs\"
                 End If
+            Else
+                If Not LogNotOnCDRoom Then
+                    If PathExists(strDebugLogPath) = False Then
+                        CreateNewDirectory strDebugLogPath
+                    End If
+                    strDebugLogFullPath = strDebugLogPath & strDebugLogName
+                Else
+                    mbDebugStandart = False
+                End If
             End If
-
-        Else
-            strDebugLogFullPath = strDebugLogPath & strDebugLogName
         End If
     End If
-
+    
+    ' Деталировка отладки - по умолчанию=1
+    lngDetailMode = GetIniValueLong(strSysIni, "Debug", "DetailMode", 1)
     If lngDetailMode < 1 Then
         lngDetailMode = 1
-    ElseIf lngDetailMode > 2 Then
-        lngDetailMode = 2
+    End If
+    If mbDebugStandart Then
+        If lngDetailMode > 1 Then
+            mbDebugDetail = True
+        End If
     End If
 
     '[Main]
@@ -399,7 +413,7 @@ Public Sub GetMainIniParam()
 
     If mbTempPath Then
         strAlternativeTempPath = PathCollect(strAlternativeTempPath)
-        DebugMode "AlternativeTempPath: " & strAlternativeTempPath
+        If mbDebugStandart Then DebugMode "AlternativeTempPath: " & strAlternativeTempPath
 
         If PathExists(strAlternativeTempPath) Then
             strWinTemp = strAlternativeTempPath
@@ -411,7 +425,7 @@ Public Sub GetMainIniParam()
             End If
 
         Else
-            DebugMode "Alternative TempPath not Exist. Use Windows Temp"
+            If mbDebugStandart Then DebugMode "Alternative TempPath not Exist. Use Windows Temp"
         End If
     End If
 
@@ -435,7 +449,7 @@ Public Sub GetMainIniParam()
 
     If lngOSCount = 0 Or lngOSCount = 9999 Then
         MsgBox strMessages(5), vbExclamation, strMessages(4)
-        DebugMode "The List supported operating systems is empty. Functioning the program impossible"
+        If mbDebugStandart Then DebugMode "The List supported operating systems is empty. Functioning the program impossible"
 
         End
 
@@ -453,7 +467,7 @@ Public Sub GetMainIniParam()
                 arrOSList(i).drpFolderFull = PathCollect(arrOSList(i).drpFolder)
 
                 If PathExists(arrOSList(i).drpFolderFull) = False Then
-                    DebugMode "Not find folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & str2vbNewLine & "Folder is not Exist: " & vbNewLine & arrOSList(i).drpFolderFull
+                    If mbDebugStandart Then DebugMode "Not find folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & str2vbNewLine & "Folder is not Exist: " & vbNewLine & arrOSList(i).drpFolderFull
                     arrOSList(i).DPFolderNotExist = True
                     mbAllFolderDRVNotExistCount = mbAllFolderDRVNotExistCount + 1
 
@@ -469,7 +483,7 @@ Public Sub GetMainIniParam()
                 End If
 
             Else
-                DebugMode "Folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & vbNewLine & "Is Not present in options. Correct and start the program again."
+                If mbDebugStandart Then DebugMode "Folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & vbNewLine & "Is Not present in options. Correct and start the program again."
             End If
 
             arrOSList(i).devIDFolder = IniStringPrivate("OS_" & cntOsInIni, "devIDFolder", strSysIni)

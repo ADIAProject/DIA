@@ -19,8 +19,8 @@ Private Const lngIMG_SIZE           As Long = &H20
 '                              strPathImageDir (String)
 '!--------------------------------------------------------------------------------
 Public Sub LoadIconImage2Object(objName As Object, strPictureName As String, strPathImageDir As String)
-Dim strFile() As FindFileListStruct
-Dim strFilePicture As String
+Dim strFile()       As FindFileListStruct
+Dim strFilePicture  As String
     
     strFile = SearchFilesInRoot(strPathImageDir, strPictureName & ".ico", False, True)
     strFilePicture = strFile(0).FullPath
@@ -44,8 +44,7 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFile(imgName As PictureBox, PicturePath As String)
-    DebugMode "LoadIconImageFromFile-Start" & vbNewLine & _
-              vbTab & "LoadIconImageFromFile: PicturePath=" & PicturePath, 2
+    If mbDebugDetail Then DebugMode vbTab & "LoadIconImageFromFile: PicturePath=" & PicturePath
 
     If PathExists(PicturePath) Then
         Set imgName.Picture = Nothing
@@ -53,11 +52,10 @@ Private Sub LoadIconImageFromFile(imgName As PictureBox, PicturePath As String)
     Else
 
         If Not mbSilentRun Then
-            DebugMode vbTab & "LoadIconImageFromFile: Path to picture: " & PicturePath & " not Exist. Standard picture Will is used", 2
+            If mbDebugDetail Then DebugMode vbTab & "LoadIconImageFromFile: Path to picture: " & PicturePath & " not Exist. Standard picture Will is used"
         End If
     End If
 
-    DebugMode "LoadIconImageFromFile-End", 2
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -67,12 +65,11 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFileBtnJC(ByVal btnName As ctlJCbutton, ByVal PicturePath As String)
-    DebugMode vbTab & "LoadIconImageFromFileBtnJC-Start" & vbNewLine & _
-              str2VbTab & "LoadIconImageFromFileBtnJC: PicturePath=" & PicturePath, 2
+    If mbDebugDetail Then DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: PicturePath=" & PicturePath
 
     If PathExists(PicturePath) Then
 
-        On Error GoTo PictureNotAllowFormat
+        On Error GoTo ExitFromSub
 
         With btnName
 
@@ -80,35 +77,27 @@ Private Sub LoadIconImageFromFileBtnJC(ByVal btnName As ctlJCbutton, ByVal Pictu
                 If .PictureNormal <> stdole.LoadPicture(PicturePath) Then
                     Set .PictureNormal = Nothing
                     Set .PictureNormal = stdole.LoadPicture(PicturePath)
-                    DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: Picture is Installed", 2
+                    If mbDebugDetail Then DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: Picture is Installed"
                 Else
-                    DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: Picture is already set", 2
+                    If mbDebugDetail Then DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: Picture is already set"
                 End If
 
             Else
                 Set .PictureNormal = Nothing
                 Set .PictureNormal = stdole.LoadPicture(PicturePath)
-                DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: Picture is Installed", 2
+                If mbDebugDetail Then DebugMode str2VbTab & "LoadIconImageFromFileBtnJC: Picture is Installed"
             End If
 
         End With
 
     Else
-        DebugMode str2VbTab & "Path to picture: " & PicturePath & " not Exist. Standard picture Will is used", 2
+        If mbDebugDetail Then DebugMode str2VbTab & "Path to picture: " & PicturePath & " not Exist. Standard picture Will is used"
     End If
 
-    DebugMode vbTab & "LoadIconImageFromFileBtnJC-End", 2
+
 ExitFromSub:
 
     Exit Sub
-
-PictureNotAllowFormat:
-
-    If Err.Number = 481 Then
-        MsgBox "Error №: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
-    ElseIf Err.Number <> 0 Then
-        GoTo ExitFromSub
-    End If
 
 End Sub
 
@@ -119,18 +108,16 @@ End Sub
 '                              PicturePath (String)
 '!--------------------------------------------------------------------------------
 Private Sub LoadIconImageFromFileJC(ByVal imgName As ctlJCFrames, ByVal PicturePath As String)
-    DebugMode vbTab & "LoadIconImageFromFileJC-Start" & vbNewLine & _
-              str2VbTab & "LoadIconImageFromFileJC: PicturePath=" & PicturePath, 2
+    If mbDebugDetail Then DebugMode str2VbTab & "LoadIconImageFromFileJC: PicturePath=" & PicturePath
 
     If PathExists(PicturePath) Then
         'imgName.Picture = stdole.LoadPicture(PicturePath, lngIMG_SIZE, lngIMG_SIZE, Color)
         Set imgName.Picture = Nothing
         Set imgName.Picture = stdole.LoadPicture(PicturePath)
     Else
-        DebugMode str2VbTab & "Path to picture: " & PicturePath & " not Exist. Standard picture Will is used"
+        If mbDebugStandart Then DebugMode str2VbTab & "LoadIconImageFromFileJC-Path to picture: " & PicturePath & " not Exist. Standard picture Will is used"
     End If
 
-    DebugMode vbTab & "LoadIconImageFromFileJC-End", 2
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -141,26 +128,23 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function LoadIconImageFromPath(strPictureName As String, strPathImageDir As String) As IPictureDisp
 
-    Dim strFile() As FindFileListStruct
-    Dim strFilePicture As String
-    
-    DebugMode "LoadIconImageFromPath-Start", 2
+    Dim strFile()       As FindFileListStruct
+    Dim strFilePicture  As String
     
     strFile = SearchFilesInRoot(strPathImageDir, strPictureName & ".*", False, True)
     strFilePicture = strFile(0).FullPath
     
-    DebugMode vbTab & "LoadIconImageFromPath: PicturePath=" & strFilePicture, 2
+    If mbDebugDetail Then DebugMode vbTab & "LoadIconImageFromPath: PicturePath=" & strFilePicture
     
     If PathExists(strFilePicture) Then
         Set LoadIconImageFromPath = stdole.LoadPicture(strFilePicture)
     Else
 
         If Not mbSilentRun Then
-            DebugMode vbTab & "LoadIconImageFromPath: Path to picture: " & strFilePicture & " not Exist. Standard picture Will is used", 2
+            If mbDebugDetail Then DebugMode vbTab & "LoadIconImageFromPath: Path to picture: " & strFilePicture & " not Exist. Standard picture Will is used"
         End If
     End If
 
-    DebugMode "LoadIconImageFromPath-End", 2
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -169,7 +153,6 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub LoadIconImagePath()
-    DebugMode vbTab & "LoadIconImagePath-Start", 2
     strPathImageMainWork = strPathImageMain & strImageMainName
     strPathImageStatusButtonWork = strPathImageStatusButton & strImageStatusButtonName
     'strPathImageMenuWork = strPathImageMenu & strImageMenuName
@@ -196,5 +179,4 @@ Public Sub LoadIconImagePath()
     'End If
     'strPathImageMenuWork = strPathImageMenu & "Standart"
     'End If
-    DebugMode vbTab & "LoadIconImagePath-End", 2
 End Sub

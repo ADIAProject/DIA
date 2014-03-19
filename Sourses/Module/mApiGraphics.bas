@@ -214,26 +214,3 @@ Public Declare Function StretchDIBits Lib "gdi32.dll" (ByVal hDC As Long, ByVal 
 Public Declare Function GetNearestColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Public Declare Function DwmIsCompositionEnabled Lib "dwmapi" (ByRef pfEnabled As Long) As Long
 Public Declare Function LoadIcon Lib "user32.dll" Alias "LoadIconW" (ByVal hInstance As Long, ByVal lpIconName As Long) As Long
-
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FlatBorderButton
-'! Description (Описание)  :   [Делает кнопку нажатой/нормальной]
-'! Parameters  (Переменные):   lngHWnd (Long)
-'                              mbFlat (Boolean = True)
-'!--------------------------------------------------------------------------------
-Public Sub FlatBorderButton(ByVal lngHWnd As Long, Optional mbFlat As Boolean = True)
-
-    Dim TFlat As Long
-
-    TFlat = GetWindowLong(lngHWnd, GWL_EXSTYLE)
-
-    If mbFlat Then
-        TFlat = TFlat And Not WS_EX_CLIENTEDGE Or WS_EX_STATICEDGE
-    Else
-        TFlat = TFlat And WS_EX_CLIENTEDGE
-    End If
-
-    SetWindowLong lngHWnd, GWL_EXSTYLE, TFlat
-    SetWindowPos lngHWnd, 0, 0, 0, 0, 0, SWP_NOACTIVATE Or SWP_NOZORDER Or SWP_FRAMECHANGED Or SWP_NOSIZE Or SWP_NOMOVE
-End Sub

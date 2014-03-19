@@ -66,10 +66,10 @@ Public Function ExtractResource(ByVal strOCXFileName As String, ByVal strPathOcx
 
     ' Извлекаем ресурс в файл
     If GetBinaryFileFromResource(strCopyOcxFileTo, "OCX_" & FileName_woExt(strOCXFileName), "CUSTOM") Then
-        DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: True"
+        If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: True"
         ExtractResource = True
     Else
-        DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: False"
+        If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: False"
     End If
 
 End Function
@@ -80,7 +80,7 @@ End Function
 '! Parameters  (Переменные):   strPathOcxTo (String)
 '!--------------------------------------------------------------------------------
 Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
-    DebugMode "ExtractResourceAll - Start"
+    If mbDebugStandart Then DebugMode "ExtractResourceAll - Start"
     ExtractResourceAll = True
 
     If ExtractResource("MSFLXGRD.OCX", strPathOcxTo) = False Then
@@ -93,7 +93,7 @@ Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
         ExtractResourceAll = False
     End If
 
-'    DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
+'    if mbDebugStandart then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
 '
 '    If ExtractResource("RICHTX32.OCX", strPathOcxTo) = False Then
 '        If MsgBox("Extract OCX or DLL: 'RICHTX32.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -105,7 +105,7 @@ Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
 '        ExtractResourceAll = False
 '    End If
 
-    DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
+    If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
 
     If ExtractResource("TABCTL32.OCX", strPathOcxTo) = False Then
         If MsgBox("Extract OCX or DLL: 'TABCTL32.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -117,7 +117,7 @@ Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
         ExtractResourceAll = False
     End If
 
-    DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
+    If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
 
     If ExtractResource("vbscript.dll", strPathOcxTo) = False Then
         If MsgBox("Extract OCX or DLL: 'vbscript.dll' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -129,7 +129,7 @@ Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
         ExtractResourceAll = False
     End If
 
-'    DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
+'    if mbDebugStandart then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
 '
 '    If ExtractResource("capicom.dll", strPathOcxTo) = False Then
 '        If MsgBox("Extract OCX or DLL: capicom.dll' - False" & str2vbNewLine & strMessages(20), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -140,7 +140,7 @@ Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
 '        ExtractResourceAll = False
 '
 '    End If
-    DebugMode "ExtractResourceAll - End"
+    If mbDebugStandart Then DebugMode "ExtractResourceAll - End"
 End Function
 
 '!--------------------------------------------------------------------------------

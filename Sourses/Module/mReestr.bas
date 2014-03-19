@@ -141,7 +141,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
             tmpVal = Left$(tmpVal, intTemp)
             sKeyVal_x = Split(tmpVal, vbNullChar)
 
-            ReDim GetKeyValueMultiSZ(UBound(sKeyVal_x)) As String
+            ReDim GetKeyValueMultiSZ(UBound(sKeyVal_x))
 
             Do Until LenB(tmpVal) = 0
                 intTempSmallBuff = InStrRev(tmpVal, vbNullChar)
@@ -158,7 +158,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
 
             Loop
 
-            ReDim Preserve GetKeyValueMultiSZ(Index) As String
+            ReDim Preserve GetKeyValueMultiSZ(Index)
 
             For i = LBound(GetKeyValueMultiSZ) To UBound(GetKeyValueMultiSZ) - 1
 
@@ -189,7 +189,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
 GetKeyError:
     ' Cleanup After An Error Has Occured...
     GetKeyValue = vbNullString
-    DebugMode "Error read RegistryParam: Key:" & KeyName & " Param:" & SubKeyRef & " Error: є" & RC & " - " & ApiErrorText(RC), 2
+    If mbDebugDetail Then DebugMode "Error read RegistryParam: Key:" & KeyName & " Param:" & SubKeyRef & " Error: є" & RC & " - " & ApiErrorText(RC)
     ' Set Return Val To Empty String
     RC = RegCloseKey(hkey)
     ' Close Registry Key
@@ -271,7 +271,7 @@ Public Function ListKey(ByVal hkey, ByVal Key, Optional ByVal mbReadKeyRights As
     ' максимальное кол-во элементов в массиве
     miMaxCountArr = 500
 
-    ReDim K(miMaxCountArr) As String
+    ReDim K(miMaxCountArr)
 
     lRetVal = RegOpenKeyEx(hkey, Key, 0, lngKeyRights, hKeyResult)
 
@@ -315,7 +315,7 @@ Public Function ListKey(ByVal hkey, ByVal Key, Optional ByVal mbReadKeyRights As
 
     ' »тоговое переобъ€вление массива на реальное кол-во записей
     If lCurIdx Then
-        ReDim Preserve K(lCurIdx - 1) As String
+        ReDim Preserve K(lCurIdx - 1)
     Else
         ReDim Preserve K(0)
     End If

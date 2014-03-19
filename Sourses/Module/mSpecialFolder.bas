@@ -265,7 +265,7 @@ Public Function GetSpecialFolderPath(csidl As CSIDL_VALUES, Optional SHGFP_TYPE 
     If lngResult = S_OK Then
         GetSpecialFolderPath = TrimNull(buff)
     Else
-        DebugMode "GetSpecialFolderPath: csidl=" & csidl & " SHGFP_TYPE=" & SHGFP_TYPE & " ResultCode=" & lngResult
+        If mbDebugStandart Then DebugMode "GetSpecialFolderPath: csidl=" & csidl & " SHGFP_TYPE=" & SHGFP_TYPE & " ResultCode=" & lngResult
     End If
 
 End Function

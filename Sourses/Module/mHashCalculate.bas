@@ -26,9 +26,11 @@ Option Explicit
 #If mbIDE_DBSProject Then
     Public Function CalcHashFile(ByVal StrPathFile As String, ByVal lngHashAlgoritm As lngHASH_TYPE) As String
     
-        Dim objHashedData As New CAPICOM.HashedData
-        Dim objStream     As New ADODB.Stream
+        Dim objHashedData As CAPICOM.HashedData
+        Dim objStream     As ADODB.Stream
     
+        Set objHashedData = New CAPICOM.HashedData
+        Set objStream = New ADODB.Stream
         objHashedData.Algorithm = lngHashAlgoritm
     
         'Для строки

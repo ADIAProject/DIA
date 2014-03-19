@@ -9,16 +9,16 @@ Option Explicit
 '!--------------------------------------------------------------------------------
 Public Function CompareDevDBVersion(strDevDBFullFileName As String, Optional ByVal strPathDRP As String) As Boolean
 
-    Dim lngValue          As Long
+    Dim LngValue          As Long
     Dim strFilePath_woExt As String
 
     strFilePath_woExt = FileName_woExt(strDevDBFullFileName)
-    lngValue = IniLongPrivate(FileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(PathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
+    LngValue = IniLongPrivate(FileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(PathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
 
-    If lngValue = 9999 Then
+    If LngValue = 9999 Then
         CompareDevDBVersion = False
     Else
-        CompareDevDBVersion = Not (lngValue <> lngDevDBVersion)
+        CompareDevDBVersion = Not (LngValue <> lngDevDBVersion)
     End If
 
 End Function
@@ -57,7 +57,7 @@ Public Sub DevParserLocalHwids2()
         .Global = True
     End With
 
-    DebugMode "DevParserLocalHwids2-Start"
+    If mbDebugDetail Then DebugMode "DevParserLocalHwids2-Start"
 
     If PathExists(strHwidsTxtPath) Then
         If Not PathIsAFolder(strHwidsTxtPath) Then
@@ -182,11 +182,12 @@ Public Sub DevParserLocalHwids2()
         End If
 
     Else
+        If mbDebugDetail Then DebugMode "DevParserLocalHwids2-False: " & strHwidsTxtPath & vbTab & strMessages(46)
         MsgBox strHwidsTxtPath & vbNewLine & strMessages(46), vbInformation, strProductName
         Unload frmMain
     End If
 
-    DebugMode "DevParserLocalHwids2-End"
+    If mbDebugDetail Then DebugMode "DevParserLocalHwids2-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -228,30 +229,27 @@ Public Function RunDevcon() As Boolean
 
     Dim cmdString As String
 
-    DebugMode "RunDevcon-Start"
     If PathExists(strHwidsTxtPath) Then
         DeleteFiles strHwidsTxtPath
     End If
-    'cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConExePath & Kavichki & " " & Kavichki & strHwidsTxtPath & Kavichki & " 1"
+
     cmdString = "cmd.exe /c " & Kavichki & Kavichki & strDevConExePath & Kavichki & " status * > " & Kavichki & strHwidsTxtPath & Kavichki
+    
     CreateIfNotExistPath strWorkTemp
 
-    If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
+    RunDevcon = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
+    If Not RunDevcon Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
-        RunDevcon = False
-    Else
-        RunDevcon = True
     End If
 
-    If GetFileSizeByPath(strHwidsTxtPath) > 0 Then
+    If GetFileSizeByPath(strHwidsTxtPath) Then
         PrintFileInDebugLog strHwidsTxtPath
     Else
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
         RunDevcon = False
     End If
 
-    DebugMode vbTab & "Run Devcon: " & RunDevcon & vbNewLine & _
-              "RunDevcon-End"
+    If mbDebugStandart Then DebugMode vbTab & "Run Devcon: " & RunDevcon
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -263,20 +261,16 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
 
     Dim cmdString As String
 
-    DebugMode "RunDevconRescan-Start"
     cmdString = Kavichki & strDevConExePath & Kavichki & " rescan"
     ChangeStatusTextAndDebug strMessages(96) & " " & cmdString
     CreateIfNotExistPath strWorkTemp
 
-    If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
+    RunDevconRescan = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
+    If Not RunDevconRescan Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
-        RunDevconRescan = False
-    Else
-        RunDevconRescan = True
     End If
 
-    DebugMode vbTab & "Run RunDevconRescan: " & RunDevconRescan & vbNewLine & _
-              "RunDevconRescan-End"
+    If mbDebugDetail Then DebugMode vbTab & "Run RunDevconRescan: " & RunDevconRescan
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -288,18 +282,14 @@ Public Function RunDevconView() As Boolean
 
     Dim cmdString As String
 
-    DebugMode "RunDevconView-Start"
     cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConExePath & Kavichki & " " & Kavichki & strHwidsTxtPathView & Kavichki & " 3"
 
-    If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
+    RunDevconView = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
+    If Not RunDevconView Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
-        RunDevconView = False
-    Else
-        RunDevconView = True
     End If
 
-    DebugMode vbTab & "Run DevconView: " & RunDevconView & vbNewLine & _
-              "RunDevconView-End"
+    If mbDebugDetail Then DebugMode vbTab & "Run DevconView: " & RunDevconView
 End Function
 
 '!--------------------------------------------------------------------------------

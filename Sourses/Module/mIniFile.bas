@@ -40,15 +40,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueBoolean(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Boolean
 
-    Dim lngValue As Long
+    Dim LngValue As Long
 
-    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If lngValue = 9999 Then
-        lngValue = lngValueDefault
+    If LngValue = 9999 Then
+        LngValue = lngValueDefault
     End If
 
-    GetIniValueBoolean = CBool(lngValue)
+    GetIniValueBoolean = CBool(LngValue)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -61,15 +61,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Long
 
-    Dim lngValue As Long
+    Dim LngValue As Long
 
-    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If lngValue = 9999 Then
-        lngValue = lngValueDefault
+    If LngValue = 9999 Then
+        LngValue = lngValueDefault
     End If
 
-    GetIniValueLong = lngValue
+    GetIniValueLong = LngValue
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
 
     If FirstValue Then
 
-        ReDim arrSection(1, 2) As String
+        ReDim arrSection(1, 2)
 
         arrSectionTemp = Split(strTemp, vbNullChar)
         intTempSmallBuff = InStrRev(strTemp, vbNullChar)
@@ -148,7 +148,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
             GoTo IF_EXIT
         Else
 
-            ReDim arrSection(1, 2) As String
+            ReDim arrSection(1, 2)
 
             arrSection(1, 1) = "Small Buffer"
             arrSection(1, 2) = "Small Buffer"
@@ -160,7 +160,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
     If LenB(strTemp) Then
         lpKeyValue = Split(strTemp, vbNullChar)
 
-        ReDim arrSection(UBound(lpKeyValue), 2) As String
+        ReDim arrSection(UBound(lpKeyValue), 2)
 
         Do Until LenB(strTemp) = 0
             intTempSmallBuff = InStrRev(strTemp, vbNullChar)
@@ -192,7 +192,7 @@ Save_StrKey:
                 strTemp = Mid$(strTemp, intTemp + 1, Len(strTemp))
             Else
 
-                ReDim arrSection(1, 2) As String
+                ReDim arrSection(1, 2)
 
                 arrSection(1, 1) = "Small Buffer"
                 arrSection(1, 2) = "Small Buffer"
@@ -204,7 +204,7 @@ Save_StrKey:
 
     Else
 
-        ReDim arrSection(Index, 2) As String
+        ReDim arrSection(Index, 2)
 
         arrSection(Index, 1) = "No section"
         arrSection(Index, 2) = "No section"
@@ -261,9 +261,10 @@ End Function
 Public Function IniStringPrivate(ByVal SekName As String, ByVal KeyName As String, ByVal IniFileName As String) As String
 
     'строковый буфер(под значение ключа)
-    Dim sTemp(4096) As Byte
+    Dim sTemp()     As Byte
     Dim nTemp       As Long
 
+    ReDim sTemp(4096)
     'в неё запишется количество символов в строке ключа
     'ограничение - параметр не может быть больше 4096 символов
     nTemp = GetPrivateProfileStringW(StrPtr(SekName), StrPtr(KeyName), StrPtr("no_key"), VarPtr(sTemp(0)), -1, StrPtr(IniFileName))
@@ -343,7 +344,7 @@ Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strfullpath
 
     If n = -1 Then
 
-        ReDim Z(0) As String
+        ReDim Z(0)
 
     End If
 

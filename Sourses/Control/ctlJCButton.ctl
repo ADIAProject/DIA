@@ -626,7 +626,9 @@ Private Enum eParamUser
     exUserControl = 2
 End Enum
 
-Private m_cSubclass                                    As cSelfSubHookCallback
+Private m_cSubclass             As cSelfSubHookCallback
+Private m_bInitThem             As Boolean
+Private m_bInitThemed           As Boolean
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawLineApi
 '! Description (Описание)  :   [draw lines]
@@ -786,8 +788,8 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         TmpObj = SelectObject(TmpDC, TmpBmp)
         Sr2Obj = SelectObject(Sr2DC, Sr2Bmp)
 
-        ReDim DataDest(DstW * DstH * 3 - 1) As RGB
-        ReDim DataSrc(UBound(DataDest)) As RGB
+        ReDim DataDest(DstW * DstH * 3 - 1)
+        ReDim DataSrc(UBound(DataDest))
 
         With Info.bmiHeader
             .biSize = Len(Info.bmiHeader)
@@ -1024,8 +1026,8 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
             .biSizeImage = 4 * ((DstW * .biBitCount + 31) \ 32) * DstH
         End With
 
-        ReDim DataDest(Info.bmiHeader.biSizeImage - 1) As RGBQUAD
-        ReDim DataSrc(UBound(DataDest)) As RGBQUAD
+        ReDim DataDest(Info.bmiHeader.biSizeImage - 1)
+        ReDim DataSrc(UBound(DataDest))
 
         BitBlt TmpDC, 0, 0, DstW, DstH, DstDC, DstX, DstY, vbSrcCopy
         BitBlt Sr2DC, 0, 0, DstW, DstH, SrcDC, 0, 0, vbSrcCopy
@@ -1234,15 +1236,15 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
 
             Case [gdHorizontal]
 
-                ReDim lGrad(0 To lngWidth - 1) As Long
+                ReDim lGrad(0 To lngWidth - 1)
 
             Case [gdVertical]
 
-                ReDim lGrad(0 To lngHeight - 1) As Long
+                ReDim lGrad(0 To lngHeight - 1)
 
             Case Else
 
-                ReDim lGrad(0 To lngWidth + lngHeight - 2) As Long
+                ReDim lGrad(0 To lngWidth + lngHeight - 2)
 
         End Select
 
@@ -1261,7 +1263,7 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
         End If
 
         '-- Size DIB array
-        ReDim lBits(lngWidth * lngHeight - 1) As Long
+        ReDim lBits(lngWidth * lngHeight - 1)
 
         iEnd = lngWidth - 1
         jEnd = lngHeight - 1
@@ -4707,11 +4709,9 @@ End Property
 '!--------------------------------------------------------------------------------
 Private Property Get HasUxTheme() As Boolean
 
-    Static m_bInit As Boolean
-
-    If Not (m_bInit) Then
+    If Not (m_bInitThem) Then
         m_bHasUxTheme = APIFunctionPresent("IsAppThemed", "uxtheme.dll")
-        m_bInit = True
+        m_bInitThem = True
     End If
 
     HasUxTheme = m_bHasUxTheme
@@ -4724,14 +4724,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Private Property Get IsThemed() As Boolean
 
-    Static m_bInit As Boolean
-
     On Error Resume Next
 
     If HasUxTheme Then
-        If Not (m_bInit) Then
+        If Not (m_bInitThemed) Then
             m_bIsThemed = IsAppThemed
-            m_bInit = True
+            m_bInitThemed = True
         End If
     End If
 
@@ -5294,8 +5292,6 @@ Private Sub myWndProc(ByVal bBefore As Boolean, _
 'If you really know what you're doing, it's possible to change the values of the
 'hWnd, uMsg, wParam and lParam parameters in a 'before' callback so that different
 'values get passed to the default handler.. and optionaly, the 'after' callback
-
-'Static bMoving As Boolean
 
     Select Case lParamUser
 

@@ -84,7 +84,7 @@ Private Sub ChangeResolution(ByVal lngWidth As Long, ByVal lngHeight As Long, By
     End With
 
     BackVal = ChangeDisplaySettings(MyDevMode, CDS_TEST)
-    DebugMode "ResolutionChangeStatus=" & BackVal
+    If mbDebugStandart Then DebugMode "ResolutionChangeStatus=" & BackVal
 
     If BackVal <> DISP_CHANGE_SUCCESSFUL Then
         If Not mbRunWithParam Then
@@ -150,7 +150,7 @@ Public Sub SetVideoMode()
 
     'Текущие параметры экрана
     GetVideoMode iXres, iYres, iColor
-    DebugMode "Resolution=" & iXres & "x" & iYres & "x" & iColor
+    If mbDebugStandart Then DebugMode "Resolution=" & iXres & "x" & iYres & "x" & iColor
 
     'Изменение настроек монитора, если они меньше 800/600
     If iXres < 800 Or iYres < 600 Then

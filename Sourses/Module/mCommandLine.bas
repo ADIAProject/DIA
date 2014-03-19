@@ -92,7 +92,7 @@ Public Sub CmdLineParsing()
                     miSilentRunTimer = 10
                 End If
 
-                mbDebugEnable = True
+                mbDebugStandart = True
                 mbUpdateCheck = False
 
             Case "/s", "-s", "--s"
@@ -133,7 +133,7 @@ Public Sub CmdLineParsing()
                     miSilentRunTimer = 10
                 End If
 
-                mbDebugEnable = True
+                mbDebugStandart = True
                 mbUpdateCheck = False
 
             'todo SaveHWIDs2File
@@ -179,10 +179,10 @@ Private Sub SaveReport(ByVal strFilePathTo As String)
                 If PathExists(strResultHwidsExtTxtPath) Then
                     CopyFileTo strResultHwidsExtTxtPath, strFilePathTo
                 Else
-                    DebugMode strMessages(45) & vbNewLine & strFilePathTo
+                    If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFilePathTo
                 End If
             Else
-                DebugMode strMessages(45) & vbNewLine & strFilePathTo
+                If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFilePathTo
             End If
         End If
     End If

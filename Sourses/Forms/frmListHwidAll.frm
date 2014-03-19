@@ -611,9 +611,9 @@ Private Sub cmdGoSite_Click()
         cmdString = Kavichki & "http://catalog.update.microsoft.com/v7/site/Search.aspx?q=" & strDevID & "&=" & Kavichki
     End If
 
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1273,10 +1273,10 @@ Private Sub OpenDeviceProp(ByVal strHwid As String)
 
     cmdString = "rundll32.exe"
     cmdStringParams = "devmgr.dll,DeviceProperties_RunDLL /DeviceID " & strHwid
-    DebugMode "cmdString: " & cmdString
-    DebugMode "cmdStringParams: " & cmdStringParams
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdStringParams: " & cmdStringParams
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL, cmdStringParams)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------

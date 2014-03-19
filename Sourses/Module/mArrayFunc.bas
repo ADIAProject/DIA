@@ -18,7 +18,7 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
     Dim i             As Long
     Dim ii            As Long
 
-    DebugMode vbTab & "SaveAnyStringArray2File-Start"
+    If mbDebugStandart Then DebugMode vbTab & "SaveAnyStringArray2File-Start"
     hiIndex = UBound(MyArray, 2)
     loIndex = UBound(MyArray, 1)
 
@@ -36,12 +36,12 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
         '---------------Âûגמהטל טעמד ג פאיכ-----
         Set objRezultFile = objFSO.CreateTextFile(StrPathFile, True, True)
         objRezultFile.Write (strResultAll)
-        DebugMode vbTab & "ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
+        If mbDebugStandart Then DebugMode vbTab & "ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
                                     "**************************************************************************"
         SaveAnyStringArray2File = True
     End If
 
-    DebugMode vbTab & "SaveAnyStringArray2File-End"
+    If mbDebugStandart Then DebugMode vbTab & "SaveAnyStringArray2File-End"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
     Dim i             As Long
     Dim ii            As Long
 
-    DebugMode vbTab & "SaveHwidsArray2File-Start"
+    If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & StrPathFile
 
     For i = 0 To UBound(MyArray)
         strLine = vbNullString
@@ -88,12 +88,13 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
         '---------------Âûגמהטל טעמד ג פאיכ-----
         Set objRezultFile = objFSO.CreateTextFile(StrPathFile, True, True)
         objRezultFile.Write (strResultAll)
-        DebugMode vbTab & "ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
+        If mbDebugStandart Then DebugMode "SaveHwidsArray2File-ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
                                     "**************************************************************************"
         SaveHwidsArray2File = True
+    Else
+        If mbDebugDetail Then DebugMode "SaveHwidsArray2File-False: NO DATA"
     End If
 
-    DebugMode vbTab & "SaveHwidsArray2File-End"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -119,10 +120,11 @@ Public Sub QuickSortMDArray(pArray As Variant, pbytDimension As Byte, plngColumn
     Dim vFirst       As Variant
     Dim vMid         As Variant
     Dim vLast        As Variant
-    Dim lDim(1 To 2) As Long
+    Dim lDim()       As Long
     Dim bytCol       As Byte
     Dim bytRow       As Byte
 
+    ReDim lDim(1 To 2)
     bytRow = -pbytDimension + 3
     bytCol = pbytDimension
 

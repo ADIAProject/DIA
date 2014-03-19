@@ -509,37 +509,29 @@ Private Function FindCheckCountList() As Long
 
     Next
 
-    If miCount > 0 Then
-
-        With cmdOK
-
+    With cmdOK
+        If miCount > 0 Then
             If Not .Enabled Then
                 .Enabled = True
-                '.Refresh
             End If
-
-        End With
-
-        'CMDOK
-    Else
-
-        With cmdOK
-
+        Else
             If mbooSelectInstall Then
                 If .Enabled Then
                     .Enabled = False
-                    '.Refresh
                 End If
             End If
-
-        End With
-
-        'CMDOK
-    End If
+        End If
+    End With
 
     FindCheckCountList = miCount
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   []
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
     lvFolders.SetFocus
 End Sub
@@ -740,6 +732,9 @@ Private Function LoadList_Folders(lngButtIndex As Long, Optional ByVal mbViewed 
     Dim lngLVHeight         As Long
     Dim lngLVWidht          As Long
     Dim lngNumRow           As Long
+    Dim strTemp_x()         As String
+    Dim strTempLine_x()     As String
+    Dim i_arr               As Long
 
     With lvFolders
         .Redraw = False
@@ -769,10 +764,6 @@ Private Function LoadList_Folders(lngButtIndex As Long, Optional ByVal mbViewed 
 
     lngNumRow = lvFolders.ListItems.Count
     miPreviousListCount = lvFolders.ListItems.Count
-
-    Dim strTemp_x()     As String
-    Dim strTempLine_x() As String
-    Dim i_arr           As Long
 
     strTemp_x = Split(arrTTip(lngButtIndex), vbNewLine)
 

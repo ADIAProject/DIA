@@ -63,7 +63,7 @@ Public Function APIFunctionPresent(ByVal FunctionName As String, ByVal DLLName A
     End If
 
     APIFunctionPresent = (lAddr <> 0)
-    DebugMode vbTab & "APIFunctionPresent: " & FunctionName & "=" & APIFunctionPresent, 2
+    If mbDebugDetail Then DebugMode vbTab & "APIFunctionPresent: " & FunctionName & "=" & APIFunctionPresent
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub RegisterAddComponent()
-    DebugMode "RegisterAddComponent - Start"
+    If mbDebugStandart Then DebugMode "RegisterAddComponent - Start"
 
     If RegOCX(strWorkTempBackSL & "TabCtl32.OCX", strTabCtl32Reference, strTabCtl32Ver, strTabCtl32VerDll) = False Then
         If MsgBox("System OCX or DLL: 'TabCtl32.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -120,7 +120,7 @@ Public Sub RegisterAddComponent()
         End If
     End If
 
-    DebugMode "RegisterAddComponent - *****************Check Next File********************"
+    If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
 
     If RegOCX(strWorkTempBackSL & "MSFLXGRD.OCX", strMSFLXGRDReference, strMSFLXGRDVer, strMSFLXGRDVerDll) = False Then
         If MsgBox("System OCX or DLL: 'MSFLXGRD.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -130,7 +130,7 @@ Public Sub RegisterAddComponent()
         End If
     End If
 
-    DebugMode "RegisterAddComponent - *****************Check Next File********************"
+    If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
 
     If RegOCX(strWorkTempBackSL & "vbscript.dll", strVBScriptReference, strVBScriptVer, strVBScriptVerDll) = False Then
         If MsgBox("System OCX or DLL: 'vbscript.dll'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -142,7 +142,7 @@ Public Sub RegisterAddComponent()
 
     ' Not add to project (if not DBS) - option for compile
     #If mbIDE_DBSProject Then
-        DebugMode "RegisterAddComponent - *****************Check Next File********************"
+        If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
     
         If RegOCX(strWorkTempBackSL & "capicom.dll", strCAPICOMReference, strCAPICOMVer, strCAPICOMVerDll) = False Then
             If MsgBox("System DLL: 'capicom.dll'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
@@ -150,7 +150,7 @@ Public Sub RegisterAddComponent()
             End If
         End If
     #End If
-    DebugMode "RegisterAddComponent - Finish"
+    If mbDebugStandart Then DebugMode "RegisterAddComponent - Finish"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String,
 
     regParam = LCase$(GetRegString(HKEY_CLASSES_ROOT, "TypeLib\" & strReference & vbBackslash & strVerOcx & "\0\win32", vbNullString))
     strOCXFileName = FileNameFromPath(strPathOcx)
-    DebugMode vbTab & strReference & ": Path to " & strOCXFileName & " from Reestr: " & regParam
+    If mbDebugStandart Then DebugMode vbTab & strReference & ": Path to " & strOCXFileName & " from Reestr: " & regParam
     strPathOcxSystem = strWinDir & "system32\" & strOCXFileName
     strPathOcxSystemCache = strWinDir & "system32\dllcache\" & strOCXFileName
     strPathOcxSystemSPFiles = strWinDir & "ServicePackFiles\i386\" & strOCXFileName
@@ -189,12 +189,12 @@ Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String,
 StartRegOCXForce:
 
                 If GetBinaryFileFromResource(strPathOcx, "OCX_" & FileName_woExt(strOCXFileName), "CUSTOM") Then
-                    DebugMode vbTab & strReference & ": BinaryFileFromResourse: True"
+                    If mbDebugStandart Then DebugMode vbTab & strReference & ": BinaryFileFromResourse: True"
 
                     'разрегистрация файла при необходимости
                     If mbForceReg Then
                         RegOCX = DLLOCX(0, regParam, False)
-                        DebugMode vbTab & strReference & ": Unregistred old dll: " & RegOCX
+                        If mbDebugStandart Then DebugMode vbTab & strReference & ": Unregistred old dll: " & RegOCX
                     End If
 
                     'Копируем новый файл с заменой в системный кеш
@@ -202,24 +202,24 @@ StartRegOCXForce:
                         If PathExists(strPathOcxSystemSPFiles) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemSPFiles) = False Then
                                 RegOCX = False
-                                DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: False: " & strPathOcxSystemSPFiles
+                                If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: False: " & strPathOcxSystemSPFiles
 
                                 Exit Function
 
                             Else
-                                DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: True: " & strPathOcxSystemSPFiles
+                                If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: True: " & strPathOcxSystemSPFiles
                             End If
                         End If
 
                         If PathExists(strPathOcxSystemCache) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemCache) = False Then
                                 RegOCX = False
-                                DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: False: " & strPathOcxSystemCache
+                                If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: False: " & strPathOcxSystemCache
 
                                 Exit Function
 
                             Else
-                                DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: True: " & strPathOcxSystemCache
+                                If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: True: " & strPathOcxSystemCache
                             End If
                         End If
                     End If
@@ -227,25 +227,25 @@ StartRegOCXForce:
                     'Копируем новый файл с заменой
                     If CopyFileTo(strPathOcx, strPathOcxSystem) = False Then
                         RegOCX = False
-                        DebugMode vbTab & strReference & ": CopyOcxFileToSystem: False: " & strPathOcxSystem
+                        If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystem: False: " & strPathOcxSystem
 
                         Exit Function
 
                     Else
-                        DebugMode vbTab & strReference & ": CopyOcxFileToSystem: True: " & strPathOcxSystem
+                        If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystem: True: " & strPathOcxSystem
                     End If
 
                     strPathOcx = strPathOcxSystem
                 Else
                     RegOCX = False
-                    DebugMode vbTab & strReference & ": BinaryFileFromResourse: False"
+                    If mbDebugStandart Then DebugMode vbTab & strReference & ": BinaryFileFromResourse: False"
 
                     Exit Function
 
                 End If
             End If
 
-            DebugMode vbTab & strReference & ": Registration in system"
+            If mbDebugStandart Then DebugMode vbTab & strReference & ": Registration in system"
             RegOCX = DLLOCX(0, strPathOcxSystem, True)
         Else
             RegOCX = True
@@ -258,7 +258,7 @@ StartRegOCXForce:
                 'Прерываем обновление библиотеки, если винда выше 2003
                 If InStr(regParam, "vbscript.dll") Then
                     If OSCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
-                        DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
+                        If mbDebugStandart Then DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
 
                         Exit Function
 
@@ -308,7 +308,7 @@ StartRegOCXForce:
                 'Прерываем обновление библиотеки, если винда выше 2003 или 64x
                 If InStr(regParam, "vbscript.dll") Then
                     If OSCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
-                        DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
+                        If mbDebugStandart Then DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
 
                         Exit Function
 
@@ -347,8 +347,8 @@ StartRegOCXForce:
             End If
         End If
 
-        DebugMode vbTab & strReference & ": is already present in system - File version: " & strVersionFile
+        If mbDebugStandart Then DebugMode vbTab & strReference & ": is already present in system - File version: " & strVersionFile
     End If
 
-    DebugMode vbTab & strReference & ": Result=" & RegOCX
+    If mbDebugStandart Then DebugMode vbTab & strReference & ": Result=" & RegOCX
 End Function

@@ -28,7 +28,7 @@ Public Sub CollectHwidFromReestr()
     Dim strMfg            As String
     Dim strCompatibleIDs  As String
 
-    DebugMode vbTab & "CollectHwidFromReestr-Start"
+    If mbDebugDetail Then DebugMode vbTab & "CollectHwidFromReestr-Start"
 
     ' максимальное кол-во элементов в массиве
     For i = LBound(arrHwidsLocal) To UBound(arrHwidsLocal)
@@ -48,7 +48,7 @@ Public Sub CollectHwidFromReestr()
         ' Убираем глюк с появлением &CTLR_ в HWID устройства
         If LenB(strCompatID) Then
             If InStr(strCompatID, "&CTLR_") Then
-                DebugMode vbTab & "CollectHwidFromReestr-Start - !!! Replace for HWID: " & strID & " in CompatibleIDs '&CTLR_' ---> &_", 1
+                If mbDebugDetail Then DebugMode vbTab & "CollectHwidFromReestr-!!! Replace for HWID: " & strID & " in CompatibleIDs '&CTLR_' ---> &_"
                 strCompatID = Replace$(strCompatID, "&CTLR_", "&_")
             End If
         End If
@@ -151,7 +151,7 @@ Public Sub CollectHwidFromReestr()
     '12 - strInfName
     '13 - Есть драйвера или нет
     '14 - Список пакетов где обнуружены драйвера
-    DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & i & vbNewLine & _
+    If mbDebugStandart Then DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & i & vbNewLine & _
               vbTab & "CollectHwidFromReestr-End"
 End Sub
 

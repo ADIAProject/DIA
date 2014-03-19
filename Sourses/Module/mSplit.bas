@@ -10,6 +10,10 @@ Private m_A()       As Long
 Private m_AP        As Long
 Private m_H(0 To 6) As Long
 Private m_HP        As Long
+
+Private R() As Long
+Private RP  As Long
+    
 Private Declare Sub GetMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, Value As Long)
 Private Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, ByVal Value As Long)
 Private Declare Function ArrPtr Lib "msvbvm60.dll" Alias "VarPtr" (ByRef Var() As Any) As Long
@@ -112,9 +116,6 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function z_Split(Expression As String, Optional Delimiter As String = " ", Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As Long
 
-    Static R() As Long
-    Static RP  As Long
-
     Dim P()    As Long
     Dim C      As Long
     Dim i      As Long
@@ -182,7 +183,7 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = " "
                 ' did we find an item?
                 If i Then
 
-                    ReDim P(3) As Long
+                    ReDim P(3)
 
                     ' space for knowing the positions
                     PL = (Limit \ 96)

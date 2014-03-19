@@ -3854,9 +3854,9 @@ Private Sub cmdDriverVer_Click()
     Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ff547394%28VS.85%29.aspx?ppud=4" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3986,9 +3986,9 @@ Private Sub cmdForceIfDriverIsNotBetter_Click()
     Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms793551.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4002,9 +4002,9 @@ Private Sub cmdLegacyMode_Click()
     Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794322.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4059,9 +4059,9 @@ Private Sub cmdPromptIfDriverIsNotBetter_Click()
     Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms793530.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4075,9 +4075,9 @@ Private Sub cmdQuietInstall_Click()
     Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794300.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4091,9 +4091,9 @@ Private Sub cmdScanHardware_Click()
     Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794295.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4107,9 +4107,9 @@ Private Sub cmdSuppressAddRemovePrograms_Click()
     Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms794270.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4123,9 +4123,9 @@ Private Sub cmdSuppressWizard_Click()
     Dim nRetShellEx As String
 
     cmdString = Kavichki & "http://msdn.microsoft.com/en-us/library/ms791062.aspx" & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4662,7 +4662,7 @@ Private Sub ReadOptions()
     chkUpdateBeta.Value = mbUpdateCheckBeta
     chkSilentDll.Value = mbSilentDLL
     chkRemoveTemp.Value = mbDelTmpAfterClose
-    chkDebug.Value = mbDebugEnable
+    chkDebug.Value = mbDebugStandart
     chkDebugTime2File.Value = mbDebugTime2File
     chkDebugLog2AppPath.Value = mbDebugLog2AppPath
     chkTabBlock.Value = mbTabBlock

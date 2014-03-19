@@ -144,7 +144,7 @@ Private Sub CheckEditLicense(StrPathFile As String)
     Dim strEULA_MD5RTF_temp As String
 
     strMD5TextRtf = GetMD5(StrPathFile)
-    DebugMode "LicenceInfo: " & strMD5TextRtf
+    If mbDebugStandart Then DebugMode "LicenceInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
 
@@ -157,18 +157,18 @@ Private Sub CheckEditLicense(StrPathFile As String)
 
     If StrComp(strMD5TextRtf, strEULA_MD5RTF_temp, vbTextCompare) <> 0 Then
         If Not mbSilentRun Then
-            DebugMode "LicenceInfo: NotValid"
+            If mbDebugStandart Then DebugMode "LicenceInfo: NotValid"
 
             If MsgBox(strMessages(11), vbYesNo + vbQuestion, strProductName) = vbNo Then
                 Unload Me
             End If
         End If
 
-        DebugMode "The Source text of the file of the license agreement was changed!!! The most Further functioning(working) the program impossible. Address to developer or download anew distribution program of the program."
+        If mbDebugStandart Then DebugMode "The Source text of the file of the license agreement was changed!!! The most Further functioning(working) the program impossible. Address to developer or download anew distribution program of the program."
 
     End If
 
-    DebugMode "LicenceText: End"
+    If mbDebugStandart Then DebugMode "LicenceText: End"
 End Sub
 
 '!--------------------------------------------------------------------------------

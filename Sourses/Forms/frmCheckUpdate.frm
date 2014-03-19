@@ -374,9 +374,9 @@ Private Sub cmdHistory_Click()
             cmdString = Kavichki & strLinkHistory_en & Kavichki
     End Select
 
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -390,9 +390,9 @@ Private Sub cmdUpdate_Click()
     Dim cmdString   As String
 
     cmdString = Kavichki & strLink(cmbVersions.ListIndex, 0) & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -417,9 +417,9 @@ Private Sub cmdUpdate_ClickMenu(mnuIndex As Integer)
             cmdString = Kavichki & strLink(cmbVersions.ListIndex, 4) & Kavichki
     End Select
 
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -433,9 +433,9 @@ Private Sub cmdUpdateFull_Click()
     Dim cmdString   As String
 
     cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 0) & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -460,9 +460,9 @@ Private Sub cmdUpdateFull_ClickMenu(mnuIndex As Integer)
             cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 4) & Kavichki
     End Select
 
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -563,9 +563,9 @@ Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
     Dim nRetShellEx As Boolean
 
     cmdString = Kavichki & strUrl_MainWWWSite & Kavichki
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------

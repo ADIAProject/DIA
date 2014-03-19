@@ -110,7 +110,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub LoadNotebookList()
 
-    ReDim arrNotebookFilterListDef(35) As String
+    ReDim arrNotebookFilterListDef(35)
 
     arrNotebookFilterListDef(0) = "3Q;*3q*"
     arrNotebookFilterListDef(1) = "Acer;*acer*;*emachines*;*packard*bell*;*gateway*"

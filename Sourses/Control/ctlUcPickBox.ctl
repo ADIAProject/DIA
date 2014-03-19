@@ -2221,7 +2221,9 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
     Dim Count               As Integer
     Dim LastCharacter       As Integer
     Dim NewCharacter        As Integer
-    Dim tempFiles(1 To 200) As String
+    Dim tempFiles()         As String
+    
+    ReDim tempFiles(1 To 200)
 
     '   Open Common Dialog Controls
     '   Note: This has been modified to allow the user to select either

@@ -97,6 +97,10 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
+'Note: this file has been modified for use within Drivers Installer Assistant.
+'This code was originally
+'You may download the original version of this code from the following link (good as of June '12):
+
 Option Explicit
 
 Dim mEnabled              As Boolean
@@ -256,6 +260,9 @@ Public Event MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Si
 Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 Public Event FontNotFound(FontName As String)
+
+Private OldDr   As eBtnState
+Private OldFont As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FontExist
@@ -428,7 +435,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub TmrAutoText_Timer()
-    mAutoText = ""
+    mAutoText = vbNullString
     TmrAutoText.Enabled = False
 End Sub
 
@@ -443,8 +450,6 @@ Private Sub TmrFocus_Timer()
 
     Focus = GetFocus
 
-    'If (Focus <> PicList.hWnd And Focus <> UserControl.hWnd And _
-    'Focus <> PicPreview.hWnd And Focus <> VScroll1.hWnd) Or CloseMe = True Then
     If (Focus <> UserControl.hWnd) Or CloseMe = True Then
         bCancel = True
         PicPreview.Visible = False
@@ -1028,9 +1033,6 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
 
     Dim Br       As Long
     Dim tC       As Long
-
-    Static OldDr As eBtnState
-
     Dim tCol     As Long
 
     UserControl.Enabled = mEnabled
@@ -1235,19 +1237,16 @@ Private Sub ShowFont(fName As String)
 
     Dim TRC        As RECT
     Dim tStr       As String
-
-    Static OldFont As String
-
     Dim Br         As Long
     Dim tC         As Long
 
-    If fName = "" Or mShowPreview = False Then
+    If fName = vbNullString Or mShowPreview = False Then
 
         Exit Sub
 
     End If
 
-    If Trim$(mPreviewText) = "" Then
+    If Trim$(mPreviewText) = vbNullString Then
         tStr = fName
     Else
         tStr = mPreviewText
@@ -1402,9 +1401,9 @@ End Sub
 '! Parameters  (Переменные):   MyHkey (HkeyLoc)
 '                              myKey (String)
 '                              MyValue (String)
-'                              MyDefaultData (String = "")
+'                              MyDefaultData (String = vbnullstring)
 '!--------------------------------------------------------------------------------
-Private Function ReadValue(MyHkey As HkeyLoc, myKey As String, MyValue As String, Optional ByVal MyDefaultData As String = "") As String
+Private Function ReadValue(MyHkey As HkeyLoc, myKey As String, MyValue As String, Optional ByVal MyDefaultData As String = vbNullString) As String
 
     On Error GoTo ReadValue_Error
 
@@ -1472,7 +1471,7 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
 
     ReDim TmpLast(mRecentMax)
 
-    If CurRecent = "" Then
+    If CurRecent = vbNullString Then
         TmpLast = mRecent
     Else
 
@@ -1495,7 +1494,7 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
             If B% <> a% Then
                 If LenB(TmpLast(a%).fName) Then
                     If TmpLast(a%).fName = TmpLast(B%).fName Then
-                        TmpLast(B%).fName = ""
+                        TmpLast(B%).fName = vbNullString
                         B% = B% - 1
                     End If
                 End If

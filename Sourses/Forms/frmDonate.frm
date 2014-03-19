@@ -182,7 +182,7 @@ Private Sub CheckEditDonate(StrPathFile As String)
     Dim strDONATE_MD5RTF_temp As String
 
     strMD5TextRtf = GetMD5(StrPathFile)
-    DebugMode "DonateInfo: " & strMD5TextRtf
+    If mbDebugStandart Then DebugMode "DonateInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
 
@@ -194,7 +194,7 @@ Private Sub CheckEditDonate(StrPathFile As String)
     End Select
 
     If InStr(1, strMD5TextRtf, strDONATE_MD5RTF_temp, vbTextCompare) = 0 Then
-        DebugMode "DonateInfo: NotValid"
+        If mbDebugStandart Then DebugMode "DonateInfo: NotValid"
         MsgBox strMessages(40), vbInformation, strProductName
         Unload Me
     End If
@@ -222,9 +222,9 @@ Private Sub cmdPayPal_Click()
     Dim nRetShellEx As Boolean
 
     cmdString = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10349042"
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -246,9 +246,9 @@ Private Sub cmdSMSCoin_Click()
             cmdString = "http://donate.smscoin.com/js/smsdonate/index_en.html?sid=403169"
     End Select
 
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -262,9 +262,9 @@ Private Sub cmdYandexMoney_Click()
     Dim nRetShellEx As Boolean
 
     cmdString = "https://money.yandex.ru/embed/shop.xml?uid=41001626648736&amp;writer=seller&amp;targets=donate+to+adia-project&amp;default-sum=50&amp;button-text=04&amp;comment=on&amp;hint=%22Please,%20write%20your%20comments%22"
-    DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    DebugMode "cmdString: " & nRetShellEx
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------

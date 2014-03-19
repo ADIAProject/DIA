@@ -113,7 +113,7 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
 
     If (hFile = INVALID_HANDLE_VALUE) Then
         'nothing to do, so bail out
-        DebugMode str2VbTab & "CopyAllFilesFromFolder: " & sSourcePath & " No " & sFiles & " files found."
+        If mbDebugStandart Then DebugMode str2VbTab & "CopyAllFilesFromFolder: " & sSourcePath & " No " & sFiles & " files found."
 
         Exit Function
 
@@ -137,9 +137,9 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
 
                 Else
                     ' Копируем содержимое архива
-                    DebugMode str2VbTab & "CopyFiles from SubFolder: " & currFile
+                    If mbDebugStandart Then DebugMode str2VbTab & "CopyFiles from SubFolder: " & currFile
                     lngNumFilesFromFolder = rgbCopyFiles(currSourcePath, sDestination & currFile, ALL_FILES)
-                    DebugMode str2VbTab & "CopyFiles SubFolder - count files: " & lngNumFilesFromFolder
+                    If mbDebugStandart Then DebugMode str2VbTab & "CopyFiles SubFolder - count files: " & lngNumFilesFromFolder
                     copied = copied + lngNumFilesFromFolder
                 End If
             End If
@@ -241,13 +241,11 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
         If mbInitial Then
             lngResultFileListCount = 0
 
-            'ReDim sResultFileList(5, miMaxCountArr)
             ReDim sResultFileList(miMaxCountArr)
             sRootInit = sRoot
 
         Else
 
-            'ReDim Preserve sResultFileList(5, miMaxCountArr)
             ReDim Preserve sResultFileList(miMaxCountArr)
 
         End If
@@ -279,7 +277,6 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
                         If lngResultFileListCount = miMaxCountArr Then
                             miMaxCountArr = 2 * miMaxCountArr
 
-                            'ReDim Preserve sResultFileList(5, miMaxCountArr)
                             ReDim Preserve sResultFileList(miMaxCountArr)
 
                         End If

@@ -58,10 +58,10 @@ Public Function GetMD5(sFile As String) As String
         If lFileSize Then
 
             'Prepare the buffer
-            ReDim uBuffer(lFileSize - 1) As Byte
+            ReDim uBuffer(lFileSize - 1)
 
             'Read the file
-            If ReadFile(hFile, uBuffer(0), lFileSize, lBytesRead, ByVal 0&) <> 0 Then
+            If ReadFile(hFile, VarPtr(uBuffer(0)), lFileSize, lBytesRead, 0) <> 0 Then
                 If lBytesRead <> lFileSize Then
 
                     ReDim Preserve uBuffer(lBytesRead - 1)

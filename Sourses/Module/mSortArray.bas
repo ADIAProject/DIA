@@ -33,7 +33,7 @@ Public Sub ShellSortAny(ByVal piArrPtr As Long, ByVal piElementCount As Long, By
     Dim lyBuffer()     As Byte
 
     'Dim our buffer for enough bytes to hold one element
-    ReDim lyBuffer(0 To piBytesPerElement - 1) As Byte
+    ReDim lyBuffer(0 To piBytesPerElement - 1)
 
     'Get the pointer to the first element
     liBufferPtr = VarPtr(lyBuffer(0))
