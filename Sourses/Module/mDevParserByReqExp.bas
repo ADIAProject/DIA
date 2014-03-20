@@ -5,8 +5,6 @@ Option Explicit
 Public Const lngDevDBVersion        As Long = 6
 
 ' Рабочие переменные
-Private objInfFile          As TextStream
-Private objCatFile          As TextStream
 Private RegExpStrSect       As RegExp
 Private RegExpStrDefs       As RegExp
 Private RegExpVerSect       As RegExp
@@ -303,10 +301,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     If PathExists(strArchCatFileList) Then
         If GetFileSizeByPath(strArchCatFileList) Then
-'            Set objCatFile = objFSO.OpenTextFile(strArchCatFileList, ForReading, False, TristateUseDefault)
-'            strArchCatFileListContent = objCatFile.ReadAll()
-'            objCatFile.Close
-            
             strArchCatFileListContent = FileReadData(strArchCatFileList)
         Else
             If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strArchCatFileList
@@ -333,7 +327,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
         ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
         If Not mbDP_Is_aFolder Then
-            'strInfPath = Replace$(strInfPath, strWorkDir, vbNullString, , , vbTextCompare)
             strInfPath = strInfPathTempList_x(infNum).RelativePath
         Else
             strInfPath = Replace$(strInfPathTempList_x(infNum).Path, BackslashAdd2Path(strPathDRP & strPackFileName), vbNullString, , , vbTextCompare)
@@ -341,7 +334,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
         If strInfPathTempList_x(infNum).Size Then
             ' Read INF file
-            'sFileContent = vbNullString
             sFileContent = FileReadData(strInfFullname)
 
             ' Убираем символ """
@@ -580,7 +572,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                     End If
     
                                     If LenB(strValval) = 0 Then
-                                        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp: Cannot find '" & strVarname & "'"
+                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Error in inf: Cannot find '" & strVarname & "'"
                                         strDevName = strVarname
                                     Else
                                         strDevName = Replace$(strDevName, "%" & strVarname & "%", strValval)
@@ -701,11 +693,9 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             CreateNewDirectory strPathDevDB
         End If
         ' Запись в файл индекса
-        'FileWriteData strRezultTxt, Join(strLinesArr(), vbNewLine)
-        FileWriteData2 strRezultTxt, Join(strLinesArr(), vbNewLine)
+        FileWriteData strRezultTxt, Join(strLinesArr(), vbNewLine)
         ' Запись в файл короткого индекса
-        'FileWriteData strRezultTxtHwid, Join(strLinesArrHwid(), vbNewLine)
-        FileWriteData2 strRezultTxtHwid, Join(strLinesArrHwid(), vbNewLine)
+        FileWriteData strRezultTxtHwid, Join(strLinesArrHwid(), vbNewLine)
         
         TimeScriptFinish = GetTickCount
         If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index 2 File: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)

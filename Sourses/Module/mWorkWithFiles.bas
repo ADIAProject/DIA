@@ -16,6 +16,7 @@ Private xFile              As File
 ' Переменная
 Public strFileListInFolder As String
 
+' Not add to project (if not DBS) - option for compile
 #Const mbIDE_DBSProject = False
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareFilesByHashCAPICOM
@@ -23,7 +24,6 @@ Public strFileListInFolder As String
 '! Parameters  (Переменные):   strFirstFile (String)
 '                              strSecondFile (String)
 '!--------------------------------------------------------------------------------
-' Not add to project (if not DBS) - option for compile
 #If mbIDE_DBSProject Then
     Public Function CompareFilesByHashCAPICOM(ByVal strFirstFile As String, ByVal strSecondFile As String) As Boolean
     
@@ -118,7 +118,6 @@ Public Sub CreateNewDirectory(ByVal NewDirectory As String)
     Dim iCounter   As Integer
     Dim sTempDir   As String
     Dim ret        As Long
-    Dim retLasrErr As Long
 
     sPath = BackslashAdd2Path(NewDirectory)
     iCounter = 1
@@ -135,16 +134,13 @@ Public Sub CreateNewDirectory(ByVal NewDirectory As String)
             .nLength = Len(SecAttrib)
         End With
 
-        ret = CreateDirectory(sTempDir, SecAttrib)
+        If PathExists(sTempDir) = False Then
+            ret = CreateDirectory(sTempDir, SecAttrib)
 
-        If ret = 0 Then
-            retLasrErr = Err.LastDllError
-
-            If PathExists(sTempDir) = False Then
-                If mbDebugStandart Then DebugMode vbTab & "CreateDirectory: False : " & sTempDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
+            If ret = 0 Then
+                If mbDebugStandart Then DebugMode str2VbTab & "CreateNewDirectory: False : " & sTempDir & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
             End If
         End If
-
     Loop
 
 End Sub
@@ -156,39 +152,66 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function DeleteFiles(ByVal PathFile As String) As Boolean
 
-    Dim ret As Long
-
+    Dim ret             As Long
+    Dim lngFilePathPtr  As Long
+    
     If PathIsValidUNC(PathFile) = False Then
-        ret = DeleteFile(StrPtr("\\?\" & PathFile & vbNullChar))
+        lngFilePathPtr = StrPtr("\\?\" & PathFile)
     Else
         '\\?\UNC\
-        ret = DeleteFile(StrPtr("\\?\UNC\" & Right$(PathFile, Len(PathFile) - 2) & vbNullChar))
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(PathFile, Len(PathFile) - 2))
+    End If
+    ret = DeleteFile(lngFilePathPtr)
+
+    If ret = 0 Then
+        ' Если нет доступа, то возможно атрибут только для чтения, пытаемся снять и снова удалить файл
+        If Err.LastDllError = 5 Then
+            ResetReadOnly4File PathFile
+            ret = DeleteFile(lngFilePathPtr)
+            If ret = 0 Then
+                If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            End If
+        Else
+            If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        End If
+        
     End If
 
     DeleteFiles = CBool(ret)
+        
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DeleteFolder
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strFolderPath (String)
+'!--------------------------------------------------------------------------------
+Public Function DeleteFolder(ByVal strFolderPath As String) As Boolean
+
+    Dim ret As Long
+    Dim lngFilePathPtr As Long
+    
+    If PathExists(strFolderPath) Then
+        If PathIsValidUNC(strFolderPath) = False Then
+            lngFilePathPtr = StrPtr("\\?\" & strFolderPath)
+        Else
+            '\\?\UNC\
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(strFolderPath, Len(strFolderPath) - 2))
+        End If
+        ret = RemoveDirectory(lngFilePathPtr)
+    End If
 
     If ret = 0 Then
-        If PathExists(PathFile) Then
-
-            On Error GoTo errhandler
-
-            objFSO.DeleteFile PathFile, True
-        End If
-
-        If PathExists(PathFile) Then
-            If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        ' Папка не пуста
+        If Err.LastDllError = 145 Then
+            If mbDebugDetail Then DebugMode vbTab & "DeleteFiles: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        Else
+            If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
     End If
 
-    Exit Function
-
-errhandler:
-    If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.Number & ": " & Err.Description & vbNewLine & _
-              vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
-    Err.Clear
-
-    Resume Next
-
+    DeleteFolder = CBool(ret)
+    
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -199,26 +222,34 @@ End Function
 Public Sub DelFolderBackUp(ByVal strFolderPath As String)
 
     Dim ret As Long
+    Dim lngFilePathPtr As Long
 
     On Error Resume Next
 
-    If mbDebugStandart Then DebugMode "DelFolder-Start: " & strFolderPath
+    If mbDebugStandart Then DebugMode "DelFolderBackUp-Start: " & strFolderPath
 
     If PathExists(strFolderPath) Then
         DelRecursiveFolder strFolderPath
     End If
 
     If PathExists(strFolderPath) Then
-        ret = RemoveDirectory(strFolderPath)
-
+                
+        If PathIsValidUNC(strFolderPath) = False Then
+            lngFilePathPtr = StrPtr("\\?\" & strFolderPath)
+        Else
+            '\\?\UNC\
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(strFolderPath, Len(strFolderPath) - 2))
+        End If
+        ret = RemoveDirectory(lngFilePathPtr)
+        
         If ret = 0 Then
-            If mbDebugStandart Then DebugMode vbTab & "RemoveDirectory: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "DelFolderBackUp: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
         End If
     End If
 
     On Error GoTo 0
 
-    If mbDebugStandart Then DebugMode "DelFolder-End"
+    If mbDebugStandart Then DebugMode "DelFolderBackUp-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -236,35 +267,23 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
 
     If PathExists(Root) Then
         SearchFilesInRoot Root, ALL_FILES, True, False, True
-        Set xFOL = objFSO.GetFolder(Root)
+        SearchFoldersInRoot Root, ALL_FILES, True, True
 
-        If xFOL.Files.Count Then
-
-            For Each xFile In xFOL.Files
-                DeleteFiles xFile.Path
-            Next
-
-        End If
-
-        ' Удаление пустых каталогов
+        ' Удаление пустых каталогов, если остались
         If PathExists(Root) Then
             retDelete = DelTree(Root)
 
             If mbDebugStandart Then
 
-                Select Case retDelete
+                If retDelete = 0 Then
+                    retStrMsg = "Deleted"
+                ElseIf retDelete = -1 Then
+                    retStrMsg = "Invalid Directory"
+                Else
+                    retStrMsg = "An Error was occured"
+                End If
 
-                    Case 0
-                        retStrMsg = "Deleted"
-
-                    Case -1
-                        retStrMsg = "Invalid Directory"
-
-                    Case Else
-                        retStrMsg = "An Error was occured"
-                End Select
-
-                If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: " & " Result: " & retStrMsg
+                If mbDebugStandart Then DebugMode vbTab & "DelRecursiveFolder: " & " Result: " & retStrMsg
             End If
         End If
     End If
@@ -278,8 +297,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub DelTemp()
 
-    Dim TimeScriptRun As Long
-    Dim TimeScriptFinish As Long
+    Dim TimeScriptRun       As Long
+    Dim TimeScriptFinish    As Long
+    Dim ret                 As Long
+    Dim lngFilePathPtr      As Long
 
     On Error Resume Next
 
@@ -291,10 +312,20 @@ Public Sub DelTemp()
     End If
 
     If PathExists(strWorkTemp) Then
-        RemoveDirectory strWorkTemp
+        
+        If PathIsValidUNC(strWorkTemp) = False Then
+            lngFilePathPtr = StrPtr("\\?\" & strWorkTemp)
+        Else
+            '\\?\UNC\
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(strWorkTemp, Len(strWorkTemp) - 2))
+        End If
+        ret = RemoveDirectory(lngFilePathPtr)
+        
+        If ret = 0 Then
+            If mbDebugStandart Then DebugMode vbTab & "DelTemp: False : " & strWorkTemp & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        End If
+        
     End If
-
-    On Error GoTo 0
 
     TimeScriptFinish = GetTickCount
     If mbDebugStandart Then DebugMode "DelTemp-End: Time to Delete: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
@@ -380,15 +411,16 @@ Private Function DelTree(ByVal strDir As String) As Long
 
                 Loop
 
-                ret = RemoveDirectory(strDir)
+                If PathIsValidUNC(strDir) = False Then
+                    ret = RemoveDirectory(StrPtr("\\?\" & strDir))
+                Else
+                    '\\?\UNC\
+                    ret = RemoveDirectory(StrPtr("\\?\UNC\" & Right$(strDir, Len(strDir) - 2)))
+                End If
 
                 If ret = 0 Then
                     retLasrErr = Err.LastDllError
-
-                    If PathExists(strDir) = False Then
-                        If mbDebugStandart Then DebugMode vbTab & "RemoveDirectory: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
-                    End If
-
+                    If mbDebugStandart Then DebugMode vbTab & "DelTree: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
                     DelTree = retLasrErr
                 Else
                     DelTree = 0
@@ -642,7 +674,6 @@ End Function
 Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearchString As String) As String
 
     Dim StringHash     As Scripting.Dictionary
-    Dim objInfFile     As TextStream
     Dim RegExpStrSect  As RegExp
     Dim RegExpStrDefs  As RegExp
     Dim MatchesStrSect As MatchCollection
@@ -696,9 +727,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     lngFileDBSize = GetFileSizeByPath(strInfFilePath)
 
     If lngFileDBSize Then
-        Set objInfFile = objFSO.OpenTextFile(strInfFilePath, ForReading, False, TristateUseDefault)
-        FileContent = objInfFile.ReadAll()
-        objInfFile.Close
+        FileContent = FileReadData(strInfFilePath)
     Else
         If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfFilePath
     End If
@@ -781,11 +810,11 @@ End Function
 Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
 
     If PathExists(StrPathFile) Then
-        If FileisReadOnly(StrPathFile) Then
+        If (GetAttr(StrPathFile) And vbReadOnly) Then
             SetAttr StrPathFile, vbNormal
         End If
 
-        If FileisSystemAttr(StrPathFile) Then
+        If (GetAttr(StrPathFile) And vbSystem) Then
             SetAttr StrPathFile, vbNormal
         End If
     End If
@@ -1387,101 +1416,6 @@ Public Function GetFileSizeByPath(ByVal strPath As String) As Long
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileWriteDataUni
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sFilePath (String)
-'                              strData (String)
-'!--------------------------------------------------------------------------------
-Public Sub FileWriteDataUni(ByVal sFilePath As String, ByVal strData As String)
-    Dim fHandle As Long
-    Dim fSuccess As Long
-    Dim lBytesWritten As Long
-    Dim BytesToWrite As Long
-    Dim anArray() As Byte
-    Dim lngFilePathPtr As Long
-    Dim lngStringSize As Long
-    
-    ' Convert to byte
-    'Str2ByteArray strData, anArray
-    lngStringSize = LenB(strData)
-    ReDim anArray(0 To lngStringSize)
-    CopyMemory anArray(0), ByVal StrPtr(strData), lngStringSize
-    'Get the length of data to write
-    BytesToWrite = (UBound(anArray) + 1) * LenB(anArray(0))
-    
-    'Get a pointer to a string with file name.
-    If PathIsValidUNC(sFilePath) = False Then
-        lngFilePathPtr = StrPtr("\\?\" & sFilePath & vbNullChar)
-    Else
-        '\\?\UNC\
-        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFilePath, Len(sFilePath) - 2) & vbNullChar)
-    End If
-    'Get a handle to a file Fname.
-    fHandle = CreateFile(lngFilePathPtr, GENERIC_WRITE Or GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE Or FILE_SHARE_DELETE, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0)
-    
-    'CreateFile returns INVALID_HANDLE_VALUE if it fails.
-    If fHandle <> INVALID_HANDLE_VALUE Then
-        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
-        'Check to see if you were successful writing the data
-        If fSuccess <> 0 Then
-            'Flush the file buffers to force writing of the data.
-            FlushFileBuffers fHandle
-            'Close the file.
-            CloseHandle fHandle
-        Else
-            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
-        End If
-    Else
-        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
-    End If
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileWriteData
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sFilePath (String)
-'                              strData (String)
-'!--------------------------------------------------------------------------------
-Public Sub FileWriteData(ByVal sFilePath As String, ByVal strData As String)
-    Dim fHandle         As Long
-    Dim fSuccess        As Long
-    Dim lBytesWritten   As Long
-    Dim BytesToWrite    As Long
-    Dim anArray()       As Byte
-    Dim lngFilePathPtr  As Long
-    
-    ' Convert to byte
-    Str2ByteArray strData, anArray
-    BytesToWrite = UBound(anArray) + 1
-    
-    'Get a pointer to a string with file name.
-    If PathIsValidUNC(sFilePath) = False Then
-        lngFilePathPtr = StrPtr("\\?\" & sFilePath & vbNullChar)
-    Else
-        '\\?\UNC\
-        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFilePath, Len(sFilePath) - 2) & vbNullChar)
-    End If
-    'Get a handle to a file Fname.
-    fHandle = CreateFile(lngFilePathPtr, GENERIC_WRITE Or GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE Or FILE_SHARE_DELETE, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0)
-    
-    'CreateFile returns INVALID_HANDLE_VALUE if it fails.
-    If fHandle <> INVALID_HANDLE_VALUE Then
-        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
-        'Check to see if you were successful writing the data
-        If fSuccess <> 0 Then
-            'Flush the file buffers to force writing of the data.
-            FlushFileBuffers fHandle
-            'Close the file.
-            CloseHandle fHandle
-        Else
-            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
-        End If
-    Else
-        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteData: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
-    End If
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileReadData
 '! Description (Описание)  :   [Read data from file with check for unicode yes/no]
 '! Parameters  (Переменные):   sFileName (String)
@@ -1518,14 +1452,14 @@ Public Function FileReadData(ByVal sFileName As String, Optional ByVal LocaleID 
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileReadData
-'! Description (Описание)  :   [Read data from file with check for unicode yes/no]
+'! Procedure   (Функция)   :   Function FileWriteData
+'! Description (Описание)  :   [Write data to file with check]
 '! Parameters  (Переменные):   sFileName (String)
-'                              LocaleID (Long)
+'                              sStringOut (String)
 '!--------------------------------------------------------------------------------
-Public Sub FileWriteData2(ByVal sFileName As String, Optional ByVal sStringOut As String)
+Public Sub FileWriteData(ByVal sFileName As String, Optional ByVal sStringOut As String)
 
-    Dim fNum As Long
+    Dim fNum As Integer
     
     fNum = FreeFile
 
@@ -1533,5 +1467,118 @@ Public Sub FileWriteData2(ByVal sFileName As String, Optional ByVal sStringOut A
     Put #fNum, , sStringOut
     Close #fNum
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileWriteDataAppend
+'! Description (Описание)  :   [Read data from file with check for unicode yes/no]
+'! Parameters  (Переменные):   sFileName (String)
+'                              sStringOut (String)
+'!--------------------------------------------------------------------------------
+Private Sub FileWriteDataAppend(ByVal sFileName As String, Optional ByVal sStringOut As String)
+
+    Dim fNum As Integer
+    
+    fNum = FreeFile
+
+    Open sFileName For Binary Access Write As fNum
+    Put #fNum, LOF(fNum), sStringOut
+    Close #fNum
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileWriteDataAPI
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sFilePath (String)
+'                              strData (String)
+'!--------------------------------------------------------------------------------
+Private Sub FileWriteDataAPI(ByVal sFilePath As String, ByVal strData As String)
+    Dim fHandle         As Long
+    Dim fSuccess        As Long
+    Dim lBytesWritten   As Long
+    Dim BytesToWrite    As Long
+    Dim anArray()       As Byte
+    Dim lngFilePathPtr  As Long
+    
+    ' Convert to byte
+    Str2ByteArray strData, anArray
+    BytesToWrite = UBound(anArray) + 1
+    
+    'Get a pointer to a string with file name.
+    If PathIsValidUNC(sFilePath) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & sFilePath)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFilePath, Len(sFilePath) - 2))
+    End If
+    'Get a handle to a file Fname.
+    fHandle = CreateFile(lngFilePathPtr, GENERIC_WRITE Or GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE Or FILE_SHARE_DELETE, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0)
+    
+    'CreateFile returns INVALID_HANDLE_VALUE if it fails.
+    If fHandle <> INVALID_HANDLE_VALUE Then
+        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
+        'Check to see if you were successful writing the data
+        If fSuccess <> 0 Then
+            'Flush the file buffers to force writing of the data.
+            FlushFileBuffers fHandle
+            'Close the file.
+            CloseHandle fHandle
+        Else
+            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPI: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        End If
+    Else
+        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPI: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+    End If
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FileWriteDataAPIUni
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sFilePath (String)
+'                              strData (String)
+'!--------------------------------------------------------------------------------
+Private Sub FileWriteDataAPIUni(ByVal sFilePath As String, ByVal strData As String)
+    Dim fHandle As Long
+    Dim fSuccess As Long
+    Dim lBytesWritten As Long
+    Dim BytesToWrite As Long
+    Dim anArray() As Byte
+    Dim lngFilePathPtr As Long
+    Dim lngStringSize As Long
+    
+    ' Convert to byte
+    'Str2ByteArray strData, anArray
+    lngStringSize = LenB(strData)
+    ReDim anArray(0 To lngStringSize)
+    CopyMemory anArray(0), ByVal StrPtr(strData), lngStringSize
+    'Get the length of data to write
+    BytesToWrite = (UBound(anArray) + 1) * LenB(anArray(0))
+    
+    'Get a pointer to a string with file name.
+    If PathIsValidUNC(sFilePath) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & sFilePath)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFilePath, Len(sFilePath) - 2))
+    End If
+    'Get a handle to a file Fname.
+    fHandle = CreateFile(lngFilePathPtr, GENERIC_WRITE Or GENERIC_READ, FILE_SHARE_READ Or FILE_SHARE_WRITE Or FILE_SHARE_DELETE, 0, CREATE_ALWAYS, FILE_FLAG_SEQUENTIAL_SCAN, 0)
+    
+    'CreateFile returns INVALID_HANDLE_VALUE if it fails.
+    If fHandle <> INVALID_HANDLE_VALUE Then
+        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
+        'Check to see if you were successful writing the data
+        If fSuccess <> 0 Then
+            'Flush the file buffers to force writing of the data.
+            FlushFileBuffers fHandle
+            'Close the file.
+            CloseHandle fHandle
+        Else
+            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPIUni: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        End If
+    Else
+        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPIUni: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+    End If
 End Sub
 

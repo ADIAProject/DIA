@@ -3,6 +3,7 @@ Option Explicit
 
 Public strAppPath                 As String
 Public strAppPathBackSL           As String
+Public strAppEXEName              As String
 
 ' Переменная для формы показа произвольного сообщения
 Public lngShowMessageResult       As Long
@@ -13,11 +14,15 @@ Public lngShowMessageResult       As Long
 Public g_UserModeFix As Boolean
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub GetCurAppPath
+'! Procedure   (Функция)   :   Sub GetMyAppValue
 '! Description (Описание)  :   [процедура получения глобальных переменных путей программы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Sub GetCurAppPath()
+Public Sub GetMyAppProperties()
+    strProductVersion = App.Major & "." & App.Minor & "." & App.Revision
+    strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
     strAppPath = App.Path
     strAppPathBackSL = BackslashAdd2Path(strAppPath)
+    strAppEXEName = App.EXEName
 End Sub
+

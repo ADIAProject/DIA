@@ -1422,10 +1422,10 @@ Public Function FileExists(ByVal sFileName As String) As Boolean
     Dim hFindFirst     As Long
 
     If PathIsValidUNC(sFileName) = False Then
-        hFindFirst = FindFirstFile(StrPtr("\\?\" & sFileName & vbNullChar), lpFindFileData)
+        hFindFirst = FindFirstFile(StrPtr("\\?\" & sFileName), lpFindFileData)
     Else
         '\\?\UNC\
-        hFindFirst = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sFileName, Len(sFileName) - 2) & vbNullChar), lpFindFileData)
+        hFindFirst = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sFileName, Len(sFileName) - 2)), lpFindFileData)
     End If
 
     If (hFindFirst > 0) And (lpFindFileData.dwFileAttributes <> FILE_ATTRIBUTE_DIR) Then

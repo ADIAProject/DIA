@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'ќсновные параметры программы
-Public Const strDateProgram         As String = "19/03/2014"
+Public Const strDateProgram         As String = "20/03/2014"
 
 'ќсновные переменные проекта (название, верси€ и т.д)
 Public strProductName               As String
@@ -192,9 +192,7 @@ Private Sub Main()
     Set objFSO = New Scripting.FileSystemObject
 
     ' «апоминаем app.path и прочее в переменные
-    GetCurAppPath
-    strProductVersion = App.Major & "." & App.Minor & "." & App.Revision
-    strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
+    GetMyAppProperties
 
     'считываем версию операционки
     If Not OSCurrVersionStruct.IsInitialize Then
@@ -337,7 +335,7 @@ Private Sub Main()
 
     If mbDebugStandart Then DebugMode "Version: " & strProductName & vbNewLine & _
               "Build: " & strDateProgram & vbNewLine & _
-              "ExeName: " & App.EXEName & ".exe" & vbNewLine & _
+              "ExeName: " & strAppEXEName & ".exe" & vbNewLine & _
               "AppWork: " & strAppPath & vbNewLine & _
               "is User an Admin?: " & mbIsUserAnAdmin
 

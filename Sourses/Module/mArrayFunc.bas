@@ -14,7 +14,6 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
     Dim loIndex       As Long
     Dim strResultAll  As String
     Dim strLine       As String
-    Dim objRezultFile As TextStream
     Dim i             As Long
     Dim ii            As Long
 
@@ -34,8 +33,8 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
 
     If LenB(strResultAll) Then
         '---------------Âûגמהטל טעמד ג פאיכ-----
-        Set objRezultFile = objFSO.CreateTextFile(StrPathFile, True, True)
-        objRezultFile.Write (strResultAll)
+        FileWriteData StrPathFile, strResultAll
+        
         If mbDebugStandart Then DebugMode vbTab & "ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
                                     "**************************************************************************"
         SaveAnyStringArray2File = True
@@ -54,7 +53,6 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
 
     Dim strResultAll  As String
     Dim strLine       As String
-    Dim objRezultFile As TextStream
     Dim i             As Long
     Dim ii            As Long
 
@@ -86,8 +84,7 @@ Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As ar
 
     If LenB(strResultAll) Then
         '---------------Âûגמהטל טעמד ג פאיכ-----
-        Set objRezultFile = objFSO.CreateTextFile(StrPathFile, True, True)
-        objRezultFile.Write (strResultAll)
+        FileWriteData StrPathFile, strResultAll
         If mbDebugStandart Then DebugMode "SaveHwidsArray2File-ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
                                     "**************************************************************************"
         SaveHwidsArray2File = True

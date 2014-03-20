@@ -223,7 +223,7 @@ Public Function OSInfo() As OSInfoStruct
             OSInfo.VerMinor = .dwMinorVersion
             OSInfo.ClientOrServer = .wProductType = VER_NT_WORKSTATION
             OSInfo.IsInitialize = True
-            strOSCurrentVersion = OSCurrVersionStruct.VerFull
+            strOSCurrentVersion = OSInfo.VerFull
         End With
 
     End If

@@ -30,7 +30,6 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub DevParserLocalHwids2()
 
-    Dim objInfFile    As TextStream
     Dim str           As String
     Dim i             As Long
     Dim strCnt        As Long
@@ -61,8 +60,7 @@ Public Sub DevParserLocalHwids2()
 
     If PathExists(strHwidsTxtPath) Then
         If Not PathIsAFolder(strHwidsTxtPath) Then
-            Set objInfFile = objFSO.OpenTextFile(strHwidsTxtPath, ForReading, False, TristateUseDefault)
-            str = objInfFile.ReadAll
+            str = FileReadData(strHwidsTxtPath)
             Set MatchesDevcon = RegExpDevcon.Execute(str)
             miMaxCountArr = 100
 

@@ -317,11 +317,8 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
     Dim ColumnByStrings() As String
     Dim i                 As Long
     Dim strContentFile    As String
-    Dim objLoadedfFile    As TextStream
 
-    Set objLoadedfFile = objFSO.OpenTextFile(strFilePath, ForReading, False, TristateUseDefault)
-    strContentFile = objLoadedfFile.ReadAll
-    objLoadedfFile.Close
+    strContentFile = FileReadData(strFilePath)
     arrFileStrings = Split(strContentFile, vbNewLine)
 
     'Переопределяем основной массив с данными об устройствах компьютера

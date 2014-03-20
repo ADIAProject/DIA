@@ -21,9 +21,6 @@ Public strDebugLogName         As String
 Public strDebugLogPathTemp     As String
 Public strDebugLogNameTemp     As String
 
-' Поток для вывода отладочного файла
-Private tsDebugLogFile As TextStream
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DebugMode
 '! Description (Описание)  :   [Функция отладочных сообщений]
@@ -31,21 +28,33 @@ Private tsDebugLogFile As TextStream
 '                              lngDetailModeTemp (Long = 1)
 '!--------------------------------------------------------------------------------
 Public Sub DebugMode(ByVal Msg As String)
-
-    ' создается ли новый файл или открывается для дозаписи
-    If PathExists(strDebugLogFullPath) Then
-        Set tsDebugLogFile = objFSO.OpenTextFile(strDebugLogFullPath, ForAppending, False, TristateUseDefault)
+    
+    Dim mbFileExist As Boolean
+    Dim fNum As Integer
+    
+    mbFileExist = PathExists(strDebugLogFullPath)
+    
+    fNum = FreeFile
+    Open strDebugLogFullPath For Binary Access Write As fNum
+    
+    If Not mbDebugTime2File Then
+        ' создается ли новый файл или открывается для дозаписи
+        If mbFileExist Then
+            Put #fNum, LOF(fNum), Msg & vbNewLine
+        Else
+            Put #fNum, , Msg & vbNewLine
+        End If
     Else
-        Set tsDebugLogFile = objFSO.OpenTextFile(strDebugLogFullPath, ForWriting, True, TristateUseDefault)
-    End If
+        ' создается ли новый файл или открывается для дозаписи
+        If mbFileExist Then
+            Put #fNum, LOF(fNum), (vbNewLine & CStr(Now()) & vbTab) & Msg
+        Else
+            Put #fNum, , (vbNewLine & CStr(Now()) & vbTab) & Msg
+        End If
 
-    If mbDebugTime2File Then
-        tsDebugLogFile.WriteLine CStr(Now()) & vbTab & Msg
-    Else
-        tsDebugLogFile.WriteLine Msg
     End If
-
-    tsDebugLogFile.Close
+    
+    Close #fNum
 
 End Sub
 
@@ -100,18 +109,16 @@ End Sub
 '! Parameters  (Переменные):   strFilePath (String)
 '!--------------------------------------------------------------------------------
 Public Sub PrintFileInDebugLog(ByVal strFilePath As String)
-
+    Dim strTxtFileAll As String
+    
     If PathExists(strFilePath) Then
         If Not PathIsAFolder(strFilePath) Then
             If GetFileSizeByPath(strFilePath) > 0 Then
-            
-                Dim objTxtFile    As TextStream
-                Dim strTxtFileAll As String
-                
-                Set objTxtFile = objFSO.OpenTextFile(strFilePath, ForReading, False, TristateUseDefault)
-                strTxtFileAll = objTxtFile.ReadAll
-                objTxtFile.Close
-                If mbDebugStandart Then DebugMode vbTab & "Content of file: " & strFilePath & vbNewLine & "*********************BEGIN FILE**************************" & vbNewLine & strTxtFileAll & vbNewLine & "**********************END FILE***************************"
+                        
+                If mbDebugStandart Then
+                    strTxtFileAll = FileReadData(strFilePath)
+                    DebugMode vbTab & "Content of file: " & strFilePath & vbNewLine & "*********************BEGIN FILE**************************" & vbNewLine & strTxtFileAll & vbNewLine & "**********************END FILE***************************"
+                End If
             Else
                 If mbDebugStandart Then DebugMode vbTab & "Content of file: " & strFilePath & " Error - 0 bytes"
             End If

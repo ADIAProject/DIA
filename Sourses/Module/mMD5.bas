@@ -41,10 +41,10 @@ Public Function GetMD5(sFile As String) As String
     
     'Get a pointer to a string with file name.
     If PathIsValidUNC(sFile) = False Then
-        lngFilePathPtr = StrPtr("\\?\" & sFile & vbNullChar)
+        lngFilePathPtr = StrPtr("\\?\" & sFile)
     Else
         '\\?\UNC\
-        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFile, Len(sFile) - 2) & vbNullChar)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFile, Len(sFile) - 2))
     End If
     'Get a handle to the file
     hFile = CreateFile(lngFilePathPtr, GENERIC_READ, FILE_SHARE_READ, ByVal 0&, OPEN_EXISTING, ByVal 0&, ByVal 0&)

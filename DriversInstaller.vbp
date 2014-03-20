@@ -44,7 +44,6 @@ Module=mMD5; Sourses\Module\mMD5.bas
 Module=mSpecialFolder; Sourses\Module\mSpecialFolder.bas
 Module=mTimeFunction; Sourses\Module\mTimeFunction.bas
 Module=mApiErrMsg; Sourses\Module\mApiErrMsg.bas
-Module=mCommonHash; Sourses\Module\mCommon.bas
 Module=mHashCalculate; Sourses\Module\mHashCalculate.bas
 Module=mMenu; Sourses\Module\mMenu.bas
 Module=mFontProp; Sourses\Module\mFontProp.bas

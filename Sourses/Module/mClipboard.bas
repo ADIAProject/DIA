@@ -103,5 +103,5 @@ End Sub
 '! Parameters  (Переменные):   eErr (eCBERRORMSG)
 '!--------------------------------------------------------------------------------
 Private Sub MsgError(eErr As eCBERRORMSG)
-    MsgBox strCBError(eErr), vbInformation, App.EXEName
+    MsgBox strCBError(eErr), vbInformation, strAppEXEName
 End Sub
