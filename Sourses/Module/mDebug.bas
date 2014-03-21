@@ -113,7 +113,7 @@ Public Sub PrintFileInDebugLog(ByVal strFilePath As String)
     
     If PathExists(strFilePath) Then
         If Not PathIsAFolder(strFilePath) Then
-            If GetFileSizeByPath(strFilePath) > 0 Then
+            If GetFileSizeByPath(strFilePath) Then
                         
                 If mbDebugStandart Then
                     strTxtFileAll = FileReadData(strFilePath)

@@ -53,12 +53,12 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strValuer                 As String
     Dim strDevName                As String
     Dim strPackFileName_woExt     As String
-    Dim strRezultTxt_x()          As FindFileListStruct
+    Dim strRezultTxt_x()          As FindListStruct
     Dim strRezultTxt              As String
     Dim strRezultTxtTo            As String
     Dim strRezultTxtHwid          As String
     Dim strRezultTxtHwidTo        As String
-    Dim strInfPathTempList_x()    As FindFileListStruct
+    Dim strInfPathTempList_x()    As FindListStruct
     Dim strDevID                  As String
     Dim strDrvDate                As String
     Dim strDrvVersion             As String
@@ -181,7 +181,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Else
         ' Создаем список файлов *.cat в архиве
         strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
-        cmdString = "cmd.exe /c Dir " & Kavichki & strPathDRP & strPackFileName & "\*.cat" & Kavichki & " /B /S >" & Kavichki & strArchCatFileList & Kavichki
+        cmdString = "cmd.exe /c Dir " & Kavichki & strPathDRP & strPackFileName & "\*.cat" & Kavichki & " /A- /B /S >" & Kavichki & strArchCatFileList & Kavichki
 
         'dir c:\windows\temp\*.tmp /S /B
         If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
@@ -301,7 +301,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     If PathExists(strArchCatFileList) Then
         If GetFileSizeByPath(strArchCatFileList) Then
-            strArchCatFileListContent = FileReadData(strArchCatFileList)
+            strArchCatFileListContent = LCase$(FileReadData(strArchCatFileList))
         Else
             If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strArchCatFileList
         End If
@@ -430,7 +430,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     
             If objMatchesCatSect.Count >= 1 Then
                 Set objMatch = objMatchesCatSect.Item(0)
-                strDrvCatFileName = objMatch.SubMatches(0)
+                strDrvCatFileName = LCase$(objMatch.SubMatches(0))
     
                 If InStr(strDrvCatFileName, Percentage) Then
                     strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, Percentage))
@@ -444,8 +444,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                 End If
     
                 ' Если ли файл *.cat в списке файлов архива?
-                If InStr(1, strDrvCatFileName, ".cat", vbTextCompare) Then
-                    If InStr(1, strArchCatFileListContent, strInfPath & strDrvCatFileName, vbTextCompare) Then
+                If InStr(1, strDrvCatFileName, ".cat") Then
+                    If InStr(1, strArchCatFileListContent, LCase$(strInfPath) & strDrvCatFileName) Then
                         lngCatFileExists = 1
                     Else
                         lngCatFileExists = 0
@@ -492,7 +492,9 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                             sB = objMatch1.SubMatches(0)
                             sB = RTrim$(sB)
     
-                            If i <> 0 Or j <> 0 Then
+                            If i <> 0 Then
+                                strSectlist = strSectlist & "|"
+                            ElseIf j <> 0 Then
                                 strSectlist = strSectlist & "|"
                             End If
     

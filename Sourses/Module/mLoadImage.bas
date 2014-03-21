@@ -19,7 +19,7 @@ Private Const lngIMG_SIZE           As Long = &H20
 '                              strPathImageDir (String)
 '!--------------------------------------------------------------------------------
 Public Sub LoadIconImage2Object(objName As Object, strPictureName As String, strPathImageDir As String)
-Dim strFile()       As FindFileListStruct
+Dim strFile()       As FindListStruct
 Dim strFilePicture  As String
     
     strFile = SearchFilesInRoot(strPathImageDir, strPictureName & ".ico", False, True)
@@ -128,7 +128,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function LoadIconImageFromPath(strPictureName As String, strPathImageDir As String) As IPictureDisp
 
-    Dim strFile()       As FindFileListStruct
+    Dim strFile()       As FindListStruct
     Dim strFilePicture  As String
     
     strFile = SearchFilesInRoot(strPathImageDir, strPictureName & ".*", False, True)

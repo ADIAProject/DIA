@@ -29,10 +29,18 @@ Begin VB.Form frmMain
       TabIndex        =   17
       Top             =   9870
       Width           =   11265
-      _extentx        =   19870
-      _extenty        =   1244
-      font            =   "frmMain.frx":000C
-      theme           =   2
+      _ExtentX        =   19870
+      _ExtentY        =   1244
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Theme           =   2
    End
    Begin VB.PictureBox pbProgressBar 
       Align           =   2  'Align Bottom
@@ -54,17 +62,25 @@ Begin VB.Form frmMain
          Top             =   75
          Visible         =   0   'False
          Width           =   3015
-         _extentx        =   5318
-         _extenty        =   688
-         font            =   "frmMain.frx":0034
-         buttonstyle     =   8
-         backcolor       =   12244692
-         caption         =   "Прервать выполнения задания"
-         captioneffects  =   0
-         picturealign    =   0
-         picturepushonhover=   -1  'True
-         pictureshadow   =   -1  'True
-         colorscheme     =   3
+         _ExtentX        =   5318
+         _ExtentY        =   688
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ButtonStyle     =   8
+         BackColor       =   12244692
+         Caption         =   "Прервать выполнения задания"
+         CaptionEffects  =   0
+         PictureAlign    =   0
+         PicturePushOnHover=   -1  'True
+         PictureShadow   =   -1  'True
+         ColorScheme     =   3
       End
       Begin prjDIADBS.ProgressBar ctlProgressBar1 
          Height          =   375
@@ -83,36 +99,52 @@ Begin VB.Form frmMain
       Left            =   0
       Top             =   0
       Width           =   11295
-      _extentx        =   19923
-      _extenty        =   15584
-      font            =   "frmMain.frx":005C
-      backcolor       =   13160660
-      fillcolor       =   14215660
-      style           =   8
-      roundedcorner   =   0   'False
-      caption         =   ""
-      themecolor      =   2
-      headerstyle     =   1
+      _ExtentX        =   19923
+      _ExtentY        =   15584
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackColor       =   13160660
+      FillColor       =   14215660
+      Style           =   8
+      RoundedCorner   =   0   'False
+      Caption         =   ""
+      ThemeColor      =   2
+      HeaderStyle     =   1
       Begin prjDIADBS.ctlJCFrames frInfo 
          Height          =   1175
          Left            =   75
          Top             =   45
          Width           =   11175
-         _extentx        =   19711
-         _extenty        =   2064
-         font            =   "frmMain.frx":0084
-         backcolor       =   14339020
-         fillcolor       =   14339020
-         moverform       =   -1  'True
-         movercontrole   =   -1  'True
-         collapsar       =   -1  'True
-         collapsado      =   -1  'True
-         style           =   4
-         roundedcorner   =   0   'False
-         caption         =   "Сведения об операционой системе и компьютере..."
-         textboxheight   =   20
-         alignment       =   0
-         themecolor      =   1
+         _ExtentX        =   19711
+         _ExtentY        =   2064
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   11.25
+            Charset         =   204
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   14339020
+         FillColor       =   14339020
+         MoverForm       =   -1  'True
+         MoverControle   =   -1  'True
+         Collapsar       =   -1  'True
+         Collapsado      =   -1  'True
+         Style           =   4
+         RoundedCorner   =   0   'False
+         Caption         =   "Сведения об операционой системе и компьютере..."
+         TextBoxHeight   =   20
+         Alignment       =   0
+         ThemeColor      =   1
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255
             Left            =   75
@@ -163,14 +195,22 @@ Begin VB.Form frmMain
          Top             =   3885
          Visible         =   0   'False
          Width           =   11175
-         _extentx        =   19711
-         _extenty        =   8599
-         font            =   "frmMain.frx":00AC
-         backcolor       =   12244692
-         fillcolor       =   13160660
-         style           =   8
-         caption         =   "Обнаруженные пакеты драйверов"
-         themecolor      =   2
+         _ExtentX        =   19711
+         _ExtentY        =   8599
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   12244692
+         FillColor       =   13160660
+         Style           =   8
+         Caption         =   "Обнаруженные пакеты драйверов"
+         ThemeColor      =   2
          Begin prjDIADBS.CheckBoxW chkPackFiles 
             Height          =   210
             Index           =   0
@@ -191,7 +231,7 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
-            Caption         =   "frmMain.frx":00D4
+            Caption         =   "frmMain.frx":000C
             Transparent     =   -1  'True
          End
          Begin prjDIADBS.ctlJCbutton acmdPackFiles 
@@ -202,20 +242,28 @@ Begin VB.Form frmMain
             Top             =   4200
             Visible         =   0   'False
             Width           =   2175
-            _extentx        =   3836
-            _extenty        =   979
-            font            =   "frmMain.frx":00F4
-            buttonstyle     =   8
-            checkexist      =   -1  'True
-            backcolor       =   14933984
-            caption         =   "Кнопка пакета драйверов"
-            captioneffects  =   0
-            mode            =   2
-            picturealign    =   0
-            pictureeffectonover=   0
-            pictureeffectondown=   0
-            picturepushonhover=   -1  'True
-            colorscheme     =   2
+            _ExtentX        =   3836
+            _ExtentY        =   979
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   9
+               Charset         =   0
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   8
+            CheckExist      =   -1  'True
+            BackColor       =   14933984
+            Caption         =   "Кнопка пакета драйверов"
+            CaptionEffects  =   0
+            Mode            =   2
+            PictureAlign    =   0
+            PictureEffectOnOver=   0
+            PictureEffectOnDown=   0
+            PicturePushOnHover=   -1  'True
+            ColorScheme     =   2
          End
          Begin TabDlg.SSTab SSTab1 
             Height          =   4155
@@ -232,7 +280,7 @@ Begin VB.Form frmMain
             ShowFocusRect   =   0   'False
             Enabled         =   0   'False
             ForeColor       =   -2147483630
-            MouseIcon       =   "frmMain.frx":011C
+            MouseIcon       =   "frmMain.frx":002C
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -243,7 +291,7 @@ Begin VB.Form frmMain
                Strikethrough   =   0   'False
             EndProperty
             TabCaption(0)   =   "OSName_1"
-            TabPicture(0)   =   "frmMain.frx":0138
+            TabPicture(0)   =   "frmMain.frx":0048
             Tab(0).ControlEnabled=   -1  'True
             Tab(0).Control(0)=   "lblNoDPInProgram"
             Tab(0).Control(0).Enabled=   0   'False
@@ -251,15 +299,15 @@ Begin VB.Form frmMain
             Tab(0).Control(1).Enabled=   0   'False
             Tab(0).ControlCount=   2
             TabCaption(1)   =   "OSName_2"
-            TabPicture(1)   =   "frmMain.frx":0154
+            TabPicture(1)   =   "frmMain.frx":0064
             Tab(1).ControlEnabled=   0   'False
             Tab(1).ControlCount=   0
             TabCaption(2)   =   "OSName_3"
-            TabPicture(2)   =   "frmMain.frx":0170
+            TabPicture(2)   =   "frmMain.frx":0080
             Tab(2).ControlEnabled=   0   'False
             Tab(2).ControlCount=   0
             TabCaption(3)   =   "OSName_4"
-            TabPicture(3)   =   "frmMain.frx":018C
+            TabPicture(3)   =   "frmMain.frx":009C
             Tab(3).ControlEnabled=   0   'False
             Tab(3).ControlCount=   0
             Begin TabDlg.SSTab SSTab2 
@@ -287,7 +335,7 @@ Begin VB.Form frmMain
                   Strikethrough   =   0   'False
                EndProperty
                TabCaption(0)   =   "Все драйверпаки"
-               TabPicture(0)   =   "frmMain.frx":01A8
+               TabPicture(0)   =   "frmMain.frx":00B8
                Tab(0).ControlEnabled=   -1  'True
                Tab(0).Control(0)=   "lblNoDP4Mode"
                Tab(0).Control(0).Enabled=   0   'False
@@ -295,22 +343,22 @@ Begin VB.Form frmMain
                Tab(0).Control(1).Enabled=   0   'False
                Tab(0).ControlCount=   2
                TabCaption(1)   =   "Доступно обновление"
-               TabPicture(1)   =   "frmMain.frx":01C4
+               TabPicture(1)   =   "frmMain.frx":00D4
                Tab(1).ControlEnabled=   0   'False
                Tab(1).Control(0)=   "ctlScrollControlTab1(0)"
                Tab(1).ControlCount=   1
                TabCaption(2)   =   "Неустановленные"
-               TabPicture(2)   =   "frmMain.frx":01E0
+               TabPicture(2)   =   "frmMain.frx":00F0
                Tab(2).ControlEnabled=   0   'False
                Tab(2).Control(0)=   "ctlScrollControlTab2(0)"
                Tab(2).ControlCount=   1
                TabCaption(3)   =   "Установленные"
-               TabPicture(3)   =   "frmMain.frx":01FC
+               TabPicture(3)   =   "frmMain.frx":010C
                Tab(3).ControlEnabled=   0   'False
                Tab(3).Control(0)=   "ctlScrollControlTab3(0)"
                Tab(3).ControlCount=   1
                TabCaption(4)   =   "БД не создана"
-               TabPicture(4)   =   "frmMain.frx":0218
+               TabPicture(4)   =   "frmMain.frx":0128
                Tab(4).ControlEnabled=   0   'False
                Tab(4).Control(0)=   "ctlScrollControlTab4(0)"
                Tab(4).ControlCount=   1
@@ -321,9 +369,9 @@ Begin VB.Form frmMain
                   TabIndex        =   21
                   Top             =   350
                   Width           =   4155
-                  _extentx        =   7329
-                  _extenty        =   2778
-                  autoscrolltofocus=   0   'False
+                  _ExtentX        =   7329
+                  _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab1 
                   Height          =   1575
@@ -332,9 +380,9 @@ Begin VB.Form frmMain
                   TabIndex        =   23
                   Top             =   350
                   Width           =   4095
-                  _extentx        =   7223
-                  _extenty        =   2778
-                  autoscrolltofocus=   0   'False
+                  _ExtentX        =   7223
+                  _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab2 
                   Height          =   1575
@@ -343,9 +391,9 @@ Begin VB.Form frmMain
                   TabIndex        =   20
                   Top             =   350
                   Width           =   4095
-                  _extentx        =   7223
-                  _extenty        =   2778
-                  autoscrolltofocus=   0   'False
+                  _ExtentX        =   7223
+                  _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab3 
                   Height          =   1575
@@ -354,9 +402,9 @@ Begin VB.Form frmMain
                   TabIndex        =   22
                   Top             =   350
                   Width           =   4095
-                  _extentx        =   7223
-                  _extenty        =   2778
-                  autoscrolltofocus=   0   'False
+                  _ExtentX        =   7223
+                  _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab4 
                   Height          =   1575
@@ -365,9 +413,9 @@ Begin VB.Form frmMain
                   TabIndex        =   24
                   Top             =   350
                   Width           =   4095
-                  _extentx        =   7223
-                  _extenty        =   2778
-                  autoscrolltofocus=   0   'False
+                  _ExtentX        =   7223
+                  _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.LabelW lblNoDP4Mode 
                   Height          =   285
@@ -422,32 +470,48 @@ Begin VB.Form frmMain
          Left            =   7920
          Top             =   1250
          Width           =   3330
-         _extentx        =   5874
-         _extenty        =   4498
-         font            =   "frmMain.frx":0234
-         backcolor       =   15783104
-         fillcolor       =   15783104
-         textboxcolor    =   11595760
-         style           =   3
-         roundedcorner   =   0   'False
-         caption         =   "Выполнить ... "
-         alignment       =   0
+         _ExtentX        =   5874
+         _ExtentY        =   4498
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   15783104
+         FillColor       =   15783104
+         TextBoxColor    =   11595760
+         Style           =   3
+         RoundedCorner   =   0   'False
+         Caption         =   "Выполнить ... "
+         Alignment       =   0
          Begin prjDIADBS.ctlJCFrames frCheck 
             Height          =   1350
             Left            =   0
             Top             =   1200
             Width           =   3324
-            _extentx        =   5874
-            _extenty        =   2381
-            font            =   "frmMain.frx":025C
-            backcolor       =   15783104
-            fillcolor       =   15783104
-            textboxcolor    =   11595760
-            style           =   3
-            roundedcorner   =   0   'False
-            caption         =   "Выделение пакетов драйверов:"
-            alignment       =   0
-            gradientheaderstyle=   1
+            _ExtentX        =   5874
+            _ExtentY        =   2381
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   700
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            BackColor       =   15783104
+            FillColor       =   15783104
+            TextBoxColor    =   11595760
+            Style           =   3
+            RoundedCorner   =   0   'False
+            Caption         =   "Выделение пакетов драйверов:"
+            Alignment       =   0
+            GradientHeaderStyle=   1
             Begin prjDIADBS.ComboBoxW cmbCheckButton 
                Height          =   315
                Left            =   120
@@ -466,8 +530,8 @@ Begin VB.Form frmMain
                   Strikethrough   =   0   'False
                EndProperty
                Style           =   2
-               Text            =   "frmMain.frx":0284
-               CueBanner       =   "frmMain.frx":02C0
+               Text            =   "frmMain.frx":0144
+               CueBanner       =   "frmMain.frx":0180
             End
             Begin prjDIADBS.ctlJCbutton cmdCheck 
                Height          =   430
@@ -475,17 +539,25 @@ Begin VB.Form frmMain
                TabIndex        =   5
                Top             =   800
                Width           =   3075
-               _extentx        =   5424
-               _extenty        =   767
-               font            =   "frmMain.frx":02E0
-               buttonstyle     =   8
-               backcolor       =   12244692
-               caption         =   "Выделить"
-               captioneffects  =   0
-               picturealign    =   0
-               picturepushonhover=   -1  'True
-               pictureshadow   =   -1  'True
-               colorscheme     =   3
+               _ExtentX        =   5424
+               _ExtentY        =   767
+               BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+                  Name            =   "Tahoma"
+                  Size            =   8.25
+                  Charset         =   204
+                  Weight          =   400
+                  Underline       =   0   'False
+                  Italic          =   0   'False
+                  Strikethrough   =   0   'False
+               EndProperty
+               ButtonStyle     =   8
+               BackColor       =   12244692
+               Caption         =   "Выделить"
+               CaptionEffects  =   0
+               PictureAlign    =   0
+               PicturePushOnHover=   -1  'True
+               PictureShadow   =   -1  'True
+               ColorScheme     =   3
             End
          End
          Begin prjDIADBS.ctlJCbutton cmdRunTask 
@@ -494,19 +566,27 @@ Begin VB.Form frmMain
             TabIndex        =   26
             Top             =   420
             Width           =   3120
-            _extentx        =   4524
-            _extenty        =   1191
-            font            =   "frmMain.frx":0308
-            buttonstyle     =   8
-            backcolor       =   12244692
-            caption         =   "Выполнить задание для выбранных пакетов драйверов на вкладке"
-            captioneffects  =   0
-            picturealign    =   0
-            picturepushonhover=   -1  'True
-            dropdownsymbol  =   6
-            dropdownseparator=   -1  'True
-            dropdownenable  =   -1  'True
-            colorscheme     =   3
+            _ExtentX        =   4524
+            _ExtentY        =   1191
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   8
+            BackColor       =   12244692
+            Caption         =   "Выполнить задание для выбранных пакетов драйверов на вкладке"
+            CaptionEffects  =   0
+            PictureAlign    =   0
+            PicturePushOnHover=   -1  'True
+            DropDownSymbol  =   6
+            DropDownSeparator=   -1  'True
+            DropDownEnable  =   -1  'True
+            ColorScheme     =   3
          End
       End
       Begin prjDIADBS.ctlJCFrames frRezim 
@@ -514,34 +594,50 @@ Begin VB.Form frmMain
          Left            =   75
          Top             =   1250
          Width           =   7815
-         _extentx        =   13785
-         _extenty        =   2725
-         font            =   "frmMain.frx":0330
-         backcolor       =   15783104
-         fillcolor       =   15783104
-         textboxcolor    =   11595760
-         style           =   3
-         roundedcorner   =   0   'False
-         caption         =   "Режим работы программы с пакетами драйверов"
-         textboxheight   =   20
-         alignment       =   0
+         _ExtentX        =   13785
+         _ExtentY        =   2725
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   15783104
+         FillColor       =   15783104
+         TextBoxColor    =   11595760
+         Style           =   3
+         RoundedCorner   =   0   'False
+         Caption         =   "Режим работы программы с пакетами драйверов"
+         TextBoxHeight   =   20
+         Alignment       =   0
          Begin prjDIADBS.ctlJCbutton cmdViewAllDevice 
             Height          =   510
             Left            =   120
             TabIndex        =   6
             Top             =   930
             Width           =   7575
-            _extentx        =   13361
-            _extenty        =   900
-            font            =   "frmMain.frx":0358
-            buttonstyle     =   8
-            backcolor       =   12244692
-            caption         =   "Список всех устройств вашего компьютера + Поиск драйвера в интернете по HWID"
-            captioneffects  =   0
-            picturealign    =   0
-            picturepushonhover=   -1  'True
-            pictureshadow   =   -1  'True
-            colorscheme     =   3
+            _ExtentX        =   13361
+            _ExtentY        =   900
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   8
+            BackColor       =   12244692
+            Caption         =   "Список всех устройств вашего компьютера + Поиск драйвера в интернете по HWID"
+            CaptionEffects  =   0
+            PictureAlign    =   0
+            PicturePushOnHover=   -1  'True
+            PictureShadow   =   -1  'True
+            ColorScheme     =   3
          End
          Begin prjDIADBS.ctlJCbutton optRezim_Intellect 
             Height          =   510
@@ -549,19 +645,27 @@ Begin VB.Form frmMain
             TabIndex        =   7
             Top             =   350
             Width           =   2415
-            _extentx        =   4260
-            _extenty        =   900
-            font            =   "frmMain.frx":0380
-            buttonstyle     =   8
-            backcolor       =   12244692
-            caption         =   "Установка (Совместимые драйвера)"
-            captioneffects  =   0
-            mode            =   2
-            value           =   -1  'True
-            picturealign    =   0
-            picturepushonhover=   -1  'True
-            pictureshadow   =   -1  'True
-            colorscheme     =   3
+            _ExtentX        =   4260
+            _ExtentY        =   900
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   8
+            BackColor       =   12244692
+            Caption         =   "Установка (Совместимые драйвера)"
+            CaptionEffects  =   0
+            Mode            =   2
+            Value           =   -1  'True
+            PictureAlign    =   0
+            PicturePushOnHover=   -1  'True
+            PictureShadow   =   -1  'True
+            ColorScheme     =   3
          End
          Begin prjDIADBS.ctlJCbutton optRezim_Upd 
             Height          =   510
@@ -569,18 +673,26 @@ Begin VB.Form frmMain
             TabIndex        =   8
             Top             =   350
             Width           =   2415
-            _extentx        =   4260
-            _extenty        =   900
-            font            =   "frmMain.frx":03A8
-            buttonstyle     =   8
-            backcolor       =   12244692
-            caption         =   "Создание или обновление базы драйверов"
-            captioneffects  =   0
-            mode            =   2
-            picturealign    =   0
-            picturepushonhover=   -1  'True
-            pictureshadow   =   -1  'True
-            colorscheme     =   3
+            _ExtentX        =   4260
+            _ExtentY        =   900
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   8
+            BackColor       =   12244692
+            Caption         =   "Создание или обновление базы драйверов"
+            CaptionEffects  =   0
+            Mode            =   2
+            PictureAlign    =   0
+            PicturePushOnHover=   -1  'True
+            PictureShadow   =   -1  'True
+            ColorScheme     =   3
          End
          Begin prjDIADBS.ctlJCbutton optRezim_Ust 
             Height          =   510
@@ -588,18 +700,26 @@ Begin VB.Form frmMain
             TabIndex        =   9
             Top             =   350
             Width           =   2535
-            _extentx        =   4471
-            _extenty        =   900
-            font            =   "frmMain.frx":03D0
-            buttonstyle     =   8
-            backcolor       =   12244692
-            caption         =   "Установка (Полная - весь пакет)"
-            captioneffects  =   0
-            mode            =   2
-            picturealign    =   0
-            picturepushonhover=   -1  'True
-            pictureshadow   =   -1  'True
-            colorscheme     =   3
+            _ExtentX        =   4471
+            _ExtentY        =   900
+            BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+               Name            =   "Tahoma"
+               Size            =   8.25
+               Charset         =   204
+               Weight          =   400
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            ButtonStyle     =   8
+            BackColor       =   12244692
+            Caption         =   "Установка (Полная - весь пакет)"
+            CaptionEffects  =   0
+            Mode            =   2
+            PictureAlign    =   0
+            PicturePushOnHover=   -1  'True
+            PictureShadow   =   -1  'True
+            ColorScheme     =   3
          End
       End
       Begin prjDIADBS.ctlJCFrames frDescriptionIco 
@@ -607,19 +727,27 @@ Begin VB.Form frmMain
          Left            =   75
          Top             =   2830
          Width           =   7815
-         _extentx        =   13785
-         _extenty        =   1667
-         font            =   "frmMain.frx":03F8
-         backcolor       =   15783104
-         fillcolor       =   15783104
-         textboxcolor    =   11595760
-         collapsado      =   -1  'True
-         style           =   3
-         roundedcorner   =   0   'False
-         caption         =   "Обозначения кнопок (наведите курсор на картинку для просмотра описания)"
-         textboxheight   =   20
-         alignment       =   0
-         gradientheaderstyle=   1
+         _ExtentX        =   13785
+         _ExtentY        =   1667
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   15783104
+         FillColor       =   15783104
+         TextBoxColor    =   11595760
+         Collapsado      =   -1  'True
+         Style           =   3
+         RoundedCorner   =   0   'False
+         Caption         =   "Обозначения кнопок (наведите курсор на картинку для просмотра описания)"
+         TextBoxHeight   =   20
+         Alignment       =   0
+         GradientHeaderStyle=   1
          Begin VB.PictureBox imgOkAttentionOld 
             Appearance      =   0  'Flat
             AutoRedraw      =   -1  'True
@@ -774,7 +902,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":0420
+      Title           =   "frmMain.frx":01A0
    End
    Begin prjDIADBS.ToolTip TTStatusIcon 
       Left            =   900
@@ -790,7 +918,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":0440
+      Title           =   "frmMain.frx":01C0
    End
    Begin prjDIADBS.ToolTip TT 
       Left            =   300
@@ -806,7 +934,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":0460
+      Title           =   "frmMain.frx":01E0
    End
    Begin VB.Menu mnuRezim 
       Caption         =   "Обновление баз данных"
@@ -1228,9 +1356,9 @@ Private Sub acmdPackFiles_Click(Index As Integer)
     Dim strDevPathShort       As String
     Dim DPInstExitCode        As Long
     Dim ReadExitCodeString    As String
-    Dim strTemp_x()     As String
-    Dim strTempLine_x() As String
-    Dim i_arr           As Long
+    Dim strTemp_x()           As String
+    Dim strTempLine_x()       As String
+    Dim i_arr                 As Long
 
     If mbDebugStandart Then DebugMode "acmdPackFiles_Click-Start: Index Button=" & Index
                
@@ -1473,30 +1601,31 @@ Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift A
         mnuContextTxt.Enabled = True
         mnuContextXLS.Enabled = True
         mnuContextToolTip.Enabled = True
-        strPackFileName = acmdPackFiles(Index).Tag
-        strPathDevDB = arrOSList(SSTab1.Tab).devIDFolderFull
-
-        If Not CheckExistDB(strPathDevDB, strPackFileName) Then
-            mnuContextTxt.Enabled = False
-            mnuContextXLS.Enabled = False
-            mnuContextToolTip.Enabled = False
-            mnuContextDeleteDevIDs.Enabled = False
-            mnuContextCopyHWIDs.Enabled = False
-        Else
-            ' создаем меню для удаления драйверов устройств
-            CreateMenuDevIDIndexDelMenu arrDevIDs(Index)
-            ' создаем меню для копирования HWID устройств
-            CreateMenuDevIDIndexCopyMenu arrDevIDs(Index)
-        End If
+        mnuContextDeleteDevIDs.Enabled = True
+        mnuContextCopyHWIDs.Enabled = True
 
         If acmdPackFiles(Index).PictureNormal = imgNo.Picture Then
             mnuContextToolTip.Enabled = False
             mnuContextDeleteDevIDs.Enabled = False
             mnuContextCopyHWIDs.Enabled = False
+        ElseIf acmdPackFiles(Index).PictureNormal = imgNoDB.Picture Then
+            mnuContextTxt.Enabled = False
+            mnuContextXLS.Enabled = False
+            mnuContextToolTip.Enabled = False
+            mnuContextDeleteDevIDs.Enabled = False
+            mnuContextCopyHWIDs.Enabled = False
+        End If
+        
+        If mnuContextDeleteDevIDs.Enabled Then
+            ' создаем меню для удаления драйверов устройств
+            CreateMenuDevIDIndexDelMenu arrDevIDs(Index)
+        End If
+        If mnuContextCopyHWIDs.Enabled Then
+            ' создаем меню для копирования HWID устройств
+            CreateMenuDevIDIndexCopyMenu arrDevIDs(Index)
         End If
 
         lngCurrentBtnIndex = Index
-        'OpenContextMenu Me, Me.mnuContextMenu
     End If
 
 End Sub
@@ -1849,10 +1978,11 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                 Else
 
                     If InStr(arrOSList(SSTab1.Tab).Ver, strOSCurrentVersion) Then
-                        If arrOSList(SSTab1.Tab).is64bit = 2 Or arrOSList(SSTab1.Tab).is64bit = 3 Then
+                        If arrOSList(SSTab1.Tab).is64bit = 2 Then
+                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
+                        ElseIf arrOSList(SSTab1.Tab).is64bit = 3 Then
                             strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
                         Else
-
                             If mbIsWin64 = CBool(arrOSList(SSTab1.Tab).is64bit) Then
                                 strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
                             Else
@@ -1948,6 +2078,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                 Set .PictureNormal = Nothing
                 Set .PictureNormal = imgNo.Picture
                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgNo"
+                .SetPopupMenuRBT mnuContextMenu
                 .DropDownEnable = False
 
                 If mbUnSuppOS Then
@@ -2539,7 +2670,9 @@ CheckVerByMarkers:
             ' Если по маркерам определить нельзя, определяем версию по имени DP
             If mbMatchHWIDbyDPName Then
                 If Not mbMarkerCheckExist Then
-                    If InStr(strDPFileName, "WXP") Or InStr(strDPFileName, "WNT5") Then
+                    If InStr(strDPFileName, "WXP") Then
+                        strDRVOSVer = "5.0;5.1;5.2"
+                    ElseIf InStr(strDPFileName, "WNT5") Then
                         strDRVOSVer = "5.0;5.1;5.2"
                     ElseIf InStr(strDPFileName, "WNT6") Then
                         strDRVOSVer = "6.0;6.1;6.2;6.3"
@@ -2678,8 +2811,14 @@ CheckVerByMarkersArch:
 
                         ' Если в inf неподдерживаемые секции с версией например 6.0, то неподдериваются ос 6.0 и выше
                         ' т.е если текущая ОС больше чем найденная в inf пустая секция, т.е драйвер не поддерживается
-                        If CompareByVersion(strOsVer, strDRVOSVerUnsupported) = ">" Or CompareByVersion(strOsVer, strDRVOSVerUnsupported) = "=" Then
-
+                        If CompareByVersion(strOsVer, strDRVOSVerUnsupported) = ">" Then
+                            ' Если в inf неподдерживаемые секции с версией например 6.0, а драйвер найден в секции 6.1, то драйвер найден правильно, иначе
+                            If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = ">" Then
+                                If mbDebugDetail Then DebugMode str6VbTab & "CompatibleDriver4OS: Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported
+                                mbCompatibleByArch = False
+                                mbCompatibleByVer = False
+                            End If
+                        ElseIf CompareByVersion(strOsVer, strDRVOSVerUnsupported) = "=" Then
                             ' Если в inf неподдерживаемые секции с версией например 6.0, а драйвер найден в секции 6.1, то драйвер найден правильно, иначе
                             If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = ">" Then
                                 If mbDebugDetail Then DebugMode str6VbTab & "CompatibleDriver4OS: Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported
@@ -2835,8 +2974,8 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
     Dim tabN                 As Long
     Dim TabHeight            As Long
     Dim ii                   As Long
-    Dim strFileList_x()      As FindFileListStruct
-    Dim lngOffSideCountTemp   As Long
+    Dim strFileList_x()      As FindListStruct
+    Dim lngOffSideCountTemp  As Long
     Dim strPhysXPath         As String
     Dim strLangPath          As String
     Dim strRuntimes          As String
@@ -2938,9 +3077,29 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
                 strButtonName = strPackFileName
             End If
 
-            ' проверяем что файл не является дополнительным для обработки вместе с архивом
-            If MatchSpec(strButtonName, strPhysXPath) Or MatchSpec(strButtonName, strLangPath) Or MatchSpec(strButtonName, strRuntimes) Or MatchSpec(strButtonName, strExcludeFileName) Then
-                GoTo NextFiles
+            ' проверяем что файл не является дополнительным для обработки вместе с архивом или исключаемым
+            If LenB(strLangPath) Then
+                If MatchSpec(strButtonName, strLangPath) Then
+                    GoTo NextFiles
+                End If
+            End If
+            
+            If LenB(strRuntimes) Then
+                If MatchSpec(strButtonName, strRuntimes) Then
+                    GoTo NextFiles
+                End If
+            End If
+            
+            If LenB(strPhysXPath) Then
+                If MatchSpec(strButtonName, strPhysXPath) Then
+                    GoTo NextFiles
+                End If
+            End If
+            
+            If LenB(strExcludeFileName) Then
+                If MatchSpec(strButtonName, strExcludeFileName) Then
+                    GoTo NextFiles
+                End If
             End If
 
             ' Изменяем имя пакета драйверов (удаление лишних Символов)
@@ -3315,8 +3474,8 @@ Private Sub DeleteUnUsedBase()
     Dim ii                     As Integer
     Dim strPathDRP             As String
     Dim strPathDevDB           As String
-    Dim strFileListTXT_x()     As FindFileListStruct
-    Dim strFileListDRP_x()     As FindFileListStruct
+    Dim strFileListTXT_x()     As FindListStruct
+    Dim strFileListDRP_x()     As FindListStruct
     Dim strFileListTXT()       As String
     Dim strFileListDBExists    As String
     Dim strFileListDBNotExists As String
@@ -4409,7 +4568,10 @@ Private Sub Form_Activate()
     Dim cntFindUnHideTab As Integer
 
     If mbFirstStart Then
-        If mbStartMaximazed Or mbChangeResolution Then
+        If mbStartMaximazed Then
+            Me.WindowState = vbMaximized
+            DoEvents
+        ElseIf mbChangeResolution Then
             Me.WindowState = vbMaximized
             DoEvents
         End If
@@ -7346,7 +7508,7 @@ Private Sub optRezim_Intellect_Click()
     End With
 
     With cmdRunTask
-        .Enabled = FindCheckCount()
+        .Enabled = FindCheckCount
         .DropDownEnable = True
         .DropDownSeparator = True
         .DropDownSymbol = 6
@@ -7354,7 +7516,6 @@ Private Sub optRezim_Intellect_Click()
     End With
     
     'заполнение списка на выделение
-    'FindCheckCount
     LoadListChecked
     ' Изменение размеров FrameScroll и ширины вкладок sstab
     cntFindUnHideTab = FindUnHideTab
@@ -7415,7 +7576,7 @@ Private Sub optRezim_Upd_Click()
                     chkPackFiles(i).Enabled = True
                 End If
     
-                .Item(i).DropDownEnable = False
+                .Item(i).DropDownEnable = True
             Next
         End With
 
@@ -7474,7 +7635,7 @@ Private Sub optRezim_Upd_Click()
     End If
 
     With cmdRunTask
-        .Enabled = FindCheckCount()
+        .Enabled = FindCheckCount
         .DropDownEnable = False
         .DropDownSeparator = False
         .DropDownSymbol = 0
@@ -7482,7 +7643,6 @@ Private Sub optRezim_Upd_Click()
     End With
     
     'заполнение списка на выделение
-    'FindCheckCount
     LoadListChecked
 
     ' Если переключились в режим обновления БД путем перехода с 4-ой вкладки, то не делаем ничего
@@ -7599,7 +7759,7 @@ Private Sub optRezim_Ust_Click()
     End With
 
     With cmdRunTask
-        .Enabled = FindCheckCount()
+        .Enabled = FindCheckCount
         .DropDownEnable = False
         .DropDownSeparator = False
         .DropDownSymbol = 0
@@ -7607,7 +7767,6 @@ Private Sub optRezim_Ust_Click()
     End With
     
     'заполнение списка на выделение
-    'FindCheckCount
     LoadListChecked
     ' Изменение размеров FrameScroll и ширины вкладок sstab
     cntFindUnHideTab = FindUnHideTab
@@ -8350,7 +8509,11 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
                 End If
             End If
 
-            If str_x64 = "2" Or str_x64 = "3" Then
+            If str_x64 = "2" Then
+                miTabIndex = i
+                strTabIndex = IIf(LenB(strTabIndex) > 0, strTabIndex & " ", vbNullString) & CStr(miTabIndex)
+                lngSupportedOS = lngSupportedOS + 1
+            ElseIf str_x64 = "3" Then
                 miTabIndex = i
                 strTabIndex = IIf(LenB(strTabIndex) > 0, strTabIndex & " ", vbNullString) & CStr(miTabIndex)
                 lngSupportedOS = lngSupportedOS + 1
@@ -8731,8 +8894,9 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     
                 Case 1
 
-                    If acmdPackFiles(i).PictureNormal = imgOkNew.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgOkNew.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8740,9 +8904,11 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 2
 
-                    If acmdPackFiles(i).PictureNormal = imgOkAttention.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgOkAttention.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -8750,11 +8916,15 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                 Case 3
 
-                    If acmdPackFiles(i).PictureNormal = imgOK.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkNew.Picture Or _
-                       acmdPackFiles(i).PictureNormal = imgOkOld.Picture Then
+                    If acmdPackFiles(i).PictureNormal = imgOK.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkNew.Picture Then
+                        GoTo MoveBtn
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkOld.Picture Then
                         GoTo MoveBtn
                     Else
                         GoTo NextBtn
@@ -9187,7 +9357,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
             strMaskFile_x = Split(strMaskFile, " ")
 
             For i = LBound(strMaskFile_x) To UBound(strMaskFile_x)
-                strMaskFile_x_TEMP = BacklashDelFromPath(strMaskFile_x(i))
+                strMaskFile_x_TEMP = BackslashDelFromPath(strMaskFile_x(i))
                 strMaskFile_xx = Split(strMaskFile_x_TEMP, vbBackslash)
 
                 If UBound(strMaskFile_xx) > 1 Then
@@ -9198,7 +9368,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
             Next
 
         Else
-            strMaskFile_x_TEMP = BacklashDelFromPath(strMaskFile)
+            strMaskFile_x_TEMP = BackslashDelFromPath(strMaskFile)
             strMaskFile_xx = Split(strMaskFile_x_TEMP, vbBackslash)
 
             If UBound(strMaskFile_xx) > 1 Then
@@ -9608,7 +9778,7 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
             StrPathDRPList_x = Split(strPathDRPList, " ")
 
             For ii = LBound(StrPathDRPList_x) To UBound(StrPathDRPList_x)
-                strSectionName = FileNameFromPath(BacklashDelFromPath(StrPathDRPList_x(ii)))
+                strSectionName = FileNameFromPath(BackslashDelFromPath(StrPathDRPList_x(ii)))
                 ChangeStatusTextAndDebug strMessages(100) & " '" & strSectionName & "'"
                 strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, FileName_woExt(strPackFileName) & ".ini")
 

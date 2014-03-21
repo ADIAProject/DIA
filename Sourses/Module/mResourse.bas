@@ -93,18 +93,6 @@ Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
         ExtractResourceAll = False
     End If
 
-'    if mbDebugStandart then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
-'
-'    If ExtractResource("RICHTX32.OCX", strPathOcxTo) = False Then
-'        If MsgBox("Extract OCX or DLL: 'RICHTX32.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
-'
-'            End
-'
-'        End If
-'
-'        ExtractResourceAll = False
-'    End If
-
     If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
 
     If ExtractResource("TABCTL32.OCX", strPathOcxTo) = False Then

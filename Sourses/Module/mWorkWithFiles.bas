@@ -51,14 +51,14 @@ Public strFileListInFolder As String
 #End If
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function BacklashDelFromPath
+'! Procedure   (Функция)   :   Function BackslashDelFromPath
 '! Description (Описание)  :   [Удаление слэша на конце]
 '! Parameters  (Переменные):   strPath (String)
 '!--------------------------------------------------------------------------------
-Public Function BacklashDelFromPath(ByVal strPath As String) As String
+Public Function BackslashDelFromPath(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathRemoveBackslash strPath
-    BacklashDelFromPath = TrimNull(strPath)
+    BackslashDelFromPath = TrimNull(strPath)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -262,7 +262,7 @@ Public Sub DelRecursiveFolder(ByVal Folder As String)
     Dim retDelete As Long
     Dim retStrMsg As String
 
-    Root = BacklashDelFromPath(Folder)
+    Root = BackslashDelFromPath(Folder)
     If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: " & Root
 
     If PathExists(Root) Then
@@ -1345,13 +1345,13 @@ Public Function CopyFolderByShell(sSource As String, sDestination As String) As 
     Dim SHFileOp  As SHFILEOPSTRUCT
 
     'terminate the folder string with a pair of nulls
-    sSource = BacklashDelFromPath(sSource) & str2vbNullChar
+    sSource = BackslashDelFromPath(sSource) & str2vbNullChar
 
     If PathExists(sDestination) = False Then
         CreateIfNotExistPath sDestination
     End If
 
-    sDestination = BacklashDelFromPath(sDestination) & str2vbNullChar
+    sDestination = BackslashDelFromPath(sDestination) & str2vbNullChar
     'determine the user's options selected
     FOF_FLAGS = FOF_FLAGS Or FOF_RENAMEONCOLLISION Or FOF_NOCONFIRMATION
 
@@ -1404,9 +1404,16 @@ End Function
 Public Function GetFileSizeByPath(ByVal strPath As String) As Long
 
     Dim lHandle As Long
-
-    GetFileSizeByPath = -1
-    lHandle = CreateFile(StrPtr(strPath & vbNullChar), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0)
+    Dim lngFilePathPtr  As Long
+    
+    If PathIsValidUNC(strPath) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & strPath)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(strPath, Len(strPath) - 2))
+    End If
+    
+    lHandle = CreateFile(lngFilePathPtr, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0)
 
     If lHandle <> INVALID_HANDLE_VALUE Then
         GetFileSizeByPath = GetFileSize(lHandle, 0&)

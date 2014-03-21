@@ -1420,19 +1420,21 @@ Public Function FileExists(ByVal sFileName As String) As Boolean
 
     Dim lpFindFileData As WIN32_FIND_DATA
     Dim hFindFirst     As Long
+    Dim lngFilePathPtr As Long
 
     If PathIsValidUNC(sFileName) = False Then
-        hFindFirst = FindFirstFile(StrPtr("\\?\" & sFileName), lpFindFileData)
+        lngFilePathPtr = StrPtr("\\?\" & sFileName)
     Else
         '\\?\UNC\
-        hFindFirst = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sFileName, Len(sFileName) - 2)), lpFindFileData)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFileName, Len(sFileName) - 2))
     End If
+    hFindFirst = FindFirstFile(lngFilePathPtr, lpFindFileData)
 
-    If (hFindFirst > 0) And (lpFindFileData.dwFileAttributes <> FILE_ATTRIBUTE_DIR) Then
+    If hFindFirst <> INVALID_HANDLE_VALUE Then
+        If (lpFindFileData.dwFileAttributes <> FILE_ATTRIBUTE_DIR) Then
+            FileExists = True
+        End If
         FindClose hFindFirst
-        FileExists = True
-    Else
-        FileExists = False
     End If
 
 End Function

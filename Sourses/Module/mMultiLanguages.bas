@@ -156,7 +156,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function LoadLanguageList() As Boolean
 
-    Dim strFileList_x() As FindFileListStruct
+    Dim strFileList_x() As FindListStruct
     Dim ii              As Integer
     Dim jj              As Integer
     Dim strTemp         As String

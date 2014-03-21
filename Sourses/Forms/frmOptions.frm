@@ -4414,7 +4414,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadSkinListCombo(cmbName As Object, strImagePath As String)
 
-    Dim strListFolderTemp() As String
+    Dim strListFolderTemp() As FindListStruct
     Dim i                   As Integer
 
     strListFolderTemp = SearchFoldersInRoot(strImagePath, "*")
@@ -4422,8 +4422,8 @@ Private Sub LoadSkinListCombo(cmbName As Object, strImagePath As String)
     With cmbName
         .Clear
 
-        For i = LBound(strListFolderTemp, 2) To UBound(strListFolderTemp, 2)
-            .AddItem strListFolderTemp(1, i), i
+        For i = LBound(strListFolderTemp) To UBound(strListFolderTemp)
+            .AddItem strListFolderTemp(i).Name, i
         Next
 
     End With

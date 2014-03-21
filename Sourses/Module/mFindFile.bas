@@ -15,39 +15,42 @@ Private Const vbDot            As Integer = 46
 
 Private fp                       As FILE_PARAMS    'holds search parameters
 Private fp2                      As FOLDER_PARAMS  'holds search parameters
-Private sResultFileList()        As FindFileListStruct
+Private sResultFileList()        As FindListStruct
+Private sResultFolderList()      As FindListStruct
 Private lngResultFileListCount   As Long
-Private sResultFolderList()      As String
 Private lngResultFolderListCount As Long
 
-Public Type FindFileListStruct
-    Path As String
-    Name As String
-    FullPath As String
-    RelativePath As String
-    NameLcase As String
-    NameWoExt As String
-    Size As Long
-    SizeInString As String
+Public Type FindListStruct
+    Path            As String
+    Name            As String
+    FullPath        As String
+    RelativePath    As String
+    NameLcase       As String
+    NameWoExt       As String
+    Size            As Long
+    SizeInString    As String
 End Type
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileSizeApi
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sSource (String)
 '!--------------------------------------------------------------------------------
-Public Function FileSizeApi(sSource As String) As String
+Public Function FileSizeApi(ByVal sSource As String) As String
 
-    Dim wfd   As WIN32_FIND_DATA
-    Dim hFile As Long
-    Dim sSize As String
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim sSize           As String
+    Dim lngFilePathPtr  As Long
 
     If PathIsValidUNC(sSource) = False Then
-        hFile = FindFirstFile(StrPtr("\\?\" & sSource), wfd)
+        lngFilePathPtr = StrPtr("\\?\" & sSource)
     Else
         '\\?\UNC\
-        hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sSource, Len(sSource) - 2)), wfd)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sSource, Len(sSource) - 2))
     End If
+    hFile = FindFirstFile(lngFilePathPtr, wfd)
 
     If hFile <> INVALID_HANDLE_VALUE Then
         sSize = String$(30, vbNullChar)
@@ -58,9 +61,10 @@ Public Function FileSizeApi(sSource As String) As String
         Else
             FileSizeApi = "0 byte"
         End If
+        
+        FindClose hFile
     End If
 
-    FindClose hFile
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -69,10 +73,12 @@ End Function
 '! Parameters  (Переменные):   sFile (String)
 '                              sSpec (String)
 '!--------------------------------------------------------------------------------
-Public Function MatchSpec(sFile As String, sSpec As String) As Boolean
+Public Function MatchSpec(ByVal sFile As String, ByVal sSpec As String) As Boolean
 
-    If LenB(sSpec) Then
-        MatchSpec = PathMatchSpec(StrPtr(sFile & vbNullChar), StrPtr(sSpec & vbNullChar))
+    If LenB(sFile) Then
+        If LenB(sSpec) Then
+            MatchSpec = PathMatchSpec(StrPtr(sFile & vbNullChar), StrPtr(sSpec & vbNullChar))
+        End If
     End If
 
 End Function
@@ -89,11 +95,11 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
     Dim wfd                   As WIN32_FIND_DATA
     Dim sA                    As SECURITY_ATTRIBUTES
     Dim hFile                 As Long
-    Dim bNext                 As Long
     Dim copied                As Long
     Dim currFile              As String
     Dim currSourcePath        As String
     Dim lngNumFilesFromFolder As Long
+    Dim lngFilePathPtr        As Long
 
     sSourcePath = BackslashAdd2Path(sSourcePath)
     sDestination = BackslashAdd2Path(sDestination)
@@ -105,23 +111,16 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
 
     'Start searching for files in the Target directory.
     If PathIsValidUNC(sSourcePath) = False Then
-        hFile = FindFirstFile(StrPtr("\\?\" & sSourcePath & sFiles), wfd)
+        lngFilePathPtr = StrPtr("\\?\" & sSourcePath & sFiles)
     Else
         '\\?\UNC\
-        hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sSourcePath, Len(sSourcePath) - 2) & sFiles), wfd)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sSourcePath, Len(sSourcePath) - 2) & sFiles)
     End If
+    hFile = FindFirstFile(lngFilePathPtr, wfd)
 
-    If (hFile = INVALID_HANDLE_VALUE) Then
-        'nothing to do, so bail out
-        If mbDebugStandart Then DebugMode str2VbTab & "CopyAllFilesFromFolder: " & sSourcePath & " No " & sFiles & " files found."
+    If hFile <> INVALID_HANDLE_VALUE Then
 
-        Exit Function
-
-    End If
-
-    'Copy each file to the new directory
-    If hFile Then
-
+        'Copy each file to the new directory
         Do
             currFile = TrimNull(wfd.cFileName)
 
@@ -145,17 +144,17 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
             End If
 
             'just to check what's happening
-            'List1.AddItem sSourcePath & currFile
             'find the next file matching the initial file spec
-            bNext = FindNextFile(hFile, wfd)
-        Loop Until bNext = 0
+        Loop While FindNextFile(hFile, wfd)
 
+        'Close the search handle
+        FindClose hFile
+        
+        'and return the number of files copied
+        rgbCopyFiles = copied
+    Else
+        If mbDebugStandart Then DebugMode str2VbTab & "CopyAllFilesFromFolder: " & sSourcePath & " No " & sFiles & " files found."
     End If
-
-    'Close the search handle
-    Call FindClose(hFile)
-    'and return the number of files copied
-    rgbCopyFiles = copied
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -168,7 +167,7 @@ End Function
 '                              mbDelete (Boolean = False)
 '                              mbSort (Boolean = False)
 '!--------------------------------------------------------------------------------
-Public Function SearchFilesInRoot(strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional mbDelete As Boolean = False, Optional mbSort As Boolean = False) As FindFileListStruct()
+Public Function SearchFilesInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional mbDelete As Boolean = False, Optional mbSort As Boolean = False) As FindListStruct()
 
     With fp
         .sFileRoot = BackslashAdd2Path(strRootDir)
@@ -202,7 +201,7 @@ End Function
 '                              mbSearchRecursion (Boolean)
 '                              mbOnlyFirstFile (Boolean)
 '!--------------------------------------------------------------------------------
-Public Function SearchFoldersInRoot(strRootDir As String, ByVal strSearchMask As String, Optional ByVal mbSearchRecursion As Boolean = False, Optional ByVal mbDelete As Boolean = False)
+Public Function SearchFoldersInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, Optional ByVal mbSearchRecursion As Boolean = False, Optional ByVal mbDelete As Boolean = False) As FindListStruct()
 
     With fp2
         .sFileRoot = BackslashAdd2Path(strRootDir)
@@ -225,24 +224,26 @@ End Function
 '                              miMaxCountArr (Long)
 '                              mbDelete (Boolean = False)
 '!--------------------------------------------------------------------------------
-Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCountArr As Long, Optional mbDelete As Boolean = False, Optional sRootInit As String = vbNullString)
+Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, ByRef miMaxCountArr As Long, Optional ByRef mbDelete As Boolean = False, Optional ByVal sRootInit As String = vbNullString)
 
     Dim wfd         As WIN32_FIND_DATA
     Dim hFile       As Long
     Dim sSize       As String
     Dim strFileName As String
+    Dim lngFilePathPtr As Long
 
     If PathIsValidUNC(sRoot) = False Then
-        hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES), wfd)
+        lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
     Else
         '\\?\UNC\
-        hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES), wfd)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
     End If
-
+    hFile = FindFirstFile(lngFilePathPtr, wfd)
+    
     If Not mbDelete Then
         If mbInitial Then
+        
             lngResultFileListCount = 0
-
             ReDim sResultFileList(miMaxCountArr)
             sRootInit = sRoot
 
@@ -258,8 +259,7 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
         Do
             strFileName = TrimNull(wfd.cFileName)
 
-            'if a folder, and recurse specified, call
-            'method again
+            'if a folder, and recurse specified, call method again
             If (wfd.dwFileAttributes And vbDirectory) Then
                 If Asc(strFileName) <> vbDot Then
                     If fp.bRecurse Then
@@ -277,7 +277,7 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
                     Else
 
                         ' Переопределение массива если превышаем заданную размерность
-                        If lngResultFileListCount = miMaxCountArr Then
+                        If lngResultFileListCount >= miMaxCountArr Then
                             miMaxCountArr = 2 * miMaxCountArr
 
                             ReDim Preserve sResultFileList(miMaxCountArr)
@@ -309,9 +309,9 @@ Private Sub SearchForFiles(sRoot As String, ByVal mbInitial As Boolean, miMaxCou
 
         Loop While FindNextFile(hFile, wfd)
 
+        FindClose hFile
     End If
 
-    FindClose hFile
 
     ' Переопределение массива на реальное кол-во записей
     If Not mbDelete Then
@@ -333,28 +333,31 @@ End Sub
 '                              mbInitial (Boolean)
 '                              miMaxCountArr (Long)
 '!--------------------------------------------------------------------------------
-Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, ByVal miMaxCountArr As Long, Optional ByVal mbDelete As Boolean = False)
+Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, ByRef miMaxCountArr As Long, Optional ByRef mbDelete As Boolean = False, Optional ByVal sRootInit As String = vbNullString)
 
     Dim wfd         As WIN32_FIND_DATA
     Dim hFile       As Long
     Dim strFindData As String
+    Dim lngFilePathPtr As Long
 
     If PathIsValidUNC(sRoot) = False Then
-        hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES), wfd)
+        lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
     Else
         '\\?\UNC\
-        hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES), wfd)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
     End If
-
+    hFile = FindFirstFile(lngFilePathPtr, wfd)
+    
     If Not mbDelete Then
         If mbInitial Then
+        
             lngResultFolderListCount = 0
-    
-            ReDim sResultFolderList(1, miMaxCountArr)
+            ReDim sResultFolderList(miMaxCountArr)
+            sRootInit = sRoot
     
         Else
     
-            ReDim Preserve sResultFolderList(1, miMaxCountArr)
+            ReDim Preserve sResultFolderList(miMaxCountArr)
     
         End If
     End If
@@ -373,7 +376,7 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
                         If mbDelete Then
                             If fp2.bRecurse Then
                                 'if a folder, and recurse specified, call  method again
-                                SearchForFolders sRoot & strFindData & vbBackslash, False, miMaxCountArr, mbDelete
+                                SearchForFolders sRoot & strFindData & vbBackslash, False, miMaxCountArr, mbDelete, sRootInit
                             End If
                             DeleteFolder sRoot & strFindData & vbBackslash
                         Else
@@ -382,14 +385,18 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
                             If lngResultFolderListCount = miMaxCountArr Then
                                 miMaxCountArr = 2 * miMaxCountArr
     
-                                ReDim Preserve sResultFolderList(1, miMaxCountArr)
+                                ReDim Preserve sResultFolderList(miMaxCountArr)
     
                             End If
     
                             ' Полный путь файла
-                            sResultFolderList(0, lngResultFolderListCount) = sRoot & strFindData
-                            'sResultFolderList(1, lngResultFolderListCount) = Left$(strFindData, InStrRev(strFindData, "_", , vbTextCompare) - 1)
-                            sResultFolderList(1, lngResultFolderListCount) = strFindData
+                            sResultFolderList(lngResultFolderListCount).FullPath = sRoot & strFindData
+                            sResultFolderList(lngResultFolderListCount).Path = sRoot
+                            sResultFolderList(lngResultFolderListCount).Name = strFindData
+                            sResultFolderList(lngResultFolderListCount).NameLcase = LCase$(strFindData)
+                            If Not mbInitial Then
+                                sResultFolderList(lngResultFolderListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
+                            End If
                             lngResultFolderListCount = lngResultFolderListCount + 1
                             
                             If fp2.bRecurse Then
@@ -404,17 +411,16 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
 
         Loop While FindNextFile(hFile, wfd)
 
+        FindClose hFile
     End If
-
-    FindClose hFile
 
     ' Переопределение массива на реальное кол-во записей
     If Not mbDelete Then
         If mbInitial Then
             If lngResultFolderListCount Then
-                ReDim Preserve sResultFolderList(1, lngResultFolderListCount - 1)
+                ReDim Preserve sResultFolderList(lngResultFolderListCount - 1)
             Else
-                ReDim Preserve sResultFolderList(1, lngResultFolderListCount)
+                ReDim Preserve sResultFolderList(lngResultFolderListCount)
             End If
         End If
     End If
@@ -429,16 +435,18 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
 
     Dim wfd   As WIN32_FIND_DATA
     Dim hFile As Long
+    Dim lngFilePathPtr As Long
 
     If LenB(sRoot) Then
         sRoot = BackslashAdd2Path(sRoot)
 
         If PathIsValidUNC(sRoot) = False Then
-            hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES), wfd)
+            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
         Else
             '\\?\UNC\
-            hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES), wfd)
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
         End If
+        hFile = FindFirstFile(lngFilePathPtr, wfd)
 
         If hFile <> INVALID_HANDLE_VALUE Then
 
@@ -459,9 +467,8 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
 
             Loop While FindNextFile(hFile, wfd)
 
+            FindClose hFile
         End If
-
-        Call FindClose(hFile)
     End If
 
 End Function
@@ -471,20 +478,22 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sRoot (String)
 '!--------------------------------------------------------------------------------
-Public Function FolderContainsFiles(sRoot As String) As Boolean
+Public Function FolderContainsFiles(ByVal sRoot As String) As Boolean
 
-    Dim wfd   As WIN32_FIND_DATA
-    Dim hFile As Long
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim lngFilePathPtr  As Long
 
     If LenB(sRoot) Then
         sRoot = BackslashAdd2Path(sRoot)
 
         If PathIsValidUNC(sRoot) = False Then
-            hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES), wfd)
+            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
         Else
             '\\?\UNC\
-            hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES), wfd)
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
         End If
+        hFile = FindFirstFile(lngFilePathPtr, wfd)
 
         If hFile <> INVALID_HANDLE_VALUE Then
 
@@ -501,9 +510,9 @@ Public Function FolderContainsFiles(sRoot As String) As Boolean
 
             Loop While FindNextFile(hFile, wfd)
 
+            FindClose hFile
         End If
 
-        Call FindClose(hFile)
     End If
 
 End Function
@@ -514,18 +523,20 @@ End Function
 '! Parameters  (Переменные):   sRoot (String)
 '                              fp (FILE_PARAMS)
 '!--------------------------------------------------------------------------------
-Private Sub GetDirectorySize(sRoot As String, fp As FILE_PARAMS)
+Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
 
-    Dim wfd   As WIN32_FIND_DATA
-    Dim hFile As Long
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim lngFilePathPtr  As Long
 
     If PathIsValidUNC(sRoot) = False Then
-        hFile = FindFirstFile(StrPtr("\\?\" & sRoot & ALL_FILES), wfd)
+        lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
     Else
         '\\?\UNC\
-        hFile = FindFirstFile(StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES), wfd)
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
     End If
-
+    hFile = FindFirstFile(lngFilePathPtr, wfd)
+    
     If hFile <> INVALID_HANDLE_VALUE Then
 
         Do
@@ -545,10 +556,9 @@ Private Sub GetDirectorySize(sRoot As String, fp As FILE_PARAMS)
             fp.nSearched = fp.nSearched + 1
         Loop While FindNextFile(hFile, wfd)
 
+        FindClose hFile
     End If
 
-    'If hFile
-    Call FindClose(hFile)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -557,7 +567,7 @@ End Sub
 '! Parameters  (Переменные):   sSource (String)
 '                              bRecursion (Boolean)
 '!--------------------------------------------------------------------------------
-Public Function FolderSizeApi(sSource As String, bRecursion As Boolean) As String
+Public Function FolderSizeApi(ByVal sSource As String, ByVal bRecursion As Boolean) As String
 
     Dim fp As FILE_PARAMS
 
@@ -576,7 +586,7 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   dwBytes (Single)
 '!--------------------------------------------------------------------------------
-Private Function FormatByteSize(dwBytes As Single) As String
+Private Function FormatByteSize(ByVal dwBytes As Single) As String
 
     Dim sBuff  As String
     Dim dwBuff As Long

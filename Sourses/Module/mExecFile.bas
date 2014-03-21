@@ -52,7 +52,7 @@ Private Type PROCESS_INFORMATION
     hProcess                            As Long
     hThread                             As Long
     dwProcessId                         As Long
-    dwThreadID                          As Long
+    dwThreadId                          As Long
 End Type
 
 Private Const STARTF_USESHOWWINDOW  As Long = &H1
@@ -227,7 +227,10 @@ Public Function ShellEx(ByVal sFile As String, Optional ByVal eShowCmd As EShell
         lR = ShellExecute(Owner, sOperation, sFile, sParameters, sDefaultDir, eShowCmd)
     End If
 
-    If (lR < 0) Or (lR > 32) Then
+    If lR < 0 Then
+        ShellEx = True
+        If mbDebugStandart Then DebugMode "ShellExecute: True - and result API ShellExecute:" & ApiErrorText(lR)
+    ElseIf lR > 32 Then
         ShellEx = True
         If mbDebugStandart Then DebugMode "ShellExecute: True - and result API ShellExecute:" & ApiErrorText(lR)
     Else

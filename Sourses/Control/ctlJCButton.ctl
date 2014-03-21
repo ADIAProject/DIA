@@ -315,6 +315,7 @@ Private m_lDY                As Single
 ' --Popup menu variables
 Private m_bPopupEnabled      As Boolean         'Popus is enabled
 Private m_bPopupShown        As Boolean         'Popupmenu is shown
+Private m_bPopupEnabledRBT   As Boolean         'Popus is enabled
 Private m_bPopupInit         As Boolean         'Flag to prevent WM_MOUSLEAVE to redraw the button
 Private mnuDropDown          As VB.Menu         'Popupmenu to be shown
 Private mnuRightButton       As VB.Menu         'Default menu in the popupmenu
@@ -3795,10 +3796,10 @@ Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Sing
     ElseIf Button = vbRightButton Then
         m_bHasFocus = True
 
-        If Not m_bPopupEnabled Then
+        If Not m_bPopupEnabledRBT Then
             RaiseEvent MouseDown(Button, Shift, X, Y)
         Else
-
+            RaiseEvent MouseDown(Button, Shift, X, Y)
             If Not m_bPopupShown Then
                 ShowPopupMenuRBT
             End If
@@ -4326,7 +4327,7 @@ Attribute SetPopupMenuRBT.VB_UserMemId = 1610809444
     If Not (Menu Is Nothing) Then
         If (TypeOf Menu Is VB.Menu) Then
             Set mnuRightButton = Menu
-            m_bPopupEnabled = True
+            m_bPopupEnabledRBT = True
         End If
     End If
 
@@ -4357,7 +4358,7 @@ Public Sub UnsetPopupMenuRBT()
 
     ' --Free the popup menu RBT
     If Not mnuRightButton Is Nothing Then Set mnuRightButton = Nothing
-    m_bPopupEnabled = False
+    m_bPopupEnabledRBT = False
     m_bPopupShown = False
     
 End Sub

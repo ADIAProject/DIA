@@ -11,15 +11,15 @@ Public mbIsWin64           As Boolean
 Public mbIsNotebok         As Boolean
 
 Public Type OSInfoStruct
-    Name As String
-    BuildNumber As String
-    ServicePack As String
-    VerFullwBuild As String
-    VerFull As String
-    VerMajor As String
-    VerMinor As String
-    ClientOrServer As Boolean
-    IsInitialize As Boolean
+    Name            As String
+    BuildNumber     As String
+    ServicePack     As String
+    VerFullwBuild   As String
+    VerFull         As String
+    VerMajor        As String
+    VerMinor        As String
+    ClientOrServer  As Boolean
+    IsInitialize    As Boolean
 End Type
 
 ' API-Declared
