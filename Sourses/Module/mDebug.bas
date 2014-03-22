@@ -8,7 +8,7 @@ Option Explicit
 '------------------ Параметры отладочного режима --------------------------'
 '==========================================================================
 ' Параметры считываются из ini-файла при запуске программы
-Public mbDebugStandart           As Boolean   'Стандартная отладка
+Public mbDebugStandart         As Boolean   'Стандартная отладка
 Public mbDebugDetail           As Boolean   'Детальная отладка, больше отладочных сообщений
 Public mbCleanHistory          As Boolean   'Очистка истории отладочного режима
 Public mbDebugTime2File        As Boolean   'Записывать время события в лог-файл

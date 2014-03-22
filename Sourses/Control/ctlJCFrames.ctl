@@ -2588,7 +2588,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         GetDIBits TmpDC, TmpBmp, 0, DstH, Data1(0), Info, 0
         GetDIBits Sr2DC, Sr2Bmp, 0, DstH, Data2(0), Info, 0
 
-        If BrushColor > 0 Then
+        If BrushColor Then
 
             With BrushRGB
                 .Blue = (BrushColor \ &H10000) Mod &H100

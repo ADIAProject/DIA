@@ -130,11 +130,11 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
         arrSectionTemp = Split(strTemp, vbNullChar)
         intTempSmallBuff = InStrRev(strTemp, vbNullChar)
 
-        If intTempSmallBuff > 0 Then
+        If intTempSmallBuff Then
             str = arrSectionTemp(0)
             miRavnoPosition = InStr(str, "=")
 
-            If miRavnoPosition > 0 Then
+            If miRavnoPosition Then
                 Key = Left$(str, miRavnoPosition - 1)
                 Value = Mid$(str, miRavnoPosition + 1)
             Else
@@ -165,7 +165,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
         Do Until LenB(strTemp) = 0
             intTempSmallBuff = InStrRev(strTemp, vbNullChar)
 
-            If intTempSmallBuff > 0 Then
+            If intTempSmallBuff Then
                 intTemp = InStr(strTemp, vbNullChar)
                 str = Left$(strTemp, intTemp)
 
@@ -177,7 +177,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
 
                 miRavnoPosition = InStr(str, "=")
 
-                If miRavnoPosition > 0 Then
+                If miRavnoPosition Then
                     Key = Left$(str, miRavnoPosition - 1)
                     Value = Mid$(str, miRavnoPosition + 1)
                 Else

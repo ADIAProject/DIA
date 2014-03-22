@@ -458,7 +458,7 @@ Private Sub ucPathUtil64_Click()
 
     Dim strTempPath As String
 
-    If ucPathUtil64.FileCount > 0 Then
+    If ucPathUtil64.FileCount Then
         strTempPath = ucPathUtil64.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -508,7 +508,7 @@ Private Sub ucPathUtil_Click()
 
     Dim strTempPath As String
 
-    If ucPathUtil.FileCount > 0 Then
+    If ucPathUtil.FileCount Then
         strTempPath = ucPathUtil.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then

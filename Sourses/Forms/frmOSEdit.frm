@@ -738,7 +738,7 @@ Private Sub ucLangPath_Click()
 
     Dim strTempPath As String
 
-    If ucLangPath.FileCount > 0 Then
+    If ucLangPath.FileCount Then
         strTempPath = ucLangPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -779,7 +779,7 @@ Private Sub ucPathDB_Click()
 
     Dim strTempPath As String
 
-    If ucPathDB.FileCount > 0 Then
+    If ucPathDB.FileCount Then
         strTempPath = ucPathDB.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -820,7 +820,7 @@ Private Sub ucPathDRP_Click()
 
     Dim strTempPath As String
 
-    If ucPathDRP.FileCount > 0 Then
+    If ucPathDRP.FileCount Then
         strTempPath = ucPathDRP.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -861,7 +861,7 @@ Private Sub ucPhysXPath_Click()
 
     Dim strTempPath As String
 
-    If ucPhysXPath.FileCount > 0 Then
+    If ucPhysXPath.FileCount Then
         strTempPath = ucPhysXPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -902,7 +902,7 @@ Private Sub ucRuntimesPath_Click()
 
     Dim strTempPath As String
 
-    If ucRuntimesPath.FileCount > 0 Then
+    If ucRuntimesPath.FileCount Then
         strTempPath = ucRuntimesPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then

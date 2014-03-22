@@ -718,7 +718,7 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
 
             Case vbKeyUp
 
-                If VScroll1.Value > 0 Then
+                If VScroll1.Value Then
                     VScroll1.Value = VScroll1.Value - 1
                 End If
 
@@ -730,7 +730,7 @@ Private Sub UserControl_KeyDown(KeyCode As Integer, Shift As Integer)
 
             Case vbKeyPageUp
 
-                If VScroll1.Value - VScroll1.LargeChange > 0 Then
+                If VScroll1.Value - VScroll1.LargeChange Then
                     VScroll1.Value = VScroll1.Value - VScroll1.LargeChange
                 Else
                     VScroll1.Value = VScroll1.Min
@@ -1052,7 +1052,7 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
             UserControl.CurrentY = ((ScaleHeight - TextHeight("X")) / 2) - 1
             UserControl.CurrentX = 4
 
-            If Ambient.UserMode = True And mListCount > 0 Then
+            If Ambient.UserMode = True And mListCount Then
                 UserControl.Print mListFont(mListPos)
             Else
                 UserControl.Print Ambient.DisplayName
@@ -1078,7 +1078,7 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
         UserControl.CurrentY = ((ScaleHeight - TextHeight("X")) / 2) - 1
         UserControl.CurrentX = 4
 
-        If Ambient.UserMode = True And mListCount > 0 Then
+        If Ambient.UserMode = True And mListCount Then
             UserControl.Print mListFont(mListPos)
         Else
             UserControl.Print Ambient.DisplayName
@@ -1147,7 +1147,7 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
         UserControl.CurrentY = ((ScaleHeight - TextHeight("X")) / 2) - 1
         UserControl.CurrentX = 4
 
-        If Ambient.UserMode = True And mListCount > 0 Then
+        If Ambient.UserMode = True And mListCount Then
             UserControl.Print mListFont(mListPos)
         Else
             UserControl.Print Ambient.DisplayName

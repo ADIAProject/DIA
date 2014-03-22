@@ -3812,7 +3812,7 @@ Private Sub cmdDelOS_Click()
 
     With lvOS
 
-        If .ListItems.Count > 0 Then
+        If .ListItems.Count Then
             i = .SelectedItem.Index
             .ListItems.Remove (i)
             lngLastIdOS = lngLastIdOS - 1
@@ -3833,7 +3833,7 @@ Private Sub cmdDelUtil_Click()
 
     With lvUtils
 
-        If .ListItems.Count > 0 Then
+        If .ListItems.Count Then
             i = .SelectedItem.Index
             .ListItems.Remove (i)
             lngLastIdUtil = lngLastIdUtil - 1
@@ -5213,7 +5213,7 @@ Private Sub ucArchPath_Click()
 
     Dim strTempPath As String
 
-    If ucArchPath.FileCount > 0 Then
+    If ucArchPath.FileCount Then
         strTempPath = ucArchPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5254,7 +5254,7 @@ Private Sub ucCmdDevconPath_Click()
 
     Dim strTempPath As String
 
-    If ucCmdDevconPath.FileCount > 0 Then
+    If ucCmdDevconPath.FileCount Then
         strTempPath = ucCmdDevconPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5295,7 +5295,7 @@ Private Sub ucDebugLogPath_Click()
 
     Dim strTempPath As String
 
-    If ucDebugLogPath.FileCount > 0 Then
+    If ucDebugLogPath.FileCount Then
         strTempPath = ucDebugLogPath.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5318,7 +5318,7 @@ Private Sub ucDevCon64Path_Click()
 
     Dim strTempPath As String
 
-    If ucDevCon64Path.FileCount > 0 Then
+    If ucDevCon64Path.FileCount Then
         strTempPath = ucDevCon64Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5360,7 +5360,7 @@ Private Sub ucDevCon86Path_Click()
 
     Dim strTempPath As String
 
-    If ucDevCon86Path.FileCount > 0 Then
+    If ucDevCon86Path.FileCount Then
         strTempPath = ucDevCon86Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5401,7 +5401,7 @@ Private Sub ucDevCon86Pathw2k_Click()
 
     Dim strTempPath As String
 
-    If ucDevCon86Pathw2k.FileCount > 0 Then
+    If ucDevCon86Pathw2k.FileCount Then
         strTempPath = ucDevCon86Pathw2k.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5442,7 +5442,7 @@ Private Sub ucDPInst64Path_Click()
 
     Dim strTempPath As String
 
-    If ucDPInst64Path.FileCount > 0 Then
+    If ucDPInst64Path.FileCount Then
         strTempPath = ucDPInst64Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5483,7 +5483,7 @@ Private Sub ucDPInst86Path_Click()
 
     Dim strTempPath As String
 
-    If ucDPInst86Path.FileCount > 0 Then
+    If ucDPInst86Path.FileCount Then
         strTempPath = ucDPInst86Path.FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
@@ -5524,7 +5524,7 @@ Private Sub ucTempPath_Click()
 
     Dim strTempPath As String
 
-    If ucTempPath.FileCount > 0 Then
+    If ucTempPath.FileCount Then
         strTempPath = ucTempPath.Path
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then

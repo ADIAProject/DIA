@@ -805,7 +805,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         GetDIBits TmpDC, TmpBmp, 0, DstH, DataDest(0), Info, 0
         GetDIBits Sr2DC, Sr2Bmp, 0, DstH, DataSrc(0), Info, 0
 
-        If BrushColor > 0 Then
+        If BrushColor Then
 
             With BrushRGB
                 .Blue = (BrushColor \ &H10000) Mod &H100
@@ -850,7 +850,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
                                 If a1 = 255 Then
                                     DataDest(i) = BrushRGB
-                                ElseIf a1 > 0 Then
+                                ElseIf a1 Then
                                     .Red = (a2 * .Red + a1 * BrushRGB.Red) \ 256
                                     .Green = (a2 * .Green + a1 * BrushRGB.Green) \ 256
                                     .Blue = (a2 * .Blue + a1 * BrushRGB.Blue) \ 256
@@ -866,7 +866,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
                                     .Red = gCol
                                     .Green = gCol
                                     .Blue = gCol
-                                ElseIf a1 > 0 Then
+                                ElseIf a1 Then
                                     .Red = (a2 * .Red + a1 * gCol) \ 256
                                     .Green = (a2 * .Green + a1 * gCol) \ 256
                                     .Blue = (a2 * .Blue + a1 * gCol) \ 256
@@ -887,7 +887,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
                                         DataDest(i) = DataSrc(i)
                                     End If
 
-                                ElseIf a1 > 0 Then
+                                ElseIf a1 Then
 
                                     If PicEffect = epeLighter Then
                                         .Red = (a2 * .Red + a1 * aLighten(DataSrc(i).Red)) \ 256
@@ -1071,7 +1071,7 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
                     If BrushColor <> -1 Then
                         If a1 = 255 Then
                             DataDest(i) = BrushRGB
-                        ElseIf a1 > 0 Then
+                        ElseIf a1 Then
                             .Red = (a2 * .Red + a1 * BrushRGB.Red) \ 256
                             .Green = (a2 * .Green + a1 * BrushRGB.Green) \ 256
                             .Blue = (a2 * .Blue + a1 * BrushRGB.Blue) \ 256
@@ -1086,7 +1086,7 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
                                 .Red = gCol
                                 .Green = gCol
                                 .Blue = gCol
-                            ElseIf a1 > 0 Then
+                            ElseIf a1 Then
                                 .Red = (a2 * .Red + a1 * gCol) \ 256
                                 .Green = (a2 * .Green + a1 * gCol) \ 256
                                 .Blue = (a2 * .Blue + a1 * gCol) \ 256
@@ -1107,7 +1107,7 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
                                     DataDest(i) = DataSrc(i)
                                 End If
 
-                            ElseIf a1 > 0 Then
+                            ElseIf a1 Then
 
                                 If PicEffect = epeLighter Then
                                     .Red = (a2 * .Red + a1 * aLighten(DataSrc(i).Red)) \ 256
@@ -2136,7 +2136,7 @@ Private Sub SetAccessKey()
         i = InStr(m_Caption, "&")
 
         If i < Len(m_Caption) Then
-            If i > 0 Then
+            If i Then
                 If Mid$(m_Caption, i + 1, 1) <> "&" Then
                     AccessKeys = LCase$(Mid$(m_Caption, i + 1, 1))
                 Else

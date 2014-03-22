@@ -806,7 +806,7 @@ Public Sub FormLoadAction()
     lngDeviceCount = lvDevices.ListItems.Count
     LoadListbyMode
     LoadFormCaption
-    cmdGoSite.Enabled = LenB(txtFindText.Text) > 0
+    cmdGoSite.Enabled = LenB(txtFindText.Text)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1370,7 +1370,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub txtFindText_Change()
-    cmdGoSite.Enabled = LenB(txtFindText.Text) > 0
+    cmdGoSite.Enabled = LenB(txtFindText.Text)
 End Sub
 
 '!--------------------------------------------------------------------------------

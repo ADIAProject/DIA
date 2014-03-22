@@ -138,7 +138,7 @@ Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, ByVal dwLCType As Lo
         'and call again passing the buffer
         R = GetLocaleInfo(dwLocaleID, dwLCType, sReturn, Len(sReturn))
 
-        'if successful (r > 0)
+        'if successful (r)
         If R Then
             'r holds the size of the string
             'including the terminating null

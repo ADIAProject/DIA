@@ -382,7 +382,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub ucFilePath_Click()
 
-    If ucFilePath.FileCount > 0 Then
+    If ucFilePath.FileCount Then
         strFilePath = ucFilePath.FileName
     End If
 

@@ -500,7 +500,7 @@ Public Function AddPanel(Optional ByVal sText As String, Optional ByVal uTextAli
         .ToolTipText = sToolTipText
         .UseMaskColor = bUseMaskColor
 
-        If lWidth > 0 Then
+        If lWidth Then
             .Width = lWidth
         Else
             .Width = 40
@@ -821,7 +821,7 @@ Private Function GetPanelIndex() As Long
     '   Handle Any Errors
     On Error GoTo Func_ErrHandler
 
-    If m_PanelCount > 0 Then
+    If m_PanelCount Then
         '   Get our position
         Call GetCursorPos(tPt)
         '   Convert coordinates
@@ -2233,7 +2233,7 @@ Private Function ShiftColor(ByVal Color As Long, ByVal Value As Long) As Long
     lb = ((Color \ &H10000) Mod &H100)
     lb = lb + ((lb * Value) \ &HC0)
 
-    If Value > 0 Then
+    If Value Then
         If lR > 255 Then lR = 255
         If lg > 255 Then lg = 255
         If lb > 255 Then lb = 255
@@ -2701,7 +2701,7 @@ Private Sub UserControl_DblClick()
 
     m_ActivePanel = GetPanelIndex()
 
-    If m_ActivePanel > 0 Then
+    If m_ActivePanel Then
 
         With m_PanelItems(m_ActivePanel)
 

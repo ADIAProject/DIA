@@ -421,7 +421,7 @@ End Sub
 Private Sub cmdOK_Click()
 
     If mbooSelectInstall Then
-        If FindCheckCountList > 0 Then
+        If FindCheckCountList Then
             If mbooSelectInstall Then
                 strPathDRPList = GetPathList
                 mbCheckDRVOk = True
@@ -510,7 +510,7 @@ Private Function FindCheckCountList() As Long
     Next
 
     With cmdOK
-        If miCount > 0 Then
+        If miCount Then
             If Not .Enabled Then
                 .Enabled = True
             End If

@@ -1024,7 +1024,7 @@ Private Sub cmdPick_Click()
                 End If
 
                 If (psFile.bCanceled = False) Then
-                    If (psFile.nFilesSelected > 0) Then
+                    If (psFile.nFilesSelected) Then
                         If m_DialogType = [ucOpen] Then
 
                             '   Set the Command Button visable
@@ -1367,7 +1367,7 @@ Public Function ExtractFilename(ByVal sFileName) As String
 
     lStrCnt = InStrRev(sFileName, vbBackslash)
 
-    If lStrCnt > 0 Then
+    If lStrCnt Then
         ExtractFilename = Mid$(sFileName, lStrCnt + 1)
     End If
 
@@ -1385,7 +1385,7 @@ Public Function ExtractPath(ByVal sFileName) As String
 
     lStrCnt = InStrRev(sFileName, vbBackslash)
 
-    If lStrCnt > 0 Then
+    If lStrCnt Then
         ExtractPath = Left$(sFileName, lStrCnt - 1)
     End If
 
@@ -2302,7 +2302,7 @@ GoAgain:
 
                 NewCharacter = InStr(LastCharacter + 1, FileDialog.sFile, vbNullChar)
 
-                If Count > 0 Then
+                If Count Then
                     tempFiles(Count) = Mid$(FileDialog.sFile, LastCharacter + 1, NewCharacter - LastCharacter - 1)
                 Else
                     ShowOpen.sLastDirectory = Mid$(FileDialog.sFile, LastCharacter + 1, NewCharacter - LastCharacter - 1)
@@ -2879,9 +2879,9 @@ Private Sub txtResult_KeyDown(KeyCode As Integer, Shift As Integer)
                 '   This routine allow the user to arrow down to the combobox
                 '   droplist. The uparrow function is in the combobox keydown
                 '   event handler...
-                If (m_DialogType = ucOpen) Then
-                    If (m_MultiSelect) Then
-                        If (.cmbMultiSel.ListCount > 0) Then
+                If m_DialogType = ucOpen Then
+                    If m_MultiSelect Then
+                        If .cmbMultiSel.ListCount Then
                             '   Set the ListIndex to 0
                             .cmbMultiSel.ListIndex = 0
                             '   Now drop the box

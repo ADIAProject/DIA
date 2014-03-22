@@ -77,7 +77,7 @@ Public Declare Function WriteFile Lib "kernel32" (ByVal hFile As Long, ByVal lpB
 Public Declare Function ReadFile Lib "kernel32.dll" (ByVal hFile As Long, ByVal lpBuffer As Long, ByVal NumberOfBytesToRead As Long, ByRef NumberOfBytesRead As Long, ByVal lpOverlapped As Long) As Long
 Public Declare Function FlushFileBuffers Lib "kernel32" (ByVal hFile As Long) As Long
 Public Declare Function GetFileSize Lib "kernel32.dll" (ByVal hFile As Long, lpFileSizeHigh As Long) As Long
-Public Declare Function StrFormatByteSize Lib "shlwapi.dll" Alias "StrFormatByteSizeA" (ByVal dw As Long, ByVal pszBuf As String, ByVal cchBuf As Long) As Long
+Public Declare Function StrFormatByteSize Lib "shlwapi.dll" Alias "StrFormatByteSizeA" (ByVal dw As Single, ByVal pszBuf As String, ByVal cchBuf As Long) As Long
 Public Declare Function StrFormatByteSizeW Lib "shlwapi.dll" (ByVal qdwLow As Long, ByVal qdwHigh As Long, pwszBuf As Any, ByVal cchBuf As Long) As Long
 Public Declare Function FindClose Lib "kernel32.dll" (ByVal hFindFile As Long) As Long
 Public Declare Function FindFirstFile Lib "kernel32.dll" Alias "FindFirstFileW" (ByVal lpFileName As Long, lpFindFileData As WIN32_FIND_DATA) As Long
