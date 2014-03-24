@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "21/03/2014"
+Public Const strDateProgram         As String = "24/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -211,7 +211,6 @@ Private Sub Main()
     If PathExists(strWinTemp) = False Then
         MsgBox "Windows TempPath not Exist or Environ %TMP% undefined. Program is exit!!!", vbInformation, strProductName
 
-        'End
         GoTo ExitSub
 
     End If
@@ -239,7 +238,6 @@ Private Sub Main()
     If PathExists(strAppPathBackSL & "Tools\") = False Then
         MsgBox "Not found the main program subfolder '.\Tools'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
 
-        'End
         GoTo ExitSub
 
     End If
@@ -248,7 +246,6 @@ Private Sub Main()
     If PathExists(strAppPathBackSL & "Tools\DIA\") = False Then
         MsgBox "Not found the main program subfolder '.\Tools\DIA'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
 
-        'End
         GoTo ExitSub
 
     End If
@@ -279,7 +276,9 @@ Private Sub Main()
     'загружаем программные сообщения
     LocaliseMessage strPCLangCurrentPath
     ' Получение настроек из ini-файла
-    GetMainIniParam
+    If Not GetMainIniParam Then
+        GoTo ExitSub
+    End If
 
     ' Если стоит настройка проверять временный путь на наличие ini, то перезагружаем файл параметров
     If mbLoadIniTmpAfterRestart Then
@@ -393,7 +392,6 @@ Private Sub Main()
         MsgBox strMessages(6), vbCritical + vbApplicationModal, strProductName
         If mbDebugStandart Then DebugMode strMessages(6)
 
-        'End
         GoTo ExitSub
 
     End If

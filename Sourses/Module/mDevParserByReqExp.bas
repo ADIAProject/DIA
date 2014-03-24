@@ -8,7 +8,8 @@ Public Const lngDevDBVersion        As Long = 6
 Private RegExpStrSect       As RegExp
 Private RegExpStrDefs       As RegExp
 Private RegExpVerSect       As RegExp
-Private RegExpCatSect       As RegExp
+Private RegExpVerParam      As RegExp
+Private RegExpCatParam      As RegExp
 Private RegExpManSect       As RegExp
 Private RegExpManDef        As RegExp
 Private RegManID            As RegExp
@@ -31,7 +32,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim objMatch1                 As Match
     Dim objMatchesStrSect         As MatchCollection
     Dim objMatchesVerSect         As MatchCollection
-    Dim objMatchesCatSect         As MatchCollection
+    Dim objMatchesVerParam        As MatchCollection
+    Dim objMatchesCatParam        As MatchCollection
     Dim objMatchesManSect         As MatchCollection
     Dim objMatchesManDef          As MatchCollection
     Dim objMatchesManID           As MatchCollection
@@ -68,6 +70,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim Strings                   As String
     Dim strRegEx_mansect          As String
     Dim strRegEx_strsect          As String
+    Dim strRegEx_versect          As String
     Dim strRegEx_version          As String
     Dim strRegEx_devs_l           As String
     Dim strRegEx_devs_r           As String
@@ -77,6 +80,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strRegEx_strings          As String
     Dim strRegEx_sectnames        As String
     Dim sFileContent              As String
+    Dim sVerSectContent           As String
     Dim strLinesArr()             As String
     Dim strLinesArrHwid()         As String
     Dim lngNumLines               As Long
@@ -99,9 +103,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim Pos                       As Long
     Dim PosRev                    As Long
     Dim strVer                    As String
-    Dim k1                        As Long
-    Dim t                         As Long
-    Dim a                         As String
     Dim strSectNoCompatVerOSList  As String
     Dim strRegEx_catFile          As String
     Dim strArchCatFileList        As String
@@ -109,7 +110,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strVarname_x()            As String
     Dim ii                        As Long
     Dim strUnpackMask             As String
-    Dim sFileBinary()             As Byte
 
     If mbDebugStandart Then DebugMode vbTab & "DevParserByRegExp-Start"
     
@@ -117,7 +117,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Set RegExpStrSect = New RegExp
     Set RegExpStrDefs = New RegExp
     Set RegExpVerSect = New RegExp
-    Set RegExpCatSect = New RegExp
+    Set RegExpVerParam = New RegExp
+    Set RegExpCatParam = New RegExp
     Set RegExpManSect = New RegExp
     Set RegExpManDef = New RegExp
     Set RegManID = New RegExp
@@ -125,6 +126,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Set RegExpDevID = New RegExp
     Set RegExpDevSect = New RegExp
     Set objHashOutput = New Scripting.Dictionary
+    objHashOutput.CompareMode = TextCompare
     
     ' Должно ускорить распаковку, если выключено чтение файла finish.ini
     If Not mbLoadFinishFile Then
@@ -204,9 +206,10 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     DoEvents
     ' sections
     strRegEx_mansect = "^[ ]*\[Manufacturer\](?:([\s\S]*?)^[ #]*(?=\[)|([\s\S]*))"
-    strRegEx_strsect = "^[ ]*\[strings\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
-    strRegEx_version = "^[ ]*\[Version\][\s\S]*?^[ ]*DriverVer[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
-    strRegEx_catFile = "^[ ]*\[Version\][\s\S]*?^[ ]*CatalogFile[.nt|.ntamd64|.ntx86]*[ ]*=[ ]*([^;\r\n]*)"
+    strRegEx_strsect = "^[ ]*\[Strings\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
+    strRegEx_versect = "^[ ]*\[Version\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
+    strRegEx_version = "^[ ]*DriverVer[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
+    strRegEx_catFile = "^[ ]*CatalogFile[.nt|.ntamd64|.ntx86]*[ ]*=[ ]*([^;\r\n]*)"
     'sections "Devices"
     strRegEx_devs_l = "^[ ]*\[("
     strRegEx_devs_r = ")\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
@@ -221,7 +224,6 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     strRegEx_strings = "^[ ]*([^; \r\n][^;=\r\n]*[^; \r\n])[ ]*=[ ]*(?:([^\r\n;]*))"
     ' variable = "sectnames"
     strRegEx_sectnames = "(?:,?[ ]*,?[ ]*([^,\r\n;]+[^,\r\n ;]))"
-    objHashOutput.CompareMode = TextCompare
 
     ' Init regexps
     With RegExpStrSect
@@ -240,24 +242,31 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     End With
 
     With RegExpVerSect
+        .Pattern = strRegEx_versect
+        .MultiLine = True
+        .IgnoreCase = True
+        .Global = True
+    End With
+    
+    With RegExpVerParam
         .Pattern = strRegEx_version
         .MultiLine = True
         .IgnoreCase = True
-        .Global = False
+        .Global = True
     End With
 
-    With RegExpCatSect
+    With RegExpCatParam
         .Pattern = strRegEx_catFile
         .MultiLine = True
         .IgnoreCase = True
-        .Global = False
+        .Global = True
     End With
 
     With RegExpManSect
         .Pattern = strRegEx_mansect
         .MultiLine = True
         .IgnoreCase = True
-        .Global = False
+        .Global = True
     End With
 
     With RegExpManDef
@@ -326,11 +335,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         End If
 
         ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
-        If Not mbDP_Is_aFolder Then
-            strInfPath = strInfPathTempList_x(infNum).RelativePath
-        Else
-            strInfPath = Replace$(strInfPathTempList_x(infNum).Path, BackslashAdd2Path(strPathDRP & strPackFileName), vbNullString, , , vbTextCompare)
-        End If
+        strInfPath = strInfPathTempList_x(infNum).RelativePath
 
         If strInfPathTempList_x(infNum).Size Then
             ' Read INF file
@@ -351,7 +356,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             objStringHash.CompareMode = TextCompare
             Set objMatchesStrSect = RegExpStrSect.Execute(sFileContent)
     
-            If objMatchesStrSect.Count >= 1 Then
+            If objMatchesStrSect.Count Then
                 Set objMatch = objMatchesStrSect.Item(0)
                 Strings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
                 'Debug.Print RegExpStrDefs.Pattern
@@ -376,110 +381,114 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     
             ' Find [version] section
             Set objMatchesVerSect = RegExpVerSect.Execute(sFileContent)
-    
-            If objMatchesVerSect.Count >= 1 Then
-                Set objMatch = objMatchesVerSect.Item(0)
-                strDrvDate = objMatch.SubMatches(0)
-    
-                If InStr(strDrvDate, Percentage) Then
-                    strVarname = Left$(strDrvDate, InStrRev(strDrvDate, Percentage))
-                    strValval = objStringHash.Item(strVarname)
-    
-                    If LenB(strValval) Then
-                        strDrvDate = Replace$(strDrvDate, strVarname, strValval)
-                    Else
-                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+            If objMatchesVerSect.Count Then
+                sVerSectContent = objMatchesVerSect.Item(0)
+            
+                ' Find DriverVer parametr
+                Set objMatchesVerParam = RegExpVerParam.Execute(sVerSectContent)
+        
+                If objMatchesVerParam.Count Then
+                    Set objMatch = objMatchesVerParam.Item(0)
+                    strDrvDate = objMatch.SubMatches(0)
+        
+                    If InStr(strDrvDate, Percentage) Then
+                        strVarname = Left$(strDrvDate, InStrRev(strDrvDate, Percentage))
+                        strValval = objStringHash.Item(strVarname)
+        
+                        If LenB(strValval) Then
+                            strDrvDate = Replace$(strDrvDate, strVarname, strValval)
+                        Else
+                            If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                        End If
                     End If
-                End If
-    
-                strDrvDate = Trim$(strDrvDate)
-                strDrvVersion = objMatch.SubMatches(1)
-    
-                If InStr(strDrvVersion, Percentage) Then
-                    strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, Percentage))
-                    strValval = objStringHash.Item(strVarname)
-    
-                    If LenB(strValval) Then
-                        strDrvVersion = Replace$(strDrvVersion, strVarname, strValval)
-                    Else
-                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+        
+                    strDrvDate = Trim$(strDrvDate)
+                    strDrvVersion = objMatch.SubMatches(1)
+        
+                    If InStr(strDrvVersion, Percentage) Then
+                        strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, Percentage))
+                        strValval = objStringHash.Item(strVarname)
+        
+                        If LenB(strValval) Then
+                            strDrvVersion = Replace$(strDrvVersion, strVarname, strValval)
+                        Else
+                            If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                        End If
                     End If
-                End If
-    
-                If LenB(strDrvVersion) Then
-                    strVer = strDrvDate & "," & strDrvVersion
+        
+                    If LenB(strDrvVersion) Then
+                        strVer = strDrvDate & "," & strDrvVersion
+                    Else
+        
+                        If LenB(strDrvDate) Then
+                            strVer = strDrvDate
+                        Else
+                            strVer = "unknown"
+                        End If
+                    End If
+        
                 Else
-    
-                    If LenB(strDrvDate) Then
-                        strVer = strDrvDate
-                    Else
-                        strVer = "unknown"
-                    End If
+                    If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr 'DriverVer' not found: " & strInfFullname
+                    strDrvDate = vbNullString
+                    strDrvVersion = vbNullString
+                    strVer = "unknown"
                 End If
-    
-            Else
-                If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Section [version] not found: " & strInfFullname
-                strDrvDate = vbNullString
-                strDrvVersion = vbNullString
-                strVer = "unknown"
-                'FileWriteData "c:\" & strInfFileName, sFileContent
-            End If
-    
-            ' Find [CatalogeFile] section
-            Set objMatchesCatSect = RegExpCatSect.Execute(sFileContent)
-    
-            If objMatchesCatSect.Count >= 1 Then
-                Set objMatch = objMatchesCatSect.Item(0)
-                strDrvCatFileName = LCase$(objMatch.SubMatches(0))
-    
-                If InStr(strDrvCatFileName, Percentage) Then
-                    strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, Percentage))
-                    strValval = objStringHash.Item(strVarname)
-    
-                    If LenB(strValval) Then
-                        strDrvCatFileName = Replace$(strDrvCatFileName, strVarname, strValval)
-                    Else
-                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+        
+                ' Find CatalogFile parametr
+                Set objMatchesCatParam = RegExpCatParam.Execute(sVerSectContent)
+        
+                If objMatchesCatParam.Count Then
+                    Set objMatch = objMatchesCatParam.Item(0)
+                    strDrvCatFileName = objMatch.SubMatches(0)
+                    
+                    If InStr(strDrvCatFileName, Percentage) Then
+                        strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, Percentage))
+                        strValval = objStringHash.Item(strVarname)
+        
+                        If LenB(strValval) Then
+                            strDrvCatFileName = Replace$(strDrvCatFileName, strVarname, strValval)
+                        Else
+                            If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                        End If
                     End If
-                End If
-    
-                ' Если ли файл *.cat в списке файлов архива?
-                If InStr(1, strDrvCatFileName, ".cat") Then
-                    If InStr(1, strArchCatFileListContent, LCase$(strInfPath) & strDrvCatFileName) Then
-                        lngCatFileExists = 1
+                    strDrvCatFileName = LCase$(strDrvCatFileName)
+        
+                    ' Если ли файл *.cat в списке файлов архива?
+                    If InStr(strDrvCatFileName, ".cat") Then
+                        If InStr(1, strArchCatFileListContent, LCase$(strInfPath) & strDrvCatFileName) Then
+                            lngCatFileExists = 1
+                        Else
+                            lngCatFileExists = 0
+                        End If
+        
                     Else
                         lngCatFileExists = 0
                     End If
-    
+        
                 Else
+                    If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr 'CatalogeFile' not found: " & strInfFullname
+                    strDrvCatFileName = vbNullString
                     lngCatFileExists = 0
                 End If
-    
             Else
-                If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Section [CatalogeFile] not found: " & strInfFullname
-                strDrvCatFileName = vbNullString
+                If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Section [version] not found: " & strInfFullname
+                strDrvDate = vbNullString
+                strDrvVersion = vbNullString
+                strVer = "unknown"
                 lngCatFileExists = 0
             End If
-    
+            
             ' Find [manufacturer] section
             Set objMatchesManSect = RegExpManSect.Execute(sFileContent)
     
-            If objMatchesManSect.Count >= 1 Then
+            If objMatchesManSect.Count Then
                 Set objMatch = objMatchesManSect.Item(0)
                 strSections = objMatch.SubMatches(0) & objMatch.SubMatches(1)
                 strSectlist = vbNullString
                 Set objMatchesManDef = RegExpManDef.Execute(strSections)
     
-                If objMatchesManDef.Count = 0 Then
-                    If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr in section [Manufacturer] not match 'name = sectname,suffix,suffix'. Inf-File=" & strInfFullname
-    
-                    If InStr(strSectlist, vbNewLine) Then
-                        strSectlist = Replace$(strSectlist, vbNewLine, vbNullString)
-                    End If
-    
-                    If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Try seek in section [Manufacturer] parametr: " & strSectlist
-                Else
-    
+                If objMatchesManDef.Count <> 0 Then
+                
                     For i = 0 To objMatchesManDef.Count - 1
                         Set objMatch = objMatchesManDef.Item(i)
                         ss = objMatch.SubMatches(0)
@@ -508,6 +517,14 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                         Next
                     Next
     
+                Else
+                    If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr in section [Manufacturer] not match 'name = sectname,suffix,suffix'. Inf-File=" & strInfFullname
+    
+                    If InStr(strSectlist, vbNewLine) Then
+                        strSectlist = Replace$(strSectlist, vbNewLine, vbNullString)
+                    End If
+    
+                    If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Try seek in section [Manufacturer] parametr: " & strSectlist
                 End If
     
                 'Debug.Print strSectlist
@@ -573,12 +590,12 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                         strValval = objStringHash.Item(strVarname)
                                     End If
     
-                                    If LenB(strValval) = 0 Then
-                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                                        strDevName = strVarname
-                                    Else
+                                    If LenB(strValval) Then
                                         strDevName = Replace$(strDevName, "%" & strVarname & "%", strValval)
                                         ' Если все таки есть процент, то есть не определился из cекции String
+                                    Else
+                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                                        strDevName = strVarname
                                     End If
                                 End If
     
@@ -617,10 +634,10 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     
                                     strValval = objStringHash.Item(strVarname)
     
-                                    If LenB(strValval) = 0 Then
-                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                                    Else
+                                    If LenB(strValval) Then
                                         strValuer = Replace$(strValuer, strVarname, strValval)
+                                    Else
+                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
                                     End If
                                 End If
     
@@ -705,16 +722,9 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         Erase strLinesArr
         Erase strLinesArrHwid
 
-        If CopyFileTo(strRezultTxt, strRezultTxtTo) = False Then
-            MsgBox strMessages(31), vbInformation, strProductName
-            If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtTo
-        Else
-
+        If CopyFileTo(strRezultTxt, strRezultTxtTo) Then
             'Копируем файл HWID
-            If CopyFileTo(strRezultTxtHwid, strRezultTxtHwidTo) = False Then
-                MsgBox strMessages(31), vbInformation, strProductName
-                If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtHwidTo
-            Else
+            If CopyFileTo(strRezultTxtHwid, strRezultTxtHwidTo) Then
                 ' Записываем версию базы драйверов в ini-файл
                 IniWriteStrPrivate strPackFileName_woExt, "Version", lngDevDBVersion, PathCombine(strPathDevDB, "DevDBVersions.ini")
                 'IniWriteStrPrivate strPackFileName_woExt, "FullHwid", CStr(Abs(Not mbDelDouble)), strPathDevDB & "DevDBVersions.ini"
@@ -738,7 +748,13 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                         If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtTo
                     End If
                 End If
+            Else
+                MsgBox strMessages(31), vbInformation, strProductName
+                If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtHwidTo
             End If
+        Else
+            MsgBox strMessages(31), vbInformation, strProductName
+            If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtTo
         End If
     End If
 

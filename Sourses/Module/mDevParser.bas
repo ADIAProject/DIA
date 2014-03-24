@@ -196,10 +196,6 @@ End Sub
 Public Function ParseDoubleHwid(ByVal strValuer As String) As String
 
     Dim strValuer_x() As String
-    Dim miSubSys      As Long
-    Dim miREV         As Long
-    Dim miMI          As Long
-    Dim miCC          As Long
 
     If LenB(strValuer) Then
 
@@ -207,7 +203,7 @@ Public Function ParseDoubleHwid(ByVal strValuer As String) As String
         If InStr(strValuer, vbBackslash) Then
             strValuer_x = Split(strValuer, vbBackslash)
 
-            If UBound(strValuer_x) >= 1 Then
+            If UBound(strValuer_x) Then
                 strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
             Else
                 strValuer = strValuer_x(0)

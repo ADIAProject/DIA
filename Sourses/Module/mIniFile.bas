@@ -418,14 +418,12 @@ End Function
 '! Parameters  (Переменные):   strSection (String)
 '                              strIni (String)
 '!--------------------------------------------------------------------------------
-Public Function IniSectionIsEmpty(strSection As String, strIni As String) As Boolean
+Public Function IniSectionIsEmpty(ByVal strSection As String, ByVal strIni As String) As Boolean
 
     Dim sTemp As String * 2048
-    Dim nTemp As Long
 
     'в неё запишется количество символов в строке ключа
-    nTemp = GetPrivateProfileSection(strSection, sTemp, 2048, strIni)
-    IniSectionIsEmpty = nTemp = 0
+    IniSectionIsEmpty = GetPrivateProfileSection(strSection, sTemp, 2048, strIni) = 0
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -434,19 +432,21 @@ End Function
 '! Parameters  (Переменные):   strSectionList (String)
 '                              strIniPath (String)
 '!--------------------------------------------------------------------------------
-Public Function GetIniEmptySectionFromList(strSectionList As String, strIniPath As String) As String
+Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal strIniPath As String) As String
 
     Dim strTmp             As String
     Dim strSectionList_x() As String
     Dim i_i                As Long
     Dim strManufSection    As String
+    Dim sTemp              As String * 2048
 
     strSectionList_x = Split(strSectionList, "|")
 
     For i_i = 0 To UBound(strSectionList_x)
         strManufSection = strSectionList_x(i_i)
-
-        If IniSectionIsEmpty(strManufSection, strIniPath) Then
+    
+        If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
+        
             If LenB(strTmp) Then
                 strTmp = strTmp & "," & strManufSection
             Else

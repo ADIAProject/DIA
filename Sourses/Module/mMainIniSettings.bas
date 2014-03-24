@@ -309,7 +309,7 @@ End Sub
 '! Description (Описание)  :   [Получение настроек из ини файла]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Sub GetMainIniParam()
+Public Function GetMainIniParam() As Boolean
 
     Dim i                           As Long
     Dim mbAllFolderDRVNotExistCount As Integer
@@ -318,6 +318,8 @@ Public Sub GetMainIniParam()
     Dim NotebookFilterCount         As Long
     Dim numFilter                   As Long
 
+    GetMainIniParam = True
+    
     'SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP", True
     'SaveSetting App.ProductName, "Settings", "LOAD_INI_PATH", strSysIni
     '[Description]
@@ -447,12 +449,14 @@ Public Sub GetMainIniParam()
     ' получение Кол-ва систем (Секция OS) и построение массива ОС
     lngOSCount = IniLongPrivate("OS", "OSCount", strSysIni)
 
-    If lngOSCount = 0 Or lngOSCount = 9999 Then
+    If lngOSCount = 0 Then
         MsgBox strMessages(5), vbExclamation, strMessages(4)
         If mbDebugStandart Then DebugMode "The List supported operating systems is empty. Functioning the program impossible"
-
-        End
-
+        GoTo ExitFunc
+    ElseIf lngOSCount = 9999 Then
+        MsgBox strMessages(5), vbExclamation, strMessages(4)
+        If mbDebugStandart Then DebugMode "The List supported operating systems is empty. Functioning the program impossible"
+        GoTo ExitFunc
     Else
 
         ReDim arrOSList(lngOSCount - 1)
@@ -830,6 +834,10 @@ Public Sub GetMainIniParam()
         Next
 
     End If
-
-End Sub
+    
+    Exit Function
+    
+ExitFunc:
+    GetMainIniParam = False
+End Function
 

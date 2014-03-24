@@ -205,12 +205,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
 
-    If mbFirstStart Then
-        Unload Me
-        'End
-    Else
-        Unload Me
-    End If
+    Unload Me
 
 End Sub
 

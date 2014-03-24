@@ -838,7 +838,7 @@ Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
 
     Call CopyMemory(tIconHeader, bytIcoData(0), Len(tIconHeader))
 
-    If tIconHeader.ihCount >= 1 Then
+    If tIconHeader.ihCount Then
 
         ReDim tIconEntry(tIconHeader.ihCount - 1)
 

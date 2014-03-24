@@ -7576,7 +7576,7 @@ Private Sub optRezim_Upd_Click()
                     chkPackFiles(i).Enabled = True
                 End If
     
-                .Item(i).DropDownEnable = True
+                .Item(i).DropDownEnable = False
             Next
         End With
 

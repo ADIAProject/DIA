@@ -688,7 +688,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     Dim FileContent    As String
     Dim Key            As String
     Dim Value          As String
-    Dim R              As Boolean
+    Dim mbR            As Boolean
     Dim i              As Long
     Dim Strings        As String
     Dim valval         As String
@@ -737,7 +737,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     StringHash.CompareMode = TextCompare
     Set MatchesStrSect = RegExpStrSect.Execute(FileContent)
 
-    If MatchesStrSect.Count >= 1 Then
+    If MatchesStrSect.Count Then
         Set objMatch = MatchesStrSect.Item(0)
         Strings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
         Set MatchesStrDefs = RegExpStrDefs.Execute(Strings)
@@ -751,9 +751,9 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
                 Value = objMatch1.SubMatches(2)
             End If
 
-            R = StringHash.Exists(Key)
+            mbR = StringHash.Exists(Key)
 
-            If Not R Then
+            If Not mbR Then
                 StringHash.Add Key, Value
                 StringHash.Add Percentage & Key & Percentage, Value
             End If
@@ -807,15 +807,15 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Public Sub ResetReadOnly4File(ByVal StrPathFile As String)
+Public Sub ResetReadOnly4File(ByVal strPathFile As String)
 
-    If PathExists(StrPathFile) Then
-        If (GetAttr(StrPathFile) And vbReadOnly) Then
-            SetAttr StrPathFile, vbNormal
+    If PathExists(strPathFile) Then
+        If (GetAttr(strPathFile) And vbReadOnly) Then
+            SetAttr strPathFile, vbNormal
         End If
 
-        If (GetAttr(StrPathFile) And vbSystem) Then
-            SetAttr StrPathFile, vbNormal
+        If (GetAttr(strPathFile) And vbSystem) Then
+            SetAttr strPathFile, vbNormal
         End If
     End If
 
