@@ -8,7 +8,7 @@ Option Explicit
 '                              MyArray() (String)
 '                              strDelimiter (String = vbTab)
 '!--------------------------------------------------------------------------------
-Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() As String, Optional ByVal strDelimiter As String = vbTab) As Boolean
+Public Function SaveAnyStringArray2File(ByVal strPathFile As String, MyArray() As String, Optional ByVal strDelimiter As String = vbTab) As Boolean
 
     Dim hiIndex       As Long
     Dim loIndex       As Long
@@ -25,15 +25,15 @@ Public Function SaveAnyStringArray2File(ByVal StrPathFile As String, MyArray() A
         strLine = vbNullString
 
         For ii = 0 To loIndex
-            strLine = AppendStr(strLine, MyArray(ii, i), strDelimiter)
+            AppendStr strLine, MyArray(ii, i), strDelimiter
         Next
 
-        strResultAll = AppendStr(strResultAll, strLine, vbNewLine)
+        AppendStr strResultAll, strLine, vbNewLine
     Next
 
     If LenB(strResultAll) Then
         '---------------Выводим итог в файл-----
-        FileWriteData StrPathFile, strResultAll
+        FileWriteData strPathFile, strResultAll
         
         If mbDebugStandart Then DebugMode vbTab & "ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
                                     "**************************************************************************"
@@ -49,42 +49,42 @@ End Function
 '! Parameters  (Переменные):   StrPathFile (String)
 '                              MyArray() (arrHwidsStruct)
 '!--------------------------------------------------------------------------------
-Public Function SaveHwidsArray2File(ByVal StrPathFile As String, MyArray() As arrHwidsStruct) As Boolean
+Public Function SaveHwidsArray2File(ByVal strPathFile As String, MyArray() As arrHwidsStruct) As Boolean
 
     Dim strResultAll  As String
     Dim strLine       As String
     Dim i             As Long
     Dim ii            As Long
 
-    If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & StrPathFile
+    If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & strPathFile
 
     For i = 0 To UBound(MyArray)
         strLine = vbNullString
 
         With arrHwidsLocal(i)
-            strLine = AppendStr(strLine, .HWID, vbTab)
-            strLine = AppendStr(strLine, .DevName, vbTab)
-            strLine = AppendStr(strLine, .Status, vbTab)
-            strLine = AppendStr(strLine, .VerLocal, vbTab)
-            strLine = AppendStr(strLine, .HWIDOrig, vbTab)
-            strLine = AppendStr(strLine, .Provider, vbTab)
-            strLine = AppendStr(strLine, .HWIDCompat, vbTab)
-            strLine = AppendStr(strLine, .Description, vbTab)
-            strLine = AppendStr(strLine, .PriznakSravnenia, vbTab)
-            strLine = AppendStr(strLine, .InfSection, vbTab)
-            strLine = AppendStr(strLine, .HWIDCutting, vbTab)
-            strLine = AppendStr(strLine, .HWIDMatches, vbTab)
-            strLine = AppendStr(strLine, .InfName, vbTab)
-            strLine = AppendStr(strLine, .DPsList, vbTab)
-            strLine = AppendStr(strLine, .DRVScore, vbTab)
+            AppendStr strLine, .HWID, vbTab
+            AppendStr strLine, .DevName, vbTab
+            AppendStr strLine, .Status, vbTab
+            AppendStr strLine, .VerLocal, vbTab
+            AppendStr strLine, .HWIDOrig, vbTab
+            AppendStr strLine, .Provider, vbTab
+            AppendStr strLine, .HWIDCompat, vbTab
+            AppendStr strLine, .Description, vbTab
+            AppendStr strLine, .PriznakSravnenia, vbTab
+            AppendStr strLine, .InfSection, vbTab
+            AppendStr strLine, .HWIDCutting, vbTab
+            AppendStr strLine, .HWIDMatches, vbTab
+            AppendStr strLine, .InfName, vbTab
+            AppendStr strLine, .DPsList, vbTab
+            AppendStr strLine, .DRVScore, vbTab
         End With
 
-        strResultAll = AppendStr(strResultAll, strLine, vbNewLine)
+        AppendStr strResultAll, strLine, vbNewLine
     Next
 
     If LenB(strResultAll) Then
         '---------------Выводим итог в файл-----
-        FileWriteData StrPathFile, strResultAll
+        FileWriteData strPathFile, strResultAll
         If mbDebugStandart Then DebugMode "SaveHwidsArray2File-ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
                                     "**************************************************************************"
         SaveHwidsArray2File = True
@@ -181,9 +181,8 @@ End Sub
 '! Parameters  (Переменные):   strArray() (String)
 '                              strSearch (String)
 '!--------------------------------------------------------------------------------
-Public Function BinarySearch(strArray() As String, strSearch As String) As Long
+Public Function BinarySearch(strArray() As String, ByVal strSearch As String) As Long
 
-    Dim lngIndex        As Long
     Dim lngFirst        As Long
     Dim lngLast         As Long
     Dim lngMiddle       As Long
@@ -192,7 +191,6 @@ Public Function BinarySearch(strArray() As String, strSearch As String) As Long
     lngFirst = LBound(strArray)
     lngLast = UBound(strArray)
     bolInverseOrder = (strArray(lngFirst) > strArray(lngLast))
-    'Debug.Print (strArray(lngFirst) & ">" & strArray(lngLast))
     BinarySearch = lngFirst - 1
 
     Do
@@ -204,7 +202,6 @@ Public Function BinarySearch(strArray() As String, strSearch As String) As Long
             Exit Do
 
         ElseIf ((StrComp(strArray(lngMiddle), strSearch) < 0) Xor bolInverseOrder) Then
-            'Debug.Print strArray(lngMiddle)
             lngFirst = lngMiddle + 1
         Else
             lngLast = lngMiddle - 1

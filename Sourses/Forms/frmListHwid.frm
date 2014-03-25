@@ -685,7 +685,7 @@ Private Function GetPathList() As String
 
                         If StrComp(strDevDPName, frmMain.acmdPackFiles(arrCheckDP(0, ii)).Tag, vbTextCompare) = 0 Then
                             If InStr(1, strDevPathList, strDevPathShort, vbTextCompare) = 0 Then
-                                strDevPathList = AppendStr(strDevPathList, strDevPathShort, " ")
+                                AppendStr strDevPathList, strDevPathShort, " "
                             End If
                         End If
 
@@ -695,7 +695,7 @@ Private Function GetPathList() As String
                 Else
 
                     If InStr(1, strDevPathList, strDevPathShort, vbTextCompare) = 0 Then
-                        strDevPathList = AppendStr(strDevPathList, strDevPathShort, " ")
+                        AppendStr strDevPathList, strDevPathShort, " "
                     End If
                 End If
             End If
@@ -767,7 +767,7 @@ Private Function LoadList_Folders(lngButtIndex As Long, Optional ByVal mbViewed 
 
     strTemp_x = Split(arrTTip(lngButtIndex), vbNewLine)
 
-    For i_arr = LBound(strTemp_x) To UBound(strTemp_x)
+    For i_arr = 0 To UBound(strTemp_x)
         strTempLine_x = Split(strTemp_x(i_arr), " | ")
 
         If LenB(Trim$(strTemp_x(i_arr))) Then
@@ -951,25 +951,25 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    strMeCaptionView = LocaliseString(StrPathFile, strFormName, "frmListHwidView", Me.Caption)
-    strMeCaptionInstall = LocaliseString(StrPathFile, strFormName, "frmListHwidInstall", Me.Caption)
-    lblInformation.Caption = LocaliseString(StrPathFile, strFormName, "lblInformation", lblInformation.Caption)
+    strMeCaptionView = LocaliseString(strPathFile, strFormName, "frmListHwidView", Me.Caption)
+    strMeCaptionInstall = LocaliseString(strPathFile, strFormName, "frmListHwidInstall", Me.Caption)
+    lblInformation.Caption = LocaliseString(strPathFile, strFormName, "lblInformation", lblInformation.Caption)
     'Кнопки
-    cmdCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
-    cmdUnCheckAll.Caption = LocaliseString(StrPathFile, strFormName, "cmdUnCheckAll", cmdUnCheckAll.Caption)
-    strCmdOKCaption1 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption1", "Установить")
-    strCmdOKCaption2 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption2", "OK")
-    strCmdOKCaption3 = LocaliseString(StrPathFile, strFormName, "cmdOKCaption3", "Распаковать")
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-    frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
-    chkGrp1.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp1", chkGrp1.Caption)
-    chkGrp2.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
-    chkGrp3.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
-    chkGrp4.Caption = LocaliseString(StrPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
+    cmdCheckAll.Caption = LocaliseString(strPathFile, strFormName, "cmdCheckAll", cmdCheckAll.Caption)
+    cmdUnCheckAll.Caption = LocaliseString(strPathFile, strFormName, "cmdUnCheckAll", cmdUnCheckAll.Caption)
+    strCmdOKCaption1 = LocaliseString(strPathFile, strFormName, "cmdOKCaption1", "Установить")
+    strCmdOKCaption2 = LocaliseString(strPathFile, strFormName, "cmdOKCaption2", "OK")
+    strCmdOKCaption3 = LocaliseString(strPathFile, strFormName, "cmdOKCaption3", "Распаковать")
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
+    chkGrp1.Caption = LocaliseString(strPathFile, strFormName, "chkGrp1", chkGrp1.Caption)
+    chkGrp2.Caption = LocaliseString(strPathFile, strFormName, "chkGrp2", chkGrp2.Caption)
+    chkGrp3.Caption = LocaliseString(strPathFile, strFormName, "chkGrp3", chkGrp3.Caption)
+    chkGrp4.Caption = LocaliseString(strPathFile, strFormName, "chkGrp4", chkGrp4.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------

@@ -1118,7 +1118,7 @@ Retry:
                                 sExt = InputBox("The File Extension is Missing!" & vbCrLf & "Please Enter a Valid Extension Below...", "ucPickBox", , (.Parent.ScaleWidth \ 2) + .Parent.Left - 2700, (.Parent.ScaleHeight \ 2) + .Parent.Top - 800)
 
                                 If LenB(sExt) = 0 Then
-                                    If MsgBox("     The File Extension is Invalid!" & vbCrLf & vbCrLf & "File will be saved with " & Kavichki & ".txt" & Kavichki & " extension.", vbExclamation + vbOKCancel, "ucPickBox") = vbOK Then
+                                    If MsgBox("     The File Extension is Invalid!" & vbCrLf & vbCrLf & "File will be saved with " & strKavichki & ".txt" & strKavichki & " extension.", vbExclamation + vbOKCancel, "ucPickBox") = vbOK Then
                                         '   Just use the default text file type
                                         sExt = ".txt"
                                     Else

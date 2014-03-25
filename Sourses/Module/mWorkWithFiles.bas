@@ -531,11 +531,11 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
     Dim strTempEnv     As String
     Dim strNumPosition As Long
 
-    strNumPosition = InStr(strEnv, Percentage)
+    strNumPosition = InStr(strEnv, strPercentage)
 
     If strNumPosition Then
         strTemp = Mid$(strEnv, strNumPosition + 1, Len(strEnv) - strNumPosition)
-        strNumPosition = InStr(strTemp, Percentage)
+        strNumPosition = InStr(strTemp, strPercentage)
 
         If strNumPosition Then
             strTemp = Left$(strTemp, strNumPosition - 1)
@@ -545,7 +545,7 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
     strTempEnv = Environ$(strTemp)
 
     If mbCollectFull Then
-        GetEnviron = Replace$(strEnv, Percentage & strTemp & Percentage, strTempEnv, , , vbTextCompare)
+        GetEnviron = Replace$(strEnv, strPercentage & strTemp & strPercentage, strTempEnv, , , vbTextCompare)
     Else
         GetEnviron = strTempEnv
     End If
@@ -755,7 +755,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
 
             If Not mbR Then
                 StringHash.Add Key, Value
-                StringHash.Add Percentage & Key & Percentage, Value
+                StringHash.Add strPercentage & Key & strPercentage, Value
             End If
 
         Next
@@ -763,10 +763,10 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     End If
 
     ' Собственно ищем саму переменную
-    Pos = InStr(strSearchString, Percentage)
+    Pos = InStr(strSearchString, strPercentage)
 
     If Pos Then
-        varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, Percentage))
+        varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, strPercentage))
         valval = StringHash.Item(varname)
 
         If LenB(valval) = 0 Then
@@ -1137,13 +1137,13 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     If mbAdditionalPath Then
         cDir = BackslashAdd2Path(cDir) & Trim$(Str_x(1))
 
-        If InStr(cDir, Percentage) Then
+        If InStr(cDir, strPercentage) Then
             cDir = ParserInf4Strings(strInfFilePath, cDir)
         End If
     End If
 
     cDir = Replace$(cDir, vbTab, vbNullString)
-    cDir = Replace$(cDir, Kavichki, vbNullString)
+    cDir = Replace$(cDir, strKavichki, vbNullString)
     cDir = BackslashAdd2Path(cDir)
     WhereIsDir = TrimNull(cDir)
 End Function
@@ -1173,7 +1173,7 @@ Public Function PathCollect(Path As String) As String
                     PathCollect = PathCombine(strAppPath, Path)
                 Else
 
-                    If InStr(Path, Percentage) Then
+                    If InStr(Path, strPercentage) Then
                         PathCollect = GetEnviron(Path, True)
                     Else
 
@@ -1229,7 +1229,7 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
                     PathCollect4Dest = PathNameFromPath(strDest) & Mid$(Path, 4, Len(Path) - 1)
                 Else
 
-                    If InStr(Path, Percentage) Then
+                    If InStr(Path, strPercentage) Then
                         PathCollect4Dest = GetEnviron(Path, True)
                     Else
 
@@ -1286,7 +1286,7 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
     Dim str_OSBit As String
     Dim str_DATE  As String
 
-    If InStr(strFileName, Percentage) Then
+    If InStr(strFileName, strPercentage) Then
         ' Макроподстановка версия ОС %OSVer%
         str_OSVer = "wnt" & Left$(strOSCurrentVersion, 1)
 
@@ -1509,8 +1509,7 @@ Private Sub FileWriteDataAPI(ByVal sFilePath As String, ByVal strData As String)
     Dim lngFilePathPtr  As Long
     
     ' Convert to byte
-    Str2ByteArray strData, anArray
-    BytesToWrite = UBound(anArray) + 1
+    anArray = StrConv(strData, vbFromUnicode)
     
     'Get a pointer to a string with file name.
     If PathIsValidUNC(sFilePath) = False Then
@@ -1524,7 +1523,7 @@ Private Sub FileWriteDataAPI(ByVal sFilePath As String, ByVal strData As String)
     
     'CreateFile returns INVALID_HANDLE_VALUE if it fails.
     If fHandle <> INVALID_HANDLE_VALUE Then
-        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), BytesToWrite, lBytesWritten, 0)
+        fSuccess = WriteFile(fHandle, VarPtr(anArray(0)), UBound(anArray) + 1, lBytesWritten, 0)
         'Check to see if you were successful writing the data
         If fSuccess <> 0 Then
             'Flush the file buffers to force writing of the data.
@@ -1554,8 +1553,6 @@ Private Sub FileWriteDataAPIUni(ByVal sFilePath As String, ByVal strData As Stri
     Dim lngFilePathPtr As Long
     Dim lngStringSize As Long
     
-    ' Convert to byte
-    'Str2ByteArray strData, anArray
     lngStringSize = LenB(strData)
     ReDim anArray(0 To lngStringSize)
     CopyMemory anArray(0), ByVal StrPtr(strData), lngStringSize

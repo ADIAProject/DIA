@@ -368,10 +368,10 @@ Private Sub cmdHistory_Click()
     Select Case strPCLangCurrentID
 
         Case "0419"
-            cmdString = Kavichki & strLinkHistory & Kavichki
+            cmdString = strKavichki & strLinkHistory & strKavichki
 
         Case Else
-            cmdString = Kavichki & strLinkHistory_en & Kavichki
+            cmdString = strKavichki & strLinkHistory_en & strKavichki
     End Select
 
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
@@ -389,7 +389,7 @@ Private Sub cmdUpdate_Click()
     Dim nRetShellEx As Boolean
     Dim cmdString   As String
 
-    cmdString = Kavichki & strLink(cmbVersions.ListIndex, 0) & Kavichki
+    cmdString = strKavichki & strLink(cmbVersions.ListIndex, 0) & strKavichki
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
@@ -408,13 +408,13 @@ Private Sub cmdUpdate_ClickMenu(mnuIndex As Integer)
     Select Case mnuIndex
 
         Case 0
-            cmdString = Kavichki & strLink(cmbVersions.ListIndex, 0) & Kavichki
+            cmdString = strKavichki & strLink(cmbVersions.ListIndex, 0) & strKavichki
 
         Case 2
-            cmdString = Kavichki & strLink(cmbVersions.ListIndex, 2) & Kavichki
+            cmdString = strKavichki & strLink(cmbVersions.ListIndex, 2) & strKavichki
 
         Case 4
-            cmdString = Kavichki & strLink(cmbVersions.ListIndex, 4) & Kavichki
+            cmdString = strKavichki & strLink(cmbVersions.ListIndex, 4) & strKavichki
     End Select
 
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
@@ -432,7 +432,7 @@ Private Sub cmdUpdateFull_Click()
     Dim nRetShellEx As Boolean
     Dim cmdString   As String
 
-    cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 0) & Kavichki
+    cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 0) & strKavichki
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
@@ -451,13 +451,13 @@ Private Sub cmdUpdateFull_ClickMenu(mnuIndex As Integer)
     Select Case mnuIndex
 
         Case 0
-            cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 0) & Kavichki
+            cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 0) & strKavichki
 
         Case 2
-            cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 2) & Kavichki
+            cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 2) & strKavichki
 
         Case 4
-            cmdString = Kavichki & strLinkFull(cmbVersions.ListIndex, 4) & Kavichki
+            cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 4) & strKavichki
     End Select
 
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
@@ -562,7 +562,7 @@ Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
     Dim cmdString   As String
     Dim nRetShellEx As Boolean
 
-    cmdString = Kavichki & strUrl_MainWWWSite & Kavichki
+    cmdString = strKavichki & strUrl_MainWWWSite & strKavichki
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx

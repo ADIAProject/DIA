@@ -1486,7 +1486,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
 
                     strTemp_x = Split(arrTTip(Index), vbNewLine)
 
-                    For i_arr = LBound(strTemp_x) To UBound(strTemp_x)
+                    For i_arr = 0 To UBound(strTemp_x)
                         strTempLine_x = Split(strTemp_x(i_arr), " | ")
 
                         If LenB(Trim$(strTemp_x(i_arr))) Then
@@ -1494,7 +1494,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
 
                             ' Если данного пути нет в списке, то добавляем
                             If InStr(1, strPathDRPList, strDevPathShort, vbTextCompare) = 0 Then
-                                strPathDRPList = AppendStr(strPathDRPList, strDevPathShort, " ")
+                                AppendStr strPathDRPList, strDevPathShort, " "
                             End If
                         End If
 
@@ -1842,7 +1842,7 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOLD.Enabled = mbBlock
+    imgOkAttentionOld.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
@@ -1894,7 +1894,7 @@ Private Function CalculateUnknownDrivers() As Long
     Dim ii              As Long
     Dim lngCountUnknown As Long
 
-    For ii = LBound(arrHwidsLocal) To UBound(arrHwidsLocal)
+    For ii = 0 To UBound(arrHwidsLocal)
 
         If LenB(arrHwidsLocal(ii).DPsList) = 0 Then
 
@@ -1916,9 +1916,9 @@ End Function
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ChangeFrmMainCaption
 '! Description (Описание)  :   [Изменение Caption Формы]
-'! Parameters  (Переменные):   lngPercentage (Long)
+'! Parameters  (Переменные):   lngstrPercentage (Long)
 '!--------------------------------------------------------------------------------
-Private Sub ChangeFrmMainCaption(Optional ByVal lngPercentage As Long)
+Private Sub ChangeFrmMainCaption(Optional ByVal lngstrPercentage As Long)
 
     Dim strProgressValue As String
 
@@ -1933,9 +1933,9 @@ Private Sub ChangeFrmMainCaption(Optional ByVal lngPercentage As Long)
             strFrmMainCaptionTempDate = " (Date Build: "
     End Select
 
-    If lngPercentage Mod 999 Then
+    If lngstrPercentage Mod 999 Then
         If ctlProgressBar1.Visible Then
-            strProgressValue = (lngPercentage \ 10) & "% (" & ctlUcStatusBar1.PanelText(1) & ") - "
+            strProgressValue = (lngstrPercentage \ 10) & "% (" & ctlUcStatusBar1.PanelText(1) & ") - "
         End If
     End If
 
@@ -2028,7 +2028,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
                                 Set .PictureNormal = Nothing
-                                Set .PictureNormal = imgOkAttentionOLD.Picture
+                                Set .PictureNormal = imgOkAttentionOld.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
                             Else
                                 Set .PictureNormal = Nothing
@@ -2061,7 +2061,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
                             Set .PictureNormal = Nothing
-                            Set .PictureNormal = imgOkAttentionOLD.Picture
+                            Set .PictureNormal = imgOkAttentionOld.Picture
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
                         Else
                             Set .PictureNormal = Nothing
@@ -2197,8 +2197,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path64)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOSInfo.MousePointer = 0
-            lblOSInfo.ToolTipText = vbNullString
+            lblOsInfo.MousePointer = 0
+            lblOsInfo.ToolTipText = vbNullString
         End If
 
     Else
@@ -2209,8 +2209,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOSInfo.MousePointer = 0
-            lblOSInfo.ToolTipText = vbNullString
+            lblOsInfo.MousePointer = 0
+            lblOsInfo.ToolTipText = vbNullString
         End If
     End If
 
@@ -3061,10 +3061,10 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
         strLangPath = FileNameFromPath(arrOSList(tabN).PathLanguages)
         strRuntimes = FileNameFromPath(arrOSList(tabN).PathRuntimes)
         strExcludeFileName = arrOSList(tabN).ExcludeFileName
-        lngFileCount = UBound(strFileList_x) - LBound(strFileList_x) + 1
+        lngFileCount = UBound(strFileList_x) + 1
         pbProgressBar.Refresh
 
-        For ii = LBound(strFileList_x) To UBound(strFileList_x)
+        For ii = 0 To UBound(strFileList_x)
             strPackFileName = Replace$(strFileList_x(ii).FullPath, BackslashAdd2Path(strDrpPath), vbNullString, , , vbTextCompare)
             If mbDebugStandart Then DebugMode "====================================================================================================" & vbNewLine & _
                       str2VbTab & "CreateButtonsOnSSTab-Work with File: " & strPackFileName
@@ -3511,8 +3511,7 @@ Private Sub DeleteUnUsedBase()
             strFileListTXT_x = SearchFilesInRoot(strPathDevDB, "*DP*.txt;*DP*.ini;*DP*.hwid;*DevDBVersions*.ini", False, False)
 
             ' Проверка на существование БД
-            For ii = LBound(strFileListDRP_x) To UBound(strFileListDRP_x)
-                'strDRPFilename = FileNameFromPath(strFileListDRP_x(0, ii))
+            For ii = 0 To UBound(strFileListDRP_x)
                 strDRPFilename = strFileListDRP_x(ii).Name
 
                 If CheckExistDB(strPathDevDB, strDRPFilename) Then
@@ -3526,7 +3525,7 @@ Private Sub DeleteUnUsedBase()
 
                     strFileNameDBHwid = Replace$(strFileNameDB, ".txt", ".hwid", , , vbTextCompare)
                     strFileNameDBIni = Replace$(strFileNameDB, ".txt", ".ini", , , vbTextCompare)
-                    strFileListDBExists = AppendStr(strFileListDBExists, strFileNameDB & vbTab & strFileNameDBHwid, vbTab)
+                    AppendStr strFileListDBExists, strFileNameDB & vbTab & strFileNameDBHwid, vbTab
 
                     If PathExists(strFileNameDBIni) Then
                         strFileListDBExists = IIf(LenB(strFileListDBExists), strFileListDBExists & vbTab, vbNullString) & strFileNameDBIni
@@ -3539,7 +3538,7 @@ Private Sub DeleteUnUsedBase()
             strFileListDBExists = IIf(LenB(strFileListDBExists), strFileListDBExists & vbTab, vbNullString) & strFileDBVerIniPath
 
             'Строим список удаляемых файлов для несуществующих пакетов
-            For ii = LBound(strFileListTXT_x) To UBound(strFileListTXT_x)
+            For ii = 0 To UBound(strFileListTXT_x)
 
                 If InStr(1, strFileListDBExists, strFileListTXT_x(ii).FullPath, vbTextCompare) = 0 Then
                     If PathExists(strFileListTXT_x(ii).FullPath) Then
@@ -3560,7 +3559,7 @@ Private Sub DeleteUnUsedBase()
                 strFileListTXT = Split(strFileListDBNotExists, vbNewLine)
 
                 'удаление файлов для несуществующих пакетов
-                For ii = LBound(strFileListTXT) To UBound(strFileListTXT)
+                For ii = 0 To UBound(strFileListTXT)
                     strFileName2Del = PathCollect(strFileListTXT(ii))
 
                     If PathExists(strFileName2Del) Then
@@ -3816,7 +3815,7 @@ Private Function FindAndInstallPanel(ByVal strArcDRPPath As String, ByVal strIni
                 strTemp = Replace$(strTemp, "%DPSROOT%\", strDPSROOT, , , vbTextCompare)
 
                 ' Если в пути есть переменные окружения, то заменяем их на нормальный путь
-                If InStr(strTemp, Percentage) Then
+                If InStr(strTemp, strPercentage) Then
                     strTemp = GetEnviron(strTemp, True)
                 End If
 
@@ -3861,7 +3860,7 @@ NextTag:
                         strTemp = Replace$(strTemp, "%SystemDrive%\devcon.exe", strDevConExePath, , , vbTextCompare)
 
                         ' Если в пути есть переменные окружения, то заменяем их на нормальный путь
-                        If InStr(strTemp, Percentage) Then
+                        If InStr(strTemp, strPercentage) Then
                             strTemp = GetEnviron(strTemp, True)
                         End If
 
@@ -3965,7 +3964,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim i                        As Long
     Dim ii                       As Long
     Dim iii                      As Long
-    Dim lngCnt                   As Long
     Dim strFind                  As String
     Dim strFindMachID            As String
     Dim strFindCompatIDTemp      As String
@@ -4055,7 +4053,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
             strFileFullTextHwid = FileReadData(strPathFileNameDevDBHwid)
             strFile_x = Split(strFileFullTextHwid, vbNewLine)
             
-            lngCnt = UBound(arrHwidsLocal)
             miMaxCountArr = 100
 
             ReDim strTTipLocalArr(12, miMaxCountArr)
@@ -4070,7 +4067,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
             lngMaxLengthRow13 = lngTableHwidHeader13
             maxSizeRowAllLine = 0
 
-            For i = 0 To lngCnt
+            For i = 0 To UBound(arrHwidsLocal)
                 strFind = arrHwidsLocal(i).HWIDCutting
                 'Debug.Print strFind
                 strFindCompatIDTemp = arrHwidsLocal(i).HWIDCompat
@@ -4115,7 +4112,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
                         strFind = vbNullString
 
-                        For iii = LBound(strFindCompatID_x) To UBound(strFindCompatID_x)
+                        For iii = 0 To UBound(strFindCompatID_x)
 
                             'Глубина поиска HWID
                             If iii > lngCompatiblesHWIDCount Then
@@ -4183,14 +4180,14 @@ ExitFromForNext_iii:
                         ' Если драйвер несовместим с текущей ОС (вкладкой), то пропускаем его (анализ имени секции manufactured)
                         If Not CompatibleDriver4OS(strSection, strPackFileName, strDevPath, strSectionUnsupported) Then
                             If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: !!! SKIP. Driver is not compatible for this OS - IniSection: " & strSection & " Inf: " & strDevPath & strDevInf
-                            GoTo NextlngMatchesCount
+                            GoTo NextLngMatchesCount
                         End If
 
                         strDevID = strResultByTab_x(0)
                         
                         If StrComp(strDevID, strFind, vbBinaryCompare) <> 0 Then
                             If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Seeking HWID included in found HWID from database: HWID=" & strDevID
-                            GoTo NextlngMatchesCount
+                            GoTo NextLngMatchesCount
                         End If
                         
                         strDevInf = FileNameFromPath(strDevPath)
@@ -4208,7 +4205,7 @@ ExitFromForNext_iii:
 
                                 If lngDriverScore > lngDriverScorePrev Then
                                     If mbDebugStandart Then DebugMode str7VbTab & ii & " FindHwidInBaseNew: ***Driver is WORSE than found previously: ScoredPrev=" & lngDriverScorePrev
-                                    GoTo NextlngMatchesCount
+                                    GoTo NextLngMatchesCount
                                 Else
                                     arrHwidsLocal(i).DRVScore = lngDriverScore
                                     If mbDebugStandart Then DebugMode str7VbTab & ii & " FindHwidInBaseNew: ***Added! Driver is BETTER OR EQUAL than found previously: ScoredPrev=" & lngDriverScorePrev
@@ -4278,7 +4275,7 @@ ExitFromForNext_iii:
                         arrHwidsLocal(i).InfSection = strSection
                         strDevIDOrig = ParseDoubleHwid(arrHwidsLocal(i).HWIDOrig)
                         ' Для этого драйвера есть совпадение в пакете драйверов. Заносим признак и имя пакета
-                        arrHwidsLocal(i).DPsList = AppendStr(arrHwidsLocal(i).DPsList, strPackFileName, " | ")
+                        AppendStr arrHwidsLocal(i).DPsList, strPackFileName, " | "
 
                         ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
                         If lngTTipLocalArrCount = miMaxCountArr Then
@@ -4361,7 +4358,7 @@ ExitFromForNext_iii:
                             lngMaxLengthRow13 = Len(strSection)
                         End If
 
-NextlngMatchesCount:
+NextLngMatchesCount:
 
                     Next ii
 
@@ -4380,7 +4377,7 @@ NextStrFind:
 
                 ReDim Preserve strTTipLocalArr(12, lngTTipLocalArrCount - 1)
 
-                For i = LBound(strTTipLocalArr, 2) To UBound(strTTipLocalArr, 2)
+                For i = 0 To UBound(strTTipLocalArr, 2)
                     'strDevID
                     strTemp = strTTipLocalArr(0, i)
                     strTTipLocalArr(0, i) = strTemp & Space$(lngMaxLengthRow1 - Len(strTemp) + 1) & "| "
@@ -4411,7 +4408,7 @@ NextStrFind:
 
                     If Not R Then
                         objHashOutput.Item(strLineAll) = "+"
-                        strAll = AppendStr(strAll, strLineAll, vbNewLine)
+                        AppendStr strAll, strLineAll, vbNewLine
                     End If
 
                     ' Заполняем массив для удаления драйверов по HWID
@@ -4420,7 +4417,7 @@ NextStrFind:
 
                     If Not R2 Then
                         objHashOutput2.Item(strHwidToDelLine) = "+"
-                        strHwidToDel = AppendStr(strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(6, i), ";")
+                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(6, i), ";"
                     End If
 
                     ' Подсчитываем максимальную длину строки в подсказке
@@ -4905,7 +4902,7 @@ Private Sub Form_Load()
     ' Начальные позиции некоторых элементов управления
     frTabPanel.Top = 3100
     frTabPanel.Left = 75
-    lblOSInfo.Left = 75
+    lblOsInfo.Left = 75
 
     With acmdPackFiles(0)
         .ButtonStyle = lngStatusBtnStyle
@@ -4979,7 +4976,7 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    If mbDebugStandart Then DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & _
+    If mbDebugStandart Then DebugMode "OsInfo: " & lblOsInfo.Caption & vbNewLine & _
               "PCModel: " & lblPCInfo.Caption
     ' Выставляем шрифт
     FontCharsetChange
@@ -4999,7 +4996,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -5011,13 +5008,13 @@ Private Sub Form_Load()
 
     If mbIsWin64 Then
         If PathExists(PathCollect("Tools\SIV\SIV64X.exe")) Then
-            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
         End If
 
     Else
 
         If PathExists(PathCollect("Tools\SIV\SIV32X.exe")) Then
-            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
         End If
     End If
 
@@ -5241,11 +5238,11 @@ Public Sub Form_Resize()
         imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
         imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
         imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
+        imgOkAttentionOld.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
+        imgNo.Left = imgOkAttentionOld.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
-        lblOSInfo.Width = frInfo.Width - 200
+        lblOsInfo.Width = frInfo.Width - 200
         lblPCInfo.Width = frInfo.Width - 200
         cmdViewAllDevice.Width = optRezim_Upd.Left + optRezim_Upd.Width - cmdViewAllDevice.Left
         ' Удаление иконки в трее если есть
@@ -5461,7 +5458,7 @@ Private Sub GroupInstallDP()
                 strPathDRPList = vbNullString
                 strTemp_x = Split(arrTTip(arrCheckDP(0, i)), vbNewLine)
 
-                For i_arr = LBound(strTemp_x) To UBound(strTemp_x)
+                For i_arr = 0 To UBound(strTemp_x)
                     strTempLine_x = Split(strTemp_x(i_arr), " | ")
 
                     If LenB(Trim$(strTemp_x(i_arr))) Then
@@ -5469,7 +5466,7 @@ Private Sub GroupInstallDP()
 
                         ' Если данного пути нет в списке, то добавляем
                         If InStr(1, strPathDRPList, strDevPathShort, vbTextCompare) = 0 Then
-                            strPathDRPList = AppendStr(strPathDRPList, strDevPathShort, " ")
+                            AppendStr strPathDRPList, strDevPathShort, " "
                         End If
                     End If
 
@@ -5798,9 +5795,9 @@ Private Sub lblOsInfoChange()
         str64bit = " x86 Edition"
     End If
 
-    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOSInfo.Caption)
+    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOsInfo.Caption)
     'lblOsInfo.Caption = lblOsInfoCaption & " " & OSInfoWMI(0) & " " & " (" & OSInfoWMI(4) & "." & OSInfoWMI(1) & " " & OSInfoWMI(2) & ")" & str64bit
-    lblOSInfo.Caption = lblOsInfoCaption & " " & OSInfo.Name & " " & " (" & OSInfo.VerFullwBuild & " " & OSInfo.ServicePack & ")" & str64bit
+    lblOsInfo.Caption = lblOsInfoCaption & " " & OSInfo.Name & " " & " (" & OSInfo.VerFullwBuild & " " & OSInfo.ServicePack & ")" & str64bit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6039,7 +6036,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -6131,57 +6128,57 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' изменяем шрифт
     FontCharsetChange
     'Frame
-    frRezim.Caption = LocaliseString(StrPathFile, strFormName, "frRezim", frRezim.Caption)
-    frDescriptionIco.Caption = LocaliseString(StrPathFile, strFormName, "frDescriptionIco", frDescriptionIco.Caption)
-    frRunChecked.Caption = LocaliseString(StrPathFile, strFormName, "frRunChecked", frRunChecked.Caption)
-    frCheck.Caption = LocaliseString(StrPathFile, strFormName, "frCheck", frCheck.Caption)
-    frInfo.Caption = LocaliseString(StrPathFile, strFormName, "frInfo", frInfo.Caption)
+    frRezim.Caption = LocaliseString(strPathFile, strFormName, "frRezim", frRezim.Caption)
+    frDescriptionIco.Caption = LocaliseString(strPathFile, strFormName, "frDescriptionIco", frDescriptionIco.Caption)
+    frRunChecked.Caption = LocaliseString(strPathFile, strFormName, "frRunChecked", frRunChecked.Caption)
+    frCheck.Caption = LocaliseString(strPathFile, strFormName, "frCheck", frCheck.Caption)
+    frInfo.Caption = LocaliseString(strPathFile, strFormName, "frInfo", frInfo.Caption)
     ' Описание режимов
-    optRezim_Intellect.Caption = LocaliseString(StrPathFile, strFormName, "RezimIntellect", optRezim_Intellect.Caption)
-    optRezim_Ust.Caption = LocaliseString(StrPathFile, strFormName, "RezimUst", optRezim_Ust.Caption)
-    optRezim_Upd.Caption = LocaliseString(StrPathFile, strFormName, "RezimUpd", optRezim_Upd.Caption)
+    optRezim_Intellect.Caption = LocaliseString(strPathFile, strFormName, "RezimIntellect", optRezim_Intellect.Caption)
+    optRezim_Ust.Caption = LocaliseString(strPathFile, strFormName, "RezimUst", optRezim_Ust.Caption)
+    optRezim_Upd.Caption = LocaliseString(strPathFile, strFormName, "RezimUpd", optRezim_Upd.Caption)
     ' Меню
     '  Вызов основной функции для вывода Caption меню с поддержкой Unicode
-    Call LocaliseMenu(StrPathFile)
+    Call LocaliseMenu(strPathFile)
     'Кнопки
-    cmdRunTask.Caption = LocaliseString(StrPathFile, strFormName, "cmdRunTask", cmdRunTask.Caption)
-    cmdCheck.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheck", cmdCheck.Caption)
-    cmdBreakUpdateDB.Caption = LocaliseString(StrPathFile, strFormName, "cmdBreakUpdateDB", cmdBreakUpdateDB.Caption)
-    cmdViewAllDevice.Caption = LocaliseString(StrPathFile, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
+    cmdRunTask.Caption = LocaliseString(strPathFile, strFormName, "cmdRunTask", cmdRunTask.Caption)
+    cmdCheck.Caption = LocaliseString(strPathFile, strFormName, "cmdCheck", cmdCheck.Caption)
+    cmdBreakUpdateDB.Caption = LocaliseString(strPathFile, strFormName, "cmdBreakUpdateDB", cmdBreakUpdateDB.Caption)
+    cmdViewAllDevice.Caption = LocaliseString(strPathFile, strFormName, "cmdViewAllDevice", cmdViewAllDevice.Caption)
     ' Лейблы
-    lblPCInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblPCInfo", lblPCInfo.Caption) & " " & strCompModel
-    lblNoDP4Mode.Caption = LocaliseString(StrPathFile, strFormName, "lblNoDP4Mode", lblNoDP4Mode.Caption)
-    lblNoDPInProgram.Caption = LocaliseString(StrPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
+    lblPCInfo.Caption = LocaliseString(strPathFile, strFormName, "lblPCInfo", lblPCInfo.Caption) & " " & strCompModel
+    lblNoDP4Mode.Caption = LocaliseString(strPathFile, strFormName, "lblNoDP4Mode", lblNoDP4Mode.Caption)
+    lblNoDPInProgram.Caption = LocaliseString(strPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
     ' Другие параметры
-    strTableHwidHeader1 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader1", "-HWID-")
-    strTableHwidHeader2 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader2", "-Путь-")
-    strTableHwidHeader3 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader3", "-Файл-")
-    strTableHwidHeader4 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
-    strTableHwidHeader5 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
-    strTableHwidHeader6 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader6", "-Статус-")
-    strTableHwidHeader7 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader7", "-Наименование устройства-")
-    strTableHwidHeader8 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader8", "-Пакет драйверов-")
-    strTableHwidHeader9 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader9", "-!-")
-    strTableHwidHeader10 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader10", "-Производитель-")
-    strTableHwidHeader11 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader11", "-Совместимый HWID-")
-    strTableHwidHeader12 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader12", "-Код устройства-")
-    strTableHwidHeader13 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader13", "-Секция-")
-    strTableHwidHeader14 = LocaliseString(StrPathFile, strFormName, "TableHwidHeader14", "Найден в пакете")
-    strTTipTextTitle = LocaliseString(StrPathFile, strFormName, "ToolTipTextTitle", "Файл пакета драйверов:")
-    strTTipTextFileSize = LocaliseString(StrPathFile, strFormName, "ToolTipTextFileSize", "Размер файла:")
-    strTTipTextClassDRV = LocaliseString(StrPathFile, strFormName, "ToolTipTextClassDRV", "Класс драйверов:")
-    strTTipTextDrv2Install = LocaliseString(StrPathFile, strFormName, "ToolTipTextDrv2Install", "ДРАЙВЕРА ДОСТУПНЫЕ ДЛЯ УСТАНОВКИ:")
-    strTTipTextDrv4UnsupOS = LocaliseString(StrPathFile, strFormName, "ToolTipTextDrv4UnsupportedOS", "ВНИМАНИЕ! ДРАЙВЕРА ДЛЯ ДРУГОЙ ОС." & vbNewLine & "ОБАБОТКА ВКЛАДКИ ВЫКЛЮЧЕНА В НАСТРОЙКАХ")
-    strTTipTextTitleStatus = LocaliseString(StrPathFile, strFormName, "ToolTipTextTitleStatus", "Подробное описание:")
-    strSSTabTypeDPTab1 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab1", "Все драйверпаки")
-    strSSTabTypeDPTab2 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab2", "Доступно обновление")
-    strSSTabTypeDPTab3 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab3", "Неустановленные")
-    strSSTabTypeDPTab4 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab4", "Установленные")
-    strSSTabTypeDPTab5 = LocaliseString(StrPathFile, strFormName, "SSTabTypeDPTab5", "БД не создана")
+    strTableHwidHeader1 = LocaliseString(strPathFile, strFormName, "TableHwidHeader1", "-HWID-")
+    strTableHwidHeader2 = LocaliseString(strPathFile, strFormName, "TableHwidHeader2", "-Путь-")
+    strTableHwidHeader3 = LocaliseString(strPathFile, strFormName, "TableHwidHeader3", "-Файл-")
+    strTableHwidHeader4 = LocaliseString(strPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
+    strTableHwidHeader5 = LocaliseString(strPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
+    strTableHwidHeader6 = LocaliseString(strPathFile, strFormName, "TableHwidHeader6", "-Статус-")
+    strTableHwidHeader7 = LocaliseString(strPathFile, strFormName, "TableHwidHeader7", "-Наименование устройства-")
+    strTableHwidHeader8 = LocaliseString(strPathFile, strFormName, "TableHwidHeader8", "-Пакет драйверов-")
+    strTableHwidHeader9 = LocaliseString(strPathFile, strFormName, "TableHwidHeader9", "-!-")
+    strTableHwidHeader10 = LocaliseString(strPathFile, strFormName, "TableHwidHeader10", "-Производитель-")
+    strTableHwidHeader11 = LocaliseString(strPathFile, strFormName, "TableHwidHeader11", "-Совместимый HWID-")
+    strTableHwidHeader12 = LocaliseString(strPathFile, strFormName, "TableHwidHeader12", "-Код устройства-")
+    strTableHwidHeader13 = LocaliseString(strPathFile, strFormName, "TableHwidHeader13", "-Секция-")
+    strTableHwidHeader14 = LocaliseString(strPathFile, strFormName, "TableHwidHeader14", "Найден в пакете")
+    strTTipTextTitle = LocaliseString(strPathFile, strFormName, "ToolTipTextTitle", "Файл пакета драйверов:")
+    strTTipTextFileSize = LocaliseString(strPathFile, strFormName, "ToolTipTextFileSize", "Размер файла:")
+    strTTipTextClassDRV = LocaliseString(strPathFile, strFormName, "ToolTipTextClassDRV", "Класс драйверов:")
+    strTTipTextDrv2Install = LocaliseString(strPathFile, strFormName, "ToolTipTextDrv2Install", "ДРАЙВЕРА ДОСТУПНЫЕ ДЛЯ УСТАНОВКИ:")
+    strTTipTextDrv4UnsupOS = LocaliseString(strPathFile, strFormName, "ToolTipTextDrv4UnsupportedOS", "ВНИМАНИЕ! ДРАЙВЕРА ДЛЯ ДРУГОЙ ОС." & vbNewLine & "ОБАБОТКА ВКЛАДКИ ВЫКЛЮЧЕНА В НАСТРОЙКАХ")
+    strTTipTextTitleStatus = LocaliseString(strPathFile, strFormName, "ToolTipTextTitleStatus", "Подробное описание:")
+    strSSTabTypeDPTab1 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab1", "Все драйверпаки")
+    strSSTabTypeDPTab2 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab2", "Доступно обновление")
+    strSSTabTypeDPTab3 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab3", "Неустановленные")
+    strSSTabTypeDPTab4 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab4", "Установленные")
+    strSSTabTypeDPTab5 = LocaliseString(strPathFile, strFormName, "SSTabTypeDPTab5", "БД не создана")
     ' Прописываем как константу длину названия колонок
     lngTableHwidHeader1 = Len(strTableHwidHeader1)
     lngTableHwidHeader2 = Len(strTableHwidHeader2)
@@ -6235,7 +6232,7 @@ End Sub
 '! Description (Описание)  :   [Загрузка текста меню с поддеркой Unicode]
 '! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub LocaliseMenu(ByVal StrPathFile As String)
+Private Sub LocaliseMenu(ByVal strPathFile As String)
     ' Меню должно быть видимым, так как для невидимого не применяется изменение свойства
     ' Поэтому просто изменяем у них свойство caption, и делаем меню неактивным
     mnuContextMenu.Caption = "Drivers"
@@ -6256,13 +6253,13 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 5    mnuSep1 - "-"
 ' 6    mnuLoadOtherPC - "Загрузить информацию другого ПК (Эмуляция работы)"
 ' 7    mnuSaveInfoPC - "Сохранить информацию об устройствах для эмуляции на другом ПК"
-    SetUniMenu -1, 0, -1, mnuRezim, LocaliseString(StrPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
-    SetUniMenu 0, 0, -1, mnuRezimBaseDrvUpdateALL, LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
-    SetUniMenu 0, 1, -1, mnuRezimBaseDrvUpdateNew, LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
-    SetUniMenu 0, 3, -1, mnuRezimBaseDrvClean, LocaliseString(StrPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
-    SetUniMenu 0, 4, -1, mnuDelDuplicateOldDP, LocaliseString(StrPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
-    SetUniMenu 0, 6, -1, mnuLoadOtherPC, LocaliseString(StrPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
-    SetUniMenu 0, 7, -1, mnuSaveInfoPC, LocaliseString(StrPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
+    SetUniMenu -1, 0, -1, mnuRezim, LocaliseString(strPathFile, strFormName, "mnuRezim", mnuRezim.Caption)
+    SetUniMenu 0, 0, -1, mnuRezimBaseDrvUpdateALL, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateALL", mnuRezimBaseDrvUpdateALL.Caption)
+    SetUniMenu 0, 1, -1, mnuRezimBaseDrvUpdateNew, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvUpdateNew", mnuRezimBaseDrvUpdateNew.Caption)
+    SetUniMenu 0, 3, -1, mnuRezimBaseDrvClean, LocaliseString(strPathFile, strFormName, "mnuRezimBaseDrvClean", mnuRezimBaseDrvClean.Caption)
+    SetUniMenu 0, 4, -1, mnuDelDuplicateOldDP, LocaliseString(strPathFile, strFormName, "mnuDelDuplicateOldDP", mnuDelDuplicateOldDP.Caption)
+    SetUniMenu 0, 6, -1, mnuLoadOtherPC, LocaliseString(strPathFile, strFormName, "mnuLoadOtherPC", mnuLoadOtherPC.Caption)
+    SetUniMenu 0, 7, -1, mnuSaveInfoPC, LocaliseString(strPathFile, strFormName, "mnuSaveInfoPC", mnuSaveInfoPC.Caption)
     
 '1  mnuService - "Сервис"
 ' 0    mnuShowHwidsTxt - "Показать HWIDs устройств компьютера (текстовый файл)"
@@ -6286,20 +6283,20 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 18   mnuViewDPInstLog - "Просмотреть DPinst.log"
 ' 19   mnuSep9 - "-"
 ' 20   mnuOptions - "Параметры" - Shortcut^O
-    SetUniMenu -1, 1, -1, mnuService, LocaliseString(StrPathFile, strFormName, "mnuService", mnuService.Caption)
-    SetUniMenu 1, 0, -1, mnuShowHwidsTxt, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
-    SetUniMenu 1, 1, -1, mnuShowHwidsXLS, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
-    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(StrPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption), , "F7"
-    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption), , "F6"
-    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(StrPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption), , "Shift+F7"
-    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption), , "F5"
-    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(StrPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption), , "Shift+F5"
-    SetUniMenu 1, 10, -1, mnuAutoInfoAfterDelDRV, LocaliseString(StrPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
-    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(StrPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption), , "F8"
-    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(StrPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption), , "F9"
-    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(StrPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption), , "F12"
-    SetUniMenu 1, 18, -1, mnuViewDPInstLog, LocaliseString(StrPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
-    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(StrPathFile, strFormName, "mnuOptions", mnuOptions.Caption), , "Ctrl+O"
+    SetUniMenu -1, 1, -1, mnuService, LocaliseString(strPathFile, strFormName, "mnuService", mnuService.Caption)
+    SetUniMenu 1, 0, -1, mnuShowHwidsTxt, LocaliseString(strPathFile, strFormName, "mnuShowHwidsTxt", mnuShowHwidsTxt.Caption)
+    SetUniMenu 1, 1, -1, mnuShowHwidsXLS, LocaliseString(strPathFile, strFormName, "mnuShowHwidsXLS", mnuShowHwidsXLS.Caption)
+    SetUniMenu 1, 3, -1, mnuShowHwidsAll, LocaliseString(strPathFile, strFormName, "mnuShowHwidsAll", mnuShowHwidsAll.Caption), , "F7"
+    SetUniMenu 1, 5, -1, mnuUpdateStatusAll, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusAll", mnuUpdateStatusAll.Caption), , "F6"
+    SetUniMenu 1, 6, -1, mnuUpdateStatusTab, LocaliseString(strPathFile, strFormName, "mnuUpdateStatusTab", mnuUpdateStatusTab.Caption), , "Shift+F7"
+    SetUniMenu 1, 8, -1, mnuReCollectHWID, LocaliseString(strPathFile, strFormName, "mnuReCollectHWID", mnuReCollectHWID.Caption), , "F5"
+    SetUniMenu 1, 9, -1, mnuReCollectHWIDTab, LocaliseString(strPathFile, strFormName, "mnuReCollectHWIDTab", mnuReCollectHWIDTab.Caption), , "Shift+F5"
+    SetUniMenu 1, 10, -1, mnuAutoInfoAfterDelDRV, LocaliseString(strPathFile, strFormName, "mnuAutoInfoAfterDelDRV", mnuAutoInfoAfterDelDRV.Caption)
+    SetUniMenu 1, 12, -1, mnuRunSilentMode, LocaliseString(strPathFile, strFormName, "mnuRunSilentMode", mnuRunSilentMode.Caption), , "F8"
+    SetUniMenu 1, 14, -1, mnuCreateRestorePoint, LocaliseString(strPathFile, strFormName, "mnuCreateRestorePoint", mnuCreateRestorePoint.Caption), , "F9"
+    SetUniMenu 1, 16, -1, mnuCreateBackUp, LocaliseString(strPathFile, strFormName, "mnuCreateBackUp", mnuCreateBackUp.Caption), , "F12"
+    SetUniMenu 1, 18, -1, mnuViewDPInstLog, LocaliseString(strPathFile, strFormName, "mnuViewDPInstLog", mnuViewDPInstLog.Caption)
+    SetUniMenu 1, 20, -1, mnuOptions, LocaliseString(strPathFile, strFormName, "mnuOptions", mnuOptions.Caption), , "Ctrl+O"
     
 '2  mnuMainUtils - "Утилиты"
 ' 0    mnuUtils_devmgmt - "Диспетчер устройств Windows" - Shortcut^{F1}
@@ -6310,13 +6307,13 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 5    mnuUtils_UnknownDevices - "Unknown Devices" - Shortcut^{F6}
 ' 6    mnuSep10 - "-"
 ' 7    mnuUtils - "" - Index   0 - Visible'False
-    SetUniMenu -1, 2, -1, mnuMainUtils, LocaliseString(StrPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
-    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(StrPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption), , "Ctrl+F1"
-    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(StrPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption), , "Ctrl+F2"
-    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(StrPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption), , "Ctrl+F3"
-    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(StrPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption), , "Ctrl+F4"
-    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(StrPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption), , "Ctrl+F5"
-    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(StrPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption), , "Ctrl+F6"
+    SetUniMenu -1, 2, -1, mnuMainUtils, LocaliseString(strPathFile, strFormName, "mnuMainUtils", mnuMainUtils.Caption)
+    SetUniMenu 2, 0, -1, mnuUtils_devmgmt, LocaliseString(strPathFile, strFormName, "mnuUtils_devmgmt", mnuUtils_devmgmt.Caption), , "Ctrl+F1"
+    SetUniMenu 2, 1, -1, mnuUtils_DevManView, LocaliseString(strPathFile, strFormName, "mnuUtils_DevManView", mnuUtils_DevManView.Caption), , "Ctrl+F2"
+    SetUniMenu 2, 2, -1, mnuUtils_DoubleDriver, LocaliseString(strPathFile, strFormName, "mnuUtils_DoubleDriver", mnuUtils_DoubleDriver.Caption), , "Ctrl+F3"
+    SetUniMenu 2, 3, -1, mnuUtils_SIV, LocaliseString(strPathFile, strFormName, "mnuUtils_SIV", mnuUtils_SIV.Caption), , "Ctrl+F4"
+    SetUniMenu 2, 4, -1, mnuUtils_UDI, LocaliseString(strPathFile, strFormName, "mnuUtils_UDI", mnuUtils_UDI.Caption), , "Ctrl+F5"
+    SetUniMenu 2, 5, -1, mnuUtils_UnknownDevices, LocaliseString(strPathFile, strFormName, "mnuUtils_UnknownDevices", mnuUtils_UnknownDevices.Caption), , "Ctrl+F6"
     
 '3  mnuMainAbout - "Справка"
 ' 0    mnuLinks - "Ссылки"
@@ -6335,26 +6332,26 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 13   mnuDonate - "Поблагодарить автора..."
 ' 14   mnuLicence - "Лицензионное соглашение..."
 ' 15   mnuAbout - "О программе..."
-    SetUniMenu -1, 3, -1, mnuMainAbout, LocaliseString(StrPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
-    SetUniMenu 3, 0, -1, mnuLinks, LocaliseString(StrPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
-    SetUniMenu 3, 1, -1, mnuHistory, LocaliseString(StrPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
-    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(StrPathFile, strFormName, "mnuHelp", mnuHelp.Caption), , "F1"
-    SetUniMenu 3, 4, -1, mnuHomePage1, LocaliseString(StrPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
-    SetUniMenu 3, 5, -1, mnuHomePage, LocaliseString(StrPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
-    SetUniMenu 3, 6, -1, mnuDriverPacks, LocaliseString(StrPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
-    SetUniMenu 3, 7, -1, mnuDriverPacksOnMySite, LocaliseString(StrPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
-    SetUniMenu 3, 9, -1, mnuCheckUpd, LocaliseString(StrPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
-    SetUniMenu 3, 11, -1, mnuModulesVersion, LocaliseString(StrPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
-    SetUniMenu 3, 13, -1, mnuDonate, LocaliseString(StrPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
-    SetUniMenu 3, 14, -1, mnuLicence, LocaliseString(StrPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
-    SetUniMenu 3, 15, -1, mnuAbout, LocaliseString(StrPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
+    SetUniMenu -1, 3, -1, mnuMainAbout, LocaliseString(strPathFile, strFormName, "mnuMainAbout", mnuMainAbout.Caption)
+    SetUniMenu 3, 0, -1, mnuLinks, LocaliseString(strPathFile, strFormName, "mnuLinks", mnuLinks.Caption)
+    SetUniMenu 3, 1, -1, mnuHistory, LocaliseString(strPathFile, strFormName, "mnuHistory", mnuHistory.Caption)
+    SetUniMenu 3, 2, -1, mnuHelp, LocaliseString(strPathFile, strFormName, "mnuHelp", mnuHelp.Caption), , "F1"
+    SetUniMenu 3, 4, -1, mnuHomePage1, LocaliseString(strPathFile, strFormName, "mnuHomePage1", mnuHomePage1.Caption)
+    SetUniMenu 3, 5, -1, mnuHomePage, LocaliseString(strPathFile, strFormName, "mnuHomePage", mnuHomePage.Caption)
+    SetUniMenu 3, 6, -1, mnuDriverPacks, LocaliseString(strPathFile, strFormName, "mnuDriverPacks", mnuDriverPacks.Caption)
+    SetUniMenu 3, 7, -1, mnuDriverPacksOnMySite, LocaliseString(strPathFile, strFormName, "mnuDriverPacksOnMySite", mnuDriverPacksOnMySite.Caption)
+    SetUniMenu 3, 9, -1, mnuCheckUpd, LocaliseString(strPathFile, strFormName, "mnuCheckUpd", mnuCheckUpd.Caption)
+    SetUniMenu 3, 11, -1, mnuModulesVersion, LocaliseString(strPathFile, strFormName, "mnuModulesVersion", mnuModulesVersion.Caption)
+    SetUniMenu 3, 13, -1, mnuDonate, LocaliseString(strPathFile, strFormName, "mnuDonate", mnuDonate.Caption)
+    SetUniMenu 3, 14, -1, mnuLicence, LocaliseString(strPathFile, strFormName, "mnuLicence", mnuLicence.Caption)
+    SetUniMenu 3, 15, -1, mnuAbout, LocaliseString(strPathFile, strFormName, "mnuAbout", mnuAbout.Caption)
     
 '4  mnuMainLang - "Язык"
 ' 0    mnuLangStart - "Использовать выбранный язык при запуске (отмена автовыбора)"
 ' 1    mnuSep15 - "-"
 ' 2    mnuLang - "" - Index0 - Visible'False
-    SetUniMenu -1, 4, -1, mnuMainLang, LocaliseString(StrPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
-    SetUniMenu 4, 0, -1, mnuLangStart, LocaliseString(StrPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
+    SetUniMenu -1, 4, -1, mnuMainLang, LocaliseString(strPathFile, strFormName, "mnuMainLang", mnuMainLang.Caption)
+    SetUniMenu 4, 0, -1, mnuLangStart, LocaliseString(strPathFile, strFormName, "mnuLangStart", mnuLangStart.Caption)
     
 '5  mnuContextMenu - "Контекстное меню"
 ' 0    mnuContextXLS - "Открыть файл базы данных в программе Excel"
@@ -6378,21 +6375,21 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 '  0          mnuContextCopyHWIDDesc - "Список доступных HWID" -    Enabled'False
 '  1          mnuContextSep8 - "-"
 '  2          mnuContextCopyHWID2Clipboard - "Список устройств" -    Index0 -    Visible'False
-    SetUniMenu 5, 0, -1, mnuContextXLS, LocaliseString(StrPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
-    SetUniMenu 5, 1, -1, mnuContextTxt, LocaliseString(StrPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
-    SetUniMenu 5, 3, -1, mnuContextToolTip, LocaliseString(StrPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
-    SetUniMenu 5, 5, -1, mnuContextUpdStatus, LocaliseString(StrPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
-    SetUniMenu 5, 7, -1, mnuContextEditDPName, LocaliseString(StrPathFile, strFormName, "mnuContextEditDPName", mnuContextEditDPName.Caption)
-    SetUniMenu 5, 9, -1, mnuContextTestDRP, LocaliseString(StrPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
-    SetUniMenu 5, 11, -1, mnuContextDeleteDRP, LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
-    SetUniMenu 5, 13, -1, mnuContextDeleteDevIDs, LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
-    SetUniMenu 5, 13, 0, mnuContextDeleteDevIDDesc, LocaliseString(StrPathFile, strFormName, "mnuContextDeleteDevIDDesc", mnuContextDeleteDevIDDesc.Caption)
-    SetUniMenu 5, 14, -1, mnuContextCopyHWIDs, LocaliseString(StrPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
-    SetUniMenu 5, 14, 0, mnuContextCopyHWIDDesc, LocaliseString(StrPathFile, strFormName, "mnuContextCopyHWIDDesc", mnuContextCopyHWIDDesc.Caption)
+    SetUniMenu 5, 0, -1, mnuContextXLS, LocaliseString(strPathFile, strFormName, "mnuContextXLS", mnuContextXLS.Caption)
+    SetUniMenu 5, 1, -1, mnuContextTxt, LocaliseString(strPathFile, strFormName, "mnuContextTxt", mnuContextTxt.Caption)
+    SetUniMenu 5, 3, -1, mnuContextToolTip, LocaliseString(strPathFile, strFormName, "mnuContextToolTip", mnuContextToolTip.Caption)
+    SetUniMenu 5, 5, -1, mnuContextUpdStatus, LocaliseString(strPathFile, strFormName, "mnuContextUpdStatus", mnuContextUpdStatus.Caption)
+    SetUniMenu 5, 7, -1, mnuContextEditDPName, LocaliseString(strPathFile, strFormName, "mnuContextEditDPName", mnuContextEditDPName.Caption)
+    SetUniMenu 5, 9, -1, mnuContextTestDRP, LocaliseString(strPathFile, strFormName, "mnuContextTestDRP", mnuContextTestDRP.Caption)
+    SetUniMenu 5, 11, -1, mnuContextDeleteDRP, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDRP", mnuContextDeleteDRP.Caption)
+    SetUniMenu 5, 13, -1, mnuContextDeleteDevIDs, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDs", mnuContextDeleteDevIDs.Caption)
+    SetUniMenu 5, 13, 0, mnuContextDeleteDevIDDesc, LocaliseString(strPathFile, strFormName, "mnuContextDeleteDevIDDesc", mnuContextDeleteDevIDDesc.Caption)
+    SetUniMenu 5, 14, -1, mnuContextCopyHWIDs, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDs", mnuContextCopyHWIDs.Caption)
+    SetUniMenu 5, 14, 0, mnuContextCopyHWIDDesc, LocaliseString(strPathFile, strFormName, "mnuContextCopyHWIDDesc", mnuContextCopyHWIDDesc.Caption)
 
 '6  mnuContextMenu2 - "Контекстное меню2"
 ' 0    mnuContextLegendIco - "Просмотреть описание всех обозначений"
-    SetUniMenu 6, 0, -1, mnuContextLegendIco, LocaliseString(StrPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
+    SetUniMenu 6, 0, -1, mnuContextLegendIco, LocaliseString(strPathFile, strFormName, "mnuContextLegendIco", mnuContextLegendIco.Caption)
     
 '7  mnuContextMenu3 - "Контекстное меню3"
 ' 0    mnuContextInstallGroupDP - "Обычная установка" - Index0
@@ -6401,10 +6398,10 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 3    mnuContextInstallGroupDP - "-" - Index3
 ' 4    mnuContextInstallGroupDP - "Распаковать в каталог - Все подобранные драйвера" - Index4
 ' 5    mnuContextInstallGroupDP - "Распаковать в каталог - Выбрать драйвера..." - Index5
-    SetUniMenu 7, 0, -1, mnuContextInstallGroupDP(0), LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstallGroupDP(0).Caption)
-    SetUniMenu 7, 2, -1, mnuContextInstallGroupDP(2), LocaliseString(StrPathFile, strFormName, "mnuContextInstall2", mnuContextInstallGroupDP(2).Caption)
-    SetUniMenu 7, 4, -1, mnuContextInstallGroupDP(4), LocaliseString(StrPathFile, strFormName, "mnuContextInstall3", mnuContextInstallGroupDP(4).Caption)
-    SetUniMenu 7, 5, -1, mnuContextInstallGroupDP(5), LocaliseString(StrPathFile, strFormName, "mnuContextInstall4", mnuContextInstallGroupDP(5).Caption)
+    SetUniMenu 7, 0, -1, mnuContextInstallGroupDP(0), LocaliseString(strPathFile, strFormName, "mnuContextInstall1", mnuContextInstallGroupDP(0).Caption)
+    SetUniMenu 7, 2, -1, mnuContextInstallGroupDP(2), LocaliseString(strPathFile, strFormName, "mnuContextInstall2", mnuContextInstallGroupDP(2).Caption)
+    SetUniMenu 7, 4, -1, mnuContextInstallGroupDP(4), LocaliseString(strPathFile, strFormName, "mnuContextInstall3", mnuContextInstallGroupDP(4).Caption)
+    SetUniMenu 7, 5, -1, mnuContextInstallGroupDP(5), LocaliseString(strPathFile, strFormName, "mnuContextInstall4", mnuContextInstallGroupDP(5).Caption)
 '8  mnuContextMenu4 - "Контекстное меню3"
 ' 0    mnuContextInstallSingleDP - "Обычная установка" - Index0
 ' 1    mnuContextInstallSingleDP - "-" - Index1
@@ -6412,10 +6409,10 @@ Private Sub LocaliseMenu(ByVal StrPathFile As String)
 ' 3    mnuContextInstallSingleDP - "-" - Index3
 ' 4    mnuContextInstallSingleDP - "Распаковать в каталог - Все подобранные драйвера" - Index4
 ' 5    mnuContextInstallSingleDP - "Распаковать в каталог - Выбрать драйвера..." - Index5    SetUniMenu 8, 0, -1, mnuContextInstall(0), LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstall(0).Caption)
-    SetUniMenu 8, 0, -1, mnuContextInstallSingleDP(0), LocaliseString(StrPathFile, strFormName, "mnuContextInstall1", mnuContextInstallSingleDP(0).Caption)
-    SetUniMenu 8, 2, -1, mnuContextInstallSingleDP(2), LocaliseString(StrPathFile, strFormName, "mnuContextInstall2", mnuContextInstallSingleDP(2).Caption)
-    SetUniMenu 8, 4, -1, mnuContextInstallSingleDP(4), LocaliseString(StrPathFile, strFormName, "mnuContextInstall3", mnuContextInstallSingleDP(4).Caption)
-    SetUniMenu 8, 5, -1, mnuContextInstallSingleDP(5), LocaliseString(StrPathFile, strFormName, "mnuContextInstall4", mnuContextInstallSingleDP(5).Caption)
+    SetUniMenu 8, 0, -1, mnuContextInstallSingleDP(0), LocaliseString(strPathFile, strFormName, "mnuContextInstall1", mnuContextInstallSingleDP(0).Caption)
+    SetUniMenu 8, 2, -1, mnuContextInstallSingleDP(2), LocaliseString(strPathFile, strFormName, "mnuContextInstall2", mnuContextInstallSingleDP(2).Caption)
+    SetUniMenu 8, 4, -1, mnuContextInstallSingleDP(4), LocaliseString(strPathFile, strFormName, "mnuContextInstall3", mnuContextInstallSingleDP(4).Caption)
+    SetUniMenu 8, 5, -1, mnuContextInstallSingleDP(5), LocaliseString(strPathFile, strFormName, "mnuContextInstall4", mnuContextInstallSingleDP(5).Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6649,7 +6646,7 @@ Private Sub mnuContextTestDRP_Click()
 
     strPackFileName = acmdPackFiles(lngCurrentBtnIndex).Tag
     strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
-    cmdString = Kavichki & strArh7zExePATH & Kavichki & " t " & Kavichki & strPathDRP & strPackFileName & Kavichki & " -r"
+    cmdString = strKavichki & strArh7zExePATH & strKavichki & " t " & strKavichki & strPathDRP & strPackFileName & strKavichki & " -r"
     ChangeStatusTextAndDebug strMessages(109) & " " & strPackFileName
     BlockControl False
 
@@ -6694,7 +6691,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextTxt_Click()
-    RunUtilsShell Kavichki & strCurSelButtonPath & Kavichki, False
+    RunUtilsShell strKavichki & strCurSelButtonPath & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6778,7 +6775,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuDriverPacks_Click()
-    RunUtilsShell Kavichki & "http://driverpacks.net/driverpacks" & Kavichki, False
+    RunUtilsShell strKavichki & "http://driverpacks.net/driverpacks" & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6787,7 +6784,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuDriverPacksOnMySite_Click()
-    RunUtilsShell Kavichki & "http://adia-project.net/forum/index.php?topic=789.0" & Kavichki, False
+    RunUtilsShell strKavichki & "http://adia-project.net/forum/index.php?topic=789.0" & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6806,7 +6803,7 @@ Private Sub mnuHelp_Click()
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Help.html"
     End If
 
-    cmdString = Kavichki & strFilePathTemp & Kavichki
+    cmdString = strKavichki & strFilePathTemp & strKavichki
     RunUtilsShell cmdString, False
 End Sub
 
@@ -6826,7 +6823,7 @@ Private Sub mnuHistory_Click()
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\history.txt"
     End If
 
-    cmdString = Kavichki & strFilePathTemp & Kavichki
+    cmdString = strKavichki & strFilePathTemp & strKavichki
     RunUtilsShell cmdString, False
 End Sub
 
@@ -6836,7 +6833,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHomePage1_Click()
-    RunUtilsShell Kavichki & strUrl_MainWWWSite & Kavichki, False
+    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6845,7 +6842,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHomePage_Click()
-    RunUtilsShell Kavichki & "http://forum.oszone.net/thread-139908.html" & Kavichki, False
+    RunUtilsShell strKavichki & "http://forum.oszone.net/thread-139908.html" & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6939,7 +6936,7 @@ Private Sub mnuLinks_Click()
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Links.html"
     End If
 
-    cmdString = Kavichki & strFilePathTemp & Kavichki
+    cmdString = strKavichki & strFilePathTemp & strKavichki
     RunUtilsShell cmdString, False
 End Sub
 
@@ -7215,9 +7212,9 @@ Private Sub mnuUtils_Click(Index As Integer)
     Params = arrUtilsList(i, 3)
 
     If LenB(Params) = 0 Then
-        cmdString = Kavichki & PathExe & Kavichki
+        cmdString = strKavichki & PathExe & strKavichki
     Else
-        cmdString = Kavichki & PathExe & Kavichki & " " & Params
+        cmdString = strKavichki & PathExe & strKavichki & " " & Params
     End If
 
     RunUtilsShell cmdString, False
@@ -7305,7 +7302,7 @@ Private Sub mnuViewDPInstLog_Click()
 
     If PathExists(strLogPath) Then
         CopyFileTo strLogPath, strLogPathNew
-        cmdString = Kavichki & strLogPathNew & Kavichki
+        cmdString = strKavichki & strLogPathNew & strKavichki
         RunUtilsShell cmdString, False
     Else
         If mbDebugStandart Then DebugMode "cmdString - File not exist: " & strLogPath
@@ -8152,7 +8149,7 @@ Private Function RunDPInst(ByVal strWorkPath As String) As Long
     If mbDebugStandart Then DebugMode "RunDPInst-Start" & vbNewLine & _
               "RunDPInst: strWorkPath" & strWorkPath
 
-    cmdString = Kavichki & strDPInstExePath & Kavichki & " " & CollectCmdString & "/PATH " & Kavichki & strWorkPath & Kavichki
+    cmdString = strKavichki & strDPInstExePath & strKavichki & " " & CollectCmdString & "/PATH " & strKavichki & strWorkPath & strKavichki
     ChangeStatusTextAndDebug strMessages(93)
 
     If RunAndWaitNew(cmdString, PathNameFromPath(strDPInstExePath), vbNormalFocus) = False Then
@@ -8492,22 +8489,22 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
     Dim strTabIndex     As String
     Dim strTabIndex_x() As String
     Dim strTabIndexTemp As String
-    Dim StrTabName      As String
+    Dim strTabName      As String
     Dim str_x64         As String
     Dim lngSupportedOS  As Long
 
     lngSupportedOS = 0
 
     For i = 0 To UBound(arrOSList)
-        StrTabName = arrOSList(i).Name
+        strTabName = arrOSList(i).Name
         str_x64 = arrOSList(i).is64bit
 
         If InStr(arrOSList(i).Ver, strOSCurrentVersion) Then
 
             ' Если в списке есть ОС x64
             If str_x64 = 1 Then
-                If InStr(StrTabName, "64") = 0 Then
-                    StrTabName = StrTabName & " x64"
+                If InStr(strTabName, "64") = 0 Then
+                    strTabName = strTabName & " x64"
                 End If
             End If
 
@@ -8529,7 +8526,7 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
             End If
         End If
 
-        SSTab1.TabCaption(i) = StrTabName
+        SSTab1.TabCaption(i) = strTabName
     Next
 
     'Если среди вкладок не найдено поддержки вашей ОС
@@ -8908,7 +8905,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                     If acmdPackFiles(i).PictureNormal = imgOkAttention.Picture Then
                         GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Then
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOld.Picture Then
                         GoTo MoveBtn
                     ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
@@ -8920,7 +8917,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
                     If acmdPackFiles(i).PictureNormal = imgOK.Picture Then
                         GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Then
+                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOld.Picture Then
                         GoTo MoveBtn
                     ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
@@ -9173,7 +9170,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
@@ -9276,7 +9273,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
     End If
 
     If Not mbDP_Is_aFolder Then
-        cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & ArchTempPath & Kavichki & " -r " & Kavichki & strPathDRP & strPackFileName & Kavichki & " " & strMaskFile
+        cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & ArchTempPath & strKavichki & " -r " & strKavichki & strPathDRP & strPackFileName & strKavichki & " " & strMaskFile
         ChangeStatusTextAndDebug strMessages(97) & " " & strPackFileName
         If mbDebugStandart Then DebugMode "Extract: " & cmdString
 
@@ -9358,7 +9355,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
         If InStr(strMaskFile, " ") Then
             strMaskFile_x = Split(strMaskFile, " ")
 
-            For i = LBound(strMaskFile_x) To UBound(strMaskFile_x)
+            For i = 0 To UBound(strMaskFile_x)
                 strMaskFile_x_TEMP = BackslashDelFromPath(strMaskFile_x(i))
                 strMaskFile_xx = Split(strMaskFile_x_TEMP, vbBackslash)
 
@@ -9403,7 +9400,7 @@ Private Sub UnPackDPFileAdd(ByVal strPathAddFile As String, ByVal strPathDRP As 
 
     If PathExists(strPathAddFilePath) Then
         If Not PathIsAFolder(strPathAddFilePath) Then
-            cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strArchTempPath & Kavichki & " -r " & Kavichki & strPathAddFilePath & Kavichki & " *.*"
+            cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & strArchTempPath & strKavichki & " -r " & strKavichki & strPathAddFilePath & strKavichki & " *.*"
             ChangeStatusTextAndDebug strMessages(98) & " " & strPathAddFilePath
             If mbDebugStandart Then DebugMode "Extract: " & cmdString
 
@@ -9445,7 +9442,7 @@ Private Function UnpackOtherFile(ByVal strArcDRPPath As String, ByVal strWorkDir
               "UnpackOtherFile: strArcDRPPath=" & strArcDRPPath & vbNewLine & _
               "UnpackOtherFile: strMaskFile=" & strMaskFile
      
-    cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strWorkDir & Kavichki & " -r " & Kavichki & strArcDRPPath & Kavichki & " " & strMaskFile
+    cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & strWorkDir & strKavichki & " -r " & strKavichki & strArcDRPPath & strKavichki & " " & strMaskFile
     ChangeStatusTextAndDebug strMessages(99) & " " & strArcDRPPath
     If mbDebugStandart Then DebugMode "Extract: " & cmdString
     UnpackOtherFile = True
@@ -9766,7 +9763,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As String, ByVal strWorkPath As String, ByVal strPathDRPList As String)
 
-    Dim StrPathDRPList_x() As String
+    Dim strPathDRPList_x() As String
     Dim strSectionName     As String
     Dim strFinishIniPath   As String
     Dim lngEXCCount        As Long
@@ -9777,10 +9774,10 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
 
     If mbLoadFinishFile Then
         If strPathDRPList <> ALL_FILES Then
-            StrPathDRPList_x = Split(strPathDRPList, " ")
+            strPathDRPList_x = Split(strPathDRPList, " ")
 
-            For ii = LBound(StrPathDRPList_x) To UBound(StrPathDRPList_x)
-                strSectionName = FileNameFromPath(BackslashDelFromPath(StrPathDRPList_x(ii)))
+            For ii = 0 To UBound(strPathDRPList_x)
+                strSectionName = FileNameFromPath(BackslashDelFromPath(strPathDRPList_x(ii)))
                 ChangeStatusTextAndDebug strMessages(100) & " '" & strSectionName & "'"
                 strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, FileName_woExt(strPackFileName) & ".ini")
 

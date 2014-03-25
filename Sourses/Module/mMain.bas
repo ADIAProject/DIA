@@ -536,7 +536,7 @@ Private Sub SaveSert2Reestr()
 
     ReDim strByteArray(UBound(strBuffer_x))
 
-    For i = LBound(strBuffer_x) To UBound(strBuffer_x)
+    For i = 0 To UBound(strBuffer_x)
         strByteArray(i) = CLng("&H" & strBuffer_x(i))
     Next
 

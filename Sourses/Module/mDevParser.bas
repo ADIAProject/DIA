@@ -227,7 +227,7 @@ Public Function RunDevcon() As Boolean
         DeleteFiles strHwidsTxtPath
     End If
 
-    cmdString = "cmd.exe /c " & Kavichki & Kavichki & strDevConExePath & Kavichki & " status * > " & Kavichki & strHwidsTxtPath & Kavichki
+    cmdString = "cmd.exe /c " & strKavichki & strKavichki & strDevConExePath & strKavichki & " status * > " & strKavichki & strHwidsTxtPath & strKavichki
     
     CreateIfNotExistPath strWorkTemp
 
@@ -255,7 +255,7 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
 
     Dim cmdString As String
 
-    cmdString = Kavichki & strDevConExePath & Kavichki & " rescan"
+    cmdString = strKavichki & strDevConExePath & strKavichki & " rescan"
     ChangeStatusTextAndDebug strMessages(96) & " " & cmdString
     CreateIfNotExistPath strWorkTemp
 
@@ -276,7 +276,7 @@ Public Function RunDevconView() As Boolean
 
     Dim cmdString As String
 
-    cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConExePath & Kavichki & " " & Kavichki & strHwidsTxtPathView & Kavichki & " 3"
+    cmdString = strKavichki & strDevconCmdPath & strKavichki & " " & strKavichki & strDevConExePath & strKavichki & " " & strKavichki & strHwidsTxtPathView & strKavichki & " 3"
 
     RunDevconView = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
     If Not RunDevconView Then
@@ -348,7 +348,7 @@ Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
         End If
     End If
 
-    cmdString = Kavichki & strDevconCmdPath & Kavichki & " " & Kavichki & strDevConTemp & Kavichki & " " & Kavichki & strHwidsTxtPath & Kavichki & " 4 " & Kavichki & strHwid & Kavichki
+    cmdString = strKavichki & strDevconCmdPath & strKavichki & " " & strKavichki & strDevConTemp & strKavichki & " " & strKavichki & strHwidsTxtPath & strKavichki & " 4 " & strKavichki & strHwid & strKavichki
 
     If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName

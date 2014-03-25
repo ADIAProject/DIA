@@ -31,7 +31,7 @@ Public Sub CollectHwidFromReestr()
     If mbDebugDetail Then DebugMode vbTab & "CollectHwidFromReestr-Start"
 
     ' максимальное кол-во элементов в массиве
-    For i = LBound(arrHwidsLocal) To UBound(arrHwidsLocal)
+    For i = 0 To UBound(arrHwidsLocal)
         strID = arrHwidsLocal(i).HWIDOrig
         ' ѕолучаем данные об устройстве
         regNameEnum = "SYSTEM\CurrentControlSet\Enum\" & strID & vbBackslash

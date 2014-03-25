@@ -26,7 +26,7 @@ Private objStringHash       As Scripting.Dictionary
 '                              strPathDRP (String)
 '                              strPathDevDB (String)
 '!--------------------------------------------------------------------------------
-Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As String, ByVal strPathDevDB As String)
+Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP As String, ByVal strPathDevDB As String)
 
     Dim objMatch                  As Match
     Dim objMatch1                 As Match
@@ -67,7 +67,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Dim strDrvCatFileName         As String
     Dim lngCatFileExists          As Long
     Dim strValval                 As String
-    Dim Strings                   As String
+    Dim sStrings                  As String
     Dim strRegEx_mansect          As String
     Dim strRegEx_strsect          As String
     Dim strRegEx_versect          As String
@@ -157,7 +157,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
     If Not mbDP_Is_aFolder Then
         ' Запуск распаковки
-        cmdString = Kavichki & strArh7zExePATH & Kavichki & " x -yo" & Kavichki & strInfPathTemp & Kavichki & " -r " & Kavichki & strPathDRP & strPackFileName & Kavichki & strUnpackMask
+        cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & strInfPathTemp & strKavichki & " -r " & strKavichki & strPathDRP & strPackFileName & strKavichki & strUnpackMask
         ChangeStatusTextAndDebug strMessages(72) & " " & strPackFileName
 
         If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
@@ -171,7 +171,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
 
             ' Создаем спсиок файлов *.cat в архиве
             strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
-            cmdString = "cmd.exe /c " & Kavichki & Kavichki & strArh7zExePATH & Kavichki & " l " & Kavichki & strPathDRP & strPackFileName & Kavichki & " -yr *.cat >" & Kavichki & strArchCatFileList & Kavichki
+            cmdString = "cmd.exe /c " & strKavichki & strKavichki & strArh7zExePATH & strKavichki & " l " & strKavichki & strPathDRP & strPackFileName & strKavichki & " -yr *.cat >" & strKavichki & strArchCatFileList & strKavichki
             If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
                 If mbDebugStandart Then DebugMode strMessages(13) & str2vbNewLine & cmdString
             End If
@@ -183,7 +183,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     Else
         ' Создаем список файлов *.cat в архиве
         strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
-        cmdString = "cmd.exe /c Dir " & Kavichki & strPathDRP & strPackFileName & "\*.cat" & Kavichki & " /A- /B /S >" & Kavichki & strArchCatFileList & Kavichki
+        cmdString = "cmd.exe /c Dir " & strKavichki & strPathDRP & strPackFileName & "\*.cat" & strKavichki & " /A- /B /S >" & strKavichki & strArchCatFileList & strKavichki
 
         'dir c:\windows\temp\*.tmp /S /B
         If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
@@ -316,11 +316,11 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
         End If
     End If
         
-    infCount = (UBound(strInfPathTempList_x) - LBound(strInfPathTempList_x) + 1)
+    infCount = UBound(strInfPathTempList_x) + 1
     ChangeStatusTextAndDebug strMessages(73) & " " & strPackFileName & " (" & infCount & " inf-files)"
     
     ' Запускаем цикл обработки inf-файлов
-    For infNum = LBound(strInfPathTempList_x) To UBound(strInfPathTempList_x)
+    For infNum = 0 To UBound(strInfPathTempList_x)
         ' полный путь к файлу inf
         strInfFullname = strInfPathTempList_x(infNum).FullPath
         ' Имя inf файла
@@ -342,8 +342,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             sFileContent = FileReadData(strInfFullname)
 
             ' Убираем символ """
-            If InStr(sFileContent, Kavichki) Then
-                sFileContent = Replace$(sFileContent, Kavichki, vbNullString)
+            If InStr(sFileContent, strKavichki) Then
+                sFileContent = Replace$(sFileContent, strKavichki, vbNullString)
             End If
 
             If InStr(sFileContent, vbTab) Then
@@ -351,16 +351,16 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
             End If
                         
             ' Find [strings] section
-            Strings = vbNullString
+            sStrings = vbNullString
             Set objStringHash = New Scripting.Dictionary
             objStringHash.CompareMode = TextCompare
             Set objMatchesStrSect = RegExpStrSect.Execute(sFileContent)
     
             If objMatchesStrSect.Count Then
                 Set objMatch = objMatchesStrSect.Item(0)
-                Strings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
+                sStrings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
                 'Debug.Print RegExpStrDefs.Pattern
-                Set objMatchesStrDefs = RegExpStrDefs.Execute(Strings)
+                Set objMatchesStrDefs = RegExpStrDefs.Execute(sStrings)
     
                 For i = 0 To objMatchesStrDefs.Count - 1
                     Set objMatch = objMatchesStrDefs.Item(i)
@@ -372,7 +372,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                         objStringHash.Add strKey, strValue
                         'Debug.Print strRegEx_strings
                         'Debug.Print strRegEx_strsect
-                        objStringHash.Add Percentage & strKey & Percentage, strValue
+                        objStringHash.Add strPercentage & strKey & strPercentage, strValue
                     End If
     
                 Next
@@ -391,8 +391,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     Set objMatch = objMatchesVerParam.Item(0)
                     strDrvDate = objMatch.SubMatches(0)
         
-                    If InStr(strDrvDate, Percentage) Then
-                        strVarname = Left$(strDrvDate, InStrRev(strDrvDate, Percentage))
+                    If InStr(strDrvDate, strPercentage) Then
+                        strVarname = Left$(strDrvDate, InStrRev(strDrvDate, strPercentage))
                         strValval = objStringHash.Item(strVarname)
         
                         If LenB(strValval) Then
@@ -405,8 +405,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     strDrvDate = Trim$(strDrvDate)
                     strDrvVersion = objMatch.SubMatches(1)
         
-                    If InStr(strDrvVersion, Percentage) Then
-                        strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, Percentage))
+                    If InStr(strDrvVersion, strPercentage) Then
+                        strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, strPercentage))
                         strValval = objStringHash.Item(strVarname)
         
                         If LenB(strValval) Then
@@ -441,8 +441,8 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                     Set objMatch = objMatchesCatParam.Item(0)
                     strDrvCatFileName = objMatch.SubMatches(0)
                     
-                    If InStr(strDrvCatFileName, Percentage) Then
-                        strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, Percentage))
+                    If InStr(strDrvCatFileName, strPercentage) Then
+                        strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, strPercentage))
                         strValval = objStringHash.Item(strVarname)
         
                         If LenB(strValval) Then
@@ -565,20 +565,20 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
     
                             'Debug.Print strDevName
                             If LenB(strDevName) Then
-                                Pos = InStr(strDevName, Percentage)
+                                Pos = InStr(strDevName, strPercentage)
                                 strValval = vbNullString
     
                                 If Pos Then
-                                    PosRev = InStrRev(strDevName, Percentage)
+                                    PosRev = InStrRev(strDevName, strPercentage)
     
                                     If Pos <> PosRev Then
                                         strVarname = Mid$(strDevName, Pos + 1, PosRev - 2)
     
-                                        If InStr(strVarname, Percentage) Then
-                                            strVarname_x = Split(strVarname, Percentage)
+                                        If InStr(strVarname, strPercentage) Then
+                                            strVarname_x = Split(strVarname, strPercentage)
     
-                                            For ii = LBound(strVarname_x) To UBound(strVarname_x)
-                                                strValval = AppendStr(strValval, objStringHash.Item(strVarname_x(ii)))
+                                            For ii = 0 To UBound(strVarname_x)
+                                                AppendStr strValval, objStringHash.Item(strVarname_x(ii))
                                             Next ii
     
                                         Else
@@ -586,7 +586,7 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                         End If
     
                                     Else
-                                        strVarname = Replace$(strDevName, Percentage, vbNullString)
+                                        strVarname = Replace$(strDevName, strPercentage, vbNullString)
                                         strValval = objStringHash.Item(strVarname)
                                     End If
     
@@ -599,14 +599,14 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                     End If
                                 End If
     
-                                If InStr(strDevName, Percentage) Then
+                                If InStr(strDevName, strPercentage) Then
                                     '                            strDevName = "not defined in the inf"
-                                    strDevName = Replace$(strDevName, Percentage, vbNullString)
+                                    strDevName = Replace$(strDevName, strPercentage, vbNullString)
                                     strDevName = objStringHash.Item(strDevName)
                                 End If
     
                                 ' На случай если есть юникодовые символы в имени устройства
-                                strDevName = RemoveUni(strDevName, 63)
+                                RemoveUni strDevName
     
                                 ' Если требуется то удаление лишних символов
                                 ReplaceBadSymbol strDevName
@@ -625,11 +625,11 @@ Public Sub DevParserByRegExp(strPackFileName As String, ByVal strPathDRP As Stri
                                 Set objMatch = objMatchesDevID.Item(j)
                                 strValuer = objMatch.SubMatches(0)
     
-                                If InStr(strValuer, Percentage) Then
-                                    strVarname = Left$(strValuer, InStrRev(strValuer, Percentage))
+                                If InStr(strValuer, strPercentage) Then
+                                    strVarname = Left$(strValuer, InStrRev(strValuer, strPercentage))
     
-                                    If InStr(strVarname, Percentage) > 1 Then
-                                        strVarname = Right$(strVarname, Len(strVarname) - InStr(strValuer, Percentage) + 1)
+                                    If InStr(strVarname, strPercentage) > 1 Then
+                                        strVarname = Right$(strVarname, Len(strVarname) - InStr(strValuer, strPercentage) + 1)
                                     End If
     
                                     strValval = objStringHash.Item(strVarname)

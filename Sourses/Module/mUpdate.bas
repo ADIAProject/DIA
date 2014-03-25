@@ -328,6 +328,7 @@ Public Sub LoadUpdateData()
     Dim strVersionsTemp As String
     Dim i               As Long
     Dim strUrl_Request  As String
+    Dim lngUbound       As Long
 
     On Error Resume Next
    
@@ -357,13 +358,14 @@ Public Sub LoadUpdateData()
             
                 strVersionsTemp = xmlNode.childNodes(miNodeIndex).Text
                 strUpdVersions = Split(strVersionsTemp, ";")
+                lngUbound = UBound(strUpdVersions)
 
-                ReDim strUpdDescription(UBound(strUpdVersions), 2)
-                ReDim strLink(UBound(strUpdVersions), 6)
-                ReDim strLinkFull(UBound(strUpdVersions), 6)
+                ReDim strUpdDescription(lngUbound, 2)
+                ReDim strLink(lngUbound, 6)
+                ReDim strLinkFull(lngUbound, 6)
 
                 ' Данные из файла %ver%.xml - Загрузка описаний изменений
-                For i = LBound(strUpdVersions) To UBound(strUpdVersions)
+                For i = 0 To lngUbound
                     LoadUpdDescription strUpdVersions(i), i
                 Next i
 

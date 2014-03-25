@@ -399,7 +399,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdOsZoneNet_Click()
-    RunUtilsShell Kavichki & strUrlOsZoneNetThread & Kavichki, False
+    RunUtilsShell strKavichki & strUrlOsZoneNetThread & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdHomePage_Click()
-    RunUtilsShell Kavichki & strUrl_MainWWWSite & Kavichki, False
+    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -423,10 +423,10 @@ Private Sub cmdHomePage_ClickMenu(mnuIndex As Integer)
     Select Case mnuIndex
 
         Case 0
-            cmdString = Kavichki & strUrl_MainWWWSite & Kavichki
+            cmdString = strKavichki & strUrl_MainWWWSite & strKavichki
 
         Case 2
-            cmdString = Kavichki & strUrl_MainWWWForum & Kavichki
+            cmdString = strKavichki & strUrl_MainWWWForum & strKavichki
     End Select
 
     RunUtilsShell cmdString, False
@@ -438,7 +438,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ctlAquaButton_Click()
-    RunUtilsShell Kavichki & strUrl_MainWWWSite & Kavichki, False
+    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -516,7 +516,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub lblAuthor_Click()
-    RunUtilsShell Kavichki & strUrl_MainWWWSite & Kavichki, False
+    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -552,7 +552,7 @@ Private Sub lblTranslator_MouseDown(Button As Integer, Shift As Integer, X As Si
 
     If LenB(strTranslatorUrl) Then
         If Button = vbLeftButton Then
-            RunUtilsShell Kavichki & strTranslatorUrl & Kavichki, False
+            RunUtilsShell strKavichki & strTranslatorUrl & strKavichki, False
         End If
     End If
 
@@ -713,7 +713,7 @@ End Sub
 Private Sub lblThanks_Click(Index As Integer)
 
     If LenB(strCreditList(Index)) Then
-        RunUtilsShell Kavichki & strCreditList(Index) & Kavichki, False
+        RunUtilsShell strKavichki & strCreditList(Index) & strKavichki, False
     End If
 
 End Sub

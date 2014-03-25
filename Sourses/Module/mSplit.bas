@@ -15,11 +15,9 @@ Private R() As Long
 Private RP  As Long
     
 Private Declare Sub GetMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, Value As Long)
-Private Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, ByVal Value As Long)
 Private Declare Function ArrPtr Lib "msvbvm60.dll" Alias "VarPtr" (ByRef Var() As Any) As Long
 Private Declare Function InitStringArray Lib "oleaut32.dll" Alias "SafeArrayCreate" (Optional ByVal VarType As VbVarType = vbString, Optional ByVal Dims As Integer = 1, Optional saBound As Currency) As Long
 Private Declare Function SysAllocStringByteLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
-Private Declare Function SysAllocStringLen Lib "oleaut32.dll" (ByVal Ptr As Long, ByVal Length As Long) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property API
@@ -175,7 +173,6 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = " "
                         Loop Until (i And 1) = 1 Or (i = 0)
 
                     Else
-                        'NOT COMPARE...
                         i = InStr(Expression, Delimiter)
                     End If
                 End If

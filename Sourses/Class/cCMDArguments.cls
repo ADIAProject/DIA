@@ -128,7 +128,7 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
                     Append = True
                 End If
 
-            Case Kavichki
+            Case strKavichki
                 InvertStart = Not InvertStart
 
                 If InvertStart Then
@@ -144,7 +144,7 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
 
             Case True
 
-                If curChar <> Kavichki Then
+                If curChar <> strKavichki Then
                     CurArg = CurArg & curChar
                 End If
 

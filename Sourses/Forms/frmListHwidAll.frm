@@ -558,7 +558,7 @@ Private Sub cmdBackUpDrivers_Click()
     Select Case lngMsgRet
 
         Case vbYes
-            RunUtilsShell Kavichki & strUrl_MainWWWSite & Kavichki, False
+            RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
     End Select
 
 End Sub
@@ -604,11 +604,11 @@ Private Sub cmdGoSite_Click()
     strDevID = Replace$(strDevID, "&", "%26", , , vbTextCompare)
 
     If optDevID.Value Then
-        cmdString = Kavichki & "http://www.devid.info/search.php?text=" & strDevID & "&=" & Kavichki
+        cmdString = strKavichki & "http://www.devid.info/search.php?text=" & strDevID & "&=" & strKavichki
     ElseIf optGoogle.Value Then
-        cmdString = Kavichki & "http://www.google.com/search?q=driver+" & strDevID & "&=" & Kavichki
+        cmdString = strKavichki & "http://www.google.com/search?q=driver+" & strDevID & "&=" & strKavichki
     Else
-        cmdString = Kavichki & "http://catalog.update.microsoft.com/v7/site/Search.aspx?q=" & strDevID & "&=" & Kavichki
+        cmdString = strKavichki & "http://catalog.update.microsoft.com/v7/site/Search.aspx?q=" & strDevID & "&=" & strKavichki
     End If
 
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
@@ -955,7 +955,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
 
     End With
 
-    For ii = LBound(arrHwidsLocal) To UBound(arrHwidsLocal)
+    For ii = 0 To UBound(arrHwidsLocal)
         strDevHwid = arrHwidsLocal(ii).HWID
         strDevName = arrHwidsLocal(ii).DevName
         strDevStatus = arrHwidsLocal(ii).Status
@@ -1162,24 +1162,24 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    frGroup.Caption = LocaliseString(StrPathFile, strFormName, "frGroup", frGroup.Caption)
-    frFindDrvInternet.Caption = LocaliseString(StrPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
-    chkParseHwid.Caption = LocaliseString(StrPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
-    cmdGoSite.Caption = LocaliseString(StrPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
-    optGrp1.Caption = LocaliseString(StrPathFile, strFormName, "optGrp1", optGrp1.Caption)
-    optGrp2.Caption = LocaliseString(StrPathFile, strFormName, "optGrp2", optGrp2.Caption)
-    optGrp3.Caption = LocaliseString(StrPathFile, strFormName, "optGrp3", optGrp3.Caption)
-    optGrp4.Caption = LocaliseString(StrPathFile, strFormName, "optGrp4", optGrp4.Caption)
-    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
-    cmdReNewHW.Caption = LocaliseString(StrPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
-    cmdBackUpDrivers.Caption = LocaliseString(StrPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
+    frFindDrvInternet.Caption = LocaliseString(strPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
+    chkParseHwid.Caption = LocaliseString(strPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
+    cmdGoSite.Caption = LocaliseString(strPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
+    optGrp1.Caption = LocaliseString(strPathFile, strFormName, "optGrp1", optGrp1.Caption)
+    optGrp2.Caption = LocaliseString(strPathFile, strFormName, "optGrp2", optGrp2.Caption)
+    optGrp3.Caption = LocaliseString(strPathFile, strFormName, "optGrp3", optGrp3.Caption)
+    optGrp4.Caption = LocaliseString(strPathFile, strFormName, "optGrp4", optGrp4.Caption)
+    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
+    cmdReNewHW.Caption = LocaliseString(strPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
+    cmdBackUpDrivers.Caption = LocaliseString(strPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1320,7 +1320,7 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   strValuer (String)
 '!--------------------------------------------------------------------------------
-Private Function ParseHwid(strValuer As String) As String
+Private Function ParseHwid(ByVal strValuer As String) As String
 
     Dim strValuer_x() As String
     Dim miSubSys      As Long

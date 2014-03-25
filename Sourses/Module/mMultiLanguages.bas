@@ -161,15 +161,17 @@ Public Function LoadLanguageList() As Boolean
     Dim jj              As Integer
     Dim strTemp         As String
     Dim strLangFilePath As String
+    Dim lngUbound       As Long
 
     strFileList_x = SearchFilesInRoot(strAppPathBackSL & strToolsLang_Path, "*.lng", False, False)
 
-    If UBound(strFileList_x) > 0 Then
+    lngUbound = UBound(strFileList_x)
+    If lngUbound Then
         If LenB(strFileList_x(0).FullPath) Then
     
-            ReDim arrLanguage(6, UBound(strFileList_x) + 1)
+            ReDim arrLanguage(6, lngUbound + 1)
         
-            For ii = LBound(strFileList_x) To UBound(strFileList_x)
+            For ii = 0 To lngUbound
                 jj = ii + 1
                 
                 ' Путь до языкового файла

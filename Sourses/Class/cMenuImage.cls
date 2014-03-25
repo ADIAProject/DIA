@@ -502,8 +502,6 @@ Private Function CreateNewDib() As Long
 
     Index = UBound(mDIB)
 
-
-
     With mDIB(Index)
 
         TempDC = GetDC(0&)
@@ -673,7 +671,7 @@ Public Function AddImageFromFile(ByVal FileName As String, Optional bGhosted As 
     Dim hBmp                            As Long
     Dim hImage                          As Long
 
-    FileType = UCase(Right(FileName, 3))
+    FileType = UCase$(Right$(FileName, 3))
 
     If FileType = "ICO" Or FileType = "CUR" Then
 
