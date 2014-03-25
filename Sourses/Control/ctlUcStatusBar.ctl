@@ -434,6 +434,854 @@ End Enum
 '*************************************************************
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get BackColor() As OLE_COLOR
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    BackColor = m_BackColor
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'Description: Use this color for drawing
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property BackColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (OLE_COLOR)
+'!--------------------------------------------------------------------------------
+Public Property Let BackColor(ByVal NewValue As OLE_COLOR)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    m_BackColor = NewValue
+    UserControl.BackColor = m_BackColor
+    Refresh
+    PropertyChanged "BackColor"
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get Font() As StdFont
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    Set Font = m_Font
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Font
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewFont (StdFont)
+'!--------------------------------------------------------------------------------
+Public Property Set Font(ByVal NewFont As StdFont)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    Set m_Font = NewFont
+    Refresh
+    PropertyChanged "Font"
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get ForeColor() As OLE_COLOR
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    ForeColor = m_Forecolor
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'Description: Use this color for drawing
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (OLE_COLOR)
+'!--------------------------------------------------------------------------------
+Public Property Let ForeColor(ByVal NewValue As OLE_COLOR)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    m_BackColor = NewValue
+    UserControl.ForeColor = m_Forecolor
+    Refresh
+    PropertyChanged "ForeColor"
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property GripShape
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get GripShape() As usbGripEnum
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    GripShape = m_GripShape
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property GripShape
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   lShape (usbGripEnum)
+'!--------------------------------------------------------------------------------
+Public Property Let GripShape(lShape As usbGripEnum)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    '   Check to see if this changed, otherwise we get an
+    '   "Out of Stack Space" error with recursive changes...
+    If lShape <> m_GripShape Then
+        m_GripShape = lShape
+        Refresh
+        PropertyChanged "GripShape"
+    End If
+
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAlignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelAlignment(ByVal Index As Long) As usbAlignEnum
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+
+    Select Case m_PanelItems(Index).Alignment
+
+        Case DT_SB_LEFT
+            PanelAlignment = usbLeft
+
+        Case DT_SB_CENTER
+            PanelAlignment = usbCenter
+
+        Case DT_SB_RIGHT
+            PanelAlignment = usbRight
+    End Select
+
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAlignment
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (usbAlignEnum)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelAlignment(ByVal Index As Long, ByVal NewValue As usbAlignEnum)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+
+    Select Case NewValue
+
+        Case usbLeft
+            m_PanelItems(Index).Alignment = DT_SB_LEFT
+
+        Case usbCenter
+            m_PanelItems(Index).Alignment = DT_SB_CENTER
+
+        Case usbRight
+            m_PanelItems(Index).Alignment = DT_SB_RIGHT
+    End Select
+
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAutoSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelAutoSize(ByVal Index As Long) As Boolean
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    PanelAutoSize = m_PanelItems(Index).AutoSize
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelAutoSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelAutoSize(ByVal Index As Long, ByVal NewValue As Boolean)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    m_PanelItems(Index).AutoSize = NewValue
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelCount
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get PanelCount() As Long
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    m_PanelCount = UBoundEx(m_PanelItems)
+    PanelCount = m_PanelCount
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelCount", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelEditable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelEditable(ByVal Index As Long) As Boolean
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    PanelEditable = m_PanelItems(Index).Editable
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelEditable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelEditable(ByVal Index As Long, ByVal NewValue As Boolean)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    m_PanelItems(Index).Editable = NewValue
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelFont
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelFont(ByVal Index As Long) As StdFont
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    Set PanelFont = m_PanelItems(Index).Font
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelFont
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (StdFont)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelFont(ByVal Index As Long, ByVal NewItem As StdFont)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    Set m_PanelItems(Index).Font = NewItem
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelForeColor(ByVal Index As Long) As OLE_COLOR
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    PanelForeColor = m_PanelItems(Index).ForeColor
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (OLE_COLOR)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelForeColor(ByVal Index As Long, ByVal NewItem As OLE_COLOR)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    m_PanelItems(Index).ForeColor = NewItem
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelIcon
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelIcon(ByVal Index As Long) As StdPicture
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    Set PanelIcon = m_PanelItems(Index).Icon
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelIcon
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (StdPicture)
+'!--------------------------------------------------------------------------------
+Public Property Set PanelIcon(ByVal Index As Long, ByVal NewItem As StdPicture)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    Set m_PanelItems(Index).Icon = NewItem
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelText(ByVal Index As Long) As String
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    PanelText = m_PanelItems(Index).Text
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (String)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelText(ByVal Index As Long, ByVal NewItem As String)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    m_PanelItems(Index).Text = NewItem
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelToolTipText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelToolTipText(ByVal Index As Long) As String
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    PanelToolTipText = m_PanelItems(Index).ToolTipText
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelToolTipText
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewValue (String)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelToolTipText(ByVal Index As Long, NewValue As String)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    m_PanelItems(Index).ToolTipText = NewValue
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelWidth
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'!--------------------------------------------------------------------------------
+Public Property Get PanelWidth(ByVal Index As Long) As Long
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    PanelWidth = m_PanelItems(Index).Width
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property PanelWidth
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Long)
+'                              NewItem (Long)
+'!--------------------------------------------------------------------------------
+Public Property Let PanelWidth(ByVal Index As Long, ByVal NewItem As Long)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    If m_PanelCount < 1 Then
+
+        Exit Property
+
+    End If
+
+    If Index < 1 Then Index = 1
+    If Index > m_PanelCount Then Index = m_PanelCount
+    m_PanelItems(Index).Width = NewItem
+    Refresh
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Sizable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get Sizable() As Boolean
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    Sizable = m_Sizable
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Sizable
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let Sizable(ByVal NewValue As Boolean)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    m_Sizable = NewValue
+
+    If m_Sizable Then
+        If IsWinXPOrLater Then
+            m_GripShape = usbSquare
+        Else
+            m_GripShape = usbBars
+        End If
+
+    Else
+        m_GripShape = usbNone
+    End If
+
+    Refresh
+    PropertyChanged "Sizable"
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Theme
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get Theme() As usbThemeEnum
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    Theme = m_Theme
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Theme
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (usbThemeEnum)
+'!--------------------------------------------------------------------------------
+Public Property Let Theme(ByVal NewValue As usbThemeEnum)
+
+    '   Handle Any Errors
+    On Error GoTo Prop_ErrHandler
+
+    m_Theme = NewValue
+    Refresh
+    PropertyChanged "Theme"
+Prop_ErrHandlerExit:
+
+    Exit Property
+
+Prop_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Prop_ErrHandlerExit:
+
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function AddPanel
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sText (String)
@@ -583,54 +1431,6 @@ Sub_ErrHandler:
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property BackColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get BackColor() As OLE_COLOR
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    BackColor = m_BackColor
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'Description: Use this color for drawing
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property BackColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewValue (OLE_COLOR)
-'!--------------------------------------------------------------------------------
-Public Property Let BackColor(ByVal NewValue As OLE_COLOR)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    m_BackColor = NewValue
-    UserControl.BackColor = m_BackColor
-    Refresh
-    PropertyChanged "BackColor"
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub BoundControl
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Index (Long)
@@ -712,100 +1512,6 @@ Sub_ErrHandler:
     Resume Sub_ErrHandlerExit:
 
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ForeColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get ForeColor() As OLE_COLOR
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    ForeColor = m_Forecolor
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'Description: Use this color for drawing
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ForeColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewValue (OLE_COLOR)
-'!--------------------------------------------------------------------------------
-Public Property Let ForeColor(ByVal NewValue As OLE_COLOR)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    m_BackColor = NewValue
-    UserControl.ForeColor = m_Forecolor
-    Refresh
-    PropertyChanged "ForeColor"
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Font
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get Font() As StdFont
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    Set Font = m_Font
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Font
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewFont (StdFont)
-'!--------------------------------------------------------------------------------
-Public Property Set Font(ByVal NewFont As StdFont)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    Set m_Font = NewFont
-    Refresh
-    PropertyChanged "Font"
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetPanelIndex
@@ -985,57 +1691,6 @@ Sub_ErrHandler:
     Resume Sub_ErrHandlerExit:
 
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property GripShape
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get GripShape() As usbGripEnum
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    GripShape = m_GripShape
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property GripShape
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   lShape (usbGripEnum)
-'!--------------------------------------------------------------------------------
-Public Property Let GripShape(lShape As usbGripEnum)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    '   Check to see if this changed, otherwise we get an
-    '   "Out of Stack Space" error with recursive changes...
-    If lShape <> m_GripShape Then
-        m_GripShape = lShape
-        Refresh
-        PropertyChanged "GripShape"
-    End If
-
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub PaintGradients
@@ -1507,557 +2162,6 @@ Sub_ErrHandler:
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelCount
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get PanelCount() As Long
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    m_PanelCount = UBoundEx(m_PanelItems)
-    PanelCount = m_PanelCount
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelCount", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelAlignment
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelAlignment(ByVal Index As Long) As usbAlignEnum
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-
-    Select Case m_PanelItems(Index).Alignment
-
-        Case DT_SB_LEFT
-            PanelAlignment = usbLeft
-
-        Case DT_SB_CENTER
-            PanelAlignment = usbCenter
-
-        Case DT_SB_RIGHT
-            PanelAlignment = usbRight
-    End Select
-
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelAlignment
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewValue (usbAlignEnum)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelAlignment(ByVal Index As Long, ByVal NewValue As usbAlignEnum)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-
-    Select Case NewValue
-
-        Case usbLeft
-            m_PanelItems(Index).Alignment = DT_SB_LEFT
-
-        Case usbCenter
-            m_PanelItems(Index).Alignment = DT_SB_CENTER
-
-        Case usbRight
-            m_PanelItems(Index).Alignment = DT_SB_RIGHT
-    End Select
-
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelAutoSize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelAutoSize(ByVal Index As Long) As Boolean
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    PanelAutoSize = m_PanelItems(Index).AutoSize
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelAutoSize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewValue (Boolean)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelAutoSize(ByVal Index As Long, ByVal NewValue As Boolean)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    m_PanelItems(Index).AutoSize = NewValue
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelEditable
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelEditable(ByVal Index As Long) As Boolean
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    PanelEditable = m_PanelItems(Index).Editable
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelEditable
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewValue (Boolean)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelEditable(ByVal Index As Long, ByVal NewValue As Boolean)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    m_PanelItems(Index).Editable = NewValue
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelForeColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelForeColor(ByVal Index As Long) As OLE_COLOR
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    PanelForeColor = m_PanelItems(Index).ForeColor
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelForeColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewItem (OLE_COLOR)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelForeColor(ByVal Index As Long, ByVal NewItem As OLE_COLOR)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    m_PanelItems(Index).ForeColor = NewItem
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelFont
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelFont(ByVal Index As Long) As StdFont
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    Set PanelFont = m_PanelItems(Index).Font
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelFont
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewItem (StdFont)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelFont(ByVal Index As Long, ByVal NewItem As StdFont)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    Set m_PanelItems(Index).Font = NewItem
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelIcon
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelIcon(ByVal Index As Long) As StdPicture
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    Set PanelIcon = m_PanelItems(Index).Icon
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelIcon
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewItem (StdPicture)
-'!--------------------------------------------------------------------------------
-Public Property Set PanelIcon(ByVal Index As Long, ByVal NewItem As StdPicture)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    Set m_PanelItems(Index).Icon = NewItem
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelText
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelText(ByVal Index As Long) As String
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    PanelText = m_PanelItems(Index).Text
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelText
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewItem (String)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelText(ByVal Index As Long, ByVal NewItem As String)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    m_PanelItems(Index).Text = NewItem
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelToolTipText
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelToolTipText(ByVal Index As Long) As String
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    PanelToolTipText = m_PanelItems(Index).ToolTipText
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelToolTipText
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewValue (String)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelToolTipText(ByVal Index As Long, NewValue As String)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    m_PanelItems(Index).ToolTipText = NewValue
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelWidth
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'!--------------------------------------------------------------------------------
-Public Property Get PanelWidth(ByVal Index As Long) As Long
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    PanelWidth = m_PanelItems(Index).Width
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property PanelWidth
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Index (Long)
-'                              NewItem (Long)
-'!--------------------------------------------------------------------------------
-Public Property Let PanelWidth(ByVal Index As Long, ByVal NewItem As Long)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    If m_PanelCount < 1 Then
-
-        Exit Property
-
-    End If
-
-    If Index < 1 Then Index = 1
-    If Index > m_PanelCount Then Index = m_PanelCount
-    m_PanelItems(Index).Width = NewItem
-    Refresh
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function PtInRect
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   lpRect (RECT)
@@ -2257,108 +2361,31 @@ Func_ErrHandler:
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Sizable
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
+'! Procedure   (Функция)   :   Sub TrackMouseLeave
+'! Description (Описание)  :   [Track the mouse leaving the indicated window]
+'! Parameters  (Переменные):   lng_hWnd (Long)
 '!--------------------------------------------------------------------------------
-Public Property Get Sizable() As Boolean
+Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
 
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
+    Dim TME As TRACKMOUSEEVENT_STRUCT
 
-    Sizable = m_Sizable
-Prop_ErrHandlerExit:
+    If bTrack Then
 
-    Exit Property
+        With TME
+            .cbSize = LenB(TME)
+            .dwFlags = TME_LEAVE
+            .hWndTrack = lng_hWnd
+            .dwHoverTime = 1
+        End With
 
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Sizable
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewValue (Boolean)
-'!--------------------------------------------------------------------------------
-Public Property Let Sizable(ByVal NewValue As Boolean)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    m_Sizable = NewValue
-
-    If m_Sizable Then
-        If IsWinXPOrLater Then
-            m_GripShape = usbSquare
+        If bTrackUser32 Then
+            TrackMouseEvent TME
         Else
-            m_GripShape = usbBars
+            TrackMouseEventComCtl TME
         End If
-
-    Else
-        m_GripShape = usbNone
     End If
 
-    Refresh
-    PropertyChanged "Sizable"
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Theme
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get Theme() As usbThemeEnum
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    Theme = m_Theme
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Theme
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewValue (usbThemeEnum)
-'!--------------------------------------------------------------------------------
-Public Property Let Theme(ByVal NewValue As usbThemeEnum)
-
-    '   Handle Any Errors
-    On Error GoTo Prop_ErrHandler
-
-    m_Theme = NewValue
-    Refresh
-    PropertyChanged "Theme"
-Prop_ErrHandlerExit:
-
-    Exit Property
-
-Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Prop_ErrHandlerExit:
-
-End Property
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub TransBltEx
@@ -3000,63 +3027,6 @@ Sub_ErrHandler:
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Resize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Resize()
-
-    '   Handle Any Errors
-    On Error GoTo Sub_ErrHandler
-
-    With UserControl
-        '.Height = 360
-        .Height = 700
-    End With
-
-    With m_GripRect
-        .Left = ScaleWidth - 15
-        .Top = ScaleHeight - 15
-        .Right = .Left + 15
-        .Bottom = .Top + 15
-    End With
-
-    UserControl.Refresh
-    Refresh
-Sub_ErrHandlerExit:
-
-    Exit Sub
-
-Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_Resize", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Sub_ErrHandlerExit:
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Show
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Show()
-
-    '   Handle Any Errors
-    On Error GoTo Sub_ErrHandler
-
-    Refresh
-Sub_ErrHandlerExit:
-
-    Exit Sub
-
-Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_Show", Err.Description, Err.HelpFile, Err.HelpContext
-
-    Resume Sub_ErrHandlerExit:
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_ReadProperties
 '! Description (Описание)  :   [Read the properties from the property bag - also, a good place to start the subclassing (if we're running)]
 '! Parameters  (Переменные):   PropBag (PropertyBag)
@@ -3119,60 +3089,59 @@ Sub_ErrHandler:
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Procedure   (Функция)   :   Sub UserControl_Resize
 '! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   PropBag (PropertyBag)
+'! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+Private Sub UserControl_Resize()
 
     '   Handle Any Errors
     On Error GoTo Sub_ErrHandler
 
-    With PropBag
-        Call .WriteProperty("Font", m_Font, Ambient.Font)
-        Call .WriteProperty("BackColor", m_BackColor, Ambient.BackColor)
-        Call .WriteProperty("ForeColor", m_Forecolor, Ambient.ForeColor)
-        Call .WriteProperty("GripShape", m_GripShape, usbSquare)
-        Call .WriteProperty("PanelCount", m_PanelCount, 0)
-        Call .WriteProperty("Sizable", m_Sizable, True)
-        Call .WriteProperty("Theme", m_Theme, usbAuto)
+    With UserControl
+        '.Height = 360
+        .Height = 700
     End With
 
+    With m_GripRect
+        .Left = ScaleWidth - 15
+        .Top = ScaleHeight - 15
+        .Right = .Left + 15
+        .Bottom = .Top + 15
+    End With
+
+    UserControl.Refresh
+    Refresh
 Sub_ErrHandlerExit:
 
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_WriteProperties", Err.Description, Err.HelpFile, Err.HelpContext
+    Err.Raise Err.Number, "ucStatusBar.UserControl_Resize", Err.Description, Err.HelpFile, Err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub TrackMouseLeave
-'! Description (Описание)  :   [Track the mouse leaving the indicated window]
-'! Parameters  (Переменные):   lng_hWnd (Long)
+'! Procedure   (Функция)   :   Sub UserControl_Show
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
+Private Sub UserControl_Show()
 
-    Dim TME As TRACKMOUSEEVENT_STRUCT
+    '   Handle Any Errors
+    On Error GoTo Sub_ErrHandler
 
-    If bTrack Then
+    Refresh
+Sub_ErrHandlerExit:
 
-        With TME
-            .cbSize = LenB(TME)
-            .dwFlags = TME_LEAVE
-            .hWndTrack = lng_hWnd
-            .dwHoverTime = 1
-        End With
+    Exit Sub
 
-        If bTrackUser32 Then
-            TrackMouseEvent TME
-        Else
-            TrackMouseEventComCtl TME
-        End If
-    End If
+Sub_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.UserControl_Show", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Sub_ErrHandlerExit:
 
 End Sub
 
@@ -3205,6 +3174,37 @@ Private Sub UserControl_Terminate()
     Set m_cSubclass = Nothing
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+
+    '   Handle Any Errors
+    On Error GoTo Sub_ErrHandler
+
+    With PropBag
+        Call .WriteProperty("Font", m_Font, Ambient.Font)
+        Call .WriteProperty("BackColor", m_BackColor, Ambient.BackColor)
+        Call .WriteProperty("ForeColor", m_Forecolor, Ambient.ForeColor)
+        Call .WriteProperty("GripShape", m_GripShape, usbSquare)
+        Call .WriteProperty("PanelCount", m_PanelCount, 0)
+        Call .WriteProperty("Sizable", m_Sizable, True)
+        Call .WriteProperty("Theme", m_Theme, usbAuto)
+    End With
+
+Sub_ErrHandlerExit:
+
+    Exit Sub
+
+Sub_ErrHandler:
+    Err.Raise Err.Number, "ucStatusBar.UserControl_WriteProperties", Err.Description, Err.HelpFile, Err.HelpContext
+
+    Resume Sub_ErrHandlerExit:
+
+End Sub
+
 '======================================================================================================
 '-Subclass callback, usually ordinal #1, the last method in this source file----------------------
 '!--------------------------------------------------------------------------------
@@ -3219,7 +3219,7 @@ End Sub
 '                              lParam (Long)
 '                              lParamUser (Long)
 '!--------------------------------------------------------------------------------
-Private Sub zWndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByRef lParamUser As Long)
+Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByRef lParamUser As Long)
 
     '*************************************************************************************************
     '* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
@@ -3261,3 +3261,4 @@ Private Sub zWndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef
     End Select
 
 End Sub
+

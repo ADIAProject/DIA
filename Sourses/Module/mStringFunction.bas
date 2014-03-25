@@ -56,6 +56,101 @@ Public Sub AppendStr(ByRef strHead As String, ByVal strAdd As String, Optional B
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ByteArray2Str
+'! Description (Описание)  :   [Конвертация байт массива в строку]
+'! Parameters  (Переменные):   StringIn (String)
+'                              ByteArray() (Byte)
+'!--------------------------------------------------------------------------------
+Private Sub ByteArray2Str(sStringOut As String, ByteArray() As Byte)
+    sStringOut = StrConv(ByteArray(), vbUnicode)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CompareByDate
+'! Description (Описание)  :   [Check if date1 newer than date2]
+'! Parameters  (Переменные):   Date1 (String)
+'                              Date2 (String)
+'!--------------------------------------------------------------------------------
+Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As String
+
+    Dim objRegExp    As RegExp
+    Dim objMatch     As Match
+    Dim objMatches   As MatchCollection
+    Dim m1           As Integer
+    Dim M2           As Integer
+    Dim d1           As Integer
+    Dim d2           As Integer
+    Dim Y1           As Integer
+    Dim Y2           As Integer
+    Dim strDate1     As String
+    Dim strDate2     As String
+    Dim strDate1_x() As String
+    Dim strDate2_x() As String
+    Dim strResult    As String
+
+    If mbDebugDetail Then DebugMode str8VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
+
+    If InStr(Date1, "unknown") = 0 Then
+        If InStr(Date1, ",") Then
+            strDate1_x = Split(Trim$(Date1), ",")
+            Date1 = strDate1_x(0)
+        End If
+
+        If InStr(Date2, ",") Then
+            strDate2_x = Split(Trim$(Date2), ",")
+            Date2 = strDate2_x(0)
+        End If
+
+        Set objRegExp = New RegExp
+
+        With objRegExp
+            .Pattern = "(\d+).(\d+).(\d+)"
+            .IgnoreCase = True
+            .Global = True
+        End With
+
+        'получаем date1
+        Set objMatches = objRegExp.Execute(Date1)
+
+        If objMatches.Count Then
+            Set objMatch = objMatches.Item(0)
+            With objMatch
+                m1 = .SubMatches(0)
+                d1 = .SubMatches(1)
+                Y1 = .SubMatches(2)
+            End With
+        End If
+
+        'получаем date2
+        Set objMatches = objRegExp.Execute(Date2)
+
+        If objMatches.Count Then
+            Set objMatch = objMatches.Item(0)
+            With objMatch
+                M2 = .SubMatches(0)
+                d2 = .SubMatches(1)
+                Y2 = .SubMatches(2)
+            End With
+        End If
+        
+        If mbDateFormatRus Then
+            strDate1 = Y1 & "." & d1 & "." & m1
+            strDate2 = Y2 & "." & d2 & "." & M2
+        Else
+            strDate1 = Y1 & "." & m1 & "." & d1
+            strDate2 = Y2 & "." & M2 & "." & d2
+        End If
+
+        strResult = CompareByVersion(strDate1, strDate2)
+        CompareByDate = strResult
+    Else
+        CompareByDate = "?"
+    End If
+
+    If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & " " & strResult & " " & Date2
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareByVersion
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   strVersionBD (String)
@@ -236,91 +331,6 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function CompareByDate
-'! Description (Описание)  :   [Check if date1 newer than date2]
-'! Parameters  (Переменные):   Date1 (String)
-'                              Date2 (String)
-'!--------------------------------------------------------------------------------
-Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As String
-
-    Dim objRegExp    As RegExp
-    Dim objMatch     As Match
-    Dim objMatches   As MatchCollection
-    Dim m1           As Integer
-    Dim M2           As Integer
-    Dim d1           As Integer
-    Dim d2           As Integer
-    Dim Y1           As Integer
-    Dim Y2           As Integer
-    Dim strDate1     As String
-    Dim strDate2     As String
-    Dim strDate1_x() As String
-    Dim strDate2_x() As String
-    Dim strResult    As String
-
-    If mbDebugDetail Then DebugMode str8VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
-
-    If InStr(Date1, "unknown") = 0 Then
-        If InStr(Date1, ",") Then
-            strDate1_x = Split(Trim$(Date1), ",")
-            Date1 = strDate1_x(0)
-        End If
-
-        If InStr(Date2, ",") Then
-            strDate2_x = Split(Trim$(Date2), ",")
-            Date2 = strDate2_x(0)
-        End If
-
-        Set objRegExp = New RegExp
-
-        With objRegExp
-            .Pattern = "(\d+).(\d+).(\d+)"
-            .IgnoreCase = True
-            .Global = True
-        End With
-
-        'получаем date1
-        Set objMatches = objRegExp.Execute(Date1)
-
-        If objMatches.Count Then
-            Set objMatch = objMatches.Item(0)
-            With objMatch
-                m1 = .SubMatches(0)
-                d1 = .SubMatches(1)
-                Y1 = .SubMatches(2)
-            End With
-        End If
-
-        'получаем date2
-        Set objMatches = objRegExp.Execute(Date2)
-
-        If objMatches.Count Then
-            Set objMatch = objMatches.Item(0)
-            With objMatch
-                M2 = .SubMatches(0)
-                d2 = .SubMatches(1)
-                Y2 = .SubMatches(2)
-            End With
-        End If
-        
-        If mbDateFormatRus Then
-            strDate1 = Y1 & "." & d1 & "." & m1
-            strDate2 = Y2 & "." & d2 & "." & M2
-        Else
-            strDate1 = Y1 & "." & m1 & "." & d1
-            strDate2 = Y2 & "." & M2 & "." & d2
-        End If
-
-        strResult = CompareByVersion(strDate1, strDate2)
-        CompareByDate = strResult
-    Else
-        CompareByDate = "?"
-    End If
-
-    If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & " " & strResult & " " & Date2
-End Function
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function ConvertString
 '! Description (Описание)  :   [Заменяем в строке некоторые символы RegExp на константы VB]
 '! Parameters  (Переменные):   strStringText (String)
@@ -347,13 +357,29 @@ Public Function ConvertString(ByVal strStringText As String) As String
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function TrimNull
-'! Description (Описание)  :   [получаем значение из буфера данных]
-'! Parameters  (Переменные):   startstr (String)
+'! Procedure   (Функция)   :   Sub ConvertVerByDate
+'! Description (Описание)  :   [Convert]
+'! Parameters  (Переменные):   strVersion1 (String)
 '!--------------------------------------------------------------------------------
-Public Function TrimNull(ByVal startstr As String) As String
-    TrimNull = Left$(startstr, lstrlenW(StrPtr(startstr)))
-End Function
+Public Sub ConvertVerByDate(ByRef strVersion As String)
+
+    Dim strVer     As String
+    Dim strVer_x() As String
+
+    If LenB(strVersion) Then
+        If InStr(strVersion, "unknown") = 0 Then
+            If InStr(strVersion, ",") Then
+                strVer_x = Split(strVersion, ",")
+                strVersion = strVer_x(0)
+                strVer = strVer_x(1)
+            End If
+
+            ConvertDate2Rus strVersion
+            strVersion = strVersion & "," & strVer
+        End If
+    End If
+
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DelSpaceAfterZPT
@@ -377,28 +403,30 @@ Public Sub DelSpaceAfterZPT(ByRef strVersion As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ConvertVerByDate
-'! Description (Описание)  :   [Convert]
-'! Parameters  (Переменные):   strVersion1 (String)
+'! Procedure   (Функция)   :   Sub RemoveUni
+'! Description (Описание)  :   [Удаление Unicode символов]
+'! Parameters  (Переменные):   s (String)
+'                              ReplaceWith (Byte)
 '!--------------------------------------------------------------------------------
-Public Sub ConvertVerByDate(ByRef strVersion As String)
-
-    Dim strVer     As String
-    Dim strVer_x() As String
-
-    If LenB(strVersion) Then
-        If InStr(strVersion, "unknown") = 0 Then
-            If InStr(strVersion, ",") Then
-                strVer_x = Split(strVersion, ",")
-                strVersion = strVer_x(0)
-                strVer = strVer_x(1)
+Public Sub RemoveUni(ByRef sStr As String)
+    Dim i       As Long
+    Dim bLen    As Long
+    Dim Map()   As Byte
+ 
+    If LenB(sStr) Then
+        Map = sStr
+        bLen = UBound(Map)
+        For i = 1 To bLen Step 2
+            'Is Unicode
+            If Map(i) Then
+                 'Clear upper byte
+                Map(i) = 0
+                 'Replace low byte
+                Map(i - 1) = strVopros
             End If
-
-            ConvertDate2Rus strVersion
-            strVersion = strVersion & "," & strVer
-        End If
+        Next
     End If
-
+    sStr = Map
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -471,6 +499,16 @@ Public Sub ReplaceBadSymbol(ByRef strString As String)
     strString = Trim$(TrimNull(strString))
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Str2ByteArray
+'! Description (Описание)  :   [Конвертация строки в байт массив]
+'! Parameters  (Переменные):   StringIn (String)
+'                              ByteArray() (Byte)
+'!--------------------------------------------------------------------------------
+Private Sub Str2ByteArray(sStringIn As String, ByteArray() As Byte)
+    ByteArray = StrConv(sStringIn, vbFromUnicode)
+End Sub
+
 Private Function StrConvFromUTF8(ByVal Text As String) As String
     ' get length
     Dim lngLen As Long, lngPtr As Long: lngLen = LenB(Text)
@@ -504,48 +542,10 @@ Private Function StrConvToUTF8(ByVal Text As String) As String
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Str2ByteArray
-'! Description (Описание)  :   [Конвертация строки в байт массив]
-'! Parameters  (Переменные):   StringIn (String)
-'                              ByteArray() (Byte)
+'! Procedure   (Функция)   :   Function TrimNull
+'! Description (Описание)  :   [получаем значение из буфера данных]
+'! Parameters  (Переменные):   startstr (String)
 '!--------------------------------------------------------------------------------
-Private Sub Str2ByteArray(sStringIn As String, ByteArray() As Byte)
-    ByteArray = StrConv(sStringIn, vbFromUnicode)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ByteArray2Str
-'! Description (Описание)  :   [Конвертация байт массива в строку]
-'! Parameters  (Переменные):   StringIn (String)
-'                              ByteArray() (Byte)
-'!--------------------------------------------------------------------------------
-Private Sub ByteArray2Str(sStringOut As String, ByteArray() As Byte)
-    sStringOut = StrConv(ByteArray(), vbUnicode)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub RemoveUni
-'! Description (Описание)  :   [Удаление Unicode символов]
-'! Parameters  (Переменные):   s (String)
-'                              ReplaceWith (Byte)
-'!--------------------------------------------------------------------------------
-Public Sub RemoveUni(ByRef sStr As String)
-    Dim i       As Long
-    Dim bLen    As Long
-    Dim Map()   As Byte
- 
-    If LenB(sStr) Then
-        Map = sStr
-        bLen = UBound(Map)
-        For i = 1 To bLen Step 2
-            'Is Unicode
-            If Map(i) Then
-                 'Clear upper byte
-                Map(i) = 0
-                 'Replace low byte
-                Map(i - 1) = strVopros
-            End If
-        Next
-    End If
-    sStr = Map
-End Sub
+Public Function TrimNull(ByVal startstr As String) As String
+    TrimNull = Left$(startstr, lstrlenW(StrPtr(startstr)))
+End Function

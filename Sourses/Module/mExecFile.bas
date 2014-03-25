@@ -81,45 +81,6 @@ Private Declare Function ShellExecuteForExplore Lib "shell32.dll" Alias "ShellEx
 Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function RunAndWaitNew
-'! Description (Описание)  :   [запустить приложение с ожиданием завершения и отсутсвие заморозки экрана]
-'! Parameters  (Переменные):   ComLine (String)
-'                              DefaultDir (String)
-'                              ShowFlag (VbAppWinStyle)
-'!--------------------------------------------------------------------------------
-Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle) As Boolean
-
-    Dim SI   As STARTUPINFO
-    Dim PI   As PROCESS_INFORMATION
-    Dim nRet As Long
-
-    If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-RunString: " & ComLine
-    If mbDebugDetail Then DebugMode str2VbTab & "RunAndWaitNew-StartDir: " & DefaultDir
-    
-    If OSCurrVersionStruct.VerFull >= "5.1" Then
-        DoEvents
-        lngExitProc = 0
-    
-        If ShowFlag = vbHide Then
-            If Not mbHideOtherProcess Then
-                ShowFlag = vbNormalFocus
-            End If
-        End If
-    
-        nRet = ShellW(ComLine, ShowFlag, INFINITE)
-        lngExitProc = nRet
-        RunAndWaitNew = True
-        
-        If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
-    Else
-        ' Если Windows2k, то вызываем старую функцию RunAndWait
-        RunAndWaitNew = RunAndWait(ComLine, DefaultDir, ShowFlag)
-    End If
-    
-    DoEvents
-End Function
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function RunAndWait
 '! Description (Описание)  :   [запустить приложение с ожиданием завершения]
 '! Parameters  (Переменные):   ComLine (String)
@@ -155,6 +116,45 @@ Public Function RunAndWait(ComLine As String, DefaultDir As String, ShowFlag As 
     CloseHandle PI.hProcess
     lngExitProc = nRet
     RunAndWait = True
+    
+    DoEvents
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function RunAndWaitNew
+'! Description (Описание)  :   [запустить приложение с ожиданием завершения и отсутсвие заморозки экрана]
+'! Parameters  (Переменные):   ComLine (String)
+'                              DefaultDir (String)
+'                              ShowFlag (VbAppWinStyle)
+'!--------------------------------------------------------------------------------
+Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle) As Boolean
+
+    Dim SI   As STARTUPINFO
+    Dim PI   As PROCESS_INFORMATION
+    Dim nRet As Long
+
+    If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-RunString: " & ComLine
+    If mbDebugDetail Then DebugMode str2VbTab & "RunAndWaitNew-StartDir: " & DefaultDir
+    
+    If OSCurrVersionStruct.VerFull >= "5.1" Then
+        DoEvents
+        lngExitProc = 0
+    
+        If ShowFlag = vbHide Then
+            If Not mbHideOtherProcess Then
+                ShowFlag = vbNormalFocus
+            End If
+        End If
+    
+        nRet = ShellW(ComLine, ShowFlag, INFINITE)
+        lngExitProc = nRet
+        RunAndWaitNew = True
+        
+        If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
+    Else
+        ' Если Windows2k, то вызываем старую функцию RunAndWait
+        RunAndWaitNew = RunAndWait(ComLine, DefaultDir, ShowFlag)
+    End If
     
     DoEvents
 End Function

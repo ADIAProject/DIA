@@ -15,21 +15,6 @@ Private Declare Function GetCommandLine Lib "kernel32" Alias "GetCommandLineW" (
 Private Declare Function PathGetArgs Lib "shlwapi" Alias "PathGetArgsW" (ByVal lpszPath As Long) As Long
 Private Declare Function SysReAllocString Lib "oleaut32" (ByVal pbString As Long, ByVal pszStrPtr As Long) As Long
 
-' (VB-Overwrite)
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub CmdLineParsing
-'! Description (Описание)  :   [Функция получения строки запуска программы, заменяет встроенную функцию VBA.Command$()]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function Command() As String
-    If InIDE() = False Then
-        SysReAllocString VarPtr(Command), PathGetArgs(GetCommandLine())
-        Command = LTrim$(Command)
-    Else
-        Command = VBA.Command$()
-    End If
-End Function
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CmdLineParsing
 '! Description (Описание)  :   [Функция анализа коммандной строки и присвоение переменных на основании передеваемых комманд]
@@ -154,14 +139,20 @@ Public Sub CmdLineParsing()
 
 End Sub
 
+' (VB-Overwrite)
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ShowHelpMsg
-'! Description (Описание)  :   [Показ окна с параметрами запуска]
+'! Procedure   (Функция)   :   Sub CmdLineParsing
+'! Description (Описание)  :   [Функция получения строки запуска программы, заменяет встроенную функцию VBA.Command$()]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub ShowHelpMsg()
-    MsgBox strMessages(137), vbInformation & vbOKOnly, strProductName
-End Sub
+Public Function Command() As String
+    If InIDE() = False Then
+        SysReAllocString VarPtr(Command), PathGetArgs(GetCommandLine())
+        Command = LTrim$(Command)
+    Else
+        Command = VBA.Command$()
+    End If
+End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowHelpMsg
@@ -186,4 +177,13 @@ Private Sub SaveReport(ByVal strFilePathTo As String)
             End If
         End If
     End If
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ShowHelpMsg
+'! Description (Описание)  :   [Показ окна с параметрами запуска]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ShowHelpMsg()
+    MsgBox strMessages(137), vbInformation & vbOKOnly, strProductName
 End Sub

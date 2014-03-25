@@ -226,6 +226,25 @@ Public Function LoadLanguageList() As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadLanguageOS
+'! Description (Описание)  :   [Считываем язык операционной системы, и записываем в переменные Public]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub LoadLanguageOS()
+
+    Dim LCID As Long
+
+    ' Считываем язык операционой системы
+    LCID = GetSystemDefaultLCID()
+    'language id
+    strPCLangID = GetUserLocaleInfo(LCID, LOCALE_ILANGUAGE)
+    'localized name of language
+    strPCLangLocaliseName = GetUserLocaleInfo(LCID, LOCALE_SLANGUAGE)
+    'English name of language
+    strPCLangEngName = GetUserLocaleInfo(LCID, LOCALE_SENGLANGUAGE)
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LocaliseMessage
 '! Description (Описание)  :   [Локализация сообщений программы]
 '! Parameters  (Переменные):   StrPathFile (String)
@@ -261,23 +280,4 @@ Public Function LocaliseString(ByVal strPathFile As String, ByVal strSection As 
     End If
 
 End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadLanguageOS
-'! Description (Описание)  :   [Считываем язык операционной системы, и записываем в переменные Public]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Sub LoadLanguageOS()
-
-    Dim LCID As Long
-
-    ' Считываем язык операционой системы
-    LCID = GetSystemDefaultLCID()
-    'language id
-    strPCLangID = GetUserLocaleInfo(LCID, LOCALE_ILANGUAGE)
-    'localized name of language
-    strPCLangLocaliseName = GetUserLocaleInfo(LCID, LOCALE_SLANGUAGE)
-    'English name of language
-    strPCLangEngName = GetUserLocaleInfo(LCID, LOCALE_SENGLANGUAGE)
-End Sub
 

@@ -132,18 +132,29 @@ Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private strFormName      As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckEditLicense
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub CheckEditLicense(StrPathFile As String)
+Private Sub CheckEditLicense(strPathFile As String)
 
     Dim strMD5TextRtf       As String
     Dim strEULA_MD5RTF_temp As String
 
-    strMD5TextRtf = GetMD5(StrPathFile)
+    strMD5TextRtf = GetMD5(strPathFile)
     If mbDebugStandart Then DebugMode "LicenceInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -187,6 +198,60 @@ Private Sub FontCharsetChange()
 
     SetBtnFontProperties cmdExit
     SetBtnFontProperties cmdOK
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadLicence
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadLicence()
+
+    Dim strPathLicence As String
+
+    strPathLicence = strWorkTempBackSL & "licence.rtf"
+
+    Select Case strPCLangCurrentID
+
+        Case "0419"
+            strPathLicence = PathCollect(strToolsDocs_Path & "\0419\licence.rtf")
+
+        Case Else
+            strPathLicence = PathCollect(strToolsDocs_Path & "\0409\licence.rtf")
+    End Select
+
+    If PathExists(strPathLicence) Then
+        LicenceRTF.LoadFile strPathLicence
+        
+        ' Проверка лицензии на неправомерное изменение
+        CheckEditLicense strPathLicence
+        LicenceRTF.SetFocus
+    Else
+
+        If Not mbSilentRun Then
+            MsgBox strMessages(39), vbInformation, strProductName
+        End If
+
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    ' Чекбокс
+    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
+    'Кнопки
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -354,6 +419,11 @@ Private Sub Form_Resize()
 
 End Sub
 
+'Private Sub LicenceRTF_LinkEvent(ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal LinkStart As Long, ByVal LinkEnd As Long)
+'Debug.Print LinkStart & " " & LinkEnd
+'Debug.Print Mid$(LicenceRTF.Text, LinkStart, (LinkEnd - LinkStart))
+'End Sub
+
 'Private Sub LicenceRTF_Click()
 '
 'Dim lngRetVal                           As Long
@@ -411,73 +481,4 @@ End Sub
 '    'to run
 '    ShellExecute Me.hWnd, "OPEN", strBuffer, vbNullString, vbNullString, 5
 '
-'End Sub
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadLicence
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadLicence()
-
-    Dim strPathLicence As String
-
-    strPathLicence = strWorkTempBackSL & "licence.rtf"
-
-    Select Case strPCLangCurrentID
-
-        Case "0419"
-            strPathLicence = PathCollect(strToolsDocs_Path & "\0419\licence.rtf")
-
-        Case Else
-            strPathLicence = PathCollect(strToolsDocs_Path & "\0409\licence.rtf")
-    End Select
-
-    If PathExists(strPathLicence) Then
-        LicenceRTF.LoadFile strPathLicence
-        
-        ' Проверка лицензии на неправомерное изменение
-        CheckEditLicense strPathLicence
-        LicenceRTF.SetFocus
-    Else
-
-        If Not mbSilentRun Then
-            MsgBox strMessages(39), vbInformation, strProductName
-        End If
-
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    ' Чекбокс
-    chkAgreeLicence.Caption = LocaliseString(StrPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
-    'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
-
-'Private Sub LicenceRTF_LinkEvent(ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal LinkStart As Long, ByVal LinkEnd As Long)
-'Debug.Print LinkStart & " " & LinkEnd
-'Debug.Print Mid$(LicenceRTF.Text, LinkStart, (LinkEnd - LinkStart))
 'End Sub

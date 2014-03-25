@@ -2,6 +2,47 @@ Attribute VB_Name = "mDevParser"
 Option Explicit
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CollectCmdString
+'! Description (Описание)  :   [Создание коммандной строки запуска программы DPInst]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function CollectCmdString() As String
+
+    Dim strCmdStringDPInstTemp As String
+
+    If mbDpInstLegacyMode Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/LM "
+    End If
+
+    If mbDpInstPromptIfDriverIsNotBetter Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/P "
+    End If
+
+    If mbDpInstForceIfDriverIsNotBetter Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/F "
+    End If
+
+    If mbDpInstSuppressAddRemovePrograms Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/SA "
+    End If
+
+    If mbDpInstSuppressWizard Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/SW "
+    End If
+
+    If mbDpInstQuietInstall Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/Q "
+    End If
+
+    If mbDpInstScanHardware Then
+        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/SH "
+    End If
+
+    ' Результирующая строка
+    CollectCmdString = strCmdStringDPInstTemp
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareDevDBVersion
 '! Description (Описание)  :   [Сравнение версий баз драйверов, с константой в программе]
 '! Parameters  (Переменные):   strDevDBFullFileName (String)
@@ -19,6 +60,38 @@ Public Function CompareDevDBVersion(strDevDBFullFileName As String, Optional ByV
         CompareDevDBVersion = False
     Else
         CompareDevDBVersion = Not (LngValue <> lngDevDBVersion)
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function DeleteDriverbyHwid
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strHwid (String)
+'!--------------------------------------------------------------------------------
+Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
+
+    Dim cmdString     As String
+    Dim strDevConTemp As String
+
+    If mbIsWin64 Then
+        strDevConTemp = strDevConExePath64
+    Else
+
+        If strOSCurrentVersion = "5.0" Then
+            strDevConTemp = strDevConExePathW2k
+        Else
+            strDevConTemp = strDevConExePath
+        End If
+    End If
+
+    cmdString = strKavichki & strDevconCmdPath & strKavichki & " " & strKavichki & strDevConTemp & strKavichki & " " & strKavichki & strHwidsTxtPath & strKavichki & " 4 " & strKavichki & strHwid & strKavichki
+
+    If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
+        MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
+        DeleteDriverbyHwid = False
+    Else
+        DeleteDriverbyHwid = True
     End If
 
 End Function
@@ -284,78 +357,5 @@ Public Function RunDevconView() As Boolean
     End If
 
     If mbDebugDetail Then DebugMode vbTab & "Run DevconView: " & RunDevconView
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function CollectCmdString
-'! Description (Описание)  :   [Создание коммандной строки запуска программы DPInst]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function CollectCmdString() As String
-
-    Dim strCmdStringDPInstTemp As String
-
-    If mbDpInstLegacyMode Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/LM "
-    End If
-
-    If mbDpInstPromptIfDriverIsNotBetter Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/P "
-    End If
-
-    If mbDpInstForceIfDriverIsNotBetter Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/F "
-    End If
-
-    If mbDpInstSuppressAddRemovePrograms Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/SA "
-    End If
-
-    If mbDpInstSuppressWizard Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/SW "
-    End If
-
-    If mbDpInstQuietInstall Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/Q "
-    End If
-
-    If mbDpInstScanHardware Then
-        strCmdStringDPInstTemp = strCmdStringDPInstTemp & "/SH "
-    End If
-
-    ' Результирующая строка
-    CollectCmdString = strCmdStringDPInstTemp
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function DeleteDriverbyHwid
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strHwid (String)
-'!--------------------------------------------------------------------------------
-Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
-
-    Dim cmdString     As String
-    Dim strDevConTemp As String
-
-    If mbIsWin64 Then
-        strDevConTemp = strDevConExePath64
-    Else
-
-        If strOSCurrentVersion = "5.0" Then
-            strDevConTemp = strDevConExePathW2k
-        Else
-            strDevConTemp = strDevConExePath
-        End If
-    End If
-
-    cmdString = strKavichki & strDevconCmdPath & strKavichki & " " & strKavichki & strDevConTemp & strKavichki & " " & strKavichki & strHwidsTxtPath & strKavichki & " 4 " & strKavichki & strHwid & strKavichki
-
-    If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
-        MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
-        DeleteDriverbyHwid = False
-    Else
-        DeleteDriverbyHwid = True
-    End If
-
 End Function
 

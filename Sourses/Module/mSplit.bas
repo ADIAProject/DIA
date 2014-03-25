@@ -92,6 +92,17 @@ Private Property Let Procedure(ByVal AddressOfDest As Long, ByVal AddressOfSrc A
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PutLong
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Ptr (Long)
+'                              Value (Long)
+'!--------------------------------------------------------------------------------
+Public Sub PutLong(ByVal Ptr As Long, ByVal Value As Long)
+    Procedure(AddressOf mSplit.PutLong) = API("msvbvm60", "PutMem4")
+    PutLong Ptr, Value
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function Split
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Expression (String)
@@ -303,15 +314,4 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = " "
     End If
 
 End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PutLong
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Ptr (Long)
-'                              Value (Long)
-'!--------------------------------------------------------------------------------
-Public Sub PutLong(ByVal Ptr As Long, ByVal Value As Long)
-    Procedure(AddressOf mSplit.PutLong) = API("msvbvm60", "PutMem4")
-    PutLong Ptr, Value
-End Sub
 

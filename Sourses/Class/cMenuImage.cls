@@ -312,331 +312,6 @@ Public Property Get ImageCount() As Long
 End Property
 
 
-Public Function RemoveImage(ByVal Index As Long) As Boolean
-
-    Dim i                               As Long
-
-    If Index < 0 Or Index > Me.ImageCount Then Exit Function
-
-    With mDIB(Index)
-        Call DeleteObject(.hDIB)
-        Call DeleteDC(.hDC)
-    End With
-
-    For i = Index To Me.ImageCount
-        mDIB(i) = mDIB(i + 1)
-    Next
-
-    ReDim Preserve mDIB(Me.ImageCount)
-
-    RemoveImage = True
-End Function
-
-
-Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, ParamArray vSubMenuPos() As Variant) As Boolean
-
-    On Error Resume Next
-
-    Dim hMenu                           As Long
-    Dim hSubMenu                        As Long
-    Dim MII                             As MENUITEMINFO
-    Dim v                               As Variant
-    Dim sKey                            As String
-
-    hMenu = GetMenu(m_hWnd)
-
-    Dim tmpInfo                         As MENUINFO
-
-    If classicThemeWorkaround Then
-        tmpInfo.cbSize = Len(tmpInfo)
-        tmpInfo.fMask = MIM_APPLYTOSUBMENUS Or MIM_STYLE
-        tmpInfo.dwStyle = MNS_CHECKORBMP
-        SetMenuInfo hMenu, tmpInfo
-    End If
-
-    hSubMenu = hMenu
-
-    For Each v In vSubMenuPos
-        hSubMenu = GetSubMenu(hSubMenu, v)
-    Next
-
-    With MII
-        .cbSize = Len(MII)
-        .fMask = MIIM_ID
-    End With
-
-    If GetMenuItemInfo(hSubMenu, MenuPos, True, MII) = 0 Then Exit Function
-
-    sKey = hSubMenu & "-" & MII.wid
-
-    With MII
-        '.cbSize = Len(MII)
-        .fMask = MIIM_BITMAP                                                   'Or MIIM_DATA
-
-        If imageID = -1 Then
-            .hbmpItem = 0
-            If KeyExists(sKey) Then Call cColl.Remove(sKey)
-        Else
-            If IsWinVistaOrLater Then
-                .hbmpItem = mDIB(imageID).hDIB
-            Else
-                .hbmpItem = HBMMENU_CALLBACK
-                If KeyExists(sKey) Then Call cColl.Remove(sKey)
-                cColl.Add imageID, sKey
-            End If
-        End If
-
-        '.dwItemData = ImageID
-
-    End With
-
-    PutImageToVBMenu = SetMenuItemInfo(hSubMenu, MenuPos, True, MII)
-
-    If hSubMenu = hMenu Then DrawMenuBar m_hWnd
-
-End Function
-
-Public Function PutImageToApiMenu(ByVal imageID As Long, ByVal hMenu As Long, ByVal MenuPos As Long, Optional ByVal ItemData As Long) As Boolean
-
-    Dim MII                             As MENUITEMINFO
-    Dim sKey                            As String
-
-    With MII
-        .cbSize = Len(MII)
-        .fMask = MIIM_ID
-    End With
-
-    If GetMenuItemInfo(hMenu, MenuPos, True, MII) = 0 Then Exit Function
-
-    sKey = hMenu & "-" & MII.wid
-
-    With MII
-        .fMask = MIIM_BITMAP Or MIIM_DATA
-
-        If imageID = -1 Then
-            .hbmpItem = 0
-            If KeyExists(sKey) Then Call cColl.Remove(sKey)
-        Else
-            If IsWinVistaOrLater Then
-                .hbmpItem = mDIB(imageID).hDIB
-            Else
-                .hbmpItem = HBMMENU_CALLBACK
-                If KeyExists(sKey) Then Call cColl.Remove(sKey)
-                cColl.Add imageID, sKey
-            End If
-        End If
-        .dwItemData = ItemData
-    End With
-
-    PutImageToApiMenu = SetMenuItemInfo(hMenu, MenuPos, True, MII)
-
-End Function
-
-Public Sub RemoveMenuCheckApi(ByVal hMenu As Long)
-    Dim MI                              As MENUINFO
-
-    With MI
-        .cbSize = Len(MI)
-        .fMask = MIM_STYLE
-        .dwStyle = MNS_NOCHECK
-    End With
-
-    SetMenuInfo hMenu, MI
-End Sub
-
-Public Sub RemoveMenuCheckVB(ParamArray vSubMenuPos() As Variant)
-    Dim MI                              As MENUINFO
-    Dim hMenu                           As Long
-    Dim hSubMenu                        As Long
-    Dim v                               As Variant
-
-    hMenu = GetMenu(m_hWnd)
-
-    hSubMenu = hMenu
-
-    For Each v In vSubMenuPos
-        hSubMenu = GetSubMenu(hSubMenu, v)
-    Next
-
-    With MI
-        .cbSize = Len(MI)
-        .fMask = MIM_STYLE
-        .dwStyle = MNS_NOCHECK
-    End With
-
-    SetMenuInfo hSubMenu, MI
-End Sub
-
-
-Private Sub DrawCheck(ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal X2 As Long, ByVal Y2 As Long, bDisabled As Boolean)
-    Dim hPen As Long, OldPen            As Long
-    Dim hBrush As Long, OldBrush        As Long
-
-    hPen = CreatePen(0, 1, GetSysColor(IIf(bDisabled, COLOR_GRAYTEXT, COLOR_APPWORKSPACE)))
-    hBrush = GetStockObject(NULL_BRUSH)
-
-    OldPen = SelectObject(hDC, hPen)
-    OldBrush = SelectObject(hDC, hBrush)
-
-    Rectangle hDC, X, Y, X + X2, Y + Y2
-
-    DeleteObject SelectObject(hDC, OldPen)
-    Call SelectObject(hDC, OldBrush)
-
-End Sub
-
-Private Function CreateNewDib() As Long
-
-    Dim tBITMAPINFO                     As BITMAPINFO
-    Dim Index                           As Long
-    Dim TempDC                          As Long
-
-    With tBITMAPINFO.bmiHeader
-        .biSize = Len(tBITMAPINFO.bmiHeader)
-        .biBitCount = 32
-        .biHeight = m_lWidth
-        .biWidth = m_lHeight
-        .biPlanes = 1
-        .biSizeImage = .biWidth * .biHeight * 4&
-    End With
-
-    Index = UBound(mDIB)
-
-    With mDIB(Index)
-
-        TempDC = GetDC(0&)
-
-        .hDC = CreateCompatibleDC(TempDC)
-
-        .hDIB = CreateDIBSection(TempDC, tBITMAPINFO, DIB_RGB_COLORS, .Ptr, 0&, 0&)
-
-        Call ReleaseDC(0&, TempDC)
-
-        If .hDIB <> 0 Then
-            CreateNewDib = Index
-        Else
-            CreateNewDib = -1
-            Exit Function
-        End If
-
-    End With
-
-    ReDim Preserve mDIB(Index + 1)
-
-End Function
-
-Public Function Clear()
-
-    Dim i                               As Long
-
-    For i = 0 To UBound(mDIB) - 1
-        With mDIB(i)
-            Call DeleteObject(.hDIB)
-            Call DeleteDC(.hDC)
-        End With
-    Next
-
-    ReDim mDIB(0)
-
-End Function
-
-Private Sub DrawDIB(ByVal DestHdc As Long, ByVal X As Long, ByVal Y As Long, ByVal Index As Long, Disabled As Boolean)
-
-    Dim hGraphics                       As Long
-    Dim hImage                          As Long
-    Dim hAttributes                     As Long
-    Dim tMatrixColor                    As COLORMATRIX
-    Dim tMatrixGray                     As COLORMATRIX
-
-    If Index < 0 Or Index > Me.ImageCount Then Exit Sub
-
-    If GdipCreateBitmapFromScan0(m_lWidth, m_lHeight, m_lWidth * 4&, PixelFormat32bppARGB, ByVal mDIB(Index).Ptr, hImage) = 0 Then
-
-        If GdipCreateFromHDC(DestHdc, hGraphics) = 0 Then
-
-            GdipImageRotateFlip hImage, &H6
-
-            If Disabled Then
-
-                GdipCreateImageAttributes hAttributes
-
-                With tMatrixColor
-                    .M(0, 0) = 0.299
-                    .M(1, 0) = .M(0, 0)
-                    .M(2, 0) = .M(0, 0)
-                    .M(0, 1) = 0.587
-                    .M(1, 1) = .M(0, 1)
-                    .M(2, 1) = .M(0, 1)
-                    .M(0, 2) = 0.114
-                    .M(1, 2) = .M(0, 2)
-                    .M(2, 2) = .M(0, 2)
-                    .M(3, 3) = 0.5
-                    .M(4, 4) = 1
-                End With
-
-                GdipSetImageAttributesColorMatrix hAttributes, ColorAdjustTypeDefault, True, tMatrixColor, tMatrixGray, ColorMatrixFlagsDefault
-
-            End If
-
-            GdipDrawImageRectRectI hGraphics, hImage, X, Y, m_lWidth, m_lHeight, 0, 0, m_lWidth, m_lHeight, &H2, hAttributes, 0&, 0&
-
-            If hAttributes Then Call GdipDisposeImageAttributes(hAttributes)
-
-            GdipDeleteGraphics hGraphics
-
-        End If
-
-        GdipDisposeImage hImage
-
-    End If
-
-End Sub
-
-
-Private Function AlphaIconToBmp(ByVal IconHandle As Long, ByRef RefBmp As Long) As Long
-
-    Dim tRect                           As RECT
-    Dim tICONINFO                       As ICONINFO
-    Dim tBitmapData                     As BitmapData
-    Dim lPixelFormat                    As Long
-    Dim sngWidth                        As Single
-    Dim sngHeight                       As Single
-
-    If GetIconInfo(IconHandle, tICONINFO) <> 0 Then
-
-        If GdipCreateBitmapFromHBITMAP(tICONINFO.hBMColor, 0&, RefBmp) = 0 Then
-
-            If GdipGetImagePixelFormat(RefBmp, lPixelFormat) = 0 Then
-
-                If GdipGetImageDimension(RefBmp, sngWidth, sngHeight) = 0 Then
-
-                    With tRect
-                        .Right = CLng(sngWidth)
-                        .Bottom = CLng(sngHeight)
-                    End With
-
-                    If GdipBitmapLockBits(RefBmp, tRect, ImageLockModeRead, lPixelFormat, tBitmapData) = 0 Then
-
-                        Call GdipCreateBitmapFromScan0(tRect.Right, tRect.Bottom, tBitmapData.Stride, PixelFormat32bppARGB, ByVal tBitmapData.Scan0, AlphaIconToBmp)
-
-                        Call GdipBitmapUnlockBits(RefBmp, tBitmapData)
-
-                    End If
-
-                End If
-
-            End If
-
-        End If
-
-        Call DeleteObject(tICONINFO.hBMMask)
-        Call DeleteObject(tICONINFO.hBMColor)
-
-    End If
-
-End Function
-
-
 Public Function AddIconFromHandle(ByVal hIcon As Long, Optional bGhosted As Boolean) As Boolean
 
     Dim hBmp                            As Long
@@ -740,139 +415,174 @@ AddImageFromStream_Error:
 
 End Function
 
-Private Function pvAddImagen(ByVal hImage As Long, Optional bGhosted As Boolean) As Boolean
-    Dim hGraphics                       As Long
-    Dim ImgWidth                        As Single
-    Dim imgHeight                       As Single
+
+Private Function AlphaIconToBmp(ByVal IconHandle As Long, ByRef RefBmp As Long) As Long
+
+    Dim tRect                           As RECT
+    Dim tICONINFO                       As ICONINFO
+    Dim tBitmapData                     As BitmapData
+    Dim lPixelFormat                    As Long
+    Dim sngWidth                        As Single
+    Dim sngHeight                       As Single
+
+    If GetIconInfo(IconHandle, tICONINFO) <> 0 Then
+
+        If GdipCreateBitmapFromHBITMAP(tICONINFO.hBMColor, 0&, RefBmp) = 0 Then
+
+            If GdipGetImagePixelFormat(RefBmp, lPixelFormat) = 0 Then
+
+                If GdipGetImageDimension(RefBmp, sngWidth, sngHeight) = 0 Then
+
+                    With tRect
+                        .Right = CLng(sngWidth)
+                        .Bottom = CLng(sngHeight)
+                    End With
+
+                    If GdipBitmapLockBits(RefBmp, tRect, ImageLockModeRead, lPixelFormat, tBitmapData) = 0 Then
+
+                        Call GdipCreateBitmapFromScan0(tRect.Right, tRect.Bottom, tBitmapData.Stride, PixelFormat32bppARGB, ByVal tBitmapData.Scan0, AlphaIconToBmp)
+
+                        Call GdipBitmapUnlockBits(RefBmp, tBitmapData)
+
+                    End If
+
+                End If
+
+            End If
+
+        End If
+
+        Call DeleteObject(tICONINFO.hBMMask)
+        Call DeleteObject(tICONINFO.hBMColor)
+
+    End If
+
+End Function
+
+Public Function Clear()
+
+    Dim i                               As Long
+
+    For i = 0 To UBound(mDIB) - 1
+        With mDIB(i)
+            Call DeleteObject(.hDIB)
+            Call DeleteDC(.hDC)
+        End With
+    Next
+
+    ReDim mDIB(0)
+
+End Function
+
+Private Function CreateNewDib() As Long
+
+    Dim tBITMAPINFO                     As BITMAPINFO
     Dim Index                           As Long
-    Dim OldhDib                         As Long
+    Dim TempDC                          As Long
+
+    With tBITMAPINFO.bmiHeader
+        .biSize = Len(tBITMAPINFO.bmiHeader)
+        .biBitCount = 32
+        .biHeight = m_lWidth
+        .biWidth = m_lHeight
+        .biPlanes = 1
+        .biSizeImage = .biWidth * .biHeight * 4&
+    End With
+
+    Index = UBound(mDIB)
+
+    With mDIB(Index)
+
+        TempDC = GetDC(0&)
+
+        .hDC = CreateCompatibleDC(TempDC)
+
+        .hDIB = CreateDIBSection(TempDC, tBITMAPINFO, DIB_RGB_COLORS, .Ptr, 0&, 0&)
+
+        Call ReleaseDC(0&, TempDC)
+
+        If .hDIB <> 0 Then
+            CreateNewDib = Index
+        Else
+            CreateNewDib = -1
+            Exit Function
+        End If
+
+    End With
+
+    ReDim Preserve mDIB(Index + 1)
+
+End Function
 
 
-    If hImage <> 0 Then
+Private Sub DrawCheck(ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal X2 As Long, ByVal Y2 As Long, bDisabled As Boolean)
+    Dim hPen As Long, OldPen            As Long
+    Dim hBrush As Long, OldBrush        As Long
 
-        Index = CreateNewDib()
+    hPen = CreatePen(0, 1, GetSysColor(IIf(bDisabled, COLOR_GRAYTEXT, COLOR_APPWORKSPACE)))
+    hBrush = GetStockObject(NULL_BRUSH)
 
-        If Index <> -1 Then
+    OldPen = SelectObject(hDC, hPen)
+    OldBrush = SelectObject(hDC, hBrush)
 
-            OldhDib = SelectObject(mDIB(Index).hDC, mDIB(Index).hDIB)
+    Rectangle hDC, X, Y, X + X2, Y + Y2
 
-            GdipCreateFromHDC mDIB(Index).hDC, hGraphics
+    DeleteObject SelectObject(hDC, OldPen)
+    Call SelectObject(hDC, OldBrush)
 
-            GdipGetImageDimension hImage, ImgWidth, imgHeight
+End Sub
 
-            If bGhosted Then
-                Dim tMatrixColor        As COLORMATRIX
-                Dim tMatrixGray         As COLORMATRIX
-                Dim hAttributes         As Long
+Private Sub DrawDIB(ByVal DestHdc As Long, ByVal X As Long, ByVal Y As Long, ByVal Index As Long, Disabled As Boolean)
+
+    Dim hGraphics                       As Long
+    Dim hImage                          As Long
+    Dim hAttributes                     As Long
+    Dim tMatrixColor                    As COLORMATRIX
+    Dim tMatrixGray                     As COLORMATRIX
+
+    If Index < 0 Or Index > Me.ImageCount Then Exit Sub
+
+    If GdipCreateBitmapFromScan0(m_lWidth, m_lHeight, m_lWidth * 4&, PixelFormat32bppARGB, ByVal mDIB(Index).Ptr, hImage) = 0 Then
+
+        If GdipCreateFromHDC(DestHdc, hGraphics) = 0 Then
+
+            GdipImageRotateFlip hImage, &H6
+
+            If Disabled Then
 
                 GdipCreateImageAttributes hAttributes
 
                 With tMatrixColor
-                    .M(0, 0) = 1
-                    .M(1, 1) = 1
-                    .M(2, 2) = 1
-                    .M(3, 3) = 0.7
+                    .M(0, 0) = 0.299
+                    .M(1, 0) = .M(0, 0)
+                    .M(2, 0) = .M(0, 0)
+                    .M(0, 1) = 0.587
+                    .M(1, 1) = .M(0, 1)
+                    .M(2, 1) = .M(0, 1)
+                    .M(0, 2) = 0.114
+                    .M(1, 2) = .M(0, 2)
+                    .M(2, 2) = .M(0, 2)
+                    .M(3, 3) = 0.5
                     .M(4, 4) = 1
-
                 End With
 
                 GdipSetImageAttributesColorMatrix hAttributes, ColorAdjustTypeDefault, True, tMatrixColor, tMatrixGray, ColorMatrixFlagsDefault
+
             End If
 
-            GdipDrawImageRectRectI hGraphics, hImage, 0, 0, m_lWidth, m_lHeight, 0, 0, ImgWidth, imgHeight, &H2, hAttributes, 0&, 0&
+            GdipDrawImageRectRectI hGraphics, hImage, X, Y, m_lWidth, m_lHeight, 0, 0, m_lWidth, m_lHeight, &H2, hAttributes, 0&, 0&
 
             If hAttributes Then Call GdipDisposeImageAttributes(hAttributes)
 
-            GdipDisposeImage hImage
-
             GdipDeleteGraphics hGraphics
 
-            Call SelectObject(mDIB(Index).hDC, OldhDib)
-
-            pvAddImagen = True
-
         End If
 
-    End If
-End Function
-
-Private Function LoadImageFromStream(ByRef bvData() As Byte, ByRef hImage As Long) As Boolean
-
-    On Local Error GoTo LoadImageFromStream_Error
-
-    Dim IStream                         As IUnknown
-
-    Call CreateStreamOnHGlobal(bvData(0), 0&, IStream)
-
-    If Not IStream Is Nothing Then
-
-        If GdipLoadImageFromStream(IStream, hImage) = 0 Then
-
-            LoadImageFromStream = True
-
-        End If
+        GdipDisposeImage hImage
 
     End If
 
-    Set IStream = Nothing
-
-LoadImageFromStream_Error:
-
-End Function
-
-Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
-
-    On Local Error GoTo LoadIconFromStream_Error
-
-    Dim tIconHeader                     As IconHeader
-    Dim tIconEntry()                    As IconEntry
-    Dim MaxBitCount                     As Long
-    Dim MaxSize                         As Long
-    Dim Aproximate                      As Long
-    Dim IconID                          As Long
-    Dim hIcon                           As Long
-    Dim i                               As Long
-
-
-    Call CopyMemory(tIconHeader, bytIcoData(0), Len(tIconHeader))
-
-    If tIconHeader.ihCount Then
-
-        ReDim tIconEntry(tIconHeader.ihCount - 1)
-
-        Call CopyMemory(tIconEntry(0), bytIcoData(Len(tIconHeader)), Len(tIconEntry(0)) * tIconHeader.ihCount)
-
-        IconID = -1
-
-        For i = 0 To tIconHeader.ihCount - 1
-            If tIconEntry(i).ieBitCount > MaxBitCount Then MaxBitCount = tIconEntry(i).ieBitCount
-        Next
-
-
-        For i = 0 To tIconHeader.ihCount - 1
-            If MaxBitCount = tIconEntry(i).ieBitCount Then
-                MaxSize = CLng(tIconEntry(i).ieWidth) + CLng(tIconEntry(i).ieHeight)
-                If MaxSize > Aproximate And MaxSize <= (m_lWidth + m_lHeight) Then
-                    Aproximate = MaxSize
-                    IconID = i
-                End If
-            End If
-        Next
-
-        If IconID = -1 Then Exit Function
-
-        With tIconEntry(IconID)
-            hIcon = CreateIconFromResourceEx(bytIcoData(.ieImageOffset), .ieBytesInRes, 1, IconVersion, m_lWidth, m_lHeight, &H0)
-            If hIcon <> 0 Then
-                LoadIconFromStream = hIcon
-            End If
-        End With
-
-    End If
-
-LoadIconFromStream_Error:
-
-End Function
+End Sub
 
 Public Function Init(ByVal hWnd As Long, ImgWidth As Long, ByVal imgHeight As Long, Optional ByVal bRaiseEvent As Boolean = False) As Boolean
 
@@ -899,91 +609,11 @@ Public Function Init(ByVal hWnd As Long, ImgWidth As Long, ByVal imgHeight As Lo
 
 End Function
 
-
-Private Function SetSubclassing(ByVal hWnd As Long) As Boolean
-
-    If cSubclass.ssc_Subclass(hWnd, , , Me) Then
-        cSubclass.ssc_AddMsg hWnd, MSG_AFTER, WM_MENUSELECT, WM_ENTERIDLE, WM_MEASUREITEM, WM_DRAWITEM, WM_DESTROY
-        SetSubclassing = True
-    Else
-        SetSubclassing = False
-    End If
-
-End Function
-
-Private Function StopSubclassing() As Boolean
-
-    If m_hWnd <> 0 Then
-        cSubclass.ssc_UnSubclass m_hWnd <> 0
-        StopSubclassing = True
-    Else
-        StopSubclassing = False
-    End If
-
-End Function
-
-Private Sub Class_Initialize()
-
-    Set cColl = New Collection
-
-    'Tanner's addition 20 September '12:
-    ' Double-check that theming is enabled. If it isn't, fall back to subclassing (e.g. Windows XP style)
-    Dim hTheme                          As Long
-    Dim sClass                          As String
-    sClass = "Window"
-    hTheme = OpenThemeData(frmMain.hWnd, StrPtr(sClass))
-    If hTheme = 0 Then
-        classicThemeWorkaround = True
-    Else
-        CloseThemeData hTheme
-    End If
-
-    ReDim mDIB(0)
-
-    InitGDI
-
-    'Tanner's fix: initialize an IDE-safe subclasser
-    Set cSubclass = New cSelfSubHookCallback
-
-End Sub
-
-
-Private Sub Class_Terminate()
-
-    cSubclass.ssc_Terminate
-    Clear
-    TerminateGDI
-
-End Sub
-
 Private Sub InitGDI()
     Dim GdipStartupInput                As GdiplusStartupInput
     GdipStartupInput.GdiplusVersion = GdiplusVersion
     Call GdiplusStartup(GdipToken, GdipStartupInput, ByVal 0&)
 End Sub
-
-Private Sub TerminateGDI()
-    If GdipToken <> 0 Then Call GdiplusShutdown(GdipToken)
-End Sub
-
-Private Function IsArrayDim(ByVal lpArray As Long) As Boolean
-    Dim lAddress                        As Long
-    Call CopyMemory(lAddress, ByVal lpArray, &H4)
-    IsArrayDim = Not (lAddress = 0)
-End Function
-
-Private Function KeyExists(ByVal sKey As String) As Boolean
-    On Error GoTo HandleError:
-    Dim tVal                            As String                              'Variant
-
-    tVal = cColl(sKey)
-
-    KeyExists = True
-    Exit Function
-
-HandleError:
-    Err.Clear
-End Function
 
 Private Function IsAlphaIcon(ByVal IconHandle As Long) As Boolean
 
@@ -1080,8 +710,378 @@ Private Function IsAlphaIcon(ByVal IconHandle As Long) As Boolean
 
 End Function
 
+Private Function IsArrayDim(ByVal lpArray As Long) As Boolean
+    Dim lAddress                        As Long
+    Call CopyMemory(lAddress, ByVal lpArray, &H4)
+    IsArrayDim = Not (lAddress = 0)
+End Function
+
+Private Function KeyExists(ByVal sKey As String) As Boolean
+    On Error GoTo HandleError:
+    Dim tVal                            As String                              'Variant
+
+    tVal = cColl(sKey)
+
+    KeyExists = True
+    Exit Function
+
+HandleError:
+    Err.Clear
+End Function
+
+Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
+
+    On Local Error GoTo LoadIconFromStream_Error
+
+    Dim tIconHeader                     As IconHeader
+    Dim tIconEntry()                    As IconEntry
+    Dim MaxBitCount                     As Long
+    Dim MaxSize                         As Long
+    Dim Aproximate                      As Long
+    Dim IconID                          As Long
+    Dim hIcon                           As Long
+    Dim i                               As Long
+
+
+    Call CopyMemory(tIconHeader, bytIcoData(0), Len(tIconHeader))
+
+    If tIconHeader.ihCount Then
+
+        ReDim tIconEntry(tIconHeader.ihCount - 1)
+
+        Call CopyMemory(tIconEntry(0), bytIcoData(Len(tIconHeader)), Len(tIconEntry(0)) * tIconHeader.ihCount)
+
+        IconID = -1
+
+        For i = 0 To tIconHeader.ihCount - 1
+            If tIconEntry(i).ieBitCount > MaxBitCount Then MaxBitCount = tIconEntry(i).ieBitCount
+        Next
+
+
+        For i = 0 To tIconHeader.ihCount - 1
+            If MaxBitCount = tIconEntry(i).ieBitCount Then
+                MaxSize = CLng(tIconEntry(i).ieWidth) + CLng(tIconEntry(i).ieHeight)
+                If MaxSize > Aproximate And MaxSize <= (m_lWidth + m_lHeight) Then
+                    Aproximate = MaxSize
+                    IconID = i
+                End If
+            End If
+        Next
+
+        If IconID = -1 Then Exit Function
+
+        With tIconEntry(IconID)
+            hIcon = CreateIconFromResourceEx(bytIcoData(.ieImageOffset), .ieBytesInRes, 1, IconVersion, m_lWidth, m_lHeight, &H0)
+            If hIcon <> 0 Then
+                LoadIconFromStream = hIcon
+            End If
+        End With
+
+    End If
+
+LoadIconFromStream_Error:
+
+End Function
+
+Private Function LoadImageFromStream(ByRef bvData() As Byte, ByRef hImage As Long) As Boolean
+
+    On Local Error GoTo LoadImageFromStream_Error
+
+    Dim IStream                         As IUnknown
+
+    Call CreateStreamOnHGlobal(bvData(0), 0&, IStream)
+
+    If Not IStream Is Nothing Then
+
+        If GdipLoadImageFromStream(IStream, hImage) = 0 Then
+
+            LoadImageFromStream = True
+
+        End If
+
+    End If
+
+    Set IStream = Nothing
+
+LoadImageFromStream_Error:
+
+End Function
+
+Public Function PutImageToApiMenu(ByVal imageID As Long, ByVal hMenu As Long, ByVal MenuPos As Long, Optional ByVal ItemData As Long) As Boolean
+
+    Dim MII                             As MENUITEMINFO
+    Dim sKey                            As String
+
+    With MII
+        .cbSize = Len(MII)
+        .fMask = MIIM_ID
+    End With
+
+    If GetMenuItemInfo(hMenu, MenuPos, True, MII) = 0 Then Exit Function
+
+    sKey = hMenu & "-" & MII.wid
+
+    With MII
+        .fMask = MIIM_BITMAP Or MIIM_DATA
+
+        If imageID = -1 Then
+            .hbmpItem = 0
+            If KeyExists(sKey) Then Call cColl.Remove(sKey)
+        Else
+            If IsWinVistaOrLater Then
+                .hbmpItem = mDIB(imageID).hDIB
+            Else
+                .hbmpItem = HBMMENU_CALLBACK
+                If KeyExists(sKey) Then Call cColl.Remove(sKey)
+                cColl.Add imageID, sKey
+            End If
+        End If
+        .dwItemData = ItemData
+    End With
+
+    PutImageToApiMenu = SetMenuItemInfo(hMenu, MenuPos, True, MII)
+
+End Function
+
+
+Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, ParamArray vSubMenuPos() As Variant) As Boolean
+
+    On Error Resume Next
+
+    Dim hMenu                           As Long
+    Dim hSubMenu                        As Long
+    Dim MII                             As MENUITEMINFO
+    Dim v                               As Variant
+    Dim sKey                            As String
+
+    hMenu = GetMenu(m_hWnd)
+
+    Dim tmpInfo                         As MENUINFO
+
+    If classicThemeWorkaround Then
+        tmpInfo.cbSize = Len(tmpInfo)
+        tmpInfo.fMask = MIM_APPLYTOSUBMENUS Or MIM_STYLE
+        tmpInfo.dwStyle = MNS_CHECKORBMP
+        SetMenuInfo hMenu, tmpInfo
+    End If
+
+    hSubMenu = hMenu
+
+    For Each v In vSubMenuPos
+        hSubMenu = GetSubMenu(hSubMenu, v)
+    Next
+
+    With MII
+        .cbSize = Len(MII)
+        .fMask = MIIM_ID
+    End With
+
+    If GetMenuItemInfo(hSubMenu, MenuPos, True, MII) = 0 Then Exit Function
+
+    sKey = hSubMenu & "-" & MII.wid
+
+    With MII
+        '.cbSize = Len(MII)
+        .fMask = MIIM_BITMAP                                                   'Or MIIM_DATA
+
+        If imageID = -1 Then
+            .hbmpItem = 0
+            If KeyExists(sKey) Then Call cColl.Remove(sKey)
+        Else
+            If IsWinVistaOrLater Then
+                .hbmpItem = mDIB(imageID).hDIB
+            Else
+                .hbmpItem = HBMMENU_CALLBACK
+                If KeyExists(sKey) Then Call cColl.Remove(sKey)
+                cColl.Add imageID, sKey
+            End If
+        End If
+
+        '.dwItemData = ImageID
+
+    End With
+
+    PutImageToVBMenu = SetMenuItemInfo(hSubMenu, MenuPos, True, MII)
+
+    If hSubMenu = hMenu Then DrawMenuBar m_hWnd
+
+End Function
+
+Private Function pvAddImagen(ByVal hImage As Long, Optional bGhosted As Boolean) As Boolean
+    Dim hGraphics                       As Long
+    Dim ImgWidth                        As Single
+    Dim imgHeight                       As Single
+    Dim Index                           As Long
+    Dim OldhDib                         As Long
+
+
+    If hImage <> 0 Then
+
+        Index = CreateNewDib()
+
+        If Index <> -1 Then
+
+            OldhDib = SelectObject(mDIB(Index).hDC, mDIB(Index).hDIB)
+
+            GdipCreateFromHDC mDIB(Index).hDC, hGraphics
+
+            GdipGetImageDimension hImage, ImgWidth, imgHeight
+
+            If bGhosted Then
+                Dim tMatrixColor        As COLORMATRIX
+                Dim tMatrixGray         As COLORMATRIX
+                Dim hAttributes         As Long
+
+                GdipCreateImageAttributes hAttributes
+
+                With tMatrixColor
+                    .M(0, 0) = 1
+                    .M(1, 1) = 1
+                    .M(2, 2) = 1
+                    .M(3, 3) = 0.7
+                    .M(4, 4) = 1
+
+                End With
+
+                GdipSetImageAttributesColorMatrix hAttributes, ColorAdjustTypeDefault, True, tMatrixColor, tMatrixGray, ColorMatrixFlagsDefault
+            End If
+
+            GdipDrawImageRectRectI hGraphics, hImage, 0, 0, m_lWidth, m_lHeight, 0, 0, ImgWidth, imgHeight, &H2, hAttributes, 0&, 0&
+
+            If hAttributes Then Call GdipDisposeImageAttributes(hAttributes)
+
+            GdipDisposeImage hImage
+
+            GdipDeleteGraphics hGraphics
+
+            Call SelectObject(mDIB(Index).hDC, OldhDib)
+
+            pvAddImagen = True
+
+        End If
+
+    End If
+End Function
+
+
+Public Function RemoveImage(ByVal Index As Long) As Boolean
+
+    Dim i                               As Long
+
+    If Index < 0 Or Index > Me.ImageCount Then Exit Function
+
+    With mDIB(Index)
+        Call DeleteObject(.hDIB)
+        Call DeleteDC(.hDC)
+    End With
+
+    For i = Index To Me.ImageCount
+        mDIB(i) = mDIB(i + 1)
+    Next
+
+    ReDim Preserve mDIB(Me.ImageCount)
+
+    RemoveImage = True
+End Function
+
+Public Sub RemoveMenuCheckApi(ByVal hMenu As Long)
+    Dim MI                              As MENUINFO
+
+    With MI
+        .cbSize = Len(MI)
+        .fMask = MIM_STYLE
+        .dwStyle = MNS_NOCHECK
+    End With
+
+    SetMenuInfo hMenu, MI
+End Sub
+
+Public Sub RemoveMenuCheckVB(ParamArray vSubMenuPos() As Variant)
+    Dim MI                              As MENUINFO
+    Dim hMenu                           As Long
+    Dim hSubMenu                        As Long
+    Dim v                               As Variant
+
+    hMenu = GetMenu(m_hWnd)
+
+    hSubMenu = hMenu
+
+    For Each v In vSubMenuPos
+        hSubMenu = GetSubMenu(hSubMenu, v)
+    Next
+
+    With MI
+        .cbSize = Len(MI)
+        .fMask = MIM_STYLE
+        .dwStyle = MNS_NOCHECK
+    End With
+
+    SetMenuInfo hSubMenu, MI
+End Sub
+
+
+Private Function SetSubclassing(ByVal hWnd As Long) As Boolean
+
+    If cSubclass.ssc_Subclass(hWnd, , , Me) Then
+        cSubclass.ssc_AddMsg hWnd, MSG_AFTER, WM_MENUSELECT, WM_ENTERIDLE, WM_MEASUREITEM, WM_DRAWITEM, WM_DESTROY
+        SetSubclassing = True
+    Else
+        SetSubclassing = False
+    End If
+
+End Function
+
+Private Function StopSubclassing() As Boolean
+
+    If m_hWnd <> 0 Then
+        cSubclass.ssc_UnSubclass m_hWnd <> 0
+        StopSubclassing = True
+    Else
+        StopSubclassing = False
+    End If
+
+End Function
+
+Private Sub TerminateGDI()
+    If GdipToken <> 0 Then Call GdiplusShutdown(GdipToken)
+End Sub
+
+Private Sub Class_Initialize()
+
+    Set cColl = New Collection
+
+    'Tanner's addition 20 September '12:
+    ' Double-check that theming is enabled. If it isn't, fall back to subclassing (e.g. Windows XP style)
+    Dim hTheme                          As Long
+    Dim sClass                          As String
+    sClass = "Window"
+    hTheme = OpenThemeData(frmMain.hWnd, StrPtr(sClass))
+    If hTheme = 0 Then
+        classicThemeWorkaround = True
+    Else
+        CloseThemeData hTheme
+    End If
+
+    ReDim mDIB(0)
+
+    InitGDI
+
+    'Tanner's fix: initialize an IDE-safe subclasser
+    Set cSubclass = New cSelfSubHookCallback
+
+End Sub
+
+
+Private Sub Class_Terminate()
+
+    cSubclass.ssc_Terminate
+    Clear
+    TerminateGDI
+
+End Sub
+
 'All events subclassed by this window are processed here.
-Private Sub myWndProc(ByVal bBefore As Boolean, _
+Private Sub z_myWndProc(ByVal bBefore As Boolean, _
                       ByRef bHandled As Boolean, _
                       ByRef lReturn As Long, _
                       ByVal lng_hWnd As Long, _
@@ -1202,3 +1202,4 @@ Private Sub myWndProc(ByVal bBefore As Boolean, _
     '   add this warning banner to the last routine in your class
     ' *************************************************************
 End Sub
+

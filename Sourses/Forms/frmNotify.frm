@@ -120,22 +120,6 @@ Private Type GRADIENT_RECT
 End Type
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FontCharsetChange()
-
-    ' Выставляем шрифт
-    With Me.Font
-        .Name = strFontOtherForm_Name
-        .Size = lngFontOtherForm_Size
-        .Charset = lngFont_Charset
-    End With
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawGradientBackground
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Colour1 (Long)
@@ -214,6 +198,121 @@ Private Sub DrawIconPicture(img As StdPicture, ImageX As Long, ImageY As Long, I
     ElseIf img.Type = vbPicTypeIcon Then
         'if the picture is an icon
         Me.PaintPicture img, ImageX, ImageY
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub FontCharsetChange()
+
+    ' Выставляем шрифт
+    With Me.Font
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
+    End With
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function LongToSignedShort
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   dwUnsigned (Long)
+'!--------------------------------------------------------------------------------
+Private Function LongToSignedShort(dwUnsigned As Long) As Integer
+
+    'convert from long to signed short
+    If dwUnsigned < 32768 Then
+        LongToSignedShort = CInt(dwUnsigned)
+    Else
+        LongToSignedShort = CInt(dwUnsigned - &H10000)
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ShowMessage
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sMsg (String)
+'                              img (StdPicture)
+'                              ImageX (Long = 0)
+'                              ImageY (Long = 0)
+'                              BgColour1 (Long = &HFFFFFF)
+'                              BgColour2 (Long = &HFFFFFF)
+'                              ImgTransColour (Long = &HFFFFFF)
+'                              msShowTime (Long = 50)
+'                              msHangTime (Long = 4000)
+'                              msHideTime (Long = 50)
+'                              bPlacement (Boolean = False)
+'                              sSound (String)
+'!--------------------------------------------------------------------------------
+Public Sub ShowMessage(ByVal sMsg As String, Optional img As StdPicture, Optional ImageX As Long = 0, Optional ImageY As Long = 0, Optional BgColour1 As Long = &HFFFFFF, Optional BgColour2 As Long = &HFFFFFF, Optional ImgTransColour As Long = _
+                            &HFFFFFF, Optional ByVal msShowTime As Long = 50, Optional ByVal msHangTime As Long = 4000, Optional ByVal msHideTime As Long = 50, Optional ByVal bPlacement As Boolean = False, Optional sSound As String)
+
+    Dim RC As RECT
+
+    'ensure the notification window
+    'is not already visible
+    If Not Me.Visible Then
+        'clear form
+        Me.Cls
+        'draw gradient background
+        DrawGradientBackground BgColour1, BgColour2
+
+        'draw picture
+        If Not img Is Nothing Then
+            DrawIconPicture img, ImageX, ImageY, ImgTransColour
+        End If
+
+        'set the sMsg
+        Label1.Caption = sMsg
+        'assign the intervals for the
+        'respective timer events
+        msShowDuration = msShowTime
+        msHangDuration = msHangTime
+        msHideDuration = msHideTime
+
+        'ready to go, so first play
+        'the notification sound
+        If LenB(sSound) Then
+            PlaySound sSound, ByVal 0&, SND_FILENAME Or SND_ASYNC
+        End If
+
+        'retrieve the work area (the
+        'available real estate available)
+        SystemParametersInfo SPI_GETWORKAREA, 0, RC, 0
+
+        'move the form in the upper-right corner
+        'of the work area and set the form as
+        '"topmost" (always on top). We pass
+        'SWP_NOACTIVATE so the form does not
+        'take focus from the active app. The
+        'initial height of the form is 0
+        Select Case bPlacement
+
+            Case True
+                'show top left
+                SetWindowPos Me.hWnd, HWND_TOPMOST, 0, RC.Top, (Me.Width / twipsx), 0, SWP_NOACTIVATE
+
+            Case False
+                'show top right
+                SetWindowPos Me.hWnd, HWND_TOPMOST, RC.Right - (Me.Width / twipsx), RC.Top, (Me.Width / twipsx), 0, SWP_NOACTIVATE
+        End Select
+
+        'show the form without activating
+        ShowWindow Me.hWnd, SW_SHOWNA
+        'begin the animation by setting
+        'the notify mode to notify_mode_show,
+        'and setting the interval to the value
+        'passed as msShowDuration, and starting
+        'the timer
+        notify_mode = notify_mode_show
+        Timer1.Interval = msShowDuration
+        Timer1.Enabled = True
     End If
 
 End Sub
@@ -343,105 +442,6 @@ Private Sub Label1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function LongToSignedShort
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   dwUnsigned (Long)
-'!--------------------------------------------------------------------------------
-Private Function LongToSignedShort(dwUnsigned As Long) As Integer
-
-    'convert from long to signed short
-    If dwUnsigned < 32768 Then
-        LongToSignedShort = CInt(dwUnsigned)
-    Else
-        LongToSignedShort = CInt(dwUnsigned - &H10000)
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ShowMessage
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sMsg (String)
-'                              img (StdPicture)
-'                              ImageX (Long = 0)
-'                              ImageY (Long = 0)
-'                              BgColour1 (Long = &HFFFFFF)
-'                              BgColour2 (Long = &HFFFFFF)
-'                              ImgTransColour (Long = &HFFFFFF)
-'                              msShowTime (Long = 50)
-'                              msHangTime (Long = 4000)
-'                              msHideTime (Long = 50)
-'                              bPlacement (Boolean = False)
-'                              sSound (String)
-'!--------------------------------------------------------------------------------
-Public Sub ShowMessage(ByVal sMsg As String, Optional img As StdPicture, Optional ImageX As Long = 0, Optional ImageY As Long = 0, Optional BgColour1 As Long = &HFFFFFF, Optional BgColour2 As Long = &HFFFFFF, Optional ImgTransColour As Long = _
-                            &HFFFFFF, Optional ByVal msShowTime As Long = 50, Optional ByVal msHangTime As Long = 4000, Optional ByVal msHideTime As Long = 50, Optional ByVal bPlacement As Boolean = False, Optional sSound As String)
-
-    Dim RC As RECT
-
-    'ensure the notification window
-    'is not already visible
-    If Not Me.Visible Then
-        'clear form
-        Me.Cls
-        'draw gradient background
-        DrawGradientBackground BgColour1, BgColour2
-
-        'draw picture
-        If Not img Is Nothing Then
-            DrawIconPicture img, ImageX, ImageY, ImgTransColour
-        End If
-
-        'set the sMsg
-        Label1.Caption = sMsg
-        'assign the intervals for the
-        'respective timer events
-        msShowDuration = msShowTime
-        msHangDuration = msHangTime
-        msHideDuration = msHideTime
-
-        'ready to go, so first play
-        'the notification sound
-        If LenB(sSound) Then
-            PlaySound sSound, ByVal 0&, SND_FILENAME Or SND_ASYNC
-        End If
-
-        'retrieve the work area (the
-        'available real estate available)
-        SystemParametersInfo SPI_GETWORKAREA, 0, RC, 0
-
-        'move the form in the upper-right corner
-        'of the work area and set the form as
-        '"topmost" (always on top). We pass
-        'SWP_NOACTIVATE so the form does not
-        'take focus from the active app. The
-        'initial height of the form is 0
-        Select Case bPlacement
-
-            Case True
-                'show top left
-                SetWindowPos Me.hWnd, HWND_TOPMOST, 0, RC.Top, (Me.Width / twipsx), 0, SWP_NOACTIVATE
-
-            Case False
-                'show top right
-                SetWindowPos Me.hWnd, HWND_TOPMOST, RC.Right - (Me.Width / twipsx), RC.Top, (Me.Width / twipsx), 0, SWP_NOACTIVATE
-        End Select
-
-        'show the form without activating
-        ShowWindow Me.hWnd, SW_SHOWNA
-        'begin the animation by setting
-        'the notify mode to notify_mode_show,
-        'and setting the interval to the value
-        'passed as msShowDuration, and starting
-        'the timer
-        notify_mode = notify_mode_show
-        Timer1.Interval = msShowDuration
-        Timer1.Enabled = True
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Timer1_Timer
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -482,3 +482,4 @@ Private Sub Timer1_Timer()
     End Select
 
 End Sub
+

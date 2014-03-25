@@ -313,154 +313,16 @@ Private lngFormWidthMin     As Long
 Private lngFormHeightMin    As Long
 Private strFormName         As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FontCharsetChange()
-
-    ' Выставляем шрифт
-    With Me.Font
-        .Name = strFontOtherForm_Name
-        .Size = lngFontOtherForm_Size
-        .Charset = lngFont_Charset
-    End With
-
-    frGroup.Font.Charset = lngFont_Charset
-    SetBtnFontProperties cmdExit
-    SetBtnFontProperties cmdOK
-    SetBtnFontProperties cmdCheckAll
-    SetBtnFontProperties cmdUnCheckAll
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub chkGrp1_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub chkGrp1_Click()
-    mbGrp1 = chkGrp1.Value
-    miCurrentListCount = 0
-    LoadListbyMode
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub chkGrp2_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub chkGrp2_Click()
-    mbGrp2 = chkGrp2.Value
-    miCurrentListCount = 0
-    LoadListbyMode
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub chkGrp3_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub chkGrp3_Click()
-    mbGrp3 = chkGrp3.Value
-    miCurrentListCount = 0
-    LoadListbyMode
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub chkGrp4_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub chkGrp4_Click()
-    mbGrp4 = chkGrp4.Value
-    miCurrentListCount = 0
-    LoadListbyMode
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdCheckAll_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdCheckAll_Click()
-
-    Dim i As Integer
-
-    With lvFolders.ListItems
-
-        For i = 1 To .Count
-
-            If Not .Item(i).Checked Then
-                .Item(i).Checked = True
-            End If
-
-        Next
-
-    End With
-
-    FindCheckCountList
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    mbooSelectInstall = False
-    Me.Hide
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-
-    If mbooSelectInstall Then
-        If FindCheckCountList Then
-            If mbooSelectInstall Then
-                strPathDRPList = GetPathList
-                mbCheckDRVOk = True
-            End If
-
-        Else
-
-            If mbooSelectInstall Then
-                MsgBox "Not Selected. Window will be closed...", vbInformation + vbApplicationModal, strProductName
-            End If
-        End If
-    End If
-
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdUnCheckAll_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdUnCheckAll_Click()
-
-    Dim i As Integer
-
-    With lvFolders.ListItems
-
-        For i = 1 To .Count
-
-            If .Item(i).Checked Then
-                .Item(i).Checked = False
-            End If
-
-        Next
-
-    End With
-
-    FindCheckCountList
-End Sub
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CollectModeString
@@ -526,72 +388,26 @@ Private Function FindCheckCountList() As Long
     FindCheckCountList = miCount
 End Function
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Activate
-'! Description (Описание)  :   []
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_Activate()
-    lvFolders.SetFocus
-End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-
-    If KeyCode = vbKeyEscape Then
-        cmdExit_Click
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
+'! Procedure   (Функция)   :   Sub FontCharsetChange
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    SetupVisualStyles Me
+Private Sub FontCharsetChange()
 
-    With Me
-        strFormName = .Name
-        SetIcon .hWnd, "frmListHwid", False
-        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
-        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-        lngFormWidthMin = .Width
-        lngFormHeightMin = .Height
+    ' Выставляем шрифт
+    With Me.Font
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
     End With
 
-    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
-    LoadIconImage2Object cmdCheckAll, "BTN_CHECKMARK", strPathImageMainWork
-    LoadIconImage2Object cmdUnCheckAll, "BTN_UNCHECKMARK", strPathImageMainWork
-    ' все остальные процедуры
-    FormLoadAction
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FormLoadDefaultParam
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Sub FormLoadDefaultParam()
-    miCurrentListCount = 0
-
-    If Not (lvFolders Is Nothing) Then
-        lvFolders.ColumnHeaders.Clear
-        lvFolders.ListItems.Clear
-    End If
-
-    chkGrp1.Value = Checked
-    chkGrp2.Value = Checked
-    chkGrp3.Value = Unchecked
-    chkGrp4.Value = Checked
+    frGroup.Font.Charset = lngFont_Charset
+    SetBtnFontProperties cmdExit
+    SetBtnFontProperties cmdOK
+    SetBtnFontProperties cmdCheckAll
+    SetBtnFontProperties cmdUnCheckAll
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -652,6 +468,25 @@ Public Sub FormLoadAction()
         Me.CaptionW = strMeCaptionInstall & " " & lvFolders.ListItems.Count & " " & strMessages(124) & " " & miCurrentListCount & ")"
     End If
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadDefaultParam
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub FormLoadDefaultParam()
+    miCurrentListCount = 0
+
+    If Not (lvFolders Is Nothing) Then
+        lvFolders.ColumnHeaders.Clear
+        lvFolders.ListItems.Clear
+    End If
+
+    chkGrp1.Value = Checked
+    chkGrp2.Value = Checked
+    chkGrp3.Value = Unchecked
+    chkGrp4.Value = Checked
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -964,6 +799,182 @@ Private Sub Localise(ByVal strPathFile As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp1_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkGrp1_Click()
+    mbGrp1 = chkGrp1.Value
+    miCurrentListCount = 0
+    LoadListbyMode
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp2_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkGrp2_Click()
+    mbGrp2 = chkGrp2.Value
+    miCurrentListCount = 0
+    LoadListbyMode
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp3_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkGrp3_Click()
+    mbGrp3 = chkGrp3.Value
+    miCurrentListCount = 0
+    LoadListbyMode
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkGrp4_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkGrp4_Click()
+    mbGrp4 = chkGrp4.Value
+    miCurrentListCount = 0
+    LoadListbyMode
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdCheckAll_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdCheckAll_Click()
+
+    Dim i As Integer
+
+    With lvFolders.ListItems
+
+        For i = 1 To .Count
+
+            If Not .Item(i).Checked Then
+                .Item(i).Checked = True
+            End If
+
+        Next
+
+    End With
+
+    FindCheckCountList
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    mbooSelectInstall = False
+    Me.Hide
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+
+    If mbooSelectInstall Then
+        If FindCheckCountList Then
+            If mbooSelectInstall Then
+                strPathDRPList = GetPathList
+                mbCheckDRVOk = True
+            End If
+
+        Else
+
+            If mbooSelectInstall Then
+                MsgBox "Not Selected. Window will be closed...", vbInformation + vbApplicationModal, strProductName
+            End If
+        End If
+    End If
+
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdUnCheckAll_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdUnCheckAll_Click()
+
+    Dim i As Integer
+
+    With lvFolders.ListItems
+
+        For i = 1 To .Count
+
+            If .Item(i).Checked Then
+                .Item(i).Checked = False
+            End If
+
+        Next
+
+    End With
+
+    FindCheckCountList
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   []
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_Activate()
+    lvFolders.SetFocus
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    If KeyCode = vbKeyEscape Then
+        cmdExit_Click
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+    SetupVisualStyles Me
+
+    With Me
+        strFormName = .Name
+        SetIcon .hWnd, "frmListHwid", False
+        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
+        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
+        lngFormWidthMin = .Width
+        lngFormHeightMin = .Height
+    End With
+
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+    LoadIconImage2Object cmdCheckAll, "BTN_CHECKMARK", strPathImageMainWork
+    LoadIconImage2Object cmdUnCheckAll, "BTN_UNCHECKMARK", strPathImageMainWork
+    ' все остальные процедуры
+    FormLoadAction
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_QueryUnload
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Cancel (Integer)
@@ -1182,15 +1193,4 @@ Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Bool
 
     FindCheckCountList
 End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
 

@@ -280,6 +280,33 @@ Option Explicit
 Private strFilePath As String
 Private strFormName As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub EnablerCmdOK
+'! Description (Описание)  :   [Активизация кнопки OK]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub EnablerCmdOK()
+
+    If Not PathIsAFolder(ucFilePath.Path) Then
+        If PathExists(ucFilePath.Path) Then
+            If cmbOS.ListIndex >= 0 Then
+                cmdOK.Enabled = True
+            End If
+        End If
+    End If
+
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -295,15 +322,6 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [нажали выход]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    Unload Me
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -346,132 +364,6 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
         End With
 
     Next i
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [нажали ок]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-
-    Dim strFilePath As String
-
-    strFilePath = ucFilePath.Path
-
-    If LenB(strFilePath) Then
-        LoadAndParseFile strFilePath
-        'Переопределение версии и разрядности системы для режима эмуляции
-        mbIsWin64 = CBool(chk64bit.Value)
-        strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
-        ' А теперь Обновляем статус всех пакетов
-        frmMain.UpdateStatusButtonAll
-        ' Обновить список неизвестных дров и описание для кнопки
-        frmMain.LoadCmdViewAllDeviceCaption
-        ChangeStatusTextAndDebug strMessages(114)
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ucFilePath_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub ucFilePath_Click()
-
-    If ucFilePath.FileCount Then
-        strFilePath = ucFilePath.FileName
-    End If
-
-    If LenB(strFilePath) Then
-        ucFilePath.Path = strFilePath
-        ' активация кнопки старт
-        EnablerCmdOK
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    ' Лэйблы
-    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
-    chk64bit.Caption = LocaliseString(StrPathFile, strFormName, "chk64bit", chk64bit.Caption)
-    'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-
-    If KeyCode = vbKeyEscape Then
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [обработка при загрузке формы]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    ' Устанавливаем картинки кнопок и убираем описание кнопок
-    SetupVisualStyles Me
-
-    With Me
-        strFormName = .Name
-        SetIcon .hWnd, "frmUtilsEdit", False
-        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
-        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-    End With
-
-    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
-
-    ' Локализациz приложения
-    If mbMultiLanguage Then
-        Localise strPCLangCurrentPath
-    Else
-        ' Выставляем шрифт
-        FontCharsetChange
-    End If
-
-    ' Загружаем список операционных систем
-    LoadListOS
-    LoadDefaultParam
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub EnablerCmdOK
-'! Description (Описание)  :   [Активизация кнопки OK]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub EnablerCmdOK()
-
-    If Not PathIsAFolder(ucFilePath.Path) Then
-        If PathExists(ucFilePath.Path) Then
-            If cmbOS.ListIndex >= 0 Then
-                cmdOK.Enabled = True
-            End If
-        End If
-    End If
 
 End Sub
 
@@ -533,14 +425,121 @@ Private Sub LoadListOS()
 
 End Sub
 
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    ' Лэйблы
+    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    chk64bit.Caption = LocaliseString(strPathFile, strFormName, "chk64bit", chk64bit.Caption)
+    'Кнопки
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+End Sub
 
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [нажали выход]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [нажали ок]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+
+    Dim strFilePath As String
+
+    strFilePath = ucFilePath.Path
+
+    If LenB(strFilePath) Then
+        LoadAndParseFile strFilePath
+        'Переопределение версии и разрядности системы для режима эмуляции
+        mbIsWin64 = CBool(chk64bit.Value)
+        strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
+        ' А теперь Обновляем статус всех пакетов
+        frmMain.UpdateStatusButtonAll
+        ' Обновить список неизвестных дров и описание для кнопки
+        frmMain.LoadCmdViewAllDeviceCaption
+        ChangeStatusTextAndDebug strMessages(114)
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    If KeyCode = vbKeyEscape Then
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [обработка при загрузке формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+    ' Устанавливаем картинки кнопок и убираем описание кнопок
+    SetupVisualStyles Me
+
+    With Me
+        strFormName = .Name
+        SetIcon .hWnd, "frmUtilsEdit", False
+        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
+        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
+    End With
+
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+
+    ' Локализациz приложения
+    If mbMultiLanguage Then
+        Localise strPCLangCurrentPath
+    Else
+        ' Выставляем шрифт
+        FontCharsetChange
+    End If
+
+    ' Загружаем список операционных систем
+    LoadListOS
+    LoadDefaultParam
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucFilePath_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucFilePath_Click()
+
+    If ucFilePath.FileCount Then
+        strFilePath = ucFilePath.FileName
+    End If
+
+    If LenB(strFilePath) Then
+        ucFilePath.Path = strFilePath
+        ' активация кнопки старт
+        EnablerCmdOK
+    End If
+
+End Sub
 

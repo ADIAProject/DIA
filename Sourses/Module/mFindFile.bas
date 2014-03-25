@@ -68,6 +68,180 @@ Public Function FileSizeApi(ByVal sSource As String) As String
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FolderContainsFiles
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sRoot (String)
+'!--------------------------------------------------------------------------------
+Public Function FolderContainsFiles(ByVal sRoot As String) As Boolean
+
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim lngFilePathPtr  As Long
+
+    If LenB(sRoot) Then
+        sRoot = BackslashAdd2Path(sRoot)
+
+        If PathIsValidUNC(sRoot) = False Then
+            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
+        Else
+            '\\?\UNC\
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
+        End If
+        hFile = FindFirstFile(lngFilePathPtr, wfd)
+
+        If hFile <> INVALID_HANDLE_VALUE Then
+
+            Do
+
+                'if the vbDirectory bit's not set, it's a
+                'file so we're done!
+                If (Not (wfd.dwFileAttributes And vbDirectory) = vbDirectory) Then
+                    FolderContainsFiles = True
+
+                    Exit Do
+
+                End If
+
+            Loop While FindNextFile(hFile, wfd)
+
+            FindClose hFile
+        End If
+
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FolderContainsSubfolders
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sRoot (String)
+'!--------------------------------------------------------------------------------
+Public Function FolderContainsSubfolders(sRoot As String) As Boolean
+
+    Dim wfd   As WIN32_FIND_DATA
+    Dim hFile As Long
+    Dim lngFilePathPtr As Long
+
+    If LenB(sRoot) Then
+        sRoot = BackslashAdd2Path(sRoot)
+
+        If PathIsValidUNC(sRoot) = False Then
+            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
+        Else
+            '\\?\UNC\
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
+        End If
+        hFile = FindFirstFile(lngFilePathPtr, wfd)
+
+        If hFile <> INVALID_HANDLE_VALUE Then
+
+            Do
+
+                If (wfd.dwFileAttributes And vbDirectory) Then
+
+                    'an item with the vbDirectory bit was found
+                    'but is it a system folder?
+                    If (Left$(wfd.cFileName, 1) <> ".") And (Left$(wfd.cFileName, 2) <> "..") Then
+                        'nope, it's a user folder
+                        FolderContainsSubfolders = True
+
+                        Exit Do
+
+                    End If
+                End If
+
+            Loop While FindNextFile(hFile, wfd)
+
+            FindClose hFile
+        End If
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FolderSizeApi
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sSource (String)
+'                              bRecursion (Boolean)
+'!--------------------------------------------------------------------------------
+Public Function FolderSizeApi(ByVal sSource As String, ByVal bRecursion As Boolean) As String
+
+    Dim fp As FILE_PARAMS
+
+    With fp
+        .sFileRoot = BackslashAdd2Path(sSource)
+        .sFileNameExt = ALL_FILES
+        .bRecurse = bRecursion
+    End With
+
+    GetDirectorySize fp.sFileRoot, fp
+    FolderSizeApi = FormatByteSize(CSng(fp.nFileSize))
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FormatByteSize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   dwBytes (Single)
+'!--------------------------------------------------------------------------------
+Private Function FormatByteSize(ByVal dwBytes As Single) As String
+
+    Dim sBuff  As String
+    Dim dwBuff As Long
+
+    sBuff = String$(32, vbNullChar)
+    dwBuff = Len(sBuff)
+
+    If StrFormatByteSize(dwBytes, sBuff, dwBuff) <> 0 Then
+        FormatByteSize = TrimNull(sBuff)
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GetDirectorySize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sRoot (String)
+'                              fp (FILE_PARAMS)
+'!--------------------------------------------------------------------------------
+Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
+
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim lngFilePathPtr  As Long
+
+    If PathIsValidUNC(sRoot) = False Then
+        lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
+    Else
+        '\\?\UNC\
+        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
+    End If
+    hFile = FindFirstFile(lngFilePathPtr, wfd)
+    
+    If hFile <> INVALID_HANDLE_VALUE Then
+
+        Do
+
+            If Asc(wfd.cFileName) <> vbDot Then
+                If (wfd.dwFileAttributes And vbDirectory) Then
+                    If fp.bRecurse Then
+                        GetDirectorySize sRoot & TrimNull(wfd.cFileName) & vbBackslash, fp
+                    End If
+
+                Else
+                    fp.nFileCount = fp.nFileCount + 1
+                    fp.nFileSize = fp.nFileSize + ((wfd.nFileSizeHigh * (MAXDWORD + 1)) + wfd.nFileSizeLow)
+                End If
+            End If
+
+            fp.nSearched = fp.nSearched + 1
+        Loop While FindNextFile(hFile, wfd)
+
+        FindClose hFile
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function MatchSpec
 '! Description (Описание)  :   [Проверка на соответствие условиям поиска]
 '! Parameters  (Переменные):   sFile (String)
@@ -425,177 +599,3 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
         End If
     End If
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FolderContainsSubfolders
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sRoot (String)
-'!--------------------------------------------------------------------------------
-Public Function FolderContainsSubfolders(sRoot As String) As Boolean
-
-    Dim wfd   As WIN32_FIND_DATA
-    Dim hFile As Long
-    Dim lngFilePathPtr As Long
-
-    If LenB(sRoot) Then
-        sRoot = BackslashAdd2Path(sRoot)
-
-        If PathIsValidUNC(sRoot) = False Then
-            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
-        Else
-            '\\?\UNC\
-            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
-        End If
-        hFile = FindFirstFile(lngFilePathPtr, wfd)
-
-        If hFile <> INVALID_HANDLE_VALUE Then
-
-            Do
-
-                If (wfd.dwFileAttributes And vbDirectory) Then
-
-                    'an item with the vbDirectory bit was found
-                    'but is it a system folder?
-                    If (Left$(wfd.cFileName, 1) <> ".") And (Left$(wfd.cFileName, 2) <> "..") Then
-                        'nope, it's a user folder
-                        FolderContainsSubfolders = True
-
-                        Exit Do
-
-                    End If
-                End If
-
-            Loop While FindNextFile(hFile, wfd)
-
-            FindClose hFile
-        End If
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FolderContainsFiles
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sRoot (String)
-'!--------------------------------------------------------------------------------
-Public Function FolderContainsFiles(ByVal sRoot As String) As Boolean
-
-    Dim wfd             As WIN32_FIND_DATA
-    Dim hFile           As Long
-    Dim lngFilePathPtr  As Long
-
-    If LenB(sRoot) Then
-        sRoot = BackslashAdd2Path(sRoot)
-
-        If PathIsValidUNC(sRoot) = False Then
-            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
-        Else
-            '\\?\UNC\
-            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
-        End If
-        hFile = FindFirstFile(lngFilePathPtr, wfd)
-
-        If hFile <> INVALID_HANDLE_VALUE Then
-
-            Do
-
-                'if the vbDirectory bit's not set, it's a
-                'file so we're done!
-                If (Not (wfd.dwFileAttributes And vbDirectory) = vbDirectory) Then
-                    FolderContainsFiles = True
-
-                    Exit Do
-
-                End If
-
-            Loop While FindNextFile(hFile, wfd)
-
-            FindClose hFile
-        End If
-
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub GetDirectorySize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sRoot (String)
-'                              fp (FILE_PARAMS)
-'!--------------------------------------------------------------------------------
-Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
-
-    Dim wfd             As WIN32_FIND_DATA
-    Dim hFile           As Long
-    Dim lngFilePathPtr  As Long
-
-    If PathIsValidUNC(sRoot) = False Then
-        lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
-    Else
-        '\\?\UNC\
-        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
-    End If
-    hFile = FindFirstFile(lngFilePathPtr, wfd)
-    
-    If hFile <> INVALID_HANDLE_VALUE Then
-
-        Do
-
-            If Asc(wfd.cFileName) <> vbDot Then
-                If (wfd.dwFileAttributes And vbDirectory) Then
-                    If fp.bRecurse Then
-                        GetDirectorySize sRoot & TrimNull(wfd.cFileName) & vbBackslash, fp
-                    End If
-
-                Else
-                    fp.nFileCount = fp.nFileCount + 1
-                    fp.nFileSize = fp.nFileSize + ((wfd.nFileSizeHigh * (MAXDWORD + 1)) + wfd.nFileSizeLow)
-                End If
-            End If
-
-            fp.nSearched = fp.nSearched + 1
-        Loop While FindNextFile(hFile, wfd)
-
-        FindClose hFile
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FolderSizeApi
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sSource (String)
-'                              bRecursion (Boolean)
-'!--------------------------------------------------------------------------------
-Public Function FolderSizeApi(ByVal sSource As String, ByVal bRecursion As Boolean) As String
-
-    Dim fp As FILE_PARAMS
-
-    With fp
-        .sFileRoot = BackslashAdd2Path(sSource)
-        .sFileNameExt = ALL_FILES
-        .bRecurse = bRecursion
-    End With
-
-    GetDirectorySize fp.sFileRoot, fp
-    FolderSizeApi = FormatByteSize(CSng(fp.nFileSize))
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FormatByteSize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   dwBytes (Single)
-'!--------------------------------------------------------------------------------
-Private Function FormatByteSize(ByVal dwBytes As Single) As String
-
-    Dim sBuff  As String
-    Dim dwBuff As Long
-
-    sBuff = String$(32, vbNullChar)
-    dwBuff = Len(sBuff)
-
-    If StrFormatByteSize(dwBytes, sBuff, dwBuff) <> 0 Then
-        FormatByteSize = TrimNull(sBuff)
-    End If
-
-End Function

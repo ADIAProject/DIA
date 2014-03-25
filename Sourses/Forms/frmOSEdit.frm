@@ -459,15 +459,16 @@ Option Explicit
 
 Private strFormName As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub chkNotCheckBitOS_Click()
-    chk64bit.Enabled = Not chkNotCheckBitOS.Value
-End Sub
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -486,106 +487,30 @@ Private Sub FontCharsetChange()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-
-    If ucPathDB.Path = "Путь до каталога хранения БД" Then
-        ucPathDB.Path = BackslashAdd2Path(ucPathDRP.Path) & "dev_db"
-    End If
-
-    SaveOptions
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Activate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Activate()
-    txtOSVer_Change
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-
-    If KeyCode = vbKeyEscape Then
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    SetupVisualStyles Me
-
-    With Me
-        strFormName = .Name
-        SetIcon .hWnd, "frmOSEdit", False
-        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
-        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-    End With
-
-    ' Устанавливаем картинки кнопок
-    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
-
-    ' Локализациz приложения
-    If mbMultiLanguage Then
-        Localise strPCLangCurrentPath
-    Else
-        ' Выставляем шрифт
-        FontCharsetChange
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Localise
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
+Private Sub Localise(ByVal strPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
     ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
     ' Лэйблы
-    lblOSVer.Caption = LocaliseString(StrPathFile, strFormName, "lblOSVer", lblOSVer.Caption)
-    lblNameOS.Caption = LocaliseString(StrPathFile, strFormName, "lblNameOS", lblNameOS.Caption)
-    lblPathDRP.Caption = LocaliseString(StrPathFile, strFormName, "lblPathDRP", lblPathDRP.Caption)
-    lblPathDB.Caption = LocaliseString(StrPathFile, strFormName, "lblPathDB", lblPathDB.Caption)
-    frDopFile.Caption = LocaliseString(StrPathFile, strFormName, "frDopFile", frDopFile.Caption)
-    lblPhysX.Caption = LocaliseString(StrPathFile, strFormName, "lblPhysX", lblPhysX.Caption)
-    lblLang.Caption = LocaliseString(StrPathFile, strFormName, "lblLang", lblLang.Caption)
-    lblRuntimes.Caption = LocaliseString(StrPathFile, strFormName, "lblRuntimes", lblRuntimes.Caption)
-    frExcludeFileName.Caption = LocaliseString(StrPathFile, strFormName, "frExcludeFileName", frExcludeFileName.Caption)
-    chk64bit.Caption = LocaliseString(StrPathFile, strFormName, "chk64bit", chk64bit.Caption)
-    chkNotCheckBitOS.Caption = LocaliseString(StrPathFile, strFormName, "chkNotCheckBitOS", chkNotCheckBitOS.Caption)
+    lblOSVer.Caption = LocaliseString(strPathFile, strFormName, "lblOSVer", lblOSVer.Caption)
+    lblNameOS.Caption = LocaliseString(strPathFile, strFormName, "lblNameOS", lblNameOS.Caption)
+    lblPathDRP.Caption = LocaliseString(strPathFile, strFormName, "lblPathDRP", lblPathDRP.Caption)
+    lblPathDB.Caption = LocaliseString(strPathFile, strFormName, "lblPathDB", lblPathDB.Caption)
+    frDopFile.Caption = LocaliseString(strPathFile, strFormName, "frDopFile", frDopFile.Caption)
+    lblPhysX.Caption = LocaliseString(strPathFile, strFormName, "lblPhysX", lblPhysX.Caption)
+    lblLang.Caption = LocaliseString(strPathFile, strFormName, "lblLang", lblLang.Caption)
+    lblRuntimes.Caption = LocaliseString(strPathFile, strFormName, "lblRuntimes", lblRuntimes.Caption)
+    frExcludeFileName.Caption = LocaliseString(strPathFile, strFormName, "frExcludeFileName", frExcludeFileName.Caption)
+    chk64bit.Caption = LocaliseString(strPathFile, strFormName, "chk64bit", chk64bit.Caption)
+    chkNotCheckBitOS.Caption = LocaliseString(strPathFile, strFormName, "chkNotCheckBitOS", chkNotCheckBitOS.Caption)
     'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -666,6 +591,92 @@ Private Sub SaveOptions()
     mbAddInList = False
 End Sub
 
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkNotCheckBitOS_Click()
+    chk64bit.Enabled = Not chkNotCheckBitOS.Value
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+
+    If ucPathDB.Path = "Путь до каталога хранения БД" Then
+        ucPathDB.Path = BackslashAdd2Path(ucPathDRP.Path) & "dev_db"
+    End If
+
+    SaveOptions
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Activate()
+    txtOSVer_Change
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    If KeyCode = vbKeyEscape Then
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+    SetupVisualStyles Me
+
+    With Me
+        strFormName = .Name
+        SetIcon .hWnd, "frmOSEdit", False
+        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
+        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
+    End With
+
+    ' Устанавливаем картинки кнопок
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+
+    ' Локализациz приложения
+    If mbMultiLanguage Then
+        Localise strPCLangCurrentPath
+    Else
+        ' Выставляем шрифт
+        FontCharsetChange
+    End If
+
+End Sub
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtExcludeFileName_GotFocus
 '! Description (Описание)  :   [type_description_here]
@@ -703,6 +714,15 @@ Private Sub txtOSName_LostFocus()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub txtOSVer_Change
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub txtOSVer_Change()
+    cmdOK.Enabled = LenB(Trim$(txtOSVer)) And LenB(Trim$(ucPathDRP.Path))
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtOSVer_GotFocus
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -718,15 +738,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub txtOSVer_LostFocus()
     HighlightActiveControl Me, txtOSVer, False
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub txtOSVer_Change
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub txtOSVer_Change()
-    cmdOK.Enabled = LenB(Trim$(txtOSVer)) And LenB(Trim$(ucPathDRP.Path))
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -933,15 +944,4 @@ End Sub
 Private Sub ucRuntimesPath_LostFocus()
     HighlightActiveControl Me, ucRuntimesPath, False
 End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
 

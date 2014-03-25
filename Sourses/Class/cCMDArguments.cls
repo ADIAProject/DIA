@@ -51,6 +51,24 @@ Private Declare Function LocalFree Lib "kernel32.dll" (ByVal hMem As Long) As Lo
 Private Declare Function SysAllocString Lib "oleaut32.dll" (ByVal nString As Long) As Long
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property CommandLine
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get CommandLine() As String
+    CommandLine = cFm_CommandLine
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property CommandLine
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   sNewString (String)
+'!--------------------------------------------------------------------------------
+Public Property Let CommandLine(ByVal sNewString As String)
+    cFm_CommandLine = sNewString
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function Arguments
 '! Description (Описание)  :   [Get unicode supporting unicode]
 '! Parameters  (Переменные):
@@ -165,21 +183,3 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
     On Error GoTo 0
 
 End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property CommandLine
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get CommandLine() As String
-    CommandLine = cFm_CommandLine
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property CommandLine
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sNewString (String)
-'!--------------------------------------------------------------------------------
-Public Property Let CommandLine(ByVal sNewString As String)
-    cFm_CommandLine = sNewString
-End Property

@@ -27,7 +27,7 @@ Private Declare Function SetTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nI
 Private Declare Function KillTimer Lib "user32.dll" (ByVal hWnd As Long, ByVal nIDEvent As Long) As Long
 Private Declare Function GetCurrentThreadId Lib "kernel32.dll" () As Long
 Private Declare Function UnhookWindowsHookEx Lib "user32.dll" (ByVal hHook As Long) As Long
-Private Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExW" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
+Private Declare Function SetWindowsHookEx Lib "user32.dll" Alias "SetWindowsHookExW" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
 Private Declare Function GetDlgCtrlID Lib "user32.dll" (ByVal hWnd As Long) As Long
 Private Declare Function SetWindowText Lib "user32.dll" Alias "SetWindowTextW" (ByVal hWnd As Long, ByVal lpString As Long) As Long
 Private Declare Function GetWindowText Lib "user32.dll" Alias "GetWindowTextW" (ByVal hWnd As Long, ByVal lpString As Long, ByVal cch As Long) As Long

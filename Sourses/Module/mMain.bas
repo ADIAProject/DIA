@@ -171,6 +171,64 @@ Public lngSizeRow13                 As Long
 Public maxSizeRowAllLine            As Long
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ChangeStatusTextAndDebug
+'! Description (Описание)  :   [Изменение текста статустной строки и отладочной информации]
+'! Parameters  (Переменные):   strPanel2Text (String)
+'                              strDebugText (String)
+'                              mbEqual (Boolean = False)
+'                              mbDoEvents (Boolean = True)
+'                              strPanel1Text (String)
+'!--------------------------------------------------------------------------------
+Public Sub ChangeStatusTextAndDebug(ByVal strPanel2Text As String, Optional ByVal strPanel1Text As String = vbNullString, Optional ByVal mbDoEvents As Boolean = True)
+
+    If LenB(strPanel2Text) Then
+
+        If frmMain.ctlUcStatusBar1.PanelCount >= 2 Then
+            frmMain.ctlUcStatusBar1.PanelText(2) = strPanel2Text
+        Else
+            frmMain.ctlUcStatusBar1.PanelText(1) = strPanel2Text
+        End If
+
+        If LenB(strPanel1Text) Then
+            frmMain.ctlUcStatusBar1.PanelText(1) = strPanel1Text
+        End If
+        
+        If mbDoEvents Then
+            DoEvents
+        End If
+    End If
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function CheckBallonTip
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Function CheckBallonTip() As Boolean
+    regParam = GetKeyValue(HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "EnableBalloonTips")
+
+    If LenB(regParam) = 0 Then
+        CheckBallonTip = True
+    Else
+        CheckBallonTip = regParam = "1"
+    End If
+
+    If mbDebugStandart Then DebugMode "EnableBalloonTips: " & regParam & "(" & CheckBallonTip & ")"
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub InitializePathHwidsTxt
+'! Description (Описание)  :   [Служебные файлы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub InitializePathHwidsTxt()
+    strHwidsTxtPath = strWorkTempBackSL & "HWIDS.txt"
+    strHwidsTxtPathView = strWorkTempBackSL & "HWIDS_ForView.txt"
+    strResultHwidsTxtPath = strWorkTempBackSL & "HwidsTemp.txt"
+    strResultHwidsExtTxtPath = strWorkTempBackSL & "HwidsTempExt.txt"
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Main
 '! Description (Описание)  :   [Основная функция запуска программы]
 '! Parameters  (Переменные):
@@ -448,35 +506,6 @@ ExitSub:
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ChangeStatusTextAndDebug
-'! Description (Описание)  :   [Изменение текста статустной строки и отладочной информации]
-'! Parameters  (Переменные):   strPanel2Text (String)
-'                              strDebugText (String)
-'                              mbEqual (Boolean = False)
-'                              mbDoEvents (Boolean = True)
-'                              strPanel1Text (String)
-'!--------------------------------------------------------------------------------
-Public Sub ChangeStatusTextAndDebug(ByVal strPanel2Text As String, Optional ByVal strPanel1Text As String = vbNullString, Optional ByVal mbDoEvents As Boolean = True)
-
-    If LenB(strPanel2Text) Then
-
-        If frmMain.ctlUcStatusBar1.PanelCount >= 2 Then
-            frmMain.ctlUcStatusBar1.PanelText(2) = strPanel2Text
-        Else
-            frmMain.ctlUcStatusBar1.PanelText(1) = strPanel2Text
-        End If
-
-        If LenB(strPanel1Text) Then
-            frmMain.ctlUcStatusBar1.PanelText(1) = strPanel1Text
-        End If
-        
-        If mbDoEvents Then
-            DoEvents
-        End If
-    End If
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SaveSert2Reestr
 '! Description (Описание)  :   [процедура прописывания сертификата для проверки валидности цифровой подписи моего exe]
 '! Parameters  (Переменные):
@@ -550,31 +579,3 @@ Private Sub Win64ReloadOptions()
     strDPInstExePath = strDPInstExePath64
 End Sub
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub InitializePathHwidsTxt
-'! Description (Описание)  :   [Служебные файлы]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub InitializePathHwidsTxt()
-    strHwidsTxtPath = strWorkTempBackSL & "HWIDS.txt"
-    strHwidsTxtPathView = strWorkTempBackSL & "HWIDS_ForView.txt"
-    strResultHwidsTxtPath = strWorkTempBackSL & "HwidsTemp.txt"
-    strResultHwidsExtTxtPath = strWorkTempBackSL & "HwidsTempExt.txt"
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function CheckBallonTip
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Function CheckBallonTip() As Boolean
-    regParam = GetKeyValue(HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "EnableBalloonTips")
-
-    If LenB(regParam) = 0 Then
-        CheckBallonTip = True
-    Else
-        CheckBallonTip = regParam = "1"
-    End If
-
-    If mbDebugStandart Then DebugMode "EnableBalloonTips: " & regParam & "(" & CheckBallonTip & ")"
-End Function

@@ -181,6 +181,25 @@ Private mY As Single
 Private mX As Single
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property AutoScrollToFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get AutoScrollToFocus() As Boolean
+    AutoScrollToFocus = m_AutoScrollToFocus
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property AutoScrollToFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let AutoScrollToFocus(ByVal NewValue As Boolean)
+    m_AutoScrollToFocus = NewValue
+    PropertyChanged "AutoScrollToFocus"
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property BackColor
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -219,44 +238,6 @@ Public Property Let BorderStyle(ByVal NewValue As EnuBorderStyle)
 End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property AutoScrollToFocus
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get AutoScrollToFocus() As Boolean
-    AutoScrollToFocus = m_AutoScrollToFocus
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property AutoScrollToFocus
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewValue (Boolean)
-'!--------------------------------------------------------------------------------
-Public Property Let AutoScrollToFocus(ByVal NewValue As Boolean)
-    m_AutoScrollToFocus = NewValue
-    PropertyChanged "AutoScrollToFocus"
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property UseHandsCursor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get UseHandsCursor() As Boolean
-    UseHandsCursor = m_UseHandsCursor
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property UseHandsCursor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewValue (Boolean)
-'!--------------------------------------------------------------------------------
-Public Property Let UseHandsCursor(ByVal NewValue As Boolean)
-    m_UseHandsCursor = NewValue
-    PropertyChanged "UseHandsCursor"
-End Property
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property Enabled
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -285,260 +266,23 @@ Public Property Get hWnd()
 End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_InitProperties
+'! Procedure   (Функция)   :   Property UseHandsCursor
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub UserControl_InitProperties()
-    m_AutoScrollToFocus = True
-    m_UseHandsCursor = True
-End Sub
+Public Property Get UseHandsCursor() As Boolean
+    UseHandsCursor = m_UseHandsCursor
+End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_MouseDown
+'! Procedure   (Функция)   :   Property UseHandsCursor
 '! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
+'! Parameters  (Переменные):   NewValue (Boolean)
 '!--------------------------------------------------------------------------------
-Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-    If m_UseHandsCursor Then
-        If Button = 1 Then
-            If m_VScrollVisible Or m_HScrollVisible Then
-                SetCursor UserControl.MaskPicture
-            End If
-        End If
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_MouseUp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-    If m_UseHandsCursor Then
-        If Button = 1 Then
-            If m_VScrollVisible Or m_HScrollVisible Then
-                SetCursor UserControl.MouseIcon
-            End If
-        End If
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_MouseMove
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-    If m_UseHandsCursor = False Then
-
-        Exit Sub
-
-    End If
-
-    If Button = 1 Then
-        If m_VScrollVisible Then
-            GetScrollInfo UserControl.hWnd, SB_VERT, SI
-            SI.nPos = -(Y - mY)
-            SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
-            GetScrollInfo UserControl.hWnd, SB_VERT, SI
-            ScrollVerticalWindow -SI.nPos
-        End If
-
-        If m_HScrollVisible Then
-            GetScrollInfo UserControl.hWnd, SB_HORZ, SI
-            SI.nPos = -(X - mX)
-            SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
-            GetScrollInfo UserControl.hWnd, SB_HORZ, SI
-            ScrollHorizontalWindow -SI.nPos
-        End If
-
-    Else
-
-        If m_VScrollVisible Then
-            GetScrollInfo UserControl.hWnd, SB_VERT, SI
-            mY = Y + SI.nPos
-        End If
-
-        If m_HScrollVisible Then
-            GetScrollInfo UserControl.hWnd, SB_HORZ, SI
-            mX = X + SI.nPos
-        End If
-    End If
-
-    If m_VScrollVisible Or m_HScrollVisible Then
-        If Button = 1 Then
-            SetCursor UserControl.MaskPicture
-        Else
-
-            If Button = 0 Then SetCursor UserControl.MouseIcon
-        End If
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_ReadProperties
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   PropBag (PropertyBag)
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
-
-    With PropBag
-        Me.BackColor = .ReadProperty("BackColor", vbButtonFace)
-        Me.BorderStyle = .ReadProperty("BorderStyle", vbFixedSingle)
-        m_AutoScrollToFocus = .ReadProperty("AutoScrollToFocus", True)
-        m_UseHandsCursor = .ReadProperty("UseHandsCursor", True)
-        Me.Enabled = .ReadProperty("Enabled", True)
-    End With
-
-    On Error GoTo H
-
-    'If we're not in design mode
-    If g_UserModeFix Then
-        
-        bTrack = True
-        bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
-
-        If Not bTrackUser32 Then
-            If Not APIFunctionPresent("_TrackMouseEvent", "comctl32") Then
-                bTrack = False
-            End If
-        End If
-
-        If bTrack Then
-                
-            'Add the messages that we're interested in
-            With m_cSubclass
-                '   Start Subclassing using our Handle
-                If .ssc_Subclass(UserControl.hWnd, ByVal exUserControl, 1, Me) Then
-                    .ssc_AddMsg UserControl.hWnd, MSG_AFTER, WM_VSCROLL, WM_HSCROLL, WM_MOUSEWHEEL, WM_NCPAINT, WM_THEMECHANGED, WM_SYSCOLORCHANGE
-                End If
-    
-            End With
-        End If
-
-    End If
-
-H:
-
-    On Error GoTo 0
-    
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   PropBag (PropertyBag)
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
-
-    With PropBag
-        .WriteProperty "BackColor", UserControl.BackColor, vbButtonFace
-        .WriteProperty "BorderStyle", UserControl.BorderStyle, vbFixedSingle
-        .WriteProperty "AutoScrollToFocus", m_AutoScrollToFocus, True
-        .WriteProperty "UseHandsCursor", m_UseHandsCursor, True
-        .WriteProperty "Enabled", UserControl.Enabled, True
-    End With
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetChildRectOfMe
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   hWnd (Long)
-'                              SrcRect (RECT)
-'!--------------------------------------------------------------------------------
-Private Function GetChildRectOfMe(hWnd As Long, ByRef SrcRect As RECT)
-
-    Dim PT As POINTAPI
-
-    ClientToScreen UserControl.hWnd, PT
-    Call GetWindowRect(hWnd, SrcRect)
-
-    With SrcRect
-        .Left = .Left - PT.X - OldPosH
-        .Top = .Top - PT.Y - OldPosV
-        .Right = .Right - PT.X - OldPosH
-        .Bottom = .Bottom - PT.Y - OldPosV
-    End With
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsChildOfMe
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   hWnd (Long)
-'!--------------------------------------------------------------------------------
-Private Function IsChildOfMe(hWnd As Long) As Boolean
-
-    Dim hParent As Long
-
-    hParent = GetParent(hWnd)
-
-    Do While hParent <> 0
-
-        If hParent = UserControl.hWnd Then
-            IsChildOfMe = True
-
-            Exit Do
-
-        End If
-
-        hParent = GetParent(hParent)
-    Loop
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Initialize()
-
-    SI.cbSize = Len(SI)
-    SI.fMask = SIF_ALL
-    mBorderSize = GetSystemMetrics(SM_CYBORDER)
-    
-    Set m_cSubclass = New cSelfSubHookCallback
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Resize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Resize()
-
-    On Error Resume Next
-
-    CheckScroll
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Refresh
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Sub Refresh()
-    m_hFocus = 0
-    CheckScroll
-End Sub
+Public Property Let UseHandsCursor(ByVal NewValue As Boolean)
+    m_UseHandsCursor = NewValue
+    PropertyChanged "UseHandsCursor"
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckScroll
@@ -607,37 +351,24 @@ Private Sub CheckScroll()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ScrollVerticalWindow
+'! Procedure   (Функция)   :   Function GetChildRectOfMe
 '! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewPos (Long)
+'! Parameters  (Переменные):   hWnd (Long)
+'                              SrcRect (RECT)
 '!--------------------------------------------------------------------------------
-Private Sub ScrollVerticalWindow(ByVal NewPos As Long)
-    ScrollWindowByNum UserControl.hWnd, 0&, NewPos - OldPosV, 0&, 0&
-    OldPosV = NewPos
-End Sub
+Private Function GetChildRectOfMe(hWnd As Long, ByRef SrcRect As RECT)
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ScrollHorizontalWindow
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   NewPos (Long)
-'!--------------------------------------------------------------------------------
-Private Sub ScrollHorizontalWindow(ByVal NewPos As Long)
-    ScrollWindowByNum UserControl.hWnd, NewPos - OldPosH, 0&, 0&, 0&
-    OldPosH = NewPos
-End Sub
+    Dim PT As POINTAPI
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetLoWord
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   dw (Long)
-'!--------------------------------------------------------------------------------
-Private Function GetLoWord(dw As Long) As Long
+    ClientToScreen UserControl.hWnd, PT
+    Call GetWindowRect(hWnd, SrcRect)
 
-    If dw And &H8000& Then
-        GetLoWord = &H8000 Or (dw And &H7FFF&)
-    Else
-        GetLoWord = dw And &HFFFF&
-    End If
+    With SrcRect
+        .Left = .Left - PT.X - OldPosH
+        .Top = .Top - PT.Y - OldPosV
+        .Right = .Right - PT.X - OldPosH
+        .Bottom = .Bottom - PT.Y - OldPosV
+    End With
 
 End Function
 
@@ -657,29 +388,73 @@ Private Function GetHiWord(dw As Long) As Long
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Show
+'! Procedure   (Функция)   :   Function GetLoWord
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   dw (Long)
+'!--------------------------------------------------------------------------------
+Private Function GetLoWord(dw As Long) As Long
+
+    If dw And &H8000& Then
+        GetLoWord = &H8000 Or (dw And &H7FFF&)
+    Else
+        GetLoWord = dw And &HFFFF&
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsChildOfMe
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   hWnd (Long)
+'!--------------------------------------------------------------------------------
+Private Function IsChildOfMe(hWnd As Long) As Boolean
+
+    Dim hParent As Long
+
+    hParent = GetParent(hWnd)
+
+    Do While hParent <> 0
+
+        If hParent = UserControl.hWnd Then
+            IsChildOfMe = True
+
+            Exit Do
+
+        End If
+
+        hParent = GetParent(hParent)
+    Loop
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Refresh
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub UserControl_Show()
-    Me.Refresh
+Public Sub Refresh()
+    m_hFocus = 0
     CheckScroll
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ScrollHorizontalWindow
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewPos (Long)
+'!--------------------------------------------------------------------------------
+Private Sub ScrollHorizontalWindow(ByVal NewPos As Long)
+    ScrollWindowByNum UserControl.hWnd, NewPos - OldPosH, 0&, 0&, 0&
+    OldPosH = NewPos
+End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Terminate
-'! Description (Описание)  :   [The control is terminating - a good place to stop the subclasser]
-'! Parameters  (Переменные):
+'! Procedure   (Функция)   :   Sub ScrollVerticalWindow
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewPos (Long)
 '!--------------------------------------------------------------------------------
-Private Sub UserControl_Terminate()
-
-    On Error Resume Next
-
-    'Terminate all subclassing
-    m_cSubclass.ssc_Terminate
-    Set m_cSubclass = Nothing
-    
+Private Sub ScrollVerticalWindow(ByVal NewPos As Long)
+    ScrollWindowByNum UserControl.hWnd, 0&, NewPos - OldPosV, 0&, 0&
+    OldPosV = NewPos
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -709,6 +484,231 @@ Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Initialize()
+
+    SI.cbSize = Len(SI)
+    SI.fMask = SIF_ALL
+    mBorderSize = GetSystemMetrics(SM_CYBORDER)
+    
+    Set m_cSubclass = New cSelfSubHookCallback
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_InitProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_InitProperties()
+    m_AutoScrollToFocus = True
+    m_UseHandsCursor = True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    If m_UseHandsCursor Then
+        If Button = 1 Then
+            If m_VScrollVisible Or m_HScrollVisible Then
+                SetCursor UserControl.MaskPicture
+            End If
+        End If
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    If m_UseHandsCursor = False Then
+
+        Exit Sub
+
+    End If
+
+    If Button = 1 Then
+        If m_VScrollVisible Then
+            GetScrollInfo UserControl.hWnd, SB_VERT, SI
+            SI.nPos = -(Y - mY)
+            SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
+            GetScrollInfo UserControl.hWnd, SB_VERT, SI
+            ScrollVerticalWindow -SI.nPos
+        End If
+
+        If m_HScrollVisible Then
+            GetScrollInfo UserControl.hWnd, SB_HORZ, SI
+            SI.nPos = -(X - mX)
+            SetScrollInfo UserControl.hWnd, SB_HORZ, SI, True
+            GetScrollInfo UserControl.hWnd, SB_HORZ, SI
+            ScrollHorizontalWindow -SI.nPos
+        End If
+
+    Else
+
+        If m_VScrollVisible Then
+            GetScrollInfo UserControl.hWnd, SB_VERT, SI
+            mY = Y + SI.nPos
+        End If
+
+        If m_HScrollVisible Then
+            GetScrollInfo UserControl.hWnd, SB_HORZ, SI
+            mX = X + SI.nPos
+        End If
+    End If
+
+    If m_VScrollVisible Or m_HScrollVisible Then
+        If Button = 1 Then
+            SetCursor UserControl.MaskPicture
+        Else
+
+            If Button = 0 Then SetCursor UserControl.MouseIcon
+        End If
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    If m_UseHandsCursor Then
+        If Button = 1 Then
+            If m_VScrollVisible Or m_HScrollVisible Then
+                SetCursor UserControl.MouseIcon
+            End If
+        End If
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_ReadProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+
+    With PropBag
+        Me.BackColor = .ReadProperty("BackColor", vbButtonFace)
+        Me.BorderStyle = .ReadProperty("BorderStyle", vbFixedSingle)
+        m_AutoScrollToFocus = .ReadProperty("AutoScrollToFocus", True)
+        m_UseHandsCursor = .ReadProperty("UseHandsCursor", True)
+        Me.Enabled = .ReadProperty("Enabled", True)
+    End With
+
+    On Error GoTo H
+
+    'If we're not in design mode
+    If g_UserModeFix Then
+        
+        bTrack = True
+        bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
+
+        If Not bTrackUser32 Then
+            If Not APIFunctionPresent("_TrackMouseEvent", "comctl32") Then
+                bTrack = False
+            End If
+        End If
+
+        If bTrack Then
+                
+            'Add the messages that we're interested in
+            With m_cSubclass
+                '   Start Subclassing using our Handle
+                If .ssc_Subclass(UserControl.hWnd, ByVal exUserControl, 1, Me) Then
+                    .ssc_AddMsg UserControl.hWnd, MSG_AFTER, WM_VSCROLL, WM_HSCROLL, WM_MOUSEWHEEL, WM_NCPAINT, WM_THEMECHANGED, WM_SYSCOLORCHANGE
+                End If
+    
+            End With
+        End If
+
+    End If
+
+H:
+
+    On Error GoTo 0
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Resize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Resize()
+
+    On Error Resume Next
+
+    CheckScroll
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Show
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Show()
+    Me.Refresh
+    CheckScroll
+End Sub
+
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [The control is terminating - a good place to stop the subclasser]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Terminate()
+
+    On Error Resume Next
+
+    'Terminate all subclassing
+    m_cSubclass.ssc_Terminate
+    Set m_cSubclass = Nothing
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_WriteProperties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropBag (PropertyBag)
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+
+    With PropBag
+        .WriteProperty "BackColor", UserControl.BackColor, vbButtonFace
+        .WriteProperty "BorderStyle", UserControl.BorderStyle, vbFixedSingle
+        .WriteProperty "AutoScrollToFocus", m_AutoScrollToFocus, True
+        .WriteProperty "UseHandsCursor", m_UseHandsCursor, True
+        .WriteProperty "Enabled", UserControl.Enabled, True
+    End With
+
+End Sub
+
 '======================================================================================================
 '-Subclass callback, usually ordinal #1, the last method in this source file----------------------
 '!--------------------------------------------------------------------------------
@@ -723,7 +723,7 @@ End Sub
 '                              lParam (Long)
 '                              lParamUser (Long)
 '!--------------------------------------------------------------------------------
-Private Sub zWndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByRef lParamUser As Long)
+Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRef lReturn As Long, ByVal lng_hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByRef lParamUser As Long)
 
     '*************************************************************************************************
     '* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually

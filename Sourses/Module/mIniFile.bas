@@ -31,6 +31,44 @@ Public Function CheckIniSectionExists(ByVal strSection As String, ByVal strfullp
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetIniEmptySectionFromList
+'! Description (Описание)  :   [Получение списка пустых секций из полученного ранее списка секций]
+'! Parameters  (Переменные):   strSectionList (String)
+'                              strIniPath (String)
+'!--------------------------------------------------------------------------------
+Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal strIniPath As String) As String
+
+    Dim strTmp             As String
+    Dim strSectionList_x() As String
+    Dim i_i                As Long
+    Dim strManufSection    As String
+    Dim sTemp              As String * 2048
+
+    strSectionList_x = Split(strSectionList, "|")
+
+    For i_i = 0 To UBound(strSectionList_x)
+        strManufSection = strSectionList_x(i_i)
+    
+        If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
+        
+            If LenB(strTmp) Then
+                strTmp = strTmp & "," & strManufSection
+            Else
+                strTmp = strManufSection
+            End If
+        End If
+
+    Next
+
+    If LenB(strTmp) Then
+        GetIniEmptySectionFromList = strTmp
+    Else
+        GetIniEmptySectionFromList = "-"
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetIniValueBoolean
 '! Description (Описание)  :   [Получение Boolean значения переменной ini-файла с дефолтовым значением]
 '! Parameters  (Переменные):   strIniPath (String)
@@ -252,6 +290,20 @@ Public Function IniLongPrivate(ByVal SekName As String, ByVal KeyName As String,
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IniSectionIsEmpty
+'! Description (Описание)  :   [Проверка на то что секция пустая]
+'! Parameters  (Переменные):   strSection (String)
+'                              strIni (String)
+'!--------------------------------------------------------------------------------
+Public Function IniSectionIsEmpty(ByVal strSection As String, ByVal strIni As String) As Boolean
+
+    Dim sTemp As String * 2048
+
+    'в неё запишется количество символов в строке ключа
+    IniSectionIsEmpty = GetPrivateProfileSection(strSection, sTemp, 2048, strIni) = 0
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniStringPrivate
 '! Description (Описание)  :   [Читает строковый параметр из любого файла .INI,"no_key" - возвращаемое функцией значение, если ключ не найден]
 '! Parameters  (Переменные):   SekName (String)
@@ -410,56 +462,4 @@ Public Function ReadFromINI(ByVal strSection As String, ByVal strKey As String, 
 
     strBuffer = String$(750, vbNullChar)
     ReadFromINI = Left$(strBuffer, GetPrivateProfileString(strSection, ByVal LCase$(strKey), strDefault, strBuffer, Len(strBuffer), strfullpath))
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IniSectionIsEmpty
-'! Description (Описание)  :   [Проверка на то что секция пустая]
-'! Parameters  (Переменные):   strSection (String)
-'                              strIni (String)
-'!--------------------------------------------------------------------------------
-Public Function IniSectionIsEmpty(ByVal strSection As String, ByVal strIni As String) As Boolean
-
-    Dim sTemp As String * 2048
-
-    'в неё запишется количество символов в строке ключа
-    IniSectionIsEmpty = GetPrivateProfileSection(strSection, sTemp, 2048, strIni) = 0
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetIniEmptySectionFromList
-'! Description (Описание)  :   [Получение списка пустых секций из полученного ранее списка секций]
-'! Parameters  (Переменные):   strSectionList (String)
-'                              strIniPath (String)
-'!--------------------------------------------------------------------------------
-Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal strIniPath As String) As String
-
-    Dim strTmp             As String
-    Dim strSectionList_x() As String
-    Dim i_i                As Long
-    Dim strManufSection    As String
-    Dim sTemp              As String * 2048
-
-    strSectionList_x = Split(strSectionList, "|")
-
-    For i_i = 0 To UBound(strSectionList_x)
-        strManufSection = strSectionList_x(i_i)
-    
-        If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
-        
-            If LenB(strTmp) Then
-                strTmp = strTmp & "," & strManufSection
-            Else
-                strTmp = strManufSection
-            End If
-        End If
-
-    Next
-
-    If LenB(strTmp) Then
-        GetIniEmptySectionFromList = strTmp
-    Else
-        GetIniEmptySectionFromList = "-"
-    End If
-
 End Function

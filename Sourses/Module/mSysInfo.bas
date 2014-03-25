@@ -73,17 +73,156 @@ Public Declare Function GetVersionEx Lib "kernel32.dll" Alias "GetVersionExA" (l
 Public Declare Sub GetNativeSystemInfo Lib "kernel32.dll" (ByRef lpSystemInfo As SYSTEM_INFO)
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWinXPOrLater
+'! Procedure   (Функция)   :   Function GetMB_Manufacturer
+'! Description (Описание)  :   [Получение производителя материнской платы, используется WMI]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetMB_Manufacturer() As String
+
+    Dim colItems           As Object
+    Dim objItem            As Object
+    Dim objWMIService      As Object
+    Dim sAnsComputerSystem As String
+    Dim sAnsBaseBoard      As String
+    Dim objRegExp          As RegExp
+    Dim strTemp            As String
+
+    Const wbemFlagReturnImmediately = &H10
+    Const wbemFlagForwardOnly = &H20
+
+    ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
+    Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
+    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
+
+    For Each objItem In colItems
+
+        sAnsComputerSystem = sAnsComputerSystem & objItem.Manufacturer
+    Next
+
+    ' получение данных из Win32_ComputerSystem
+    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
+
+    For Each objItem In colItems
+
+        sAnsBaseBoard = sAnsBaseBoard & objItem.Manufacturer
+    Next
+
+    ' итог
+    If StrComp(sAnsComputerSystem, "System manufacturer", vbTextCompare) = 0 Then
+        strTemp = Trim$(sAnsBaseBoard)
+        mbIsNotebok = False
+    Else
+        strTemp = Trim$(sAnsComputerSystem)
+        mbIsNotebok = True
+    End If
+
+    ' удаляем лишние символы в наименовании
+    Set objRegExp = New RegExp
+
+    With objRegExp
+        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
+        .IgnoreCase = True
+        .Global = True
+    End With
+
+    'получаем date1
+    GetMB_Manufacturer = Trim$(objRegExp.Replace(strTemp, " "))
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetMB_Model
+'! Description (Описание)  :   [Получение модели материнской платы, используется WMI]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetMB_Model() As String
+
+    Dim colItems           As Object
+    Dim objItem            As Object
+    Dim objWMIService      As Object
+    Dim sAnsComputerSystem As String
+    Dim sAnsBaseBoard      As String
+    Dim objRegExp          As RegExp
+    Dim strTemp            As String
+
+    Const wbemFlagReturnImmediately = &H10
+    Const wbemFlagForwardOnly = &H20
+
+    ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
+    Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
+    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
+
+    For Each objItem In colItems
+
+        sAnsComputerSystem = sAnsComputerSystem & objItem.Model
+    Next
+
+    ' получение данных из Win32_ComputerSystem
+    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
+
+    For Each objItem In colItems
+
+        sAnsBaseBoard = sAnsBaseBoard & objItem.Product
+    Next
+
+    ' итог
+    If StrComp(sAnsComputerSystem, "System Product Name", vbTextCompare) = 0 Then
+        strTemp = Trim$(sAnsBaseBoard)
+        mbIsNotebok = False
+    Else
+        strTemp = Trim$(sAnsComputerSystem)
+        mbIsNotebok = True
+    End If
+
+    ' удаляем лишние символы в наименовании
+    Set objRegExp = New RegExp
+
+    With objRegExp
+        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
+        .IgnoreCase = True
+        .Global = True
+    End With
+
+    'получаем date1
+    GetMB_Model = Trim$(objRegExp.Replace(strTemp, " "))
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetMBInfo
+'! Description (Описание)  :   [Итоговая строка производитель/модель материнской платы/ноутбука]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetMBInfo() As String
+
+    Dim strMB_Manufacturer As String
+    Dim strMB_Model        As String
+
+    strMB_Manufacturer = GetMB_Manufacturer()
+    strMB_Model = GetMB_Model()
+
+    If LenB(strMB_Manufacturer) And LenB(strMB_Model) Then
+        GetMBInfo = strMB_Manufacturer & "_" & strMB_Model
+    ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) Then
+        GetMBInfo = strMB_Model
+    ElseIf LenB(strMB_Manufacturer) And LenB(strMB_Model) = 0 Then
+        GetMBInfo = strMB_Manufacturer
+    Else
+        GetMBInfo = "Unknown"
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsWin7OrLater
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function IsWinXPOrLater() As Boolean
+Public Function IsWin7OrLater() As Boolean
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
     End If
 
-    IsWinXPOrLater = OSCurrVersionStruct.VerFull > "5.0"
+    IsWin7OrLater = OSCurrVersionStruct.VerFull >= "6.1"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -101,17 +240,17 @@ Public Function IsWinVistaOrLater() As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWin7OrLater
+'! Procedure   (Функция)   :   Function IsWinXPOrLater
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function IsWin7OrLater() As Boolean
+Public Function IsWinXPOrLater() As Boolean
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
     End If
 
-    IsWin7OrLater = OSCurrVersionStruct.VerFull >= "6.1"
+    IsWinXPOrLater = OSCurrVersionStruct.VerFull > "5.0"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -307,144 +446,5 @@ Public Function OSInfoWMI(ByVal Nfo As Long) As String
     'Clear the memory
     Set colItems = Nothing
     Set objWMI = Nothing
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMB_Manufacturer
-'! Description (Описание)  :   [Получение производителя материнской платы, используется WMI]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function GetMB_Manufacturer() As String
-
-    Dim colItems           As Object
-    Dim objItem            As Object
-    Dim objWMIService      As Object
-    Dim sAnsComputerSystem As String
-    Dim sAnsBaseBoard      As String
-    Dim objRegExp          As RegExp
-    Dim strTemp            As String
-
-    Const wbemFlagReturnImmediately = &H10
-    Const wbemFlagForwardOnly = &H20
-
-    ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
-    Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsComputerSystem = sAnsComputerSystem & objItem.Manufacturer
-    Next
-
-    ' получение данных из Win32_ComputerSystem
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsBaseBoard = sAnsBaseBoard & objItem.Manufacturer
-    Next
-
-    ' итог
-    If StrComp(sAnsComputerSystem, "System manufacturer", vbTextCompare) = 0 Then
-        strTemp = Trim$(sAnsBaseBoard)
-        mbIsNotebok = False
-    Else
-        strTemp = Trim$(sAnsComputerSystem)
-        mbIsNotebok = True
-    End If
-
-    ' удаляем лишние символы в наименовании
-    Set objRegExp = New RegExp
-
-    With objRegExp
-        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
-        .IgnoreCase = True
-        .Global = True
-    End With
-
-    'получаем date1
-    GetMB_Manufacturer = Trim$(objRegExp.Replace(strTemp, " "))
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMB_Model
-'! Description (Описание)  :   [Получение модели материнской платы, используется WMI]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function GetMB_Model() As String
-
-    Dim colItems           As Object
-    Dim objItem            As Object
-    Dim objWMIService      As Object
-    Dim sAnsComputerSystem As String
-    Dim sAnsBaseBoard      As String
-    Dim objRegExp          As RegExp
-    Dim strTemp            As String
-
-    Const wbemFlagReturnImmediately = &H10
-    Const wbemFlagForwardOnly = &H20
-
-    ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
-    Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsComputerSystem = sAnsComputerSystem & objItem.Model
-    Next
-
-    ' получение данных из Win32_ComputerSystem
-    Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
-
-    For Each objItem In colItems
-
-        sAnsBaseBoard = sAnsBaseBoard & objItem.Product
-    Next
-
-    ' итог
-    If StrComp(sAnsComputerSystem, "System Product Name", vbTextCompare) = 0 Then
-        strTemp = Trim$(sAnsBaseBoard)
-        mbIsNotebok = False
-    Else
-        strTemp = Trim$(sAnsComputerSystem)
-        mbIsNotebok = True
-    End If
-
-    ' удаляем лишние символы в наименовании
-    Set objRegExp = New RegExp
-
-    With objRegExp
-        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
-        .IgnoreCase = True
-        .Global = True
-    End With
-
-    'получаем date1
-    GetMB_Model = Trim$(objRegExp.Replace(strTemp, " "))
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMBInfo
-'! Description (Описание)  :   [Итоговая строка производитель/модель материнской платы/ноутбука]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function GetMBInfo() As String
-
-    Dim strMB_Manufacturer As String
-    Dim strMB_Model        As String
-
-    strMB_Manufacturer = GetMB_Manufacturer()
-    strMB_Model = GetMB_Model()
-
-    If LenB(strMB_Manufacturer) And LenB(strMB_Model) Then
-        GetMBInfo = strMB_Manufacturer & "_" & strMB_Model
-    ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) Then
-        GetMBInfo = strMB_Model
-    ElseIf LenB(strMB_Manufacturer) And LenB(strMB_Model) = 0 Then
-        GetMBInfo = strMB_Manufacturer
-    Else
-        GetMBInfo = "Unknown"
-    End If
-
 End Function
 

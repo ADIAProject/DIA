@@ -236,6 +236,16 @@ Option Explicit
 
 Private strFormName As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -251,6 +261,69 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    ' Лэйблы
+    lblUtilName.Caption = LocaliseString(strPathFile, strFormName, "lblUtilName", lblUtilName.Caption)
+    lblPathUtil.Caption = LocaliseString(strPathFile, strFormName, "lblPathUtil", lblPathUtil.Caption)
+    lblPathUtil64.Caption = LocaliseString(strPathFile, strFormName, "lblPathUtil64", lblPathUtil64.Caption)
+    lblParamUtil.Caption = LocaliseString(strPathFile, strFormName, "lblParamUtil", lblParamUtil.Caption)
+    'Кнопки
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveOptions
+'! Description (Описание)  :   [Сохранение настроек]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub SaveOptions()
+
+    Dim i As Long
+
+    If mbAddInList Then
+        i = lngLastIdUtil + 1
+
+        With frmOptions.lvUtils.ListItems.Add(, , txtUtilName)
+            .SubItems(1) = ucPathUtil.Path
+            .SubItems(2) = ucPathUtil64.Path
+            .SubItems(3) = txtParamUtil
+        End With
+
+        'frmOptions
+    Else
+
+        With frmOptions.lvUtils
+            i = .SelectedItem.Index
+            .ListItems.Item(i).Text = txtUtilName
+            .ListItems.Item(i).SubItems(1) = ucPathUtil.Path
+            .ListItems.Item(i).SubItems(2) = ucPathUtil64.Path
+
+            'frmOptions
+            If txtParamUtil.Text <> "Дополнительные параметры запуска" Then
+                .ListItems.Item(i).SubItems(3) = txtParamUtil
+            Else
+                .ListItems.Item(i).SubItems(3) = vbNullString
+            End If
+
+        End With
+
+    End If
+
+    lngLastIdUtil = frmOptions.lvUtils.ListItems.Count
+    frmOptions.lvUtils.Refresh
+    mbAddInList = False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -324,69 +397,6 @@ Private Sub Form_Load()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    ' Лэйблы
-    lblUtilName.Caption = LocaliseString(StrPathFile, strFormName, "lblUtilName", lblUtilName.Caption)
-    lblPathUtil.Caption = LocaliseString(StrPathFile, strFormName, "lblPathUtil", lblPathUtil.Caption)
-    lblPathUtil64.Caption = LocaliseString(StrPathFile, strFormName, "lblPathUtil64", lblPathUtil64.Caption)
-    lblParamUtil.Caption = LocaliseString(StrPathFile, strFormName, "lblParamUtil", lblParamUtil.Caption)
-    'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub SaveOptions
-'! Description (Описание)  :   [Сохранение настроек]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub SaveOptions()
-
-    Dim i As Long
-
-    If mbAddInList Then
-        i = lngLastIdUtil + 1
-
-        With frmOptions.lvUtils.ListItems.Add(, , txtUtilName)
-            .SubItems(1) = ucPathUtil.Path
-            .SubItems(2) = ucPathUtil64.Path
-            .SubItems(3) = txtParamUtil
-        End With
-
-        'frmOptions
-    Else
-
-        With frmOptions.lvUtils
-            i = .SelectedItem.Index
-            .ListItems.Item(i).Text = txtUtilName
-            .ListItems.Item(i).SubItems(1) = ucPathUtil.Path
-            .ListItems.Item(i).SubItems(2) = ucPathUtil64.Path
-
-            'frmOptions
-            If txtParamUtil.Text <> "Дополнительные параметры запуска" Then
-                .ListItems.Item(i).SubItems(3) = txtParamUtil
-            Else
-                .ListItems.Item(i).SubItems(3) = vbNullString
-            End If
-
-        End With
-
-    End If
-
-    lngLastIdUtil = frmOptions.lvUtils.ListItems.Count
-    frmOptions.lvUtils.Refresh
-    mbAddInList = False
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtParamUtil_GotFocus
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -429,24 +439,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub txtUtilName_LostFocus()
     HighlightActiveControl Me, txtUtilName, False
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ucPathUtil_GotFocus
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub ucPathUtil_GotFocus()
-    HighlightActiveControl Me, ucPathUtil, True
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ucPathUtil_LostFocus
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub ucPathUtil_LostFocus()
-    HighlightActiveControl Me, ucPathUtil, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -523,6 +515,24 @@ Private Sub ucPathUtil_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucPathUtil_GotFocus()
+    HighlightActiveControl Me, ucPathUtil, True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPathUtil_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucPathUtil_LostFocus()
+    HighlightActiveControl Me, ucPathUtil, False
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucPathUtil_PathChanged
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -530,14 +540,3 @@ End Sub
 Private Sub ucPathUtil_PathChanged()
     cmdOK.Enabled = LenB(Trim$(txtUtilName)) And LenB(Trim$(ucPathUtil.Path))
 End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property

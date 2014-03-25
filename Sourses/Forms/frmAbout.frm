@@ -337,8 +337,18 @@ Private strFormName       As String
 Private strCreditList()   As String
 Private lngCurCredit      As Long
 
-
 Private Const strUrlOsZoneNetThread As String = "http://forum.oszone.net/thread-139908.html"
+
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -359,6 +369,153 @@ Private Sub FontCharsetChange()
     SetBtnFontProperties cmdOsZoneNet
     SetBtnFontProperties cmdHomePage
     SetBtnFontProperties cmdExit
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GenerateThankyou
+'! Description (Описание)  :   [Генерация текста благодарности со ссылкой на страницу]
+'!                              Idea from
+'!                              Copyright ©2001-2013 by Tanner Helland
+'!                              http://www.tannerhelland.com/photodemon
+'! Parameters  (Переменные):   thxText (String)
+'                              creditURL (String = vbNullString)
+'!--------------------------------------------------------------------------------
+Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL As String = vbNullString)
+    'Generate a new label
+    Load lblThanks(lngCurCredit)
+
+    'Because I now have too many people to thank, it's necessary to split the list into multiple columns
+    Dim columnLimit As Long
+
+    columnLimit = 5
+
+    Dim thxOffset As Long
+
+    thxOffset = 750
+
+    With lblThanks(lngCurCredit)
+
+        If lngCurCredit = 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300
+            .Left = lblThanks(0).Left + 30 + thxOffset
+        ElseIf lngCurCredit < columnLimit Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
+            .Left = lblThanks(0).Left + 30 + thxOffset
+        ElseIf lngCurCredit = columnLimit Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit - 1).Top - lblThanks(0).Top)
+            .Left = lblThanks(0).Left + 2700 + thxOffset
+        ElseIf lngCurCredit < columnLimit * 2 - 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
+            .Left = lblThanks(0).Left + 2700 + thxOffset
+        ElseIf lngCurCredit = columnLimit * 2 - 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit * 2 - 2).Top - lblThanks(0).Top)
+            .Left = lblThanks(0).Left + 5400 + thxOffset
+        Else
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
+            .Left = lblThanks(0).Left + 5400 + thxOffset
+        End If
+
+        .Caption = thxText
+
+        If LenB(creditURL) = 0 Then
+            .MousePointer = vbDefault
+        Else
+            .Font.Underline = True
+            .MouseIcon = lblMailTo.MouseIcon
+            .MousePointer = lblMailTo.MousePointer
+            .ForeColor = lblMailTo.ForeColor
+            .ToolTipText = creditURL
+        End If
+
+        .Visible = True
+    End With
+
+    ReDim Preserve strCreditList(0 To lngCurCredit)
+
+    strCreditList(lngCurCredit) = creditURL
+    lngCurCredit = lngCurCredit + 1
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadThankYou
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadThankYou()
+    lngCurCredit = 1
+    GenerateThankyou "SamLab", "http://driveroff.net/"
+    GenerateThankyou "OSzone.net forum's users", "http://forum.oszone.net/forum-62.html"
+    GenerateThankyou "Krool", "http://www.vbforums.com/showthread.php?698563-CommonControls-(Replacement-of-the-MS-common-controls)"
+    GenerateThankyou "Juned Chhipa", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=71482&lngWId=1"
+    GenerateThankyou "Leandro Ascierto", "http://leandroascierto.com/blog/clsmenuimage/"
+    GenerateThankyou "VBnet and Randy Birch", "http://vbnet.mvps.org/"
+    'cmdparsing
+    GenerateThankyou "EliteXP Software Solutions", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=72018&lngWId=1"
+    'ucPickBox' ucStatusBar
+    GenerateThankyou "Paul R.Territos", "http://planetsourcecode.com/vb/scripts/ShowCode.asp?txtCodeId=63905&lngWId=1"
+    '[VB6] Function Wait (non-freezing & non-CPU-intensive)
+    GenerateThankyou "Bonnie West", "http://www.vbforums.com/showthread.php?700373-VB6-Shell-amp-Wait"
+    'Team HomeWork
+    ' Timed MessageBox
+    GenerateThankyou "Anirudha Vengurlekar"
+    ' SortDMArray
+    GenerateThankyou "Ellis Dee"
+    GenerateThankyou "Zhu JinYong"
+    'AnimateForm - Jim Jose
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadTranslator
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadTranslator()
+
+    Select Case strPCLangCurrentID
+
+        Case "0419"
+            lblTranslator.Caption = "Перевод программы: " & strTranslatorName
+
+        Case Else
+            lblTranslator.Caption = "Translation of the program: " & strTranslatorName
+    End Select
+
+    If LenB(strTranslatorUrl) Then
+
+        With lblTranslator
+            .MouseIcon = lblMailTo.MouseIcon
+            .MousePointer = lblMailTo.MousePointer
+            .ForeColor = lblMailTo.ForeColor
+        End With
+
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    'Кнопки
+    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdCheckUpd.Caption = LocaliseString(strPathFile, strFormName, "cmdCheckUpd", cmdCheckUpd.Caption)
+    cmdLicence.Caption = LocaliseString(strPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
+    cmdHomePage.Caption = LocaliseString(strPathFile, strFormName, "cmdHomePage", cmdHomePage.Caption)
+    cmdOsZoneNet.Caption = LocaliseString(strPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    ' Лейблы
+    lblMailTo.Caption = LocaliseString(strPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
+    lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    ' Перевод программы
+    strTranslatorName = LocaliseString(strPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
+    strTranslatorUrl = LocaliseString(strPathFile, "Lang", "TranslatorUrl", vbNullString)
+    LoadTranslator
 End Sub
 
 Private Sub cmdCheckUpd_Click()
@@ -382,24 +539,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdLicence_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdLicence_Click()
-    frmLicence.Show vbModal, Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOsZoneNet_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOsZoneNet_Click()
-    RunUtilsShell strKavichki & strUrlOsZoneNetThread & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -430,6 +569,24 @@ Private Sub cmdHomePage_ClickMenu(mnuIndex As Integer)
     End Select
 
     RunUtilsShell cmdString, False
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdLicence_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdLicence_Click()
+    frmLicence.Show vbModal, Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOsZoneNet_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOsZoneNet_Click()
+    RunUtilsShell strKavichki & strUrlOsZoneNetThread & strKavichki, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -538,6 +695,19 @@ Private Sub lblMailTo_MouseDown(Button As Integer, Shift As Integer, X As Single
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub lblThanks_Click
+'! Description (Описание)  :   [When a thank-you credit is clicked, launch the corresponding website]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub lblThanks_Click(Index As Integer)
+
+    If LenB(strCreditList(Index)) Then
+        RunUtilsShell strKavichki & strCreditList(Index) & strKavichki, False
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lblTranslator_MouseDown
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Button (Integer)
@@ -557,174 +727,3 @@ Private Sub lblTranslator_MouseDown(Button As Integer, Shift As Integer, X As Si
     End If
 
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadTranslator
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadTranslator()
-
-    Select Case strPCLangCurrentID
-
-        Case "0419"
-            lblTranslator.Caption = "Перевод программы: " & strTranslatorName
-
-        Case Else
-            lblTranslator.Caption = "Translation of the program: " & strTranslatorName
-    End Select
-
-    If LenB(strTranslatorUrl) Then
-
-        With lblTranslator
-            .MouseIcon = lblMailTo.MouseIcon
-            .MousePointer = lblMailTo.MousePointer
-            .ForeColor = lblMailTo.ForeColor
-        End With
-
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    'Кнопки
-    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdCheckUpd.Caption = LocaliseString(StrPathFile, strFormName, "cmdCheckUpd", cmdCheckUpd.Caption)
-    cmdLicence.Caption = LocaliseString(StrPathFile, strFormName, "cmdLicence", cmdLicence.Caption)
-    cmdHomePage.Caption = LocaliseString(StrPathFile, strFormName, "cmdHomePage", cmdHomePage.Caption)
-    cmdOsZoneNet.Caption = LocaliseString(StrPathFile, strFormName, "cmdOsZoneNet", cmdOsZoneNet.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-    ' Лейблы
-    lblMailTo.Caption = LocaliseString(StrPathFile, strFormName, "lblMailTo", lblMailTo.Caption)
-    lblInfo.Caption = LocaliseString(StrPathFile, strFormName, "lblInfo", lblInfo.Caption)
-    ' Перевод программы
-    strTranslatorName = LocaliseString(StrPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
-    strTranslatorUrl = LocaliseString(StrPathFile, "Lang", "TranslatorUrl", vbNullString)
-    LoadTranslator
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadThankYou
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadThankYou()
-    lngCurCredit = 1
-    GenerateThankyou "SamLab", "http://driveroff.net/"
-    GenerateThankyou "OSzone.net forum's users", "http://forum.oszone.net/forum-62.html"
-    GenerateThankyou "Krool", "http://www.vbforums.com/showthread.php?698563-CommonControls-(Replacement-of-the-MS-common-controls)"
-    GenerateThankyou "Juned Chhipa", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=71482&lngWId=1"
-    GenerateThankyou "Leandro Ascierto", "http://leandroascierto.com/blog/clsmenuimage/"
-    GenerateThankyou "VBnet and Randy Birch", "http://vbnet.mvps.org/"
-    'cmdparsing
-    GenerateThankyou "EliteXP Software Solutions", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=72018&lngWId=1"
-    'ucPickBox' ucStatusBar
-    GenerateThankyou "Paul R.Territos", "http://planetsourcecode.com/vb/scripts/ShowCode.asp?txtCodeId=63905&lngWId=1"
-    '[VB6] Function Wait (non-freezing & non-CPU-intensive)
-    GenerateThankyou "Bonnie West", "http://www.vbforums.com/showthread.php?700373-VB6-Shell-amp-Wait"
-    'Team HomeWork
-    ' Timed MessageBox
-    GenerateThankyou "Anirudha Vengurlekar"
-    ' SortDMArray
-    GenerateThankyou "Ellis Dee"
-    GenerateThankyou "Zhu JinYong"
-    'AnimateForm - Jim Jose
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub GenerateThankyou
-'! Description (Описание)  :   [Генерация текста благодарности со ссылкой на страницу]
-'!                              Idea from
-'!                              Copyright ©2001-2013 by Tanner Helland
-'!                              http://www.tannerhelland.com/photodemon
-'! Parameters  (Переменные):   thxText (String)
-'                              creditURL (String = vbNullString)
-'!--------------------------------------------------------------------------------
-Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL As String = vbNullString)
-    'Generate a new label
-    Load lblThanks(lngCurCredit)
-
-    'Because I now have too many people to thank, it's necessary to split the list into multiple columns
-    Dim columnLimit As Long
-
-    columnLimit = 5
-
-    Dim thxOffset As Long
-
-    thxOffset = 750
-
-    With lblThanks(lngCurCredit)
-
-        If lngCurCredit = 1 Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300
-            .Left = lblThanks(0).Left + 30 + thxOffset
-        ElseIf lngCurCredit < columnLimit Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
-            .Left = lblThanks(0).Left + 30 + thxOffset
-        ElseIf lngCurCredit = columnLimit Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit - 1).Top - lblThanks(0).Top)
-            .Left = lblThanks(0).Left + 2700 + thxOffset
-        ElseIf lngCurCredit < columnLimit * 2 - 1 Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
-            .Left = lblThanks(0).Left + 2700 + thxOffset
-        ElseIf lngCurCredit = columnLimit * 2 - 1 Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit * 2 - 2).Top - lblThanks(0).Top)
-            .Left = lblThanks(0).Left + 5400 + thxOffset
-        Else
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
-            .Left = lblThanks(0).Left + 5400 + thxOffset
-        End If
-
-        .Caption = thxText
-
-        If LenB(creditURL) = 0 Then
-            .MousePointer = vbDefault
-        Else
-            .Font.Underline = True
-            .MouseIcon = lblMailTo.MouseIcon
-            .MousePointer = lblMailTo.MousePointer
-            .ForeColor = lblMailTo.ForeColor
-            .ToolTipText = creditURL
-        End If
-
-        .Visible = True
-    End With
-
-    ReDim Preserve strCreditList(0 To lngCurCredit)
-
-    strCreditList(lngCurCredit) = creditURL
-    lngCurCredit = lngCurCredit + 1
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub lblThanks_Click
-'! Description (Описание)  :   [When a thank-you credit is clicked, launch the corresponding website]
-'! Parameters  (Переменные):   Index (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub lblThanks_Click(Index As Integer)
-
-    If LenB(strCreditList(Index)) Then
-        RunUtilsShell strKavichki & strCreditList(Index) & strKavichki, False
-    End If
-
-End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property

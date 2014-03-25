@@ -293,6 +293,16 @@ Option Explicit
 Private mbFirstStartUpdate As Boolean
 Private strFormName        As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -313,6 +323,144 @@ Private Sub FontCharsetChange()
     SetBtnFontProperties cmdHistory
     SetBtnFontProperties cmdDonate
     SetBtnFontProperties cmdExit
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadButtonLink
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ButtonName (ctlXpButton)
+'                              strMassivLink() (String)
+'!--------------------------------------------------------------------------------
+Private Sub LoadButtonLink(ButtonName As Object, strMassivLink() As String)
+
+    Dim strMirrorText As String
+
+    If cmbVersions.ListIndex > -1 Then
+
+        ' Отличия работы если русский или английский
+        Select Case strPCLangCurrentID
+
+            Case "0419"
+                strMirrorText = "Зеркало"
+
+            Case Else
+                strMirrorText = "Mirror"
+        End Select
+
+        With ButtonName
+
+            If InStr(1, strMassivLink(cmbVersions.ListIndex, 0), "http", vbTextCompare) Then
+                '.MenuExist = True
+            ElseIf InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) Then
+                '.MenuExist = True
+            Else
+                '.MenuExist = False
+            End If
+
+'            If .MenuExist Then
+'                If .MenuCount = 0 Then
+'                    .AddMenu strMirrorText & " 1"
+'                    .AddMenu "-"
+'                    .AddMenu strMirrorText & " 2"
+'                    .AddMenu "-"
+'                    .AddMenu strMirrorText & " 3"
+'                End If
+'
+'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
+'                    .MenuEnabled(2) = False
+'                End If
+'
+'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
+'                    .MenuEnabled(4) = False
+'                End If
+'
+'                If LenB(strMassivLink(cmbVersions.ListIndex, 1)) = 0 Then
+'                    .MenuVisible(0) = False
+'                    .MenuVisible(1) = False
+'                Else
+'                    .MenuCaption(0) = strMassivLink(cmbVersions.ListIndex, 1)
+'                End If
+'
+'                If LenB(strMassivLink(cmbVersions.ListIndex, 3)) = 0 Then
+'                    .MenuVisible(1) = False
+'                    .MenuVisible(2) = False
+'                Else
+'                    .MenuCaption(2) = strMassivLink(cmbVersions.ListIndex, 3)
+'                End If
+'
+'                If LenB(strMassivLink(cmbVersions.ListIndex, 5)) = 0 Then
+'                    .MenuVisible(3) = False
+'                    .MenuVisible(4) = False
+'                Else
+'                    .MenuCaption(4) = strMassivLink(cmbVersions.ListIndex, 5)
+'                End If
+'            End If
+
+        End With
+
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadDescriptionAndLinks
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadDescriptionAndLinks()
+
+    Dim strDescriptionTemp As String
+
+    ' Отличия работы если русский или английский
+    Select Case strPCLangCurrentID
+
+        Case "0419"
+            strDescriptionTemp = Replace$(strDescription, vbLf, vbNewLine)
+
+        Case Else
+            strDescriptionTemp = Replace$(strDescription_en, vbLf, vbNewLine)
+    End Select
+
+    ' Кнопка Скачать обновление
+    LoadButtonLink cmdUpdate, strLink
+    ' Кнопка Скачать дистрибутив
+    LoadButtonLink cmdUpdateFull, strLinkFull
+
+    ' Описание изменений
+    If LenB(strDescriptionTemp) Then
+        rtfDescription.TextRTF = strDescriptionTemp
+    Else
+        rtfDescription.TextRTF = "Error on load ChangeLog. Please inform the developer"
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    'Кнопки
+    cmdUpdate.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
+    cmdUpdateFull.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
+    cmdHistory.Caption = LocaliseString(strPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
+    cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    ' Лейблы
+    lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
+
+    If InStr(1, strRelease, "beta", vbTextCompare) Then
+        lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"
+        lblVersion.ForeColor = vbRed
+    End If
+
+    lblVersionList.Caption = LocaliseString(strPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
+    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -567,153 +715,4 @@ Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadButtonLink
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   ButtonName (ctlXpButton)
-'                              strMassivLink() (String)
-'!--------------------------------------------------------------------------------
-Private Sub LoadButtonLink(ButtonName As Object, strMassivLink() As String)
-
-    Dim strMirrorText As String
-
-    If cmbVersions.ListIndex > -1 Then
-
-        ' Отличия работы если русский или английский
-        Select Case strPCLangCurrentID
-
-            Case "0419"
-                strMirrorText = "Зеркало"
-
-            Case Else
-                strMirrorText = "Mirror"
-        End Select
-
-        With ButtonName
-
-            If InStr(1, strMassivLink(cmbVersions.ListIndex, 0), "http", vbTextCompare) Then
-                '.MenuExist = True
-            ElseIf InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) Then
-                '.MenuExist = True
-            Else
-                '.MenuExist = False
-            End If
-
-'            If .MenuExist Then
-'                If .MenuCount = 0 Then
-'                    .AddMenu strMirrorText & " 1"
-'                    .AddMenu "-"
-'                    .AddMenu strMirrorText & " 2"
-'                    .AddMenu "-"
-'                    .AddMenu strMirrorText & " 3"
-'                End If
-'
-'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
-'                    .MenuEnabled(2) = False
-'                End If
-'
-'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
-'                    .MenuEnabled(4) = False
-'                End If
-'
-'                If LenB(strMassivLink(cmbVersions.ListIndex, 1)) = 0 Then
-'                    .MenuVisible(0) = False
-'                    .MenuVisible(1) = False
-'                Else
-'                    .MenuCaption(0) = strMassivLink(cmbVersions.ListIndex, 1)
-'                End If
-'
-'                If LenB(strMassivLink(cmbVersions.ListIndex, 3)) = 0 Then
-'                    .MenuVisible(1) = False
-'                    .MenuVisible(2) = False
-'                Else
-'                    .MenuCaption(2) = strMassivLink(cmbVersions.ListIndex, 3)
-'                End If
-'
-'                If LenB(strMassivLink(cmbVersions.ListIndex, 5)) = 0 Then
-'                    .MenuVisible(3) = False
-'                    .MenuVisible(4) = False
-'                Else
-'                    .MenuCaption(4) = strMassivLink(cmbVersions.ListIndex, 5)
-'                End If
-'            End If
-
-        End With
-
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadDescriptionAndLinks
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadDescriptionAndLinks()
-
-    Dim strDescriptionTemp As String
-
-    ' Отличия работы если русский или английский
-    Select Case strPCLangCurrentID
-
-        Case "0419"
-            strDescriptionTemp = Replace$(strDescription, vbLf, vbNewLine)
-
-        Case Else
-            strDescriptionTemp = Replace$(strDescription_en, vbLf, vbNewLine)
-    End Select
-
-    ' Кнопка Скачать обновление
-    LoadButtonLink cmdUpdate, strLink
-    ' Кнопка Скачать дистрибутив
-    LoadButtonLink cmdUpdateFull, strLinkFull
-
-    ' Описание изменений
-    If LenB(strDescriptionTemp) Then
-        rtfDescription.TextRTF = strDescriptionTemp
-    Else
-        rtfDescription.TextRTF = "Error on load ChangeLog. Please inform the developer"
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    'Кнопки
-    cmdUpdate.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
-    cmdUpdateFull.Caption = LocaliseString(StrPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
-    cmdHistory.Caption = LocaliseString(StrPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
-    cmdDonate.Caption = LocaliseString(StrPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-    ' Лейблы
-    lblVersion.Caption = LocaliseString(StrPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
-
-    If InStr(1, strRelease, "beta", vbTextCompare) Then
-        lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"
-        lblVersion.ForeColor = vbRed
-    End If
-
-    lblVersionList.Caption = LocaliseString(StrPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
-    lblWait.Caption = LocaliseString(StrPathFile, strFormName, "lblWait", lblWait.Caption)
-End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
 

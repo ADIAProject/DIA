@@ -170,18 +170,28 @@ Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private strFormName      As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckEditDonate
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub CheckEditDonate(StrPathFile As String)
+Private Sub CheckEditDonate(strPathFile As String)
 
     Dim strMD5TextRtf         As String
     Dim strDONATE_MD5RTF_temp As String
 
-    strMD5TextRtf = GetMD5(StrPathFile)
+    strMD5TextRtf = GetMD5(strPathFile)
     If mbDebugStandart Then DebugMode "DonateInfo: " & strMD5TextRtf
 
     Select Case strPCLangCurrentID
@@ -200,6 +210,67 @@ Private Sub CheckEditDonate(StrPathFile As String)
     End If
 
     DonateRTF.Visible = True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub FontCharsetChange()
+
+    ' Выставляем шрифт
+    With Me.Font
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
+    End With
+
+    SetBtnFontProperties cmdExit
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadDonate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadDonate()
+
+    Dim strPathDonate As String
+
+    Select Case strPCLangCurrentID
+
+        Case "0419"
+            strPathDonate = PathCollect(strToolsDocs_Path & "\0419\donate.rtf")
+
+        Case Else
+            strPathDonate = PathCollect(strToolsDocs_Path & "\0409\donate.rtf")
+    End Select
+
+    If PathExists(strPathDonate) Then
+        DonateRTF.LoadFile strPathDonate
+    Else
+        MsgBox strMessages(41), vbInformation, strProductName
+        Unload Me
+    End If
+
+    ' Проверка файла Donate на неправомерное изменение
+    CheckEditDonate strPathDonate
+    DonateRTF.SetFocus
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    'Кнопки
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -265,23 +336,6 @@ Private Sub cmdYandexMoney_Click()
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
     nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
     If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FontCharsetChange()
-
-    ' Выставляем шрифт
-    With Me.Font
-        .Name = strFontOtherForm_Name
-        .Size = lngFontOtherForm_Size
-        .Charset = lngFont_Charset
-    End With
-
-    SetBtnFontProperties cmdExit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -404,59 +458,4 @@ Private Sub Form_Resize()
     End With
 
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadDonate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadDonate()
-
-    Dim strPathDonate As String
-
-    Select Case strPCLangCurrentID
-
-        Case "0419"
-            strPathDonate = PathCollect(strToolsDocs_Path & "\0419\donate.rtf")
-
-        Case Else
-            strPathDonate = PathCollect(strToolsDocs_Path & "\0409\donate.rtf")
-    End Select
-
-    If PathExists(strPathDonate) Then
-        DonateRTF.LoadFile strPathDonate
-    Else
-        MsgBox strMessages(41), vbInformation, strProductName
-        Unload Me
-    End If
-
-    ' Проверка файла Donate на неправомерное изменение
-    CheckEditDonate strPathDonate
-    DonateRTF.SetFocus
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    'Кнопки
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
 

@@ -190,14 +190,6 @@ Public Event DropDownClose()
 
 Implements OLEGuids.IOleInPlaceActiveObjectVB
 
-Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
-    On Error Resume Next
-    Dim This As OLEGuids.IOleInPlaceActiveObjectVB
-    
-    Set This = UserControl.ActiveControl.Object
-    This.TranslateAccelerator Handled, RetVal, wMsg, wParam, lParam, Shift
-End Sub
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property BackColor
 '! Description (Описание)  :   [BackColor Property]
@@ -289,6 +281,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get ForbiddenColor() As OLE_COLOR
+Attribute ForbiddenColor.VB_Description = "Defines color that can't be selected from the dropdown part. Has meaning only if UseForbiddenColor = True. TrackColor event isn't fired for such color."
     ForbiddenColor = m_nForbiddenColor
 End Property
 
@@ -298,7 +291,6 @@ End Property
 '! Parameters  (Переменные):   NewValue (OLE_COLOR)
 '!--------------------------------------------------------------------------------
 Public Property Let ForbiddenColor(ByVal NewValue As OLE_COLOR)
-Attribute ForbiddenColor.VB_Description = "Defines color that can't be selected from the dropdown part. Has meaning only if UseForbiddenColor = True. TrackColor event isn't fired for such color."
     m_nForbiddenColor = NewValue
     Redraw
     PropertyChanged ("ForbiddenColor")
@@ -723,6 +715,39 @@ Private Sub InitColorArray()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Redraw
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Redraw()
+    UserControl.Cls
+    UserControl.BackColor = m_nBackColor
+    DrawSelectedColor
+    UserControl.Refresh
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function VBColorToRGB
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   VBColor (Long)
+'!--------------------------------------------------------------------------------
+Public Function VBColorToRGB(ByVal VBColor As Long) As Long
+
+    If OleTranslateColor(VBColor, 0, VBColorToRGB) Then
+        VBColorToRGB = VBColor
+    End If
+
+End Function
+
+Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
+    On Error Resume Next
+    Dim This As OLEGuids.IOleInPlaceActiveObjectVB
+    
+    Set This = UserControl.ActiveControl.Object
+    This.TranslateAccelerator Handled, RetVal, wMsg, wParam, lParam, Shift
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub picDropDown_MouseDown
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Button (Integer)
@@ -897,18 +922,6 @@ Dim j                                   As Integer
         End If
     End If
 
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Redraw
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Redraw()
-    UserControl.Cls
-    UserControl.BackColor = m_nBackColor
-    DrawSelectedColor
-    UserControl.Refresh
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1103,16 +1116,3 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     End With
 
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function VBColorToRGB
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   VBColor (Long)
-'!--------------------------------------------------------------------------------
-Public Function VBColorToRGB(ByVal VBColor As Long) As Long
-
-    If OleTranslateColor(VBColor, 0, VBColorToRGB) Then
-        VBColorToRGB = VBColor
-    End If
-
-End Function

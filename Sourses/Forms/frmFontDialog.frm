@@ -348,6 +348,113 @@ Option Explicit
 
 Private strFormName As String
 
+Public Property Get CaptionW() As String
+    Dim strLen As Long
+    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(strLen)
+    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
+End Property
+
+Public Property Let CaptionW(ByVal NewValue As String)
+    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub FontCharsetChange()
+
+    ' Выставляем шрифт
+    With Me.Font
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
+    End With
+
+    SetBtnFontProperties cmdExit
+    SetBtnFontProperties cmdOK
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    ' Лэйблы
+    lblFontSize.Caption = LocaliseString(strPathFile, strFormName, "lblFontSize", lblFontSize.Caption)
+    lblFontColor.Caption = LocaliseString(strPathFile, strFormName, "lblFontColor", lblFontColor.Caption)
+    chkBold.Caption = LocaliseString(strPathFile, strFormName, "chkBold", chkBold.Caption)
+    chkItalic.Caption = LocaliseString(strPathFile, strFormName, "chkItalic", chkItalic.Caption)
+    chkUnderline.Caption = LocaliseString(strPathFile, strFormName, "chkUnderline", chkUnderline.Caption)
+    txtFont.Text = LocaliseString(strPathFile, strFormName, "txtFont", txtFont.Text)
+    ctlFontColor.DropDownCaption = LocaliseString(strPathFile, strFormName, "ctlFontColor", ctlFontColor.DropDownCaption)
+    
+    'Кнопки
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveOptions
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub SaveOptions()
+
+    With txtFont
+
+        If optControl.Item(0).Value Then
+            strFontTab_Name = .Font.Name
+            miFontTab_Size = .Font.Size
+            mbFontTab_Underline = .Font.Underline
+            mbFontTab_Strikethru = .Font.Strikethrough
+            mbFontTab_Bold = .Font.Bold
+            mbFontTab_Italic = .Font.Italic
+            lngFontTab_Color = .ForeColor
+            
+        ElseIf optControl.Item(1).Value Then
+            strFontTab2_Name = .Font.Name
+            miFontTab2_Size = .Font.Size
+            mbFontTab2_Underline = .Font.Underline
+            mbFontTab2_Strikethru = .Font.Strikethrough
+            mbFontTab2_Bold = .Font.Bold
+            mbFontTab2_Italic = .Font.Italic
+            lngFontTab2_Color = .ForeColor
+            
+        ElseIf optControl.Item(2).Value Then
+            strFontTT_Name = .Font.Name
+            miFontTT_Size = .Font.Size
+            mbFontTT_Underline = .Font.Underline
+            mbFontTT_Strikethru = .Font.Strikethrough
+            mbFontTT_Bold = .Font.Bold
+            mbFontTT_Italic = .Font.Italic
+            lngFontTT_Color = .ForeColor
+            SetTTFontProperties frmOptions.TT
+            
+        ElseIf optControl.Item(3).Value Then
+            strFontBtn_Name = .Font.Name
+            miFontBtn_Size = .Font.Size
+            mbFontBtn_Underline = .Font.Underline
+            mbFontBtn_Strikethru = .Font.Strikethrough
+            mbFontBtn_Bold = .Font.Bold
+            mbFontBtn_Italic = .Font.Italic
+            lngFontBtn_Color = .ForeColor
+            SetBtnStatusFontProperties frmOptions.cmdFutureButton
+            frmOptions.cmdFutureButton.ForeColor = .ForeColor
+            
+        End If
+
+    End With
+
+End Sub
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkBold_Click
@@ -370,21 +477,40 @@ Private Sub chkItalic_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ctlFontColor_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub ctlFontColor_Click()
-    txtFont.ForeColor = ctlFontColor.Value
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkUnderline_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub chkUnderline_Click()
     txtFont.Font.Underline = chkUnderline.Value
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+    SaveOptions
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlFontColor_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ctlFontColor_Click()
+    txtFont.ForeColor = ctlFontColor.Value
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -469,127 +595,12 @@ Private Sub Form_Load()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal StrPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(StrPathFile, strFormName, strFormName, Me.Caption)
-    ' Лэйблы
-    lblFontSize.Caption = LocaliseString(StrPathFile, strFormName, "lblFontSize", lblFontSize.Caption)
-    lblFontColor.Caption = LocaliseString(StrPathFile, strFormName, "lblFontColor", lblFontColor.Caption)
-    chkBold.Caption = LocaliseString(StrPathFile, strFormName, "chkBold", chkBold.Caption)
-    chkItalic.Caption = LocaliseString(StrPathFile, strFormName, "chkItalic", chkItalic.Caption)
-    chkUnderline.Caption = LocaliseString(StrPathFile, strFormName, "chkUnderline", chkUnderline.Caption)
-    txtFont.Text = LocaliseString(StrPathFile, strFormName, "txtFont", txtFont.Text)
-    ctlFontColor.DropDownCaption = LocaliseString(StrPathFile, strFormName, "ctlFontColor", ctlFontColor.DropDownCaption)
-    
-    'Кнопки
-    cmdOK.Caption = LocaliseString(StrPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(StrPathFile, strFormName, "cmdExit", cmdExit.Caption)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FontCharsetChange()
-
-    ' Выставляем шрифт
-    With Me.Font
-        .Name = strFontOtherForm_Name
-        .Size = lngFontOtherForm_Size
-        .Charset = lngFont_Charset
-    End With
-
-    SetBtnFontProperties cmdExit
-    SetBtnFontProperties cmdOK
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtFont_Change
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub txtFont_Change()
     ctlFontCombo.PreviewText = txtFont.Text
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-    SaveOptions
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub SaveOptions
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub SaveOptions()
-
-    With txtFont
-
-        If optControl.Item(0).Value Then
-            strFontTab_Name = .Font.Name
-            miFontTab_Size = .Font.Size
-            mbFontTab_Underline = .Font.Underline
-            mbFontTab_Strikethru = .Font.Strikethrough
-            mbFontTab_Bold = .Font.Bold
-            mbFontTab_Italic = .Font.Italic
-            lngFontTab_Color = .ForeColor
-            
-        ElseIf optControl.Item(1).Value Then
-            strFontTab2_Name = .Font.Name
-            miFontTab2_Size = .Font.Size
-            mbFontTab2_Underline = .Font.Underline
-            mbFontTab2_Strikethru = .Font.Strikethrough
-            mbFontTab2_Bold = .Font.Bold
-            mbFontTab2_Italic = .Font.Italic
-            lngFontTab2_Color = .ForeColor
-            
-        ElseIf optControl.Item(2).Value Then
-            strFontTT_Name = .Font.Name
-            miFontTT_Size = .Font.Size
-            mbFontTT_Underline = .Font.Underline
-            mbFontTT_Strikethru = .Font.Strikethrough
-            mbFontTT_Bold = .Font.Bold
-            mbFontTT_Italic = .Font.Italic
-            lngFontTT_Color = .ForeColor
-            SetTTFontProperties frmOptions.TT
-            
-        ElseIf optControl.Item(3).Value Then
-            strFontBtn_Name = .Font.Name
-            miFontBtn_Size = .Font.Size
-            mbFontBtn_Underline = .Font.Underline
-            mbFontBtn_Strikethru = .Font.Strikethrough
-            mbFontBtn_Bold = .Font.Bold
-            mbFontBtn_Italic = .Font.Italic
-            lngFontBtn_Color = .ForeColor
-            SetBtnStatusFontProperties frmOptions.cmdFutureButton
-            frmOptions.cmdFutureButton.ForeColor = .ForeColor
-            
-        End If
-
-    End With
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -609,15 +620,4 @@ End Sub
 Private Sub txtFontSize_TextChange()
     txtFont.Font.Size = txtFontSize.Value
 End Sub
-
-Public Property Let CaptionW(ByVal NewValue As String)
-    DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
-End Property
-
-Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
-    DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
-End Property
 
