@@ -95,6 +95,7 @@ Private Function DLLOCX(ByVal lngHWnd As Long, ByVal Path As String, ByVal mbReg
 
         CallWindowProc PA, lngHWnd, ByVal 0&, ByVal 0&, ByVal 0&
         DLLOCX = True
+
 FreeLib:
         FreeLibrary lb
 
@@ -109,49 +110,73 @@ End Function
 '! Description (Описание)  :   [Регистрация внешних компонент]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Sub RegisterAddComponent()
+Public Function RegisterAddComponent() As Boolean
+    
+    Dim lngRet As Long
+
     If mbDebugStandart Then DebugMode "RegisterAddComponent - Start"
 
-    If RegOCX(strWorkTempBackSL & "TabCtl32.OCX", strTabCtl32Reference, strTabCtl32Ver, strTabCtl32VerDll) = False Then
+    RegisterAddComponent = True
+    
+    lngRet = RegOCX(strWorkTempBackSL & "TabCtl32.OCX", strTabCtl32Reference, strTabCtl32Ver, strTabCtl32VerDll)
+    If lngRet = 0 Then
         If MsgBox("System OCX or DLL: 'TabCtl32.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
 
-            End
+            RegisterAddComponent = False
+            Exit Function
 
         End If
+    ElseIf lngRet = -1 Then
+        RegisterAddComponent = False
     End If
 
     If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
 
-    If RegOCX(strWorkTempBackSL & "MSFLXGRD.OCX", strMSFLXGRDReference, strMSFLXGRDVer, strMSFLXGRDVerDll) = False Then
+    lngRet = RegOCX(strWorkTempBackSL & "MSFLXGRD.OCX", strMSFLXGRDReference, strMSFLXGRDVer, strMSFLXGRDVerDll)
+    If lngRet = 0 Then
         If MsgBox("System OCX or DLL: 'MSFLXGRD.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
 
-            End
+            RegisterAddComponent = False
+            Exit Function
 
         End If
+    ElseIf lngRet = -1 Then
+        RegisterAddComponent = False
     End If
 
     If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
 
-    If RegOCX(strWorkTempBackSL & "vbscript.dll", strVBScriptReference, strVBScriptVer, strVBScriptVerDll) = False Then
+    lngRet = RegOCX(strWorkTempBackSL & "vbscript.dll", strVBScriptReference, strVBScriptVer, strVBScriptVerDll)
+    If lngRet = 0 Then
         If MsgBox("System OCX or DLL: 'vbscript.dll'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
 
-            End
+            RegisterAddComponent = False
+            Exit Function
 
         End If
+    ElseIf lngRet = -1 Then
+        RegisterAddComponent = False
     End If
 
     ' Not add to project (if not DBS) - option for compile
     #If mbIDE_DBSProject Then
         If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
     
-        If RegOCX(strWorkTempBackSL & "capicom.dll", strCAPICOMReference, strCAPICOMVer, strCAPICOMVerDll) = False Then
+        lngRet = RegOCX(strWorkTempBackSL & "capicom.dll", strCAPICOMReference, strCAPICOMVer, strCAPICOMVerDll)
+        If lngRet = 0 Then
             If MsgBox("System DLL: 'capicom.dll'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
-                End
+                
+                RegisterAddComponent = False
+                Exit Function
+                
             End If
+        ElseIf lngRet = -1 Then
+            RegisterAddComponent = False
         End If
     #End If
+    
     If mbDebugStandart Then DebugMode "RegisterAddComponent - Finish"
-End Sub
+End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function RegOCX
@@ -161,7 +186,7 @@ End Sub
 '                              strVerOcx (String)
 '                              strVerFileOcx (String)
 '!--------------------------------------------------------------------------------
-Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String, ByVal strVerOcx As String, ByVal strVerFileOcx As String) As Boolean
+Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String, ByVal strVerOcx As String, ByVal strVerFileOcx As String) As Long
 
     Dim strPathOcxSystem        As String
     Dim strPathOcxSystemSPFiles As String
@@ -173,8 +198,9 @@ Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String,
     Dim lngMsgRet               As Integer
 
     regParam = LCase$(GetRegString(HKEY_CLASSES_ROOT, "TypeLib\" & strReference & vbBackslash & strVerOcx & "\0\win32", vbNullString))
-    strOCXFileName = FileNameFromPath(strPathOcx)
+    strOCXFileName = GetFileNameFromPath(strPathOcx)
     If mbDebugStandart Then DebugMode vbTab & strReference & ": Path to " & strOCXFileName & " from Reestr: " & regParam
+    
     strPathOcxSystem = strWinDir & "system32\" & strOCXFileName
     strPathOcxSystemCache = strWinDir & "system32\dllcache\" & strOCXFileName
     strPathOcxSystemSPFiles = strWinDir & "ServicePackFiles\i386\" & strOCXFileName
@@ -186,9 +212,10 @@ Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String,
     If PathExists(regParam) = False Then
         If InStr(regParam, "vbscript.dll\3") = 0 Then
             If PathExists(strPathOcxSystem) = False Or LenB(regParam) = 0 Then
+
 StartRegOCXForce:
 
-                If GetBinaryFileFromResource(strPathOcx, "OCX_" & FileName_woExt(strOCXFileName), "CUSTOM") Then
+                If GetBinaryFileFromResource(strPathOcx, "OCX_" & GetFileName_woExt(strOCXFileName), "CUSTOM") Then
                     If mbDebugStandart Then DebugMode vbTab & strReference & ": BinaryFileFromResourse: True"
 
                     'разрегистрация файла при необходимости
@@ -198,10 +225,10 @@ StartRegOCXForce:
                     End If
 
                     'Копируем новый файл с заменой в системный кеш
-                    If StrComp(ExtFromFileName(strPathOcx), "dll", vbTextCompare) = 0 Then
+                    If StrComp(GetFileNameExtension(strPathOcx), "dll", vbTextCompare) = 0 Then
                         If PathExists(strPathOcxSystemSPFiles) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemSPFiles) = False Then
-                                RegOCX = False
+                                RegOCX = 0
                                 If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: False: " & strPathOcxSystemSPFiles
 
                                 Exit Function
@@ -213,7 +240,7 @@ StartRegOCXForce:
 
                         If PathExists(strPathOcxSystemCache) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemCache) = False Then
-                                RegOCX = False
+                                RegOCX = 0
                                 If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: False: " & strPathOcxSystemCache
 
                                 Exit Function
@@ -226,7 +253,7 @@ StartRegOCXForce:
 
                     'Копируем новый файл с заменой
                     If CopyFileTo(strPathOcx, strPathOcxSystem) = False Then
-                        RegOCX = False
+                        RegOCX = 0
                         If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystem: False: " & strPathOcxSystem
 
                         Exit Function
@@ -237,7 +264,7 @@ StartRegOCXForce:
 
                     strPathOcx = strPathOcxSystem
                 Else
-                    RegOCX = False
+                    RegOCX = 0
                     If mbDebugStandart Then DebugMode vbTab & strReference & ": BinaryFileFromResourse: False"
 
                     Exit Function
@@ -248,12 +275,12 @@ StartRegOCXForce:
             If mbDebugStandart Then DebugMode vbTab & strReference & ": Registration in system"
             RegOCX = DLLOCX(0, strPathOcxSystem, True)
         Else
-            RegOCX = True
+            RegOCX = 1
             regParam = Replace$(regParam, "vbscript.dll\3", "vbscript.dll")
 
             If PathExists(regParam) Then
                 ' Сравниваем версии библиотек
-                strVersionFile = objFSO.GetFileVersion(regParam)
+                strVersionFile = GetFileVersionOnly(regParam)
 
                 'Прерываем обновление библиотеки, если винда выше 2003
                 If InStr(regParam, "vbscript.dll") Then
@@ -281,11 +308,13 @@ StartRegOCXForce:
                             GoTo StartRegOCXForce
                         ElseIf lngMsgRet = vbNo Then
 
+                            RegOCX = 0
                             Exit Function
 
                         Else
 
-                            End
+                            RegOCX = -1
+                            Exit Function
 
                         End If
 
@@ -298,12 +327,12 @@ StartRegOCXForce:
         End If
 
     Else
-        RegOCX = True
+        RegOCX = 1
 
         If PathExists(regParam) Then
             If LenB(regParam) Then
                 ' Сравниваем версии библиотек
-                strVersionFile = objFSO.GetFileVersion(regParam)
+                strVersionFile = GetFileVersionOnly(regParam)
 
                 'Прерываем обновление библиотеки, если винда выше 2003 или 64x
                 If InStr(regParam, "vbscript.dll") Then
@@ -331,11 +360,13 @@ StartRegOCXForce:
                             GoTo StartRegOCXForce
                         ElseIf lngMsgRet = vbNo Then
 
+                            RegOCX = 0
                             Exit Function
 
                         Else
 
-                            End
+                            RegOCX = -1
+                            Exit Function
 
                         End If
 

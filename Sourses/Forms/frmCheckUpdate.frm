@@ -292,7 +292,7 @@ Option Explicit
 
 Private mbFirstStartUpdate As Boolean
 Private strFormName        As String
-Private m_Caption         As String
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange

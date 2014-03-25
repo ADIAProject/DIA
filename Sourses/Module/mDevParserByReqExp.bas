@@ -54,7 +54,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim infCount                  As Long
     Dim strValuer                 As String
     Dim strDevName                As String
-    Dim strPackFileName_woExt     As String
+    Dim strPackGetFileName_woExt     As String
     Dim strRezultTxt_x()          As FindListStruct
     Dim strRezultTxt              As String
     Dim strRezultTxtTo            As String
@@ -87,7 +87,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strManufSection           As String
     Dim strKey                    As String
     Dim strValue                  As String
-    Dim mbR                       As Boolean
     Dim strVarname                As String
     Dim strSections               As String
     Dim strSectlist               As String
@@ -136,9 +135,9 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     End If
     
     'Имя папки с распакованными драйверами
-    strPackFileName_woExt = FileName_woExt(FileNameFromPath(strPackFileName))
+    strPackGetFileName_woExt = GetFileName_woExt(GetFileNameFromPath(strPackFileName))
     'Рабочий каталог
-    strWorkDir = BackslashAdd2Path(strWorkTempBackSL & strPackFileName_woExt)
+    strWorkDir = BackslashAdd2Path(strWorkTempBackSL & strPackGetFileName_woExt)
     'Если рабочий каталог уже есть, то удаляем его
     DoEvents
 
@@ -149,7 +148,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     End If
 
     ' Каталог для распаковки inf файлов
-    strInfPathTemp = strWorkTempBackSL & strPackFileName_woExt
+    strInfPathTemp = strWorkTempBackSL & strPackGetFileName_woExt
 
     If PathExists(strInfPathTemp) = False Then
         CreateNewDirectory strInfPathTemp
@@ -170,7 +169,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             End If
 
             ' Создаем спсиок файлов *.cat в архиве
-            strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
+            strArchCatFileList = strWorkTempBackSL & "list_" & strPackGetFileName_woExt & ".txt"
             cmdString = "cmd.exe /c " & strKavichki & strKavichki & strArh7zExePATH & strKavichki & " l " & strKavichki & strPathDRP & strPackFileName & strKavichki & " -yr *.cat >" & strKavichki & strArchCatFileList & strKavichki
             If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
                 If mbDebugStandart Then DebugMode strMessages(13) & str2vbNewLine & cmdString
@@ -182,7 +181,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         strInfPathTempList_x = SearchFilesInRoot(strInfPathTemp, "*.inf", True, False)
     Else
         ' Создаем список файлов *.cat в архиве
-        strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
+        strArchCatFileList = strWorkTempBackSL & "list_" & strPackGetFileName_woExt & ".txt"
         cmdString = "cmd.exe /c Dir " & strKavichki & strPathDRP & strPackFileName & "\*.cat" & strKavichki & " /A- /B /S >" & strKavichki & strArchCatFileList & strKavichki
 
         'dir c:\windows\temp\*.tmp /S /B
@@ -366,9 +365,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     Set objMatch = objMatchesStrDefs.Item(i)
                     strKey = Trim$(objMatch.SubMatches(0))
                     strValue = Trim$(objMatch.SubMatches(1))
-                    mbR = objStringHash.Exists(strKey)
     
-                    If Not mbR Then
+                    If Not objStringHash.Exists(strKey) Then
                         objStringHash.Add strKey, strValue
                         'Debug.Print strRegEx_strings
                         'Debug.Print strRegEx_strsect
@@ -644,9 +642,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 strValuer = UCase$(Trim$(strValuer))
                                 strDevID = ParseDoubleHwid(strValuer)
                                 ss = strDevID & vbTab & strInfPath & strInfFileName & vbTab & strManufSection
-                                mbR = objHashOutput.Exists(ss)
     
-                                If Not mbR Then
+                                If Not objHashOutput.Exists(ss) Then
                                     objHashOutput.Item(ss) = "+"
     
                                     'Итоговая строка
@@ -684,10 +681,10 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Next
 
     ChangeStatusTextAndDebug strMessages(121) & " " & strPackFileName
-    strRezultTxt = strWorkTempBackSL & "rezult" & strPackFileName_woExt & ".txt"
-    strRezultTxtHwid = strWorkTempBackSL & "rezult" & strPackFileName_woExt & ".hwid"
-    strRezultTxtTo = Replace$(PathCombine(strPathDevDB, FileNameFromPath(strRezultTxt)), "rezult", vbNullString, , , vbTextCompare)
-    strRezultTxtHwidTo = Replace$(PathCombine(strPathDevDB, FileNameFromPath(strRezultTxtHwid)), "rezult", vbNullString, , , vbTextCompare)
+    strRezultTxt = strWorkTempBackSL & "rezult" & strPackGetFileName_woExt & ".txt"
+    strRezultTxtHwid = strWorkTempBackSL & "rezult" & strPackGetFileName_woExt & ".hwid"
+    strRezultTxtTo = Replace$(PathCombine(strPathDevDB, GetFileNameFromPath(strRezultTxt)), "rezult", vbNullString, , , vbTextCompare)
+    strRezultTxtHwidTo = Replace$(PathCombine(strPathDevDB, GetFileNameFromPath(strRezultTxtHwid)), "rezult", vbNullString, , , vbTextCompare)
     TimeScriptFinish = GetTickCount
     If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Create Index Data: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
 
@@ -726,8 +723,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             'Копируем файл HWID
             If CopyFileTo(strRezultTxtHwid, strRezultTxtHwidTo) Then
                 ' Записываем версию базы драйверов в ini-файл
-                IniWriteStrPrivate strPackFileName_woExt, "Version", lngDevDBVersion, PathCombine(strPathDevDB, "DevDBVersions.ini")
-                'IniWriteStrPrivate strPackFileName_woExt, "FullHwid", CStr(Abs(Not mbDelDouble)), strPathDevDB & "DevDBVersions.ini"
+                IniWriteStrPrivate strPackGetFileName_woExt, "Version", lngDevDBVersion, PathCombine(strPathDevDB, "DevDBVersions.ini")
+                'IniWriteStrPrivate strPackGetFileName_woExt, "FullHwid", CStr(Abs(Not mbDelDouble)), strPathDevDB & "DevDBVersions.ini"
                 'Ищем файл DriverPack*.ini
                 strRezultTxt = vbNullString
                 strRezultTxt_x = SearchFilesInRoot(strInfPathTemp, "DriverPack*.ini", False, True)

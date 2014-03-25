@@ -131,7 +131,7 @@ Option Explicit
 Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private strFormName      As String
-Private m_Caption        As String
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckEditLicense

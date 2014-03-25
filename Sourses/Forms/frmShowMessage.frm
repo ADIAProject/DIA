@@ -106,7 +106,7 @@ Option Explicit
 Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private strFormName      As String
-Private m_Caption        As String
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -192,7 +192,7 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   StrPathFile (String)
 '!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
+Private Sub Localise(ByVal StrPathFile As String)
     ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
     FontCharsetChange
 End Sub

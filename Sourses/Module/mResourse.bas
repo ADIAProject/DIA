@@ -65,7 +65,7 @@ Public Function ExtractResource(ByVal strOCXFileName As String, ByVal strPathOcx
     strCopyOcxFileTo = BackslashAdd2Path(strPathOcx) & strOCXFileName
 
     ' Извлекаем ресурс в файл
-    If GetBinaryFileFromResource(strCopyOcxFileTo, "OCX_" & FileName_woExt(strOCXFileName), "CUSTOM") Then
+    If GetBinaryFileFromResource(strCopyOcxFileTo, "OCX_" & GetFileName_woExt(strOCXFileName), "CUSTOM") Then
         If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: True"
         ExtractResource = True
     Else

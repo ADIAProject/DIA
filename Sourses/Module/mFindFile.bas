@@ -301,7 +301,7 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
                         sResultFileList(lngResultFileListCount).Name = strFileName
                         ' ָלÿ פאיכא smallcase
                         sResultFileList(lngResultFileListCount).NameLcase = LCase$(strFileName)
-                        sResultFileList(lngResultFileListCount).NameWoExt = FileName_woExt(strFileName)
+                        sResultFileList(lngResultFileListCount).NameWoExt = GetFileName_woExt(strFileName)
                         lngResultFileListCount = lngResultFileListCount + 1
                     End If
                 End If

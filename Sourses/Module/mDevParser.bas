@@ -12,8 +12,8 @@ Public Function CompareDevDBVersion(strDevDBFullFileName As String, Optional ByV
     Dim LngValue          As Long
     Dim strFilePath_woExt As String
 
-    strFilePath_woExt = FileName_woExt(strDevDBFullFileName)
-    LngValue = IniLongPrivate(FileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(PathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
+    strFilePath_woExt = GetFileName_woExt(strDevDBFullFileName)
+    LngValue = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
 
     If LngValue = 9999 Then
         CompareDevDBVersion = False

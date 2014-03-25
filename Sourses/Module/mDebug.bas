@@ -66,21 +66,23 @@ End Sub
 Public Function LogNotOnCDRoom(Optional ByVal strLogFolder As String) As Boolean
 
     Dim strDriveName As String
-    Dim xDrv         As Drive
+    Dim xDrv         As Long
 
     If LenB(strLogFolder) = 0 Then
-        strDriveName = Left$(strDebugLogPath, 2)
+        strDriveName = Left$(strDebugLogPath, 3)
     Else
-        strDriveName = Left$(strLogFolder, 2)
+        strDriveName = Left$(strLogFolder, 3)
     End If
     
     ' ѕровер€ем на запуск из сети
-    If InStr(strDriveName, vbBackslash) = 0 Then
+    If InStr(strDriveName, vbBackslashDouble) = 0 Then
         'получаем тип диска
-        Set xDrv = objFSO.GetDrive(strDriveName)
-
-        If xDrv.DriveType = CDRom Then
-            LogNotOnCDRoom = True
+        If PathIsRoot(strDriveName) Then
+            xDrv = GetDriveType(strDriveName)
+    
+            If xDrv = DRIVE_CDROM Then
+                LogNotOnCDRoom = True
+            End If
         End If
     End If
 

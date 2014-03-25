@@ -1280,9 +1280,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private strFormName                 As String
-Private m_Caption                   As String
-
 Private lngCntBtn                   As Long
 Private lngSSTabCurrentOS           As Long
 Private lngFirstActiveTabIndex      As Long
@@ -1308,6 +1305,7 @@ Private mbBreakUpdateDBAll          As Boolean      ' Флаг, указывающий что нажа
 Private mbIgnorStatusHwid           As Boolean
 Private mbDRVNotInstall             As Boolean
 
+Private strFormName                 As String
 Private strCurSelButtonPath         As String
 Private strSSTabCurrentOSList       As String
 Private strCmbChkBtnListElement1    As String
@@ -1350,7 +1348,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
     Dim TimeScriptRun         As Long
     Dim TimeScriptFinish      As Long
     Dim AllTimeScriptRun      As String
-    Dim strPackFileName_woExt As String
+    Dim strFileName_woExt As String
     Dim cmdString             As String
     Dim ArchTempPath          As String
     Dim strDevPathShort       As String
@@ -1417,8 +1415,8 @@ Private Sub acmdPackFiles_Click(Index As Integer)
             ElseIf optRezim_Ust.Value Then
                 ChangeStatusTextAndDebug strMessages(63) & " " & strPackFileName, strMessages(129)
                 'Имя папки с распакованными драйверами
-                strPackFileName_woExt = FileName_woExt(strPackFileName)
-                ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
+                strFileName_woExt = GetFileName_woExt(strPackFileName)
+                ArchTempPath = strWorkTempBackSL & strFileName_woExt
 
                 'Извлечение драйверов из файла
                 If UnPackDPFile(strPathDRP, strPackFileName, ALL_FILES, ArchTempPath) = False Then
@@ -1452,7 +1450,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
             Else
                 ChangeStatusTextAndDebug strMessages(63) & " " & strPackFileName, strMessages(129)
                 'Имя папки с распакованными драйверами
-                strPackFileName_woExt = FileName_woExt(strPackFileName)
+                strFileName_woExt = GetFileName_woExt(strPackFileName)
 
                 ' если выборочная установка, то получаем список каталогов для распаковки
                 If mbooSelectInstall Then
@@ -1490,7 +1488,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                         strTempLine_x = Split(strTemp_x(i_arr), " | ")
 
                         If LenB(Trim$(strTemp_x(i_arr))) Then
-                            strDevPathShort = Trim$(strTempLine_x(1))
+                            strDevPathShort = Trim$(GetPathNameFromPath(strTempLine_x(1)))
 
                             ' Если данного пути нет в списке, то добавляем
                             If InStr(1, strPathDRPList, strDevPathShort, vbTextCompare) = 0 Then
@@ -1509,7 +1507,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     strPathDRPList = ALL_FILES
                 End If
 
-                ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
+                ArchTempPath = strWorkTempBackSL & strFileName_woExt
 
                 'Извлечение драйверов из файла
                 If UnPackDPFile(strPathDRP, strPackFileName, strPathDRPList, ArchTempPath) = False Then
@@ -1547,8 +1545,8 @@ Private Sub acmdPackFiles_Click(Index As Integer)
             If mbGroupTask Then
                 ' Удаление временных файлов
                 ChangeStatusTextAndDebug strMessages(81), strMessages(130)
-                strPackFileName_woExt = FileName_woExt(strPackFileName)
-                ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
+                strFileName_woExt = GetFileName_woExt(strPackFileName)
+                ArchTempPath = strWorkTempBackSL & strFileName_woExt
                 
                 If PathExists(ArchTempPath) Then
                     DelRecursiveFolder ArchTempPath
@@ -1974,17 +1972,17 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
             ' Ищем совпадения HWID в DP в новом режиме
             If mbFirstStart Then
                 If mbLoadUnSupportedOS Then
-                    strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
+                    strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
                 Else
 
                     If InStr(arrOSList(SSTab1.Tab).Ver, strOSCurrentVersion) Then
                         If arrOSList(SSTab1.Tab).is64bit = 2 Then
-                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
+                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
                         ElseIf arrOSList(SSTab1.Tab).is64bit = 3 Then
-                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
+                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
                         Else
                             If mbIsWin64 = CBool(arrOSList(SSTab1.Tab).is64bit) Then
-                                strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
+                                strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
                             Else
                                 mbUnSuppOS = True
                             End If
@@ -1996,7 +1994,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                 End If
 
             Else
-                strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(FileNameFromPath(strPackFileName)), ButtonIndex)
+                strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
             End If
 
             If LenB(strTextHwids) Then
@@ -2143,10 +2141,10 @@ Private Function CheckExistDB(ByVal strDevDBPath As String, ByVal strPackFileNam
     strDevDBPath = BackslashAdd2Path(strDevDBPath)
 
     If Not mbDP_Is_aFolder Then
-        strPathFileNameDevDB = PathCombine(strDevDBPath, FileNameFromPath(strFileNameDevDB))
+        strPathFileNameDevDB = PathCombine(strDevDBPath, GetFileNameFromPath(strFileNameDevDB))
         strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
     Else
-        strPathFileNameDevDB = PathCombine(strDevDBPath, FileNameFromPath(strPackFileName) & ".TXT")
+        strPathFileNameDevDB = PathCombine(strDevDBPath, GetFileNameFromPath(strPackFileName) & ".TXT")
         strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
     End If
 
@@ -3021,7 +3019,6 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
         End If
 
         mbStep = False
-        strFileListInFolder = vbNullString
         If mbDebugStandart Then DebugMode str2VbTab & "CreateButtonsonSSTab: Recursion: " & mbRecursion & vbNewLine & _
                   str2VbTab & "CreateButtonsonSSTab: Get ListFile in folder: " & strDrpPath
 
@@ -3057,9 +3054,9 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             End If
         End If
 
-        strPhysXPath = FileNameFromPath(arrOSList(tabN).PathPhysX)
-        strLangPath = FileNameFromPath(arrOSList(tabN).PathLanguages)
-        strRuntimes = FileNameFromPath(arrOSList(tabN).PathRuntimes)
+        strPhysXPath = GetFileNameFromPath(arrOSList(tabN).PathPhysX)
+        strLangPath = GetFileNameFromPath(arrOSList(tabN).PathLanguages)
+        strRuntimes = GetFileNameFromPath(arrOSList(tabN).PathRuntimes)
         strExcludeFileName = arrOSList(tabN).ExcludeFileName
         lngFileCount = UBound(strFileList_x) + 1
         pbProgressBar.Refresh
@@ -3544,7 +3541,7 @@ Private Sub DeleteUnUsedBase()
                     If PathExists(strFileListTXT_x(ii).FullPath) Then
                         strFileListDBNotExists = IIf(LenB(strFileListDBNotExists), strFileListDBNotExists & vbNewLine, vbNullString) & Replace$(strFileListTXT_x(ii).FullPath, strAppPath, vbNullString, , , vbTextCompare)
                         'Удаление секции о данном пакете из ini-файла
-                        'IniDelAllKeyPrivate FileName_woExt(FileNameFromPath(strFileListTXT_x(0, ii))), strFileDBVerIniPath
+                        'IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strFileListTXT_x(0, ii))), strFileDBVerIniPath
                     End If
                 End If
 
@@ -3573,7 +3570,7 @@ Private Sub DeleteUnUsedBase()
                             lngFileDBVerIniSize = GetFileSizeByPath(strFileDBVerIniPath)
 
                             If lngFileDBVerIniSize Then
-                                IniDelAllKeyPrivate FileName_woExt(FileNameFromPath(strFileListTXT(ii))), strFileDBVerIniPath
+                                IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strFileListTXT(ii))), strFileDBVerIniPath
                             Else
                                 If mbDebugStandart Then DebugMode str2VbTab & "DeleteUnUsedBase: Delete - file is zero = 0 bytes: " & strFileDBVerIniPath
                                 DeleteFiles strFileDBVerIniPath
@@ -3633,7 +3630,7 @@ Private Sub EditOrReadDPName(ByVal CurButtonIndex As Long, Optional ByVal mbRead
     If mbDebugDetail Then DebugMode str4VbTab & "EditOrReadDPName: CurButtonIndex=" & CurButtonIndex
     'Считываем текущее имя пакета из файла
     strDPName = vbNullString
-    strDRPFilename = FileNameFromPath(acmdPackFiles(CurButtonIndex).Tag)
+    strDRPFilename = GetFileNameFromPath(acmdPackFiles(CurButtonIndex).Tag)
     strDPNameOld = acmdPackFiles(CurButtonIndex).Caption
     strDPName = IniStringPrivate("DPNames", strDRPFilename, strSysIni)
 
@@ -3677,7 +3674,7 @@ Private Sub EditOrReadDPName(ByVal CurButtonIndex As Long, Optional ByVal mbRead
                         strDPNameMsg = strDPNameOld
                         strDPName = strDPNameOld
                     Else
-                        strDPNameMsg = FileNameFromPath(acmdPackFiles(CurButtonIndex).Tag)
+                        strDPNameMsg = GetFileNameFromPath(acmdPackFiles(CurButtonIndex).Tag)
                         strDPName = strDPNameMsg
                     End If
 
@@ -3977,8 +3974,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim strTemp                  As String
     Dim strDevID                 As String
     Dim strDevIDOrig             As String
-    Dim strDevPath               As String
-    Dim strDevInf                As String
+    Dim strPathInf               As String
     Dim strDevVer                As String
     Dim strDevVerLocal           As String
     Dim strDevStatus             As String
@@ -3997,9 +3993,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim lngTTipLocalArrCount     As Long
     Dim miMaxCountArr            As Long
     Dim strPriznakSravnenia      As String
-    Dim R                        As Boolean
-    Dim R2                       As Boolean
-    Dim R3                       As Boolean
     Dim strHwidToDel             As String
     Dim strHwidToDelLine         As String
     Dim lngMatchesCount          As Long
@@ -4055,11 +4048,10 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
             
             miMaxCountArr = 100
 
-            ReDim strTTipLocalArr(12, miMaxCountArr)
+            ReDim strTTipLocalArr(11, miMaxCountArr)
 
             lngMaxLengthRow1 = lngTableHwidHeader1
             lngMaxLengthRow2 = lngTableHwidHeader2
-            lngMaxLengthRow3 = lngTableHwidHeader3
             lngMaxLengthRow4 = lngTableHwidHeader4
             lngMaxLengthRow5 = lngTableHwidHeader5
             lngMaxLengthRow6 = lngTableHwidHeader6
@@ -4069,13 +4061,11 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
             For i = 0 To UBound(arrHwidsLocal)
                 strFind = arrHwidsLocal(i).HWIDCutting
-                'Debug.Print strFind
                 strFindCompatIDTemp = arrHwidsLocal(i).HWIDCompat
-                'If InIDE() Then
-                'If InStr(1, strFind, "FORCED\7x64\HP\E1D62x64.INF", vbTextCompare) Then Stop ' Debug .Assert strInfPath
-                'End If
+
                 ' Быстрый поиск совпадений в массиве
                 lngBuffer = BinarySearch(strFile_x(), strFind)
+                
                 If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: PreFind by HWID: " & strFind & " =" & lngBuffer
                 'Debug.Print str5VbTab & "FindHwidInBaseNew: PreFind by HWID: " & strFind & " =" & lngBuffer
                 lngFileStartFromSymbol = lngBuffer
@@ -4123,9 +4113,8 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
                             'Debug.Print iii & " " & lngCompatiblesHWIDCount & " " & strFindCompatIDFind
                             If Not MatchSpec(strFindCompatIDFind, strExcludeHWID) Then
-                                R3 = objHashOutput3.Exists(strFindCompatIDFind)
 
-                                If Not R3 Then
+                                If Not objHashOutput3.Exists(strFindCompatIDFind) Then
                                     objHashOutput3.Item(strFindCompatIDFind) = "+"
                                     lngBuffer2 = 0
                                     lngBuffer2 = BinarySearch(strFile_x(), strFindCompatIDFind)
@@ -4158,7 +4147,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 ExitFromForNext_iii:
 
                 If lngFileStartFromSymbol < 0 Then
-                    If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!ERROR lngFileStartFromSymbol=0 " & strPackFileName & vbBackslash & BackslashAdd2Path(strDevPath) & strDevInf & " by HWID=" & strFind
+                    If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!ERROR lngFileStartFromSymbol=0 " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
                     GoTo NextStrFind
                 End If
 
@@ -4167,19 +4156,19 @@ ExitFromForNext_iii:
                 lngMatchesCount = UBound(strResult_x)
 
                 If lngMatchesCount >= 0 Then
-                    If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!Find " & lngMatchesCount & " Match in: " & strPackFileName & vbBackslash & BackslashAdd2Path(strDevPath) & strDevInf & " by HWID=" & strFind
+                    If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!Find " & lngMatchesCount & " Match in: " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
 
                     For ii = 0 To lngMatchesCount
                         strResultByTab_x = Split(strResult_x(ii), vbTab)
                         ' Получаем имя секции файла inf для дальнейшего анализа
-                        strDevPath = strResultByTab_x(1)
+                        strPathInf = strResultByTab_x(1)
                         strSection = strResultByTab_x(2)
                         ' получение списка секций несовместимых ОС
                         strSectionUnsupported = strResultByTab_x(4)
 
                         ' Если драйвер несовместим с текущей ОС (вкладкой), то пропускаем его (анализ имени секции manufactured)
-                        If Not CompatibleDriver4OS(strSection, strPackFileName, strDevPath, strSectionUnsupported) Then
-                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: !!! SKIP. Driver is not compatible for this OS - IniSection: " & strSection & " Inf: " & strDevPath & strDevInf
+                        If Not CompatibleDriver4OS(strSection, strPackFileName, strPathInf, strSectionUnsupported) Then
+                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: !!! SKIP. Driver is not compatible for this OS - IniSection: " & strSection & " Inf: " & strPathInf
                             GoTo NextLngMatchesCount
                         End If
 
@@ -4190,13 +4179,12 @@ ExitFromForNext_iii:
                             GoTo NextLngMatchesCount
                         End If
                         
-                        strDevInf = FileNameFromPath(strDevPath)
                         strCatFileExists = strResultByTab_x(5)
 
                         If mbCalcDriverScore Then
                             ' Проверка и присвоение баллов драйверов
                             ' Если до этого оценок не было, то добавляем в базу
-                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Driver find in : " & PathCombine(strPackFileName & vbBackslash & strDevPath, strDevInf) & " Has Score=" & lngDriverScore
+                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Driver find in : " & (strPackFileName & vbBackslash & strPathInf) & " Has Score=" & lngDriverScore
 
                             If arrHwidsLocal(i).DRVScore = 0 Then
                                 arrHwidsLocal(i).DRVScore = lngDriverScore
@@ -4281,24 +4269,23 @@ ExitFromForNext_iii:
                         If lngTTipLocalArrCount = miMaxCountArr Then
                             miMaxCountArr = 2 * miMaxCountArr
 
-                            ReDim Preserve strTTipLocalArr(12, miMaxCountArr)
+                            ReDim Preserve strTTipLocalArr(11, miMaxCountArr)
 
                         End If
 
                         ' Заносим данные во временный массив
                         strTTipLocalArr(0, lngTTipLocalArrCount) = strDevID
-                        strTTipLocalArr(1, lngTTipLocalArrCount) = strDevPath
-                        strTTipLocalArr(2, lngTTipLocalArrCount) = strDevInf
-                        strTTipLocalArr(3, lngTTipLocalArrCount) = strDevVer
-                        strTTipLocalArr(4, lngTTipLocalArrCount) = strDevVerLocal
-                        strTTipLocalArr(5, lngTTipLocalArrCount) = strDevStatus
-                        strTTipLocalArr(6, lngTTipLocalArrCount) = strDevName
-                        strTTipLocalArr(7, lngTTipLocalArrCount) = strPriznakSravnenia
-                        strTTipLocalArr(8, lngTTipLocalArrCount) = strSection
-                        strTTipLocalArr(9, lngTTipLocalArrCount) = strDevIDOrig
-                        strTTipLocalArr(10, lngTTipLocalArrCount) = lngDriverScore
-                        strTTipLocalArr(11, lngTTipLocalArrCount) = strSectionUnsupported
-                        strTTipLocalArr(12, lngTTipLocalArrCount) = strCatFileExists
+                        strTTipLocalArr(1, lngTTipLocalArrCount) = strPathInf
+                        strTTipLocalArr(2, lngTTipLocalArrCount) = strDevVer
+                        strTTipLocalArr(3, lngTTipLocalArrCount) = strDevVerLocal
+                        strTTipLocalArr(4, lngTTipLocalArrCount) = strDevStatus
+                        strTTipLocalArr(5, lngTTipLocalArrCount) = strDevName
+                        strTTipLocalArr(6, lngTTipLocalArrCount) = strPriznakSravnenia
+                        strTTipLocalArr(7, lngTTipLocalArrCount) = strSection
+                        strTTipLocalArr(8, lngTTipLocalArrCount) = strDevIDOrig
+                        strTTipLocalArr(9, lngTTipLocalArrCount) = lngDriverScore
+                        strTTipLocalArr(10, lngTTipLocalArrCount) = strSectionUnsupported
+                        strTTipLocalArr(11, lngTTipLocalArrCount) = strCatFileExists
                         lngTTipLocalArrCount = lngTTipLocalArrCount + 1
 
                         If mbFirstStart Then
@@ -4308,24 +4295,23 @@ ExitFromForNext_iii:
                             If lngArrDriversIndex = lngArrDriversListCountMax Then
                                 lngArrDriversListCountMax = 2 * lngArrDriversListCountMax
 
-                                ReDim Preserve arrDriversList(13, lngArrDriversListCountMax)
+                                ReDim Preserve arrDriversList(12, lngArrDriversListCountMax)
 
                             End If
 
                             arrDriversList(0, lngArrDriversIndex) = strDevID
-                            arrDriversList(1, lngArrDriversIndex) = strDevPath
-                            arrDriversList(2, lngArrDriversIndex) = strDevInf
-                            arrDriversList(3, lngArrDriversIndex) = strDevVer
-                            arrDriversList(4, lngArrDriversIndex) = strDevVerLocal
-                            arrDriversList(5, lngArrDriversIndex) = strDevStatus
-                            arrDriversList(6, lngArrDriversIndex) = strDevName
-                            arrDriversList(7, lngArrDriversIndex) = strPriznakSravnenia
-                            arrDriversList(8, lngArrDriversIndex) = strSection
-                            arrDriversList(9, lngArrDriversIndex) = strDevIDOrig
-                            arrDriversList(10, lngArrDriversIndex) = lngDriverScore
-                            arrDriversList(11, lngArrDriversIndex) = strSectionUnsupported
-                            arrDriversList(12, lngArrDriversIndex) = strCatFileExists
-                            arrDriversList(13, lngArrDriversIndex) = strPackFileName
+                            arrDriversList(1, lngArrDriversIndex) = strPathInf
+                            arrDriversList(2, lngArrDriversIndex) = strDevVer
+                            arrDriversList(3, lngArrDriversIndex) = strDevVerLocal
+                            arrDriversList(4, lngArrDriversIndex) = strDevStatus
+                            arrDriversList(5, lngArrDriversIndex) = strDevName
+                            arrDriversList(6, lngArrDriversIndex) = strPriznakSravnenia
+                            arrDriversList(7, lngArrDriversIndex) = strSection
+                            arrDriversList(8, lngArrDriversIndex) = strDevIDOrig
+                            arrDriversList(9, lngArrDriversIndex) = lngDriverScore
+                            arrDriversList(10, lngArrDriversIndex) = strSectionUnsupported
+                            arrDriversList(11, lngArrDriversIndex) = strCatFileExists
+                            arrDriversList(12, lngArrDriversIndex) = strPackFileName
                             lngArrDriversIndex = lngArrDriversIndex + 1
                         End If
 
@@ -4334,12 +4320,8 @@ ExitFromForNext_iii:
                             lngMaxLengthRow1 = Len(strDevID)
                         End If
 
-                        If Len(strDevPath) > lngMaxLengthRow2 Then
-                            lngMaxLengthRow2 = Len(strDevPath)
-                        End If
-
-                        If Len(strDevInf) > lngMaxLengthRow3 Then
-                            lngMaxLengthRow3 = Len(strDevInf)
+                        If Len(strPathInf) > lngMaxLengthRow2 Then
+                            lngMaxLengthRow2 = Len(strPathInf)
                         End If
 
                         If Len(strDevVer) > lngMaxLengthRow4 Then
@@ -4363,7 +4345,7 @@ NextLngMatchesCount:
                     Next ii
 
                 Else
-                    If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!ERROR Driver NOT find by Regexp in : " & strPackFileName & vbBackslash & BackslashAdd2Path(strDevPath) & strDevInf & " by HWID=" & strFind
+                    If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!ERROR Driver NOT find by Regexp in : " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
                 End If
 
 NextStrFind:
@@ -4375,49 +4357,44 @@ NextStrFind:
                 objHashOutput.RemoveAll
                 objHashOutput2.RemoveAll
 
-                ReDim Preserve strTTipLocalArr(12, lngTTipLocalArrCount - 1)
+                ReDim Preserve strTTipLocalArr(11, lngTTipLocalArrCount - 1)
 
                 For i = 0 To UBound(strTTipLocalArr, 2)
                     'strDevID
                     strTemp = strTTipLocalArr(0, i)
                     strTTipLocalArr(0, i) = strTemp & Space$(lngMaxLengthRow1 - Len(strTemp) + 1) & "| "
-                    'strDevPath
+                    'strPathInf
                     strTemp = strTTipLocalArr(1, i)
                     strTTipLocalArr(1, i) = strTemp & Space$(lngMaxLengthRow2 - Len(strTemp) + 1) & "| "
-                    'strDevInf
-                    strTemp = strTTipLocalArr(2, i)
-                    strTTipLocalArr(2, i) = strTemp & Space$(lngMaxLengthRow3 - Len(strTemp) + 1) & "| "
                     'strDevVer
-                    strTemp = strTTipLocalArr(3, i)
-                    strTTipLocalArr(3, i) = strTemp & Space$(lngMaxLengthRow4 - Len(strTemp) + 1) & "| "
+                    strTemp = strTTipLocalArr(2, i)
+                    strTTipLocalArr(2, i) = strTemp & Space$(lngMaxLengthRow4 - Len(strTemp) + 1) & "| "
                     'strDevVerLocal
-                    strTemp = strTTipLocalArr(4, i)
-                    strTTipLocalArr(4, i) = strTemp & Space$(lngMaxLengthRow5 - Len(strTemp) + 1) & "| "
+                    strTemp = strTTipLocalArr(3, i)
+                    strTTipLocalArr(3, i) = strTemp & Space$(lngMaxLengthRow5 - Len(strTemp) + 1) & "| "
                     ' strPriznakSravnenia
-                    strTemp = strTTipLocalArr(7, i)
-                    strTTipLocalArr(7, i) = strTemp & Space$(lngMaxLengthRow9 - Len(strTemp) + 1) & "| "
+                    strTemp = strTTipLocalArr(6, i)
+                    strTTipLocalArr(6, i) = strTemp & Space$(lngMaxLengthRow9 - Len(strTemp) + 1) & "| "
                     'strDevStatus & strDevName
-                    strTemp = strTTipLocalArr(5, i)
-                    strTTipLocalArr(5, i) = strTemp & Space$(lngMaxLengthRow6 - Len(strTemp) + 1) & "| "
+                    strTemp = strTTipLocalArr(4, i)
+                    strTTipLocalArr(4, i) = strTemp & Space$(lngMaxLengthRow6 - Len(strTemp) + 1) & "| "
                     ' Секция
-                    strTemp = strTTipLocalArr(8, i)
-                    strTTipLocalArr(8, i) = strTemp & Space$(lngMaxLengthRow13 - Len(strTemp) + 1) & "|"
+                    strTemp = strTTipLocalArr(7, i)
+                    strTTipLocalArr(7, i) = strTemp & Space$(lngMaxLengthRow13 - Len(strTemp) + 1) & "|"
                     ' Итоговый
-                    strLineAll = strTTipLocalArr(0, i) & strTTipLocalArr(1, i) & strTTipLocalArr(2, i) & strTTipLocalArr(3, i) & strTTipLocalArr(7, i) & strTTipLocalArr(4, i) & strTTipLocalArr(5, i) & strTTipLocalArr(6, i)
-                    R = objHashOutput.Exists(strLineAll)
+                    strLineAll = strTTipLocalArr(0, i) & strTTipLocalArr(1, i) & strTTipLocalArr(2, i) & strTTipLocalArr(6, i) & strTTipLocalArr(3, i) & strTTipLocalArr(4, i) & strTTipLocalArr(5, i)
 
-                    If Not R Then
+                    If Not objHashOutput.Exists(strLineAll) Then
                         objHashOutput.Item(strLineAll) = "+"
                         AppendStr strAll, strLineAll, vbNewLine
                     End If
 
                     ' Заполняем массив для удаления драйверов по HWID
-                    strHwidToDelLine = strTTipLocalArr(9, i)
-                    R2 = objHashOutput2.Exists(strHwidToDelLine)
+                    strHwidToDelLine = strTTipLocalArr(8, i)
 
-                    If Not R2 Then
+                    If Not objHashOutput2.Exists(strHwidToDelLine) Then
                         objHashOutput2.Item(strHwidToDelLine) = "+"
-                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(6, i), ";"
+                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, i), ";"
                     End If
 
                     ' Подсчитываем максимальную длину строки в подсказке
@@ -4443,12 +4420,6 @@ NextStrFind:
 
             If lngSizeRow2Max < lngSizeRow2 Then
                 lngSizeRow2Max = lngSizeRow2
-            End If
-
-            lngSizeRow3 = lngMaxLengthRow3
-
-            If lngSizeRow3Max < lngSizeRow3 Then
-                lngSizeRow3Max = lngSizeRow3
             End If
 
             lngSizeRow4 = lngMaxLengthRow4
@@ -4494,7 +4465,7 @@ NextStrFind:
 
     ReDim Preserve arrTTipSize(lngButtonIndex + 1)
 
-    arrTTipSize(lngButtonIndex) = maxSizeRowAllLine & (";" & lngSizeRow1 & ";" & lngSizeRow2 & ";" & lngSizeRow3 & ";" & lngSizeRow4 & ";" & lngSizeRow9 & ";" & lngSizeRow5 & ";" & lngSizeRow6)
+    arrTTipSize(lngButtonIndex) = maxSizeRowAllLine & (";" & lngSizeRow1 & ";" & lngSizeRow2 & ";" & lngSizeRow4 & ";" & lngSizeRow9 & ";" & lngSizeRow5 & ";" & lngSizeRow6)
 
 ExitFromSub:
    
@@ -5073,7 +5044,7 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     If mbLoadIniTmpAfterRestart Then
         SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP_PATH", "-"
 
-        If StrComp(FileNameFromPath(strSysIni), "Settings_DIA_TMP.ini", vbTextCompare) = 0 Then
+        If StrComp(GetFileNameFromPath(strSysIni), "Settings_DIA_TMP.ini", vbTextCompare) = 0 Then
             DeleteFiles strSysIni
         End If
     End If
@@ -5348,7 +5319,7 @@ Private Sub GroupInstallDP()
     Dim strPackFileName       As String
     Dim strPathDRP            As String
     Dim strPathDevDB          As String
-    Dim strPackFileName_woExt As String
+    Dim strPackGetFileName_woExt As String
     Dim ArchTempPath          As String
     Dim DPInstExitCode        As Long
     Dim strDevPathShort       As String
@@ -5554,7 +5525,7 @@ Private Sub GroupInstallDP()
                 End If
 
                 strPackFileName = .Tag
-                strPackFileName_woExt = FileName_woExt(strPackFileName)
+                strPackGetFileName_woExt = GetFileName_woExt(strPackFileName)
 
                 If UnPackDPFile(strPathDRP, strPackFileName, arrCheckDP(1, i), ArchTempPath) = False Then
                     If Not mbSilentRun Then
@@ -5689,8 +5660,8 @@ BreakUnpack:
                         If mbLoadFinishFile Then
                             For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
                                 strPackFileName = acmdPackFiles(arrCheckDP(0, i)).Tag
-                                strPackFileName_woExt = FileName_woExt(strPackFileName)
-                                ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
+                                strPackGetFileName_woExt = GetFileName_woExt(strPackFileName)
+                                ArchTempPath = strWorkTempBackSL & strPackGetFileName_woExt
                                 WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, arrCheckDP(1, i)
                             Next
                         End If
@@ -5836,7 +5807,6 @@ Private Sub PutAllDrivers2Log()
                         UCase$(strTableHwidHeader1 & Space$(lngSizeRow1Max - lngTableHwidHeader1 + 1) & "| " & _
                         strTableHwidHeaderDP & Space$(lngSizeRowDPMax - Len(strTableHwidHeaderDP) + 1) & "| " & _
                         strTableHwidHeader2 & Space$(lngSizeRow2Max - lngTableHwidHeader2 + 1) & "| " & _
-                        strTableHwidHeader3 & Space$(lngSizeRow3Max - lngTableHwidHeader3 + 1) & "| " & _
                         strTableHwidHeader4 & Space$(lngSizeRow4Max - lngTableHwidHeader4 + 1) & "| " & _
                         strTableHwidHeader9 & Space$(lngSizeRow9Max - lngTableHwidHeader9 + 1) & "| " & _
                         strTableHwidHeader5 & Space$(lngSizeRow5Max - lngTableHwidHeader5 + 1) & "| " & _
@@ -5845,7 +5815,7 @@ Private Sub PutAllDrivers2Log()
 
     If mbDebugStandart Then DebugMode "===============================List of all found a matched driver===================================" & vbNewLine & strTTipTextHeaders
 
-    ReDim Preserve arrDriversList(13, lngArrDriversIndex - 1)
+    ReDim Preserve arrDriversList(12, lngArrDriversIndex - 1)
 
     QuickSortMDArray arrDriversList, 1, 0
 
@@ -5856,29 +5826,26 @@ Private Sub PutAllDrivers2Log()
         'strDevPath
         strTemp = arrDriversList(1, i)
         arrDriversList(1, i) = strTemp & Space$(lngSizeRow2Max - Len(strTemp) + 1) & "| "
-        'strDevInf
-        strTemp = arrDriversList(2, i)
-        arrDriversList(2, i) = strTemp & Space$(lngSizeRow3Max - Len(strTemp) + 1) & "| "
         'strDevVer
-        strTemp = arrDriversList(3, i)
-        arrDriversList(3, i) = strTemp & Space$(lngSizeRow4Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(2, i)
+        arrDriversList(2, i) = strTemp & Space$(lngSizeRow4Max - Len(strTemp) + 1) & "| "
         'strDevVerLocal
-        strTemp = arrDriversList(4, i)
-        arrDriversList(4, i) = strTemp & Space$(lngSizeRow5Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(3, i)
+        arrDriversList(3, i) = strTemp & Space$(lngSizeRow5Max - Len(strTemp) + 1) & "| "
         ' strPriznakSravnenia
-        strTemp = arrDriversList(7, i)
-        arrDriversList(7, i) = strTemp & Space$(lngSizeRow9Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(6, i)
+        arrDriversList(6, i) = strTemp & Space$(lngSizeRow9Max - Len(strTemp) + 1) & "| "
         'strDevStatus & strDevName
-        strTemp = arrDriversList(5, i)
-        arrDriversList(5, i) = strTemp & Space$(lngSizeRow6Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(4, i)
+        arrDriversList(4, i) = strTemp & Space$(lngSizeRow6Max - Len(strTemp) + 1) & "| "
         ' Секция
-        strTemp = arrDriversList(8, i)
-        arrDriversList(8, i) = strTemp & Space$(lngSizeRow13Max - Len(strTemp) + 1) & "|"
+        strTemp = arrDriversList(7, i)
+        arrDriversList(7, i) = strTemp & Space$(lngSizeRow13Max - Len(strTemp) + 1) & "|"
         ' Имя DP
-        strTemp = arrDriversList(13, i)
-        arrDriversList(13, i) = strTemp & Space$(lngSizeRowDPMax - Len(strTemp) + 1) & "|"
+        strTemp = arrDriversList(12, i)
+        arrDriversList(12, i) = strTemp & Space$(lngSizeRowDPMax - Len(strTemp) + 1) & "|"
         ' Итоговый
-        strLineAll = arrDriversList(0, i) & arrDriversList(13, i) & arrDriversList(1, i) & (arrDriversList(2, i) & arrDriversList(3, i) & arrDriversList(7, i)) & (arrDriversList(4, i) & arrDriversList(5, i) & arrDriversList(6, i))
+        strLineAll = (arrDriversList(0, i) & arrDriversList(12, i) & arrDriversList(1, i) & arrDriversList(2, i) & arrDriversList(6, i)) & (arrDriversList(3, i) & arrDriversList(4, i) & arrDriversList(5, i))
         If mbDebugStandart Then DebugMode strLineAll
     Next
 
@@ -5924,7 +5891,7 @@ Private Sub LoadButton()
     lngArrDriversIndex = 0
     lngArrDriversListCountMax = 100
 
-    ReDim Preserve arrDriversList(13, lngArrDriversListCountMax)
+    ReDim Preserve arrDriversList(12, lngArrDriversListCountMax)
 
     For i = 0 To cnt
         strPathFolderDRP = arrOSList(i).drpFolderFull
@@ -6155,8 +6122,7 @@ Private Sub Localise(ByVal strPathFile As String)
     lblNoDPInProgram.Caption = LocaliseString(strPathFile, strFormName, "lblNoDPInProgram", lblNoDPInProgram.Caption)
     ' Другие параметры
     strTableHwidHeader1 = LocaliseString(strPathFile, strFormName, "TableHwidHeader1", "-HWID-")
-    strTableHwidHeader2 = LocaliseString(strPathFile, strFormName, "TableHwidHeader2", "-Путь-")
-    strTableHwidHeader3 = LocaliseString(strPathFile, strFormName, "TableHwidHeader3", "-Файл-")
+    strTableHwidHeader2 = LocaliseString(strPathFile, strFormName, "TableHwidHeader2", "-Inf-Файл-")
     strTableHwidHeader4 = LocaliseString(strPathFile, strFormName, "TableHwidHeader4", "-Версия(БД)-")
     strTableHwidHeader5 = LocaliseString(strPathFile, strFormName, "TableHwidHeader5", "-Версия(PC)-")
     strTableHwidHeader6 = LocaliseString(strPathFile, strFormName, "TableHwidHeader6", "-Статус-")
@@ -6182,7 +6148,6 @@ Private Sub Localise(ByVal strPathFile As String)
     ' Прописываем как константу длину названия колонок
     lngTableHwidHeader1 = Len(strTableHwidHeader1)
     lngTableHwidHeader2 = Len(strTableHwidHeader2)
-    lngTableHwidHeader3 = Len(strTableHwidHeader3)
     lngTableHwidHeader4 = Len(strTableHwidHeader4)
     lngTableHwidHeader5 = Len(strTableHwidHeader5)
     lngTableHwidHeader6 = Len(strTableHwidHeader6)
@@ -6508,7 +6473,7 @@ Private Sub mnuContextDeleteDRP_Click()
         strPathDRP = arrOSList(i).drpFolderFull
         strPathDB = arrOSList(i).devIDFolderFull
         strFullPathDRP = PathCombine(strPathDRP, acmdPackFiles(lngCurrentBtnIndex).Tag)
-        strFullPathDB = PathCombine(strPathDB, FileNameFromPath(strCurSelButtonPath))
+        strFullPathDB = PathCombine(strPathDB, GetFileNameFromPath(strCurSelButtonPath))
         strFullPathDBIni = Replace$(strFullPathDB, ".txt", "*.ini", , , vbTextCompare)
 
         If MsgBox(strMessages(17) & " '" & acmdPackFiles(lngCurrentBtnIndex).Tag & "' ?", vbQuestion + vbYesNo, strProductName) = vbYes Then
@@ -6524,7 +6489,7 @@ Private Sub mnuContextDeleteDRP_Click()
                     If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDB
                     DeleteFiles strFullPathDB
                     'Удаление секции о данном пакете из ini-файла
-                    IniDelAllKeyPrivate FileName_woExt(FileNameFromPath(strCurSelButtonPath)), PathCombine(strPathDB, "DevDBVersions.ini")
+                    IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strCurSelButtonPath)), PathCombine(strPathDB, "DevDBVersions.ini")
                 End If
             End If
 
@@ -6721,7 +6686,7 @@ Private Sub mnuContextXLS_Click()
 
     Dim strCurSelButtonPathTemp As String
 
-    strCurSelButtonPathTemp = strWorkTempBackSL & FileNameFromPath(strCurSelButtonPath)
+    strCurSelButtonPathTemp = strWorkTempBackSL & GetFileNameFromPath(strCurSelButtonPath)
     ' Копируем файл БД во временный каталог
     CopyFileTo strCurSelButtonPath, strCurSelButtonPathTemp
     ' Открываем в Excel
@@ -8002,7 +7967,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
         
         'Считываем класс пакета из файла
         If mbReadClasses Then
-            strFinishIniPath = BackslashAdd2Path(strPathDevDB) & FileName_woExt(strPackFileName) & ".ini"
+            strFinishIniPath = BackslashAdd2Path(strPathDevDB) & GetFileName_woExt(strPackFileName) & ".ini"
             strClassesName = IniStringPrivate("DriverPack", "classes", strFinishIniPath)
 
             ' Если такого значения в файле нет, то ничего не добавляем
@@ -8051,7 +8016,6 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                     strTTipSizeHeader_x = Split(arrTTipSize(Index), ";")
                     maxLengthRow1 = lngTableHwidHeader1
                     maxLengthRow2 = lngTableHwidHeader2
-                    maxLengthRow3 = lngTableHwidHeader3
                     maxLengthRow4 = lngTableHwidHeader4
                     maxLengthRow9 = lngTableHwidHeader9
                     maxLengthRow5 = lngTableHwidHeader5
@@ -8059,7 +8023,6 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                     maxSizeRowAllLine = strTTipSizeHeader_x(0)
                     lngSizeRow1 = strTTipSizeHeader_x(1)
                     lngSizeRow2 = strTTipSizeHeader_x(2)
-                    lngSizeRow3 = strTTipSizeHeader_x(3)
                     lngSizeRow4 = strTTipSizeHeader_x(4)
                     lngSizeRow9 = strTTipSizeHeader_x(5)
                     lngSizeRow5 = strTTipSizeHeader_x(6)
@@ -8071,10 +8034,6 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
 
                     If lngSizeRow2 < maxLengthRow2 Then
                         lngSizeRow2 = maxLengthRow2
-                    End If
-
-                    If lngSizeRow3 < maxLengthRow3 Then
-                        lngSizeRow3 = maxLengthRow3
                     End If
 
                     If lngSizeRow4 < maxLengthRow4 Then
@@ -8099,7 +8058,6 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                                      String$(maxSizeRowAllLine, "-") & vbNewLine & _
                                      UCase$(strTableHwidHeader1 & Space$(lngSizeRow1 - lngTableHwidHeader1 + 1) & "| " & _
                                      strTableHwidHeader2 & Space$(lngSizeRow2 - lngTableHwidHeader2 + 1) & "| " & _
-                                     strTableHwidHeader3 & Space$(lngSizeRow3 - lngTableHwidHeader3 + 1) & "| " & _
                                      strTableHwidHeader4 & Space$(lngSizeRow4 - lngTableHwidHeader4 + 1) & "| " & _
                                      strTableHwidHeader9 & Space$(lngSizeRow9 - lngTableHwidHeader9 + 1) & "| " & _
                                      strTableHwidHeader5 & Space$(lngSizeRow5 - lngTableHwidHeader5 + 1) & "| " & _
@@ -8152,7 +8110,7 @@ Private Function RunDPInst(ByVal strWorkPath As String) As Long
     cmdString = strKavichki & strDPInstExePath & strKavichki & " " & CollectCmdString & "/PATH " & strKavichki & strWorkPath & strKavichki
     ChangeStatusTextAndDebug strMessages(93)
 
-    If RunAndWaitNew(cmdString, PathNameFromPath(strDPInstExePath), vbNormalFocus) = False Then
+    If RunAndWaitNew(cmdString, GetPathNameFromPath(strDPInstExePath), vbNormalFocus) = False Then
         If Not mbSilentRun Then
             MsgBox strMessages(21) & str2vbNewLine & cmdString, vbInformation, strProductName
         End If
@@ -9234,7 +9192,7 @@ End Sub
 Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName As String, ByVal strMaskFile As String, ByVal strDest4OnlyUnpack As String) As Boolean
 
     Dim WorkDir               As String
-    Dim strPackFileName_woExt As String
+    Dim strPackGetFileName_woExt As String
     Dim cmdString             As String
     Dim ArchTempPath          As String
     Dim strPhysXPath          As String
@@ -9253,15 +9211,15 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
               "UnPackDPFile: strMaskFile=" & strMaskFile
 
     If Not mbOnlyUnpackDP Then
-        strPackFileName_woExt = FileName_woExt(strPackFileName)
+        strPackGetFileName_woExt = GetFileName_woExt(strPackFileName)
 
         'Рабочий каталог
         If mbGroupTask Then
             WorkDir = strWorkTempBackSL & "GroupInstall\"
             ArchTempPath = strWorkTempBackSL & "GroupInstall"
         Else
-            WorkDir = BackslashAdd2Path(strWorkTempBackSL & strPackFileName_woExt)
-            ArchTempPath = strWorkTempBackSL & strPackFileName_woExt
+            WorkDir = BackslashAdd2Path(strWorkTempBackSL & strPackGetFileName_woExt)
+            ArchTempPath = strWorkTempBackSL & strPackGetFileName_woExt
 
             If PathExists(WorkDir) Then
                 DelRecursiveFolder (WorkDir)
@@ -9301,7 +9259,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
                 strClassesName = vbNullString
 
                 If mbReadClasses Then
-                    strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, FileName_woExt(strPackFileName) & ".ini")
+                    strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, GetFileName_woExt(strPackFileName) & ".ini")
                     strClassesName = IniStringPrivate("DriverPack", "classes", strFinishIniPath)
 
                     ' Если такого значения в файле нет, то ничего не добавляем
@@ -9459,7 +9417,7 @@ Private Function UnpackOtherFile(ByVal strArcDRPPath As String, ByVal strWorkDir
 
         ' Архиватор отработал на все 100%? Если нет то сообщаем
         If lngExitProc = 2 Or lngExitProc = 7 Or lngExitProc = 255 Then
-            ChangeStatusTextAndDebug strMessages(13) & " " & FileNameFromPath(strArcDRPPath)
+            ChangeStatusTextAndDebug strMessages(13) & " " & GetFileNameFromPath(strArcDRPPath)
 
             If Not mbSilentRun Then
                 MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
@@ -9749,8 +9707,8 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub VerModules()
-    MsgBox strMessages(35) & vbNewLine & "DPinst.exe (x86)" & vbTab & objFSO.GetFileVersion(strDPInstExePath) & vbNewLine & "DPinst.exe (x64)" & vbTab & objFSO.GetFileVersion(strDPInstExePath64) & vbNewLine & "DevCon.exe (x86)" & vbTab & _
-                                objFSO.GetFileVersion(strDevConExePath) & vbNewLine & "7za.exe (x86)" & vbTab & objFSO.GetFileVersion(strArh7zExePATH), vbInformation, strProductName
+    MsgBox strMessages(35) & vbNewLine & "DPinst.exe (x86)" & vbTab & GetFileVersionOnly(strDPInstExePath) & vbNewLine & "DPinst.exe (x64)" & vbTab & GetFileVersionOnly(strDPInstExePath64) & vbNewLine & "DevCon.exe (x86)" & vbTab & _
+                                GetFileVersionOnly(strDevConExePath) & vbNewLine & "7za.exe (x86)" & vbTab & GetFileVersionOnly(strArh7zExePATH), vbInformation, strProductName
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9777,9 +9735,9 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
             strPathDRPList_x = Split(strPathDRPList, " ")
 
             For ii = 0 To UBound(strPathDRPList_x)
-                strSectionName = FileNameFromPath(BackslashDelFromPath(strPathDRPList_x(ii)))
+                strSectionName = GetFileNameFromPath(BackslashDelFromPath(strPathDRPList_x(ii)))
                 ChangeStatusTextAndDebug strMessages(100) & " '" & strSectionName & "'"
-                strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, FileName_woExt(strPackFileName) & ".ini")
+                strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, GetFileName_woExt(strPackFileName) & ".ini")
 
                 If PathExists(strFinishIniPath) Then
                     If Not PathIsAFolder(strFinishIniPath) Then
@@ -10025,14 +9983,14 @@ Private Sub DelDuplicateOldDP()
         strPackFileNameTemp = strPackFileName(i, 0)
 
         If InStr(strPackFileNameTemp, vbBackslash) Then
-            strPackFileNameTemp = FileNameFromPath(strPackFileName(i, 0))
+            strPackFileNameTemp = GetFileNameFromPath(strPackFileName(i, 0))
         End If
 
         lngVersionPosition = InStrRev(strPackFileNameTemp, "_", , vbTextCompare)
 
         If lngVersionPosition Then
             strPackFileName_woVersion = Left$(strPackFileNameTemp, lngVersionPosition)
-            strPackFileName_Ext = ExtFromFileName(strPackFileNameTemp)
+            strPackFileName_Ext = GetFileNameExtension(strPackFileNameTemp)
             Set objRegExp = New RegExp
 
             With objRegExp

@@ -279,7 +279,7 @@ Option Explicit
 
 Private strFilePath As String
 Private strFormName As String
-Private m_Caption   As String
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange

@@ -52,7 +52,7 @@ Private Type PROCESS_INFORMATION
     hProcess                            As Long
     hThread                             As Long
     dwProcessId                         As Long
-    dwThreadId                          As Long
+    dwThreadID                          As Long
 End Type
 
 Private Const STARTF_USESHOWWINDOW  As Long = &H1
@@ -176,7 +176,7 @@ Public Sub RunUtilsShell(ByVal strPathUtils As String, Optional ByVal mbCollectP
         cmdString = PathCollect(strPathUtils)
 
         If mbStartPathAsPathExe Then
-            strStartPath = PathNameFromPath(cmdString)
+            strStartPath = GetPathNameFromPath(cmdString)
         End If
 
     Else

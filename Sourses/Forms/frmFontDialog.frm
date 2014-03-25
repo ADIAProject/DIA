@@ -347,7 +347,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private strFormName As String
-Private m_Caption   As String
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkBold_Click

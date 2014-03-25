@@ -336,7 +336,7 @@ Private strTranslatorUrl  As String
 Private strFormName       As String
 Private strCreditList()   As String
 Private lngCurCredit      As Long
-Private m_Caption         As String
+
 
 Private Const strUrlOsZoneNetThread As String = "http://forum.oszone.net/thread-139908.html"
 

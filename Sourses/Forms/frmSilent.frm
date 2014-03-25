@@ -171,7 +171,7 @@ Option Explicit
 
 Private miTimerSecond As Integer
 Private strFormName   As String
-Private m_Caption     As String
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange

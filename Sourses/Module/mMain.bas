@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "24/03/2014"
+Public Const strDateProgram         As String = "25/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -124,7 +124,6 @@ Public strFrmMainCaptionTempDate    As String           ' кэпшн основной формы -
 'Заголовки таблицы для подсказок
 Public strTableHwidHeader1          As String           ' "-HWID-"
 Public strTableHwidHeader2          As String           ' "-Путь-"
-Public strTableHwidHeader3          As String           ' "-Файл-"
 Public strTableHwidHeader4          As String           ' "-Версия(БД)-"
 Public strTableHwidHeader5          As String           ' "-Версия(PC)-"
 Public strTableHwidHeader6          As String           ' "-Статус-"
@@ -139,7 +138,6 @@ Public strTableHwidHeader14         As String           ' "-Найден в пакете-"
 'Размеры заголовков таблицы для подсказок, высчитываем как Len()
 Public lngTableHwidHeader1          As Long
 Public lngTableHwidHeader2          As Long
-Public lngTableHwidHeader3          As Long
 Public lngTableHwidHeader4          As Long
 Public lngTableHwidHeader5          As Long
 Public lngTableHwidHeader6          As Long
@@ -155,7 +153,6 @@ Public lngTableHwidHeader14         As Long
 Public lngSizeRowDPMax              As Long
 Public lngSizeRow1Max               As Long
 Public lngSizeRow2Max               As Long
-Public lngSizeRow3Max               As Long
 Public lngSizeRow4Max               As Long
 Public lngSizeRow5Max               As Long
 Public lngSizeRow6Max               As Long
@@ -166,7 +163,6 @@ Public maxSizeRowAllLineMax         As Long
 'Расчитываются при старте исходя из длины наименования колонки
 Public lngSizeRow1                  As Long
 Public lngSizeRow2                  As Long
-Public lngSizeRow3                  As Long
 Public lngSizeRow4                  As Long
 Public lngSizeRow5                  As Long
 Public lngSizeRow6                  As Long
@@ -189,7 +185,6 @@ Private Sub Main()
     On Error Resume Next
 
     dtStartTimeProg = GetTickCount
-    Set objFSO = New Scripting.FileSystemObject
 
     ' Запоминаем app.path и прочее в переменные
     GetMyAppProperties
@@ -378,7 +373,9 @@ Private Sub Main()
     End If
 
     ' Регистрация внешних компонент
-    RegisterAddComponent
+    If Not RegisterAddComponent Then
+        GoTo ExitSub
+    End If
 
     If mbDebugStandart Then DebugMode "OsCurrentVersion: " & strOSCurrentVersion & vbNewLine & _
               "Architecture: " & strOSArchitecture & vbNewLine & _

@@ -1,21 +1,6 @@
 Attribute VB_Name = "mWorkWithFiles"
 Option Explicit
 
-' Переменные для работы с файловой системой
-Public objFSO              As Scripting.FileSystemObject
-
-'Константы для FSO
-Public Const ForWriting    As Long = 2
-Public Const ForAppending  As Long = 8
-Public Const ForReading    As Long = 1
-
-Private Root               As String
-Private xFOL               As Folder
-Private xFile              As File
-
-' Переменная
-Public strFileListInFolder As String
-
 ' Not add to project (if not DBS) - option for compile
 #Const mbIDE_DBSProject = False
 '!--------------------------------------------------------------------------------
@@ -41,12 +26,8 @@ Public strFileListInFolder As String
     
         lngResult = StrComp(strDataSHAFirst, strDataSHASecond, vbTextCompare)
     
-        If lngResult = 0 Then
-            CompareFilesByHashCAPICOM = True
-        Else
-            CompareFilesByHashCAPICOM = False
-        End If
-    
+        CompareFilesByHashCAPICOM = lngResult = 0
+
     End Function
 #End If
 
@@ -259,8 +240,9 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub DelRecursiveFolder(ByVal Folder As String)
 
-    Dim retDelete As Long
-    Dim retStrMsg As String
+    Dim retDelete   As Long
+    Dim retStrMsg   As String
+    Dim Root        As String
 
     Root = BackslashDelFromPath(Folder)
     If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: " & Root
@@ -441,20 +423,20 @@ Private Function DelTree(ByVal strDir As String) As Long
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function ExtFromFileName
+'! Procedure   (Функция)   :   Function GetFileNameExtension
 '! Description (Описание)  :   [Получить расширение файла из пути или имени файла]
 '! Parameters  (Переменные):   FileName (String)
 '!--------------------------------------------------------------------------------
-Public Function ExtFromFileName(ByVal FileName As String) As String
+Public Function GetFileNameExtension(ByVal FileName As String) As String
 
     Dim intLastSeparator As Long
 
     intLastSeparator = InStrRev(FileName, ".")
 
     If intLastSeparator Then
-        ExtFromFileName = Right$(FileName, Len(FileName) - intLastSeparator)
+        GetFileNameExtension = Right$(FileName, Len(FileName) - intLastSeparator)
     Else
-        ExtFromFileName = vbNullString
+        GetFileNameExtension = vbNullString
     End If
 
 End Function
@@ -473,47 +455,47 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   PathFile (String)
 '!--------------------------------------------------------------------------------
-Public Function FileisSystemAttr(PathFile As String) As Boolean
-    FileisSystemAttr = GetAttr(PathFile) And vbSystem
+Public Function FileIsSystemAttr(ByVal PathFile As String) As Boolean
+    FileIsSystemAttr = GetAttr(PathFile) And vbSystem
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileName_woExt
+'! Procedure   (Функция)   :   Function GetFileName_woExt
 '! Description (Описание)  :   [Получить имя файла без расширения, зная имя файла]
 '! Parameters  (Переменные):   FileName (String)
 '!--------------------------------------------------------------------------------
-Public Function FileName_woExt(ByVal FileName As String) As String
+Public Function GetFileName_woExt(ByVal FileName As String) As String
 
     Dim intLastSeparator As Long
 
-    FileName_woExt = FileName
+    GetFileName_woExt = FileName
 
     If LenB(FileName) Then
         intLastSeparator = InStrRev(FileName, ".")
 
         If intLastSeparator Then
-            FileName_woExt = Left$(FileName, intLastSeparator - 1)
+            GetFileName_woExt = Left$(FileName, intLastSeparator - 1)
         End If
     End If
 
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileNameFromPath
+'! Procedure   (Функция)   :   Function GetFileNameFromPath
 '! Description (Описание)  :   [Получить имя файла из полного пути]
 '! Parameters  (Переменные):   FilePath (String)
 '!--------------------------------------------------------------------------------
-Public Function FileNameFromPath(ByVal FilePath As String) As String
+Public Function GetFileNameFromPath(ByVal FilePath As String) As String
 
     Dim intLastSeparator As Long
 
-    FileNameFromPath = FilePath
+    GetFileNameFromPath = FilePath
 
     If LenB(FilePath) Then
         intLastSeparator = InStrRev(FilePath, vbBackslash)
 
         If intLastSeparator >= 0 Then
-            FileNameFromPath = Right$(FilePath, Len(FilePath) - intLastSeparator)
+            GetFileNameFromPath = Right$(FilePath, Len(FilePath) - intLastSeparator)
         End If
     End If
 
@@ -588,18 +570,19 @@ End Function
 Public Function IsDriveCDRoom() As Boolean
 
     Dim strDriveName As String
-    Dim xDrv         As Drive
+    Dim xDrv         As Long
 
-    IsDriveCDRoom = False
-    strDriveName = Left$(strAppPath, 2)
+    strDriveName = Left$(strAppPath, 3)
 
     ' Проверяем на запуск из сети
-    If InStr(strDriveName, vbBackslash) = 0 Then
+    If InStr(strDriveName, vbBackslashDouble) = 0 Then
         'получаем тип диска
-        Set xDrv = objFSO.GetDrive(strDriveName)
-
-        If xDrv.DriveType = CDRom Then
-            IsDriveCDRoom = True
+        If PathIsRoot(strDriveName) Then
+            xDrv = GetDriveType(strDriveName)
+    
+            If xDrv = DRIVE_CDROM Then
+                IsDriveCDRoom = True
+            End If
         End If
     End If
 
@@ -688,7 +671,6 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     Dim FileContent    As String
     Dim Key            As String
     Dim Value          As String
-    Dim mbR            As Boolean
     Dim i              As Long
     Dim Strings        As String
     Dim valval         As String
@@ -751,9 +733,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
                 Value = objMatch1.SubMatches(2)
             End If
 
-            mbR = StringHash.Exists(Key)
-
-            If Not mbR Then
+            If Not StringHash.Exists(Key) Then
                 StringHash.Add Key, Value
                 StringHash.Add strPercentage & Key & strPercentage, Value
             End If
@@ -779,11 +759,11 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function PathNameFromPath
+'! Procedure   (Функция)   :   Function GetPathNameFromPath
 '! Description (Описание)  :   [Получить путь к файлу из полного пути]
 '! Parameters  (Переменные):   FilePath (String)
 '!--------------------------------------------------------------------------------
-Public Function PathNameFromPath(FilePath As String) As String
+Public Function GetPathNameFromPath(ByVal FilePath As String) As String
 
     Dim intLastSeparator As Long
 
@@ -791,13 +771,13 @@ Public Function PathNameFromPath(FilePath As String) As String
 
     If intLastSeparator Then
         If intLastSeparator < Len(FilePath) Then
-            PathNameFromPath = Left$(FilePath, intLastSeparator)
+            GetPathNameFromPath = Left$(FilePath, intLastSeparator)
         Else
-            PathNameFromPath = FilePath
+            GetPathNameFromPath = FilePath
         End If
 
     Else
-        PathNameFromPath = FilePath
+        GetPathNameFromPath = FilePath
     End If
 
 End Function
@@ -1177,8 +1157,8 @@ Public Function PathCollect(Path As String) As String
                         PathCollect = GetEnviron(Path, True)
                     Else
 
-                        If LenB(ExtFromFileName(Path)) Then
-                            If FileNameFromPath(Path) = Path Then
+                        If LenB(GetFileNameExtension(Path)) Then
+                            If GetFileNameFromPath(Path) = Path Then
                                 PathCollect = Path
                             Else
                                 PathCollect = strAppPathBackSL & Path
@@ -1226,15 +1206,15 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
             Else
 
                 If Left$(Path, 3) = "..\" Then
-                    PathCollect4Dest = PathNameFromPath(strDest) & Mid$(Path, 4, Len(Path) - 1)
+                    PathCollect4Dest = GetPathNameFromPath(strDest) & Mid$(Path, 4, Len(Path) - 1)
                 Else
 
                     If InStr(Path, strPercentage) Then
                         PathCollect4Dest = GetEnviron(Path, True)
                     Else
 
-                        If LenB(ExtFromFileName(Path)) Then
-                            If FileNameFromPath(Path) = Path Then
+                        If LenB(GetFileNameExtension(Path)) Then
+                            If GetFileNameFromPath(Path) = Path Then
                                 PathCollect4Dest = Path
                             Else
                                 PathCollect4Dest = BackslashAdd2Path(strDest) & Path
@@ -1320,7 +1300,7 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   strFolderPath (String)
 '!--------------------------------------------------------------------------------
-Public Function CreateIfNotExistPath(strFolderPath As String) As Boolean
+Public Function CreateIfNotExistPath(ByVal strFolderPath As String) As Boolean
 
     If LenB(strFolderPath) Then
 
@@ -1586,3 +1566,46 @@ Private Sub FileWriteDataAPIUni(ByVal sFilePath As String, ByVal strData As Stri
     End If
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetFileVersionOnly
+'! Description (Описание)  :   [Return file version information string.]
+'! Parameters  (Переменные):   sFileName (String)
+'!--------------------------------------------------------------------------------
+Public Function GetFileVersionOnly(ByVal sFileName As String) As String
+    Dim nUnused As Long
+    Dim sBuffer() As Byte
+    Dim nBufferSize As Long
+    Dim lpBuffer As Long
+    Dim FFI As VS_FIXEDFILEINFO
+    Dim nVerSize As Long
+    Dim sResult As String
+
+    ' Get the version information buffer size.
+    nBufferSize = GetFileVersionInfoSize(sFileName, nUnused)
+    If nBufferSize Then
+        ' Load the fixed file information into a buffer.
+        ReDim sBuffer(0 To nBufferSize)
+        If GetFileVersionInfo(sFileName, 0&, nBufferSize, sBuffer(0)) Then
+            'VerQueryValue function returns selected version info
+            'from the specified version-information resource. Grab
+            'the file info and copy it into the  VS_FIXEDFILEINFO structure.
+            If VerQueryValue(sBuffer(0), "\", lpBuffer, nVerSize) Then
+            
+                ' Copy the information from the buffer into a usable structure.
+                CopyMemory FFI, ByVal lpBuffer, Len(FFI)
+            
+                ' Get the version information.
+                With FFI
+                    ' File version number.
+                    sResult = Format$(.dwFileVersionMSh) & "." & Format$(.dwFileVersionMSl) & "." & Format$(.dwFileVersionLSh) & "." & Format$(.dwFileVersionLSl)
+                    'sResult = Format$(.dwFileVersionMSh) & "." & Format$(.dwFileVersionMSl) & "." & Format$(.dwFileVersionLSl)
+                End With
+            
+                GetFileVersionOnly = sResult
+            End If
+            ' Else MsgBox "Error getting fixed file version information"
+        End If
+        'Else MsgBox "Error getting version information"
+    End If
+    'Else MsgBox "No version information available"
+End Function
