@@ -516,6 +516,7 @@ Option Explicit
 ' Минимальные размеры формы
 Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
+
 Private lngDeviceCount   As Long
 Private strFormName      As String
 
@@ -564,19 +565,12 @@ Private Sub FindCheckCountList()
     Next
 
     If miCount Then
-
-        With cmdOK
-
-            If Not .Enabled Then
-                .Enabled = True
-            End If
-
-        End With
-
+        If Not cmdOK.Enabled Then
+            cmdOK.Enabled = True
+        End If
     End If
 
 End Sub
-
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -594,6 +588,7 @@ Private Sub FontCharsetChange()
 
     frGroup.Font.Charset = lngFont_Charset
     frFindDrvInternet.Font.Charset = lngFont_Charset
+    
     SetBtnFontProperties cmdReNewHW
     SetBtnFontProperties cmdBackUpDrivers
     SetBtnFontProperties cmdOK
@@ -616,11 +611,10 @@ Public Sub FormLoadAction()
         ' Выставляем шрифт
         FontCharsetChange
     End If
-
-    LoadList_Device False
-    Me.CaptionW = Me.CaptionW & " (Find: " & lvDevices.ListItems.Count & ")"
-    lngDeviceCount = lvDevices.ListItems.Count
+    
     LoadListbyMode
+    
+    lngDeviceCount = UBound(arrHwidsLocal) + 1
     LoadFormCaption
     cmdGoSite.Enabled = LenB(txtFindText.Text)
 End Sub
@@ -711,12 +705,24 @@ Private Sub LoadListbyMode()
         End If
     End If
 
-    If Not (lvDevices Is Nothing) Then
-        lvDevices.ListItems.Clear
-    End If
-
     If lngModeList <> 9999 Then
-        LoadList_Device False, lngModeList
+        LoadList_Device lngModeList
+    Else
+        If Not (lvDevices Is Nothing) Then
+            lvDevices.ListItems.Clear
+        End If
+        With lvDevices.ColumnHeaders
+            If .Count Then
+                .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+            End If
+        End With
     End If
 
     LoadFormCaption
@@ -856,7 +862,6 @@ Private Sub cmdCheckAll_Click()
 
     End With
 
-    'LVDEVICES
     FindCheckCountList
 End Sub
 
@@ -1087,7 +1092,6 @@ Private Sub Form_Resize()
 
     End With
 
-    'Me
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1096,7 +1100,7 @@ End Sub
 '! Parameters  (Переменные):   mbViewed (Boolean = True)
 '                              lngMode (Long = 0)
 '!--------------------------------------------------------------------------------
-Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional ByVal lngMode As Long = 0)
+Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
 
     Dim strDevHwid        As String
     Dim strDevDriverLocal As String
@@ -1114,14 +1118,14 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
         .ListItems.Clear
 
         If .ColumnHeaders.Count = 0 Then
-            .ColumnHeaders.Add 1, , strTableHwidHeader1, 225 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 2, , strTableHwidHeader7, 300 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 3, , strTableHwidHeader6, 60 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 4, , strTableHwidHeader5, 150 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 5, , strTableHwidHeader10, 150 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 6, , strTableHwidHeader11, 150 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 7, , strTableHwidHeader12, 250 * Screen.TwipsPerPixelX
-            .ColumnHeaders.Add 8, , strTableHwidHeader14, 250 * Screen.TwipsPerPixelX
+            .ColumnHeaders.Add 1, , strTableHwidHeader1
+            .ColumnHeaders.Add 2, , strTableHwidHeader7
+            .ColumnHeaders.Add 3, , strTableHwidHeader6
+            .ColumnHeaders.Add 4, , strTableHwidHeader5
+            .ColumnHeaders.Add 5, , strTableHwidHeader10
+            .ColumnHeaders.Add 6, , strTableHwidHeader11
+            .ColumnHeaders.Add 7, , strTableHwidHeader12
+            .ColumnHeaders.Add 8, , strTableHwidHeader14
         End If
 
     End With
@@ -1179,7 +1183,7 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
                     lngNumRow = lngNumRow + 1
                 End If
 
-                ' OEM - All
+            ' OEM - All
             Case 2
 
                 If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
@@ -1258,6 +1262,33 @@ Private Sub LoadList_Device(Optional ByVal mbViewed As Boolean = True, Optional 
         End Select
 
     Next
+    
+    With lvDevices.ColumnHeaders
+        If .Count Then
+            If lvDevices.ListItems.Count Then
+                .Item(1).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(2).AutoSize LvwColumnHeaderAutoSizeToItems
+                If .Item(2).Width < lvDevices.ListItems.Item(1).Width Then
+                    .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                End If
+                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(4).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(5).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(6).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(7).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(8).AutoSize LvwColumnHeaderAutoSizeToItems
+            Else
+                .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+            End If
+        End If
+    End With
 
 End Sub
 
