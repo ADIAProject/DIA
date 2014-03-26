@@ -1717,7 +1717,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
 
             If LenB(strTextHwids) Then
                 ChangeStatusAndPictureButton = strTextHwids
-                If mbDebugStandart Then DebugMode str4VbTab & "ChangeStatusAndPictureButton-Hwids in file for PC: " & vbNewLine & vbNewLine & strTextHwids & vbNewLine
+                If mbDebugStandart Then DebugMode str4VbTab & "ChangeStatusAndPictureButton-Hwids in file for PC: " & str2vbNewLine & strTextHwids & vbNewLine
 
                 If mbStatusHwid Then
                     If mbStatusNewer Then
@@ -6801,9 +6801,9 @@ Private Sub ToolTipStatusLoad()
     arrTTipStatusIconTemp(0) = "В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & str2vbNewLine & "Такие же драйвера (тех же версий) уже установлены на вашем компьютере." & _
                                 str2vbNewLine & "Ваши действия:" & vbNewLine & "Никаких действий не требуется. " & str2vbNewLine & "Примечание:" & vbNewLine & "Если в колонке статус для устроуства стоит '0', то это означает:" & vbNewLine & _
                                 " * - устройство блокировано;" & vbNewLine & " * - драйвер для данного устройства не активен (см. сведения в диспетчере устройств)"
-    arrTTipStatusIconTemp(1) = "В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & vbNewLine & vbNewLine & "На вашем компьютере эти драйвера не установлены." & vbNewLine & vbNewLine & _
+    arrTTipStatusIconTemp(1) = "В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & str2vbNewLine & "На вашем компьютере эти драйвера не установлены." & str2vbNewLine & _
                                 "Ваши действия:" & vbNewLine & _
-                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке необходимых драйверов из пакета и соответствующему изменению вида кнопки." & vbNewLine & vbNewLine & _
+                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке необходимых драйверов из пакета и соответствующему изменению вида кнопки." & str2vbNewLine & _
                                 "Примечания:" & vbNewLine & _
                                 "1. В некоторых случаях драйвера, из обнаруженных в пакете драйверов, могут не подойти к вашему оборудованию. Сравнение идентификаторов устройств (HWID) происходит по основной части HWID без учета подклассов устройств (SUBSYS|REV|MI)." _
                                 & vbNewLine & "2. Если в колонке статус для устроуства стоит '0', то это означает:" & vbNewLine & " * - драйвер для данного устройства не установлен;" & vbNewLine & " * - устройство блокировано;" & vbNewLine & _
@@ -6814,20 +6814,20 @@ Private Sub ToolTipStatusLoad()
                                 "В некоторых случаях драйвера, из обнаруженных в пакете драйверов, могут не подойти к вашему оборудованию. Сравнение идентификаторов устройств (HWID) происходит по основной части HWID без учета подклассов устройств (SUBSYS|REV|MI)."
     arrTTipStatusIconTemp(3) = "В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере, но более старые, чем те, что уже установлены." & str2vbNewLine & "Ваши действия:" & vbNewLine & _
                                 "Ничего делать не надо. Можете поискать в сети более свежие драйвера и обновить (заменить) данный пакет в программе."
-    arrTTipStatusIconTemp(4) = "1. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере, но более новые, чем те, что уже установлены." & vbNewLine & vbNewLine & "Ваши действия:" & vbNewLine & _
-                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке более новых драйверов из пакета и соответствующему изменению вида кнопки." & vbNewLine & vbNewLine & _
-                                "2. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & vbNewLine & vbNewLine & "На вашем компьютере эти драйвера не установлены." & vbNewLine & vbNewLine _
+    arrTTipStatusIconTemp(4) = "1. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере, но более новые, чем те, что уже установлены." & str2vbNewLine & "Ваши действия:" & vbNewLine & _
+                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке более новых драйверов из пакета и соответствующему изменению вида кнопки." & str2vbNewLine & _
+                                "2. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & str2vbNewLine & "На вашем компьютере эти драйвера не установлены." & str2vbNewLine _
                                 & "Ваши действия:" & vbNewLine & _
-                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке необходимых драйверов из пакета и соответствующему изменению вида кнопки." & vbNewLine & vbNewLine & _
+                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке необходимых драйверов из пакета и соответствующему изменению вида кнопки." & str2vbNewLine & _
                                 "Примечания:" & vbNewLine & _
                                 "1. В некоторых случаях драйвера, из обнаруженных в пакете драйверов, могут не подойти к вашему оборудованию. Сравнение идентификаторов устройств (HWID) происходит по основной части HWID без учета подклассов устройств (SUBSYS|REV|MI)." _
                                 & vbNewLine & "2. Если в колонке статус для устроуства стоит '0', то это означает:" & vbNewLine & " * - драйвер для данного устройства не установлен;" & vbNewLine & " * - устройство блокировано;" & vbNewLine & _
                                 " * - драйвер для данного устройства не активен (см. сведения в диспетчере устройств)"
-    arrTTipStatusIconTemp(5) = "1. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере, но более старые, чем те, что уже установлены." & vbNewLine & vbNewLine & "Ваши действия:" & vbNewLine & _
-                                "Ничего делать не надо. Можете поискать в сети более свежие драйвера и обновить (заменить) данный пакет в программе." & vbNewLine & vbNewLine & _
-                                "2. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & vbNewLine & vbNewLine & "На вашем компьютере эти драйвера не установлены." & vbNewLine & vbNewLine _
+    arrTTipStatusIconTemp(5) = "1. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере, но более старые, чем те, что уже установлены." & str2vbNewLine & "Ваши действия:" & vbNewLine & _
+                                "Ничего делать не надо. Можете поискать в сети более свежие драйвера и обновить (заменить) данный пакет в программе." & str2vbNewLine & _
+                                "2. В этом пакете драйверов программы есть драйвера, подходящие к устройству, обнаруженному на вашем компьютере." & str2vbNewLine & "На вашем компьютере эти драйвера не установлены." & str2vbNewLine _
                                 & "Ваши действия:" & vbNewLine & _
-                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке необходимых драйверов из пакета и соответствующему изменению вида кнопки." & vbNewLine & vbNewLine & _
+                                "Переключите программу в один из режимов установки драйверов и нажмите на эту кнопку - это приведет к установке необходимых драйверов из пакета и соответствующему изменению вида кнопки." & str2vbNewLine & _
                                 "Примечания:" & vbNewLine & _
                                 "1. В некоторых случаях драйвера, из обнаруженных в пакете драйверов, могут не подойти к вашему оборудованию. Сравнение идентификаторов устройств (HWID) происходит по основной части HWID без учета подклассов устройств (SUBSYS|REV|MI)." _
                                 & vbNewLine & "2. Если в колонке статус для устроуства стоит '0', то это означает:" & vbNewLine & " * - драйвер для данного устройства не установлен;" & vbNewLine & " * - устройство блокировано;" & vbNewLine & _
@@ -7495,7 +7495,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
     Dim TimeScriptRun         As Long
     Dim TimeScriptFinish      As Long
     Dim AllTimeScriptRun      As String
-    Dim strFileName_woExt As String
+    Dim strFileName_woExt     As String
     Dim cmdString             As String
     Dim ArchTempPath          As String
     Dim strDevPathShort       As String
@@ -7504,14 +7504,18 @@ Private Sub acmdPackFiles_Click(Index As Integer)
     Dim strTemp_x()           As String
     Dim strTempLine_x()       As String
     Dim i_arr                 As Long
+    Dim lngRetMsgBox          As Long
 
     If mbDebugStandart Then DebugMode "acmdPackFiles_Click-Start: Index Button=" & Index
                
     strPathDRPList = vbNullString
+    
+    ' Блокируем форму при обработке пакета
     If Not mbGroupTask Then
         BlockControl False
     End If
 
+    ' Запущен ли другой процесс обработки пакета?
     If mbDevParserRun Then
         MsgBox strMessages(22), vbInformation, strProductName
     Else
@@ -7560,6 +7564,26 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                 '-------- Установка всех драйверов в пакете -----------
                 '------------------------------------------------------
             ElseIf optRezim_Ust.Value Then
+                
+                ' Создаем точку восстановления
+                If mbCreateRestorePoint Then
+                    ' Проверяем создавалась ли точка восстановления ранее
+                    If Not mbCreateRestorePointDone Then
+                        If mbSilentRun Then
+                            CreateRestorePoint
+                        Else
+                            lngRetMsgBox = MsgBox(strMessages(115) & vbNewLine & strMessages(120) & str2vbNewLine & strMessages(153), vbQuestion + vbYesNoCancel, strProductName)
+                            ' Click "Yes"
+                            If lngRetMsgBox = vbYes Then
+                                CreateRestorePoint
+                            ' Click "Cancel" - Do not remind
+                            ElseIf lngRetMsgBox = vbCancel Then
+                                mbCreateRestorePointDone = True
+                            End If
+                        End If
+                    End If
+                End If
+    
                 ChangeStatusTextAndDebug strMessages(63) & " " & strPackFileName, strMessages(129)
                 'Имя папки с распакованными драйверами
                 strFileName_woExt = GetFileName_woExt(strPackFileName)
@@ -7595,6 +7619,26 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                 '------- Установка избранных драйверов в пакете--------
                 '------------------------------------------------------
             Else
+            
+                ' Создаем точку восстановления
+                If mbCreateRestorePoint Then
+                    ' Проверяем создавалась ли точка восстановления ранее
+                    If Not mbCreateRestorePointDone Then
+                        If mbSilentRun Then
+                            CreateRestorePoint
+                        Else
+                            lngRetMsgBox = MsgBox(strMessages(115) & vbNewLine & strMessages(120) & str2vbNewLine & strMessages(153), vbQuestion + vbYesNoCancel, strProductName)
+                            ' Click "Yes"
+                            If lngRetMsgBox = vbYes Then
+                                CreateRestorePoint
+                            ' Click "Cancel" - Do not remind
+                            ElseIf lngRetMsgBox = vbCancel Then
+                                mbCreateRestorePointDone = True
+                            End If
+                        End If
+                    End If
+                End If
+                
                 ChangeStatusTextAndDebug strMessages(63) & " " & strPackFileName, strMessages(129)
                 'Имя папки с распакованными драйверами
                 strFileName_woExt = GetFileName_woExt(strPackFileName)
@@ -8159,11 +8203,6 @@ Private Sub Form_Activate()
             
             ChangeStatusTextAndDebug strMessages(59) & " " & dtAllTimeProg
             If mbDebugStandart Then DebugMode "End Start Operation" & " StartTime is: " & dtAllTimeProg
-            ' Иконки меню
-            'If mbExMenu Then
-            'ExMenuEnable
-            'End If
-            'Me.Refresh
     
             If mbRunWithParam Then
                 ChangeStatusTextAndDebug strMessages(60)
@@ -8172,11 +8211,6 @@ Private Sub Form_Activate()
     
                 If mbSilentRun Then
     
-                    ' Создаем точку восстановления
-                    If mbCreateRestorePoint Then
-                        CreateRestorePoint
-                    End If
-    
                     If Not mbNoSupportedOS Then
                         '"Начинается автоматическая установка"
                         SilentInstall
@@ -8184,26 +8218,11 @@ Private Sub Form_Activate()
                         Unload Me
                     End If
     
-                Else
-    
-                    ' Создаем точку восстановления
-                    If mbCreateRestorePoint Then
-                        If MsgBox(strMessages(115) & vbNewLine & strMessages(120), vbQuestion + vbYesNo, strProductName) = vbYes Then
-                            CreateRestorePoint
-                        End If
-                    End If
                 End If
     
             Else
                 ' Разные сообщения если нет поддерживаемых вкладок, или что-то нет так с пакетами
                 EventOnActivateForm
-    
-                ' Создаем точку восстановления
-                If mbCreateRestorePoint Then
-                    If MsgBox(strMessages(115) & vbNewLine & strMessages(120), vbQuestion + vbYesNo, strProductName) = vbYes Then
-                        CreateRestorePoint
-                    End If
-                End If
     
                 ' Проверка обновлений при старте, только если не тихий режим установки
                 If mbUpdateCheck Then
@@ -9142,7 +9161,12 @@ End Sub
 Private Sub mnuCreateRestorePoint_Click()
 
     If MsgBox(strMessages(115), vbQuestion + vbYesNo, strProductName) = vbYes Then
+        ' Блокируем форму при создании точки восстановления
+        BlockControl False
+        ' Собственно создание точки
         CreateRestorePoint
+        ' РазБлокируем форму после создания точки восстановления
+        BlockControl True
     End If
 
 End Sub

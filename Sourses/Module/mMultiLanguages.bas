@@ -1,19 +1,25 @@
 Attribute VB_Name = "mMultiLanguages"
 Option Explicit
 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Copyright ©1996-2009 VBnet, Randy Birch, All Rights Reserved.
-' Some pages may also contain other copyrights by the author.
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' Distribution: You can freely use this code in your own
-'               applications, but you may not reproduce
-'               or publish this code on any web site,
-'               online service, or distribute as source
-'               on any media without express permission.
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'Поддержка многоязычности в программе
+'Note: this file has been writen for use within Drivers Installer Assistant.
+
+' Модуль для организации поддержки многоязычности в программе
+' В процессе обработки создается массив данных о языковых файлах arrLanguage() , данные беруться из секции [Lang]
+' Пример секции
+' [Lang]
+'    Name = English
+'    TranslatorName = Romeo91 & stasys44
+'    TranslatorURL = www.adia-project.net
+'    ID=0409;0009;0c09;2809;1009;2409;4009;1809;2009;4409;1409;3409;4809;1c09;2c09;0809;3009;3c09;3809
+'    Version=6.0.0 - справочное значение
+'    Date=17/2/2014 - справочное значение
+'    Charset=1252
+
+' данные вносятся в языковой файл в подсекции с именами form
+' параметрами являются имена контролов
+
 Public mbMultiLanguage                As Boolean
-Public arrLanguage()                  As String     ' Массив служебных сообщений
+Public arrLanguage()                  As String     ' Массив данных о языковых файлах
 Public strPCLangID                    As String
 Public strPCLangLocaliseName          As String
 Public strPCLangEngName               As String
@@ -26,25 +32,24 @@ Public mbAutoLanguage                 As Boolean
 Public strStartLanguageID             As String
 
 ' Массив служебных сообщений
-Public strMessages(150)               As String
+Public strMessages(153)               As String
 
 ' Api - переменные для работы с языками
-Public Const LOCALE_ILANGUAGE         As Long = &H1    'language id
-Public Const LOCALE_SLANGUAGE         As Long = &H2    'localized name of language
-Public Const LOCALE_SENGLANGUAGE      As Long = &H1001    'English name of language
+Public Const LOCALE_ILANGUAGE         As Long = &H1     'language id
+Public Const LOCALE_SLANGUAGE         As Long = &H2     'localized name of language
+Public Const LOCALE_SENGLANGUAGE      As Long = &H1001  'English name of language
 
-Private Const LOCALE_SABBREVLANGNAME  As Long = &H3    'abbreviated language name
-Private Const LOCALE_SNATIVELANGNAME  As Long = &H4    'native name of language
-Private Const LOCALE_IDEFAULTLANGUAGE As Long = &H9    'default language id
+'Private Const LOCALE_SABBREVLANGNAME  As Long = &H3     'abbreviated language name
+'Private Const LOCALE_SNATIVELANGNAME  As Long = &H4     'native name of language
+'Private Const LOCALE_IDEFAULTLANGUAGE As Long = &H9     'default language id
 
 Public Declare Function GetSystemDefaultLCID Lib "kernel32.dll" () As Long
 
 Private Declare Function GetLocaleInfo Lib "kernel32.dll" Alias "GetLocaleInfoA" (ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As String, ByVal cchData As Long) As Long
 
-' Получение Font.charset на основании кодовой страницы
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetCharsetFromLng
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Получение Font.charset на основании кодовой страницы]
 '! Parameters  (Переменные):   lngCodePage (Long)
 '!--------------------------------------------------------------------------------
 Public Function GetCharsetFromLng(lngCodePage As Long) As Long

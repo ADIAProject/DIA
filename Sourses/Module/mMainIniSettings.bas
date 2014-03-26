@@ -44,6 +44,7 @@ Public mbLoadUnSupportedOS               As Boolean     ' Грузить\негрузить драй
 Public mbAutoInfoAfterDelDRV             As Boolean     ' Автообновление конфигурации при удалении драйвера
 Public mbDateFormatRus                   As Boolean     ' Автообновление конфигурации при удалении драйвера
 Public mbCreateRestorePoint              As Boolean     ' Переменная для режима создания точки восстановления
+Public mbCreateRestorePointDone          As Boolean     ' Флаг, показывающий что точка восстановления уже создавалась ранее
 Public mbDisableDEP                      As Boolean     ' Переменная для определения выключения DEP
 Public mbHideOtherProcess                As Boolean     ' Скрывать сторонние процессы при запуске
 Public mbDP_Is_aFolder                   As Boolean     ' Пакеты драйверов в виде папок - т.е распакованные пакет драйверов

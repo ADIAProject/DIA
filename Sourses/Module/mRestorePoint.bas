@@ -4,10 +4,9 @@ Option Explicit
 Private Const DEVICE_DRIVER_INSTALL As Integer = 10
 Private Const BEGIN_SYSTEM_CHANGE   As Integer = 100
 
-' Проверка реестра на опцию SystemRestore - включена или нет
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckRestorePoint
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Проверка реестра на опцию SystemRestore - включена или нет]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function CheckRestorePoint() As Boolean
@@ -35,7 +34,7 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateRestorePoint
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Создание точки восстановления, используя WMI]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub CreateRestorePoint()
@@ -47,8 +46,6 @@ Public Sub CreateRestorePoint()
 
     ChangeStatusTextAndDebug strMessages(118)
     strComputer = "."
-    ' Блокируем форму при создании точки восстановления
-    frmMain.BlockControl False
 
     On Error GoTo HandErr
 
@@ -86,11 +83,10 @@ Public Sub CreateRestorePoint()
 
     Set objWMIService = Nothing
     Set objRP = Nothing
-    
-    ' РазБлокируем форму при создании точки восстановления
-    frmMain.BlockControl True
 
 ExitFromSub:
+    ' Флаг - Процесс создания точки восстановления уже запускался, независимо от результатов, для исключения многократного запуска при установке драйверов
+    mbCreateRestorePointDone = True
 
     Exit Sub
 
@@ -105,6 +101,4 @@ HandErr:
         GoTo ExitFromSub
     End If
 
-    ' РазБлокируем форму при создании точки восстановления
-    frmMain.BlockControl True
 End Sub

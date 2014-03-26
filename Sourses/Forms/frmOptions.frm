@@ -3582,10 +3582,10 @@ Dim strTTText As String
 Dim strTTipTextTitle As String
 
     strTTipTextTitle = LocaliseString(strPCLangCurrentPath, frmMain.Name, "ToolTipTextTitle", "Файл пакета драйверов:")
-    strTTText = "d:\DriversInstaller\driverpacks.net\All\" & vbNewLine & vbNewLine & _
+    strTTText = "d:\DriversInstaller\driverpacks.net\All\" & str2vbNewLine & _
                 "dp_chipset_wnt5_x86-32_1209.7z" & vbNewLine & _
                 "File Size: 4,33 МБ" & vbNewLine & _
-                "Class of the Drivers: System" & vbNewLine & vbNewLine & _
+                "Class of the Drivers: System" & str2vbNewLine & _
                 "DRIVERS AVAILABLE TO INSTALL:" & vbNewLine & _
                 "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------" & vbNewLine & _
                 "HWID                  | PATH      | INFFILE      | VERSION(DB)            | ! | VERSION(PC)              | STATUS | DEVICE NAME                                                                                " & vbNewLine & _
