@@ -55,7 +55,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdOK 
          Height          =   645
          Left            =   75
-         TabIndex        =   0
+         TabIndex        =   1
          Top             =   3735
          Width           =   2850
          _ExtentX        =   5027
@@ -78,9 +78,10 @@ Begin VB.Form frmOptions
          PictureShadow   =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdExit 
+         Default         =   -1  'True
          Height          =   645
          Left            =   75
-         TabIndex        =   14
+         TabIndex        =   2
          Top             =   4515
          Width           =   2850
          _ExtentX        =   5027
@@ -105,7 +106,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ListView lvOptions 
          Height          =   3195
          Left            =   120
-         TabIndex        =   136
+         TabIndex        =   0
          Top             =   480
          Width           =   2775
          _ExtentX        =   4895
@@ -159,7 +160,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkRemoveTemp 
          Height          =   210
          Left            =   435
-         TabIndex        =   19
+         TabIndex        =   16
          Top             =   3600
          Width           =   7920
          _ExtentX        =   8281
@@ -179,7 +180,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkUpdate 
          Height          =   210
          Left            =   435
-         TabIndex        =   20
+         TabIndex        =   4
          Top             =   800
          Width           =   3240
          _ExtentX        =   5715
@@ -199,7 +200,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkReadDPName 
          Height          =   210
          Left            =   435
-         TabIndex        =   28
+         TabIndex        =   8
          Top             =   1850
          Width           =   7920
          _ExtentX        =   11430
@@ -219,7 +220,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkConvertDPName 
          Height          =   210
          Left            =   435
-         TabIndex        =   29
+         TabIndex        =   7
          Top             =   1500
          Width           =   7920
          _ExtentX        =   13758
@@ -239,7 +240,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkHideOtherProcess 
          Height          =   210
          Left            =   435
-         TabIndex        =   50
+         TabIndex        =   12
          Top             =   2550
          Width           =   7920
          _ExtentX        =   6350
@@ -259,7 +260,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkTempPath 
          Height          =   210
          Left            =   435
-         TabIndex        =   51
+         TabIndex        =   14
          Top             =   3250
          Width           =   3255
          _ExtentX        =   5741
@@ -279,7 +280,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkUpdateBeta 
          Height          =   210
          Left            =   3780
-         TabIndex        =   54
+         TabIndex        =   5
          Top             =   800
          Width           =   4560
          _ExtentX        =   8043
@@ -299,7 +300,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkSilentDll 
          Height          =   210
          Left            =   435
-         TabIndex        =   15
+         TabIndex        =   6
          Top             =   1150
          Width           =   7920
          _ExtentX        =   13970
@@ -319,7 +320,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkSearchOnStart 
          Height          =   210
          Left            =   435
-         TabIndex        =   16
+         TabIndex        =   9
          Top             =   2200
          Width           =   5280
          _ExtentX        =   9313
@@ -339,7 +340,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtPauseAfterSearch 
          Height          =   255
          Left            =   7710
-         TabIndex        =   17
+         TabIndex        =   11
          Top             =   2200
          Width           =   660
          _ExtentX        =   1164
@@ -358,7 +359,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucTempPath 
          Height          =   315
          Left            =   3780
-         TabIndex        =   1
+         TabIndex        =   15
          Top             =   3200
          Width           =   4575
          _ExtentX        =   8070
@@ -371,7 +372,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton optRezim_Intellect 
          Height          =   510
          Left            =   420
-         TabIndex        =   55
+         TabIndex        =   18
          Top             =   4300
          Width           =   2505
          _ExtentX        =   4419
@@ -398,7 +399,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton optRezim_Upd 
          Height          =   510
          Left            =   5700
-         TabIndex        =   56
+         TabIndex        =   20
          Top             =   4300
          Width           =   2505
          _ExtentX        =   4419
@@ -425,7 +426,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton optRezim_Ust 
          Height          =   510
          Left            =   3060
-         TabIndex        =   57
+         TabIndex        =   19
          Top             =   4300
          Width           =   2505
          _ExtentX        =   4419
@@ -452,7 +453,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblPauseAfterSearch 
          Height          =   225
          Left            =   5400
-         TabIndex        =   86
+         TabIndex        =   10
          Top             =   2200
          Width           =   2265
          _ExtentX        =   3995
@@ -473,7 +474,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblOptionsTemp 
          Height          =   270
          Left            =   180
-         TabIndex        =   87
+         TabIndex        =   13
          Top             =   2900
          Width           =   8295
          _ExtentX        =   14631
@@ -494,7 +495,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblOptionsStart 
          Height          =   270
          Left            =   180
-         TabIndex        =   88
+         TabIndex        =   3
          Top             =   465
          Width           =   8295
          _ExtentX        =   14631
@@ -515,7 +516,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblRezim 
          Height          =   270
          Left            =   180
-         TabIndex        =   89
+         TabIndex        =   17
          Top             =   3950
          Width           =   8295
          _ExtentX        =   14631
@@ -561,14 +562,14 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   300
-         TabIndex        =   83
+         TabIndex        =   24
          Top             =   1550
          Width           =   255
       End
       Begin prjDIADBS.OptionButtonW optCompareByVersion 
          Height          =   255
          Left            =   300
-         TabIndex        =   59
+         TabIndex        =   27
          Top             =   2250
          Width           =   8100
          _ExtentX        =   14288
@@ -589,7 +590,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.OptionButtonW optCompareByDate 
          Height          =   255
          Left            =   300
-         TabIndex        =   58
+         TabIndex        =   26
          Top             =   1900
          Width           =   8100
          _ExtentX        =   14288
@@ -609,7 +610,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtCompareVersionDRV 
          Height          =   1005
          Left            =   300
-         TabIndex        =   18
+         TabIndex        =   28
          Top             =   2600
          Width           =   8100
          _ExtentX        =   0
@@ -635,7 +636,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkDateFormatRus 
          Height          =   210
          Left            =   300
-         TabIndex        =   2
+         TabIndex        =   22
          Top             =   850
          Width           =   8100
          _ExtentX        =   14288
@@ -675,7 +676,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkCompatiblesHWID 
          Height          =   210
          Left            =   300
-         TabIndex        =   22
+         TabIndex        =   23
          Top             =   1200
          Width           =   8100
          _ExtentX        =   14288
@@ -695,7 +696,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblCompareVersionDRV 
          Height          =   225
          Left            =   600
-         TabIndex        =   90
+         TabIndex        =   25
          Top             =   1550
          Width           =   7800
          _ExtentX        =   13758
@@ -740,7 +741,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucDevCon86Path 
          Height          =   315
          Left            =   2520
-         TabIndex        =   23
+         TabIndex        =   29
          Top             =   450
          Width           =   6000
          _ExtentX        =   10583
@@ -755,7 +756,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucDevCon64Path 
          Height          =   315
          Left            =   2520
-         TabIndex        =   25
+         TabIndex        =   31
          Top             =   850
          Width           =   6000
          _ExtentX        =   10583
@@ -769,7 +770,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucDevCon86Pathw2k 
          Height          =   315
          Left            =   2520
-         TabIndex        =   3
+         TabIndex        =   33
          Top             =   1250
          Width           =   6000
          _ExtentX        =   10583
@@ -783,7 +784,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucDPInst86Path 
          Height          =   315
          Left            =   2520
-         TabIndex        =   4
+         TabIndex        =   35
          Top             =   1650
          Width           =   6000
          _ExtentX        =   10583
@@ -797,7 +798,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucDPInst64Path 
          Height          =   315
          Left            =   2520
-         TabIndex        =   5
+         TabIndex        =   37
          Top             =   2050
          Width           =   6000
          _ExtentX        =   10583
@@ -811,7 +812,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucArchPath 
          Height          =   315
          Left            =   2520
-         TabIndex        =   6
+         TabIndex        =   39
          Top             =   2450
          Width           =   6000
          _ExtentX        =   10583
@@ -825,7 +826,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucCmdDevconPath 
          Height          =   315
          Left            =   2520
-         TabIndex        =   8
+         TabIndex        =   41
          Top             =   2850
          Width           =   6000
          _ExtentX        =   10583
@@ -839,7 +840,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdPathDefault 
          Height          =   495
          Left            =   4900
-         TabIndex        =   60
+         TabIndex        =   43
          Top             =   3300
          Width           =   3615
          _ExtentX        =   6376
@@ -864,7 +865,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDevCon64 
          Height          =   315
          Left            =   100
-         TabIndex        =   91
+         TabIndex        =   32
          Top             =   875
          Width           =   2350
          _ExtentX        =   4154
@@ -886,7 +887,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDevCon86w2k 
          Height          =   315
          Left            =   100
-         TabIndex        =   92
+         TabIndex        =   34
          Top             =   1275
          Width           =   2350
          _ExtentX        =   4154
@@ -908,7 +909,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblCmdDevconPath 
          Height          =   315
          Left            =   100
-         TabIndex        =   93
+         TabIndex        =   42
          Top             =   2875
          Width           =   2350
          _ExtentX        =   4154
@@ -930,7 +931,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblArc 
          Height          =   315
          Left            =   100
-         TabIndex        =   94
+         TabIndex        =   40
          Top             =   2475
          Width           =   2350
          _ExtentX        =   4154
@@ -952,7 +953,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDPInst64 
          Height          =   315
          Left            =   100
-         TabIndex        =   95
+         TabIndex        =   38
          Top             =   2075
          Width           =   2350
          _ExtentX        =   4154
@@ -974,7 +975,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDPInst86 
          Height          =   315
          Left            =   100
-         TabIndex        =   96
+         TabIndex        =   36
          Top             =   1675
          Width           =   2350
          _ExtentX        =   4154
@@ -996,7 +997,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDevCon86 
          Height          =   315
          Left            =   100
-         TabIndex        =   97
+         TabIndex        =   30
          Top             =   475
          Width           =   2350
          _ExtentX        =   4154
@@ -1042,7 +1043,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ListView lvUtils 
          Height          =   3855
          Left            =   120
-         TabIndex        =   84
+         TabIndex        =   44
          Top             =   480
          Width           =   8355
          _ExtentX        =   14737
@@ -1075,7 +1076,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdAddUtil 
          Height          =   650
          Left            =   120
-         TabIndex        =   64
+         TabIndex        =   45
          Top             =   4440
          Width           =   1815
          _ExtentX        =   3201
@@ -1100,7 +1101,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdEditUtil 
          Height          =   650
          Left            =   2160
-         TabIndex        =   65
+         TabIndex        =   46
          Top             =   4455
          Width           =   1815
          _ExtentX        =   3201
@@ -1125,7 +1126,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdDelUtil 
          Height          =   650
          Left            =   4200
-         TabIndex        =   66
+         TabIndex        =   47
          Top             =   4455
          Width           =   1815
          _ExtentX        =   3201
@@ -1174,7 +1175,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ListView lvOS 
          Height          =   2350
          Left            =   120
-         TabIndex        =   85
+         TabIndex        =   48
          Top             =   480
          Width           =   8355
          _ExtentX        =   14737
@@ -1207,7 +1208,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtExcludeHWID 
          Height          =   495
          Left            =   120
-         TabIndex        =   26
+         TabIndex        =   50
          Top             =   3180
          Width           =   8355
          _ExtentX        =   0
@@ -1249,7 +1250,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkRecursion 
          Height          =   255
          Left            =   135
-         TabIndex        =   53
+         TabIndex        =   51
          Top             =   3735
          Width           =   8355
          _ExtentX        =   14737
@@ -1269,7 +1270,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdAddOS 
          Height          =   650
          Left            =   120
-         TabIndex        =   61
+         TabIndex        =   53
          Top             =   4440
          Width           =   1815
          _ExtentX        =   3201
@@ -1294,7 +1295,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdEditOS 
          Height          =   650
          Left            =   2160
-         TabIndex        =   62
+         TabIndex        =   54
          Top             =   4455
          Width           =   1815
          _ExtentX        =   3201
@@ -1319,7 +1320,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdDelOS 
          Height          =   650
          Left            =   4200
-         TabIndex        =   63
+         TabIndex        =   55
          Top             =   4455
          Width           =   1815
          _ExtentX        =   3201
@@ -1344,7 +1345,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblExcludeHWID 
          Height          =   255
          Left            =   120
-         TabIndex        =   98
+         TabIndex        =   49
          Top             =   2900
          Width           =   8355
          _ExtentX        =   14737
@@ -1388,7 +1389,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlColorButton ctlStatusBtnBackColor 
          Height          =   330
          Left            =   6720
-         TabIndex        =   149
+         TabIndex        =   80
          Top             =   3780
          Visible         =   0   'False
          Width           =   525
@@ -1400,7 +1401,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ComboBoxW cmbButtonStyleColor 
          Height          =   315
          Left            =   3960
-         TabIndex        =   147
+         TabIndex        =   79
          Top             =   3780
          Width           =   2595
          _ExtentX        =   4233
@@ -1422,7 +1423,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ComboBoxW cmbButtonStyle 
          Height          =   315
          Left            =   600
-         TabIndex        =   138
+         TabIndex        =   78
          Top             =   3780
          Width           =   2595
          _ExtentX        =   4233
@@ -1451,7 +1452,7 @@ Begin VB.Form frmOptions
          Left            =   7920
          ScaleHeight     =   465
          ScaleWidth      =   465
-         TabIndex        =   72
+         TabIndex        =   69
          TabStop         =   0   'False
          Top             =   1560
          Visible         =   0   'False
@@ -1460,7 +1461,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkFutureButton 
          Height          =   210
          Left            =   450
-         TabIndex        =   71
+         TabIndex        =   72
          TabStop         =   0   'False
          Top             =   2400
          Width           =   210
@@ -1481,7 +1482,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ComboBoxW cmbImageMain 
          Height          =   315
          Left            =   615
-         TabIndex        =   48
+         TabIndex        =   84
          Top             =   4845
          Width           =   3000
          _ExtentX        =   5292
@@ -1503,7 +1504,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ComboBoxW cmbImageStatus 
          Height          =   315
          Left            =   3960
-         TabIndex        =   30
+         TabIndex        =   85
          Top             =   4845
          Width           =   3000
          _ExtentX        =   4233
@@ -1525,7 +1526,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkButtonTextUpCase 
          Height          =   210
          Left            =   3510
-         TabIndex        =   27
+         TabIndex        =   67
          Top             =   1530
          Width           =   4920
          _ExtentX        =   8678
@@ -1545,7 +1546,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtButtonHeight 
          Height          =   255
          Left            =   1485
-         TabIndex        =   9
+         TabIndex        =   58
          Top             =   765
          Width           =   1575
          _ExtentX        =   2778
@@ -1565,7 +1566,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtButtonWidth 
          Height          =   255
          Left            =   1485
-         TabIndex        =   10
+         TabIndex        =   62
          Top             =   1125
          Width           =   1575
          _ExtentX        =   2778
@@ -1585,7 +1586,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtButton2BtnL 
          Height          =   255
          Left            =   6405
-         TabIndex        =   7
+         TabIndex        =   60
          Top             =   765
          Width           =   1575
          _ExtentX        =   2778
@@ -1605,7 +1606,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtButton2BtnT 
          Height          =   255
          Left            =   6405
-         TabIndex        =   11
+         TabIndex        =   64
          Top             =   1125
          Width           =   1575
          _ExtentX        =   2778
@@ -1625,7 +1626,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtButtonLeft 
          Height          =   255
          Left            =   1485
-         TabIndex        =   12
+         TabIndex        =   66
          Top             =   1470
          Width           =   1575
          _ExtentX        =   2778
@@ -1645,7 +1646,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtButtonTop 
          Height          =   255
          Left            =   1485
-         TabIndex        =   13
+         TabIndex        =   70
          Top             =   1815
          Width           =   1575
          _ExtentX        =   2778
@@ -1665,7 +1666,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdFontColorButton 
          Height          =   645
          Left            =   3480
-         TabIndex        =   69
+         TabIndex        =   73
          Top             =   2145
          Width           =   2400
          _ExtentX        =   4313
@@ -1690,7 +1691,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkButtonDisable 
          Height          =   390
          Left            =   390
-         TabIndex        =   70
+         TabIndex        =   75
          Top             =   2940
          Width           =   8040
          _ExtentX        =   14182
@@ -1710,7 +1711,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdFontColorToolTip 
          Height          =   645
          Left            =   6060
-         TabIndex        =   133
+         TabIndex        =   74
          Top             =   2145
          Width           =   2400
          _ExtentX        =   4313
@@ -1735,7 +1736,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdFutureButton 
          Height          =   555
          Left            =   390
-         TabIndex        =   137
+         TabIndex        =   71
          Top             =   2220
          Width           =   2535
          _ExtentX        =   4471
@@ -1763,7 +1764,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButtonStyleColor 
          Height          =   315
          Left            =   3960
-         TabIndex        =   148
+         TabIndex        =   77
          Top             =   3480
          Width           =   3495
          _ExtentX        =   6165
@@ -1783,7 +1784,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButtonStyle 
          Height          =   315
          Left            =   660
-         TabIndex        =   139
+         TabIndex        =   76
          Top             =   3480
          Width           =   3075
          _ExtentX        =   5424
@@ -1819,7 +1820,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblTheme 
          Height          =   225
          Left            =   360
-         TabIndex        =   99
+         TabIndex        =   81
          Top             =   4260
          Width           =   7875
          _ExtentX        =   13150
@@ -1840,7 +1841,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblImageStatus 
          Height          =   255
          Left            =   3960
-         TabIndex        =   100
+         TabIndex        =   83
          Top             =   4545
          Width           =   3000
          _ExtentX        =   0
@@ -1860,7 +1861,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblImageMain 
          Height          =   255
          Left            =   615
-         TabIndex        =   101
+         TabIndex        =   82
          Top             =   4545
          Width           =   3000
          _ExtentX        =   0
@@ -1880,7 +1881,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButtonWidth 
          Height          =   210
          Left            =   630
-         TabIndex        =   102
+         TabIndex        =   61
          Top             =   1125
          Width           =   645
          _ExtentX        =   1270
@@ -1901,7 +1902,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButtonHeight 
          Height          =   210
          Left            =   630
-         TabIndex        =   103
+         TabIndex        =   57
          Top             =   765
          Width           =   630
          _ExtentX        =   1191
@@ -1922,7 +1923,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButtonTop 
          Height          =   210
          Left            =   630
-         TabIndex        =   104
+         TabIndex        =   68
          Top             =   1815
          Width           =   615
          _ExtentX        =   1191
@@ -1943,7 +1944,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButtonLeft 
          Height          =   210
          Left            =   630
-         TabIndex        =   105
+         TabIndex        =   65
          Top             =   1470
          Width           =   525
          _ExtentX        =   1032
@@ -1964,7 +1965,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButton2BtnT 
          Height          =   255
          Left            =   3525
-         TabIndex        =   106
+         TabIndex        =   63
          Top             =   1125
          Width           =   2865
          _ExtentX        =   5054
@@ -1985,7 +1986,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblButton2BtnL 
          Height          =   255
          Left            =   3525
-         TabIndex        =   107
+         TabIndex        =   59
          Top             =   765
          Width           =   2850
          _ExtentX        =   5027
@@ -2006,7 +2007,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblSizeButton 
          Height          =   210
          Left            =   390
-         TabIndex        =   108
+         TabIndex        =   56
          Top             =   465
          Width           =   8100
          _ExtentX        =   14288
@@ -2051,7 +2052,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtTabPerRowCount 
          Height          =   255
          Left            =   3330
-         TabIndex        =   24
+         TabIndex        =   95
          Top             =   1755
          Width           =   675
          _ExtentX        =   1191
@@ -2073,7 +2074,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkTabBlock 
          Height          =   210
          Left            =   390
-         TabIndex        =   31
+         TabIndex        =   96
          Top             =   2085
          Width           =   7995
          _ExtentX        =   14102
@@ -2093,7 +2094,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkTabHide 
          Height          =   210
          Left            =   390
-         TabIndex        =   32
+         TabIndex        =   97
          Top             =   2400
          Width           =   7995
          _ExtentX        =   14102
@@ -2113,7 +2114,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkLoadUnSupportedOS 
          Height          =   210
          Left            =   390
-         TabIndex        =   49
+         TabIndex        =   98
          Top             =   2715
          Width           =   7995
          _ExtentX        =   14102
@@ -2133,7 +2134,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabOS 
          Height          =   795
          Left            =   390
-         TabIndex        =   67
+         TabIndex        =   99
          Top             =   3030
          Width           =   2850
          _ExtentX        =   5027
@@ -2158,7 +2159,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlJCbutton cmdFontColorTabDrivers 
          Height          =   795
          Left            =   390
-         TabIndex        =   68
+         TabIndex        =   101
          Top             =   4320
          Width           =   2850
          _ExtentX        =   5027
@@ -2183,7 +2184,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkFormMaximaze 
          Height          =   210
          Left            =   3315
-         TabIndex        =   140
+         TabIndex        =   89
          TabStop         =   0   'False
          Top             =   720
          Width           =   4920
@@ -2204,7 +2205,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtFormHeight 
          Height          =   255
          Left            =   1275
-         TabIndex        =   141
+         TabIndex        =   88
          Top             =   720
          Width           =   1575
          _ExtentX        =   2778
@@ -2224,7 +2225,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtFormWidth 
          Height          =   255
          Left            =   1275
-         TabIndex        =   142
+         TabIndex        =   91
          Top             =   1065
          Width           =   1575
          _ExtentX        =   2778
@@ -2244,7 +2245,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkFormSizeSave 
          Height          =   210
          Left            =   3315
-         TabIndex        =   143
+         TabIndex        =   92
          TabStop         =   0   'False
          Top             =   1065
          Width           =   4920
@@ -2265,7 +2266,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblSizeForm 
          Height          =   210
          Left            =   180
-         TabIndex        =   146
+         TabIndex        =   86
          Top             =   420
          Width           =   8115
          _ExtentX        =   14314
@@ -2286,7 +2287,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblFormHeight 
          Height          =   210
          Left            =   435
-         TabIndex        =   145
+         TabIndex        =   87
          Top             =   720
          Width           =   630
          _ExtentX        =   1191
@@ -2307,7 +2308,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblFormWidth 
          Height          =   210
          Left            =   435
-         TabIndex        =   144
+         TabIndex        =   90
          Top             =   1065
          Width           =   645
          _ExtentX        =   1270
@@ -2328,7 +2329,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblTabPerRowCount 
          Height          =   225
          Left            =   390
-         TabIndex        =   109
+         TabIndex        =   94
          Top             =   1755
          Width           =   2730
          _ExtentX        =   5054
@@ -2349,7 +2350,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblTabControl 
          Height          =   225
          Left            =   150
-         TabIndex        =   110
+         TabIndex        =   93
          Top             =   1440
          Width           =   8205
          _ExtentX        =   14473
@@ -2370,7 +2371,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblTabControl2 
          Height          =   225
          Left            =   120
-         TabIndex        =   111
+         TabIndex        =   100
          Top             =   3960
          Width           =   8205
          _ExtentX        =   14473
@@ -2416,7 +2417,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2655
-         TabIndex        =   33
+         TabIndex        =   105
          ToolTipText     =   "More on MSDN..."
          Top             =   660
          Width           =   255
@@ -2425,7 +2426,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2640
-         TabIndex        =   34
+         TabIndex        =   108
          ToolTipText     =   "More on MSDN..."
          Top             =   1305
          Width           =   255
@@ -2434,7 +2435,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2655
-         TabIndex        =   35
+         TabIndex        =   111
          ToolTipText     =   "More on MSDN..."
          Top             =   1905
          Width           =   255
@@ -2443,7 +2444,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2655
-         TabIndex        =   36
+         TabIndex        =   114
          ToolTipText     =   "More on MSDN..."
          Top             =   2460
          Width           =   255
@@ -2452,7 +2453,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2655
-         TabIndex        =   37
+         TabIndex        =   117
          ToolTipText     =   "More on MSDN..."
          Top             =   2955
          Width           =   255
@@ -2461,7 +2462,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2655
-         TabIndex        =   38
+         TabIndex        =   120
          ToolTipText     =   "More on MSDN..."
          Top             =   3510
          Width           =   255
@@ -2470,7 +2471,7 @@ Begin VB.Form frmOptions
          Caption         =   "?"
          Height          =   255
          Left            =   2655
-         TabIndex        =   47
+         TabIndex        =   123
          ToolTipText     =   "More on MSDN..."
          Top             =   4005
          Width           =   255
@@ -2478,7 +2479,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtCmdStringDPInst 
          Height          =   330
          Left            =   2895
-         TabIndex        =   46
+         TabIndex        =   126
          Top             =   4875
          Width           =   5535
          _ExtentX        =   0
@@ -2499,7 +2500,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkLegacyMode 
          Height          =   210
          Left            =   120
-         TabIndex        =   39
+         TabIndex        =   104
          Top             =   660
          Width           =   2520
          _ExtentX        =   4445
@@ -2519,7 +2520,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkPromptIfDriverIsNotBetter 
          Height          =   210
          Left            =   120
-         TabIndex        =   40
+         TabIndex        =   107
          Top             =   1305
          Width           =   2520
          _ExtentX        =   4445
@@ -2539,7 +2540,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkForceIfDriverIsNotBetter 
          Height          =   210
          Left            =   120
-         TabIndex        =   41
+         TabIndex        =   110
          Top             =   1905
          Width           =   2520
          _ExtentX        =   4445
@@ -2560,7 +2561,7 @@ Begin VB.Form frmOptions
          CausesValidation=   0   'False
          Height          =   210
          Left            =   120
-         TabIndex        =   42
+         TabIndex        =   113
          Top             =   2460
          Width           =   2520
          _ExtentX        =   4445
@@ -2580,7 +2581,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkSuppressWizard 
          Height          =   210
          Left            =   120
-         TabIndex        =   43
+         TabIndex        =   116
          Top             =   2955
          Width           =   2520
          _ExtentX        =   4445
@@ -2600,7 +2601,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkQuietInstall 
          Height          =   210
          Left            =   120
-         TabIndex        =   44
+         TabIndex        =   119
          Top             =   3510
          Width           =   2520
          _ExtentX        =   4445
@@ -2620,7 +2621,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkScanHardware 
          Height          =   210
          Left            =   120
-         TabIndex        =   45
+         TabIndex        =   122
          Top             =   4005
          Width           =   2520
          _ExtentX        =   4445
@@ -2640,7 +2641,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblCmdStringDPInst 
          Height          =   210
          Left            =   135
-         TabIndex        =   112
+         TabIndex        =   125
          Top             =   4875
          Width           =   2685
          _ExtentX        =   4736
@@ -2660,7 +2661,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDescription 
          Height          =   255
          Left            =   2865
-         TabIndex        =   113
+         TabIndex        =   103
          Top             =   350
          Width           =   5505
          _ExtentX        =   9710
@@ -2681,7 +2682,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblParam 
          Height          =   255
          Left            =   120
-         TabIndex        =   114
+         TabIndex        =   102
          Top             =   350
          Width           =   2595
          _ExtentX        =   4577
@@ -2702,7 +2703,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblPromptIfDriverIsNotBetter 
          Height          =   570
          Left            =   2925
-         TabIndex        =   115
+         TabIndex        =   109
          Top             =   1305
          Width           =   5550
          _ExtentX        =   9790
@@ -2722,7 +2723,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblLegacyMode 
          Height          =   645
          Left            =   2925
-         TabIndex        =   116
+         TabIndex        =   106
          Top             =   660
          Width           =   5550
          _ExtentX        =   9790
@@ -2742,7 +2743,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblForceIfDriverIsNotBetter 
          Height          =   510
          Left            =   2925
-         TabIndex        =   117
+         TabIndex        =   112
          Top             =   1905
          Width           =   5550
          _ExtentX        =   9790
@@ -2762,7 +2763,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblSuppressAddRemovePrograms 
          Height          =   450
          Left            =   2925
-         TabIndex        =   118
+         TabIndex        =   115
          Top             =   2460
          Width           =   5580
          _ExtentX        =   0
@@ -2782,7 +2783,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblSuppressWizard 
          Height          =   450
          Left            =   2925
-         TabIndex        =   119
+         TabIndex        =   118
          Top             =   2955
          Width           =   5550
          _ExtentX        =   0
@@ -2802,7 +2803,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblQuietInstall 
          Height          =   450
          Left            =   2925
-         TabIndex        =   120
+         TabIndex        =   121
          Top             =   3510
          Width           =   5550
          _ExtentX        =   0
@@ -2822,7 +2823,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblScanHardware 
          Height          =   900
          Left            =   2925
-         TabIndex        =   121
+         TabIndex        =   124
          Top             =   4005
          Width           =   5550
          _ExtentX        =   0
@@ -2866,7 +2867,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtDebugLogName 
          Height          =   315
          Left            =   480
-         TabIndex        =   82
+         TabIndex        =   136
          Top             =   2520
          Width           =   7815
          _ExtentX        =   0
@@ -2886,7 +2887,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtMacrosDateDebug 
          Height          =   255
          Left            =   480
-         TabIndex        =   77
+         TabIndex        =   148
          Top             =   4905
          Width           =   1500
          _ExtentX        =   0
@@ -2907,7 +2908,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtMacrosOSBITDebug 
          Height          =   255
          Left            =   480
-         TabIndex        =   76
+         TabIndex        =   146
          Top             =   4545
          Width           =   1500
          _ExtentX        =   0
@@ -2928,7 +2929,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtMacrosOSVERDebug 
          Height          =   255
          Left            =   480
-         TabIndex        =   75
+         TabIndex        =   144
          Top             =   4185
          Width           =   1500
          _ExtentX        =   0
@@ -2949,7 +2950,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtMacrosPCModelDebug 
          Height          =   255
          Left            =   480
-         TabIndex        =   74
+         TabIndex        =   142
          Top             =   3825
          Width           =   1500
          _ExtentX        =   0
@@ -2970,7 +2971,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.TextBoxW txtMacrosPCNameDebug 
          Height          =   255
          Left            =   480
-         TabIndex        =   73
+         TabIndex        =   140
          Top             =   3465
          Width           =   1500
          _ExtentX        =   0
@@ -2991,7 +2992,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkDebug 
          Height          =   210
          Left            =   495
-         TabIndex        =   78
+         TabIndex        =   129
          Top             =   750
          Width           =   4440
          _ExtentX        =   7832
@@ -3011,7 +3012,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.ctlUcPickBox ucDebugLogPath 
          Height          =   315
          Left            =   480
-         TabIndex        =   79
+         TabIndex        =   134
          Top             =   1890
          Width           =   7845
          _ExtentX        =   10821
@@ -3024,7 +3025,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkDebugLog2AppPath 
          Height          =   210
          Left            =   495
-         TabIndex        =   80
+         TabIndex        =   132
          Top             =   1350
          Width           =   7920
          _ExtentX        =   11245
@@ -3044,7 +3045,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.CheckBoxW chkDebugTime2File 
          Height          =   210
          Left            =   495
-         TabIndex        =   81
+         TabIndex        =   131
          Top             =   1050
          Width           =   7920
          _ExtentX        =   11245
@@ -3064,7 +3065,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.SpinBox txtDebugLogLevel 
          Height          =   255
          Left            =   7680
-         TabIndex        =   134
+         TabIndex        =   130
          Top             =   720
          Width           =   735
          _ExtentX        =   1296
@@ -3084,7 +3085,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDebugLogLevel 
          Height          =   255
          Left            =   4680
-         TabIndex        =   135
+         TabIndex        =   128
          Top             =   720
          Width           =   3015
          _ExtentX        =   5318
@@ -3105,7 +3106,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosDateDebug 
          Height          =   375
          Left            =   2400
-         TabIndex        =   122
+         TabIndex        =   149
          Top             =   4905
          Width           =   5775
          _ExtentX        =   0
@@ -3125,7 +3126,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosOSBitDebug 
          Height          =   375
          Left            =   2400
-         TabIndex        =   123
+         TabIndex        =   147
          Top             =   4545
          Width           =   5775
          _ExtentX        =   0
@@ -3145,7 +3146,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosOSVerDebug 
          Height          =   375
          Left            =   2400
-         TabIndex        =   124
+         TabIndex        =   145
          Top             =   4185
          Width           =   5775
          _ExtentX        =   0
@@ -3165,7 +3166,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosPCModelDebug 
          Height          =   375
          Left            =   2400
-         TabIndex        =   125
+         TabIndex        =   143
          Top             =   3825
          Width           =   5775
          _ExtentX        =   0
@@ -3185,7 +3186,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosParamDebug 
          Height          =   255
          Left            =   480
-         TabIndex        =   126
+         TabIndex        =   138
          Top             =   3150
          Width           =   1755
          _ExtentX        =   0
@@ -3205,7 +3206,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosDescriptionDebug 
          Height          =   255
          Left            =   2400
-         TabIndex        =   127
+         TabIndex        =   139
          Top             =   3150
          Width           =   5865
          _ExtentX        =   0
@@ -3225,7 +3226,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosPCNameDebug 
          Height          =   375
          Left            =   2400
-         TabIndex        =   128
+         TabIndex        =   141
          Top             =   3465
          Width           =   5775
          _ExtentX        =   0
@@ -3245,7 +3246,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblMacrosTypeDebug 
          Height          =   285
          Left            =   480
-         TabIndex        =   129
+         TabIndex        =   137
          Top             =   2865
          Width           =   7860
          _ExtentX        =   13864
@@ -3266,7 +3267,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDebugLogPath 
          Height          =   285
          Left            =   480
-         TabIndex        =   130
+         TabIndex        =   133
          Top             =   1575
          Width           =   7845
          _ExtentX        =   13838
@@ -3287,7 +3288,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDebug 
          Height          =   270
          Left            =   240
-         TabIndex        =   131
+         TabIndex        =   127
          Top             =   420
          Width           =   8295
          _ExtentX        =   14631
@@ -3308,7 +3309,7 @@ Begin VB.Form frmOptions
       Begin prjDIADBS.LabelW lblDebugLogName 
          Height          =   285
          Left            =   495
-         TabIndex        =   132
+         TabIndex        =   135
          Top             =   2225
          Width           =   7845
          _ExtentX        =   13838

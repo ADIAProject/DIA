@@ -31,7 +31,7 @@ Begin VB.UserControl ctlFontCombo
       ScaleHeight     =   57
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   147
-      TabIndex        =   1
+      TabIndex        =   2
       TabStop         =   0   'False
       Top             =   810
       Visible         =   0   'False
@@ -56,7 +56,7 @@ Begin VB.UserControl ctlFontCombo
          CausesValidation=   0   'False
          Height          =   2595
          Left            =   2760
-         TabIndex        =   2
+         TabIndex        =   1
          TabStop         =   0   'False
          Top             =   120
          Width           =   240

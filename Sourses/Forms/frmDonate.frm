@@ -26,7 +26,7 @@ Begin VB.Form frmDonate
       Default         =   -1  'True
       Height          =   855
       Left            =   7425
-      TabIndex        =   1
+      TabIndex        =   4
       Top             =   5400
       Width           =   1995
       _ExtentX        =   3519
@@ -77,7 +77,7 @@ Begin VB.Form frmDonate
    Begin prjDIADBS.ctlJCbutton cmdSMSCoin 
       Height          =   850
       Left            =   120
-      TabIndex        =   2
+      TabIndex        =   1
       Top             =   5400
       Width           =   2000
       _ExtentX        =   3519
@@ -104,7 +104,7 @@ Begin VB.Form frmDonate
    Begin prjDIADBS.ctlJCbutton cmdPayPal 
       Height          =   855
       Left            =   2220
-      TabIndex        =   3
+      TabIndex        =   2
       Top             =   5400
       Width           =   2000
       _ExtentX        =   3519
@@ -132,7 +132,7 @@ Begin VB.Form frmDonate
    Begin prjDIADBS.ctlJCbutton cmdYandexMoney 
       Height          =   855
       Left            =   4380
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   5400
       Width           =   1815
       _ExtentX        =   3201

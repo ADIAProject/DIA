@@ -32,7 +32,7 @@ Begin VB.Form frmSilent
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   2400
-      TabIndex        =   0
+      TabIndex        =   5
       Top             =   1560
       Width           =   2205
       _ExtentX        =   3889
@@ -56,9 +56,10 @@ Begin VB.Form frmSilent
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   650
       Left            =   60
-      TabIndex        =   1
+      TabIndex        =   4
       Top             =   1560
       Width           =   2200
       _ExtentX        =   3889
@@ -84,7 +85,7 @@ Begin VB.Form frmSilent
    Begin prjDIADBS.LabelW lblTimeInSec 
       Height          =   255
       Left            =   3480
-      TabIndex        =   2
+      TabIndex        =   3
       Top             =   1215
       Width           =   855
       _ExtentX        =   0
@@ -104,7 +105,7 @@ Begin VB.Form frmSilent
    Begin prjDIADBS.LabelW lblTimer 
       Height          =   375
       Left            =   3000
-      TabIndex        =   3
+      TabIndex        =   2
       Top             =   1215
       Width           =   375
       _ExtentX        =   0
@@ -124,7 +125,7 @@ Begin VB.Form frmSilent
    Begin prjDIADBS.LabelW lblTimerText 
       Height          =   255
       Left            =   240
-      TabIndex        =   4
+      TabIndex        =   1
       Top             =   1215
       Width           =   2655
       _ExtentX        =   0
@@ -144,7 +145,7 @@ Begin VB.Form frmSilent
    Begin prjDIADBS.LabelW lblInfo 
       Height          =   1000
       Left            =   120
-      TabIndex        =   5
+      TabIndex        =   0
       Top             =   50
       Width           =   4455
       _ExtentX        =   7858

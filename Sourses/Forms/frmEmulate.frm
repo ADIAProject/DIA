@@ -51,7 +51,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.ctlUcPickBox ucFilePath 
          Height          =   315
          Left            =   120
-         TabIndex        =   2
+         TabIndex        =   1
          Top             =   900
          Width           =   7935
          _ExtentX        =   13996
@@ -67,7 +67,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.LabelW lblInfo 
          Height          =   495
          Left            =   120
-         TabIndex        =   3
+         TabIndex        =   0
          Top             =   360
          Width           =   7935
          _ExtentX        =   13996
@@ -89,7 +89,7 @@ Begin VB.Form frmEmulate
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   4380
-      TabIndex        =   0
+      TabIndex        =   7
       Top             =   4320
       Width           =   1815
       _ExtentX        =   3201
@@ -117,7 +117,7 @@ Begin VB.Form frmEmulate
       Default         =   -1  'True
       Height          =   650
       Left            =   6420
-      TabIndex        =   1
+      TabIndex        =   8
       Top             =   4320
       Width           =   1815
       _ExtentX        =   3201
@@ -167,7 +167,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.TextBoxW txtPCModel 
          Height          =   315
          Left            =   60
-         TabIndex        =   4
+         TabIndex        =   5
          Top             =   1860
          Width           =   7935
          _ExtentX        =   13996
@@ -187,7 +187,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.ComboBoxW cmbOS 
          Height          =   330
          Left            =   60
-         TabIndex        =   5
+         TabIndex        =   3
          Top             =   960
          Width           =   7935
          _ExtentX        =   13996
@@ -208,7 +208,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.CheckBoxW chk64bit 
          Height          =   255
          Left            =   60
-         TabIndex        =   6
+         TabIndex        =   4
          Top             =   1440
          Width           =   7935
          _ExtentX        =   13996
@@ -229,7 +229,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.CheckBoxW chkIsNotebook 
          Height          =   255
          Left            =   60
-         TabIndex        =   7
+         TabIndex        =   6
          Top             =   2340
          Width           =   7935
          _ExtentX        =   13996
@@ -250,7 +250,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.LabelW lblOSInfo 
          Height          =   495
          Left            =   60
-         TabIndex        =   8
+         TabIndex        =   2
          Top             =   360
          Width           =   7935
          _ExtentX        =   13996

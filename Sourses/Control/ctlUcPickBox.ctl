@@ -20,7 +20,7 @@ Begin VB.UserControl ctlUcPickBox
       EndProperty
       Height          =   275
       Left            =   720
-      TabIndex        =   3
+      TabIndex        =   5
       TabStop         =   0   'False
       ToolTipText     =   "Click Here to View Selected Files."
       Top             =   720
@@ -65,7 +65,7 @@ Begin VB.UserControl ctlUcPickBox
       Picture         =   "ctlUcPickBox.ctx":0312
       ScaleHeight     =   285
       ScaleWidth      =   255
-      TabIndex        =   4
+      TabIndex        =   3
       Top             =   720
       Visible         =   0   'False
       Width           =   255
@@ -81,7 +81,7 @@ Begin VB.UserControl ctlUcPickBox
       Picture         =   "ctlUcPickBox.ctx":0717
       ScaleHeight     =   285
       ScaleWidth      =   255
-      TabIndex        =   5
+      TabIndex        =   4
       Top             =   720
       Visible         =   0   'False
       Width           =   255

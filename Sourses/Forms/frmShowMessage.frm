@@ -46,7 +46,7 @@ Begin VB.Form frmShowMessage
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   7020
-      TabIndex        =   1
+      TabIndex        =   2
       Top             =   4080
       Width           =   1815
       _ExtentX        =   3201
@@ -70,9 +70,10 @@ Begin VB.Form frmShowMessage
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   650
       Left            =   5100
-      TabIndex        =   2
+      TabIndex        =   1
       Top             =   4080
       Width           =   1815
       _ExtentX        =   3201

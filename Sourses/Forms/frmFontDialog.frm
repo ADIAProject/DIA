@@ -27,7 +27,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.TextBoxW txtFont 
       Height          =   495
       Left            =   60
-      TabIndex        =   11
+      TabIndex        =   8
       Top             =   1260
       Width           =   4275
       _ExtentX        =   7541
@@ -49,7 +49,8 @@ Begin VB.Form frmFontDialog
       Height          =   255
       Index           =   3
       Left            =   3240
-      TabIndex        =   8
+      TabIndex        =   14
+      TabStop         =   0   'False
       Top             =   2760
       Visible         =   0   'False
       Width           =   975
@@ -71,7 +72,8 @@ Begin VB.Form frmFontDialog
       Height          =   255
       Index           =   1
       Left            =   960
-      TabIndex        =   7
+      TabIndex        =   12
+      TabStop         =   0   'False
       Top             =   2760
       Visible         =   0   'False
       Width           =   1035
@@ -93,7 +95,8 @@ Begin VB.Form frmFontDialog
       Height          =   255
       Index           =   0
       Left            =   120
-      TabIndex        =   6
+      TabIndex        =   11
+      TabStop         =   0   'False
       Top             =   2760
       Visible         =   0   'False
       Width           =   795
@@ -113,7 +116,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.SpinBox txtFontSize 
       Height          =   315
       Left            =   1860
-      TabIndex        =   4
+      TabIndex        =   2
       Top             =   420
       Width           =   675
       _ExtentX        =   1191
@@ -135,8 +138,8 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.ctlColorButton ctlFontColor 
       Height          =   330
       Left            =   1980
-      TabIndex        =   3
-      Top             =   780
+      TabIndex        =   6
+      Top             =   840
       Width           =   525
       _ExtentX        =   926
       _ExtentY        =   582
@@ -145,7 +148,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.CheckBoxW chkItalic 
       Height          =   315
       Left            =   2700
-      TabIndex        =   2
+      TabIndex        =   4
       Top             =   675
       Width           =   1575
       _ExtentX        =   2778
@@ -165,7 +168,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.CheckBoxW chkBold 
       Height          =   255
       Left            =   2700
-      TabIndex        =   1
+      TabIndex        =   3
       Top             =   420
       Width           =   1575
       _ExtentX        =   2778
@@ -206,7 +209,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.CheckBoxW chkUnderline 
       Height          =   315
       Left            =   2700
-      TabIndex        =   5
+      TabIndex        =   7
       Top             =   960
       Width           =   1575
       _ExtentX        =   2778
@@ -226,7 +229,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   2280
-      TabIndex        =   9
+      TabIndex        =   10
       Top             =   1860
       Width           =   2100
       _ExtentX        =   3704
@@ -253,7 +256,7 @@ Begin VB.Form frmFontDialog
       Default         =   -1  'True
       Height          =   650
       Left            =   60
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   1860
       Width           =   2100
       _ExtentX        =   3704
@@ -280,7 +283,8 @@ Begin VB.Form frmFontDialog
       Height          =   255
       Index           =   2
       Left            =   2100
-      TabIndex        =   14
+      TabIndex        =   13
+      TabStop         =   0   'False
       Top             =   2760
       Visible         =   0   'False
       Width           =   1035
@@ -301,7 +305,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375
       Left            =   60
-      TabIndex        =   12
+      TabIndex        =   1
       Top             =   420
       Width           =   1815
       _ExtentX        =   3201
@@ -321,7 +325,7 @@ Begin VB.Form frmFontDialog
    Begin prjDIADBS.LabelW lblFontColor 
       Height          =   375
       Left            =   60
-      TabIndex        =   13
+      TabIndex        =   5
       Top             =   840
       Width           =   1815
       _ExtentX        =   3201

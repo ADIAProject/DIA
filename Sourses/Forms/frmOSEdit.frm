@@ -27,7 +27,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.TextBoxW txtOSVer 
       Height          =   375
       Left            =   2000
-      TabIndex        =   6
+      TabIndex        =   1
       Top             =   240
       Width           =   6225
       _ExtentX        =   0
@@ -65,7 +65,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.TextBoxW txtExcludeFileName 
          Height          =   850
          Left            =   120
-         TabIndex        =   1
+         TabIndex        =   15
          Top             =   280
          Width           =   7935
          _ExtentX        =   0
@@ -106,7 +106,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.ctlUcPickBox ucPhysXPath 
          Height          =   315
          Left            =   2760
-         TabIndex        =   2
+         TabIndex        =   10
          Top             =   270
          Width           =   5295
          _ExtentX        =   9340
@@ -120,7 +120,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.ctlUcPickBox ucLangPath 
          Height          =   315
          Left            =   2760
-         TabIndex        =   3
+         TabIndex        =   12
          Top             =   720
          Width           =   5295
          _ExtentX        =   9340
@@ -134,7 +134,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.ctlUcPickBox ucRuntimesPath 
          Height          =   315
          Left            =   2760
-         TabIndex        =   4
+         TabIndex        =   14
          Top             =   1185
          Width           =   5295
          _ExtentX        =   9340
@@ -148,7 +148,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.LabelW lblRuntimes 
          Height          =   255
          Left            =   120
-         TabIndex        =   12
+         TabIndex        =   13
          Top             =   1185
          Width           =   2535
          _ExtentX        =   0
@@ -168,7 +168,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.LabelW lblPhysX 
          Height          =   255
          Left            =   120
-         TabIndex        =   13
+         TabIndex        =   8
          Top             =   270
          Width           =   2535
          _ExtentX        =   0
@@ -188,7 +188,7 @@ Begin VB.Form frmOSEdit
       Begin prjDIADBS.LabelW lblLang 
          Height          =   255
          Left            =   120
-         TabIndex        =   14
+         TabIndex        =   11
          Top             =   720
          Width           =   2535
          _ExtentX        =   0
@@ -205,26 +205,6 @@ Begin VB.Form frmOSEdit
          BackStyle       =   0
          Caption         =   "DP_Graphics_Languages_*.7z"
       End
-      Begin prjDIADBS.LabelW lblNo 
-         Height          =   500
-         Left            =   9135
-         TabIndex        =   15
-         Top             =   45
-         Width           =   2175
-         _ExtentX        =   0
-         _ExtentY        =   0
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         BackStyle       =   0
-         Caption         =   "В БД не найдено драйверов для ваших устройств"
-      End
       Begin VB.Image imgNo 
          Height          =   480
          Left            =   8535
@@ -235,7 +215,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.CheckBoxW chk64bit 
       Height          =   255
       Left            =   120
-      TabIndex        =   5
+      TabIndex        =   16
       Top             =   5150
       Width           =   4215
       _ExtentX        =   7435
@@ -255,7 +235,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.TextBoxW txtOSName 
       Height          =   375
       Left            =   2000
-      TabIndex        =   0
+      TabIndex        =   3
       Top             =   720
       Width           =   6225
       _ExtentX        =   0
@@ -275,7 +255,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.CheckBoxW chkNotCheckBitOS 
       Height          =   255
       Left            =   120
-      TabIndex        =   8
+      TabIndex        =   17
       Top             =   5500
       Width           =   4215
       _ExtentX        =   7435
@@ -295,7 +275,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.ctlUcPickBox ucPathDRP 
       Height          =   315
       Left            =   2880
-      TabIndex        =   9
+      TabIndex        =   5
       Top             =   1200
       Width           =   5275
       _ExtentX        =   9313
@@ -308,7 +288,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.ctlUcPickBox ucPathDB 
       Height          =   315
       Left            =   2880
-      TabIndex        =   10
+      TabIndex        =   7
       Top             =   1710
       Width           =   5275
       _ExtentX        =   9313
@@ -320,7 +300,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   6420
-      TabIndex        =   11
+      TabIndex        =   9
       Top             =   5150
       Width           =   1815
       _ExtentX        =   3201
@@ -344,9 +324,10 @@ Begin VB.Form frmOSEdit
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   650
       Left            =   4500
-      TabIndex        =   7
+      TabIndex        =   18
       Top             =   5150
       Width           =   1815
       _ExtentX        =   3201
@@ -372,7 +353,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.LabelW lblPathDB 
       Height          =   495
       Left            =   120
-      TabIndex        =   16
+      TabIndex        =   6
       Top             =   1710
       Width           =   2655
       _ExtentX        =   0
@@ -392,7 +373,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.LabelW lblPathDRP 
       Height          =   495
       Left            =   120
-      TabIndex        =   17
+      TabIndex        =   4
       Top             =   1200
       Width           =   2655
       _ExtentX        =   0
@@ -412,7 +393,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.LabelW lblNameOS 
       Height          =   375
       Left            =   120
-      TabIndex        =   18
+      TabIndex        =   2
       Top             =   720
       Width           =   1815
       _ExtentX        =   3201
@@ -432,7 +413,7 @@ Begin VB.Form frmOSEdit
    Begin prjDIADBS.LabelW lblOSVer 
       Height          =   375
       Left            =   120
-      TabIndex        =   19
+      TabIndex        =   0
       Top             =   240
       Width           =   1815
       _ExtentX        =   3201

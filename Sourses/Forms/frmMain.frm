@@ -26,7 +26,7 @@ Begin VB.Form frmMain
       Align           =   2  'Align Bottom
       Height          =   705
       Left            =   0
-      TabIndex        =   17
+      TabIndex        =   29
       Top             =   9870
       Width           =   11265
       _ExtentX        =   19870
@@ -50,7 +50,7 @@ Begin VB.Form frmMain
       Left            =   0
       ScaleHeight     =   525
       ScaleWidth      =   11265
-      TabIndex        =   0
+      TabIndex        =   27
       TabStop         =   0   'False
       Top             =   9345
       Visible         =   0   'False
@@ -58,7 +58,7 @@ Begin VB.Form frmMain
       Begin prjDIADBS.ctlJCbutton cmdBreakUpdateDB 
          Height          =   385
          Left            =   4200
-         TabIndex        =   25
+         TabIndex        =   28
          Top             =   75
          Visible         =   0   'False
          Width           =   3015
@@ -148,7 +148,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255
             Left            =   75
-            TabIndex        =   30
+            TabIndex        =   1
             Top             =   850
             Width           =   10995
             _ExtentX        =   19394
@@ -168,7 +168,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.LabelW lblOsInfo 
             Height          =   255
             Left            =   75
-            TabIndex        =   29
+            TabIndex        =   0
             ToolTipText     =   "Starting ""System Information Viewer"""
             Top             =   480
             Width           =   10995
@@ -215,7 +215,7 @@ Begin VB.Form frmMain
             Height          =   210
             Index           =   0
             Left            =   180
-            TabIndex        =   3
+            TabIndex        =   31
             TabStop         =   0   'False
             Top             =   4380
             Visible         =   0   'False
@@ -238,7 +238,7 @@ Begin VB.Form frmMain
             Height          =   555
             Index           =   0
             Left            =   120
-            TabIndex        =   31
+            TabIndex        =   30
             Top             =   4200
             Visible         =   0   'False
             Width           =   2175
@@ -268,7 +268,7 @@ Begin VB.Form frmMain
          Begin TabDlg.SSTab SSTab1 
             Height          =   4155
             Left            =   0
-            TabIndex        =   1
+            TabIndex        =   18
             Top             =   0
             Width           =   11160
             _ExtentX        =   19685
@@ -314,7 +314,7 @@ Begin VB.Form frmMain
                Height          =   2895
                Index           =   0
                Left            =   0
-               TabIndex        =   2
+               TabIndex        =   19
                Top             =   660
                Width           =   10980
                _ExtentX        =   19368
@@ -366,7 +366,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   25
-                  TabIndex        =   21
+                  TabIndex        =   24
                   Top             =   350
                   Width           =   4155
                   _ExtentX        =   7329
@@ -377,7 +377,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   -74975
-                  TabIndex        =   23
+                  TabIndex        =   21
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -410,7 +410,7 @@ Begin VB.Form frmMain
                   Height          =   1575
                   Index           =   0
                   Left            =   -74975
-                  TabIndex        =   24
+                  TabIndex        =   23
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -420,7 +420,7 @@ Begin VB.Form frmMain
                Begin prjDIADBS.LabelW lblNoDP4Mode 
                   Height          =   285
                   Left            =   105
-                  TabIndex        =   27
+                  TabIndex        =   25
                   Top             =   2460
                   Visible         =   0   'False
                   Width           =   10590
@@ -443,7 +443,7 @@ Begin VB.Form frmMain
             Begin prjDIADBS.LabelW lblNoDPInProgram 
                Height          =   285
                Left            =   120
-               TabIndex        =   28
+               TabIndex        =   26
                Top             =   3600
                Visible         =   0   'False
                Width           =   10920
@@ -515,7 +515,7 @@ Begin VB.Form frmMain
             Begin prjDIADBS.ComboBoxW cmbCheckButton 
                Height          =   315
                Left            =   120
-               TabIndex        =   4
+               TabIndex        =   16
                Top             =   405
                Width           =   3075
                _ExtentX        =   5424
@@ -536,7 +536,7 @@ Begin VB.Form frmMain
             Begin prjDIADBS.ctlJCbutton cmdCheck 
                Height          =   430
                Left            =   120
-               TabIndex        =   5
+               TabIndex        =   17
                Top             =   800
                Width           =   3075
                _ExtentX        =   5424
@@ -561,9 +561,10 @@ Begin VB.Form frmMain
             End
          End
          Begin prjDIADBS.ctlJCbutton cmdRunTask 
+            Default         =   -1  'True
             Height          =   675
             Left            =   120
-            TabIndex        =   26
+            TabIndex        =   15
             Top             =   420
             Width           =   3120
             _ExtentX        =   4524
@@ -616,7 +617,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.ctlJCbutton cmdViewAllDevice 
             Height          =   510
             Left            =   120
-            TabIndex        =   6
+            TabIndex        =   5
             Top             =   930
             Width           =   7575
             _ExtentX        =   13361
@@ -642,7 +643,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.ctlJCbutton optRezim_Intellect 
             Height          =   510
             Left            =   120
-            TabIndex        =   7
+            TabIndex        =   2
             Top             =   350
             Width           =   2415
             _ExtentX        =   4260
@@ -670,7 +671,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.ctlJCbutton optRezim_Upd 
             Height          =   510
             Left            =   5280
-            TabIndex        =   8
+            TabIndex        =   4
             Top             =   350
             Width           =   2415
             _ExtentX        =   4260
@@ -697,7 +698,7 @@ Begin VB.Form frmMain
          Begin prjDIADBS.ctlJCbutton optRezim_Ust 
             Height          =   510
             Left            =   2640
-            TabIndex        =   9
+            TabIndex        =   3
             Top             =   350
             Width           =   2535
             _ExtentX        =   4471
@@ -759,7 +760,7 @@ Begin VB.Form frmMain
             Left            =   240
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   18
+            TabIndex        =   6
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -775,7 +776,7 @@ Begin VB.Form frmMain
             Left            =   6840
             ScaleHeight     =   480
             ScaleWidth      =   480
-            TabIndex        =   16
+            TabIndex        =   14
             TabStop         =   0   'False
             Top             =   350
             Width           =   510
@@ -790,7 +791,7 @@ Begin VB.Form frmMain
             Left            =   6000
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   15
+            TabIndex        =   13
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -805,7 +806,7 @@ Begin VB.Form frmMain
             Left            =   5160
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   14
+            TabIndex        =   12
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -820,7 +821,7 @@ Begin VB.Form frmMain
             Left            =   4320
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   13
+            TabIndex        =   11
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -835,7 +836,7 @@ Begin VB.Form frmMain
             Left            =   3480
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   19
+            TabIndex        =   10
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -850,7 +851,7 @@ Begin VB.Form frmMain
             Left            =   2640
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   12
+            TabIndex        =   9
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -865,7 +866,7 @@ Begin VB.Form frmMain
             Left            =   1800
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   11
+            TabIndex        =   8
             TabStop         =   0   'False
             Top             =   350
             Width           =   495
@@ -881,7 +882,7 @@ Begin VB.Form frmMain
             Left            =   960
             ScaleHeight     =   465
             ScaleWidth      =   465
-            TabIndex        =   10
+            TabIndex        =   7
             TabStop         =   0   'False
             Top             =   350
             Width           =   495

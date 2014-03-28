@@ -27,7 +27,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.TextBoxW txtParamUtil 
       Height          =   330
       Left            =   2640
-      TabIndex        =   2
+      TabIndex        =   7
       Top             =   1620
       Width           =   4935
       _ExtentX        =   0
@@ -47,7 +47,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.TextBoxW txtUtilName 
       Height          =   330
       Left            =   2640
-      TabIndex        =   0
+      TabIndex        =   1
       Top             =   120
       Width           =   4935
       _ExtentX        =   0
@@ -67,7 +67,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.ctlUcPickBox ucPathUtil 
       Height          =   315
       Left            =   2640
-      TabIndex        =   1
+      TabIndex        =   3
       Top             =   600
       Width           =   4935
       _ExtentX        =   10398
@@ -82,7 +82,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.ctlUcPickBox ucPathUtil64 
       Height          =   315
       Left            =   2640
-      TabIndex        =   3
+      TabIndex        =   5
       Top             =   1080
       Width           =   4935
       _ExtentX        =   10398
@@ -97,7 +97,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   5760
-      TabIndex        =   4
+      TabIndex        =   9
       Top             =   2040
       Width           =   1815
       _ExtentX        =   3201
@@ -121,9 +121,10 @@ Begin VB.Form frmUtilsEdit
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   650
       Left            =   3840
-      TabIndex        =   5
+      TabIndex        =   8
       Top             =   2040
       Width           =   1815
       _ExtentX        =   3201
@@ -149,7 +150,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.LabelW lblPathUtil64 
       Height          =   450
       Left            =   120
-      TabIndex        =   6
+      TabIndex        =   4
       Top             =   1080
       Width           =   2415
       _ExtentX        =   4260
@@ -169,7 +170,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.LabelW lblParamUtil 
       Height          =   495
       Left            =   120
-      TabIndex        =   7
+      TabIndex        =   6
       Top             =   1580
       Width           =   2415
       _ExtentX        =   0
@@ -189,7 +190,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.LabelW lblUtilName 
       Height          =   375
       Left            =   120
-      TabIndex        =   8
+      TabIndex        =   0
       Top             =   120
       Width           =   2415
       _ExtentX        =   0
@@ -209,7 +210,7 @@ Begin VB.Form frmUtilsEdit
    Begin prjDIADBS.LabelW lblPathUtil 
       Height          =   400
       Left            =   120
-      TabIndex        =   9
+      TabIndex        =   2
       Top             =   600
       Width           =   2415
       _ExtentX        =   0

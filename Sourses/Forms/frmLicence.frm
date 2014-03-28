@@ -70,7 +70,7 @@ Begin VB.Form frmLicence
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
       Left            =   7560
-      TabIndex        =   2
+      TabIndex        =   3
       Top             =   5570
       Width           =   1815
       _ExtentX        =   3201
@@ -94,9 +94,10 @@ Begin VB.Form frmLicence
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   650
       Left            =   5640
-      TabIndex        =   3
+      TabIndex        =   2
       Top             =   5570
       Width           =   1815
       _ExtentX        =   3201

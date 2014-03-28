@@ -22,10 +22,11 @@ Begin VB.Form frmListHwidAll
    ScaleWidth      =   11760
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ctlJCbutton cmdOK 
+      Default         =   -1  'True
       Height          =   650
       Left            =   9120
-      TabIndex        =   0
-      Top             =   5580
+      TabIndex        =   17
+      Top             =   5595
       Width           =   2505
       _ExtentX        =   4419
       _ExtentY        =   1138
@@ -50,7 +51,7 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.ctlJCbutton cmdReNewHW 
       Height          =   650
       Left            =   6480
-      TabIndex        =   1
+      TabIndex        =   16
       Top             =   5595
       Width           =   2505
       _ExtentX        =   4419
@@ -76,7 +77,7 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.ctlJCbutton cmdBackUpDrivers 
       Height          =   650
       Left            =   3840
-      TabIndex        =   2
+      TabIndex        =   15
       Top             =   5595
       Width           =   2500
       _ExtentX        =   4419
@@ -102,7 +103,8 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.ctlJCbutton cmdCheckAll 
       Height          =   300
       Left            =   60
-      TabIndex        =   3
+      TabIndex        =   12
+      TabStop         =   0   'False
       Top             =   5520
       Visible         =   0   'False
       Width           =   2055
@@ -129,7 +131,8 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.ctlJCbutton cmdUnCheckAll 
       Height          =   300
       Left            =   60
-      TabIndex        =   4
+      TabIndex        =   14
+      TabStop         =   0   'False
       Top             =   5940
       Visible         =   0   'False
       Width           =   2055
@@ -180,7 +183,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.OptionButtonW optGrp4 
          Height          =   405
          Left            =   1860
-         TabIndex        =   8
+         TabIndex        =   3
          Top             =   780
          Width           =   2175
          _ExtentX        =   3836
@@ -202,7 +205,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.OptionButtonW optGrp3 
          Height          =   405
          Left            =   1860
-         TabIndex        =   7
+         TabIndex        =   1
          Top             =   360
          Width           =   2175
          _ExtentX        =   3836
@@ -223,7 +226,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.CheckBoxW optGrp1 
          Height          =   405
          Left            =   120
-         TabIndex        =   5
+         TabIndex        =   0
          Top             =   360
          Width           =   1695
          _ExtentX        =   2990
@@ -244,7 +247,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.CheckBoxW optGrp2 
          Height          =   405
          Left            =   120
-         TabIndex        =   6
+         TabIndex        =   2
          Top             =   780
          Width           =   1695
          _ExtentX        =   2990
@@ -290,7 +293,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.TextBoxW txtFindText 
          Height          =   315
          Left            =   60
-         TabIndex        =   13
+         TabIndex        =   4
          Top             =   360
          Width           =   5355
          _ExtentX        =   9446
@@ -331,7 +334,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.OptionButtonW optDevID 
          Height          =   405
          Left            =   60
-         TabIndex        =   10
+         TabIndex        =   5
          Top             =   600
          Width           =   1700
          _ExtentX        =   2990
@@ -353,7 +356,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.OptionButtonW optMS 
          Height          =   405
          Left            =   1800
-         TabIndex        =   11
+         TabIndex        =   6
          Top             =   600
          Width           =   1755
          _ExtentX        =   3096
@@ -375,7 +378,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.OptionButtonW optGoogle 
          Height          =   405
          Left            =   3660
-         TabIndex        =   12
+         TabIndex        =   7
          Top             =   600
          Width           =   1700
          _ExtentX        =   2990
@@ -396,7 +399,7 @@ Begin VB.Form frmListHwidAll
       Begin prjDIADBS.ctlJCbutton cmdGoSite 
          Height          =   795
          Left            =   5520
-         TabIndex        =   14
+         TabIndex        =   8
          Top             =   360
          Width           =   1905
          _ExtentX        =   5318
@@ -423,7 +426,7 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.ListView lvDevices 
       Height          =   1455
       Left            =   60
-      TabIndex        =   15
+      TabIndex        =   10
       Top             =   1320
       Width           =   11610
       _ExtentX        =   20479
@@ -456,7 +459,7 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.LabelW lblWait 
       Height          =   375
       Left            =   105
-      TabIndex        =   16
+      TabIndex        =   11
       Top             =   2880
       Visible         =   0   'False
       Width           =   11640
@@ -478,7 +481,7 @@ Begin VB.Form frmListHwidAll
    Begin prjDIADBS.LabelW lblInformation 
       Height          =   795
       Left            =   2160
-      TabIndex        =   17
+      TabIndex        =   13
       Top             =   5400
       Visible         =   0   'False
       Width           =   1635

@@ -32,7 +32,7 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   0
+      TabIndex        =   10
       Top             =   4560
       Width           =   495
    End
@@ -44,7 +44,7 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   7
+      TabIndex        =   8
       Top             =   3600
       Width           =   495
    End
@@ -56,7 +56,7 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   6
+      TabIndex        =   0
       Top             =   120
       Width           =   495
    End
@@ -68,7 +68,7 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   5
+      TabIndex        =   2
       Top             =   840
       Width           =   495
    End
@@ -92,7 +92,7 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   3
+      TabIndex        =   6
       Top             =   2640
       Width           =   495
    End
@@ -104,7 +104,7 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   2
+      TabIndex        =   12
       Top             =   5520
       Width           =   495
    End
@@ -116,14 +116,15 @@ Begin VB.Form frmLegendIco
       Left            =   120
       ScaleHeight     =   465
       ScaleWidth      =   465
-      TabIndex        =   1
+      TabIndex        =   14
       Top             =   6480
       Width           =   495
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
+      Default         =   -1  'True
       Height          =   650
       Left            =   9900
-      TabIndex        =   8
+      TabIndex        =   16
       Top             =   7140
       Width           =   1815
       _ExtentX        =   3201
@@ -150,7 +151,7 @@ Begin VB.Form frmLegendIco
       Height          =   795
       Index           =   7
       Left            =   720
-      TabIndex        =   9
+      TabIndex        =   15
       Top             =   6360
       Width           =   10995
       _ExtentX        =   0
@@ -171,7 +172,7 @@ Begin VB.Form frmLegendIco
       Height          =   795
       Index           =   6
       Left            =   720
-      TabIndex        =   10
+      TabIndex        =   13
       Top             =   5400
       Width           =   10995
       _ExtentX        =   0
@@ -213,7 +214,7 @@ Begin VB.Form frmLegendIco
       Height          =   795
       Index           =   4
       Left            =   720
-      TabIndex        =   12
+      TabIndex        =   9
       Top             =   3480
       Width           =   10995
       _ExtentX        =   0
@@ -234,7 +235,7 @@ Begin VB.Form frmLegendIco
       Height          =   795
       Index           =   3
       Left            =   720
-      TabIndex        =   13
+      TabIndex        =   7
       Top             =   2520
       Width           =   10995
       _ExtentX        =   0
@@ -255,7 +256,7 @@ Begin VB.Form frmLegendIco
       Height          =   795
       Index           =   2
       Left            =   720
-      TabIndex        =   14
+      TabIndex        =   5
       Top             =   1560
       Width           =   10995
       _ExtentX        =   0
@@ -276,7 +277,7 @@ Begin VB.Form frmLegendIco
       Height          =   555
       Index           =   1
       Left            =   720
-      TabIndex        =   15
+      TabIndex        =   3
       Top             =   840
       Width           =   10995
       _ExtentX        =   0
@@ -297,7 +298,7 @@ Begin VB.Form frmLegendIco
       Height          =   555
       Index           =   0
       Left            =   720
-      TabIndex        =   16
+      TabIndex        =   1
       Top             =   120
       Width           =   10995
       _ExtentX        =   0

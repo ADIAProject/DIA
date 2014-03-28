@@ -23,7 +23,7 @@ Begin VB.Form frmListHwid
    Begin prjDIADBS.ListView lvFolders 
       Height          =   2895
       Left            =   60
-      TabIndex        =   8
+      TabIndex        =   4
       Top             =   1080
       Width           =   11610
       _ExtentX        =   20479
@@ -99,7 +99,7 @@ Begin VB.Form frmListHwid
       Begin prjDIADBS.CheckBoxW chkGrp4 
          Height          =   450
          Left            =   8880
-         TabIndex        =   1
+         TabIndex        =   3
          Top             =   400
          Width           =   2595
          _ExtentX        =   4577
@@ -142,7 +142,7 @@ Begin VB.Form frmListHwid
       Begin prjDIADBS.CheckBoxW chkGrp2 
          Height          =   450
          Left            =   2940
-         TabIndex        =   3
+         TabIndex        =   1
          Top             =   400
          Width           =   2600
          _ExtentX        =   4577
@@ -165,7 +165,7 @@ Begin VB.Form frmListHwid
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   645
       Left            =   9840
-      TabIndex        =   4
+      TabIndex        =   9
       Top             =   4300
       Width           =   1815
       _ExtentX        =   3201
@@ -189,9 +189,10 @@ Begin VB.Form frmListHwid
       ColorScheme     =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
+      Default         =   -1  'True
       Height          =   645
       Left            =   7920
-      TabIndex        =   5
+      TabIndex        =   8
       Top             =   4300
       Width           =   1815
       _ExtentX        =   3201
@@ -271,7 +272,7 @@ Begin VB.Form frmListHwid
    Begin prjDIADBS.LabelW lblInformation 
       Height          =   375
       Left            =   120
-      TabIndex        =   9
+      TabIndex        =   5
       Top             =   4000
       Visible         =   0   'False
       Width           =   11520
