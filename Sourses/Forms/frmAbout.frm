@@ -340,9 +340,10 @@ Private lngCurCredit      As Long
 Private Const strUrlOsZoneNetThread As String = "http://forum.oszone.net/thread-139908.html"
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
@@ -381,16 +382,14 @@ End Sub
 '                              creditURL (String = vbNullString)
 '!--------------------------------------------------------------------------------
 Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL As String = vbNullString)
-    'Generate a new label
-    Load lblThanks(lngCurCredit)
-
     'Because I now have too many people to thank, it's necessary to split the list into multiple columns
     Dim columnLimit As Long
-
-    columnLimit = 5
-
     Dim thxOffset As Long
 
+    'Generate a new label
+    Load lblThanks(lngCurCredit)
+    
+    columnLimit = 5
     thxOffset = 750
 
     With lblThanks(lngCurCredit)
@@ -445,8 +444,13 @@ Private Sub LoadThankYou()
     lngCurCredit = 1
     GenerateThankyou "SamLab", "http://driveroff.net/"
     GenerateThankyou "OSzone.net forum's users", "http://forum.oszone.net/forum-62.html"
+    ' Replacement CommonControls (TextBoxW, ListView, ComboBoxW, ListBoxW, ProgressBar, ToolTip, ImageList, OptionButtonW,RichTextBox, CheckBoxW, LabelW, SpinBox)
     GenerateThankyou "Krool", "http://www.vbforums.com/showthread.php?698563-CommonControls-(Replacement-of-the-MS-common-controls)"
+    'JCbutton
     GenerateThankyou "Juned Chhipa", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=71482&lngWId=1"
+    'jcFrames
+    GenerateThankyou "Juan Carlos San Roman", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=64261&lngWId=1"
+    'clsmenuimage, ScrollControl
     GenerateThankyou "Leandro Ascierto", "http://leandroascierto.com/blog/clsmenuimage/"
     GenerateThankyou "VBnet and Randy Birch", "http://vbnet.mvps.org/"
     'cmdparsing
@@ -457,11 +461,17 @@ Private Sub LoadThankYou()
     GenerateThankyou "Bonnie West", "http://www.vbforums.com/showthread.php?700373-VB6-Shell-amp-Wait"
     'Team HomeWork
     ' Timed MessageBox
-    GenerateThankyou "Anirudha Vengurlekar"
+    GenerateThankyou "Anirudha Vengurlekar", "anirudhav@yahoo.com"
     ' SortDMArray
     GenerateThankyou "Ellis Dee"
     GenerateThankyou "Zhu JinYong"
-    'AnimateForm - Jim Jose
+    'AnimateForm
+    GenerateThankyou "Jim Jose", "jimjosev33@yahoo.com"
+    'MD5
+    GenerateThankyou "Marcin Kleczynski", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=69092&lngWId=1"
+    'HighlightActiveControl
+    GenerateThankyou "Giorgio Brausi", "http://nuke.vbcorner.net/"
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -547,7 +557,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdHomePage_Click()
-    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
+    RunUtilsShell strUrl_MainWWWSite, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -557,18 +567,15 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdHomePage_ClickMenu(mnuIndex As Integer)
 
-    Dim cmdString   As String
-
     Select Case mnuIndex
 
         Case 0
-            cmdString = strKavichki & strUrl_MainWWWSite & strKavichki
+            RunUtilsShell strUrl_MainWWWSite, False
 
         Case 2
-            cmdString = strKavichki & strUrl_MainWWWForum & strKavichki
+            RunUtilsShell strUrl_MainWWWForum, False
     End Select
 
-    RunUtilsShell cmdString, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -586,7 +593,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdOsZoneNet_Click()
-    RunUtilsShell strKavichki & strUrlOsZoneNetThread & strKavichki, False
+    RunUtilsShell strUrlOsZoneNetThread, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -595,7 +602,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ctlAquaButton_Click()
-    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
+    RunUtilsShell strUrl_MainWWWSite, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -656,7 +663,7 @@ Private Sub Form_Load()
 '        End If
 '    End With
 
-    ' Локализациz приложения
+    ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
@@ -673,7 +680,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub lblAuthor_Click()
-    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
+    RunUtilsShell strUrl_MainWWWSite, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -702,7 +709,7 @@ End Sub
 Private Sub lblThanks_Click(Index As Integer)
 
     If LenB(strCreditList(Index)) Then
-        RunUtilsShell strKavichki & strCreditList(Index) & strKavichki, False
+        RunUtilsShell strCreditList(Index), False
     End If
 
 End Sub
@@ -717,12 +724,9 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lblTranslator_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
     If LenB(strTranslatorUrl) Then
         If Button = vbLeftButton Then
-            RunUtilsShell strKavichki & strTranslatorUrl & strKavichki, False
+            RunUtilsShell strTranslatorUrl, False
         End If
     End If
 

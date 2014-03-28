@@ -1336,9 +1336,10 @@ Private objHashOutput2              As Scripting.Dictionary
 Private objHashOutput3              As Scripting.Dictionary
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
@@ -1657,10 +1658,8 @@ Private Sub ChangeFrmMainCaption(Optional ByVal lngstrPercentage As Long)
 
     If LenB(strThisBuildBy) = 0 Then
         Me.CaptionW = strProgressValue & strFrmMainCaptionTemp & " v." & strProductVersion & " @" & App.CompanyName & " - " & strPCLangCurrentLangName
-        ' & strProgressValue
     Else
         Me.CaptionW = strProgressValue & strFrmMainCaptionTemp & " v." & strProductVersion & " " & strThisBuildBy & " - " & strPCLangCurrentLangName
-        ' & strProgressValue
     End If
 
 End Sub
@@ -3066,26 +3065,16 @@ Private Sub DelDuplicateOldDP()
 
                         If lngStrLen1 > lngStrLen2 Then
                             strResult1 = CompareByVersion(Left$(strVerDP_1, lngStrLen2), strVerDP_2)
-
-                            If strResult1 = "=" Then
-                                strResult = strResult1
-                            Else
-                                strResult = strResult1
-                            End If
+                            strResult = strResult1
 
                         ElseIf lngStrLen1 < lngStrLen2 Then
                             strResult1 = CompareByVersion(strVerDP_1, Left$(strVerDP_2, lngStrLen1))
-
-                            If strResult1 = "=" Then
-                                strResult = strResult1
-                            Else
-                                strResult = strResult1
-                            End If
+                            strResult = strResult1
 
                         Else
                             strResult = CompareByVersion(strVerDP_1, strVerDP_2)
 
-                            If strResult = "=" Then
+                            If StrComp(strResult, "=") = 0 Then
                                 If LenB(strVerDP_1_1) And LenB(strVerDP_1_1) Then
                                     strResult2 = CompareByVersion(strVerDP_1_1, strVerDP_2_1)
                                 End If
@@ -3094,10 +3083,10 @@ Private Sub DelDuplicateOldDP()
                             End If
                         End If
 
-                        If strResult = ">" Then
+                        If StrComp(strResult, ">") = 0 Then
                             strVerDP_Main = strVerDP_1
                             strPackFileName2DelTemp = strDPName_2
-                        ElseIf strResult = "<" Then
+                        ElseIf StrComp(strResult, "<") = 0 Then
                             strVerDP_Main = strVerDP_2
                             strPackFileName2DelTemp = strDPName_1
                         End If
@@ -3308,7 +3297,7 @@ Private Sub EditOrReadDPName(ByVal CurButtonIndex As Long, Optional ByVal mbRead
     strDPName = IniStringPrivate("DPNames", strDRPFilename, strSysIni)
 
     ' Если такого значения в файле нет, то ничего не добавляем
-    If strDPName = "no_key" Then
+    If StrComp(strDPName, "no_key") = 0 Then
         strDPName = strDPNameOld
     End If
 
@@ -3477,7 +3466,7 @@ Private Function FindAndInstallPanel(ByVal strArcDRPPath As String, ByVal strIni
             For i = 1 To lngTagFilesCount
                 strTemp = IniStringPrivate(strSection, strPrefixTag & i, strIniPath)
 
-                If strTemp = "no_key" Then
+                If StrComp(strTemp, "no_key") = 0 Then
                     GoTo ExitWithFalse
                 End If
 
@@ -3519,7 +3508,7 @@ NextTag:
                     For i = 1 To lngCommandsCount
                         strTemp = IniStringPrivate(strSection, strPrefixCommand & i, strIniPath)
 
-                        If strTemp = "no_key" Then
+                        If StrComp(strTemp, "no_key") = 0 Then
                             GoTo NextCommand
                         End If
 
@@ -3588,7 +3577,6 @@ Private Function FindCheckCount(Optional ByVal mbMsgStatus As Boolean = True) As
     Next
 
     With cmdRunTask
-        '.Enabled = miCount
     
         If optRezim_Upd.Value Then
             .Caption = LocaliseString(strPCLangCurrentPath, strFormName, "cmdRunTask", .Caption)
@@ -3740,7 +3728,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
                 lngBuffer = BinarySearch(strFile_x(), strFind)
                 
                 If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: PreFind by HWID: " & strFind & " =" & lngBuffer
-                'Debug.Print str5VbTab & "FindHwidInBaseNew: PreFind by HWID: " & strFind & " =" & lngBuffer
                 lngFileStartFromSymbol = lngBuffer
 
                 If lngBuffer < 0 Then
@@ -3783,8 +3770,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
                             End If
 
                             strFindCompatIDFind = strFindCompatID_x(iii)
-
-                            'Debug.Print iii & " " & lngCompatiblesHWIDCount & " " & strFindCompatIDFind
+                            
                             If Not MatchSpec(strFindCompatIDFind, strExcludeHWID) Then
 
                                 If Not objHashOutput3.Exists(strFindCompatIDFind) Then
@@ -3792,7 +3778,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
                                     lngBuffer2 = 0
                                     lngBuffer2 = BinarySearch(strFile_x(), strFindCompatIDFind)
                                     If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: ***PreFind by HWID-Compatibles: " & strFindCompatIDFind & " =" & lngBuffer2
-                                    'Debug.Print str5VbTab & "FindHwidInBaseNew: ***PreFind by HWID-Compatibles: " & strFindCompatIDFind & " =" & lngBuffer2
                                     lngFileStartFromSymbol = lngBuffer2
 
                                     If lngBuffer2 >= 0 Then
@@ -3908,11 +3893,11 @@ ExitFromForNext_iii:
                                 strPriznakSravnenia = CompareByVersion(strDevVer, strDevVerLocal)
                             End If
 
-                            If strPriznakSravnenia = ">" Then
+                            If StrComp(strPriznakSravnenia, ">") = 0 Then
                                 ' В БД новее
                                 mbStatusNewer = True
                                 mbStatusOlder = False
-                            ElseIf strPriznakSravnenia = "<" Then
+                            ElseIf StrComp(strPriznakSravnenia, "<") = 0 Then
                                 ' В БД старее
                                 If Not mbStatusOlder Then
                                     If Not mbStatusNewer Then
@@ -5493,7 +5478,7 @@ Private Function ReadExitCode(ByVal lngCode As Long) As String
 
         If Len(strCode) >= 1 Then
             If Len(strCode) <= 2 Then
-                If strCode = "0" Then
+                If StrComp(strCode, "0") = 0 Then
                     strResultText = "Cancel or Nothing to Install"
                 Else
                     mbCodeInstall = True
@@ -5620,7 +5605,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             strClassesName = IniStringPrivate("DriverPack", "classes", strFinishIniPath)
 
             ' Если такого значения в файле нет, то ничего не добавляем
-            If strClassesName = "no_key" Then
+            If StrComp(strClassesName, "no_key") = 0 Then
                 strClassesName = vbNullString
             End If
             
@@ -6342,35 +6327,33 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
     Dim strTabIndex_x() As String
     Dim strTabIndexTemp As String
     Dim strTabName      As String
-    Dim str_x64         As String
+    Dim lng_x64         As Long
     Dim lngSupportedOS  As Long
-
-    lngSupportedOS = 0
 
     For i = 0 To UBound(arrOSList)
         strTabName = arrOSList(i).Name
-        str_x64 = arrOSList(i).is64bit
+        lng_x64 = CLng(arrOSList(i).is64bit)
 
         If InStr(arrOSList(i).Ver, strOSCurrentVersion) Then
 
             ' Если в списке есть ОС x64
-            If str_x64 = 1 Then
+            If lng_x64 = 1 Then
                 If InStr(strTabName, "64") = 0 Then
                     strTabName = strTabName & " x64"
                 End If
             End If
 
-            If str_x64 = "2" Then
+            If lng_x64 = 2 Then
                 miTabIndex = i
                 strTabIndex = IIf(LenB(strTabIndex), strTabIndex & " ", vbNullString) & CStr(miTabIndex)
                 lngSupportedOS = lngSupportedOS + 1
-            ElseIf str_x64 = "3" Then
+            ElseIf lng_x64 = 3 Then
                 miTabIndex = i
                 strTabIndex = IIf(LenB(strTabIndex), strTabIndex & " ", vbNullString) & CStr(miTabIndex)
                 lngSupportedOS = lngSupportedOS + 1
             Else
 
-                If CBool(str_x64) = mbIsWin64 Then
+                If CBool(lng_x64) = mbIsWin64 Then
                     miTabIndex = i
                     strTabIndex = IIf(LenB(strTabIndex), strTabIndex & " ", vbNullString) & CStr(miTabIndex)
                     lngSupportedOS = lngSupportedOS + 1
@@ -6382,9 +6365,7 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
     Next
 
     'Если среди вкладок не найдено поддержки вашей ОС
-    If lngSupportedOS = 0 Then
-        mbNoSupportedOS = True
-    End If
+    mbNoSupportedOS = lngSupportedOS = 0
 
     miSymbol = InStr(strTabIndex, " ")
 
@@ -6979,7 +6960,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
                     strClassesName = IniStringPrivate("DriverPack", "classes", strFinishIniPath)
 
                     ' Если такого значения в файле нет, то ничего не добавляем
-                    If strClassesName = "no_key" Then
+                    If StrComp(strClassesName, "no_key") = 0 Then
                         strClassesName = vbNullString
                     End If
 
@@ -9097,7 +9078,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextTxt_Click()
-    RunUtilsShell strKavichki & strCurSelButtonPath & strKavichki, False
+    RunUtilsShell strCurSelButtonPath, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9204,7 +9185,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuDriverPacks_Click()
-    RunUtilsShell strKavichki & "http://driverpacks.net/driverpacks" & strKavichki, False
+    RunUtilsShell "http://driverpacks.net/driverpacks", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9213,7 +9194,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuDriverPacksOnMySite_Click()
-    RunUtilsShell strKavichki & "http://adia-project.net/forum/index.php?topic=789.0" & strKavichki, False
+    RunUtilsShell "http://adia-project.net/forum/index.php?topic=789.0", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9223,7 +9204,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuHelp_Click()
 
-    Dim cmdString       As String
     Dim strFilePathTemp As String
 
     strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\Help.html"
@@ -9232,8 +9212,7 @@ Private Sub mnuHelp_Click()
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Help.html"
     End If
 
-    cmdString = strKavichki & strFilePathTemp & strKavichki
-    RunUtilsShell cmdString, False
+    RunUtilsShell strFilePathTemp, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9243,7 +9222,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuHistory_Click()
 
-    Dim cmdString       As String
     Dim strFilePathTemp As String
 
     strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\history.txt"
@@ -9252,8 +9230,7 @@ Private Sub mnuHistory_Click()
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\history.txt"
     End If
 
-    cmdString = strKavichki & strFilePathTemp & strKavichki
-    RunUtilsShell cmdString, False
+    RunUtilsShell strFilePathTemp, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9262,7 +9239,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHomePage1_Click()
-    RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
+    RunUtilsShell strUrl_MainWWWSite, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9271,7 +9248,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuHomePage_Click()
-    RunUtilsShell strKavichki & "http://forum.oszone.net/thread-139908.html" & strKavichki, False
+    RunUtilsShell "http://forum.oszone.net/thread-139908.html", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9356,7 +9333,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuLinks_Click()
 
-    Dim cmdString       As String
     Dim strFilePathTemp As String
 
     strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\Links.html"
@@ -9365,8 +9341,7 @@ Private Sub mnuLinks_Click()
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Links.html"
     End If
 
-    cmdString = strKavichki & strFilePathTemp & strKavichki
-    RunUtilsShell cmdString, False
+    RunUtilsShell strFilePathTemp, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9646,7 +9621,7 @@ Private Sub mnuUtils_Click(Index As Integer)
         cmdString = strKavichki & PathExe & strKavichki & " " & Params
     End If
 
-    RunUtilsShell cmdString, False
+    RunUtilsShell cmdString, False, False, False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9712,7 +9687,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuUtils_UnknownDevices_Click()
-    RunUtilsShell strUnknownDevices_Path, True, True
+    RunUtilsShell strUnknownDevices_Path, , True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9722,7 +9697,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuViewDPInstLog_Click()
 
-    Dim cmdString     As String
     Dim strLogPath    As String
     Dim strLogPathNew As String
 
@@ -9731,8 +9705,7 @@ Private Sub mnuViewDPInstLog_Click()
 
     If PathExists(strLogPath) Then
         CopyFileTo strLogPath, strLogPathNew
-        cmdString = strKavichki & strLogPathNew & strKavichki
-        RunUtilsShell cmdString, False
+        RunUtilsShell strLogPathNew, False
     Else
         If mbDebugStandart Then DebugMode "cmdString - File not exist: " & strLogPath
     End If

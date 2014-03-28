@@ -2,12 +2,12 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "26/03/2014"
+Public Const strDateProgram         As String = "28/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
 Public strProductVersion            As String
-Public Const strProjectName         As String = "DriversInstaller"
+Public Const strProjectName         As String = "DIA"
 Public Const strUrl_MainWWWSite     As String = "http://adia-project.net/"                   ' Домашний сайт проекта
 Public Const strUrl_MainWWWForum    As String = "http://adia-project.net/forum/index.php"    ' Домашний форум проекта
 Public Const strUrlOsZoneNetThread  As String = "http://forum.oszone.net/thread-139908.html" ' Топик программы на сайте Oszone.net
@@ -420,7 +420,7 @@ Private Sub Main()
             Win64ReloadOptions
         End If
 
-    ElseIf strOSCurrentVersion = "5.0" Then
+    ElseIf StrComp(strOSCurrentVersion, "5.0") = 0 Then
         ' Для win2k надо старый devcon
         strDevConExePath = strDevConExePathW2k
     End If

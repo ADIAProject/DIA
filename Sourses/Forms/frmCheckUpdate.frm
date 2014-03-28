@@ -294,9 +294,10 @@ Private mbFirstStartUpdate As Boolean
 Private strFormName        As String
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
@@ -510,21 +511,15 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdHistory_Click()
 
-    Dim nRetShellEx As Boolean
-    Dim cmdString   As String
-
     Select Case strPCLangCurrentID
 
         Case "0419"
-            cmdString = strKavichki & strLinkHistory & strKavichki
+            RunUtilsShell strLinkHistory, False
 
         Case Else
-            cmdString = strKavichki & strLinkHistory_en & strKavichki
+            RunUtilsShell strLinkHistory_en, False
     End Select
-
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -533,14 +528,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdUpdate_Click()
-
-    Dim nRetShellEx As Boolean
-    Dim cmdString   As String
-
-    cmdString = strKavichki & strLink(cmbVersions.ListIndex, 0) & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell strLink(cmbVersions.ListIndex, 0), False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -550,24 +538,18 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdUpdate_ClickMenu(mnuIndex As Integer)
 
-    Dim nRetShellEx As Boolean
-    Dim cmdString   As String
-
     Select Case mnuIndex
 
         Case 0
-            cmdString = strKavichki & strLink(cmbVersions.ListIndex, 0) & strKavichki
+            RunUtilsShell strLink(cmbVersions.ListIndex, 0), False
 
         Case 2
-            cmdString = strKavichki & strLink(cmbVersions.ListIndex, 2) & strKavichki
+            RunUtilsShell strLink(cmbVersions.ListIndex, 2), False
 
         Case 4
-            cmdString = strKavichki & strLink(cmbVersions.ListIndex, 4) & strKavichki
+            RunUtilsShell strLink(cmbVersions.ListIndex, 4), False
     End Select
 
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -576,14 +558,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdUpdateFull_Click()
-
-    Dim nRetShellEx As Boolean
-    Dim cmdString   As String
-
-    cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 0) & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell strLinkFull(cmbVersions.ListIndex, 0), False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -593,24 +568,18 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdUpdateFull_ClickMenu(mnuIndex As Integer)
 
-    Dim nRetShellEx As Boolean
-    Dim cmdString   As String
-
     Select Case mnuIndex
 
         Case 0
-            cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 0) & strKavichki
+            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 0), False
 
         Case 2
-            cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 2) & strKavichki
-
+            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 2), False
+            
         Case 4
-            cmdString = strKavichki & strLinkFull(cmbVersions.ListIndex, 4) & strKavichki
+            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 4), False
     End Select
 
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -687,7 +656,7 @@ Private Sub Form_Load()
     LoadIconImage2Object cmdHistory, "BTN_HISTORY", strPathImageMainWork
     LoadIconImage2Object cmdDonate, "BTN_DONATE", strPathImageMainWork
 
-    ' Локализациz приложения
+    ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
@@ -706,13 +675,6 @@ End Sub
 '                              Y (Single)
 '!--------------------------------------------------------------------------------
 Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
-    cmdString = strKavichki & strUrl_MainWWWSite & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell strUrl_MainWWWSite, False
 End Sub
 

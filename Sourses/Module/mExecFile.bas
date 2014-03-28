@@ -166,7 +166,7 @@ End Function
 '                              mbCollectPath (Boolean = True)
 '                              mbStartPathAsPathExe (Boolean = False)
 '!--------------------------------------------------------------------------------
-Public Sub RunUtilsShell(ByVal strPathUtils As String, Optional ByVal mbCollectPath As Boolean = True, Optional ByVal mbStartPathAsPathExe As Boolean = False)
+Public Sub RunUtilsShell(ByVal strPathUtils As String, Optional ByVal mbCollectPath As Boolean = True, Optional ByVal mbStartPathAsPathExe As Boolean = False, Optional ByVal mbPathQuoted As Boolean = True)
 
     Dim nRetShellEx  As Boolean
     Dim cmdString    As String
@@ -183,6 +183,10 @@ Public Sub RunUtilsShell(ByVal strPathUtils As String, Optional ByVal mbCollectP
         cmdString = strPathUtils
     End If
 
+    If mbPathQuoted Then
+        cmdString = strKavichki & cmdString & strKavichki
+    End If
+    
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString
 
     If mbStartPathAsPathExe Then

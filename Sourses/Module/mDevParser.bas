@@ -78,7 +78,7 @@ Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
         strDevConTemp = strDevConExePath64
     Else
 
-        If strOSCurrentVersion = "5.0" Then
+        If StrComp(strOSCurrentVersion, "5.0") = 0 Then
             strDevConTemp = strDevConExePathW2k
         Else
             strDevConTemp = strDevConExePath

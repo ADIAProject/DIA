@@ -295,7 +295,7 @@ StartRegOCXForce:
                 strResultCompare = CompareByVersion(strVersionFile, strVerFileOcx)
 
                 ' Анализ итога сравнения
-                If strResultCompare = "<" Then
+                If StrComp(strResultCompare, "<") = 0 Then
                     If Not mbRunWithParam Then
                         If mbSilentDLL Then
                             lngMsgRet = vbYes
@@ -347,7 +347,7 @@ StartRegOCXForce:
                 strResultCompare = CompareByVersion(strVersionFile, strVerFileOcx)
 
                 ' Анализ итога сравнения
-                If strResultCompare = "<" Then
+                If StrComp(strResultCompare, "<") = 0 Then
                     If Not mbRunWithParam Then
                         If mbSilentDLL Then
                             lngMsgRet = vbYes

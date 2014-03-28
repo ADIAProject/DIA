@@ -63,3 +63,37 @@ Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Lo
     End If
 
 End Function
+
+ '**************************************
+' Name: Calculate timing23-May-2012
+' Description:Basically, this is just one more way of calculating and displaying how much time a process took before finishing.
+' This will check for a hi-performance timer and if none is found then uses the API GetTickCount.
+' By: Kenaso
+' http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=74366&lngWId=1
+ 
+' ' Retrieves the frequency of the high-resolution performance counter,
+' ' if one exists. The frequency cannot change while the system is running.
+' ' If the function fails, the return value is zero.
+'Private Declare Function QueryPerformanceFrequency Lib "kernel32" (curFrequency As Currency) As Long
+' ' The QueryPerformanceCounter function retrieves the current value of the  ' high-resolution performance counter.
+'Private Declare Function QueryPerformanceCounter Lib "kernel32" (curCounter As Currency) As Boolean
+
+' ' This is a rough translation of the GetTickCount API. The
+' ' tick count of a PC is only valid for the first 49.7 days
+' ' since the last reboot. When you capture the tick count,
+' ' you are capturing the total number of milliseconds elapsed
+' ' since the last reboot. The elapsed time is stored as a
+' ' DWORD value. Therefore, the time will wrap around to zero
+' ' if the system is run continuously for 49.7 days.
+'
+'Private mcurFrequency As Currency ' High performance Frequency
+'
+'Public Function GetTimeStart() As Long
+'    If mcurFrequency > 0 Then
+'        QueryPerformanceCounter curEnd ' Hi-performance timer available
+'    Else
+'        curEnd = CDbl(GetTickCount) ' No hi-performance timer
+'    End If
+'
+'    GetTimeStart = curEnd
+'End Function

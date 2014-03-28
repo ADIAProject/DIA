@@ -314,9 +314,10 @@ Private lngFormHeightMin    As Long
 Private strFormName         As String
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 

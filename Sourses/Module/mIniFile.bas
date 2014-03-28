@@ -124,7 +124,7 @@ Public Function GetIniValueString(ByVal strIniPath As String, ByVal strIniSectio
 
     strValue = IniStringPrivate(strIniSection, strIniValue, strIniPath)
 
-    If strValue = "no_key" Then
+    If StrComp(strValue, "no_key") = 0 Then
         strValue = strValueDefault
     End If
 

@@ -171,9 +171,10 @@ Private lngFormHeightMin As Long
 Private strFormName      As String
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
@@ -288,14 +289,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdPayPal_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
-    cmdString = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10349042"
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10349042", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -305,21 +299,16 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdSMSCoin_Click()
 
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
     Select Case strPCLangCurrentID
 
         Case "0419"
-            cmdString = "http://donate.smscoin.com/js/smsdonate/index.html?sid=403169"
+            RunUtilsShell "http://donate.smscoin.com/js/smsdonate/index.html?sid=403169", False
 
         Case Else
-            cmdString = "http://donate.smscoin.com/js/smsdonate/index_en.html?sid=403169"
+            RunUtilsShell "http://donate.smscoin.com/js/smsdonate/index_en.html?sid=403169", False
     End Select
 
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -328,14 +317,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdYandexMoney_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
-    cmdString = "https://money.yandex.ru/embed/shop.xml?uid=41001626648736&amp;writer=seller&amp;targets=donate+to+adia-project&amp;default-sum=50&amp;button-text=04&amp;comment=on&amp;hint=%22Please,%20write%20your%20comments%22"
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "https://money.yandex.ru/embed/shop.xml?uid=41001626648736&amp;writer=seller&amp;targets=donate+to+adia-project&amp;default-sum=50&amp;button-text=04&amp;comment=on&amp;hint=%22Please,%20write%20your%20comments%22", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -381,7 +363,7 @@ Private Sub Form_Load()
     LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
     DonateRTF.Visible = False
 
-    ' Локализациz приложения
+    ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else

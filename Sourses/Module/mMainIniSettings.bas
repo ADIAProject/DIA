@@ -407,7 +407,7 @@ Public Function GetMainIniParam() As Boolean
     ' Получение альтернативного пути Temp
     strAlternativeTempPath = IniStringPrivate("Main", "AlternativeTempPath", strSysIni)
 
-    If strAlternativeTempPath = "no_key" Then
+    If StrComp(strAlternativeTempPath, "no_key") = 0 Then
         strAlternativeTempPath = strWinTemp
     End If
 

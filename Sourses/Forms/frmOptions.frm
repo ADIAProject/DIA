@@ -3383,9 +3383,10 @@ Private strTableUtilHeader4 As String
 Private strFormName         As String
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
@@ -3476,7 +3477,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
-    ' Локализациz приложения
+    ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
@@ -3494,7 +3495,6 @@ Public Sub FormLoadAction()
     SetBtnStatusFontProperties cmdFutureButton
     'Загрузить подсказку
     LoadToolTip
-    
     DoEvents
 End Sub
 
@@ -3504,11 +3504,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub InitializeObjectProperties()
-
-    With cmdFutureButton
-        .CheckExist = True
-    End With
-
+    cmdFutureButton.CheckExist = True
     chkFutureButton.ZOrder 0
     
     cmbButtonStyle.ListIndex = lngStatusBtnStyle
@@ -3582,7 +3578,7 @@ Dim strTTText As String
 Dim strTTipTextTitle As String
 
     strTTipTextTitle = LocaliseString(strPCLangCurrentPath, frmMain.Name, "ToolTipTextTitle", "Файл пакета драйверов:")
-    strTTText = "d:\DriversInstaller\driverpacks.net\All\" & str2vbNewLine & _
+    strTTText = "d:\DIA\driverpacks.net\All\" & str2vbNewLine & _
                 "dp_chipset_wnt5_x86-32_1209.7z" & vbNewLine & _
                 "File Size: 4,33 МБ" & vbNewLine & _
                 "Class of the Drivers: System" & str2vbNewLine & _
@@ -4160,49 +4156,47 @@ Private Sub TransferOSData()
     With lvOS
         i = .SelectedItem.Index
 
-        If i = -1 Then
+        If i >= 0 Then
 
-            Exit Sub
-
+            frmOSEdit.txtOSVer.Text = .ListItems.Item(i).Text
+            frmOSEdit.txtOSName.Text = .ListItems.Item(i).SubItems(1)
+            frmOSEdit.ucPathDRP.Path = .ListItems.Item(i).SubItems(2)
+            frmOSEdit.ucPathDB.Path = .ListItems.Item(i).SubItems(3)
+            frmOSEdit.chk64bit.Value = CBool(.ListItems.Item(i).SubItems(4))
+    
+            Select Case .ListItems.Item(i).SubItems(4)
+    
+                Case 0
+                    frmOSEdit.chk64bit.Value = False
+                    frmOSEdit.chkNotCheckBitOS.Value = False
+    
+                Case 1
+                    frmOSEdit.chk64bit.Value = True
+                    frmOSEdit.chkNotCheckBitOS.Value = False
+    
+                Case 2
+                    frmOSEdit.chk64bit.Value = False
+                    frmOSEdit.chkNotCheckBitOS.Value = True
+    
+                Case 3
+                    frmOSEdit.chk64bit.Value = True
+                    frmOSEdit.chkNotCheckBitOS.Value = True
+    
+                Case Else
+                    frmOSEdit.chk64bit.Value = False
+                    frmOSEdit.chkNotCheckBitOS.Value = False
+            End Select
+    
+            frmOSEdit.ucPhysXPath.Path = .ListItems.Item(i).SubItems(5)
+            frmOSEdit.ucLangPath.Path = .ListItems.Item(i).SubItems(6)
+            frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(i).SubItems(7)
+            frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(i).SubItems(8)
+            
+            frmOSEdit.Show vbModal, Me
         End If
-
-        frmOSEdit.txtOSVer.Text = .ListItems.Item(i).Text
-        frmOSEdit.txtOSName.Text = .ListItems.Item(i).SubItems(1)
-        frmOSEdit.ucPathDRP.Path = .ListItems.Item(i).SubItems(2)
-        frmOSEdit.ucPathDB.Path = .ListItems.Item(i).SubItems(3)
-        frmOSEdit.chk64bit.Value = CBool(.ListItems.Item(i).SubItems(4))
-
-        Select Case .ListItems.Item(i).SubItems(4)
-
-            Case 0
-                frmOSEdit.chk64bit.Value = False
-                frmOSEdit.chkNotCheckBitOS.Value = False
-
-            Case 1
-                frmOSEdit.chk64bit.Value = True
-                frmOSEdit.chkNotCheckBitOS.Value = False
-
-            Case 2
-                frmOSEdit.chk64bit.Value = False
-                frmOSEdit.chkNotCheckBitOS.Value = True
-
-            Case 3
-                frmOSEdit.chk64bit.Value = True
-                frmOSEdit.chkNotCheckBitOS.Value = True
-
-            Case Else
-                frmOSEdit.chk64bit.Value = False
-                frmOSEdit.chkNotCheckBitOS.Value = False
-        End Select
-
-        frmOSEdit.ucPhysXPath.Path = .ListItems.Item(i).SubItems(5)
-        frmOSEdit.ucLangPath.Path = .ListItems.Item(i).SubItems(6)
-        frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(i).SubItems(7)
-        frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(i).SubItems(8)
+        
     End With
 
-    'LVOS
-    frmOSEdit.Show vbModal, Me
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4217,19 +4211,17 @@ Private Sub TransferUtilsData()
     With lvUtils
         i = .SelectedItem.Index
 
-        If i = -1 Then
-
-            Exit Sub
-
+        If i >= 0 Then
+            frmUtilsEdit.txtUtilName.Text = .ListItems.Item(i).Text
+            frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(i).SubItems(1)
+            frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(i).SubItems(2)
+            frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(i).SubItems(3)
+            
+            frmUtilsEdit.Show vbModal, Me
         End If
-
-        frmUtilsEdit.txtUtilName.Text = .ListItems.Item(i).Text
-        frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(i).SubItems(1)
-        frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(i).SubItems(2)
-        frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(i).SubItems(3)
+        
     End With
 
-    frmUtilsEdit.Show vbModal, Me
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4612,13 +4604,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdDelOS_Click()
 
-    Dim i As Long
-
     With lvOS
 
         If .ListItems.Count Then
-            i = .SelectedItem.Index
-            .ListItems.Remove (i)
+            .ListItems.Remove (.SelectedItem.Index)
             lngLastIdOS = lngLastIdOS - 1
         End If
 
@@ -4633,13 +4622,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdDelUtil_Click()
 
-    Dim i As Long
-
     With lvUtils
 
         If .ListItems.Count Then
-            i = .SelectedItem.Index
-            .ListItems.Remove (i)
+            .ListItems.Remove (.SelectedItem.Index)
             lngLastIdUtil = lngLastIdUtil - 1
         End If
 
@@ -4653,14 +4639,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdDriverVer_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ff547394%28VS.85%29.aspx?ppud=4" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff547394%28VS.85%29.aspx?ppud=4", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4785,14 +4764,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdForceIfDriverIsNotBetter_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms793551.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff544948.aspx", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4801,14 +4773,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdLegacyMode_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As Boolean
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms794322.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff548635.aspx", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4858,14 +4823,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdPromptIfDriverIsNotBetter_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As String
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms793530.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff549759.aspx", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4874,14 +4832,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdQuietInstall_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As String
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms794300.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff549799.aspx", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4890,14 +4841,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdScanHardware_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As String
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms794295.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff550761.aspx", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4906,14 +4850,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdSuppressAddRemovePrograms_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As String
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms794270.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff553404.aspx", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4922,14 +4859,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdSuppressWizard_Click()
-
-    Dim cmdString   As String
-    Dim nRetShellEx As String
-
-    cmdString = strKavichki & "http://msdn.microsoft.com/en-us/library/ms791062.aspx" & strKavichki
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell "http://msdn.microsoft.com/en-us/library/ff550803.aspx#setting_the_suppresswizard_flag", False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5083,28 +5013,34 @@ Private Sub LoadList_lvOptions()
     End With
         
     ' Заполняем ListView названием опций программы
-    With lvOptions.ListItems
-        If .Count = 0 Then
-            .Add 1, , strItemOptions1, , 1
-            .Add 2, , strItemOptions8, , 2
-            .Add 3, , strItemOptions2, , 3
-            .Add 4, , strItemOptions3, , 4
-            .Add 5, , strItemOptions4, , 5
-            .Add 6, , strItemOptions5, , 6
-            .Add 7, , strItemOptions9, , 7
-            .Add 8, , strItemOptions6, , 8
-            .Add 9, , strItemOptions10, , 9
-        Else
-            .Item(1).Text = strItemOptions1
-            .Item(2).Text = strItemOptions8
-            .Item(3).Text = strItemOptions2
-            .Item(4).Text = strItemOptions3
-            .Item(5).Text = strItemOptions4
-            .Item(6).Text = strItemOptions5
-            .Item(7).Text = strItemOptions9
-            .Item(8).Text = strItemOptions6
-            .Item(9).Text = strItemOptions10
-        End If
+    With lvOptions
+        With .ListItems
+            If .Count = 0 Then
+                .Add 1, , strItemOptions1, , 1
+                .Add 2, , strItemOptions8, , 2
+                .Add 3, , strItemOptions2, , 3
+                .Add 4, , strItemOptions3, , 4
+                .Add 5, , strItemOptions4, , 5
+                .Add 6, , strItemOptions5, , 6
+                .Add 7, , strItemOptions9, , 7
+                .Add 8, , strItemOptions6, , 8
+                .Add 9, , strItemOptions10, , 9
+            Else
+                .Item(1).Text = strItemOptions1
+                .Item(2).Text = strItemOptions8
+                .Item(3).Text = strItemOptions2
+                .Item(4).Text = strItemOptions3
+                .Item(5).Text = strItemOptions4
+                .Item(6).Text = strItemOptions5
+                .Item(7).Text = strItemOptions9
+                .Item(8).Text = strItemOptions6
+                .Item(9).Text = strItemOptions10
+            End If
+        End With
+    
+        DoEvents
+        .Refresh
+        .ColumnWidth = .Width
     End With
     
 End Sub

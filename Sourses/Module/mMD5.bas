@@ -1,4 +1,5 @@
 Attribute VB_Name = "mMD5"
+'http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=69092&lngWId=1
 'This module is used to gather the contents of a file quickly and to grab the MD5 of a file quickly by using API functions. Use this
 'code in any projects you wish, no need to give credit. Please vote though.
 'marcin@malwarebytes.org if you have any questions.

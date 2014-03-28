@@ -521,9 +521,10 @@ Private lngDeviceCount   As Long
 Private strFormName      As String
 
 Public Property Get CaptionW() As String
-    Dim strLen As Long
-    strLen = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
-    CaptionW = Space$(strLen)
+    Dim lngLenStr As Long
+    
+    lngLenStr = DefWindowProc(Me.hWnd, WM_GETTEXTLENGTH, 0, ByVal 0)
+    CaptionW = Space$(lngLenStr)
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
@@ -604,7 +605,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
-    ' Локализациz приложения
+    ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
     Else
@@ -829,15 +830,9 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub cmdBackUpDrivers_Click()
 
-    Dim lngMsgRet As Long
-
-    lngMsgRet = MsgBox(strMessages(123), vbYesNo + vbQuestion, strProductName)
-
-    Select Case lngMsgRet
-
-        Case vbYes
-            RunUtilsShell strKavichki & strUrl_MainWWWSite & strKavichki, False
-    End Select
+    If MsgBox(strMessages(123), vbYesNo + vbQuestion, strProductName) = vbYes Then
+        RunUtilsShell strUrl_MainWWWSite, False
+    End If
 
 End Sub
 
@@ -874,23 +869,21 @@ Private Sub cmdGoSite_Click()
 
     Dim strDevID    As String
     Dim cmdString   As String
-    Dim nRetShellEx As Boolean
 
     strDevID = txtFindText.Text
     strDevID = Replace$(strDevID, vbBackslash, "%5C", , , vbTextCompare)
     strDevID = Replace$(strDevID, "&", "%26", , , vbTextCompare)
 
     If optDevID.Value Then
-        cmdString = strKavichki & "http://www.devid.info/search.php?text=" & strDevID & "&=" & strKavichki
+        cmdString = "http://www.devid.info/search.php?text=" & strDevID & "&="
     ElseIf optGoogle.Value Then
-        cmdString = strKavichki & "http://www.google.com/search?q=driver+" & strDevID & "&=" & strKavichki
+        cmdString = "http://www.google.com/search?q=driver+" & strDevID & "&="
     Else
-        cmdString = strKavichki & "http://catalog.update.microsoft.com/v7/site/Search.aspx?q=" & strDevID & "&=" & strKavichki
+        cmdString = "http://catalog.update.microsoft.com/v7/site/Search.aspx?q=" & strDevID & "&="
     End If
 
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+    RunUtilsShell cmdString, False
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
