@@ -15,7 +15,7 @@ Public Function ApiErrorText(ByVal errNum As Long) As String
     Dim Msg  As String
     Dim nRet As Long
 
-    Msg = String$(1024, vbNullChar)
+    Msg = FillNullChar(1024)
     nRet = FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, ByVal 0&, errNum, 0&, Msg, Len(Msg), ByVal 0&)
 
     If nRet Then

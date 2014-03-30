@@ -23,7 +23,7 @@ Public Function CheckIniSectionExists(ByVal strSection As String, ByVal strfullp
     Dim strBuffer As String
     Dim nTemp     As Long
 
-    strBuffer = String$(5 * 1024, vbNullChar)
+    strBuffer = FillNullChar(5120)
     nTemp = GetPrivateProfileSection(strSection, strBuffer, Len(strBuffer), strfullpath)
 
     CheckIniSectionExists = nTemp
@@ -219,8 +219,8 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
                     Key = Left$(str, miRavnoPosition - 1)
                     Value = Mid$(str, miRavnoPosition + 1)
                 Else
-                    Key = TrimNull(str)
-                    Value = TrimNull(str)
+                    Key = MemAPIs.RTrimZ(str)
+                    Value = MemAPIs.RTrimZ(str)
                 End If
 
 Save_StrKey:
@@ -321,7 +321,7 @@ Public Function IniStringPrivate(ByVal SekName As String, ByVal KeyName As Strin
     'ограничение - параметр не может быть больше 4096 символов
     nTemp = GetPrivateProfileStringW(StrPtr(SekName), StrPtr(KeyName), StrPtr("no_key"), VarPtr(sTemp(0)), -1, StrPtr(IniFileName))
     IniStringPrivate = Left$(sTemp(), nTemp * 2)
-    IniStringPrivate = TrimNull(IniStringPrivate)
+    IniStringPrivate = MemAPIs.RTrimZ(IniStringPrivate)
     Erase sTemp
 End Function
 
@@ -354,7 +354,7 @@ Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strfullpath
     Dim n           As Long
 
     n = -1
-    strBuffer = String$(5 * 1024, vbNullChar)
+    strBuffer = FillNullChar(5120)
     GetPrivateProfileSection strSection, strBuffer, Len(strBuffer), strfullpath
     KeyAndVal = Split(strBuffer, vbNullChar)
 
@@ -460,6 +460,6 @@ Public Function ReadFromINI(ByVal strSection As String, ByVal strKey As String, 
 
     Dim strBuffer As String
 
-    strBuffer = String$(750, vbNullChar)
+    strBuffer = FillNullChar(1024)
     ReadFromINI = Left$(strBuffer, GetPrivateProfileString(strSection, ByVal LCase$(strKey), strDefault, strBuffer, Len(strBuffer), strfullpath))
 End Function

@@ -39,7 +39,7 @@ Option Explicit
 Public Function BackslashAdd2Path(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathAddBackslash strPath
-    BackslashAdd2Path = TrimNull(strPath)
+    BackslashAdd2Path = MemAPIs.RTrimZ(strPath)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ End Function
 Public Function BackslashDelFromPath(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathRemoveBackslash strPath
-    BackslashDelFromPath = TrimNull(strPath)
+    BackslashDelFromPath = MemAPIs.RTrimZ(strPath)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -503,7 +503,7 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
         ' Замена макросов значениями
         R = strFileName
         R = Replace$(R, "%PCNAME%", strCompModel, , , vbTextCompare)
-        R = Replace$(R, "%PCMODEL%", Replace$(strCompModel, " ", "_"))
+        R = Replace$(R, "%PCMODEL%", Replace$(strCompModel, strSpace, "_"))
         R = Replace$(R, "%OSVer%", str_OSVer, , , vbTextCompare)
         R = Replace$(R, "%OSBit%", str_OSBit, , , vbTextCompare)
         R = Replace$(R, "%DATE%", str_DATE, , , vbTextCompare)
@@ -547,19 +547,21 @@ Public Function FileReadData(ByVal sFileName As String, Optional ByVal LocaleID 
     
     fNum = FreeFile
 
-    Open sFileName For Binary Access Read As fNum
+    Open sFileName For Binary Access Read Lock Write As fNum
     ' read first 2 byte, for check on Unicode
     Get #fNum, 1, B1()
     
     ' Если Unicode &HFF and &HFE 255-254
     If B1(0) = &HFF And B1(1) = &HFE Then
-        sText = Space$(LOF(fNum) - 2)
+        'sText = Space$(LOF(fNum) - 2)
+        sText = MemAPIs.AllocStr(vbNullString, LOF(fNum) - 2)
         Seek #fNum, 3
         Get #fNum, , sText
         FileReadData = StrConv(sText, vbFromUnicode, LocaleID)
     ' Если ANSI
     Else
-        sText = Space$(LOF(fNum))
+        'sText = Space$(LOF(fNum))
+        sText = MemAPIs.AllocStr(vbNullString, LOF(fNum))
         Seek #fNum, 1
         Get #fNum, , sText
         FileReadData = sText
@@ -581,7 +583,7 @@ Public Sub FileWriteData(ByVal sFileName As String, Optional ByVal sStringOut As
     
     fNum = FreeFile
 
-    Open sFileName For Binary Access Write As fNum
+    Open sFileName For Binary Access Write Lock Write As fNum
     Put #fNum, , sStringOut
     Close #fNum
 
@@ -1050,12 +1052,12 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     Set MatchesStrSect = RegExpStrSect.Execute(FileContent)
 
     If MatchesStrSect.Count Then
-        Set objMatch = MatchesStrSect.Item(0)
+        Set objMatch = MatchesStrSect.item(0)
         Strings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
         Set MatchesStrDefs = RegExpStrDefs.Execute(Strings)
 
         For i = 0 To MatchesStrDefs.Count - 1
-            Set objMatch1 = MatchesStrDefs.Item(i)
+            Set objMatch1 = MatchesStrDefs.item(i)
             Key = objMatch1.SubMatches(0)
             Value = objMatch1.SubMatches(1)
 
@@ -1077,7 +1079,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
 
     If Pos Then
         varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, strPercentage))
-        valval = StringHash.Item(varname)
+        valval = StringHash.item(varname)
 
         If LenB(valval) = 0 Then
             If mbDebugDetail Then DebugMode "ParserInf4Strings: Error in inf: Cannot find '" & strSearchString & "'"
@@ -1216,10 +1218,10 @@ Public Function PathCombine(ByVal strDirectory As String, ByVal strFile As Strin
 
     ' Concatenates two strings that represent properly formed
     ' paths into one path, as well as any relative path pieces.
-    strBuffer = String$(MAX_PATH_UNICODE, vbNullChar)
+    strBuffer = FillNullChar(MAX_PATH_UNICODE)
 
     If PathCombineW(StrPtr(strBuffer), StrPtr(strDirectory & vbNullChar), StrPtr(strFile & vbNullChar)) Then
-        PathCombine = TrimNull(strBuffer)
+        PathCombine = MemAPIs.RTrimZ(strBuffer)
     End If
 
 End Function
@@ -1304,7 +1306,7 @@ Public Function SafeDir(ByVal str As String) As String
     R = Replace$(R, "|", "_")
     R = Replace$(R, "@", "_")
     R = Replace$(R, "'", "")
-    R = Replace$(R, " ", "_")
+    R = Replace$(R, strSpace, "_")
     R = Replace$(R, "_-_", "_")
     R = Replace$(R, "(R)", "_")
     R = Replace$(R, "___", "_")
@@ -1321,7 +1323,7 @@ End Function
 Public Function SafeFileName(ByVal strString As String) As String
     ' Заменяем VbTab
     strString = Replace$(strString, vbTab, vbNullString)
-    strString = TrimNull(strString)
+    strString = MemAPIs.RTrimZ(strString)
 
     ' Отбрасываем все после ","
     If InStr(strString, ",") Then
@@ -1333,7 +1335,7 @@ Public Function SafeFileName(ByVal strString As String) As String
         strString = Left$(strString, InStr(strString, ";") - 1)
     End If
 
-    strString = Trim$(TrimNull(strString))
+    strString = Trim$(MemAPIs.RTrimZ(strString))
     SafeFileName = strString
 End Function
 
@@ -1361,7 +1363,7 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     End If
 
     If InStr(str, vbNullChar) Then
-        str = TrimNull(str)
+        str = MemAPIs.RTrimZ(str)
     End If
 
     If InStr(str, vbTab) Then
@@ -1593,7 +1595,7 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     End Select
 
     If InStr(cDir, vbNullChar) Then
-        cDir = TrimNull(cDir)
+        cDir = MemAPIs.RTrimZ(cDir)
     End If
 
     If mbAdditionalPath Then
@@ -1607,6 +1609,6 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     cDir = Replace$(cDir, vbTab, vbNullString)
     cDir = Replace$(cDir, strKavichki, vbNullString)
     cDir = BackslashAdd2Path(cDir)
-    WhereIsDir = TrimNull(cDir)
+    WhereIsDir = MemAPIs.RTrimZ(cDir)
 End Function
 

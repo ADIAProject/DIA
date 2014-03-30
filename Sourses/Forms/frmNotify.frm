@@ -373,7 +373,7 @@ End Sub
 Private Sub Form_Load()
     SetupVisualStyles Me
     strFormName = Me.Name
-    lblNameProg.Caption = strFrmMainCaptionTemp & vbNewLine & " v." & strProductVersion & " " & strFrmMainCaptionTempDate & strDateProgram & ")"
+    lblNameProg.Caption = strFrmMainCaptionTemp & vbNewLine & " v." & strProductVersion & strSpace & strFrmMainCaptionTempDate & strDateProgram & ")"
     ' Выставляем шрифт
     FontCharsetChange
 End Sub

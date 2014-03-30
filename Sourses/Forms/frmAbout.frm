@@ -471,6 +471,8 @@ Private Sub LoadThankYou()
     GenerateThankyou "Marcin Kleczynski", "http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=69092&lngWId=1"
     'HighlightActiveControl
     GenerateThankyou "Giorgio Brausi", "http://nuke.vbcorner.net/"
+    'Unicode String Array Sorting Class - cBlizzard.cls
+    GenerateThankyou "Rohan Edwards aka Rd", "http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=72576&lngWId=1"
     
 End Sub
 
@@ -697,7 +699,7 @@ Private Sub lblMailTo_MouseDown(Button As Integer, Shift As Integer, X As Single
     
     If Button = vbLeftButton Then
         strSubject = "My wishes for the program (" & App.ProductName & ")"
-        ShellExecute Me.hWnd, vbNullString, "mailto:Romeo91<roman-novosib@ngs.ru>?Subject=" & Replace$(strSubject, " ", "%20"), vbNullString, "c:\", 1
+        ShellExecute Me.hWnd, vbNullString, "mailto:Romeo91<roman-novosib@ngs.ru>?Subject=" & Replace$(strSubject, strSpace, "%20"), vbNullString, "c:\", 1
     End If
 End Sub
 

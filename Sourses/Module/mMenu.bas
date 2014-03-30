@@ -127,7 +127,7 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
             If mnuSubItem <> -1 Then
                 'DropDown Submenu Type with IdNumber
                 .fMask = MIIM_SUBMENU Or MIIM_ID
-                .dwTypeData = StrPtr(String$(255, vbNullChar))
+                .dwTypeData = StrPtr(FillNullChar(255))
                 .cch = 255
                 .cbSize = Len(mInfo)
                 ' MenuItem Number

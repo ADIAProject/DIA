@@ -453,7 +453,7 @@ Private Sub Localise(ByVal strPathFile As String)
     cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
     cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' ֻויבכû
-    lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & " " & strVersion & " (" & strDateProg & ")"
+    lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & strSpace & strVersion & " (" & strDateProg & ")"
 
     If InStr(1, strRelease, "beta", vbTextCompare) Then
         lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"

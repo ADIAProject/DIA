@@ -126,7 +126,7 @@ Public Function GetMB_Manufacturer() As String
     End With
 
     'получаем date1
-    GetMB_Manufacturer = Trim$(objRegExp.Replace(strTemp, " "))
+    GetMB_Manufacturer = Trim$(objRegExp.Replace(strTemp, strSpace))
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ Public Function GetMB_Model() As String
     End With
 
     'получаем date1
-    GetMB_Model = Trim$(objRegExp.Replace(strTemp, " "))
+    GetMB_Model = Trim$(objRegExp.Replace(strTemp, strSpace))
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ Public Function OSInfo() As OSInfoStruct
 
             OSInfo.Name = "Windows " & OSN
             OSInfo.BuildNumber = .dwBuildNumber
-            OSInfo.ServicePack = TrimNull(.szCSDVersion)
+            OSInfo.ServicePack = MemAPIs.RTrimZ(.szCSDVersion)
             OSInfo.VerFullwBuild = .dwMajorVersion & "." & .dwMinorVersion & "." & .dwBuildNumber
             OSInfo.VerFull = .dwMajorVersion & "." & .dwMinorVersion
             OSInfo.VerMajor = .dwMajorVersion
@@ -425,7 +425,7 @@ Public Function OSInfoWMI(ByVal Nfo As Long) As String
             OSInfoWMI = strBuildNumber
 
         Case 2
-            OSInfoWMI = TrimNull(strCSDVersion)
+            OSInfoWMI = MemAPIs.RTrimZ(strCSDVersion)
 
         Case 3
             OSInfoWMI = strOSVersion

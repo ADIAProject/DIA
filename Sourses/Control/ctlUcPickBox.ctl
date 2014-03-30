@@ -1433,8 +1433,8 @@ Private Function GetThemeInfo() As String
                 Exit Function
 
             Else
-                sThemeFile = TrimNull(bThemeFile)
-                sColorName = TrimNull(bColorName)
+                sThemeFile = MemAPIs.RTrimZ(bThemeFile)
+                sColorName = MemAPIs.RTrimZ(bColorName)
             End If
 
             CloseThemeData hTheme
@@ -1971,9 +1971,9 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
     With FileDialog
         .nStructSize = Len(FileDialog)
         .hWndOwner = UserControl.Parent.hWnd
-        .sFileTitle = String$(2048, vbNullChar)
+        .sFileTitle = FillNullChar(2048)
         .nTitleSize = Len(FileDialog.sFileTitle)
-        .sFile = FileDialog.sFile & String$(2048, vbNullChar)
+        .sFile = FileDialog.sFile & FillNullChar(2048)
         .nFileSize = Len(FileDialog.sFile)
 
         If LenB(sInitPath) Then
@@ -1993,7 +1993,7 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
         End If
 
         '   Init the File Names
-        .sFile = vbNullString & String$(2048, vbNullChar)
+        .sFile = vbNullString & FillNullChar(2048)
         '   Process the Filter string to replace the
         '   pipes and fix the len to correct dims
         sFilter = ProcessFilter(sFilter)
@@ -2108,9 +2108,9 @@ Private Function ShowSave(ByVal sFilter As String) As SelectedFile
     With FileDialog
         .nStructSize = Len(FileDialog)
         .hWndOwner = UserControl.Parent.hWnd
-        .sFileTitle = String$(2048, vbNullChar)
+        .sFileTitle = FillNullChar(2048)
         .nTitleSize = Len(FileDialog.sFileTitle)
-        .sFile = String$(2048, vbNullChar)
+        .sFile = FillNullChar(2048)
         .nFileSize = Len(FileDialog.sFile)
 
         If m_FileFlags <> 0 Then

@@ -25,6 +25,9 @@ Public Const str7VbTab As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const str8VbTab As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const strPercentage As String = "%"
 Public Const strKavichki As String = """" 'ChrW$(34)
+Public Const strSpace As String = " "
+Public Const str2Space As String = "  "
+Public Const str3Space As String = "   "
 Private Const strVopros As Byte = 63
 
 Private Declare Function lstrlenW Lib "kernel32.dll" (ByVal lpString As Long) As Long
@@ -40,7 +43,7 @@ Private Declare Sub PutMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, ByVal Value A
 '                              strAdd (String)
 '                              strSep (String = " ")
 '!--------------------------------------------------------------------------------
-Public Sub AppendStr(ByRef strHead As String, ByVal strAdd As String, Optional ByVal strSep As String = " ")
+Public Sub AppendStr(ByRef strHead As String, ByVal strAdd As String, Optional ByVal strSep As String = strSpace)
 
     If LenB(strAdd) Then
         If LenB(strHead) Then
@@ -113,7 +116,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
         Set objMatches = objRegExp.Execute(Date1)
 
         If objMatches.Count Then
-            Set objMatch = objMatches.Item(0)
+            Set objMatch = objMatches.item(0)
             With objMatch
                 m1 = .SubMatches(0)
                 d1 = .SubMatches(1)
@@ -125,7 +128,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
         Set objMatches = objRegExp.Execute(Date2)
 
         If objMatches.Count Then
-            Set objMatch = objMatches.Item(0)
+            Set objMatch = objMatches.item(0)
             With objMatch
                 M2 = .SubMatches(0)
                 d2 = .SubMatches(1)
@@ -147,7 +150,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
         CompareByDate = "?"
     End If
 
-    If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & " " & strResult & " " & Date2
+    If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & strSpace & strResult & strSpace & Date2
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -278,7 +281,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
 
 CompareFinish:
     CompareByVersion = ResultTemp
-    If mbDebugDetail Then DebugMode str8VbTab & "CompareByVersion-Result: " & strVersionBD & " " & ResultTemp & " " & strVersionLocal
+    If mbDebugDetail Then DebugMode str8VbTab & "CompareByVersion-Result: " & strVersionBD & strSpace & ResultTemp & strSpace & strVersionLocal
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -311,7 +314,7 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
             With objMatches
 
                 If .Count Then
-                    Set objMatch = .Item(0)
+                    Set objMatch = .item(0)
                     MM = Format$(objMatch.SubMatches(0), "00")
                     DD = Format$(objMatch.SubMatches(1), "00")
                     YYYY = DateTime.Year(dtDate)
@@ -405,8 +408,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub RemoveUni
 '! Description (Описание)  :   [Удаление Unicode символов]
-'! Parameters  (Переменные):   s (String)
-'                              ReplaceWith (Byte)
+'! Parameters  (Переменные):   sStr (String)
 '!--------------------------------------------------------------------------------
 Public Sub RemoveUni(ByRef sStr As String)
     Dim i       As Long
@@ -436,6 +438,11 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub ReplaceBadSymbol(ByRef strString As String)
 
+    ' Убираем символ vbNullChar
+    If InStr(strString, vbNullChar) Then
+         strString = TrimNull(strString)
+    End If
+    
     ' Убираем символ ","
     If InStr(strString, ",") Then
         strString = Replace$(strString, ",", vbNullString)
@@ -487,16 +494,16 @@ Public Sub ReplaceBadSymbol(ByRef strString As String)
     End If
 
     ' Убираем символ "   "
-    If InStr(strString, "   ") Then
-        strString = Replace$(strString, "   ", " ")
+    If InStr(strString, str3Space) Then
+        strString = Replace$(strString, str3Space, strSpace)
     End If
 
     ' Убираем символ "  "
-    If InStr(strString, "  ") Then
-        strString = Replace$(strString, "  ", " ")
+    If InStr(strString, str2Space) Then
+        strString = Replace$(strString, str2Space, strSpace)
     End If
 
-    strString = Trim$(TrimNull(strString))
+    strString = Trim$(strString)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -510,8 +517,12 @@ Private Sub Str2ByteArray(sStringIn As String, ByteArray() As Byte)
 End Sub
 
 Private Function StrConvFromUTF8(ByVal Text As String) As String
+
+    Dim lngLen As Long
+    Dim lngPtr As Long
+    
     ' get length
-    Dim lngLen As Long, lngPtr As Long: lngLen = LenB(Text)
+    lngLen = LenB(Text)
     ' has any?
     If lngLen Then
         ' create a BSTR over twice that length
@@ -526,8 +537,12 @@ Private Function StrConvFromUTF8(ByVal Text As String) As String
 End Function
 
 Private Function StrConvToUTF8(ByVal Text As String) As String
+
+    Dim lngLen As Long
+    Dim lngPtr As Long
+    
     ' get length
-    Dim lngLen As Long, lngPtr As Long: lngLen = LenB(Text)
+    lngLen = LenB(Text)
     ' has any?
     If lngLen Then
         ' create a BSTR over twice that length
@@ -547,5 +562,18 @@ End Function
 '! Parameters  (Переменные):   startstr (String)
 '!--------------------------------------------------------------------------------
 Public Function TrimNull(ByVal startstr As String) As String
-    TrimNull = Left$(startstr, lstrlenW(StrPtr(startstr)))
+    Dim lngPtr As Long
+    
+    lngPtr = lstrlenW(StrPtr(startstr))
+    TrimNull = Left$(startstr, lngPtr)
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FillNullChar
+'! Description (Описание)  :   [получаем значение из буфера данных]
+'! Parameters  (Переменные):   lLen (Long)
+'!--------------------------------------------------------------------------------
+Public Function FillNullChar(ByVal lLen As Long) As String
+    FillNullChar = MemAPIs.AllocStr(vbNullString, lLen)
+    MemAPIs.ZeroMemByV StrPtr(FillNullChar), lLen + lLen
 End Function

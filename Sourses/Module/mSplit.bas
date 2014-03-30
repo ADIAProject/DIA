@@ -110,7 +110,7 @@ End Sub
 '                              Limit (Long = -1)
 '                              Compare (SplitCompareMethod) As String()
 '!--------------------------------------------------------------------------------
-Public Function Split(Expression As String, Optional Delimiter As String = " ", Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As String()
+Public Function Split(Expression As String, Optional Delimiter As String = strSpace, Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As String()
     Procedure(AddressOf mSplit.Split) = Procedure(AddressOf mSplit.z_Split)
     Split = mSplit.Split(Expression, Delimiter, Limit, Compare)
 End Function
@@ -123,7 +123,7 @@ End Function
 '                              Limit (Long = -1)
 '                              Compare (SplitCompareMethod)
 '!--------------------------------------------------------------------------------
-Public Function z_Split(Expression As String, Optional Delimiter As String = " ", Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As Long
+Public Function z_Split(Expression As String, Optional Delimiter As String = strSpace, Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As Long
 
     Dim P()    As Long
     Dim C      As Long

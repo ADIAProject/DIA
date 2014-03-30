@@ -1,0 +1,174 @@
+[
+ uuid(C878CB53-7E75-4115-BD13-EECBC9430749),
+ helpstring("Memory APIs"),
+ version(1.1)
+]
+library MemAPIs
+{
+
+typedef struct SAFEARRAY1D
+    { [helpstring("Count of dimensions in this array (1)")]
+       short cDims;
+      [helpstring("Bitfield flags indicating attributes of a particular array")]
+       short fFeatures;
+      [helpstring("Byte size of each element of the array")]
+       long cbElements;
+      [helpstring("Number of times the array has been locked without corresponding unlock")]
+       long cLocks;
+      [helpstring("Pointer to the start of the array data (use only if cLocks > 0)")]
+       long pvData;
+      [helpstring("Count of elements in the dimension")]
+       long cElements;
+      [helpstring("The lower-bounding signed index number of the dimension")]
+       long lLbound;
+      [helpstring("The upper-bounding signed index number of the dimension")]
+       long lUbound;
+    } SAFEARRAY1D;
+
+typedef enum eSAFeatures
+    { [helpstring("Array is allocated on the stack")]  FADF_AUTO      = 0x1,
+      [helpstring("Array is statically allocated")]    FADF_STATIC    = 0x2,
+      [helpstring("Array is embedded in a structure")] FADF_EMBEDDED  = 0x4,
+      [helpstring("Cannot be resized or reallocated")] FADF_FIXEDSIZE = 0x10,
+      [helpstring("An array of BSTRs")]                FADF_BSTR      = 0x100,
+      [helpstring("An array of IUnknown*")]            FADF_UNKNOWN   = 0x200,
+      [helpstring("An array of IDispatch*")]           FADF_DISPATCH  = 0x400,
+      [helpstring("An array of VARIANTs")]             FADF_VARIANT   = 0x800,
+      [helpstring("Bits reserved for future use")]     FADF_RESERVED  = 0xf0e8,
+      [helpstring("Array is allocated and cannot be resized")]
+                  FADF_NO_REDIM  = 0x11 // FADF_AUTO | FADF_FIXEDSIZE
+    } eSAFeatures;
+
+typedef enum eCompareMethod 
+    { BinaryCompare  = 0x0,
+      TextCompare    = 0x1
+    } eCompareMethod;
+
+typedef enum eCompare 
+    { Lesser   = 0xffffffff,
+      Equal    = 0x0,
+      Greater  = 0x1
+    } eCompare;
+
+typedef enum eSortOrder 
+    { Descending = 0xffffffff,
+      Default    = 0x0,
+      Ascending  = 0x1
+    } eSortOrder;
+
+[dllname("Constants"), helpstring("Constants")]
+ module Constants
+    {
+    const long DW_MSB         = 0x80000000; // DWord Most Significant Bit
+    const long VT_BYREF       = 0x4000;
+    }
+
+[dllname("Kernel32"), helpstring("Kernel functions")]
+ module Kernel32 
+    {
+    // Declare some CopyMemory Alias's (thanks Bruce :)
+
+    [entry("RtlMoveMemory"), helpstring("Copy memory that may overlap.")]
+     void CopyMemory([in] void *pvDest, [in] void *pvSrc, [in] long cLenB);
+
+    [entry("RtlMoveMemory"), helpstring("Copy memory passed by reference.")]
+     void CopyMemByR([in] void *pDest, [in] void *pSrc, [in] long cLenB);
+
+    [entry("RtlMoveMemory"), helpstring("Copy memory by value address pointers.")]
+     void CopyMemByV([in] long lpDest, [in] long lpSrc, [in] long cLenB);
+
+    [entry("RtlZeroMemory"), helpstring("Zeros memory to destination.")]
+     void ZeroMemory([in] void *pvDest, [in] long cLenB);
+
+    [entry("RtlZeroMemory"), helpstring("Zeros memory to destination.")]
+     void ZeroMemByV([in] long lpDest, [in] long cLenB);
+
+    [entry("lstrlenW"), helpstring("Returns the length in characters of the specified string up to but not including the first null character.")]
+     long StrLenW ([in] long lStrPtr);
+
+    [entry("lstrlenW"), helpstring("Returns the length in characters of the specified string up to but not including the first null character.")]
+     long StrLenZ ([in] BSTR pStr);
+    }
+
+[dllname("OleAut32"), helpstring("OLE Automation functions")]
+ module OleAut32
+    {
+ /* String Manipulation Functions
+
+    To handle strings that are allocated by one component and freed by another, Automation
+    defines a special set of functions. These functions use the following data type:
+    typedef OLECHAR FAR* BSTR;
+
+    An important reason why Automation employs BSTR types for strings is that Automation was
+    designed and implemented for the most part in the group at Microsoft that also produces
+    Visual Basic, and Basic stores strings in a BSTR format. In addition, a BSTR is faster
+    to copy across a process boundary because the length of the string is already known.
+
+    BSTRs are zero-terminated, and in most cases can be treated just like OLECHAR* strings.
+    However, you can query a BSTR for its length rather than scan it, so it can contain
+    embedded null characters. The length is stored as a long integer at the memory location
+    preceding the data in the string. Instead of reading this location directly, applications
+    should use the string manipulation functions to access the length of a BSTR. 
+
+    In situations where a BSTR will not be translated from ANSI to Unicode, or vice versa,
+    you can use BSTRs to pass binary data. However, the preferred method of passing binary
+    data is to use a SAFEARRAY of VT_UI1.
+
+    A null pointer is a valid value for a BSTR variable. By convention, it is always treated
+    the same as a pointer to a BSTR that contains zero characters. Also by convention, calls
+    to functions that take a BSTR reference parameter must pass either a null pointer, or a
+    pointer to an allocated BSTR.
+
+    If the implementation of a function that takes a BSTR reference parameter assigns a new
+    BSTR to the parameter, it must free the previously referenced BSTR.
+
+    Automation caches the space allocated for BSTRs. This speeds up the Alloc/Free sequence.
+    However, this may cause IMallocSpy to assign leaks to the wrong memory user because it
+    is not aware of the caching done by Automation. */
+
+    [entry("SysAllocStringByteLen"), helpstring("Takes any string of bytes as input, and returns a pointer to the new BSTR that contains the specified number of bytes. Does not perform any ANSI-to-Unicode translation. If lAddrPtr is zero, the length is allocated but not initialized.")]
+     long AllocStrBPtr([in] long lAddrPtr, [in] long cbLenB);
+
+    [entry("SysAllocStringByteLen"), helpstring("Takes any string of bytes as input, and returns a new BSTR that contains the specified number of bytes. Does not perform any ANSI-to-Unicode translation. If lAddrPtr is zero, the length is allocated but not initialized.")]
+     BSTR AllocStrB([in] long lAddrPtr, [in] long cbLenB);
+
+    [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns a pointer to the new BSTR. If passed vbNullString (or Len(pStr) < cc), the (extra) length is allocated but not initialized.")]
+     long AllocStrPtr([in] BSTR pStr, [in] long ccLen);
+
+    /* Note: This function does NOT convert a char* string into a unicode BSTR.
+       In this case the BSTR returned can only be used with 16 bit applications. */
+
+    [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns a pointer to the new BSTR. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
+     long AllocStrSpPtr([in] long lStrPtr, [in] long ccLen);
+
+    [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns the new BSTR. If passed vbNullString (or Len(pStr) < cc), the (extra) length is allocated but not initialized.")]
+     BSTR AllocStr([in] BSTR pStr, [in] long ccLen);
+
+    [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns the new BSTR. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
+     BSTR AllocStrSp([in] long lStrPtr, [in] long ccLen);
+
+    [entry("SysAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, and returns the new BSTR.")]
+     BSTR RTrimZ([in] BSTR pStr);
+
+    [entry("SysReAllocStringLen"), helpstring("Allocates a new string with cc characters from the string to copy, frees the BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero. If vbNullString (or < cc), the (extra) length is allocated but not initialized.")]
+     long ReAllocStr([in] BSTR *pStr, [in] BSTR pStr2Copy, [in] long ccLen);
+
+    /* Notice that the first parameter is a pointer to a BSTR, not a BSTR.
+       In VB you would pass a BSTR pointer with the VarPtr(sStr) operator.
+       Often the new pointer will be the same as the old pointer, but you
+       shouldn't count on this. You can give the same BSTR for both params
+       if you want to truncate an existing BSTR. */
+
+    [entry("SysReAllocStringLen"), helpstring("Allocates a new string with cc characters from the string to copy, frees the BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
+     long ReAllocStrSp([in] BSTR *pStr, [in] long lStrPtr2Copy, [in] long ccLen);
+
+    [entry("SysFreeString"), helpstring("Frees a BSTR pointer returned by a ..Ptr string allocation function.")]
+     void FreeStr([in] long lPtr);
+
+    [entry("SysStringLen"), helpstring("Returns the allocated length in characters of a BSTR.")]
+     long AllocatedStrLen([in] BSTR pStr);
+
+    [entry("SysStringByteLen"), helpstring("Returns the allocated length in bytes of a BSTR.")]
+     long AllocatedStrLenB([in] BSTR pStr);
+    }
+}

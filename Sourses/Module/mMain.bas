@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "28/03/2014"
+Public Const strDateProgram         As String = "30/03/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -256,7 +256,7 @@ Private Sub Main()
     strWinDir = BackslashAdd2Path(Environ$("WINDIR"))
     strWinTemp = BackslashAdd2Path(Environ$("TMP"))
 
-    If InStr(strWinTemp, " ") Then
+    If InStr(strWinTemp, strSpace) Then
         strWinTemp = BackslashAdd2Path(PathCombine(strWinDir, "TEMP"))
     End If
 

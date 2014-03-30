@@ -43,7 +43,7 @@ Private Function EnumChildWindowsProc(ByVal lngHWnd As Long, ByVal lParam As Lon
     Dim lRet       As Long
     Dim sClassName As String
 
-    sClassName = String$(100, vbNullChar)
+    sClassName = FillNullChar(100)
     lRet = GetClassName(lngHWnd, StrPtr(sClassName), 100)
     sClassName = Left$(sClassName, lRet)
 
@@ -117,7 +117,7 @@ Private Sub MessageBoxTimerUpdateEvent()
         m_TimeMsgBox = m_TimeMsgBox - 1
 
         If LenB(sMsgText) = 0 Then
-            sStr = String$(255, vbNullChar)
+            sStr = FillNullChar(255)
             lRet = GetWindowText(m_lMsgHandle, StrPtr(sStr), 255)
             sStr = Left$(sStr, lRet)
             sMsgText = sStr

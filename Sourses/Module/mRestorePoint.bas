@@ -58,10 +58,10 @@ Public Sub CreateRestorePoint()
 
         If errResults = 0 Then
             If mbDebugStandart Then DebugMode vbTab & "CreateRestorePoint-Success: Name: " & strProductName & " v" & strProductVersion
-            ChangeStatusTextAndDebug strMessages(119) & " " & strProductName & " v" & strProductVersion
+            ChangeStatusTextAndDebug strMessages(119) & strSpace & strProductName & " v" & strProductVersion
 
             If Not mbSilentRun Then
-                MsgBox strMessages(119) & " " & strProductName & " v" & strProductVersion, vbInformation, strProductName
+                MsgBox strMessages(119) & strSpace & strProductName & " v" & strProductVersion, vbInformation, strProductName
             End If
 
         Else

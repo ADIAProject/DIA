@@ -139,7 +139,7 @@ Attribute ArgumentsClassical.VB_Description = "Returns the collection of command
 
         Select Case curChar
 
-            Case " ", vbTab
+            Case strSpace, vbTab
                 Append = False
 
                 If InvertStart Then

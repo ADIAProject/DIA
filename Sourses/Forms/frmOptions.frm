@@ -4159,13 +4159,13 @@ Private Sub TransferOSData()
 
         If i >= 0 Then
 
-            frmOSEdit.txtOSVer.Text = .ListItems.Item(i).Text
-            frmOSEdit.txtOSName.Text = .ListItems.Item(i).SubItems(1)
-            frmOSEdit.ucPathDRP.Path = .ListItems.Item(i).SubItems(2)
-            frmOSEdit.ucPathDB.Path = .ListItems.Item(i).SubItems(3)
-            frmOSEdit.chk64bit.Value = CBool(.ListItems.Item(i).SubItems(4))
+            frmOSEdit.txtOSVer.Text = .ListItems.item(i).Text
+            frmOSEdit.txtOSName.Text = .ListItems.item(i).SubItems(1)
+            frmOSEdit.ucPathDRP.Path = .ListItems.item(i).SubItems(2)
+            frmOSEdit.ucPathDB.Path = .ListItems.item(i).SubItems(3)
+            frmOSEdit.chk64bit.Value = CBool(.ListItems.item(i).SubItems(4))
     
-            Select Case .ListItems.Item(i).SubItems(4)
+            Select Case .ListItems.item(i).SubItems(4)
     
                 Case 0
                     frmOSEdit.chk64bit.Value = False
@@ -4188,10 +4188,10 @@ Private Sub TransferOSData()
                     frmOSEdit.chkNotCheckBitOS.Value = False
             End Select
     
-            frmOSEdit.ucPhysXPath.Path = .ListItems.Item(i).SubItems(5)
-            frmOSEdit.ucLangPath.Path = .ListItems.Item(i).SubItems(6)
-            frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(i).SubItems(7)
-            frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(i).SubItems(8)
+            frmOSEdit.ucPhysXPath.Path = .ListItems.item(i).SubItems(5)
+            frmOSEdit.ucLangPath.Path = .ListItems.item(i).SubItems(6)
+            frmOSEdit.ucRuntimesPath.Path = .ListItems.item(i).SubItems(7)
+            frmOSEdit.txtExcludeFileName.Text = .ListItems.item(i).SubItems(8)
             
             frmOSEdit.Show vbModal, Me
         End If
@@ -4213,10 +4213,10 @@ Private Sub TransferUtilsData()
         i = .SelectedItem.Index
 
         If i >= 0 Then
-            frmUtilsEdit.txtUtilName.Text = .ListItems.Item(i).Text
-            frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(i).SubItems(1)
-            frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(i).SubItems(2)
-            frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(i).SubItems(3)
+            frmUtilsEdit.txtUtilName.Text = .ListItems.item(i).Text
+            frmUtilsEdit.ucPathUtil.Path = .ListItems.item(i).SubItems(1)
+            frmUtilsEdit.ucPathUtil64.Path = .ListItems.item(i).SubItems(2)
+            frmUtilsEdit.txtParamUtil.Text = .ListItems.item(i).SubItems(3)
             
             frmUtilsEdit.Show vbModal, Me
         End If
@@ -5027,15 +5027,15 @@ Private Sub LoadList_lvOptions()
                 .Add 8, , strItemOptions6, , 8
                 .Add 9, , strItemOptions10, , 9
             Else
-                .Item(1).Text = strItemOptions1
-                .Item(2).Text = strItemOptions8
-                .Item(3).Text = strItemOptions2
-                .Item(4).Text = strItemOptions3
-                .Item(5).Text = strItemOptions4
-                .Item(6).Text = strItemOptions5
-                .Item(7).Text = strItemOptions9
-                .Item(8).Text = strItemOptions6
-                .Item(9).Text = strItemOptions10
+                .item(1).Text = strItemOptions1
+                .item(2).Text = strItemOptions8
+                .item(3).Text = strItemOptions2
+                .item(4).Text = strItemOptions3
+                .item(5).Text = strItemOptions4
+                .item(6).Text = strItemOptions5
+                .item(7).Text = strItemOptions9
+                .item(8).Text = strItemOptions6
+                .item(9).Text = strItemOptions10
             End If
         End With
     
@@ -5129,10 +5129,10 @@ End Sub
 ''! Description (Описание)  :   [При выборе опции происходит отображение соответсвующего окна]
 ''! Parameters  (Переменные):   iIndex (Long)
 ''!--------------------------------------------------------------------------------
-Private Sub lvOptions_ItemSelect(ByVal Item As LvwListItem, ByVal Selected As Boolean)
+Private Sub lvOptions_ItemSelect(ByVal item As LvwListItem, ByVal Selected As Boolean)
 
     If Selected Then
-        Select Case Item.Index
+        Select Case item.Index
     
             Case 1
             'ItemOptions1=Основные настройки
@@ -5267,7 +5267,7 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub lvOS_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
+Private Sub lvOS_ItemDblClick(ByVal item As LvwListItem, ByVal Button As Integer)
     TransferOSData
 End Sub
 
@@ -5363,7 +5363,7 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub lvUtils_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
+Private Sub lvUtils_ItemDblClick(ByVal item As LvwListItem, ByVal Button As Integer)
     TransferUtilsData
 End Sub
 

@@ -139,7 +139,7 @@ Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, ByVal dwLCType As Lo
     'if successful..
     If R Then
         'pad the buffer with spaces
-        sReturn = String$(R, vbNullChar)
+        sReturn = FillNullChar(R)
         'and call again passing the buffer
         R = GetLocaleInfo(dwLocaleID, dwLCType, sReturn, Len(sReturn))
 
@@ -147,7 +147,7 @@ Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, ByVal dwLCType As Lo
         If R Then
             'r holds the size of the string
             'including the terminating null
-            GetUserLocaleInfo = TrimNull(sReturn)
+            GetUserLocaleInfo = MemAPIs.RTrimZ(sReturn)
             ', r - 1)
         End If
     End If

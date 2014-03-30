@@ -1582,7 +1582,7 @@ Private Function ReadValue(MyHkey As HkeyLoc, myKey As String, MyValue As String
 
     End If
 
-    Donnee = String$(TailleBuffer + 1, " ")
+    Donnee = String$(TailleBuffer + 1, strSpace)
     Resultat = RegQueryValueEx(Ident, MyValue, 0&, 1, ByVal Donnee, TailleBuffer)
     Donnee = Left$(Donnee, TailleBuffer - 1)
     ReadValue = Donnee

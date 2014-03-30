@@ -85,7 +85,7 @@ Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
         End If
     End If
 
-    cmdString = strKavichki & strDevconCmdPath & strKavichki & " " & strKavichki & strDevConTemp & strKavichki & " " & strKavichki & strHwidsTxtPath & strKavichki & " 4 " & strKavichki & strHwid & strKavichki
+    cmdString = strKavichki & strDevconCmdPath & strKavichki & strSpace & strKavichki & strDevConTemp & strKavichki & strSpace & strKavichki & strHwidsTxtPath & strKavichki & " 4 " & strKavichki & strHwid & strKavichki
 
     If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
@@ -145,7 +145,7 @@ Public Sub DevParserLocalHwids2()
 
             'For i = 0 To MatchesDevcon.Count - 1
             For i = 0 To strCnt - 1
-                Set objMatch = MatchesDevcon.Item(i)
+                Set objMatch = MatchesDevcon.item(i)
 
                 ' ≈сли записей в массиве становитс€ больше чем объ€влено, то увеличиваем размерность массива
                 If RecCountArr = miMaxCountArr Then
@@ -329,7 +329,7 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
     Dim cmdString As String
 
     cmdString = strKavichki & strDevConExePath & strKavichki & " rescan"
-    ChangeStatusTextAndDebug strMessages(96) & " " & cmdString
+    ChangeStatusTextAndDebug strMessages(96) & strSpace & cmdString
     CreateIfNotExistPath strWorkTemp
 
     RunDevconRescan = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
@@ -349,7 +349,7 @@ Public Function RunDevconView() As Boolean
 
     Dim cmdString As String
 
-    cmdString = strKavichki & strDevconCmdPath & strKavichki & " " & strKavichki & strDevConExePath & strKavichki & " " & strKavichki & strHwidsTxtPathView & strKavichki & " 3"
+    cmdString = strKavichki & strDevconCmdPath & strKavichki & strSpace & strKavichki & strDevConExePath & strKavichki & strSpace & strKavichki & strHwidsTxtPathView & strKavichki & " 3"
 
     RunDevconView = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
     If Not RunDevconView Then

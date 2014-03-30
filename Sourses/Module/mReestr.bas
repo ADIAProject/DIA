@@ -114,12 +114,12 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
         Case REG_SZ, REG_EXPAND_SZ
             'tmpVal = Left$(tmpVal, InStr(tmpVal, vbNullChar) - 1)
             ' String Registry Key Data Type
-            sKeyVal = TrimNull(tmpVal)
+            sKeyVal = MemAPIs.RTrimZ(tmpVal)
 
             ' Copy String Value
         Case REG_DWORD
             'tmpVal = Left$(tmpVal, InStr(tmpVal, vbNullChar) - 1)
-            tmpVal = TrimNull(tmpVal)
+            tmpVal = MemAPIs.RTrimZ(tmpVal)
 
             ' Double Word Registry Key Data Type
             If LenB(tmpVal) Then
@@ -149,7 +149,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
                 If intTempSmallBuff Then
                     intTemp = InStr(tmpVal, vbNullChar)
                     strstr = Left$(tmpVal, intTemp)
-                    GetKeyValueMultiSZ(Index) = TrimNull(strstr)
+                    GetKeyValueMultiSZ(Index) = MemAPIs.RTrimZ(strstr)
                     Index = Index + 1
                     tmpVal = Mid$(tmpVal, intTemp + 1, Len(tmpVal))
                 Else
@@ -175,7 +175,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
 
         Case Else
             'tmpVal = Left$(tmpVal, InStr(tmpVal, vbNullChar) - 1)
-            sKeyVal = TrimNull(tmpVal)
+            sKeyVal = MemAPIs.RTrimZ(tmpVal)
     End Select
 
     GetKeyValue = Trim$(sKeyVal)
@@ -209,13 +209,13 @@ Public Function GetRegString(hkey As Long, strSubKey As String, strValueName As 
     Dim lngRes     As Long
 
     If RegOpenKey(hkey, strSubKey, lngRes) = ERROR_SUCCESS Then
-        strSetting = String$(MAX_PATH, vbNullChar)
+        strSetting = FillNullChar(MAX_PATH)
         lngDataLen = MAX_PATH
 
         If RegQueryValueEx(lngRes, strValueName, ByVal 0, REG_EXPAND_SZ, ByVal strSetting, lngDataLen) = ERROR_SUCCESS Then
             If lngDataLen > 1 Then
                 'GetRegString = Left$(strSetting, lngDataLen - 1)
-                GetRegString = TrimNull(strSetting)
+                GetRegString = MemAPIs.RTrimZ(strSetting)
             End If
         End If
 

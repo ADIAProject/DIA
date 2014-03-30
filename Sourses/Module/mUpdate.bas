@@ -81,7 +81,7 @@ Function CheckConnection2Server(ByVal URL As String) As String
 
 ErrCode:
     errNum = Err.Number
-    Debug.Print Err.Number & " " & Err.Description & " " & Err.LastDllError
+    Debug.Print Err.Number & strSpace & Err.Description & strSpace & Err.LastDllError
 
     If errNum <> 0 Then
         If mbDebugStandart Then DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError) & vbNewLine & _

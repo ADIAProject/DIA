@@ -1608,8 +1608,8 @@ Private Function GetThemeInfo() As String
                 Exit Function
 
             Else
-                sThemeFile = TrimNull(bThemeFile)
-                sColorName = TrimNull(bColorName)
+                sThemeFile = MemAPIs.RTrimZ(bThemeFile)
+                sColorName = MemAPIs.RTrimZ(bColorName)
             End If
 
             CloseThemeData hTheme

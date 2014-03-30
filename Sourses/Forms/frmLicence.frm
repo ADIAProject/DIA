@@ -422,7 +422,7 @@ Private Sub Form_Resize()
 End Sub
 
 'Private Sub LicenceRTF_LinkEvent(ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal LinkStart As Long, ByVal LinkEnd As Long)
-'Debug.Print LinkStart & " " & LinkEnd
+'Debug.Print LinkStart & strSpace & LinkEnd
 'Debug.Print Mid$(LicenceRTF.Text, LinkStart, (LinkEnd - LinkStart))
 'End Sub
 
@@ -436,7 +436,7 @@ End Sub
 '    lngRetVal = SendMessage(LicenceRTF.hWnd, EM_GETSEL, 0, 0)
 '    HiWord (lngRetVal) + 1
 '    intLo = LoWord(lngRetVal) + 1
-'    intInStr = InStrRev(LicenceRTF.Text, " ", intLo)
+'    intInStr = InStrRev(LicenceRTF.Text, strSpace, intLo)
 '
 '    If intInStr = 0 Then
 '        strBuffer = Left$(LicenceRTF.Text, intLo)
@@ -446,7 +446,7 @@ End Sub
 '    End If
 '
 '    strBuffer = Trim$(strBuffer)
-'    intInStr = InStr(strBuffer, " ")
+'    intInStr = InStr(strBuffer, strSpace)
 '
 '    If intInStr <> 0 Then
 '        strBuffer = Left$(strBuffer, intInStr - 1)

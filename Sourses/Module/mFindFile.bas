@@ -53,11 +53,11 @@ Public Function FileSizeApi(ByVal sSource As String) As String
     hFile = FindFirstFile(lngFilePathPtr, wfd)
 
     If hFile <> INVALID_HANDLE_VALUE Then
-        sSize = String$(30, vbNullChar)
+        sSize = FillNullChar(30)
 
-        If InStr(1, sSource, TrimNull(wfd.cFileName), vbTextCompare) Then
+        If InStr(1, sSource, MemAPIs.RTrimZ(wfd.cFileName), vbTextCompare) Then
             StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
-            FileSizeApi = TrimNull(sSize)
+            FileSizeApi = MemAPIs.RTrimZ(sSize)
         Else
             FileSizeApi = "0 byte"
         End If
@@ -188,11 +188,11 @@ Private Function FormatByteSize(ByVal dwBytes As Single) As String
     Dim sBuff  As String
     Dim dwBuff As Long
 
-    sBuff = String$(32, vbNullChar)
+    sBuff = FillNullChar(32)
     dwBuff = Len(sBuff)
 
     If StrFormatByteSize(dwBytes, sBuff, dwBuff) <> 0 Then
-        FormatByteSize = TrimNull(sBuff)
+        FormatByteSize = MemAPIs.RTrimZ(sBuff)
     End If
 
 End Function
@@ -224,7 +224,7 @@ Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
             If Asc(wfd.cFileName) <> vbDot Then
                 If (wfd.dwFileAttributes And vbDirectory) Then
                     If fp.bRecurse Then
-                        GetDirectorySize sRoot & TrimNull(wfd.cFileName) & vbBackslash, fp
+                        GetDirectorySize sRoot & MemAPIs.RTrimZ(wfd.cFileName) & vbBackslash, fp
                     End If
 
                 Else
@@ -296,7 +296,7 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
 
         'Copy each file to the new directory
         Do
-            currFile = TrimNull(wfd.cFileName)
+            currFile = MemAPIs.RTrimZ(wfd.cFileName)
 
             If Asc(wfd.cFileName) <> vbDot Then
                 currSourcePath = sSourcePath & currFile
@@ -431,7 +431,7 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
     If hFile <> INVALID_HANDLE_VALUE Then
 
         Do
-            strFileName = TrimNull(wfd.cFileName)
+            strFileName = MemAPIs.RTrimZ(wfd.cFileName)
 
             'if a folder, and recurse specified, call method again
             If (wfd.dwFileAttributes And vbDirectory) Then
@@ -463,9 +463,9 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
                         ' размер файла числовой в байтах
                         sResultFileList(lngResultFileListCount).Size = wfd.nFileSizeLow
                         ' размер файла строковый форматированный учитывая региональные настройки в байт/кбайт/мбайт и т.д
-                        sSize = String$(30, vbNullChar)
+                        sSize = FillNullChar(30)
                         StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
-                        sResultFileList(lngResultFileListCount).SizeInString = TrimNull(sSize)
+                        sResultFileList(lngResultFileListCount).SizeInString = MemAPIs.RTrimZ(sSize)
                         ' Путь до файла
                         sResultFileList(lngResultFileListCount).Path = sRoot
                         If Not mbInitial Then
@@ -539,7 +539,7 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
     If hFile <> INVALID_HANDLE_VALUE Then
 
         Do
-            strFindData = TrimNull(wfd.cFileName)
+            strFindData = MemAPIs.RTrimZ(wfd.cFileName)
 
             If (wfd.dwFileAttributes And vbDirectory) Then
                 If Asc(strFindData) <> vbDot Then
