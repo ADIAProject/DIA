@@ -78,15 +78,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueBoolean(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Boolean
 
-    Dim LngValue As Long
+    Dim lngValue As Long
 
-    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If LngValue = 9999 Then
-        LngValue = lngValueDefault
+    If lngValue = 9999 Then
+        lngValue = lngValueDefault
     End If
 
-    GetIniValueBoolean = CBool(LngValue)
+    GetIniValueBoolean = CBool(lngValue)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -99,15 +99,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Long
 
-    Dim LngValue As Long
+    Dim lngValue As Long
 
-    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If LngValue = 9999 Then
-        LngValue = lngValueDefault
+    If lngValue = 9999 Then
+        lngValue = lngValueDefault
     End If
 
-    GetIniValueLong = LngValue
+    GetIniValueLong = lngValue
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -188,8 +188,8 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
 
             ReDim arrSection(1, 2)
 
-            arrSection(1, 1) = "Small Buffer"
-            arrSection(1, 2) = "Small Buffer"
+            arrSection(1, 1) = "small_buffer"
+            arrSection(1, 2) = "small_buffer"
             IndexDevIDMass = 1
             GoTo IF_EXIT
         End If
@@ -232,8 +232,8 @@ Save_StrKey:
 
                 ReDim arrSection(1, 2)
 
-                arrSection(1, 1) = "Small Buffer"
-                arrSection(1, 2) = "Small Buffer"
+                arrSection(1, 1) = "small_buffer"
+                arrSection(1, 2) = "small_buffer"
                 IndexDevIDMass = 1
                 GoTo IF_EXIT
             End If
@@ -244,8 +244,8 @@ Save_StrKey:
 
         ReDim arrSection(Index, 2)
 
-        arrSection(Index, 1) = "No section"
-        arrSection(Index, 2) = "No section"
+        arrSection(Index, 1) = "no_section"
+        arrSection(Index, 2) = "no_section"
     End If
 
     IndexDevIDMass = Index
@@ -272,10 +272,7 @@ End Function
 '                              IniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
 '!--------------------------------------------------------------------------------
 Public Function IniDelAllKeyPrivate(SekName As String, IniFileName As String)
-
-    Dim nTemp As Long
-
-    nTemp = WritePrivateProfileString(SekName, vbNullString, vbNullString, IniFileName)
+    WritePrivateProfileString SekName, vbNullString, vbNullString, IniFileName
 End Function
 
 '!--------------------------------------------------------------------------------

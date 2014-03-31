@@ -91,7 +91,7 @@ Private Const lngMainFormHeightDef       As Long = 8400     ' Дефолтные значения
 Private Const lngButtonWidthDef          As Long = 2150     ' Дефолтные значения размеров кнопки - Ширина
 Private Const lngButtonHeightDef         As Long = 550      ' Дефолтные значения размеров кнопки - Высота
 Private Const lngButtonLeftDef           As Long = 100      ' Дефолтные значения размеров кнопки - Отступ слева для кнопки
-Private Const lngButtonTopDef            As Long = 480      ' Дефолтные значения размеров кнопки - Отступ сверху для кнопки
+Private Const lngButtonTopDef            As Long = 100      ' Дефолтные значения размеров кнопки - Отступ сверху для кнопки
 Private Const lngBtn2BtnLeftDef          As Long = 100      ' Дефолтные значения размеров кнопки - Интервал между кнопками по горизонтали
 Private Const lngBtn2BtnTopDef           As Long = 100      ' Дефолтные значения размеров кнопки - Интервал между кнопками по вертикали
 
@@ -121,15 +121,15 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Main", "HideOtherProcess", "1", strSysIni
         IniWriteStrPrivate "Main", "AlternativeTemp", "0", strSysIni
         IniWriteStrPrivate "Main", "AlternativeTempPath", "%Temp%", strSysIni
-        IniWriteStrPrivate "Main", "AutoLanguage", "1", strSysIni
-        IniWriteStrPrivate "Main", "StartLanguageID", "0409", strSysIni
-        IniWriteStrPrivate "Main", "IconMainSkin", "Standart", strSysIni
         IniWriteStrPrivate "Main", "SilentDLL", "0", strSysIni
-        IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", "0", strSysIni
-        IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", "1", strSysIni
         IniWriteStrPrivate "Main", "SearchOnStart", "0", strSysIni
         IniWriteStrPrivate "Main", "PauseAfterSearch", "1", strSysIni
         IniWriteStrPrivate "Main", "CreateRestorePoint", "1", strSysIni
+        IniWriteStrPrivate "Main", "IconMainSkin", "Standart", strSysIni
+        IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", "0", strSysIni
+        IniWriteStrPrivate "Main", "AutoLanguage", "1", strSysIni
+        IniWriteStrPrivate "Main", "StartLanguageID", "0409", strSysIni
+        IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", "1", strSysIni
 
         'Секция Debug
         IniWriteStrPrivate "Debug", "DebugEnable", "1", strSysIni
@@ -139,6 +139,15 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Debug", "DetailMode", "1", strSysIni
         IniWriteStrPrivate "Debug", "DebugLog2AppPath", "0", strSysIni
         IniWriteStrPrivate "Debug", "Time2File", "0", strSysIni
+        
+        'Секция Arc
+        IniWriteStrPrivate "Arc", "PathExe", "Tools\Arc\7za.exe", strSysIni
+        
+        'Секция Devcon
+        IniWriteStrPrivate "Devcon", "PathExe", "Tools\Devcon\devcon.exe", strSysIni
+        IniWriteStrPrivate "Devcon", "PathExe64", "Tools\Devcon\devcon64.exe", strSysIni
+        IniWriteStrPrivate "Devcon", "PathExeW2K", "Tools\Devcon\devconw2k.exe", strSysIni
+        IniWriteStrPrivate "Devcon", "CollectHwidsCmd", "Tools\Devcon\devcon_c.cmd", strSysIni
         
         'Секция DPInst
         IniWriteStrPrivate "DPInst", "PathExe", "Tools\DPInst\DPInst.exe", strSysIni
@@ -151,15 +160,6 @@ Public Sub CreateIni()
         IniWriteStrPrivate "DPInst", "QuietInstall", 0, strSysIni
         IniWriteStrPrivate "DPInst", "ScanHardware", 1, strSysIni
         
-        'Секция Arc
-        IniWriteStrPrivate "Arc", "PathExe", "Tools\Arc\7za.exe", strSysIni
-        
-        'Секция Devcon
-        IniWriteStrPrivate "Devcon", "PathExe", "Tools\Devcon\devcon.exe", strSysIni
-        IniWriteStrPrivate "Devcon", "PathExe64", "Tools\Devcon\devcon64.exe", strSysIni
-        IniWriteStrPrivate "Devcon", "PathExeW2K", "Tools\Devcon\devconw2k.exe", strSysIni
-        IniWriteStrPrivate "Devcon", "CollectHwidsCmd", "Tools\Devcon\devcon_c.cmd", strSysIni
-        
         'Секция OS
         IniWriteStrPrivate "OS", "OSCount", "4", strSysIni
         IniWriteStrPrivate "OS", "OSCountPerRow", "4", strSysIni
@@ -169,7 +169,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS", "LoadFinishFile", "0", strSysIni
         IniWriteStrPrivate "OS", "ReadClasses", "0", strSysIni
         IniWriteStrPrivate "OS", "ReadDPName", "0", strSysIni
-        IniWriteStrPrivate "OS", "ConvertDPName", "0", strSysIni
+        IniWriteStrPrivate "OS", "ConvertDPName", "1", strSysIni
         IniWriteStrPrivate "OS", "ExcludeHWID", "USB\ROOT_HUB*;ROOT\*;STORAGE\*;USBSTOR\*;PCIIDE\IDECHANNEL;PCI\CC_0604", strSysIni
         IniWriteStrPrivate "OS", "CompareDrvVerByDate", "1", strSysIni
         IniWriteStrPrivate "OS", "DateFormatRus", "0", strSysIni
@@ -187,40 +187,40 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS_1", "drpFolder", "drivers\xp", strSysIni
         IniWriteStrPrivate "OS_1", "devIDFolder", "drivers\xp\dev_db", strSysIni
         IniWriteStrPrivate "OS_1", "is64bit", "0", strSysIni
+        IniWriteStrPrivate "OS_1", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         IniWriteStrPrivate "OS_1", "PathPhysX", "drivers\XP\DP_Graphics_PhysX*.7z", strSysIni
         IniWriteStrPrivate "OS_1", "PathLanguages", "drivers\XP\DP_Graphics_Languages*.7z", strSysIni
         IniWriteStrPrivate "OS_1", "PathRuntimes", "drivers\XP\DP_Runtimes*.7z", strSysIni
-        IniWriteStrPrivate "OS_1", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         'Секция OS_2
         IniWriteStrPrivate "OS_2", "Ver", "6.0;6.1;6.2;6.3", strSysIni
         IniWriteStrPrivate "OS_2", "Name", "Vista/7/8/8.1/Server 2008", strSysIni
         IniWriteStrPrivate "OS_2", "drpFolder", "drivers\vista", strSysIni
         IniWriteStrPrivate "OS_2", "devIDFolder", "drivers\vista\dev_db", strSysIni
         IniWriteStrPrivate "OS_2", "is64bit", "0", strSysIni
+        IniWriteStrPrivate "OS_2", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         IniWriteStrPrivate "OS_2", "PathPhysX", vbNullString, strSysIni
         IniWriteStrPrivate "OS_2", "PathLanguages", vbNullString, strSysIni
         IniWriteStrPrivate "OS_2", "PathRuntimes", vbNullString, strSysIni
-        IniWriteStrPrivate "OS_2", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         'Секция OS_3
         IniWriteStrPrivate "OS_3", "Ver", "6.0;6.1;6.2;6.3", strSysIni
         IniWriteStrPrivate "OS_3", "Name", "Vista/7/8/8.1/Server 2008 x64", strSysIni
         IniWriteStrPrivate "OS_3", "drpFolder", "drivers\vista64", strSysIni
         IniWriteStrPrivate "OS_3", "devIDFolder", "drivers\vista64\dev_db", strSysIni
         IniWriteStrPrivate "OS_3", "is64bit", "1", strSysIni
+        IniWriteStrPrivate "OS_3", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         IniWriteStrPrivate "OS_3", "PathPhysX", vbNullString, strSysIni
         IniWriteStrPrivate "OS_3", "PathLanguages", vbNullString, strSysIni
         IniWriteStrPrivate "OS_3", "PathRuntimes", vbNullString, strSysIni
-        IniWriteStrPrivate "OS_3", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         'Секция OS_4
         IniWriteStrPrivate "OS_4", "Ver", "5.0;5.1;5.2;6.0;6.1;6.2;6.3", strSysIni
         IniWriteStrPrivate "OS_4", "Name", "Windows XP / 2000 / Server 2003 / Vista / Server 2008 / 7 / 8 / 8.1", strSysIni
         IniWriteStrPrivate "OS_4", "drpFolder", "drivers\All", strSysIni
         IniWriteStrPrivate "OS_4", "devIDFolder", "drivers\All\dev_db", strSysIni
         IniWriteStrPrivate "OS_4", "is64bit", "2", strSysIni
+        IniWriteStrPrivate "OS_4", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         IniWriteStrPrivate "OS_4", "PathPhysX", vbNullString, strSysIni
         IniWriteStrPrivate "OS_4", "PathLanguages", vbNullString, strSysIni
         IniWriteStrPrivate "OS_4", "PathRuntimes", vbNullString, strSysIni
-        IniWriteStrPrivate "OS_4", "ExcludeFileName", "DPsFnshr*.7z", strSysIni
         
         'Секция Utils
         IniWriteStrPrivate "Utils", "UtilsCount", "3", strSysIni
@@ -243,7 +243,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "MainForm", "StartMaximazed", "0", strSysIni
         IniWriteStrPrivate "MainForm", "SaveSizeOnExit", "0", strSysIni
         IniWriteStrPrivate "MainForm", "FontName", "Tahoma", strSysIni
-        IniWriteStrPrivate "MainForm", "FontSize", "8", strSysIni
+        IniWriteStrPrivate "MainForm", "FontSize", "9", strSysIni
         IniWriteStrPrivate "MainForm", "HighlightColor", "32896", strSysIni
         
         'Секция Buttons
@@ -276,14 +276,14 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Tab", "FontColor", "0", strSysIni
         
         'Секция Tab2
-        IniWriteStrPrivate "Tab2", "StartMode", "1", strSysIni
         IniWriteStrPrivate "Tab2", "FontName", "Tahoma", strSysIni
         IniWriteStrPrivate "Tab2", "FontSize", "8", strSysIni
         IniWriteStrPrivate "Tab2", "FontUnderline", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontStrikethru", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontItalic", "0", strSysIni
         IniWriteStrPrivate "Tab2", "FontBold", "0", strSysIni
-        IniWriteStrPrivate "Tab2", "FontColor", "&H8000000D", strSysIni
+        IniWriteStrPrivate "Tab2", "FontColor", "-2147483635", strSysIni
+        IniWriteStrPrivate "Tab2", "StartMode", "1", strSysIni
         
         'Секция ToolTip
         'IniWriteStrPrivate "ToolTip", "FontName", "Courier New", strSysIni
@@ -792,7 +792,7 @@ Public Function GetMainIniParam() As Boolean
     mbFontTab2_Italic = GetIniValueBoolean(strSysIni, "Tab2", "FontItalic", 0)
     mbFontTab2_Underline = GetIniValueBoolean(strSysIni, "Tab2", "FontUnderline", 0)
     mbFontTab2_Strikethru = GetIniValueBoolean(strSysIni, "Tab2", "FontStrikethru", 0)
-    lngFontTab2_Color = GetIniValueLong(strSysIni, "Tab2", "FontColor", &H8000000D)
+    lngFontTab2_Color = GetIniValueLong(strSysIni, "Tab2", "FontColor", -2147483635)
     lngStartModeTab2 = GetIniValueLong(strSysIni, "Tab2", "StartMode", 1)
     '[ToolTip]
     ' Шрифт и настройки ToolTip

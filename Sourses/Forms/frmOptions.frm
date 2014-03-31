@@ -3953,22 +3953,16 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Main", "HideOtherProcess", chkHideOtherProcess.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "AlternativeTemp", chkTempPath.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "AlternativeTempPath", ucTempPath.Path, strSysIniTemp
-    IniWriteStrPrivate "Main", "IconMainSkin", cmbImageMain.Text, strSysIniTemp
     IniWriteStrPrivate "Main", "SilentDLL", chkSilentDll.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "SearchOnStart", chkSearchOnStart.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "PauseAfterSearch", txtPauseAfterSearch.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "CreateRestorePoint", chkCreateRP.Value, strSysIniTemp
-
-    If mbLoadIniTmpAfterRestart Then
-        IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", 1, strSysIniTemp
-    End If
+    IniWriteStrPrivate "Main", "IconMainSkin", cmbImageMain.Text, strSysIniTemp
+    IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", Abs(mbLoadIniTmpAfterRestart), strSysIniTemp
 
     ' Секция Debug
     IniWriteStrPrivate "Debug", "DebugEnable", chkDebug.Value, strSysIniTemp
-    IniWriteStrPrivate "Debug", "CleenHistory", 1, strSysIniTemp
-    IniWriteStrPrivate "Debug", "DebugLog2AppPath", chkDebugLog2AppPath.Value, strSysIniTemp
     IniWriteStrPrivate "Debug", "DebugLogPath", ucDebugLogPath.Path, strSysIniTemp
-    IniWriteStrPrivate "Debug", "Detailmode", txtDebugLogLevel.Text, strSysIniTemp
     strLogNameTemp = "DIA-LOG_%DATE%.txt"
 
     If LenB(txtDebugLogName.Text) Then
@@ -3978,7 +3972,13 @@ Private Sub SaveOptions()
     End If
 
     IniWriteStrPrivate "Debug", "DebugLogName", strLogNameTemp, strSysIniTemp
-    IniWriteStrPrivate "Debug", "Detailmode", lngDetailMode, strSysIniTemp
+    IniWriteStrPrivate "Debug", "CleenHistory", 1, strSysIniTemp
+    IniWriteStrPrivate "Debug", "Detailmode", txtDebugLogLevel.Text, strSysIniTemp
+    IniWriteStrPrivate "Debug", "DebugLog2AppPath", chkDebugLog2AppPath.Value, strSysIniTemp
+    IniWriteStrPrivate "Debug", "Time2File", Abs(mbDebugTime2File), strSysIniTemp
+    
+    'Секция Arc
+    IniWriteStrPrivate "Arc", "PathExe", ucArchPath.Path, strSysIniTemp
     'Секция Devcon
     IniWriteStrPrivate "Devcon", "PathExe", ucDevCon86Path.Path, strSysIniTemp
     IniWriteStrPrivate "Devcon", "PathExe64", ucDevCon64Path.Path, strSysIniTemp
@@ -3994,16 +3994,15 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "DPInst", "SuppressWizard", chkSuppressWizard.Value, strSysIniTemp
     IniWriteStrPrivate "DPInst", "QuietInstall", chkQuietInstall.Value, strSysIniTemp
     IniWriteStrPrivate "DPInst", "ScanHardware", chkScanHardware.Value, strSysIniTemp
-    'Секция Arc
-    IniWriteStrPrivate "Arc", "PathExe", ucArchPath.Path, strSysIniTemp
+    
     'Секция OS
     'Число ОС
     lngOSCountNew = lvOS.ListItems.Count
     IniWriteStrPrivate "OS", "OSCount", lngOSCountNew, strSysIniTemp
-    ' Рекурсивный перебор папок
-    IniWriteStrPrivate "OS", "Recursion", chkRecursion.Value, strSysIniTemp
     ' кол-во табов на строку
     IniWriteStrPrivate "OS", "OSCountPerRow", txtTabPerRowCount.Value, strSysIniTemp
+    ' Рекурсивный перебор папок
+    IniWriteStrPrivate "OS", "Recursion", chkRecursion.Value, strSysIniTemp
     ' Блокировать лишние вкладки
     IniWriteStrPrivate "OS", "TabBlock", chkTabBlock.Value, strSysIniTemp
     ' Скрывать лишние вкладки
@@ -4011,7 +4010,7 @@ Private Sub SaveOptions()
     ' Обрабатывать файлы Finish
     IniWriteStrPrivate "OS", "LoadFinishFile", chkLoadFinishFile.Value, strSysIniTemp
     ' Считывать класс пакета драйверов из Finish
-    'IniWriteStrPrivate "OS", "ReadClasses", chkReadClasses.value)), strSysIniTemp
+    IniWriteStrPrivate "OS", "ReadClasses", Abs(mbReadClasses), strSysIniTemp
     ' Считывать класс пакета драйверов из Finish
     IniWriteStrPrivate "OS", "ReadDPName", chkReadDPName.Value, strSysIniTemp
     ' Считывать класс пакета драйверов из Finish
@@ -4020,10 +4019,15 @@ Private Sub SaveOptions()
     ' Сравнение версий драйверов
     IniWriteStrPrivate "OS", "CompareDrvVerByDate", Abs(optCompareByDate.Value), strSysIniTemp
     IniWriteStrPrivate "OS", "DateFormatRus", chkDateFormatRus.Value, strSysIniTemp
-    ' Необрабатывать вкладки
-    IniWriteStrPrivate "OS", "LoadUnSupportedOS", chkLoadUnSupportedOS.Value, strSysIniTemp
     ' Обрабатывать совместимые HWID
     IniWriteStrPrivate "OS", "CompatiblesHWID", chkCompatiblesHWID.Value, strSysIniTemp
+    IniWriteStrPrivate "OS", "CompatiblesHWIDCount", lngCompatiblesHWIDCount, strSysIniTemp
+    ' Необрабатывать вкладки
+    IniWriteStrPrivate "OS", "LoadUnSupportedOS", chkLoadUnSupportedOS.Value, strSysIniTemp
+    IniWriteStrPrivate "OS", "CalcDriverScore", Abs(mbCalcDriverScore), strSysIniTemp
+    IniWriteStrPrivate "OS", "SearchCompatibleDriverOtherOS", Abs(mbSearchCompatibleDriverOtherOS), strSysIniTemp
+    IniWriteStrPrivate "OS", "MatchHWIDbyDPName", Abs(mbMatchHWIDbyDPName), strSysIniTemp
+    IniWriteStrPrivate "OS", "DP_is_aFolder", Abs(mbDP_Is_aFolder), strSysIniTemp
 
     'Заполяем в цикле подсекции ОС
     For cnt = 1 To lngOSCountNew
@@ -4035,10 +4039,10 @@ Private Sub SaveOptions()
             IniWriteStrPrivate "OS_" & cnt, "drpFolder", .SubItems(2), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "devIDFolder", .SubItems(3), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "is64bit", .SubItems(4), strSysIniTemp
+            IniWriteStrPrivate "OS_" & cnt, "ExcludeFileName", .SubItems(8), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "PathPhysX", .SubItems(5), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "PathLanguages", .SubItems(6), strSysIniTemp
             IniWriteStrPrivate "OS_" & cnt, "PathRuntimes", .SubItems(7), strSysIniTemp
-            IniWriteStrPrivate "OS_" & cnt, "ExcludeFileName", .SubItems(8), strSysIniTemp
         End With
 
     Next
@@ -4065,15 +4069,10 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "MainForm", "StartMaximazed", chkFormMaximaze.Value, strSysIniTemp
     mbSaveSizeOnExit = CBool(chkFormSizeSave.Value)
     IniWriteStrPrivate "MainForm", "SaveSizeOnExit", chkFormSizeSave.Value, strSysIniTemp
+    IniWriteStrPrivate "MainForm", "FontName", strFontMainForm_Name, strSysIniTemp
+    IniWriteStrPrivate "MainForm", "FontSize", lngFontMainForm_Size, strSysIniTemp
     IniWriteStrPrivate "MainForm", "HighlightColor", CStr(glHighlightColor), strSysIniTemp
     'Секция Buttons
-    IniWriteStrPrivate "Button", "Width", txtButtonWidth.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "Height", txtButtonHeight.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "Left", txtButtonLeft.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "Top", txtButtonTop.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "Btn2BtnLeft", txtButton2BtnL.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "Btn2BtnTop", txtButton2BtnT.Value, strSysIniTemp
-    IniWriteStrPrivate "Button", "TextUpCase", chkButtonTextUpCase.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "FontName", strFontBtn_Name, strSysIniTemp
     IniWriteStrPrivate "Button", "FontSize", miFontBtn_Size, strSysIniTemp
     IniWriteStrPrivate "Button", "FontUnderline", Abs(mbFontBtn_Underline), strSysIniTemp
@@ -4081,8 +4080,15 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Button", "FontItalic", Abs(mbFontBtn_Italic), strSysIniTemp
     IniWriteStrPrivate "Button", "FontBold", Abs(mbFontBtn_Bold), strSysIniTemp
     IniWriteStrPrivate "Button", "FontColor", CStr(cmdFutureButton.ForeColor), strSysIniTemp
-    IniWriteStrPrivate "Button", "IconStatusSkin", cmbImageStatus.Text, strSysIniTemp
+    IniWriteStrPrivate "Button", "Width", txtButtonWidth.Value, strSysIniTemp
+    IniWriteStrPrivate "Button", "Height", txtButtonHeight.Value, strSysIniTemp
+    IniWriteStrPrivate "Button", "Left", txtButtonLeft.Value, strSysIniTemp
+    IniWriteStrPrivate "Button", "Top", txtButtonTop.Value, strSysIniTemp
+    IniWriteStrPrivate "Button", "Btn2BtnLeft", txtButton2BtnL.Value, strSysIniTemp
+    IniWriteStrPrivate "Button", "Btn2BtnTop", txtButton2BtnT.Value, strSysIniTemp
+    IniWriteStrPrivate "Button", "TextUpCase", chkButtonTextUpCase.Value, strSysIniTemp
     IniWriteStrPrivate "Button", "Style", cmbButtonStyle.ListIndex, strSysIniTemp
+    IniWriteStrPrivate "Button", "IconStatusSkin", cmbImageStatus.Text, strSysIniTemp
     'Секция Tab
     IniWriteStrPrivate "Tab", "FontName", strFontTab_Name, strSysIniTemp
     IniWriteStrPrivate "Tab", "FontSize", miFontTab_Size, strSysIniTemp
@@ -4099,6 +4105,7 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Tab2", "FontItalic", Abs(mbFontTab2_Italic), strSysIniTemp
     IniWriteStrPrivate "Tab2", "FontBold", Abs(mbFontTab2_Bold), strSysIniTemp
     IniWriteStrPrivate "Tab2", "FontColor", lngFontTab2_Color, strSysIniTemp
+    IniWriteStrPrivate "Tab2", "StartMode", lngStartModeTab2, strSysIniTemp
     'Секция ToolTip
     IniWriteStrPrivate "ToolTip", "FontName", strFontTT_Name, strSysIniTemp
     IniWriteStrPrivate "ToolTip", "FontSize", miFontTT_Size, strSysIniTemp
@@ -4791,7 +4798,14 @@ Private Sub cmdOK_Click()
         ChangeStatusTextAndDebug strMessages(36)
         lngMsgRet = MsgBox(strMessages(36) & strMessages(147), vbInformation + vbApplicationModal + vbYesNo, strProductName)
         mbRestartProgram = lngMsgRet = vbYes
-    ElseIf Not FileisReadOnly(strSysIni) Then
+    ElseIf FileExists(strSysIni) Then
+        If Not FileisReadOnly(strSysIni) Then
+            SaveOptions
+            ChangeStatusTextAndDebug strMessages(36)
+            lngMsgRet = MsgBox(strMessages(36) & strMessages(147), vbInformation + vbApplicationModal + vbYesNo, strProductName)
+            mbRestartProgram = lngMsgRet = vbYes
+        End If
+    Else
         SaveOptions
         ChangeStatusTextAndDebug strMessages(36)
         lngMsgRet = MsgBox(strMessages(36) & strMessages(147), vbInformation + vbApplicationModal + vbYesNo, strProductName)

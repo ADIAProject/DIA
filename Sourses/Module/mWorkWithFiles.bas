@@ -692,7 +692,7 @@ Private Sub FileWriteDataAppend(ByVal sFileName As String, Optional ByVal sStrin
     
     fNum = FreeFile
 
-    Open sFileName For Binary Access Write As fNum
+    Open sFileName For Binary Access Write Lock Write As fNum
     Put #fNum, LOF(fNum), sStringOut
     Close #fNum
 

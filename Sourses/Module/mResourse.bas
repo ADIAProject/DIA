@@ -23,7 +23,7 @@ Public Function GetBinaryFileFromResource(ByVal File_Path As String, ByVal ID As
 
     If LenB(BinaryData(1)) Then
         'Если что - то есть, то все гуд
-        Open File_Path For Binary Access Write As #iFile
+        Open File_Path For Binary Access Write Lock Write As #iFile
         'запись в файл
         Put #iFile, 1, BinaryData
         Close #iFile
