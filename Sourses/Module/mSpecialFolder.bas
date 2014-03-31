@@ -121,7 +121,7 @@ Public Function Getpath_PrinterColorDirectory() As String
     'a temporarry variable that holds LENGHT OF THE FINAL PATH STRING!
     'a variable for holding the the output of the function
     Temp = GetColorDirectory(vbNullString, WindirS, 255)
-    Result = MemAPIs.RTrimZ(WindirS)
+    Result = TrimNull(WindirS)
     Getpath_PrinterColorDirectory = Result
 End Function
 
@@ -263,7 +263,7 @@ Public Function GetSpecialFolderPath(csidl As CSIDL_VALUES, Optional SHGFP_TYPE 
     lngResult = SHGetFolderPath(App.hInstance, csidl Or dwFlags, -1, SHGFP_TYPE, buff)
 
     If lngResult = S_OK Then
-        GetSpecialFolderPath = MemAPIs.RTrimZ(buff)
+        GetSpecialFolderPath = TrimNull(buff)
     Else
         If mbDebugStandart Then DebugMode "GetSpecialFolderPath: csidl=" & csidl & " SHGFP_TYPE=" & SHGFP_TYPE & " ResultCode=" & lngResult
     End If

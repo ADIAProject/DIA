@@ -560,12 +560,8 @@ Private Function LoadList_Folders(ByVal lngButtIndex As Long, Optional ByVal mbV
     Dim strDevDriverLocal   As String
     Dim strDevStatus        As String
     Dim strDevName          As String
-    Dim strSection          As String
     Dim miPreviousListCount As Long
     Dim miThisListCount     As Long
-    Dim lngLVTop            As Long
-    Dim lngLVHeight         As Long
-    Dim lngLVWidht          As Long
     Dim lngNumRow           As Long
     Dim strTemp_x()         As String
     Dim strTempLine_x()     As String

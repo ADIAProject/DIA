@@ -147,8 +147,7 @@ Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, ByVal dwLCType As Lo
         If R Then
             'r holds the size of the string
             'including the terminating null
-            GetUserLocaleInfo = MemAPIs.RTrimZ(sReturn)
-            ', r - 1)
+            GetUserLocaleInfo = TrimNull(sReturn)
         End If
     End If
 

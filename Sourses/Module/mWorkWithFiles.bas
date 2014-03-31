@@ -39,7 +39,7 @@ Option Explicit
 Public Function BackslashAdd2Path(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathAddBackslash strPath
-    BackslashAdd2Path = MemAPIs.RTrimZ(strPath)
+    BackslashAdd2Path = TrimNull(strPath)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ End Function
 Public Function BackslashDelFromPath(ByVal strPath As String) As String
     strPath = strPath & str2vbNullChar
     PathRemoveBackslash strPath
-    BackslashDelFromPath = MemAPIs.RTrimZ(strPath)
+    BackslashDelFromPath = TrimNull(strPath)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -599,7 +599,6 @@ Private Sub FileWriteDataAPI(ByVal sFilePath As String, ByVal strData As String)
     Dim fHandle         As Long
     Dim fSuccess        As Long
     Dim lBytesWritten   As Long
-    Dim BytesToWrite    As Long
     Dim anArray()       As Byte
     Dim lngFilePathPtr  As Long
     
@@ -1221,7 +1220,7 @@ Public Function PathCombine(ByVal strDirectory As String, ByVal strFile As Strin
     strBuffer = FillNullChar(MAX_PATH_UNICODE)
 
     If PathCombineW(StrPtr(strBuffer), StrPtr(strDirectory & vbNullChar), StrPtr(strFile & vbNullChar)) Then
-        PathCombine = MemAPIs.RTrimZ(strBuffer)
+        PathCombine = TrimNull(strBuffer)
     End If
 
 End Function
@@ -1321,9 +1320,15 @@ End Function
 '! Parameters  (Переменные):   strString (Variant)
 '!--------------------------------------------------------------------------------
 Public Function SafeFileName(ByVal strString As String) As String
+    ' Отбрасываем vbNullChar и все что после
+    If InStr(strString, vbNullChar) Then
+        strString = TrimNull(strString)
+    End If
+    
     ' Заменяем VbTab
-    strString = Replace$(strString, vbTab, vbNullString)
-    strString = MemAPIs.RTrimZ(strString)
+    If InStr(strString, ",") Then
+        strString = Replace$(strString, vbTab, vbNullString)
+    End If
 
     ' Отбрасываем все после ","
     If InStr(strString, ",") Then
@@ -1335,8 +1340,7 @@ Public Function SafeFileName(ByVal strString As String) As String
         strString = Left$(strString, InStr(strString, ";") - 1)
     End If
 
-    strString = Trim$(MemAPIs.RTrimZ(strString))
-    SafeFileName = strString
+    SafeFileName = Trim$(strString)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -1363,7 +1367,7 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     End If
 
     If InStr(str, vbNullChar) Then
-        str = MemAPIs.RTrimZ(str)
+        str = TrimNull(str)
     End If
 
     If InStr(str, vbTab) Then
@@ -1595,7 +1599,7 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     End Select
 
     If InStr(cDir, vbNullChar) Then
-        cDir = MemAPIs.RTrimZ(cDir)
+        cDir = TrimNull(cDir)
     End If
 
     If mbAdditionalPath Then
@@ -1609,6 +1613,6 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     cDir = Replace$(cDir, vbTab, vbNullString)
     cDir = Replace$(cDir, strKavichki, vbNullString)
     cDir = BackslashAdd2Path(cDir)
-    WhereIsDir = MemAPIs.RTrimZ(cDir)
+    WhereIsDir = TrimNull(cDir)
 End Function
 

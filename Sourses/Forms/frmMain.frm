@@ -371,7 +371,6 @@ Begin VB.Form frmMain
                   Width           =   4155
                   _ExtentX        =   7329
                   _ExtentY        =   2778
-                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab1 
                   Height          =   1575
@@ -382,7 +381,6 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
-                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab2 
                   Height          =   1575
@@ -393,7 +391,6 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
-                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab3 
                   Height          =   1575
@@ -404,7 +401,6 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
-                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab4 
                   Height          =   1575
@@ -415,7 +411,6 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
-                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.LabelW lblNoDP4Mode 
                   Height          =   285
@@ -1287,8 +1282,6 @@ Private lngFirstActiveTabIndex      As Long
 Private lngNotFinedDriversInDP      As Long
 Private lngFrameTime                As Long
 Private lngFrameCount               As Long
-Private lngBorderWidthX             As Long
-Private lngBorderWidthY             As Long
 Private lngOffSideCount             As Long         ' Кол-во переходов строк при построении кнопок
 
 Private mbNextTab                   As Boolean
@@ -1315,10 +1308,6 @@ Private strCmbChkBtnListElement3    As String
 Private strCmbChkBtnListElement4    As String
 Private strCmbChkBtnListElement5    As String
 Private strCmbChkBtnListElement6    As String
-Private strContextInstall1          As String
-Private strContextInstall2          As String
-Private strContextInstall3          As String
-Private strContextInstall4          As String
 Private strTTipTextTitle            As String
 Private strTTipTextFileSize         As String
 Private strTTipTextClassDRV         As String
@@ -1516,7 +1505,7 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
             ChangeStatusTextAndDebug strMessages(67) & strSpace & AllTimeScriptRun
         Else
             If mbDebugStandart Then DebugMode strMessages(68) & strSpace & AllTimeScriptRun
-            ChangeStatusTextAndDebug strMessages(68)
+            ChangeStatusTextAndDebug strMessages(68) & strSpace & AllTimeScriptRun
         End If
     End If
 
@@ -2520,7 +2509,7 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
 
         'Строим список файлов 7z
         If Not mbDP_Is_aFolder Then
-            strFileList_x = SearchFilesInRoot(strDrpPath, "DP*.7z;DP*.zip", mbRecursion, False, False, True)
+            strFileList_x = SearchFilesInRoot(strDrpPath, "DP*.7z;DP*.zip", mbRecursion, False, False)
             'Иначе это каталоги, а не 7z
         Else
 
@@ -3644,7 +3633,6 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim strSection               As String
     Dim lngMaxLengthRow1         As Long
     Dim lngMaxLengthRow2         As Long
-    Dim lngMaxLengthRow3         As Long
     Dim lngMaxLengthRow4         As Long
     Dim lngMaxLengthRow5         As Long
     Dim lngMaxLengthRow6         As Long
@@ -5582,7 +5570,6 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
     Dim strTTipSizeHeader_x()  As String
     Dim maxLengthRow1          As String
     Dim maxLengthRow2          As String
-    Dim maxLengthRow3          As String
     Dim maxLengthRow4          As String
     Dim maxLengthRow5          As String
     Dim maxLengthRow6          As String
@@ -5757,6 +5744,12 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     lngNoDP4ModeCnt = 0
     objScrollControl.Visible = False
 
+    If lngTab2Tab = 0 Then
+        If objScrollControl.ScrollPositionH Then
+            objScrollControl.ScrollPositionH = 0
+        End If
+    End If
+    
     For i = lngBtnPrevCnt To lngBtnTabCnt
 
         If Not (acmdPackFiles(i).PictureNormal Is Nothing) Then
@@ -5816,8 +5809,8 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
 
 MoveBtn:
             ' Собственно перемещаем кнопки на другую вкладку
-            Set acmdPackFiles(i).Container = objScrollControl
             Set chkPackFiles(i).Container = objScrollControl
+            Set acmdPackFiles(i).Container = objScrollControl
 
             ' положения кнопок
             If i = 0 Then
@@ -5831,16 +5824,18 @@ MoveBtn:
 
                     ' Если первая кнопка подходит, то расчитываем следующее положение исходя из нее
                     If lngTab2Tab Then
-                        'If InStr(1, acmdPackFiles(0).Container.Name, "ctlScrollControlTab", vbTextCompare) Then
                         If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) Then
                             lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                         End If
 
                     Else
-                        'If i = lngBtnPrevCnt And StrComp(acmdPackFiles(0).Container.Name & "_" & acmdPackFiles(0).Container.Index, acmdPackFiles(lngBtnPrevCnt).Container.Name & "_" & acmdPackFiles(lngBtnPrevCnt).Container.Index) <> 0 Then
-                        If i = lngBtnPrevCnt And IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) = False Then
-                            lngNextPosLeft = lngStartPosLeft
-                            lngNextPosTop = lngStartPosTop
+                        If i = lngBtnPrevCnt Then
+                            If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) = False Then
+                                lngNextPosLeft = lngStartPosLeft
+                                lngNextPosTop = lngStartPosTop
+                            Else
+                                lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
+                            End If
                         Else
                             lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                         End If
@@ -5890,7 +5885,6 @@ NextBtn:
     End If
 
     objScrollControl.Visible = True
-    'objScrollControl.SetFocus
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -6154,7 +6148,7 @@ End Function
 '                              LngValue (Long)
 '                              lngCntTab (Long)
 '!--------------------------------------------------------------------------------
-Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, ByVal lngCntTab As Long)
+Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal lngValue As Long, ByVal lngCntTab As Long)
 
     Dim i                As Integer
     Dim SSTabHeight      As Long
@@ -6174,13 +6168,13 @@ Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, By
             If Not (SSTab2.item(i) Is Nothing) Then
 
                 If lngCntTab > lngOSCountPerRow Then
-                    If sgnNum = LngValue Then
+                    If sgnNum = lngValue Then
                         .Top = sgnNum * SSTabTabHeight + 35
                         .Height = SSTabHeight - 60 - sgnNum * SSTabTabHeight
                         .Width = miValue3 - 100 * (sgnNum + 1)
                     Else
-                        .Top = (LngValue + 1) * SSTabTabHeight + 35
-                        .Height = SSTabHeight - 60 - (LngValue + 1) * SSTabTabHeight
+                        .Top = (lngValue + 1) * SSTabTabHeight + 35
+                        .Height = SSTabHeight - 60 - (lngValue + 1) * SSTabTabHeight
                         .Width = miValue3 - 100 * (sgnNum + 1)
                     End If
 
@@ -7765,9 +7759,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-    Dim strPackFileName As String
-    Dim strPathDevDB    As String
-
     If Button = vbRightButton Then
         mnuContextTxt.Enabled = True
         mnuContextXLS.Enabled = True
@@ -8882,12 +8873,13 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextDeleteDRP_Click()
 
-    Dim i                As Long
-    Dim strPathDRP       As String
-    Dim strPathDB        As String
-    Dim strFullPathDRP   As String
-    Dim strFullPathDB    As String
-    Dim strFullPathDBIni As String
+    Dim i                 As Long
+    Dim strPathDRP        As String
+    Dim strPathDB         As String
+    Dim strFullPathDRP    As String
+    Dim strFullPathDB     As String
+    Dim strFullPathDBHwid As String
+    Dim strFullPathDBIni  As String
 
     If mbIsDriveCDRoom Then
         MsgBox strMessages(16), vbInformation, strProductName
@@ -8897,32 +8889,45 @@ Private Sub mnuContextDeleteDRP_Click()
         strPathDB = arrOSList(i).devIDFolderFull
         strFullPathDRP = PathCombine(strPathDRP, acmdPackFiles(lngCurrentBtnIndex).Tag)
         strFullPathDB = PathCombine(strPathDB, GetFileNameFromPath(strCurSelButtonPath))
-        strFullPathDBIni = Replace$(strFullPathDB, ".txt", "*.ini", , , vbTextCompare)
+        strFullPathDBIni = Replace$(strFullPathDB, ".txt", ".ini", , , vbTextCompare)
+        strFullPathDBHwid = Replace$(strFullPathDB, ".txt", ".hwid", , , vbTextCompare)
 
         If MsgBox(strMessages(17) & " '" & acmdPackFiles(lngCurrentBtnIndex).Tag & "' ?", vbQuestion + vbYesNo, strProductName) = vbYes Then
+            ' удаление пакета 7z
             If PathExists(strFullPathDRP) Then
                 If Not PathIsAFolder(strFullPathDRP) Then
                     If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDRP
                     DeleteFiles strFullPathDRP
                 End If
-            End If
-
-            If PathExists(strFullPathDB) Then
-                If Not PathIsAFolder(strFullPathDB) Then
-                    If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDB
-                    DeleteFiles strFullPathDB
-                    'Удаление секции о данном пакете из ini-файла
-                    IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strCurSelButtonPath)), PathCombine(strPathDB, "DevDBVersions.ini")
+                
+                ' удаление файла txt
+                If PathExists(strFullPathDB) Then
+                    If Not PathIsAFolder(strFullPathDB) Then
+                        If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDB
+                        DeleteFiles strFullPathDB
+                        'Удаление секции о данном пакете из ini-файла
+                        IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strCurSelButtonPath)), PathCombine(strPathDB, "DevDBVersions.ini")
+                    End If
                 End If
-            End If
-
-            If PathExists(strFullPathDBIni) Then
-                If Not PathIsAFolder(strFullPathDBIni) Then
-                    If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBIni
-                    DeleteFiles strFullPathDBIni
+                
+                ' удаление файла hwid
+                If PathExists(strFullPathDBHwid) Then
+                    If Not PathIsAFolder(strFullPathDBHwid) Then
+                        If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBHwid
+                        DeleteFiles strFullPathDBHwid
+                    End If
                 End If
+                
+                ' удаление файла ini
+                If PathExists(strFullPathDBIni) Then
+                    If Not PathIsAFolder(strFullPathDBIni) Then
+                        If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBIni
+                        DeleteFiles strFullPathDBIni
+                    End If
+                End If
+                
             End If
-
+            
             acmdPackFiles(lngCurrentBtnIndex).Visible = False
             chkPackFiles(lngCurrentBtnIndex).Visible = False
             chkPackFiles(lngCurrentBtnIndex).Value = False
@@ -10136,7 +10141,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub pbProgressBar_Resize()
     cmdBreakUpdateDB.Left = (pbProgressBar.Width - cmdBreakUpdateDB.Width) / 2
-    cmdBreakUpdateDB.Top = (pbProgressBar.Height - cmdBreakUpdateDB.Height - 25) / 2
+    cmdBreakUpdateDB.Top = (pbProgressBar.Height - cmdBreakUpdateDB.Height) / 2
 End Sub
 
 '!--------------------------------------------------------------------------------

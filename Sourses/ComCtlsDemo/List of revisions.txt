@@ -1,5 +1,8 @@
 List of revisions:
 
+22-Mar-2014
+- Fixed a critical bug in the Sorted property in the TreeView control. (it is recommended to replace all TreeView components)
+
 19-Mar-2014
 - Fixed the 'vertically stacked tabs' bug in the TabStrip control.
 

@@ -48,18 +48,18 @@ End Function
 '! Parameters  (Переменные):   strDevDBFullFileName (String)
 '                              strPathDRP (String)
 '!--------------------------------------------------------------------------------
-Public Function CompareDevDBVersion(strDevDBFullFileName As String, Optional ByVal strPathDRP As String) As Boolean
+Public Function CompareDevDBVersion(strDevDBFullFileName As String) As Boolean
 
-    Dim LngValue          As Long
+    Dim lngValue          As Long
     Dim strFilePath_woExt As String
 
     strFilePath_woExt = GetFileName_woExt(strDevDBFullFileName)
-    LngValue = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
+    lngValue = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
 
-    If LngValue = 9999 Then
+    If lngValue = 9999 Then
         CompareDevDBVersion = False
     Else
-        CompareDevDBVersion = Not (LngValue <> lngDevDBVersion)
+        CompareDevDBVersion = Not (lngValue <> lngDevDBVersion)
     End If
 
 End Function

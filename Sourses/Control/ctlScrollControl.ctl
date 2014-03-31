@@ -27,16 +27,13 @@ Attribute VB_Exposed = False
 '---------------------------------------------------------
 
 '*********************************
-' Modified by Romeo91 (adia-project.net) Last Edit 2014-03-04
+' Modified by Romeo91 (adia-project.net) Last Edit 2014-03-31
 '*********************************
 ' Change subsclasser to class cSelfSubHookCallback
+' Added ScrollPositionH property(Get/Let)
 
 Option Explicit
 
-Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function VirtualAlloc Lib "kernel32.dll" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
-Private Declare Function VirtualFree Lib "kernel32.dll" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
 Private Declare Function SetScrollInfo Lib "user32.dll" (ByVal hWnd As Long, ByVal n As Long, lpcScrollInfo As SCROLLINFO, ByVal bool As Boolean) As Long
 Private Declare Function GetScrollInfo Lib "user32.dll" (ByVal hWnd As Long, ByVal n As Long, lpScrollInfo As SCROLLINFO) As Long
 Private Declare Function ScrollWindowByNum Lib "user32.dll" Alias "ScrollWindow" (ByVal hWnd As Long, ByVal XAmount As Long, ByVal YAmount As Long, ByVal lpRect As Long, ByVal lpClipRect As Long) As Long
@@ -44,15 +41,11 @@ Private Declare Function GetWindowDC Lib "user32.dll" (ByVal hWnd As Long) As Lo
 Private Declare Function GetWindowRect Lib "user32.dll" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function ExcludeClipRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Private Declare Function GetFocus Lib "user32.dll" () As Long
-Private Declare Function IsChild Lib "user32.dll" (ByVal hWndParent As Long, ByVal hWnd As Long) As Long
 Private Declare Function ClientToScreen Lib "user32.dll" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function SetCursor Lib "user32.dll" (ByVal hCursor As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
-Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
-Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
 Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
-Private Declare Function CallWindowProc Lib "user32.dll" Alias "CallWindowProcW" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
@@ -81,18 +74,10 @@ Private Type SCROLLINFO
     nTrackPos                           As Long
 End Type
 
-Private Const MEM_COMMIT             As Long = &H1000
-Private Const PAGE_EXECUTE_READWRITE As Long = &H40
-Private Const MEM_RELEASE            As Long = &H8000&
-Private Const GWL_WNDPROC            As Long = -4
-Private Const GWL_STYLE              As Long = (-16)
-Private Const WS_VSCROLL             As Long = &H200000
-Private Const WS_HSCROLL             As Long = &H100000
 Private Const GW_CHILD               As Long = 5
 Private Const GW_HWNDNEXT            As Long = 2
 Private Const SB_HORZ                As Long = 0
 Private Const SB_VERT                As Long = 1
-Private Const SB_BOTH                As Long = 3
 Private Const SB_LINEDOWN            As Long = 1
 Private Const SB_LINEUP              As Long = 0
 Private Const SB_PAGEDOWN            As Long = 3
@@ -118,23 +103,19 @@ Private m_AutoScrollToFocus As Boolean
 Private m_UseHandsCursor    As Boolean
 Private m_HScrollVisible    As Boolean
 Private m_VScrollVisible    As Boolean
+Private m_ScrollPositionH   As Long
 
 '*************************************************************
 '   Windows Messages
 '*************************************************************
 Private Const WM_THEMECHANGED   As Long = &H31A
 Private Const WM_SYSCOLORCHANGE As Long = &H15
-Private Const WM_NCACTIVATE     As Long = &H86
-Private Const WM_ACTIVATE       As Long = &H6
-Private Const WM_SETCURSOR As Long = &H20
-Private Const WM_SIZING         As Long = &H214
 Private Const WM_NCPAINT        As Long = &H85
-Private Const WM_MOVING         As Long = &H216
 Private Const WM_EXITSIZEMOVE   As Long = &H232
-Private Const WM_MOUSEWHEEL          As Long = &H20A
-Private Const WM_VSCROLL             As Long = &H115
-Private Const WM_HSCROLL             As Long = &H114
-Private Const WM_DESTROY             As Long = &H2
+Private Const WM_MOUSEWHEEL     As Long = &H20A
+Private Const WM_VSCROLL        As Long = &H115
+Private Const WM_HSCROLL        As Long = &H114
+Private Const WM_DESTROY        As Long = &H2
 
 '*************************************************************
 '   TRACK MOUSE
@@ -266,6 +247,30 @@ Public Property Get hWnd()
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ScrollPositionH
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get ScrollPositionH() As Boolean
+    ScrollPositionH = m_ScrollPositionH
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ScrollPositionH
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   NewValue (Boolean)
+'!--------------------------------------------------------------------------------
+Public Property Let ScrollPositionH(ByVal NewValue As Boolean)
+    m_ScrollPositionH = NewValue
+    SI.nPos = NewValue
+    SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
+    If NewValue = 0 Then
+        ScrollVerticalWindow 0
+    End If
+    PropertyChanged "ScrollPositionH"
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property UseHandsCursor
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -369,36 +374,6 @@ Private Function GetChildRectOfMe(hWnd As Long, ByRef SrcRect As RECT)
         .Right = .Right - PT.X - OldPosH
         .Bottom = .Bottom - PT.Y - OldPosV
     End With
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetHiWord
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   dw (Long)
-'!--------------------------------------------------------------------------------
-Private Function GetHiWord(dw As Long) As Long
-
-    If dw And &H80000000 Then
-        GetHiWord = (dw \ 65535) - 1
-    Else
-        GetHiWord = dw \ 65535
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetLoWord
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   dw (Long)
-'!--------------------------------------------------------------------------------
-Private Function GetLoWord(dw As Long) As Long
-
-    If dw And &H8000& Then
-        GetLoWord = &H8000 Or (dw And &H7FFF&)
-    Else
-        GetLoWord = dw And &HFFFF&
-    End If
 
 End Function
 
@@ -773,7 +748,6 @@ Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRe
 
                 Case SB_ENDSCROLL
 
-                    '
                 Case SB_LEFT
                     SI.nPos = SI.nMin
 
@@ -784,6 +758,8 @@ Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRe
             SetScrollInfo hWnd, xScroll, SI, True
             GetScrollInfo hWnd, xScroll, SI
 
+            m_ScrollPositionH = SI.nPos
+            
             If uMsg = WM_VSCROLL Then
                 ScrollVerticalWindow -SI.nPos
             Else
@@ -817,6 +793,8 @@ Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRe
             SetScrollInfo hWnd, xScroll, SI, True
             GetScrollInfo hWnd, xScroll, SI
 
+            m_ScrollPositionH = SI.nPos
+            
             If xScroll = SB_VERT Then
                 ScrollVerticalWindow -SI.nPos
             Else

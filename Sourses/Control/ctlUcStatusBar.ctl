@@ -163,14 +163,12 @@ Private Const BF_RECT   As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
 Private Declare Sub CopyMemoryLong Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
 Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
-Private Declare Function OleTranslateColorByRef Lib "oleaut32.dll" Alias "OleTranslateColor" (ByVal lOleColor As Long, ByVal lHPalette As Long, ByVal lColorRef As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
 Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
 Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
-Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
 Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
 Private Declare Function SetPixelV Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
@@ -181,7 +179,6 @@ Private Declare Function BitBlt Lib "gdi32.dll" (ByVal hDestDC As Long, ByVal X 
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
 Private Declare Function GetCurrentThemeName Lib "uxtheme.dll" (ByVal pszThemeFileName As Long, ByVal dwMaxNameChars As Long, ByVal pszColorBuff As Long, ByVal cchMaxColorChars As Long, ByVal pszSizeBuff As Long, ByVal cchMaxSizeChars As Long) As Long
-Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
 Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, ByRef qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
@@ -219,9 +216,6 @@ Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lp
 '   FONT PROPERTIES
 '*************************************************************
 Private Const LF_FACESIZE     As Long = 32
-Private Const FW_NORMAL       As Long = 400
-Private Const FW_BOLD         As Long = 700
-Private Const DEFAULT_QUALITY As Long = 0
 
 Private Type LOGFONT
     LFHeight As Long
@@ -239,13 +233,6 @@ Private Type LOGFONT
     LFPitchAndFamily As Byte
     LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
-
-Private Const WM_SETFONT       As Long = &H30
-Private Const WS_EX_RTLREADING As Long = &H2000
-
-Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 
 '   MouseDown Message Constants for Corner Drag
 Private Const HTBOTTOMRIGHT = 17
@@ -1380,8 +1367,6 @@ Private Function AlphaBlend(ByVal FirstColor As Long, ByVal SecondColor As Long,
     Dim iForeColor As RGBQUAD
     Dim iBackColor As RGBQUAD
 
-    'OleTranslateColorByRef FirstColor, 0, VarPtr(iForeColor)
-    'OleTranslateColorByRef SecondColor, 0, VarPtr(iBackColor)
     OleTranslateColor FirstColor, 0, ByVal VarPtr(iForeColor)
     OleTranslateColor SecondColor, 0, ByVal VarPtr(iBackColor)
 
@@ -1608,8 +1593,8 @@ Private Function GetThemeInfo() As String
                 Exit Function
 
             Else
-                sThemeFile = MemAPIs.RTrimZ(bThemeFile)
-                sColorName = MemAPIs.RTrimZ(bColorName)
+                sThemeFile = TrimNull(bThemeFile)
+                sColorName = TrimNull(bColorName)
             End If
 
             CloseThemeData hTheme

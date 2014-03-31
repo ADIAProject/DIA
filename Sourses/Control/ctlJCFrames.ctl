@@ -214,7 +214,6 @@ Enum m_PanelArea
 End Enum
 
 Private useMask As Boolean
-Private useGrey As Boolean
 
 '*************************************************************
 '   Required API Declarations
@@ -417,7 +416,6 @@ Private jcTextDrawParams         As Long
 Private jcColorTo                As OLE_COLOR
 Private jcColorFrom              As OLE_COLOR
 Private jcColorBorderPic         As OLE_COLOR
-Private jcLpp                    As POINTAPI
 
 Private Const TEXT_INACTIVE      As Long = &H80000011    '&H6A6A6A
 Private Const m_Border_Inactive  As Long = &H8000000B

@@ -24,7 +24,7 @@ Option Explicit
 '                              lngHashAlgoritm (lngHASH_TYPE)
 '!--------------------------------------------------------------------------------
 #If mbIDE_DBSProject Then
-    Public Function CalcHashFile(ByVal StrPathFile As String, ByVal lngHashAlgoritm As lngHASH_TYPE) As String
+    Public Function CalcHashFile(ByVal strPathFile As String, ByVal lngHashAlgoritm As lngHASH_TYPE) As String
     
         Dim objHashedData As CAPICOM.HashedData
         Dim objStream     As ADODB.Stream
@@ -35,12 +35,12 @@ Option Explicit
     
         'Для строки
         '.Hash UStr2BStr(strText)
-        If PathExists(StrPathFile) Then
+        If PathExists(strPathFile) Then
     
             With objStream
                 .Type = adTypeBinary
                 .Open
-                .LoadFromFile (StrPathFile)
+                .LoadFromFile (strPathFile)
     
                 Do Until .EOS
                     objHashedData.Hash .Read

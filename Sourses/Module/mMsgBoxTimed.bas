@@ -12,8 +12,6 @@ Private Const WH_CBT        As Integer = 5
 Private Const HCBT_ACTIVATE As Integer = 5
 Private Const BN_CLICKED    As Integer = 0
 
-Private Const IDI_APPLICATION As Integer = 32512
-
 ' Used for storing information
 Private m_lMsgHandle        As Long
 Private m_TimeMsgBox        As Long

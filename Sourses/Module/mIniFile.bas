@@ -219,8 +219,8 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
                     Key = Left$(str, miRavnoPosition - 1)
                     Value = Mid$(str, miRavnoPosition + 1)
                 Else
-                    Key = MemAPIs.RTrimZ(str)
-                    Value = MemAPIs.RTrimZ(str)
+                    Key = TrimNull(str)
+                    Value = TrimNull(str)
                 End If
 
 Save_StrKey:
@@ -321,7 +321,7 @@ Public Function IniStringPrivate(ByVal SekName As String, ByVal KeyName As Strin
     'ограничение - параметр не может быть больше 4096 символов
     nTemp = GetPrivateProfileStringW(StrPtr(SekName), StrPtr(KeyName), StrPtr("no_key"), VarPtr(sTemp(0)), -1, StrPtr(IniFileName))
     IniStringPrivate = Left$(sTemp(), nTemp * 2)
-    IniStringPrivate = MemAPIs.RTrimZ(IniStringPrivate)
+    IniStringPrivate = TrimNull(IniStringPrivate)
     Erase sTemp
 End Function
 

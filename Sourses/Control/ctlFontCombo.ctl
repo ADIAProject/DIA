@@ -172,14 +172,7 @@ Private Declare Function RegSetValueEx Lib "advapi32.dll" Alias "RegSetValueExA"
 Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 
 Private Const HWND_TOP    As Long = 0
-Private Const HWND_BOTTOM As Long = 1
-Private Const HWND_NOTOPMOST = -2
-Private Const DT_EXPANDTABS = &H40
-Private Const DT_EXTERNALLEADING = &H200
-Private Const DT_NOPREFIX = &H800
-Private Const DT_TABSTOP = &H80
 Private Const WM_MOUSEWHEEL = 522
-Private Const PM_REMOVE = &H1
 
 Public Enum CfBdrStyle
     sNone = 0
@@ -1582,7 +1575,7 @@ Private Function ReadValue(MyHkey As HkeyLoc, myKey As String, MyValue As String
 
     End If
 
-    Donnee = String$(TailleBuffer + 1, strSpace)
+    Donnee = Space$(TailleBuffer + 1)
     Resultat = RegQueryValueEx(Ident, MyValue, 0&, 1, ByVal Donnee, TailleBuffer)
     Donnee = Left$(Donnee, TailleBuffer - 1)
     ReadValue = Donnee

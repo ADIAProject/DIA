@@ -355,7 +355,7 @@ Public Function OSInfo() As OSInfoStruct
 
             OSInfo.Name = "Windows " & OSN
             OSInfo.BuildNumber = .dwBuildNumber
-            OSInfo.ServicePack = MemAPIs.RTrimZ(.szCSDVersion)
+            OSInfo.ServicePack = TrimNull(.szCSDVersion)
             OSInfo.VerFullwBuild = .dwMajorVersion & "." & .dwMinorVersion & "." & .dwBuildNumber
             OSInfo.VerFull = .dwMajorVersion & "." & .dwMinorVersion
             OSInfo.VerMajor = .dwMajorVersion
@@ -425,7 +425,7 @@ Public Function OSInfoWMI(ByVal Nfo As Long) As String
             OSInfoWMI = strBuildNumber
 
         Case 2
-            OSInfoWMI = MemAPIs.RTrimZ(strCSDVersion)
+            OSInfoWMI = TrimNull(strCSDVersion)
 
         Case 3
             OSInfoWMI = strOSVersion

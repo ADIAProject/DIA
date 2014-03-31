@@ -579,10 +579,6 @@ Public Enum ucDialogConstant
     [ucSave] = &H2
 End Enum
 
-Private Const OUT_DEFAULT_PRECIS = 0
-Private Const CLIP_DEFAULT_PRECIS = 0
-Private Const DEFAULT_QUALITY = 0
-Private Const DEFAULT_PITCH = 0
 Private Const MAX_PATH As Long = 4096    '260
 
 Private Type OPENFILENAME
@@ -1433,8 +1429,8 @@ Private Function GetThemeInfo() As String
                 Exit Function
 
             Else
-                sThemeFile = MemAPIs.RTrimZ(bThemeFile)
-                sColorName = MemAPIs.RTrimZ(bColorName)
+                sThemeFile = TrimNull(bThemeFile)
+                sColorName = TrimNull(bColorName)
             End If
 
             CloseThemeData hTheme

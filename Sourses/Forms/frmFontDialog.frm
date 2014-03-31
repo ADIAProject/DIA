@@ -415,7 +415,7 @@ Private Sub SaveOptions()
 
     With txtFont
 
-        If optControl.Item(0).Value Then
+        If optControl.item(0).Value Then
             strFontTab_Name = .Font.Name
             miFontTab_Size = .Font.Size
             mbFontTab_Underline = .Font.Underline
@@ -424,7 +424,7 @@ Private Sub SaveOptions()
             mbFontTab_Italic = .Font.Italic
             lngFontTab_Color = .ForeColor
             
-        ElseIf optControl.Item(1).Value Then
+        ElseIf optControl.item(1).Value Then
             strFontTab2_Name = .Font.Name
             miFontTab2_Size = .Font.Size
             mbFontTab2_Underline = .Font.Underline
@@ -433,7 +433,7 @@ Private Sub SaveOptions()
             mbFontTab2_Italic = .Font.Italic
             lngFontTab2_Color = .ForeColor
             
-        ElseIf optControl.Item(2).Value Then
+        ElseIf optControl.item(2).Value Then
             strFontTT_Name = .Font.Name
             miFontTT_Size = .Font.Size
             mbFontTT_Underline = .Font.Underline
@@ -443,7 +443,7 @@ Private Sub SaveOptions()
             lngFontTT_Color = .ForeColor
             SetTTFontProperties frmOptions.TT
             
-        ElseIf optControl.Item(3).Value Then
+        ElseIf optControl.item(3).Value Then
             strFontBtn_Name = .Font.Name
             miFontBtn_Size = .Font.Size
             mbFontBtn_Underline = .Font.Underline

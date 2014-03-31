@@ -18,8 +18,8 @@ Private RegExpDevID         As RegExp
 Private RegExpDevSect       As RegExp
 Private objHashOutput       As Scripting.Dictionary
 Private objStringHash       As Scripting.Dictionary
-Private cSort               As cQS5_tcm
-Private cSort2              As cQS5_tcm
+Private cSort               As cBlizzard
+Private cSort2              As cBlizzard
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DevParserByRegExp
@@ -129,13 +129,15 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Set objHashOutput = New Scripting.Dictionary
     objHashOutput.CompareMode = TextCompare
     
-    Set cSort = New cQS5_tcm
-    cSort.SortMethod = BinaryCompare
-    cSort.SortOrder = Ascending
-    
-    Set cSort2 = New cQS5_tcm
-    cSort2.SortMethod = BinaryCompare
-    cSort2.SortOrder = Ascending
+    If Not mbSortMethodShell Then
+        Set cSort = New cBlizzard
+        cSort.SortMethod = BinaryCompare
+        cSort.SortOrder = Ascending
+        
+        Set cSort2 = New cBlizzard
+        cSort2.SortMethod = BinaryCompare
+        cSort2.SortOrder = Ascending
+    End If
 
     ' Должно ускорить распаковку, если выключено чтение файла finish.ini
     If Not mbLoadFinishFile Then
@@ -734,7 +736,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         FileWriteData strRezultTxtHwid, Join(strLinesArrHwid(), vbNewLine)
         
         TimeScriptFinish = GetTickCount
-        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index 2 File: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index Files: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
         ' Удаление массива, т.е освобождение памяти
         Erase strLinesArr
         Erase strLinesArrHwid
@@ -744,7 +746,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             If CopyFileTo(strRezultTxtHwid, strRezultTxtHwidTo) Then
                 ' Записываем версию базы драйверов в ini-файл
                 IniWriteStrPrivate strPackFileName_woExt, "Version", lngDevDBVersion, PathCombine(strPathDevDB, "DevDBVersions.ini")
-                'IniWriteStrPrivate strPackFileName_woExt, "FullHwid", CStr(Abs(Not mbDelDouble)), strPathDevDB & "DevDBVersions.ini"
                 'Ищем файл DriverPack*.ini
                 strRezultTxt = vbNullString
                 strRezultTxt_x = SearchFilesInRoot(strInfPathTemp, "DriverPack*.ini", False, True)

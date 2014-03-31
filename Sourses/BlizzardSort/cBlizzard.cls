@@ -1,8 +1,12 @@
 VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
+  Persistable = 0  'NotPersistable
+  DataBindingBehavior = 0  'vbNone
+  DataSourceBehavior  = 0  'vbNone
+  MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "cQS5_tcm"
+Attribute VB_Name = "cBlizzard"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -384,8 +388,8 @@ End Sub
 
 Sub BlizzardStringSortIndexed(sArray() As String, iArray() As Long, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal StrCompCompatibility As Boolean = True)
 
-    Dim i As Long, j As Long
-    Dim cache As Long
+    Dim i       As Long
+    Dim cache   As Long
 
     If ubA - lbA < 1& Then Exit Sub
     

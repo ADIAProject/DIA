@@ -1,9 +1,6 @@
 Attribute VB_Name = "mCollectHwid"
 Option Explicit
 
-Private Const wbemFlagReturnImmediately As Long = &H10
-Private Const wbemFlagForwardOnly       As Long = &H20
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CollectHwidFromReestr
 '! Description (Описание)  :   [type_description_here]
@@ -14,7 +11,6 @@ Public Sub CollectHwidFromReestr()
     Dim strDateDRV        As String
     Dim strVersionDRV     As String
     Dim strID             As String
-    Dim RecCountArr       As Long
     Dim strInfName        As String
     Dim strProviderName   As String
     Dim strCompatID       As String

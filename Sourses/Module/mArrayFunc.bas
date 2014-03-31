@@ -171,7 +171,6 @@ Public Function SaveHwidsArray2File(ByVal strPathFile As String, MyArray() As ar
     Dim strResultAll  As String
     Dim strLine       As String
     Dim i             As Long
-    Dim ii            As Long
 
     If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & strPathFile
 

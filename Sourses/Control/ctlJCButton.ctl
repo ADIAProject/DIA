@@ -429,8 +429,6 @@ Private Const BDR_RAISEDOUTER As Long = &H1
 Private Const BDR_SUNKENOUTER As Long = &H2
 Private Const BDR_RAISEDINNER As Long = &H4
 Private Const BDR_SUNKENINNER As Long = &H8
-Private Const EDGE_RAISED = (BDR_RAISEDOUTER Or BDR_RAISEDINNER)
-Private Const EDGE_SUNKEN = (BDR_SUNKENOUTER Or BDR_SUNKENINNER)
 Private Const BF_LEFT              As Long = &H1
 Private Const BF_TOP               As Long = &H2
 Private Const BF_RIGHT             As Long = &H4
@@ -447,18 +445,11 @@ Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, B
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function SetWindowRgn Lib "user32.dll" (ByVal hWnd As Long, ByVal hRgn As Long, ByVal bRedraw As Boolean) As Long
 Private Declare Function SetRect Lib "user32.dll" (lpRect As RECT, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
-Private Declare Function RoundRect Lib "gdi32.dll" (ByVal hDC As Long, ByVal Left As Long, ByVal Top As Long, ByVal Right As Long, ByVal Bottom As Long, ByVal EllipseWidth As Long, ByVal EllipseHeight As Long) As Long
 Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
 Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function MoveToEx Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, lpPoint As POINTAPI) As Long
 Private Declare Function LineTo Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
-Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
-Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function GetWindowLong Lib "user32.dll" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function CreatePolygonRgn Lib "gdi32.dll" (lpPoint As Any, ByVal nCount As Long, ByVal nPolyFillMode As Long) As Long
-Private Declare Function CombineRgn Lib "gdi32.dll" (ByVal hDestRgn As Long, ByVal hSrcRgn1 As Long, ByVal hSrcRgn2 As Long, ByVal nCombineMode As Long) As Long
 Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
-Private Declare Function FillRgn Lib "gdi32.dll" (ByVal hDC As Long, ByVal hRgn As Long, ByVal hBrush As Long) As Long
 Private Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
 Private Declare Function GetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function CreateCompatibleDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
@@ -476,40 +467,23 @@ Private Declare Function CreateRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal 
 Private Declare Function IsAppThemed Lib "uxtheme" () As Long
 Private Declare Function GetSysColor Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
-Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
 Private Declare Function GetThemeBackgroundRegion Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pRegion As Long) As Long
 Private Declare Function WindowFromPoint Lib "user32.dll" (ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryW" (ByVal lpLibFileName As Long) As Long
 Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
-Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
-Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetCursorPos Lib "user32.dll" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function LoadCursor Lib "user32.dll" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32.dll" (ByVal hCursor As Long) As Long
 Private Declare Function SetCapture Lib "user32.dll" (ByVal hWnd As Long) As Long
 Private Declare Function GetCapture Lib "user32.dll" () As Long
-Private Declare Function DestroyWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
-Private Declare Function CreateWindowEx Lib "user32.dll" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
-Private Declare Function GetClassLong Lib "user32.dll" Alias "GetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function SetClassLong Lib "user32.dll" Alias "SetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function GetClientRect Lib "user32.dll" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, ByRef qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
 Private Declare Function DrawFocusRect Lib "user32.dll" (ByVal hDC As Long, ByRef lpRect As RECT) As Long
 Private Declare Function FillRect Lib "user32.dll" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal hBrush As Long) As Long
 Private Declare Function FrameRect Lib "user32.dll" (ByVal hDC As Long, lpRect As RECT, ByVal hBrush As Long) As Long
 Private Declare Function GetObjectAPI Lib "gdi32.dll" Alias "GetObjectW" (ByVal hObject As Long, ByVal nCount As Long, ByRef lpObject As Any) As Long
 
-Private Const GWL_STYLE       As Long = -16
-Private Const GWL_EXSTYLE     As Long = (-20)
-Private Const GWL_WNDPROC     As Long = (-4)
-Private Const WS_CAPTION      As Long = &HC00000
 Private Const IDC_HAND        As Long = 32649
-Private Const WS_EX_LAYOUTRTL As Long = &H400000
-Private Const CS_DROPSHADOW   As Long = &H20000
-Private Const GCL_STYLE       As Long = (-26)
-Private Const CW_USEDEFAULT = &H80000000
-Private Const ALL_MESSAGES      As Long = -1    'All messages added or deleted
 
 '*************************************************************
 '   TRACK MOUSE
@@ -2997,14 +2971,10 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowPopupMenuRBT
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Show the dropdown menu by Right button pressed]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ShowPopupMenuRBT()
-
-    '* Shows a popupmenu
-    '* Inspired from Noel Dacara's dcbutton
-    Const TPM_BOTTOMALIGN As Long = &H20&
 
     ' /--Show the dropdown menu
     If Not (mnuRightButton Is Nothing) Then

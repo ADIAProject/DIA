@@ -30,9 +30,6 @@ Private Const KEY_WOW64_64KEY        As Long = &H200
 Private Const KEY_CREATE_SUB_KEY     As Long = &H4
 Private Const KEY_SET_VALUE          As Long = &H2
 
-Private Declare Function RegQueryValueExString Lib "advapi32.dll" Alias "RegQueryValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal lpReserved As Long, lpType As Long, ByVal lpData As String, lpcbData As Long) As Long
-Private Declare Function RegQueryValueExLong Lib "advapi32.dll" Alias "RegQueryValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal lpReserved As Long, lpType As Long, lpData As Long, lpcbData As Long) As Long
-Private Declare Function RegQueryValueExNULL Lib "advapi32.dll" Alias "RegQueryValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal lpReserved As Long, lpType As Long, ByVal lpData As Long, lpcbData As Long) As Long
 Private Declare Function RegEnumKey Lib "advapi32.dll" Alias "RegEnumKeyA" (ByVal hkey As Long, ByVal dwIndex As Long, ByVal lpName As String, ByVal cbName As Long) As Long
 Private Declare Function RegOpenKey Lib "advapi32.dll" Alias "RegOpenKeyA" (ByVal hkey As Long, ByVal lpSubKey As String, phkResult As Long) As Long
 Private Declare Function RegOpenKeyEx Lib "advapi32.dll" Alias "RegOpenKeyExA" (ByVal hkey As Long, ByVal lpSubKey As String, ByVal ulOptions As Long, ByVal samDesired As Long, ByRef phkResult As Long) As Long
@@ -114,12 +111,12 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
         Case REG_SZ, REG_EXPAND_SZ
             'tmpVal = Left$(tmpVal, InStr(tmpVal, vbNullChar) - 1)
             ' String Registry Key Data Type
-            sKeyVal = MemAPIs.RTrimZ(tmpVal)
+            sKeyVal = TrimNull(tmpVal)
 
             ' Copy String Value
         Case REG_DWORD
             'tmpVal = Left$(tmpVal, InStr(tmpVal, vbNullChar) - 1)
-            tmpVal = MemAPIs.RTrimZ(tmpVal)
+            tmpVal = TrimNull(tmpVal)
 
             ' Double Word Registry Key Data Type
             If LenB(tmpVal) Then
@@ -149,7 +146,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
                 If intTempSmallBuff Then
                     intTemp = InStr(tmpVal, vbNullChar)
                     strstr = Left$(tmpVal, intTemp)
-                    GetKeyValueMultiSZ(Index) = MemAPIs.RTrimZ(strstr)
+                    GetKeyValueMultiSZ(Index) = TrimNull(strstr)
                     Index = Index + 1
                     tmpVal = Mid$(tmpVal, intTemp + 1, Len(tmpVal))
                 Else
@@ -175,7 +172,7 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
 
         Case Else
             'tmpVal = Left$(tmpVal, InStr(tmpVal, vbNullChar) - 1)
-            sKeyVal = MemAPIs.RTrimZ(tmpVal)
+            sKeyVal = TrimNull(tmpVal)
     End Select
 
     GetKeyValue = Trim$(sKeyVal)
@@ -215,7 +212,7 @@ Public Function GetRegString(hkey As Long, strSubKey As String, strValueName As 
         If RegQueryValueEx(lngRes, strValueName, ByVal 0, REG_EXPAND_SZ, ByVal strSetting, lngDataLen) = ERROR_SUCCESS Then
             If lngDataLen > 1 Then
                 'GetRegString = Left$(strSetting, lngDataLen - 1)
-                GetRegString = MemAPIs.RTrimZ(strSetting)
+                GetRegString = TrimNull(strSetting)
             End If
         End If
 

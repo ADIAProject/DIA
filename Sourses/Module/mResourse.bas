@@ -138,7 +138,6 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub ExtractrResToFolder(strArg As String)
 
-    Dim strArg_x()    As String
     Dim strPathToTemp As String
     Dim strPathTo     As String
 

@@ -129,8 +129,6 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle) As Boolean
 
-    Dim SI   As STARTUPINFO
-    Dim PI   As PROCESS_INFORMATION
     Dim nRet As Long
 
     If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-RunString: " & ComLine

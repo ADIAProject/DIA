@@ -302,8 +302,6 @@ Private Busy  As Boolean
 Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As AppWinStyle = vbShowNormal, Optional ByVal Wait As Long) As Long
 
     Const o = 0&, l = 1&, MAX_PATH = 260&
-    'Messages are not removed from the queue after processing by PeekMessage.
-    Const PM_NOREMOVE = &H0&
     'Process all posted messages, including timers and hotkeys.
     Const PM_QS_POSTMESSAGE = &H980000
     'The time-out interval elapsed, and the object's state is nonsignaled.

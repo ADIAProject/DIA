@@ -32,8 +32,6 @@ Public Sub SetIcon(ByVal hWnd As Long, ByVal sIconResName As String, Optional By
 
     Dim lhWndTop   As Long
     Dim lhWnd      As Long
-    Dim CX         As Long
-    Dim CY         As Long
     Dim hIconLarge As Long
     Dim hIconSmall As Long
 
@@ -53,8 +51,6 @@ Public Sub SetIcon(ByVal hWnd As Long, ByVal sIconResName As String, Optional By
 
     End If
 
-    'CX = GetSystemMetrics(SM_CXICON)
-    'CY = GetSystemMetrics(SM_CYICON)
     hIconLarge = LoadImage(App.hInstance, StrPtr(sIconResName & vbNullChar), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR)
 
     If (bSetAsAppIcon) Then
@@ -62,8 +58,6 @@ Public Sub SetIcon(ByVal hWnd As Long, ByVal sIconResName As String, Optional By
     End If
     SendMessage hWnd, WM_SETICON, ICON_BIG, ByVal hIconLarge
     
-    'CX = GetSystemMetrics(SM_CXSMICON)
-    'CY = GetSystemMetrics(SM_CYSMICON)
     hIconSmall = LoadImage(App.hInstance, StrPtr(sIconResName & vbNullChar), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR)
 
     If (bSetAsAppIcon) Then
