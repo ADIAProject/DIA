@@ -45,7 +45,7 @@ Private Function EnumChildWindowsProc(ByVal lngHWnd As Long, ByVal lParam As Lon
     lRet = GetClassName(lngHWnd, StrPtr(sClassName), 100)
     sClassName = Left$(sClassName, lRet)
 
-    If StrComp(LCase(sClassName), "button") = 0 Then
+    If StrComp(LCase$(sClassName), "button") = 0 Then
         m_lNoHandle = lngHWnd
         EnumChildWindowsProc = 0
     Else

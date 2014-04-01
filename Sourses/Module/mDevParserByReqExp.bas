@@ -104,7 +104,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim Pos                       As Long
     Dim PosRev                    As Long
     Dim strVer                    As String
-    Dim strSectNoCompatVerOSList  As String
+    Dim strSectEmptyList          As String
+    Dim strSectEmptyList4Check    As String
     Dim strRegEx_catFile          As String
     Dim strArchCatFileList        As String
     Dim strArchCatFileListContent As String
@@ -126,8 +127,10 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Set RegExpDevDef = New RegExp
     Set RegExpDevID = New RegExp
     Set RegExpDevSect = New RegExp
+    Set objStringHash = New Scripting.Dictionary
     Set objHashOutput = New Scripting.Dictionary
     objHashOutput.CompareMode = TextCompare
+    objStringHash.CompareMode = TextCompare
     
     If Not mbSortMethodShell Then
         Set cSort = New cBlizzard
@@ -363,14 +366,12 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         
             ' Find [strings] section
             sStrings = vbNullString
-            Set objStringHash = New Scripting.Dictionary
-            objStringHash.CompareMode = TextCompare
             Set objMatchesStrSect = RegExpStrSect.Execute(sFileContent)
     
             If objMatchesStrSect.Count Then
                 Set objMatch = objMatchesStrSect.item(0)
+                
                 sStrings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
-                'Debug.Print RegExpStrDefs.Pattern
                 Set objMatchesStrDefs = RegExpStrDefs.Execute(sStrings)
     
                 For i = 0 To objMatchesStrDefs.Count - 1
@@ -380,8 +381,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     
                     If Not objStringHash.Exists(strKey) Then
                         objStringHash.Add strKey, strValue
-                        'Debug.Print strRegEx_strings
-                        'Debug.Print strRegEx_strsect
                         objStringHash.Add strPercentage & strKey & strPercentage, strValue
                     End If
     
@@ -412,7 +411,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         End If
                     End If
         
-                    strDrvDate = Trim$(strDrvDate)
+                    strDrvDate = strDrvDate
                     strDrvVersion = objMatch.SubMatches(1)
         
                     If InStr(strDrvVersion, strPercentage) Then
@@ -437,6 +436,9 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         End If
                     End If
         
+                    If InStr(strVer, strSpace) Then
+                        strVer = Replace$(strVer, strSpace, vbNullString)
+                    End If
                 Else
                     If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr 'DriverVer' not found: " & strInfFullname
                     strDrvDate = vbNullString
@@ -497,7 +499,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                 strSectlist = vbNullString
                 Set objMatchesManDef = RegExpManDef.Execute(strSections)
     
-                If objMatchesManDef.Count <> 0 Then
+                If objMatchesManDef.Count Then
                 
                     For i = 0 To objMatchesManDef.Count - 1
                         Set objMatch = objMatchesManDef.item(i)
@@ -505,7 +507,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         Set objMatchesManID = RegManID.Execute(ss)
                         strBaseName = vbNullString
     
-                        'found =0
                         For j = 0 To objMatchesManID.Count - 1
                             Set objMatch1 = objMatchesManID.item(j)
                             sB = objMatch1.SubMatches(0)
@@ -537,153 +538,160 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Try seek in section [Manufacturer] parametr: " & strSectlist
                 End If
     
-                'Debug.Print strSectlist
-                strK2Sectlist = Split(strSectlist, "|")
                 ' Переменная несовместымых ОС для данного инфа
-                strSectNoCompatVerOSList = vbNullString
-    
                 If InStr(strSectlist, "|") Then
-                    strSectNoCompatVerOSList = GetIniEmptySectionFromList(strSectlist, strInfFullname)
+                    strK2Sectlist = Split(strSectlist, "|")
+                    strSectEmptyList = GetIniEmptySectionFromList(strSectlist, strInfFullname)
                 Else
-                    strSectNoCompatVerOSList = "-"
+                    ReDim strK2Sectlist(0)
+                    strK2Sectlist(0) = strSectlist
+                    strSectEmptyList = "-"
                 End If
+                            
+                strSectEmptyList4Check = strSectEmptyList & ","
     
-                'Debug.Print strSectlist & vbNewLine & strSectNoCompatVerOSList
                 For K2 = 0 To UBound(strK2Sectlist)
-                    RegExpDevSect.Pattern = strRegEx_devs_l & strK2Sectlist(K2) & strRegEx_devs_r
-                    'Debug.Print RegExpDevSect.Pattern
-                    Set objMatchesDevSect = RegExpDevSect.Execute(sFileContent)
-    
-                    For K = 0 To objMatchesDevSect.Count - 1
-                        Set objMatch = objMatchesDevSect.item(K)
-                        strThisSection = objMatch.SubMatches(1) & objMatch.SubMatches(2)
-                        strManufSection = UCase$(objMatch.SubMatches(0))
-                        ' Find device definitions
-                        Set objMatchesDevDef = RegExpDevDef.Execute(strThisSection)
-    
-                        'Debug.Print RegExpDevDef.Pattern
-                        ' Если секция пустая, то установка из данного файла запрещена на данной системе
-                        If objMatchesDevDef.Count = 0 Then
-                            If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strManufSection & "] is Empty -> this OS not Supported by inf: " & strInfPath & strInfFileName
-                        End If
-    
-                        ' Handle definition
-                        For i = 0 To objMatchesDevDef.Count - 1
-                            Set objMatch = objMatchesDevDef.item(i)
-                            strDevIDs = objMatch.SubMatches(1)
-                            strDevName = Trim$(objMatch.SubMatches(0))
-    
-                            'Debug.Print strDevName
-                            If LenB(strDevName) Then
-                                Pos = InStr(strDevName, strPercentage)
-                                strValval = vbNullString
-    
-                                If Pos Then
-                                    PosRev = InStrRev(strDevName, strPercentage)
-    
-                                    If Pos <> PosRev Then
-                                        strVarname = Mid$(strDevName, Pos + 1, PosRev - 2)
-    
-                                        If InStr(strVarname, strPercentage) Then
-                                            strVarname_x = Split(strVarname, strPercentage)
-    
-                                            For ii = 0 To UBound(strVarname_x)
-                                                AppendStr strValval, objStringHash.item(strVarname_x(ii))
-                                            Next ii
-    
-                                        Else
-                                            strValval = objStringHash.item(strVarname)
+                    ' Если секция пустая, то пропускаем ее обработку (список пустых секций получен ранее)
+                    If InStr(strSectEmptyList4Check, strK2Sectlist(K2) & ",") = 0 Then
+                        RegExpDevSect.Pattern = strRegEx_devs_l & strK2Sectlist(K2) & strRegEx_devs_r
+                        Set objMatchesDevSect = RegExpDevSect.Execute(sFileContent)
+        
+                        For K = 0 To objMatchesDevSect.Count - 1
+                            Set objMatch = objMatchesDevSect.item(K)
+                            strThisSection = objMatch.SubMatches(1) & objMatch.SubMatches(2)
+                            strManufSection = UCase$(objMatch.SubMatches(0))
+                            ' Find device definitions
+                            Set objMatchesDevDef = RegExpDevDef.Execute(strThisSection)
+        
+                            ' Если секция не пустая, то
+                            If objMatchesDevDef.Count Then
+                                ' Handle definition
+                                For i = 0 To objMatchesDevDef.Count - 1
+                                    Set objMatch = objMatchesDevDef.item(i)
+                                    strDevIDs = objMatch.SubMatches(1)
+                                    strDevName = Trim$(objMatch.SubMatches(0))
+            
+                                    If LenB(strDevName) Then
+                                        Pos = InStr(strDevName, strPercentage)
+                                        strValval = vbNullString
+            
+                                        If Pos Then
+                                            PosRev = InStrRev(strDevName, strPercentage)
+            
+                                            If Pos <> PosRev Then
+                                                strVarname = Mid$(strDevName, Pos + 1, PosRev - 2)
+            
+                                                If InStr(strVarname, strPercentage) = 0 Then
+                                                    strValval = objStringHash.item(strVarname)
+                                                Else
+                                                    strVarname_x = Split(strVarname, strPercentage)
+            
+                                                    For ii = 0 To UBound(strVarname_x)
+                                                        AppendStr strValval, objStringHash.item(strVarname_x(ii))
+                                                    Next ii
+                                                                                                                
+                                                End If
+                                                
+                                                If LenB(strValval) Then
+                                                    strDevName = Replace$(strDevName, "%" & strVarname & "%", strValval)
+                                                    ' Если все таки есть процент, то есть не определился из cекции String
+                                                Else
+                                                    If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                                                    strDevName = strVarname
+                                                End If
+            
+                                            Else
+                                                strVarname = Replace$(strDevName, strPercentage, vbNullString)
+                                                strValval = objStringHash.item(strVarname)
+                                                If LenB(strValval) Then
+                                                    strDevName = strValval
+                                                Else
+                                                    strDevName = strVarname
+                                                End If
+                                            End If
                                         End If
-    
+            
+'                                        If InStr(strDevName, strPercentage) Then
+'                                            strDevName = Replace$(strDevName, strPercentage, vbNullString)
+'                                            strDevName = objStringHash.item(strDevName)
+'                                        End If
+            
+                                        ' На случай если есть юникодовые символы в имени устройства
+                                        RemoveUni strDevName
+            
+                                        ' Если требуется то удаление лишних символов
+                                        ReplaceBadSymbol strDevName
                                     Else
-                                        strVarname = Replace$(strDevName, strPercentage, vbNullString)
-                                        strValval = objStringHash.item(strVarname)
+                                        If mbDebugDetail Then DebugMode "Error in inf: " & strInfFullname & " (Variable Name of Device is Empty) for HWID: " & strDevIDs
+                                        strDevName = "not defined in the inf"
+                                        '                                If mbIsDesignMode Then
+                                        '                                    Debug.Print "Not defined variable in [Strings] - " & strPackFileName & vbTab & strInfPath & strInfFileName & vbTab & objMatch.SubMatches(0) & vbTab & objMatchesDevDef.item(i)
+                                        '                                End If
                                     End If
-    
-                                    If LenB(strValval) Then
-                                        strDevName = Replace$(strDevName, "%" & strVarname & "%", strValval)
-                                        ' Если все таки есть процент, то есть не определился из cекции String
-                                    Else
-                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                                        strDevName = strVarname
-                                    End If
-                                End If
-    
-                                If InStr(strDevName, strPercentage) Then
-                                    '                            strDevName = "not defined in the inf"
-                                    strDevName = Replace$(strDevName, strPercentage, vbNullString)
-                                    strDevName = objStringHash.item(strDevName)
-                                End If
-    
-                                ' На случай если есть юникодовые символы в имени устройства
-                                RemoveUni strDevName
-    
-                                ' Если требуется то удаление лишних символов
-                                ReplaceBadSymbol strDevName
+            
+                                    ' add IDs
+                                    Set objMatchesDevID = RegExpDevID.Execute(strDevIDs)
+            
+                                    For j = 0 To objMatchesDevID.Count - 1
+                                        Set objMatch = objMatchesDevID.item(j)
+                                        strValuer = objMatch.SubMatches(0)
+            
+                                        If InStr(strValuer, strPercentage) Then
+                                            strVarname = Left$(strValuer, InStrRev(strValuer, strPercentage))
+            
+                                            If InStr(strVarname, strPercentage) > 1 Then
+                                                strVarname = Right$(strVarname, Len(strVarname) - InStr(strValuer, strPercentage) + 1)
+                                            End If
+            
+                                            strValval = objStringHash.item(strVarname)
+            
+                                            If LenB(strValval) Then
+                                                strValuer = Replace$(strValuer, strVarname, strValval)
+                                            Else
+                                                If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                                            End If
+                                        End If
+            
+                                        strValuer = UCase$(Trim$(strValuer))
+                                        strDevID = ParseDoubleHwid(strValuer)
+                                        ss = strDevID & vbTab & strInfPath & strInfFileName & vbTab & strManufSection
+            
+                                        If Not objHashOutput.Exists(ss) Then
+                                            objHashOutput.item(ss) = "+"
+                                            
+                                            'Итоговая строка
+                                            strLinesArr(lngNumLines) = ss & (vbTab & strVer & vbTab & strSectEmptyList & vbTab & lngCatFileExists & vbTab & strDevName)
+                                            strLinesArrHwid(lngNumLines) = strDevID
+                                            lngNumLines = lngNumLines + 1
+                                        End If
+            
+                                    ' strDevIDs'
+                                    Next
+                                            
+                                ' dev_defs'
+                                Next
+                                
                             Else
-                                If mbDebugDetail Then DebugMode "Error in inf: " & strInfFullname & " (Variable Name of Device is Empty) for HWID: " & strDevIDs
-                                strDevName = "not defined in the inf"
-                                '                                If mbIsDesignMode Then
-                                '                                    Debug.Print "Not defined variable in [Strings] - " & strPackFileName & vbTab & strInfPath & strInfFileName & vbTab & objMatch.SubMatches(0) & vbTab & objMatchesDevDef.item(i)
-                                '                                End If
+                                ' Если секция непустая, то установка из данного файла запрещена на данной системе
+                                If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strManufSection & "] is Empty -> this OS not Supported by inf: " & strInfPath & strInfFileName
                             End If
-    
-                            ' add IDs
-                            Set objMatchesDevID = RegExpDevID.Execute(strDevIDs)
-    
-                            For j = 0 To objMatchesDevID.Count - 1
-                                Set objMatch = objMatchesDevID.item(j)
-                                strValuer = objMatch.SubMatches(0)
-    
-                                If InStr(strValuer, strPercentage) Then
-                                    strVarname = Left$(strValuer, InStrRev(strValuer, strPercentage))
-    
-                                    If InStr(strVarname, strPercentage) > 1 Then
-                                        strVarname = Right$(strVarname, Len(strVarname) - InStr(strValuer, strPercentage) + 1)
-                                    End If
-    
-                                    strValval = objStringHash.item(strVarname)
-    
-                                    If LenB(strValval) Then
-                                        strValuer = Replace$(strValuer, strVarname, strValval)
-                                    Else
-                                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
-                                    End If
-                                End If
-    
-                                strValuer = UCase$(Trim$(strValuer))
-                                strDevID = ParseDoubleHwid(strValuer)
-                                ss = strDevID & vbTab & strInfPath & strInfFileName & vbTab & strManufSection
-    
-                                If Not objHashOutput.Exists(ss) Then
-                                    objHashOutput.item(ss) = "+"
-    
-                                    'Итоговая строка
-                                    If InStr(strVer, strSpace) Then
-                                        strVer = Replace$(strVer, strSpace, vbNullString)
-                                    End If
-    
-                                    strLinesArr(lngNumLines) = ss & (vbTab & strVer & vbTab & strSectNoCompatVerOSList & vbTab & lngCatFileExists & vbTab & strDevName)
-                                    strLinesArrHwid(lngNumLines) = strDevID
-                                    lngNumLines = lngNumLines + 1
-                                End If
-    
-                            Next
-    
-                            ' strDevIDs'
+                        ' dev_Sub_sects
                         Next
-    
-                        ' dev_defs'
-                    Next
-    
-                    ' dev_Sub_sects'
-                Next
-    
+                            
+                    Else
+                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strK2Sectlist(K2) & "] is Empty -> this OS not Supported by inf: " & strInfPath & strInfFileName
+                    '  dev_Sub_sects not empty
+                    End If
+                    
                 ' dev_sects'
-            End If
-    
+                Next
+            
             ' sect_list
+            End If
+                
+            ' Очистка буфера значений уникальных строк HWID
             objHashOutput.RemoveAll
+            ' Очистка буфера значений секции strings
             objStringHash.RemoveAll
         
         Else

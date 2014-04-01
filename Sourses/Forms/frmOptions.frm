@@ -4028,7 +4028,8 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "OS", "SearchCompatibleDriverOtherOS", Abs(mbSearchCompatibleDriverOtherOS), strSysIniTemp
     IniWriteStrPrivate "OS", "MatchHWIDbyDPName", Abs(mbMatchHWIDbyDPName), strSysIniTemp
     IniWriteStrPrivate "OS", "DP_is_aFolder", Abs(mbDP_Is_aFolder), strSysIniTemp
-
+    IniWriteStrPrivate "OS", "SortMethodShell", Abs(mbSortMethodShell), strSysIniTemp
+    
     'Заполяем в цикле подсекции ОС
     For cnt = 1 To lngOSCountNew
 

@@ -61,8 +61,8 @@ Begin VB.Form frmMain
          TabIndex        =   28
          Top             =   75
          Visible         =   0   'False
-         Width           =   3015
-         _ExtentX        =   5318
+         Width           =   3500
+         _ExtentX        =   6165
          _ExtentY        =   688
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -1823,7 +1823,7 @@ Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
         Next
     End With
     
-    FindCheckCount
+    cmdRunTask.Enabled = FindCheckCount
 End Sub
 
 ' проверяем совместимость драйвера по вендору ноутбука
@@ -6148,7 +6148,7 @@ End Function
 '                              LngValue (Long)
 '                              lngCntTab (Long)
 '!--------------------------------------------------------------------------------
-Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal lngValue As Long, ByVal lngCntTab As Long)
+Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, ByVal lngCntTab As Long)
 
     Dim i                As Integer
     Dim SSTabHeight      As Long
@@ -6168,13 +6168,13 @@ Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal lngValue As Long, By
             If Not (SSTab2.item(i) Is Nothing) Then
 
                 If lngCntTab > lngOSCountPerRow Then
-                    If sgnNum = lngValue Then
+                    If sgnNum = LngValue Then
                         .Top = sgnNum * SSTabTabHeight + 35
                         .Height = SSTabHeight - 60 - sgnNum * SSTabTabHeight
                         .Width = miValue3 - 100 * (sgnNum + 1)
                     Else
-                        .Top = (lngValue + 1) * SSTabTabHeight + 35
-                        .Height = SSTabHeight - 60 - (lngValue + 1) * SSTabTabHeight
+                        .Top = (LngValue + 1) * SSTabTabHeight + 35
+                        .Height = SSTabHeight - 60 - (LngValue + 1) * SSTabTabHeight
                         .Width = miValue3 - 100 * (sgnNum + 1)
                     End If
 
