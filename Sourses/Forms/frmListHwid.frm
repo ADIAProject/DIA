@@ -379,7 +379,7 @@ Private Function FindCheckCountList() As Long
                 .Enabled = True
             End If
         Else
-            If mbooSelectInstall Then
+            If mbSelectInstall Then
                 If .Enabled Then
                     .Enabled = False
                 End If
@@ -437,7 +437,7 @@ Public Sub FormLoadAction()
     mbGrp4 = chkGrp4.Value
     mbCheckDRVOk = False
 
-    If mbooSelectInstall Then
+    If mbSelectInstall Then
         If mbGroupTask Then
 
             For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
@@ -771,7 +771,7 @@ Private Sub LoadListbyMode()
 
     lvFolders.Visible = False
 
-    If mbooSelectInstall Then
+    If mbSelectInstall Then
         If mbGroupTask Then
 
             For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
@@ -893,7 +893,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
-    mbooSelectInstall = False
+    mbSelectInstall = False
     Me.Hide
 End Sub
 
@@ -904,16 +904,16 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdOK_Click()
 
-    If mbooSelectInstall Then
+    If mbSelectInstall Then
         If FindCheckCountList Then
-            If mbooSelectInstall Then
+            If mbSelectInstall Then
                 strPathDRPList = GetPathList
                 mbCheckDRVOk = True
             End If
 
         Else
 
-            If mbooSelectInstall Then
+            If mbSelectInstall Then
                 MsgBox "Not Selected. Window will be closed...", vbInformation + vbApplicationModal, strProductName
             End If
         End If
@@ -1064,7 +1064,7 @@ Private Sub Form_Resize()
             cmdExit.Left = cmdOK.Left - cmdExit.Width - 110
             cmdExit.Top = cmdOK.Top
             lngLVTop = (frGroup.Top + frGroup.Height) + 5 * Screen.TwipsPerPixelX
-            If mbooSelectInstall Then
+            If mbSelectInstall Then
                 lngLVHeight = ((cmdExit.Top - miDeltaFrm - 300)) - lngLVTop
             Else
                 lngLVHeight = ((cmdExit.Top - miDeltaFrm - 100)) - lngLVTop
@@ -1182,7 +1182,7 @@ Private Sub lvFolders_ItemCheck(ByVal item As LvwListItem, ByVal Checked As Bool
 
     Dim i As Integer
 
-    If mbooSelectInstall Then
+    If mbSelectInstall Then
 
         With lvFolders.ListItems
 

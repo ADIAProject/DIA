@@ -1,5 +1,8 @@
 List of revisions:
 
+01-Apr-2014
+- Bugfix in the ColumnWidth and SmallIcons property in the ListView control.
+
 22-Mar-2014
 - Fixed a critical bug in the Sorted property in the TreeView control. (it is recommended to replace all TreeView components)
 

@@ -255,6 +255,7 @@ Begin VB.Form frmMain
             EndProperty
             ButtonStyle     =   8
             CheckExist      =   -1  'True
+            ShowFocusRect   =   -1  'True
             BackColor       =   14933984
             Caption         =   "Кнопка пакета драйверов"
             CaptionEffects  =   0
@@ -371,6 +372,7 @@ Begin VB.Form frmMain
                   Width           =   4155
                   _ExtentX        =   7329
                   _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab1 
                   Height          =   1575
@@ -381,6 +383,7 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab2 
                   Height          =   1575
@@ -391,6 +394,7 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab3 
                   Height          =   1575
@@ -401,6 +405,7 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab4 
                   Height          =   1575
@@ -411,6 +416,7 @@ Begin VB.Form frmMain
                   Width           =   4095
                   _ExtentX        =   7223
                   _ExtentY        =   2778
+                  AutoScrollToFocus=   0   'False
                End
                Begin prjDIADBS.LabelW lblNoDP4Mode 
                   Height          =   285
@@ -3578,7 +3584,11 @@ Private Function FindCheckCount(Optional ByVal mbMsgStatus As Boolean = True) As
             If optRezim_Upd.Value Then
                 ctlUcStatusBar1.PanelText(1) = strMessages(128)
             Else
-                ctlUcStatusBar1.PanelText(1) = strMessages(129)
+                If Not mbOnlyUnpackDP Then
+                    ctlUcStatusBar1.PanelText(1) = strMessages(129)
+                Else
+                    ctlUcStatusBar1.PanelText(1) = strMessages(155)
+                End If
             End If
     
             If miCount Then
@@ -4317,7 +4327,7 @@ Private Sub GroupInstallDP()
 
         ' Получаем список извлекаемых масок
         ' если выборочная установка, то получаем список каталогов для распаковки
-        If mbooSelectInstall Then
+        If mbSelectInstall Then
 
             ' Если выборочная установка, то показываем форму выбора
             If IsFormLoaded("frmListHwid") = False Then
@@ -4331,7 +4341,11 @@ Private Sub GroupInstallDP()
             ' если на форме нажали отмену или закрыли ее, то завершаем обработку
             If Not mbCheckDRVOk Then
                 mbDevParserRun = False
-                ChangeStatusTextAndDebug strMessages(82)
+                If Not mbOnlyUnpackDP Then
+                    ChangeStatusTextAndDebug strMessages(82), strMessages(129)
+                Else
+                    ChangeStatusTextAndDebug strMessages(132), strMessages(155)
+                End If
 
                 Exit Sub
 
@@ -4388,15 +4402,21 @@ Private Sub GroupInstallDP()
             With New CommonDialog
                 .InitDir = strAppPathBackSL & "drivers"
                 .DialogTitle = strMessages(131)
+                .Flags = CdlBIFNewDialogStyle
 
                 If .ShowFolder = True Then
                     ArchTempPath = .FileName
+                Else
+                    ChangeStatusTextAndDebug strMessages(132), strMessages(155)
+                    mbDevParserRun = False
+                    '# if user cancel #
+                    Exit Sub
                 End If
 
             End With
 
             If LenB(ArchTempPath) = 0 Then
-                ChangeStatusTextAndDebug strMessages(132)
+                ChangeStatusTextAndDebug strMessages(132), strMessages(155)
 
                 '# if user cancel #
                 Exit Sub
@@ -4669,7 +4689,7 @@ Private Sub InsOrUpdSelectedDP(ByVal mbInstallMode As Boolean)
             End If
 
             mbGroupTask = True
-            mbooSelectInstall = False
+            mbSelectInstall = False
             GroupInstallDP
             mbGroupTask = False
         Else
@@ -5767,6 +5787,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
+                        acmdPackFiles(i).TabStop = False
                         GoTo NextBtn
                     End If
 
@@ -5779,6 +5800,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
                         GoTo MoveBtn
                     Else
+                        acmdPackFiles(i).TabStop = False
                         GoTo NextBtn
                     End If
 
@@ -5795,6 +5817,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     ElseIf acmdPackFiles(i).PictureNormal = imgOkOld.Picture Then
                         GoTo MoveBtn
                     Else
+                        acmdPackFiles(i).TabStop = False
                         GoTo NextBtn
                     End If
 
@@ -5803,6 +5826,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
                     If acmdPackFiles(i).PictureNormal = imgNoDB.Picture Then
                         GoTo MoveBtn
                     Else
+                        acmdPackFiles(i).TabStop = False
                         GoTo NextBtn
                     End If
             End Select
@@ -5858,6 +5882,7 @@ MoveBtn:
 
             ' Перемещение кнопок и checkbox по расчитанным ранее параметрам
             acmdPackFiles(i).Move lngNextPosLeft, lngNextPosTop
+            acmdPackFiles(i).TabStop = True
             chkPackFiles(i).Move (lngNextPosLeft + 50), (lngNextPosTop + (lngButtonHeight - chkPackFiles(i).Height) / 2)
             chkPackFiles(i).ZOrder 0
             ' Увеличиваем счетчики
@@ -6484,7 +6509,7 @@ Private Sub SilentCheckNoDB()
     cmdCheck_Click
     'Собственно запускаем сам процесс создания БД
     mbGroupTask = True
-    mbooSelectInstall = False
+    mbSelectInstall = False
     DoEvents
     cmdRunTask_Click
     FindNoDBCount
@@ -6540,7 +6565,7 @@ Private Sub SilentInstall()
 
     'MsgBox "Собственно запускаем сам процесс установки"
     mbGroupTask = True
-    mbooSelectInstall = False
+    mbSelectInstall = False
     DoEvents
     GroupInstallDP
     mbGroupTask = False
@@ -6563,7 +6588,7 @@ Private Sub SilentReindexAllDB()
     
     'Собственно запускаем сам процесс создания БД
     mbGroupTask = True
-    mbooSelectInstall = False
+    mbSelectInstall = False
     cmdRunTask_Click
     DoEvents
     FindNoDBCount
@@ -6668,54 +6693,6 @@ Private Sub TabInstBlockOnUpdate(ByVal mbBlock As Boolean)
 
     Next
 
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub TabStopParam
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub TabStopParam()
-
-    Dim i                 As Long
-    Dim lngCntBtnTab      As Long
-    Dim lngCntBtnPrevious As Long
-    Dim lngSSTab1Tab      As Long
-
-    With SSTab1
-        lngSSTab1Tab = .Tab
-
-        If lngSSTab1Tab Then
-            lngCntBtnPrevious = arrOSList(lngSSTab1Tab - 1).CntBtn
-
-            If lngCntBtnPrevious = 0 Then
-                If lngSSTab1Tab > 1 Then
-                    lngCntBtnPrevious = arrOSList(lngSSTab1Tab - 2).CntBtn
-
-                    If lngCntBtnPrevious = 0 Then
-                        If lngSSTab1Tab > 2 Then
-                            lngCntBtnPrevious = arrOSList(lngSSTab1Tab - 3).CntBtn
-
-                            If lngCntBtnPrevious = 0 Then
-                                If lngSSTab1Tab > 3 Then
-                                    lngCntBtnPrevious = arrOSList(lngSSTab1Tab - 4).CntBtn
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            End If
-        End If
-
-    End With
-
-    lngCntBtnTab = arrOSList(lngSSTab1Tab).CntBtn - 1
-
-    With acmdPackFiles
-        For i = .LBound To .UBound
-            .item(i).TabStop = i >= lngCntBtnPrevious And i <= lngCntBtnTab
-        Next
-    End With
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -7540,31 +7517,33 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                 '-------- Установка всех драйверов в пакете -----------
                 '------------------------------------------------------
             ElseIf optRezim_Ust.Value Then
-                
-                ' Создаем точку восстановления
-                If mbCreateRestorePoint Then
-                    ' Проверяем создавалась ли точка восстановления ранее
-                    If Not mbCreateRestorePointDone Then
-                        If mbSilentRun Then
-                            CreateRestorePoint
-                        Else
-                            lngRetMsgBox = MsgBox(strMessages(115) & vbNewLine & strMessages(120) & str2vbNewLine & strMessages(153), vbQuestion + vbYesNoCancel, strProductName)
-                            ' Click "Yes"
-                            If lngRetMsgBox = vbYes Then
-                                CreateRestorePoint
-                            ' Click "Cancel" - Do not remind
-                            ElseIf lngRetMsgBox = vbCancel Then
-                                mbCreateRestorePointDone = True
-                            End If
-                        End If
-                    End If
-                End If
-    
+                                
                 ChangeStatusTextAndDebug strMessages(63) & strSpace & strPackFileName, strMessages(129)
                 'Имя папки с распакованными драйверами
                 strFileName_woExt = GetFileName_woExt(strPackFileName)
                 ArchTempPath = strWorkTempBackSL & strFileName_woExt
 
+                ' Создаем точку восстановления
+                If Not mbOnlyUnpackDP Then
+                    If mbCreateRestorePoint Then
+                        ' Проверяем создавалась ли точка восстановления ранее
+                        If Not mbCreateRestorePointDone Then
+                            If mbSilentRun Then
+                                CreateRestorePoint
+                            Else
+                                lngRetMsgBox = MsgBox(strMessages(115) & vbNewLine & strMessages(120) & str2vbNewLine & strMessages(153), vbQuestion + vbYesNoCancel, strProductName)
+                                ' Click "Yes"
+                                If lngRetMsgBox = vbYes Then
+                                    CreateRestorePoint
+                                ' Click "Cancel" - Do not remind
+                                ElseIf lngRetMsgBox = vbCancel Then
+                                    mbCreateRestorePointDone = True
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+                
                 'Извлечение драйверов из файла
                 If UnPackDPFile(strPathDRP, strPackFileName, ALL_FILES, ArchTempPath) = False Then
                     If Not mbSilentRun Then
@@ -7588,39 +7567,76 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                         End If
                     End If
                 End If
-
+    
                 ChangeStatusTextAndDebug strMessages(64) & " (" & strPackFileName & "): " & ReadExitCodeString
                 If mbDebugStandart Then DebugMode "Install from : " & strPackFileName & " finished."
+
                 '------------------------------------------------------
                 '------- Установка избранных драйверов в пакете--------
                 '------------------------------------------------------
             Else
-            
+                                
+                'Имя папки с распакованными драйверами
+                strFileName_woExt = GetFileName_woExt(strPackFileName)
+                ' Временный путь распаковки
+                ArchTempPath = strWorkTempBackSL & strFileName_woExt
+
                 ' Создаем точку восстановления
-                If mbCreateRestorePoint Then
-                    ' Проверяем создавалась ли точка восстановления ранее
-                    If Not mbCreateRestorePointDone Then
-                        If mbSilentRun Then
-                            CreateRestorePoint
-                        Else
-                            lngRetMsgBox = MsgBox(strMessages(115) & vbNewLine & strMessages(120) & str2vbNewLine & strMessages(153), vbQuestion + vbYesNoCancel, strProductName)
-                            ' Click "Yes"
-                            If lngRetMsgBox = vbYes Then
+                If Not mbOnlyUnpackDP Then
+                    ChangeStatusTextAndDebug strMessages(63) & strSpace & strPackFileName, strMessages(129)
+                    If mbCreateRestorePoint Then
+                        ' Проверяем создавалась ли точка восстановления ранее
+                        If Not mbCreateRestorePointDone Then
+                            If mbSilentRun Then
                                 CreateRestorePoint
-                            ' Click "Cancel" - Do not remind
-                            ElseIf lngRetMsgBox = vbCancel Then
-                                mbCreateRestorePointDone = True
+                            Else
+                                lngRetMsgBox = MsgBox(strMessages(115) & vbNewLine & strMessages(120) & str2vbNewLine & strMessages(153), vbQuestion + vbYesNoCancel, strProductName)
+                                ' Click "Yes"
+                                If lngRetMsgBox = vbYes Then
+                                    CreateRestorePoint
+                                ' Click "Cancel" - Do not remind
+                                ElseIf lngRetMsgBox = vbCancel Then
+                                    mbCreateRestorePointDone = True
+                                End If
                             End If
                         End If
                     End If
+                Else
+                    ChangeStatusTextAndDebug strMessages(154) & strSpace & strPackFileName, strMessages(155)
+                    '# Диалог выбора каталога
+                    With New CommonDialog
+                        .InitDir = ArchTempPath
+                        .DialogTitle = strMessages(131)
+                        .Flags = CdlBIFNewDialogStyle
+        
+                        If .ShowFolder Then
+                            ArchTempPath = .FileName
+                        Else
+                            '# if user cancel #
+                            ChangeStatusTextAndDebug strMessages(132) & strSpace & strPackFileName
+                            mbDevParserRun = False
+                            
+                            Exit Sub
+                
+                        End If
+        
+                    End With
+                    
+                    If LenB(ArchTempPath) = 0 Then
+                        '# if user cancel #
+                        ChangeStatusTextAndDebug strMessages(132) & strSpace & strPackFileName
+                        mbDevParserRun = False
+                        
+                        Exit Sub
+        
+                    End If
+        
+                    If mbDebugStandart Then DebugMode "Unpack: Destination=" & ArchTempPath
+
                 End If
                 
-                ChangeStatusTextAndDebug strMessages(63) & strSpace & strPackFileName, strMessages(129)
-                'Имя папки с распакованными драйверами
-                strFileName_woExt = GetFileName_woExt(strPackFileName)
-
                 ' если выборочная установка, то получаем список каталогов для распаковки
-                If mbooSelectInstall Then
+                If mbSelectInstall Then
                     If IsFormLoaded("frmListHwid") = False Then
                         frmListHwid.Show vbModal, Me
                     Else
@@ -7674,8 +7690,6 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     strPathDRPList = ALL_FILES
                 End If
 
-                ArchTempPath = strWorkTempBackSL & strFileName_woExt
-
                 'Извлечение драйверов из файла
                 If UnPackDPFile(strPathDRP, strPackFileName, strPathDRPList, ArchTempPath) = False Then
                     If Not mbSilentRun Then
@@ -7685,26 +7699,34 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     ChangeStatusTextAndDebug strMessages(13) & strSpace & strPackFileName
                     If mbDebugStandart Then DebugMode "Error on run : " & cmdString
                 Else
-                    ' установка драйверов
-                    DPInstExitCode = RunDPInst(ArchTempPath)
-                    ReadExitCodeString = ReadExitCode(DPInstExitCode)
-
-                    If DPInstExitCode <> 0 Then
-                        If DPInstExitCode <> -2147483648# Then
-                            If InStr(1, ReadExitCodeString, "Cancel or Nothing to Install", vbTextCompare) = 0 Then
-                                ' Обрабатываем файл finish
-                                If mbLoadFinishFile Then
-                                    WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, strPathDRPList
+                    ' Если выбран режим, не только распаковки, то запускаем установку
+                    If Not mbOnlyUnpackDP Then
+                        ' установка драйверов
+                        DPInstExitCode = RunDPInst(ArchTempPath)
+                        ReadExitCodeString = ReadExitCode(DPInstExitCode)
+    
+                        If DPInstExitCode <> 0 Then
+                            If DPInstExitCode <> -2147483648# Then
+                                If InStr(1, ReadExitCodeString, "Cancel or Nothing to Install", vbTextCompare) = 0 Then
+                                    ' Обрабатываем файл finish
+                                    If mbLoadFinishFile Then
+                                        WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, strPathDRPList
+                                    End If
+                                    ' Обновление подсказки
+                                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index, True
                                 End If
-                                ' Обновление подсказки
-                                ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index, True
                             End If
+                        End If
+                        ChangeStatusTextAndDebug strMessages(64) & strSpace & strPackFileName & " finish. " & ReadExitCodeString
+                        If mbDebugStandart Then DebugMode "Install from : " & strPackFileName & " finish."
+                    Else
+                        ChangeStatusTextAndDebug strMessages(125) & strSpace & ArchTempPath
+            
+                        If MsgBox(strMessages(125) & str2vbNewLine & strMessages(133), vbYesNo, strProductName) = vbYes Then
+                            RunUtilsShell ArchTempPath, False
                         End If
                     End If
                 End If
-
-                ChangeStatusTextAndDebug strMessages(64) & strSpace & strPackFileName & " finish. " & ReadExitCodeString
-                If mbDebugStandart Then DebugMode "Install from : " & strPackFileName & " finish."
             End If
 
             mbDevParserRun = False
@@ -7790,6 +7812,7 @@ Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift A
         lngCurrentBtnIndex = Index
     End If
 
+Debug.Print optRezim_Ust.Value
 End Sub
 
 Private Sub acmdPackFiles_MouseEnter(Index As Integer)
@@ -8014,7 +8037,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdRunTask_Click()
-    mbooSelectInstall = False
+    mbSelectInstall = False
     mbGroupTask = True
     BlockControl False
     BaseUpdateOrRunTask False, True
@@ -8962,25 +8985,26 @@ Private Sub mnuContextInstallGroupDP_Click(Index As Integer)
     Select Case Index
 
         Case 0
-            mbooSelectInstall = False
+            mbSelectInstall = False
             mbOnlyUnpackDP = False
 
         Case 2
-            mbooSelectInstall = True
+            mbSelectInstall = True
             mbOnlyUnpackDP = False
 
         Case 4
-            mbooSelectInstall = False
+            mbSelectInstall = False
             mbOnlyUnpackDP = True
 
         Case 5
-            mbooSelectInstall = True
+            mbSelectInstall = True
             mbOnlyUnpackDP = True
     End Select
 
     GroupInstallDP
     mbGroupTask = False
     BlockControl True
+    cmdRunTask.Enabled = FindCheckCount(False)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8995,19 +9019,19 @@ Private Sub mnuContextInstallSingleDP_Click(Index As Integer)
     Select Case Index
 
         Case 0
-            mbooSelectInstall = False
+            mbSelectInstall = False
             mbOnlyUnpackDP = False
 
         Case 2
-            mbooSelectInstall = True
+            mbSelectInstall = True
             mbOnlyUnpackDP = False
 
         Case 4
-            mbooSelectInstall = False
+            mbSelectInstall = False
             mbOnlyUnpackDP = True
 
         Case 5
-            mbooSelectInstall = True
+            mbSelectInstall = True
             mbOnlyUnpackDP = True
     End Select
 
@@ -9015,6 +9039,7 @@ Private Sub mnuContextInstallSingleDP_Click(Index As Integer)
     
     mbGroupTask = False
     BlockControl True
+    cmdRunTask.Enabled = FindCheckCount(False)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9066,7 +9091,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextToolTip_Click()
-    mbooSelectInstall = False
+    mbSelectInstall = False
 
     If IsFormLoaded("frmListHwid") = False Then
         frmListHwid.Show vbModal, Me
@@ -10150,7 +10175,6 @@ End Sub
 '! Parameters  (Переменные):   PreviousTab (Integer)
 '!--------------------------------------------------------------------------------
 Private Sub SSTab1_Click(PreviousTab As Integer)
-    TabStopParam
 
     If acmdPackFiles(0).Visible Then
         If acmdPackFiles.UBound > 1 Then
@@ -10183,7 +10207,7 @@ End Sub
 '                              PreviousTab (Integer)
 '!--------------------------------------------------------------------------------
 Private Sub SSTab2_Click(Index As Integer, PreviousTab As Integer)
-
+    
     If SSTab2(Index).Tab = 0 Then
         If PreviousTab Then
             ctlScrollControl1(Index).Visible = False

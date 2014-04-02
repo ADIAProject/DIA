@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "01/04/2014"
+Public Const strDateProgram         As String = "02/04/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -111,7 +111,7 @@ Public lngLastIdOS                  As Long             ' номер последнего элеме
 Public lngLastIdUtil                As Long             ' номер последнего элемента в списке утилит
 Public lngCurrentBtnIndex           As Long             ' Текущая выделенная кнопка
 Public strPathDRPList               As String           ' Список папок для распаковки
-Public mbooSelectInstall            As Boolean          ' Флаг указывающий выборочную установку
+Public mbSelectInstall            As Boolean          ' Флаг указывающий выборочную установку
 Public mbCheckDRVOk                 As Boolean          ' Флаг, указывающий нажатие кнопки ОК на форме frmListHwid
 Public mbGroupTask                  As Boolean          ' Флаг указывающий групповую задачу
 Public mbRestartProgram             As Boolean          ' Маркер перезапуска программы

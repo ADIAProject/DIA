@@ -5054,9 +5054,7 @@ Private Sub LoadList_lvOptions()
             End If
         End With
     
-        DoEvents
-        .Refresh
-        .ColumnWidth = .Width
+        .ColumnWidth = .Width - 100
     End With
     
 End Sub

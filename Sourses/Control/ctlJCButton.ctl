@@ -4604,6 +4604,11 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_GotFocus()
     m_bHasFocus = True
+    
+    If (m_bHasFocus Or m_bDefault) And (m_Buttonstate <> eStateDown And m_Buttonstate <> eStateOver) Then
+        SetRect m_ButtonRect, 2, 2, ScaleWidth - 2, ScaleHeight - 2     'I don't like this ugly focusrect!!
+        DrawFocusRect hDC, m_ButtonRect
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------

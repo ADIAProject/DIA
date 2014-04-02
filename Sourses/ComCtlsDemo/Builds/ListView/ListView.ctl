@@ -377,6 +377,7 @@ Private Declare Function SysAllocString Lib "oleaut32" (ByVal lpString As Long) 
 Private Declare Function SysFreeString Lib "oleaut32" (ByVal lpString As Long) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function SendMessageSort Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As ISubclass, ByRef lParam As Any) As Long
+Private Declare Function ImageList_GetIconSize Lib "comctl32" (ByVal hImageList As Long, ByRef CX As Long, ByRef CY As Long) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
@@ -782,7 +783,7 @@ Private ListViewButtonDown As Integer
 Private ListViewListItemsControl As Long
 Private ListViewDragIndexBuffer As Long, ListViewDragIndex As Long
 Private ListViewDragOffsetX As Long, ListViewDragOffsetY As Long
-Private ListViewMemoryColumnWidth As Integer
+Private ListViewMemoryColumnWidth As Long
 Private DispIDMousePointer As Long
 Private DispIDIcons As Long, IconsArray() As String
 Private DispIDSmallIcons As Long, SmallIconsArray() As String
@@ -1655,7 +1656,16 @@ End Property
 Public Property Let SmallIcons(ByVal Value As Variant)
 If Ambient.UserMode = True Then
     If ListViewHandle <> 0 Then
-        Dim Success As Boolean, Handle As Long
+        Dim Success As Boolean, Handle As Long, Size As SIZEAPI
+        If PropView = LvwViewList Then
+            ListViewMemoryColumnWidth = SendMessage(ListViewHandle, LVM_GETCOLUMNWIDTH, 0, ByVal 0&)
+            Handle = SendMessage(ListViewHandle, LVM_GETIMAGELIST, LVSIL_SMALL, ByVal 0&)
+            If Handle <> 0 Then
+                ImageList_GetIconSize Handle, Size.CX, Size.CY
+                ListViewMemoryColumnWidth = ListViewMemoryColumnWidth - Size.CX
+                Handle = 0
+            End If
+        End If
         On Error Resume Next
         If IsObject(Value) Then
             If TypeName(Value) = "ImageList" Then
@@ -1698,6 +1708,11 @@ If Ambient.UserMode = True Then
         Else
             SendMessage ListViewHandle, LVM_ARRANGE, LVA_DEFAULT, ByVal 0&
             SendMessage ListViewHandle, LVM_UPDATE, 0, ByVal 0&
+            If PropView = LvwViewList Then
+                ImageList_GetIconSize Handle, Size.CX, Size.CY
+                ListViewMemoryColumnWidth = ListViewMemoryColumnWidth + Size.CX
+                If ListViewMemoryColumnWidth > 0 Then SendMessage ListViewHandle, LVM_SETCOLUMNWIDTH, 0, ByVal ListViewMemoryColumnWidth
+            End If
         End If
         ' The image list for the column icons need to be reset, because
         ' LVM_SETIMAGELIST with LVSIL_SMALL overrides the image list for the column icons.
@@ -1908,7 +1923,7 @@ If ListViewHandle <> 0 And Ambient.UserMode = True Then
         SetWindowLong ListViewHandle, GWL_STYLE, dwStyle
     End If
     If PropView = LvwViewList Then
-        If ListViewMemoryColumnWidth <> 0 Then SendMessage ListViewHandle, LVM_SETCOLUMNWIDTH, 0, ByVal CLng(ListViewMemoryColumnWidth)
+        If ListViewMemoryColumnWidth > 0 Then SendMessage ListViewHandle, LVM_SETCOLUMNWIDTH, 0, ByVal ListViewMemoryColumnWidth
     ElseIf PropView = LvwViewReport Then
         Call CheckHeaderControl
     End If
@@ -3915,20 +3930,24 @@ End Property
 Public Property Get ColumnWidth() As Single
 Attribute ColumnWidth.VB_Description = "Returns/sets the width of a column in 'list' view."
 Attribute ColumnWidth.VB_MemberFlags = "400"
-If ListViewMemoryColumnWidth = 0 And PropView = LvwViewList Then
-    ColumnWidth = UserControl.ScaleX(SendMessage(ListViewHandle, LVM_GETCOLUMNWIDTH, 0, ByVal 0&), vbPixels, vbContainerSize)
+If PropView = LvwViewList Then
+    If ListViewHandle <> 0 Then ColumnWidth = UserControl.ScaleX(SendMessage(ListViewHandle, LVM_GETCOLUMNWIDTH, 0, ByVal 0&), vbPixels, vbContainerSize)
 Else
-    ColumnWidth = UserControl.ScaleX(ListViewMemoryColumnWidth, vbPixels, vbContainerSize)
+    Err.Raise Number:=394, Description:="Get supported in 'list' view only"
 End If
 End Property
 
 Public Property Let ColumnWidth(ByVal Value As Single)
 If Value < 0 Then Err.Raise 380
-Dim IntValue As Integer
-IntValue = CInt(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-If IntValue > 0 Then
-    ListViewMemoryColumnWidth = IntValue
-    If ListViewHandle <> 0 And PropView = LvwViewList Then SendMessage ListViewHandle, LVM_SETCOLUMNWIDTH, 0, ByVal CLng(IntValue)
+Dim LngValue As Long
+LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
+If LngValue > 0 Then
+    If PropView = LvwViewList Then
+        ListViewMemoryColumnWidth = LngValue
+        If ListViewHandle <> 0 Then SendMessage ListViewHandle, LVM_SETCOLUMNWIDTH, 0, ByVal LngValue
+    Else
+        Err.Raise Number:=383, Description:="Set supported in 'list' view only"
+    End If
 Else
     Err.Raise 380
 End If

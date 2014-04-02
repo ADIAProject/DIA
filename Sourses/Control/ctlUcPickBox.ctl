@@ -2575,6 +2575,7 @@ Private Sub cmdPick_Click()
                 'ShowFolder_Default
                 With New CommonDialog
                     .InitDir = PathCollect(txtResult.Text)
+                    .Flags = CdlBIFNewDialogStyle
 
                     If .ShowFolder = True Then
                         sFolder = .FileName
