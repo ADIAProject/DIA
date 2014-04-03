@@ -1484,6 +1484,13 @@ End Property
 Public Property Let Value(ByVal New_Value As Boolean)
 
     If m_ButtonMode <> ebmCommandButton Then
+        'if option button, then clear all value on parent control
+        
+        If New_Value Then
+            If m_ButtonMode = ebmOptionButton Then
+                UncheckAllValues
+            End If
+        End If
         m_bValue = New_Value
 
         If Not m_bValue Then
@@ -3506,7 +3513,7 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub UncheckAllValues()
+Public Sub UncheckAllValues()
 
     ' --Many Thanks to Morgan Haueisen
     Dim objButton As Object
@@ -3526,7 +3533,9 @@ Private Sub UncheckAllValues()
                         
                         ' is it not this button
                         If Not .hWnd = UserControl.hWnd Then
-                            .Value = False
+                            If .Value Then
+                                .Value = False
+                            End If
                         End If
                     End If
                 End If

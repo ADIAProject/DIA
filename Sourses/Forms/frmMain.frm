@@ -1336,6 +1336,9 @@ Private objHashOutput               As Scripting.Dictionary
 Private objHashOutput2              As Scripting.Dictionary
 Private objHashOutput3              As Scripting.Dictionary
 
+Private objRegExpCheck              As RegExp
+Private objRegExpCompat             As RegExp
+
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -1560,7 +1563,7 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOLD.Enabled = mbBlock
+    imgOkAttentionOld.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
@@ -1744,7 +1747,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
                                 Set .PictureNormal = Nothing
-                                Set .PictureNormal = imgOkAttentionOLD.Picture
+                                Set .PictureNormal = imgOkAttentionOld.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
                             Else
                                 Set .PictureNormal = Nothing
@@ -1777,7 +1780,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
                             Set .PictureNormal = Nothing
-                            Set .PictureNormal = imgOkAttentionOLD.Picture
+                            Set .PictureNormal = imgOkAttentionOld.Picture
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
                         Else
                             Set .PictureNormal = Nothing
@@ -1888,9 +1891,8 @@ End Function
 '                              mbGetText (Boolean)
 '                              strFindText (String)
 '!--------------------------------------------------------------------------------
-Private Function CheckExistbyRegExp(ByVal strSourceText As String, ByVal strSearchText As String, Optional ByVal mbGetText As Boolean, Optional ByRef strFindText As String) As Boolean
+Private Function CheckExistByRegExp(ByVal strSourceText As String, ByVal strSearchText As String, Optional ByVal mbGetText As Boolean, Optional ByRef strFindText As String) As Boolean
 
-    Dim objRegExpCheck  As RegExp
     Dim objMatchesCheck As MatchCollection
 
     Set objRegExpCheck = New RegExp
@@ -1901,10 +1903,10 @@ Private Function CheckExistbyRegExp(ByVal strSourceText As String, ByVal strSear
         Set objMatchesCheck = .Execute(strSourceText)
     End With
 
-    CheckExistbyRegExp = objMatchesCheck.Count
+    CheckExistByRegExp = objMatchesCheck.Count
 
     If mbGetText Then
-        If CheckExistbyRegExp Then
+        If CheckExistByRegExp Then
             strFindText = Trim$(objMatchesCheck.item(0).Value)
         End If
     End If
@@ -1990,8 +1992,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path64)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOSInfo.MousePointer = 0
-            lblOSInfo.ToolTipText = vbNullString
+            lblOsInfo.MousePointer = 0
+            lblOsInfo.ToolTipText = vbNullString
         End If
 
     Else
@@ -2002,8 +2004,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOSInfo.MousePointer = 0
-            lblOSInfo.ToolTipText = vbNullString
+            lblOsInfo.MousePointer = 0
+            lblOsInfo.ToolTipText = vbNullString
         End If
     End If
 
@@ -2036,7 +2038,6 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
     Dim strDRVx64                 As String
     Dim lngDRVx64                 As Long
     Dim strDRVOSVer               As String
-    Dim objRegExp                 As RegExp
     Dim objMatch                  As Match
     Dim objMatches                As MatchCollection
     Dim mbCompatibleByArch        As Boolean
@@ -2075,21 +2076,20 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
     'strSectionUnsupported = "Atheros,Atheros.NT.6.0,Atheros.NTamd64.6.0"
     ' проверяем есть ли вообще маркеры в пути
     'strDPInfPath = "5x86\M\N\"
-    mbMarkerCheckExist = CheckExistbyRegExp(strDPInfPath, strVer_All_Known_Ver)
+    mbMarkerCheckExist = CheckExistByRegExp(strDPInfPath, strVer_All_Known_Ver)
     ' проверяем есть ли вообще маркер FORCED в пути
     'strDPInfPath = "5x86\FORCED\M\N\"
-    mbMarkerFORCEDCheckExist = CheckExistbyRegExp(strDPInfPath, strVerFORCED & vbBackslashDouble)
+    mbMarkerFORCEDCheckExist = CheckExistByRegExp(strDPInfPath, strVerFORCED & vbBackslashDouble)
     ' проверяем есть ли вообще маркер STRICT в пути
     'strDPInfPath = "5x86\STRICT\M\N\"
-    mbMarkerSTRICTCheckExist = CheckExistbyRegExp(strDPInfPath, strVerSTRICT & vbBackslashDouble)
+    mbMarkerSTRICTCheckExist = CheckExistByRegExp(strDPInfPath, strVerSTRICT & vbBackslashDouble)
 
     ' Если нет маркера FORCED, то получаем данные из секции
     'Debug.Print strDPInfPath
-    'Debug.Print mbMarkerFORCEDCheckExist
     If Not mbMarkerFORCEDCheckExist Then
-        Set objRegExp = New RegExp
+        Set objRegExpCompat = New RegExp
 
-        With objRegExp
+        With objRegExpCompat
             .Pattern = "\.NT(X86|AMD64|IA64|)(?:\.(\d(?:.\d)))?"
             .IgnoreCase = True
             'strSection = "AMD.NTAMD64.5.1.1"
@@ -2198,7 +2198,7 @@ CheckVerByMarkers:
         End If
 
         ' Поиск подходящей версии ОС в маркерах
-        mbVerFromMarkers = CheckExistbyRegExp(strDPInfPath, strRegExpMarkerPattern)
+        mbVerFromMarkers = CheckExistByRegExp(strDPInfPath, strRegExpMarkerPattern)
 
         If mbVerFromMarkers Then
             strDRVOSVer = strOSCurrentVersion
@@ -2252,7 +2252,7 @@ CheckVerByMarkersArch:
         End If
 
         ' Поиск подходящей версии ОС в маркерах
-        mbArchFromMarkers = CheckExistbyRegExp(strDPInfPath, strRegExpMarkerPattern, True, strDRVx64)
+        mbArchFromMarkers = CheckExistByRegExp(strDPInfPath, strRegExpMarkerPattern, True, strDRVx64)
 
         If mbArchFromMarkers Then
             lngDRVx64 = InStr(strDRVx64, "X64")
@@ -2320,9 +2320,9 @@ CheckVerByMarkersArch:
             strSectionMain = strSection_x(0)
 
             If strOSCurrentVersion <> "5.0" Then
-                Set objRegExp = New RegExp
+                Set objRegExpCompat = New RegExp
 
-                With objRegExp
+                With objRegExpCompat
 
                     If mbOSx64 Then
                         .Pattern = strSectionMain & "\.NT[AMD64|IA64]*(?:\.(\d(?:.\d)*)*)*,"
@@ -2331,7 +2331,6 @@ CheckVerByMarkersArch:
                     End If
 
                     'ATHEROS\.NT[AMD64|IA64]*(?:\.(\d(?:.\d)*)*)*,
-                    'Debug.Print .Pattern
                     .IgnoreCase = True
                     'strSection = "AMD.NTAMD64.5.1.1"
                     '.Pattern = "Atheros,Atheros.NT.6.0,Atheros.NTamd64.6.0"
@@ -2399,7 +2398,7 @@ CheckVerByMarkersArch:
     End If
 
     ' Чистка переменных
-    Set objRegExp = Nothing
+    Set objRegExpCompat = Nothing
     Set objMatch = Nothing
     Set objMatches = Nothing
     If mbDebugDetail Then DebugMode str6VbTab & "CompatibleDriver4OS: Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " (by Version-" & mbCompatibleByVer & "; by Architecture-" & mbCompatibleByArch & "; by ManufacturedSection:Ver/Arch-" & _
@@ -4479,7 +4478,7 @@ Private Sub GroupInstallDP()
                 End If
 
                 
-                .Value = False
+                '.Value = False
                 
             End With
 
@@ -4748,9 +4747,9 @@ Private Sub lblOsInfoChange()
         str64bit = " x86 Edition"
     End If
 
-    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOSInfo.Caption)
+    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOsInfo.Caption)
     'lblOsInfo.Caption = lblOsInfoCaption & strSpace & OSInfoWMI(0) & strSpace & " (" & OSInfoWMI(4) & "." & OSInfoWMI(1) & strSpace & OSInfoWMI(2) & ")" & str64bit
-    lblOSInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
+    lblOsInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4904,7 +4903,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -5777,125 +5776,130 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     
     For i = lngBtnPrevCnt To lngBtnTabCnt
 
-        If Not (acmdPackFiles(i).PictureNormal Is Nothing) Then
-
-            Select Case lngTab2Tab
-
-                Case 0
-                
-                    GoTo MoveBtn
+        With acmdPackFiles(i)
+            If Not (.PictureNormal Is Nothing) Then
+    
+                Select Case lngTab2Tab
+    
+                    Case 0
                     
-                Case 1
-
-                    If acmdPackFiles(i).PictureNormal = imgOkNew.Picture Then
                         GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
-                        GoTo MoveBtn
-                    Else
-                        acmdPackFiles(i).TabStop = False
-                        GoTo NextBtn
-                    End If
-
-                Case 2
-
-                    If acmdPackFiles(i).PictureNormal = imgOkAttention.Picture Then
-                        GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Then
-                        GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
-                        GoTo MoveBtn
-                    Else
-                        acmdPackFiles(i).TabStop = False
-                        GoTo NextBtn
-                    End If
-
-                Case 3
-
-                    If acmdPackFiles(i).PictureNormal = imgOK.Picture Then
-                        GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionOLD.Picture Then
-                        GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkAttentionNew.Picture Then
-                        GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkNew.Picture Then
-                        GoTo MoveBtn
-                    ElseIf acmdPackFiles(i).PictureNormal = imgOkOld.Picture Then
-                        GoTo MoveBtn
-                    Else
-                        acmdPackFiles(i).TabStop = False
-                        GoTo NextBtn
-                    End If
-
-                Case 4
-
-                    If acmdPackFiles(i).PictureNormal = imgNoDB.Picture Then
-                        GoTo MoveBtn
-                    Else
-                        acmdPackFiles(i).TabStop = False
-                        GoTo NextBtn
-                    End If
-            End Select
-
-MoveBtn:
-            ' Собственно перемещаем кнопки на другую вкладку
-            Set chkPackFiles(i).Container = objScrollControl
-            Set acmdPackFiles(i).Container = objScrollControl
-
-            ' положения кнопок
-            If i = 0 Then
-                lngNextPosLeft = lngStartPosLeft
-                lngNextPosTop = lngStartPosTop
-            Else
-                
-                If lngBtnPrevNum Then
-                    lngDeltaPosLeft = acmdPackFiles(lngBtnPrevNum).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
-                Else
-
-                    ' Если первая кнопка подходит, то расчитываем следующее положение исходя из нее
-                    If lngTab2Tab Then
-                        If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) Then
-                            lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
+                        
+                    Case 1
+    
+                        If .PictureNormal = imgOkNew.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
+                            GoTo MoveBtn
+                        Else
+                            .TabStop = False
+                            GoTo NextBtn
                         End If
-
+    
+                    Case 2
+    
+                        If .PictureNormal = imgOkAttention.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkAttentionOld.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
+                            GoTo MoveBtn
+                        Else
+                            .TabStop = False
+                            GoTo NextBtn
+                        End If
+    
+                    Case 3
+    
+                        If .PictureNormal = imgOK.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkAttentionOld.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkNew.Picture Then
+                            GoTo MoveBtn
+                        ElseIf .PictureNormal = imgOkOld.Picture Then
+                            GoTo MoveBtn
+                        Else
+                            .TabStop = False
+                            GoTo NextBtn
+                        End If
+    
+                    Case 4
+    
+                        If .PictureNormal = imgNoDB.Picture Then
+                            GoTo MoveBtn
+                        Else
+                            .TabStop = False
+                            GoTo NextBtn
+                        End If
+                End Select
+    
+MoveBtn:
+                ' Собственно перемещаем кнопки на другую вкладку
+                Set chkPackFiles(i).Container = objScrollControl
+                Set .Container = objScrollControl
+    
+                ' положения кнопок
+                If i = 0 Then
+                    lngNextPosLeft = lngStartPosLeft
+                    lngNextPosTop = lngStartPosTop
+                Else
+                    
+                    If lngBtnPrevNum Then
+                        lngDeltaPosLeft = acmdPackFiles(lngBtnPrevNum).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                     Else
-                        If i = lngBtnPrevCnt Then
-                            If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) = False Then
-                                lngNextPosLeft = lngStartPosLeft
-                                lngNextPosTop = lngStartPosTop
+    
+                        ' Если первая кнопка подходит, то расчитываем следующее положение исходя из нее
+                        If lngTab2Tab Then
+                            If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) Then
+                                lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
+                            End If
+    
+                        Else
+                            If i = lngBtnPrevCnt Then
+                                If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) = False Then
+                                    lngNextPosLeft = lngStartPosLeft
+                                    lngNextPosTop = lngStartPosTop
+                                Else
+                                    lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
+                                End If
                             Else
                                 lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                             End If
-                        Else
-                            lngDeltaPosLeft = acmdPackFiles(0).Left + lngButtonWidth + lngBtn2BtnLeft - lngStartPosLeft
                         End If
                     End If
+    
+                    lngNextPosLeft = lngStartPosLeft + lngDeltaPosLeft
+                    lngMaxLeftPos = lngNextPosLeft + lngButtonWidth + 25
+    
+                    If lngMaxLeftPos > objScrollControl.Width Then
+                        ' Если по горизонтали кнопка не входит, то перешагиваем
+                        lngDeltaPosLeft = 0
+                        lngDeltaPosTop = lngDeltaPosTop + lngButtonHeight + lngBtn2BtnTop
+                        lngNextPosLeft = lngStartPosLeft
+                        lngNextPosTop = lngStartPosTop + lngDeltaPosTop
+                    Else
+                        lngNextPosTop = lngStartPosTop + lngDeltaPosTop
+                    End If
                 End If
-
-                lngNextPosLeft = lngStartPosLeft + lngDeltaPosLeft
-                lngMaxLeftPos = lngNextPosLeft + lngButtonWidth + 25
-
-                If lngMaxLeftPos > objScrollControl.Width Then
-                    ' Если по горизонтали кнопка не входит, то перешагиваем
-                    lngDeltaPosLeft = 0
-                    lngDeltaPosTop = lngDeltaPosTop + lngButtonHeight + lngBtn2BtnTop
-                    lngNextPosLeft = lngStartPosLeft
-                    lngNextPosTop = lngStartPosTop + lngDeltaPosTop
-                Else
-                    lngNextPosTop = lngStartPosTop + lngDeltaPosTop
+    
+                ' Перемещение кнопок и checkbox по расчитанным ранее параметрам
+                .Move lngNextPosLeft, lngNextPosTop
+                .TabStop = True
+                chkPackFiles(i).Move (lngNextPosLeft + 50), (lngNextPosTop + (lngButtonHeight - chkPackFiles(i).Height) / 2)
+                chkPackFiles(i).ZOrder 0
+                ' Увеличиваем счетчики
+                lngBtnPrevNum = i
+                lngNoDP4ModeCnt = lngNoDP4ModeCnt + 1
+NextBtn:
+                ' Clear value
+                If .Value Then
+                    .Value = False
                 End If
             End If
-
-            ' Перемещение кнопок и checkbox по расчитанным ранее параметрам
-            acmdPackFiles(i).Move lngNextPosLeft, lngNextPosTop
-            acmdPackFiles(i).TabStop = True
-            chkPackFiles(i).Move (lngNextPosLeft + 50), (lngNextPosTop + (lngButtonHeight - chkPackFiles(i).Height) / 2)
-            chkPackFiles(i).ZOrder 0
-            ' Увеличиваем счетчики
-            lngBtnPrevNum = i
-            lngNoDP4ModeCnt = lngNoDP4ModeCnt + 1
-NextBtn:
-        End If
-
+        End With
     Next i
 
     If lngNoDP4ModeCnt = 0 Then
@@ -6091,13 +6095,13 @@ Private Sub SelectStartMode(Optional miModeTemp As Long = 0, Optional mbTab2 As 
         Case 1
 
             If optRezim_Intellect.Enabled Then
-                optRezim_Upd.Value = False
-                optRezim_Intellect.Value = False
+                'optRezim_Upd.Value = False
+                'optRezim_Intellect.Value = False
                 optRezim_Intellect.Value = True
                 optRezim_Intellect_Click
             Else
-                optRezim_Ust.Value = False
-                optRezim_Intellect.Value = False
+                'optRezim_Ust.Value = False
+                'optRezim_Intellect.Value = False
                 optRezim_Upd.Value = True
                 optRezim_Upd_Click
             End If
@@ -6105,20 +6109,20 @@ Private Sub SelectStartMode(Optional miModeTemp As Long = 0, Optional mbTab2 As 
         Case 2
 
             If optRezim_Ust.Enabled Then
-                optRezim_Upd.Value = False
-                optRezim_Intellect.Value = False
+                'optRezim_Upd.Value = False
+                'optRezim_Intellect.Value = False
                 optRezim_Ust.Value = True
                 optRezim_Ust_Click
             Else
-                optRezim_Ust.Value = False
-                optRezim_Intellect.Value = False
+                'optRezim_Ust.Value = False
+                'optRezim_Intellect.Value = False
                 optRezim_Upd.Value = True
                 optRezim_Upd_Click
             End If
 
         Case 3
-            optRezim_Ust.Value = False
-            optRezim_Intellect.Value = False
+            'optRezim_Ust.Value = False
+            'optRezim_Intellect.Value = False
             optRezim_Upd.Value = True
             optRezim_Upd_Click
     End Select
@@ -6663,9 +6667,13 @@ Private Sub StartReOrderBtnOnTab2(ByVal miIndex As Integer, ByVal miPrevTab As I
 
                     ' Построение пакетов с "БД не создана"
                 Case 4
-                    ' Переключаемся в режим создания БД
-                    mbSet2UpdateFromTab4 = True
-                    SelectStartMode 3, False
+                    ' Если есть пакеты без БД, тогда
+                    If mbNotSupportedDevDB Then
+                        ' Переключаемся в режим создания БД
+                        mbSet2UpdateFromTab4 = True
+                        SelectStartMode 3, False
+                    End If
+                    
                     ReOrderBtnOnTab2 4, lngCntBtnPrevious, lngCntBtnTab, ctlScrollControlTab4(miIndex)
                     mbSet2UpdateFromTab4 = False
             End Select
@@ -6823,7 +6831,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
@@ -7211,7 +7219,7 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
                     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                     ' Кнопка выглядит отжатой
                     
-                    .Value = False
+                    '.Value = False
                     
                 Else
                     strPackFileName = .Tag
@@ -7258,6 +7266,7 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
     ctlProgressBar1.SetTaskBarProgressState PrbTaskBarStateNone
     ChangeFrmMainCaption
     BlockControl True
+    
 TheEnd:
     SSTab1.Tab = lngSStabStart
     If mbDebugStandart Then DebugMode "StatusUpdateAll-End"
@@ -7335,7 +7344,7 @@ Public Sub UpdateStatusButtonTAB()
                 ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
                 
                 ' Кнопка выглядит отжатой
-                .Value = False
+                '.Value = False
                 
             End With
 
@@ -7654,7 +7663,7 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     If Not mbCheckDRVOk Then
                         mbDevParserRun = False
                         
-                        acmdPackFiles(Index).Value = False
+                        'acmdPackFiles(Index).Value = False
                         
                         If Not mbGroupTask Then
                             BlockControl True
@@ -7823,7 +7832,6 @@ Private Sub acmdPackFiles_MouseDown(Index As Integer, Button As Integer, Shift A
         lngCurrentBtnIndex = Index
     End If
 
-Debug.Print optRezim_Ust.Value
 End Sub
 
 Private Sub acmdPackFiles_MouseEnter(Index As Integer)
@@ -8264,49 +8272,47 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
         Select Case KeyCode
 
-            Case 65
+            Case vbKeyA '65
                 ' Ctrl+A (Выделение всех пакетов для установки)
                 CheckAllButton True
 
-            Case 90
+            Case vbKeyZ '90
                 ' Ctrl+Z (Отмена выделения всех)
                 CheckAllButton False
 
-            Case 83
+            Case vbKeyS '83
                 ' Ctrl+S (Выделение всех пакетов на вкладке)
                 SelectAllOnTabDP True
 
-            Case 78
+            Case vbKeyN '78
                 ' Ctrl+N (Выделение всех пакетов с новыми драйверами)
                 SelectRecommendedDP True
 
-            Case 81
+            Case vbKeyQ '81
                 ' Ctrl+Q (Выделение пакетов с не установленными)
                 SelectNotInstalledDP True
 
-            Case 73
+            Case vbKeyI '73
                 ' Ctrl+I (Установка выделенных пакетов)
                 InsOrUpdSelectedDP True
 
-            Case 85
+            Case vbKeyU '85
                 ' Ctrl+U (Обновление БД выделенных пакетов)
                 InsOrUpdSelectedDP False
 
-            Case 9
-
-                ' CTRL+Tab (Переключение по вкладкам)
+            Case vbKeyTab
+                ' CTRL+Tab (Переключение по вкладкам SSTab1)
                 If SSTab1.Tabs Then
                     SelectNextTab
                 End If
 
             Case 19
-
                 ' CTRL+Break (Прерывание групповой обработки)
                 If cmdBreakUpdateDB.Visible Then
                     mbBreakUpdateDBAll = True
                 End If
             
-            Case 88
+            Case vbKeyX '88
                 ' Ctrl+X (Прерывание групповой обработки в IDE)
                 If cmdBreakUpdateDB.Visible Then
                     mbBreakUpdateDBAll = True
@@ -8314,12 +8320,14 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
         End Select
 
-    Else
+    ElseIf Shift = 0 Then
         ' Выход из программы по "Escape"
-        If Not mbFirstStart And KeyCode = vbKeyEscape Then
-            If Not mbCheckUpdNotEnd Then
-                If VBA.MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
-                    Unload Me
+        If Not mbFirstStart Then
+            If KeyCode = vbKeyEscape Then
+                If Not mbCheckUpdNotEnd Then
+                    If VBA.MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
+                        Unload Me
+                    End If
                 End If
             End If
         End If
@@ -8349,7 +8357,7 @@ Private Sub Form_Load()
         ' Смена заголовка формы
         strFormName = .Name
         ChangeFrmMainCaption
-        ' Разворачиваем форму на весь экран
+        ' Изменяем размеры формы
         .Width = lngMainFormWidth
         .Height = lngMainFormHeight
         ' Центрируем форму на экране
@@ -8406,7 +8414,7 @@ Private Sub Form_Load()
     ' Начальные позиции некоторых элементов управления
     frTabPanel.Top = 3100
     frTabPanel.Left = 75
-    lblOSInfo.Left = 75
+    lblOsInfo.Left = 75
 
     With acmdPackFiles(0)
         .ButtonStyle = lngStatusBtnStyle
@@ -8480,7 +8488,7 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    If mbDebugStandart Then DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & _
+    If mbDebugStandart Then DebugMode "OsInfo: " & lblOsInfo.Caption & vbNewLine & _
               "PCModel: " & lblPCInfo.Caption
     ' Выставляем шрифт
     FontCharsetChange
@@ -8500,7 +8508,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -8512,13 +8520,13 @@ Private Sub Form_Load()
 
     If mbIsWin64 Then
         If PathExists(PathCollect("Tools\SIV\SIV64X.exe")) Then
-            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
         End If
 
     Else
 
         If PathExists(PathCollect("Tools\SIV\SIV32X.exe")) Then
-            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
         End If
     End If
 
@@ -8720,11 +8728,11 @@ Public Sub Form_Resize()
         imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
         imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
         imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
+        imgOkAttentionOld.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
+        imgNo.Left = imgOkAttentionOld.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
-        lblOSInfo.Width = frInfo.Width - 200
+        lblOsInfo.Width = frInfo.Width - 200
         lblPCInfo.Width = frInfo.Width - 200
         cmdViewAllDevice.Width = optRezim_Upd.Left + optRezim_Upd.Width - cmdViewAllDevice.Left
         ' Удаление иконки в трее если есть

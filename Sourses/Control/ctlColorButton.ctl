@@ -910,7 +910,6 @@ Dim j                                   As Integer
                 m_iXIndex = i
                 m_iYIndex = j
                 m_nSelectedColor = m_arrColor(j, i)
-                Debug.Print m_nSelectedColor
                 ReleaseCapture
                 Redraw
                 picDropDown.Visible = False
