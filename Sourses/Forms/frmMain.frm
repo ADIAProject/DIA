@@ -368,6 +368,7 @@ Begin VB.Form frmMain
                   Index           =   0
                   Left            =   25
                   TabIndex        =   24
+                  TabStop         =   0   'False
                   Top             =   350
                   Width           =   4155
                   _ExtentX        =   7329
@@ -379,6 +380,7 @@ Begin VB.Form frmMain
                   Index           =   0
                   Left            =   -74975
                   TabIndex        =   21
+                  TabStop         =   0   'False
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -390,6 +392,7 @@ Begin VB.Form frmMain
                   Index           =   0
                   Left            =   -74975
                   TabIndex        =   20
+                  TabStop         =   0   'False
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -401,6 +404,7 @@ Begin VB.Form frmMain
                   Index           =   0
                   Left            =   -74975
                   TabIndex        =   22
+                  TabStop         =   0   'False
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -412,6 +416,7 @@ Begin VB.Form frmMain
                   Index           =   0
                   Left            =   -74975
                   TabIndex        =   23
+                  TabStop         =   0   'False
                   Top             =   350
                   Width           =   4095
                   _ExtentX        =   7223
@@ -7763,9 +7768,15 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub acmdPackFiles_KeyDown(Index As Integer, KeyCode As Integer, Shift As Integer)
 
-    If KeyCode = 32 Then
-        chkPackFiles(Index).Value = Not chkPackFiles(Index).Value
-        FindCheckCount
+    If KeyCode = vbKeySpace Then
+        
+        If chkPackFiles(Index).Value Then
+            chkPackFiles(Index).Value = 0
+        Else
+            chkPackFiles(Index).Value = 1
+        End If
+        
+        cmdRunTask.Enabled = FindCheckCount
     End If
 
 End Sub
@@ -9329,13 +9340,14 @@ Private Sub mnuLang_Click(Index As Integer)
     ChangeFrmMainCaption
 
     ChangeStatusTextAndDebug strMessages(142) & strSpace & arrLanguage(2, i), , False
-    FindCheckCount False
 
     If mbNoSupportedOS Then
         SelectStartMode 3, False
         BlockControl True
         BlockControlEx False
     End If
+    
+    cmdRunTask.Enabled = FindCheckCount(False)
 
 End Sub
 

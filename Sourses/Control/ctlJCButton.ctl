@@ -37,13 +37,14 @@ Attribute VB_Exposed = False
 ' Change subsclasser to class cSelfSubHookCallback
 ' Fix Ambient.Usermode
 '*********************************
-' Modified by Romeo91 (adia-project.net) Last Edit 2014-03-04
+' Modified by Romeo91 (adia-project.net) Last Edit 2014-04-03
 '*********************************
 ' added unicode support for Caption
 ' delete tooltip event declaration (i used 3d-party control for this)
-' added rightbuttonmenu
-' added checkexist property (need if you put checkboxes on the button)
+' added rightbuttonmenu - ShowPopupRBT
+' added checkexist property (need if you put checkboxes on the button). If property=true then raiseevent RaiseEvent Click not run
 ' added dropdownenable property (need if want to disable dropdownmenu, but wasn't unset from control)
+' added FocusRect on GetFocus event
 
 Option Explicit
 
@@ -4810,7 +4811,9 @@ Private Sub UserControl_KeyUp(KeyCode As Integer, Shift As Integer)
             End If
 
             If Not m_bIsDown And m_bIsSpaceBarDown Then
-                RaiseEvent Click
+                If Not m_CheckExist Then
+                    RaiseEvent Click
+                End If
             End If
         End If
 
