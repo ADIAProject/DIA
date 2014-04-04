@@ -4,67 +4,67 @@ Option Explicit
 ' а также модели компьтера/ноутбука/материнской платы
 
 ' Программные переменные
-Public strOSArchitecture   As String        ' Архитетуктура ОС
-Public strOSCurrentVersion As String
-Public OSCurrVersionStruct As OSInfoStruct
-Public mbIsWin64           As Boolean
-Public mbIsNotebok         As Boolean
+Public strOSArchitecture        As String        ' Архитетуктура ОС
+Public strOSCurrentVersion      As String
+Public OSCurrVersionStruct      As OSInfoStruct
+Public mbIsWin64                As Boolean
+Public mbIsNotebok              As Boolean
 
 Public Type OSInfoStruct
-    Name            As String
-    BuildNumber     As String
-    ServicePack     As String
-    VerFullwBuild   As String
-    VerFull         As String
-    VerMajor        As String
-    VerMinor        As String
-    ClientOrServer  As Boolean
-    IsInitialize    As Boolean
+    Name                        As String
+    BuildNumber                 As String
+    ServicePack                 As String
+    VerFullwBuild               As String
+    VerFull                     As String
+    VerMajor                    As String
+    VerMinor                    As String
+    ClientOrServer              As Boolean
+    IsInitialize                As Boolean
 End Type
 
 ' API-Declared
 Public Type OSVERSIONINFO
-    dwOSVersionInfoSize                 As Long
-    dwMajorVersion                      As Long
-    dwMinorVersion                      As Long
-    dwBuildNumber                       As Long
-    dwPlatformID                        As Long
-    szCSDVersion                        As String * 128
+    dwOSVersionInfoSize         As Long
+    dwMajorVersion              As Long
+    dwMinorVersion              As Long
+    dwBuildNumber               As Long
+    dwPlatformID                As Long
+    szCSDVersion                As String * 128
 End Type
 
 Public Type OSVERSIONINFOEX
-    dwOSVersionInfoSize                 As Long
-    dwMajorVersion                      As Long
-    dwMinorVersion                      As Long
-    dwBuildNumber                       As Long
-    dwPlatformID                        As Long
-    szCSDVersion                        As String * 128
-    wServicePackMajor                   As Integer
-    wServicePackMinor                   As Integer
-    wSuiteMask                          As Integer
-    wProductType                        As Byte
-    wReserved                           As Byte
+    dwOSVersionInfoSize         As Long
+    dwMajorVersion              As Long
+    dwMinorVersion              As Long
+    dwBuildNumber               As Long
+    dwPlatformID                As Long
+    szCSDVersion                As String * 128
+    wServicePackMajor           As Integer
+    wServicePackMinor           As Integer
+    wSuiteMask                  As Integer
+    wProductType                As Byte
+    wReserved                   As Byte
 End Type
 
 ' Проверка процесса на 64 bit разрядность
 Public Type SYSTEM_INFO
-    wProcessorArchitecture              As Integer
-    wReserved                           As Integer
-    dwPageSize                          As Long
-    lpMinimumApplicationAddress         As Long
-    lpMaximumApplicationAddress         As Long
-    dwActiveProcessorMask               As Long
-    dwNumberOfProcessors                As Long
-    dwProcessorType                     As Long
-    dwAllocationGranularity             As Long
-    wProcessorLevel                     As Integer
-    wProcessorRevision                  As Integer
+    wProcessorArchitecture      As Integer
+    wReserved                   As Integer
+    dwPageSize                  As Long
+    lpMinimumApplicationAddress As Long
+    lpMaximumApplicationAddress As Long
+    dwActiveProcessorMask       As Long
+    dwNumberOfProcessors        As Long
+    dwProcessorType             As Long
+    dwAllocationGranularity     As Long
+    wProcessorLevel             As Integer
+    wProcessorRevision          As Integer
 End Type
 
-Public Const PROCESSOR_ARCHITECTURE_AMD64 As Long = &H9
-Public Const PROCESSOR_ARCHITECTURE_IA64  As Long = &H6
-Public Const PROCESSOR_ARCHITECTURE_INTEL As Long = 0
-Public Const PROCESSOR_ARCHITECTURE_ALPHA = 2
+Public Const PROCESSOR_ARCHITECTURE_AMD64   As Long = &H9
+Public Const PROCESSOR_ARCHITECTURE_IA64    As Long = &H6
+Public Const PROCESSOR_ARCHITECTURE_INTEL   As Long = 0
+Public Const PROCESSOR_ARCHITECTURE_ALPHA   As Long = 2
 Public Const PROCESSOR_ARCHITECTURE_ALPHA64 As Long = 7
 Public Const VER_PLATFORM_WIN32_NT          As Long = 2
 Public Const VER_NT_WORKSTATION             As Long = 1
@@ -123,10 +123,10 @@ Public Function GetMB_Manufacturer() As String
         .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
         .IgnoreCase = True
         .Global = True
+        'Заменяем найденные значения " "
+        GetMB_Manufacturer = Trim$(.Replace(strTemp, strSpace))
     End With
 
-    'получаем date1
-    GetMB_Manufacturer = Trim$(objRegExp.Replace(strTemp, strSpace))
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -180,10 +180,10 @@ Public Function GetMB_Model() As String
         .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
         .IgnoreCase = True
         .Global = True
+        'Заменяем найденные значения " "
+        GetMB_Model = Trim$(.Replace(strTemp, strSpace))
     End With
 
-    'получаем date1
-    GetMB_Model = Trim$(objRegExp.Replace(strTemp, strSpace))
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ Public Function GetMBInfo() As String
     strMB_Model = GetMB_Model()
 
     If LenB(strMB_Manufacturer) And LenB(strMB_Model) Then
-        GetMBInfo = strMB_Manufacturer & "_" & strMB_Model
+        GetMBInfo = strMB_Manufacturer & "-" & strMB_Model
     ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) Then
         GetMBInfo = strMB_Model
     ElseIf LenB(strMB_Manufacturer) And LenB(strMB_Model) = 0 Then
@@ -208,7 +208,10 @@ Public Function GetMBInfo() As String
     Else
         GetMBInfo = "Unknown"
     End If
-
+    
+    If InStr(GetMBInfo, "_") Then
+        GetMBInfo = Replace$(GetMBInfo, "_", "-")
+    End If
 End Function
 
 '!--------------------------------------------------------------------------------

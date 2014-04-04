@@ -479,7 +479,7 @@ End Function
 '! Description (Описание)  :   [Расширить имя файла - использование переменных %%]
 '! Parameters  (Переменные):   strFileName (String)
 '!--------------------------------------------------------------------------------
-Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As String
+Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As String
 
     Dim R         As String
     Dim str_OSVer As String
@@ -503,14 +503,14 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
         ' Замена макросов значениями
         R = strFileName
         R = Replace$(R, "%PCNAME%", strCompModel, , , vbTextCompare)
-        R = Replace$(R, "%PCMODEL%", Replace$(strCompModel, strSpace, "_"))
+        R = Replace$(R, "%PCMODEL%", Replace$(strCompModel, strSpace, "-"))
         R = Replace$(R, "%OSVer%", str_OSVer, , , vbTextCompare)
         R = Replace$(R, "%OSBit%", str_OSBit, , , vbTextCompare)
         R = Replace$(R, "%DATE%", str_DATE, , , vbTextCompare)
         R = Trim$(R)
-        ExpandFileNamebyEnvironment = R
+        ExpandFileNameByEnvironment = R
     Else
-        ExpandFileNamebyEnvironment = strFileName
+        ExpandFileNameByEnvironment = strFileName
     End If
 
 End Function

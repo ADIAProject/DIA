@@ -1563,7 +1563,7 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOld.Enabled = mbBlock
+    imgOkAttentionOLD.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
@@ -1747,7 +1747,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
                             ElseIf mbStatusOlder Then
                                 Set .PictureNormal = Nothing
-                                Set .PictureNormal = imgOkAttentionOld.Picture
+                                Set .PictureNormal = imgOkAttentionOLD.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
                             Else
                                 Set .PictureNormal = Nothing
@@ -1780,7 +1780,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
                         ElseIf mbStatusOlder Then
                             Set .PictureNormal = Nothing
-                            Set .PictureNormal = imgOkAttentionOld.Picture
+                            Set .PictureNormal = imgOkAttentionOLD.Picture
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
                         Else
                             Set .PictureNormal = Nothing
@@ -1992,8 +1992,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path64)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOsInfo.MousePointer = 0
-            lblOsInfo.ToolTipText = vbNullString
+            lblOSInfo.MousePointer = 0
+            lblOSInfo.ToolTipText = vbNullString
         End If
 
     Else
@@ -2004,8 +2004,8 @@ Private Sub CheckMenuUtilsPath()
 
         If PathExists(PathCollect(strSIV_Path)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOsInfo.MousePointer = 0
-            lblOsInfo.ToolTipText = vbNullString
+            lblOSInfo.MousePointer = 0
+            lblOSInfo.ToolTipText = vbNullString
         End If
     End If
 
@@ -4747,9 +4747,9 @@ Private Sub lblOsInfoChange()
         str64bit = " x86 Edition"
     End If
 
-    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOsInfo.Caption)
+    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOSInfo.Caption)
     'lblOsInfo.Caption = lblOsInfoCaption & strSpace & OSInfoWMI(0) & strSpace & " (" & OSInfoWMI(4) & "." & OSInfoWMI(1) & strSpace & OSInfoWMI(2) & ")" & str64bit
-    lblOsInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
+    lblOSInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4903,7 +4903,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -5800,7 +5800,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     
                         If .PictureNormal = imgOkAttention.Picture Then
                             GoTo MoveBtn
-                        ElseIf .PictureNormal = imgOkAttentionOld.Picture Then
+                        ElseIf .PictureNormal = imgOkAttentionOLD.Picture Then
                             GoTo MoveBtn
                         ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
                             GoTo MoveBtn
@@ -5813,7 +5813,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     
                         If .PictureNormal = imgOK.Picture Then
                             GoTo MoveBtn
-                        ElseIf .PictureNormal = imgOkAttentionOld.Picture Then
+                        ElseIf .PictureNormal = imgOkAttentionOLD.Picture Then
                             GoTo MoveBtn
                         ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
                             GoTo MoveBtn
@@ -6831,7 +6831,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
@@ -8414,7 +8414,7 @@ Private Sub Form_Load()
     ' Начальные позиции некоторых элементов управления
     frTabPanel.Top = 3100
     frTabPanel.Left = 75
-    lblOsInfo.Left = 75
+    lblOSInfo.Left = 75
 
     With acmdPackFiles(0)
         .ButtonStyle = lngStatusBtnStyle
@@ -8488,7 +8488,7 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    If mbDebugStandart Then DebugMode "OsInfo: " & lblOsInfo.Caption & vbNewLine & _
+    If mbDebugStandart Then DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & _
               "PCModel: " & lblPCInfo.Caption
     ' Выставляем шрифт
     FontCharsetChange
@@ -8508,7 +8508,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOld.BorderStyle = 0
+    imgOkAttentionOLD.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -8520,13 +8520,13 @@ Private Sub Form_Load()
 
     If mbIsWin64 Then
         If PathExists(PathCollect("Tools\SIV\SIV64X.exe")) Then
-            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
         End If
 
     Else
 
         If PathExists(PathCollect("Tools\SIV\SIV32X.exe")) Then
-            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
+            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
         End If
     End If
 
@@ -8728,11 +8728,11 @@ Public Sub Form_Resize()
         imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
         imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
         imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOld.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOld.Left + ImgWidth + imgWidthDelta
+        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
+        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
         imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
         imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
-        lblOsInfo.Width = frInfo.Width - 200
+        lblOSInfo.Width = frInfo.Width - 200
         lblPCInfo.Width = frInfo.Width - 200
         cmdViewAllDevice.Width = optRezim_Upd.Left + optRezim_Upd.Width - cmdViewAllDevice.Left
         ' Удаление иконки в трее если есть
@@ -9541,9 +9541,21 @@ Private Sub mnuSaveInfoPC_Click()
         .Filter = "Text Files (*.TXT)|*.TXT"
         .DefaultExt = ".txt"
         .InitDir = GetSpecialFolderPath(CSIDL_DESKTOPDIRECTORY)
-        .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
+        .DialogTitle = strMessages(151)
+        If mbIsNotebok Then
+            If Not OSCurrVersionStruct.ClientOrServer Then
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%")
+            Else
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%")
+            End If
+        Else
+            If Not OSCurrVersionStruct.ClientOrServer Then
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%")
+            Else
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
+            End If
+        End If
 
-        '.DialogTitle = "Select File"
         If .ShowSave = True Then
             strFilePathTo = .FileName
         End If

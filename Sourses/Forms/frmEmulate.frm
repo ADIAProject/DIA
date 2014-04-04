@@ -53,8 +53,8 @@ Begin VB.Form frmEmulate
          Left            =   120
          TabIndex        =   1
          Top             =   900
-         Width           =   7935
-         _ExtentX        =   13996
+         Width           =   7900
+         _ExtentX        =   13944
          _ExtentY        =   556
          UseAutoForeColor=   0   'False
          DefaultExt      =   ""
@@ -69,8 +69,8 @@ Begin VB.Form frmEmulate
          Left            =   120
          TabIndex        =   0
          Top             =   360
-         Width           =   7935
-         _ExtentX        =   13996
+         Width           =   7900
+         _ExtentX        =   13944
          _ExtentY        =   873
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -161,16 +161,16 @@ Begin VB.Form frmEmulate
       TextBoxColor    =   11595760
       Style           =   3
       RoundedCorner   =   0   'False
-      Caption         =   "Файл для эмуляции"
+      Caption         =   "Операционная система / Модель компьютера"
       TextBoxHeight   =   20
       GradientHeaderStyle=   1
       Begin prjDIADBS.TextBoxW txtPCModel 
          Height          =   315
-         Left            =   60
+         Left            =   120
          TabIndex        =   5
-         Top             =   1860
-         Width           =   7935
-         _ExtentX        =   13996
+         Top             =   2160
+         Width           =   7905
+         _ExtentX        =   13944
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -182,15 +182,16 @@ Begin VB.Form frmEmulate
             Strikethrough   =   0   'False
          EndProperty
          Text            =   "frmEmulate.frx":000C
+         Locked          =   -1  'True
          CueBanner       =   "frmEmulate.frx":004C
       End
       Begin prjDIADBS.ComboBoxW cmbOS 
-         Height          =   330
-         Left            =   60
+         Height          =   315
+         Left            =   120
          TabIndex        =   3
-         Top             =   960
-         Width           =   7935
-         _ExtentX        =   13996
+         Top             =   1140
+         Width           =   7905
+         _ExtentX        =   13944
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -207,11 +208,11 @@ Begin VB.Form frmEmulate
       End
       Begin prjDIADBS.CheckBoxW chk64bit 
          Height          =   255
-         Left            =   60
+         Left            =   120
          TabIndex        =   4
-         Top             =   1440
-         Width           =   7935
-         _ExtentX        =   13996
+         Top             =   1560
+         Width           =   7900
+         _ExtentX        =   13944
          _ExtentY        =   450
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -228,11 +229,11 @@ Begin VB.Form frmEmulate
       End
       Begin prjDIADBS.CheckBoxW chkIsNotebook 
          Height          =   255
-         Left            =   60
+         Left            =   120
          TabIndex        =   6
-         Top             =   2340
-         Width           =   7935
-         _ExtentX        =   13996
+         Top             =   1860
+         Width           =   7905
+         _ExtentX        =   13944
          _ExtentY        =   450
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -248,13 +249,13 @@ Begin VB.Form frmEmulate
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblOSInfo 
-         Height          =   495
-         Left            =   60
+         Height          =   735
+         Left            =   120
          TabIndex        =   2
          Top             =   360
-         Width           =   7935
-         _ExtentX        =   13996
-         _ExtentY        =   873
+         Width           =   7900
+         _ExtentX        =   13944
+         _ExtentY        =   1296
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
             Size            =   9.75
@@ -398,6 +399,8 @@ Private Sub LoadDefaultParam()
 
     ' Выставляем текущую разрядность ОС
     chk64bit.Value = CBool(mbIsWin64)
+    chkIsNotebook.Value = CBool(mbIsNotebok)
+    txtPCModel = strCompModel
     ' Выставляем стартовый каталог
     ucFilePath.Path = strAppPathBackSL
 End Sub
@@ -436,10 +439,17 @@ Private Sub Localise(ByVal strPathFile As String)
     FontCharsetChange
     ' Название формы
     Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
-    ' Лэйблы
+    
+    ' Frames
+    frFile.Caption = LocaliseString(strPathFile, strFormName, "frFile", frFile.Caption)
+    frOS.Caption = LocaliseString(strPathFile, strFormName, "frOS", frOS.Caption)
+    ' Labels
     lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
+    lblOSInfo.Caption = LocaliseString(strPathFile, strFormName, "lblOSInfo", lblOSInfo.Caption)
+    ' CheckBoxes
     chk64bit.Caption = LocaliseString(strPathFile, strFormName, "chk64bit", chk64bit.Caption)
-    'Кнопки
+    chkIsNotebook.Caption = LocaliseString(strPathFile, strFormName, "chkIsNotebook", chkIsNotebook.Caption)
+    ' Buttons
     cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
 End Sub
@@ -465,12 +475,20 @@ Private Sub cmdOK_Click()
     strFilePath = ucFilePath.Path
 
     If LenB(strFilePath) Then
+        'Переопределение массива данных о дайверах эмулируемой системы
         LoadAndParseFile strFilePath
+        
         'Переопределение версии и разрядности системы для режима эмуляции
         mbIsWin64 = CBool(chk64bit.Value)
         strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
-        ' А теперь Обновляем статус всех пакетов
+        
+        'Переопределение модели компьютера
+        mbIsNotebok = CBool(chkIsNotebook.Value)
+        strCompModel = txtPCModel
+        
+        ' А теперь обновляем статус всех пакетов
         frmMain.UpdateStatusButtonAll
+        
         ' Обновить список неизвестных дров и описание для кнопки
         frmMain.LoadCmdViewAllDeviceCaption
         ChangeStatusTextAndDebug strMessages(114)
@@ -523,7 +541,80 @@ Private Sub Form_Load()
     ' Загружаем список операционных систем
     LoadListOS
     LoadDefaultParam
+
+    cmbOS.Enabled = False
+    chk64bit.Enabled = False
+    chkIsNotebook.Enabled = False
+    txtPCModel.Enabled = False
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ParseFileName
+'! Description (Описание)  :   [Parsing filename snap of the OS, and get OS parametrs]
+'! Parameters  (Переменные):   strFilePath (String)
+'!--------------------------------------------------------------------------------
+Private Function ParseFileName(ByVal strFilePath As String) As Boolean
+    
+    Dim strParse_x()    As String
+    Dim strTemp         As String
+    Dim i               As Long
+    Dim ii              As Long
+    Dim mbIsServer      As Boolean
+    
+    strParse_x = Split(strFilePath, "_")
+        
+    If UBound(strParse_x) = 3 Then
+        For i = 1 To UBound(strParse_x)
+            '"hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%"
+            
+            Select Case i
+                '%PCMODEL%-Notebook
+                Case 1
+                    strTemp = strParse_x(1)
+                    If InStr(1, LCase$(strTemp), "notebook") Then
+                        chkIsNotebook.Value = 1
+                        txtPCModel = Replace$(strTemp, "-notebook", vbNullString, , , vbTextCompare)
+                    Else
+                        chkIsNotebook.Value = 0
+                        txtPCModel = strTemp
+                    End If
+                    
+                'strOSCurrentVersion-Server
+                Case 2
+                    strTemp = strParse_x(2)
+                    If InStr(1, LCase$(strTemp), "server") Then
+                        strTemp = Replace$(strTemp, "-server", vbNullString, , , vbTextCompare)
+                        mbIsServer = True
+                    End If
+                    For ii = 0 To cmbOS.ListCount - 1
+
+                        If InStr(cmbOS.List(ii), strTemp) Then
+                            If mbIsServer Then
+                                If InStr(1, cmbOS.List(ii), "server", vbTextCompare) = 0 Then
+                                    Exit For
+                                End If
+                            End If
+                            
+                            cmbOS.ListIndex = ii
+                            Exit For
+                
+                        End If
+                
+                    Next ii
+                
+                '%OSBIT%
+                Case 3
+                    strTemp = strParse_x(3)
+                    If InStr(1, LCase$(strTemp), "x64") Then
+                        chk64bit.Value = 1
+                    Else
+                        chk64bit.Value = 0
+                    End If
+            End Select
+        Next i
+        ParseFileName = True
+    End If
+End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucFilePath_Click
@@ -537,10 +628,23 @@ Private Sub ucFilePath_Click()
     End If
 
     If LenB(strFilePath) Then
-        ucFilePath.Path = strFilePath
-        ' активация кнопки старт
-        EnablerCmdOK
+    
+        cmbOS.Enabled = True
+        chk64bit.Enabled = True
+        chkIsNotebook.Enabled = True
+        txtPCModel.Enabled = True
+        
+        If FileExists(strFilePath) Then
+            ucFilePath.Path = strFilePath
+            ' Парсинг имени файла и определение параметров ОС и компьютера
+            If Not ParseFileName(strFilePath) Then
+                MsgBox strMessages(156), vbInformation, strProductName
+            End If
+            ' активация кнопки старт
+            EnablerCmdOK
+        End If
     End If
 
 End Sub
+
 
