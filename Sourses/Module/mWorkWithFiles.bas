@@ -479,12 +479,13 @@ End Function
 '! Description (Описание)  :   [Расширить имя файла - использование переменных %%]
 '! Parameters  (Переменные):   strFileName (String)
 '!--------------------------------------------------------------------------------
-Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As String
+Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As String
 
-    Dim R         As String
-    Dim str_OSVer As String
-    Dim str_OSBit As String
-    Dim str_DATE  As String
+    Dim R            As String
+    Dim str_OSVer    As String
+    Dim str_OSBit    As String
+    Dim str_DATE     As String
+    Dim str_PCMODEL  As String
 
     If InStr(strFileName, strPercentage) Then
         ' Макроподстановка версия ОС %OSVer%
@@ -498,19 +499,21 @@ Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As Stri
         End If
 
         ' Макроподстановка ДАТА %DATE%
-        str_DATE = Replace$(CStr(Now()), ".", "-")
-        str_DATE = SafeDir(str_DATE)
+        str_DATE = SafeDir(Replace$(CStr(Now()), ".", "-"))
+        ' Макроподстановка %PCMODEL%
+        str_PCMODEL = SafeDir(Replace$(strCompModel, "_", "-"))
+        
         ' Замена макросов значениями
         R = strFileName
         R = Replace$(R, "%PCNAME%", strCompModel, , , vbTextCompare)
-        R = Replace$(R, "%PCMODEL%", Replace$(strCompModel, strSpace, "-"))
+        R = Replace$(R, "%PCMODEL%", str_PCMODEL, , , vbTextCompare)
         R = Replace$(R, "%OSVer%", str_OSVer, , , vbTextCompare)
         R = Replace$(R, "%OSBit%", str_OSBit, , , vbTextCompare)
         R = Replace$(R, "%DATE%", str_DATE, , , vbTextCompare)
         R = Trim$(R)
-        ExpandFileNameByEnvironment = R
+        ExpandFileNamebyEnvironment = R
     Else
-        ExpandFileNameByEnvironment = strFileName
+        ExpandFileNamebyEnvironment = strFileName
     End If
 
 End Function
@@ -1291,27 +1294,63 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function SafeDir(ByVal str As String) As String
 
-    Dim R As String
-
-    R = str
-    R = Replace$(R, vbBackslash, "_")
-    R = Replace$(R, "/", "-")
-    R = Replace$(R, "*", "_")
-    R = Replace$(R, ":", "_")
-    R = Replace$(R, ";", "_")
-    R = Replace$(R, "?", "_")
-    R = Replace$(R, ">", "_")
-    R = Replace$(R, "<", "_")
-    R = Replace$(R, "|", "_")
-    R = Replace$(R, "@", "_")
-    R = Replace$(R, "'", "")
-    R = Replace$(R, strSpace, "_")
-    R = Replace$(R, "_-_", "_")
-    R = Replace$(R, "(R)", "_")
-    R = Replace$(R, "___", "_")
-    R = Replace$(R, "__", "_")
-    R = Trim$(R)
-    SafeDir = R
+    If InStr(str, vbBackslash) Then
+        str = Replace$(str, vbBackslash, "-")
+    End If
+    
+    If InStr(str, "/") Then
+        str = Replace$(str, "/", "-")
+    End If
+    
+    If InStr(str, "*") Then
+        str = Replace$(str, "*", "-")
+    End If
+    
+    If InStr(str, ":") Then
+        str = Replace$(str, ":", "-")
+    End If
+    
+    If InStr(str, "?") Then
+        str = Replace$(str, "?", "-")
+    End If
+    
+    If InStr(str, ">") Then
+       str = Replace$(str, ">", "-")
+    End If
+    
+    If InStr(str, "<") Then
+        str = Replace$(str, "<", "-")
+    End If
+    
+    If InStr(str, "|") Then
+        str = Replace$(str, "|", "-")
+    End If
+    
+    If InStr(str, "@") Then
+        str = Replace$(str, "@", "-")
+    End If
+    
+    If InStr(str, "'") Then
+        str = Replace$(str, "'", vbNullString)
+    End If
+        
+    If InStr(str, strSpace) Then
+        str = Replace$(str, strSpace, "-")
+    End If
+    
+    If InStr(str, "(R)") Then
+        str = Replace$(str, "(R)", "-")
+    End If
+        
+    If InStr(str, "---") Then
+        str = Replace$(str, "---", "-")
+    End If
+    
+    If InStr(str, "--") Then
+        str = Replace$(str, "--", "-")
+    End If
+        
+    SafeDir = Trim$(str)
 End Function
 
 '!--------------------------------------------------------------------------------

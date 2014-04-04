@@ -384,34 +384,40 @@ End Sub
 Private Sub GenerateThankyou(ByVal thxText As String, Optional ByVal creditURL As String = vbNullString)
     'Because I now have too many people to thank, it's necessary to split the list into multiple columns
     Dim columnLimit As Long
-    Dim thxOffset As Long
+    Dim thxOffset   As Long
 
     'Generate a new label
     Load lblThanks(lngCurCredit)
     
-    columnLimit = 5
+    columnLimit = 7
     thxOffset = 750
 
     With lblThanks(lngCurCredit)
 
         If lngCurCredit = 1 Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 30 + thxOffset
         ElseIf lngCurCredit < columnLimit Then
             .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 30 + thxOffset
         ElseIf lngCurCredit = columnLimit Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit - 1).Top - lblThanks(0).Top)
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60 - (lblThanks(columnLimit - 1).Top - lblThanks(0).Top)
             .Left = lblThanks(0).Left + 2700 + thxOffset
         ElseIf lngCurCredit < columnLimit * 2 - 1 Then
             .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 2700 + thxOffset
         ElseIf lngCurCredit = columnLimit * 2 - 1 Then
-            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 300 - (lblThanks(columnLimit * 2 - 2).Top - lblThanks(0).Top)
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60 - (lblThanks(columnLimit * 2 - 2).Top - lblThanks(0).Top)
             .Left = lblThanks(0).Left + 5400 + thxOffset
-        Else
+        ElseIf lngCurCredit < columnLimit * 3 - 1 Then
             .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
             .Left = lblThanks(0).Left + 5400 + thxOffset
+        ElseIf lngCurCredit = columnLimit * 3 - 1 Then
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60 - (lblThanks(columnLimit * 3 - 3).Top - lblThanks(0).Top)
+            .Left = lblThanks(0).Left + 8100 + thxOffset
+        Else
+            .Top = lblThanks(lngCurCredit - 1).Top + lblThanks(lngCurCredit - 1).Height + 60
+            .Left = lblThanks(0).Left + 8100 + thxOffset
         End If
 
         .Caption = thxText
@@ -442,6 +448,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadThankYou()
     lngCurCredit = 1
+    
     GenerateThankyou "SamLab", "http://driveroff.net/"
     GenerateThankyou "OSzone.net forum's users", "http://forum.oszone.net/forum-62.html"
     ' Replacement CommonControls (TextBoxW, ListView, ComboBoxW, ListBoxW, ProgressBar, ToolTip, ImageList, OptionButtonW,RichTextBox, CheckBoxW, LabelW, SpinBox)
@@ -462,9 +469,6 @@ Private Sub LoadThankYou()
     'Team HomeWork
     ' Timed MessageBox
     GenerateThankyou "Anirudha Vengurlekar", "anirudhav@yahoo.com"
-    ' SortDMArray
-    GenerateThankyou "Ellis Dee"
-    GenerateThankyou "Zhu JinYong"
     'AnimateForm
     GenerateThankyou "Jim Jose", "jimjosev33@yahoo.com"
     'MD5
@@ -473,7 +477,9 @@ Private Sub LoadThankYou()
     GenerateThankyou "Giorgio Brausi", "http://nuke.vbcorner.net/"
     'Unicode String Array Sorting Class - cBlizzard.cls
     GenerateThankyou "Rohan Edwards aka Rd", "http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=72576&lngWId=1"
-    
+    ' SortDMArray
+    GenerateThankyou "Ellis Dee"
+    GenerateThankyou "Zhu JinYong"
 End Sub
 
 '!--------------------------------------------------------------------------------
