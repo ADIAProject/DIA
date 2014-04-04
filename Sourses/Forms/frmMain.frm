@@ -1717,7 +1717,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
             Else
                 strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
             End If
-
+            
             If LenB(strTextHwids) Then
                 ChangeStatusAndPictureButton = strTextHwids
                 If mbDebugStandart Then DebugMode str4VbTab & "ChangeStatusAndPictureButton-Hwids in file for PC: " & str2vbNewLine & strTextHwids & vbNewLine
@@ -1801,7 +1801,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                 .DropDownEnable = False
 
                 If mbUnSuppOS Then
-                    ChangeStatusAndPictureButton = "Unsupported"
+                    ChangeStatusAndPictureButton = "unsupported"
                 End If
             End If
 
@@ -2319,7 +2319,7 @@ CheckVerByMarkersArch:
             strSection_x = Split(strSection, ".")
             strSectionMain = strSection_x(0)
 
-            If strOSCurrentVersion <> "5.0" Then
+            If StrComp(strOSCurrentVersion, "5.0") <> 0 Then
                 Set objRegExpCompat = New RegExp
 
                 With objRegExpCompat
@@ -4748,7 +4748,6 @@ Private Sub lblOsInfoChange()
     End If
 
     lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOSInfo.Caption)
-    'lblOsInfo.Caption = lblOsInfoCaption & strSpace & OSInfoWMI(0) & strSpace & " (" & OSInfoWMI(4) & "." & OSInfoWMI(1) & strSpace & OSInfoWMI(2) & ")" & str64bit
     lblOSInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
 End Sub
 
@@ -5600,12 +5599,13 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
     Dim maxLengthRow9          As String
     Dim TimeScriptRun          As Long
     Dim TimeScriptFinish       As Long
+    Dim objTT                  As TipTool
+    Dim mbObjTTNotExist        As Boolean
 
     If mbDebugStandart Then DebugMode str3VbTab & "ReadOrSaveToolTip - Start - Driverpack: " & strPackFileName
     TimeScriptRun = GetTickCount
     ' Небольшое прерывание для большего отклика от приложения
     DoEvents
-
 
     If LenB(strPackFileName) Then
         ' Всплывающая подсказка
@@ -5625,6 +5625,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                 If Not mbDP_Is_aFolder Then
                     strTTipTextHeadersTemp = (strPathDRP & str2vbNewLine & strPackFileName & vbNewLine) & (strTTipTextFileSize & strSpace & FileSizeApi(strPackFileNameFull) & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName)
                 Else
+                    ' Пока уберем подсчет размера директории, так как очень медленно
                     'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & FolderSizeApi(strPackFileNameFull, True) & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName
                     strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName
                 End If
@@ -5634,8 +5635,8 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             If Not mbDP_Is_aFolder Then
                 strTTipTextHeadersTemp = (strPathDRP & str2vbNewLine & strPackFileName) & (vbNewLine & strTTipTextFileSize & strSpace & FileSizeApi(strPackFileNameFull))
             Else
-                'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & FolderSizeApi(strPackFileNameFull, True)
                 ' Пока уберем подсчет размера директории, так как очень медленно
+                'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & FolderSizeApi(strPackFileNameFull, True)
                 strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName
             End If
         End If
@@ -5655,62 +5656,67 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
         strTTipTextOnlyDrivers = strTTipTextTemp
 
         If LenB(strTTipTextTemp) Then
-            If strTTipTextTemp <> "Unsupported" And InStr(strTTipTextTemp, "|") Then
+            If StrComp(strTTipTextTemp, "unsupported") <> 0 Then
+                If InStr(strTTipTextTemp, "|") Then
 
-                'Формируем шапку для подсказки
-                If mbReloadToolTip Then
-                    strTTipSizeHeader_x = Split(arrTTipSize(Index), ";")
-                    maxLengthRow1 = lngTableHwidHeader1
-                    maxLengthRow2 = lngTableHwidHeader2
-                    maxLengthRow4 = lngTableHwidHeader4
-                    maxLengthRow9 = lngTableHwidHeader9
-                    maxLengthRow5 = lngTableHwidHeader5
-                    maxLengthRow6 = lngTableHwidHeader6
-                    maxSizeRowAllLine = strTTipSizeHeader_x(0)
-                    lngSizeRow1 = strTTipSizeHeader_x(1)
-                    lngSizeRow2 = strTTipSizeHeader_x(2)
-                    lngSizeRow4 = strTTipSizeHeader_x(4)
-                    lngSizeRow9 = strTTipSizeHeader_x(5)
-                    lngSizeRow5 = strTTipSizeHeader_x(6)
-                    lngSizeRow6 = strTTipSizeHeader_x(7)
-
-                    If lngSizeRow1 < maxLengthRow1 Then
-                        lngSizeRow1 = maxLengthRow1
+                    'Формируем шапку для подсказки
+                    If mbReloadToolTip Then
+                        strTTipSizeHeader_x = Split(arrTTipSize(Index), ";")
+                        maxLengthRow1 = lngTableHwidHeader1
+                        maxLengthRow2 = lngTableHwidHeader2
+                        maxLengthRow4 = lngTableHwidHeader4
+                        maxLengthRow9 = lngTableHwidHeader9
+                        maxLengthRow5 = lngTableHwidHeader5
+                        maxLengthRow6 = lngTableHwidHeader6
+                        maxSizeRowAllLine = strTTipSizeHeader_x(0)
+                        lngSizeRow1 = strTTipSizeHeader_x(1)
+                        lngSizeRow2 = strTTipSizeHeader_x(2)
+                        lngSizeRow4 = strTTipSizeHeader_x(3)
+                        lngSizeRow9 = strTTipSizeHeader_x(4)
+                        lngSizeRow5 = strTTipSizeHeader_x(5)
+                        lngSizeRow6 = strTTipSizeHeader_x(6)
+    
+                        If lngSizeRow1 < maxLengthRow1 Then
+                            lngSizeRow1 = maxLengthRow1
+                        End If
+    
+                        If lngSizeRow2 < maxLengthRow2 Then
+                            lngSizeRow2 = maxLengthRow2
+                        End If
+    
+                        If lngSizeRow4 < maxLengthRow4 Then
+                            lngSizeRow4 = maxLengthRow4
+                        End If
+    
+                        If lngSizeRow5 < maxLengthRow5 Then
+                            lngSizeRow5 = maxLengthRow5
+                        End If
+    
+                        If lngSizeRow6 < maxLengthRow6 Then
+                            lngSizeRow6 = maxLengthRow6
+                        End If
+    
+                        If lngSizeRow9 < maxLengthRow9 Then
+                            lngSizeRow9 = maxLengthRow9
+                        End If
                     End If
-
-                    If lngSizeRow2 < maxLengthRow2 Then
-                        lngSizeRow2 = maxLengthRow2
-                    End If
-
-                    If lngSizeRow4 < maxLengthRow4 Then
-                        lngSizeRow4 = maxLengthRow4
-                    End If
-
-                    If lngSizeRow5 < maxLengthRow5 Then
-                        lngSizeRow5 = maxLengthRow5
-                    End If
-
-                    If lngSizeRow6 < maxLengthRow6 Then
-                        lngSizeRow6 = maxLengthRow6
-                    End If
-
-                    If lngSizeRow9 < maxLengthRow9 Then
-                        lngSizeRow9 = maxLengthRow9
-                    End If
+    
+                    strTTipTextHeaders = strTTipTextHeadersTemp & str2vbNewLine & _
+                                         strTTipTextDrv2Install & vbNewLine & _
+                                         String$(maxSizeRowAllLine, "-") & vbNewLine & _
+                                         UCase$(strTableHwidHeader1 & Space$(lngSizeRow1 - lngTableHwidHeader1 + 1) & "| " & _
+                                         strTableHwidHeader2 & Space$(lngSizeRow2 - lngTableHwidHeader2 + 1) & "| " & _
+                                         strTableHwidHeader4 & Space$(lngSizeRow4 - lngTableHwidHeader4 + 1) & "| " & _
+                                         strTableHwidHeader9 & Space$(lngSizeRow9 - lngTableHwidHeader9 + 1) & "| " & _
+                                         strTableHwidHeader5 & Space$(lngSizeRow5 - lngTableHwidHeader5 + 1) & "| " & _
+                                         strTableHwidHeader6 & Space$(lngSizeRow6 - lngTableHwidHeader6 + 1) & "| " & _
+                                         strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLine, "-") & vbNewLine
+                    'Текст итоговой подсказки
+                    strTTipText = strTTipTextHeaders & strTTipTextTemp & vbNewLine & String$(maxSizeRowAllLine, "-")
+                Else
+                    strTTipText = strTTipTextHeadersTemp & str2vbNewLine & strTTipTextDrv4UnsupOS
+                    strTTipTextOnlyDrivers = strTTipTextDrv4UnsupOS
                 End If
-
-                strTTipTextHeaders = strTTipTextHeadersTemp & str2vbNewLine & _
-                                     strTTipTextDrv2Install & vbNewLine & _
-                                     String$(maxSizeRowAllLine, "-") & vbNewLine & _
-                                     UCase$(strTableHwidHeader1 & Space$(lngSizeRow1 - lngTableHwidHeader1 + 1) & "| " & _
-                                     strTableHwidHeader2 & Space$(lngSizeRow2 - lngTableHwidHeader2 + 1) & "| " & _
-                                     strTableHwidHeader4 & Space$(lngSizeRow4 - lngTableHwidHeader4 + 1) & "| " & _
-                                     strTableHwidHeader9 & Space$(lngSizeRow9 - lngTableHwidHeader9 + 1) & "| " & _
-                                     strTableHwidHeader5 & Space$(lngSizeRow5 - lngTableHwidHeader5 + 1) & "| " & _
-                                     strTableHwidHeader6 & Space$(lngSizeRow6 - lngTableHwidHeader6 + 1) & "| " & _
-                                     strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLine, "-") & vbNewLine
-                'Текст итоговой подсказки
-                strTTipText = strTTipTextHeaders & strTTipTextTemp & vbNewLine & String$(maxSizeRowAllLine, "-")
             Else
                 strTTipText = strTTipTextHeadersTemp & str2vbNewLine & strTTipTextDrv4UnsupOS
                 strTTipTextOnlyDrivers = strTTipTextDrv4UnsupOS
@@ -5730,8 +5736,21 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                 If mbDebugStandart Then DebugMode (str4VbTab & "ReadOrSaveToolTip: strTTipText=" & vbNewLine & "=========================================================================================" & vbNewLine) & strTTipText
             End If
         End If
-
-        TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
+        
+        ' Создание/изменение подсказки
+        ' В цикле проходит все подсказки и проверяем, создавалась ли такая подсказка ранее для данного контрола
+        For Each objTT In TT.Tools
+            If StrComp(objTT.hWnd, acmdPackFiles(Index).hWnd) = 0 Then
+                ' Если создавалась, то меняем текст
+                mbObjTTNotExist = True
+                objTT.Text = strTTipText
+                Exit For
+            End If
+        Next
+        ' Если подсказка не найдена, то создаем новую
+        If Not mbObjTTNotExist Then
+            TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
+        End If
         
         TimeScriptFinish = GetTickCount
         If mbDebugStandart Then DebugMode str3VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
@@ -7184,7 +7203,7 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
     ButtCount = acmdPackFiles.Count
     ' Отображаем ProgressBar
     CreateProgressNew
-
+        
     If ButtIndex Then
         ' В цикле обрабатываем обновление
         miPbInterval = 1000 / ButtCount
@@ -7209,21 +7228,17 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
 
                 If Not mbReloadTT Then
                     ' Кнопка выглядит нажатой
-                    Set .PictureNormal = imgUpdBD.Picture
-                    
                     .Value = True
                     
+                    Set .PictureNormal = imgUpdBD.Picture
+                                        
                     strPackFileName = .Tag
                     ChangeStatusTextAndDebug "(" & i + 1 & strSpace & strMessages(124) & strSpace & ButtCount & "): " & strMessages(89) & strSpace & strPackFileName
                     ' Обновление подсказки
-                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
-                    ' Кнопка выглядит отжатой
-                    
-                    '.Value = False
-                    
+                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i, True
                 Else
                     strPackFileName = .Tag
-                    ' Обновление подсказки
+                    ' Только обновление подсказки (используется при смене языка, для изменения шапки таблицы в подсказке)
                     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i, , True
                 End If
 
@@ -7301,6 +7316,7 @@ Public Sub UpdateStatusButtonTAB()
     DoEvents
     AllTimeScriptRun = vbNullString
     TimeScriptRun = GetTickCount
+    
     ' Отображаем ProgressBar
     CreateProgressNew
 
@@ -7335,17 +7351,15 @@ Public Sub UpdateStatusButtonTAB()
 
             With acmdPackFiles(i)
                 ' Кнопка выглядит нажатой
-                Set .PictureNormal = imgUpdBD.Picture
                 .Value = True
+                
+                Set .PictureNormal = imgUpdBD.Picture
                 
                 strPackFileName = .Tag
                 ChangeStatusTextAndDebug "(" & lngCurrBtn & strSpace & strMessages(124) & strSpace & lngSummBtn & "): " & strMessages(89) & strSpace & strPackFileName
                 ' Обновление подсказки
                 ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
-                
-                ' Кнопка выглядит отжатой
-                '.Value = False
-                
+                                
             End With
 
             miPbNext = miPbNext + miPbInterval
