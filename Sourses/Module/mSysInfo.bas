@@ -103,7 +103,6 @@ Public Function GetMB_Manufacturer() As String
     Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
 
     For Each objItem In colItems
-
         sAnsBaseBoard = sAnsBaseBoard & objItem.Manufacturer
     Next
 
@@ -195,18 +194,26 @@ Public Function GetMBInfo() As String
 
     Dim strMB_Manufacturer As String
     Dim strMB_Model        As String
+    Dim mbMB_Model         As Boolean
+    Dim mbMB_Manufacturer  As Boolean
 
     strMB_Manufacturer = GetMB_Manufacturer()
     strMB_Model = GetMB_Model()
+    mbMB_Model = LenB(strMB_Model)
+    mbMB_Manufacturer = LenB(strMB_Manufacturer)
 
-    If LenB(strMB_Manufacturer) And LenB(strMB_Model) Then
-        GetMBInfo = strMB_Manufacturer & "-" & strMB_Model
-    ElseIf LenB(strMB_Manufacturer) = 0 And LenB(strMB_Model) Then
-        GetMBInfo = strMB_Model
-    ElseIf LenB(strMB_Manufacturer) And LenB(strMB_Model) = 0 Then
-        GetMBInfo = strMB_Manufacturer
+    If mbMB_Manufacturer Then
+        If mbMB_Model Then
+            GetMBInfo = strMB_Manufacturer & "-" & strMB_Model
+        Else
+            GetMBInfo = strMB_Manufacturer
+        End If
     Else
-        GetMBInfo = "Unknown"
+        If mbMB_Model Then
+            GetMBInfo = strMB_Model
+        Else
+            GetMBInfo = "Unknown"
+        End If
     End If
     
     If InStr(GetMBInfo, "_") Then
