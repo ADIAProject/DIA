@@ -3075,8 +3075,10 @@ Private Sub DelDuplicateOldDP()
                             strResult = CompareByVersion(strVerDP_1, strVerDP_2)
 
                             If StrComp(strResult, "=") = 0 Then
-                                If LenB(strVerDP_1_1) And LenB(strVerDP_1_1) Then
-                                    strResult2 = CompareByVersion(strVerDP_1_1, strVerDP_2_1)
+                                If LenB(strVerDP_1_1) Then
+                                    If LenB(strVerDP_1_1) Then
+                                        strResult2 = CompareByVersion(strVerDP_1_1, strVerDP_2_1)
+                                    End If
                                 End If
 
                                 strResult = strResult2
@@ -9558,15 +9560,15 @@ Private Sub mnuSaveInfoPC_Click()
         .DialogTitle = strMessages(151)
         If mbIsNotebok Then
             If Not OSCurrVersionStruct.ClientOrServer Then
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%")
+                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%")
             Else
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%")
+                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%")
             End If
         Else
             If Not OSCurrVersionStruct.ClientOrServer Then
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%")
+                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%")
             Else
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
+                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
             End If
         End If
 

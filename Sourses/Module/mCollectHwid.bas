@@ -88,8 +88,12 @@ Public Sub CollectHwidFromReestr()
             ConvertDate2Rus strDateDRV
         End If
 
-        If LenB(strDateDRV) And LenB(strVersionDRV) Then
-            strVersionDRV = strDateDRV & "," & strVersionDRV
+        If LenB(strDateDRV) Then
+            If LenB(strVersionDRV) Then
+                strVersionDRV = strDateDRV & "," & strVersionDRV
+            Else
+                strVersionDRV = "unknown"
+            End If
         Else
             strVersionDRV = "unknown"
         End If

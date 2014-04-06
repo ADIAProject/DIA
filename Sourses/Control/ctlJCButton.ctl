@@ -1562,93 +1562,117 @@ Private Sub CalcPicRects()
 
         With m_PicRect
 
-            If LenB(Trim$(m_Caption)) And m_PictureAlign <> epBackGround Then
+            If LenB(Trim$(m_Caption)) Then
+                If m_PictureAlign <> epBackGround Then
 
-                Select Case m_PictureAlign
-
-                    Case epLeftEdge
-                        .Left = 4
-                        .Top = (lh - PicH) \ 2
-
-                        If m_CheckExist Then
-                            .Left = .Left + 16
-                            '.Right = .Right - m_PictureWidth - 13
-                        End If
-            
-                        If m_PicRect.Left < 0 Then
-                            OffsetRect m_PicRect, PicW, 0
-                            OffsetRect m_TextRect, PicW, 0
-                        End If
-
-                    Case epLeftOfCaption
-                        .Left = m_TextRect.Left - PicW - 4
-                        .Top = (lh - PicH) \ 2
-
-                    Case epRightEdge
-                        .Left = lw - PicW - 3
-                        .Top = (lh - PicH) \ 2
-
-                        ' --If picture overlaps text
-                        If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                            OffsetRect m_PicRect, -16, 0
-                        End If
-
-                        If .Left < m_TextRect.Right + 2 Then
-                            .Left = m_TextRect.Right + 2
-                        End If
-
-                    Case epRightOfCaption
-                        .Left = m_TextRect.Right + 4
-                        .Top = (lh - PicH) \ 2
-
-                        If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                            OffsetRect m_PicRect, -16, 0
-                        End If
-
-                        ' --If picture overlaps text
-                        If .Left < m_TextRect.Right + 2 Then
-                            .Left = m_TextRect.Right + 2
-                        End If
-
-                    Case epTopOfCaption
-                        .Left = (lw - PicW) \ 2
-                        .Top = m_TextRect.Top - PicH - 2
-
-                        If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                            OffsetRect m_PicRect, -8, 0
-                        End If
-
-                    Case epTopEdge
-                        .Left = (lw - PicW) \ 2
-                        .Top = 4
-
-                        If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                            OffsetRect m_PicRect, -8, 0
-                        End If
-
-                    Case epBottomOfCaption
-                        .Left = (lw - PicW) \ 2
-                        .Top = m_TextRect.Bottom + 2
-
-                        If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                            OffsetRect m_PicRect, -8, 0
-                        End If
-
-                    Case epBottomEdge
-                        .Left = (lw - PicW) \ 2
-                        .Top = lh - PicH - 4
-
-                        If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                            OffsetRect m_PicRect, -8, 0
-                        End If
-
-                End Select
-
+                    Select Case m_PictureAlign
+    
+                        Case epLeftEdge
+                            .Left = 4
+                            .Top = (lh - PicH) \ 2
+    
+                            If m_CheckExist Then
+                                .Left = .Left + 16
+                                '.Right = .Right - m_PictureWidth - 13
+                            End If
+                
+                            If m_PicRect.Left < 0 Then
+                                OffsetRect m_PicRect, PicW, 0
+                                OffsetRect m_TextRect, PicW, 0
+                            End If
+    
+                        Case epLeftOfCaption
+                            .Left = m_TextRect.Left - PicW - 4
+                            .Top = (lh - PicH) \ 2
+    
+                        Case epRightEdge
+                            .Left = lw - PicW - 3
+                            .Top = (lh - PicH) \ 2
+    
+                            ' --If picture overlaps text
+                            If m_bDropDownSep Then
+                                OffsetRect m_PicRect, -16, 0
+                            ElseIf m_DropDownSymbol <> ebsNone Then
+                                OffsetRect m_PicRect, -16, 0
+                            End If
+    
+                            If .Left < m_TextRect.Right + 2 Then
+                                .Left = m_TextRect.Right + 2
+                            End If
+    
+                        Case epRightOfCaption
+                            .Left = m_TextRect.Right + 4
+                            .Top = (lh - PicH) \ 2
+    
+                            If m_bDropDownSep Then
+                                OffsetRect m_PicRect, -16, 0
+                            ElseIf m_DropDownSymbol <> ebsNone Then
+                                OffsetRect m_PicRect, -16, 0
+                            End If
+    
+                            ' --If picture overlaps text
+                            If .Left < m_TextRect.Right + 2 Then
+                                .Left = m_TextRect.Right + 2
+                            End If
+    
+                        Case epTopOfCaption
+                            .Left = (lw - PicW) \ 2
+                            .Top = m_TextRect.Top - PicH - 2
+    
+                            If m_bDropDownSep Then
+                                OffsetRect m_PicRect, -8, 0
+                            ElseIf m_DropDownSymbol <> ebsNone Then
+                                OffsetRect m_PicRect, -8, 0
+                            End If
+    
+                        Case epTopEdge
+                            .Left = (lw - PicW) \ 2
+                            .Top = 4
+    
+                            If m_bDropDownSep Then
+                                OffsetRect m_PicRect, -8, 0
+                            ElseIf m_DropDownSymbol <> ebsNone Then
+                                OffsetRect m_PicRect, -8, 0
+                            End If
+    
+                        Case epBottomOfCaption
+                            .Left = (lw - PicW) \ 2
+                            .Top = m_TextRect.Bottom + 2
+    
+                            If m_bDropDownSep Then
+                                OffsetRect m_PicRect, -8, 0
+                            ElseIf m_DropDownSymbol <> ebsNone Then
+                                OffsetRect m_PicRect, -8, 0
+                            End If
+    
+                        Case epBottomEdge
+                            .Left = (lw - PicW) \ 2
+                            .Top = lh - PicH - 4
+    
+                            If m_bDropDownSep Then
+                                OffsetRect m_PicRect, -8, 0
+                            ElseIf m_DropDownSymbol <> ebsNone Then
+                                OffsetRect m_PicRect, -8, 0
+                            End If
+    
+                    End Select
+                Else
+                    .Left = (lw - PicW) \ 2
+                    .Top = (lh - PicH) \ 2
+    
+                    If m_bDropDownSep Then
+                        OffsetRect m_PicRect, -8, 0
+                    ElseIf m_DropDownSymbol <> ebsNone Then
+                        OffsetRect m_PicRect, -8, 0
+                    End If
+                End If
             Else
                 .Left = (lw - PicW) \ 2
                 .Top = (lh - PicH) \ 2
 
-                If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
+                If m_bDropDownSep Then
+                    OffsetRect m_PicRect, -8, 0
+                ElseIf m_DropDownSymbol <> ebsNone Then
                     OffsetRect m_PicRect, -8, 0
                 End If
             End If

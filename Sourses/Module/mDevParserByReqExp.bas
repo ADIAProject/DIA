@@ -179,7 +179,11 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         Else
 
             ' Архиватор отработал на все 100%? Если нет то сообщаем
-            If lngExitProc = 2 Or lngExitProc = 7 Or lngExitProc = 255 Then
+            If lngExitProc = 2 Then
+                MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
+            ElseIf lngExitProc = 7 Then
+                MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
+            ElseIf lngExitProc = 255 Then
                 MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
             End If
 
