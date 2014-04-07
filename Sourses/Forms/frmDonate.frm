@@ -33,7 +33,7 @@ Begin VB.Form frmDonate
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -79,12 +79,12 @@ Begin VB.Form frmDonate
       Left            =   120
       TabIndex        =   1
       Top             =   5400
-      Width           =   2000
-      _ExtentX        =   3519
+      Width           =   2100
+      _ExtentX        =   3704
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -103,15 +103,15 @@ Begin VB.Form frmDonate
    End
    Begin prjDIADBS.ctlJCbutton cmdPayPal 
       Height          =   855
-      Left            =   2220
+      Left            =   2340
       TabIndex        =   2
       Top             =   5400
-      Width           =   2000
-      _ExtentX        =   3519
+      Width           =   2100
+      _ExtentX        =   3704
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False
@@ -131,15 +131,15 @@ Begin VB.Form frmDonate
    End
    Begin prjDIADBS.ctlJCbutton cmdYandexMoney 
       Height          =   855
-      Left            =   4380
+      Left            =   4560
       TabIndex        =   3
       Top             =   5400
-      Width           =   1815
-      _ExtentX        =   3201
+      Width           =   2100
+      _ExtentX        =   3704
       _ExtentY        =   1508
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
-         Size            =   8.25
+         Size            =   9
          Charset         =   204
          Weight          =   400
          Underline       =   0   'False

@@ -1248,7 +1248,10 @@ End Sub
 Private Sub UserControl_Hide()
 If Not PropListItems Is Nothing Then
     On Error Resume Next
-    If UserControl.Parent Is Nothing Then Set PropListItems = Nothing
+    If UserControl.Parent Is Nothing Then
+        Set PropListItems = Nothing
+        Set PropColumnHeaders = Nothing
+    End If
     On Error GoTo 0
 End If
 End Sub
@@ -2797,6 +2800,7 @@ Friend Property Get FListItemIndentation(ByVal Index As Long) As Long
 If ListViewHandle <> 0 Then
     Dim LVI As LVITEM
     LVI.Mask = LVIF_INDENT
+    LVI.iItem = Index - 1
     SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI)
     FListItemIndentation = LVI.iIndent
 End If
@@ -2806,6 +2810,7 @@ Friend Property Let FListItemIndentation(ByVal Index As Long, ByVal Value As Lon
 If ListViewHandle <> 0 Then
     Dim LVI As LVITEM
     LVI.Mask = LVIF_INDENT
+    LVI.iItem = Index - 1
     LVI.iIndent = Value
     SendMessage ListViewHandle, LVM_SETITEM, 0, ByVal VarPtr(LVI)
 End If
@@ -3131,7 +3136,7 @@ CopyMemory ByVal UnsignedAdd(SubPtr, 22), Value, 4
 End Property
 
 Public Property Get ColumnHeaders() As LvwColumnHeaders
-Attribute ColumnHeaders.VB_Description = "Returns a reference to a collection of the column objects."
+Attribute ColumnHeaders.VB_Description = "Returns a reference to a collection of the column header objects."
 If PropColumnHeaders Is Nothing Then
     Set PropColumnHeaders = New LvwColumnHeaders
     PropColumnHeaders.FInit Me
@@ -3139,7 +3144,7 @@ End If
 Set ColumnHeaders = PropColumnHeaders
 End Property
 
-Friend Sub FColumnHeadersAdd(Optional ByVal Index As Long, Optional ByVal Text As String, Optional ByVal Width As Single, Optional ByVal Alignment As LvwColumnHeaderAlignmentConstants, Optional ByVal Icon As Long)
+Friend Sub FColumnHeadersAdd(ByVal Index As Long, Optional ByVal Text As String, Optional ByVal Width As Single, Optional ByVal Alignment As LvwColumnHeaderAlignmentConstants, Optional ByVal Icon As Long)
 Dim ColumnHeaderIndex As Long
 If Index = 0 Then
     ColumnHeaderIndex = Me.ColumnHeaders.Count + 1

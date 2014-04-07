@@ -22,7 +22,7 @@ PropKey = Key
 End Sub
 
 Public Property Get Index() As Long
-Attribute Index.VB_Description = "Returns the index in the collection of the column."
+Attribute Index.VB_Description = "Returns the index in the collection of the column header."
 Index = PropIndex
 End Property
 

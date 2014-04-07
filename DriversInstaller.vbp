@@ -1,6 +1,6 @@
 Type=Exe
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#C:\WINDOWS\system32\STDOLE2.TLB#OLE Automation
-Reference=*\G{5B1EACE0-EDEB-11E1-AFF1-0800200C9A66}#1.0#0#C:\WINDOWS\system32\OLEGuids.tlb#OLE Guid and interface definitions
+Reference=*\G{5B1EACE0-EDEB-11E1-AFF1-0800200C9A66}#1.0#0#Sourses\ComCtlsDemo\OLEGuids\OLEGuids.tlb#OLE Guid and interface definitions
 Reference=*\G{3F4DACA7-160D-11D2-A8E9-00104B365C9F}#5.5#0#C:\WINDOWS\system32\vbscript.dll\3#Microsoft VBScript Regular Expressions 5.5
 Reference=*\G{420B2830-E718-11CF-893D-00A0C9054228}#1.0#0#C:\WINDOWS\system32\scrrun.dll#Microsoft Scripting Runtime
 Reference=*\G{F5078F18-C551-11D3-89B9-0000F81FE221}#3.0#0#c:\WINDOWS\system32\msxml3.dll#Microsoft XML, v3.0
