@@ -113,42 +113,53 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub LoadNotebookList()
 
-    ReDim arrNotebookFilterListDef(35)
+    ReDim arrNotebookFilterListDef(21)
 
-    arrNotebookFilterListDef(0) = "3Q;*3q*"
-    arrNotebookFilterListDef(1) = "Acer;*acer*;*emachines*;*packard*bell*;*gateway*"
-    arrNotebookFilterListDef(2) = "Apple;*apple*"
-    arrNotebookFilterListDef(3) = "Asus;*asus*"
-    arrNotebookFilterListDef(4) = "BenQ;*benq*"
-    arrNotebookFilterListDef(5) = "Clevo;*clevo*"
-    arrNotebookFilterListDef(6) = "Dell;*dell*;*alienware*"
-    arrNotebookFilterListDef(7) = "Eurocom;*eurocom*"
-    arrNotebookFilterListDef(8) = "Fujitsu;*fujitsu*;*sieme*"
-    arrNotebookFilterListDef(9) = "Getac;*getac*"
-    arrNotebookFilterListDef(10) = "Gigabyte;*gigabyte*;*ecs*;*elitegroup*"
-    arrNotebookFilterListDef(11) = "HP;*hp*;*hewle*;*compaq*"
-    arrNotebookFilterListDef(12) = "Intel;*intel*"
-    arrNotebookFilterListDef(13) = "Inventec;*inventec*"
-    arrNotebookFilterListDef(14) = "iRU;*iru*"
-    arrNotebookFilterListDef(15) = "Lenovo;*lenovo*;*compal*;*ibm*"
-    arrNotebookFilterListDef(16) = "LG;*lg*"
-    arrNotebookFilterListDef(17) = "Matsushita;*matsushita*"
-    arrNotebookFilterListDef(18) = "Mitac;*mitac*;*MTC*"
-    arrNotebookFilterListDef(19) = "MSI;*msi*;*micro-star*"
-    arrNotebookFilterListDef(20) = "NEC;*nec*"
-    arrNotebookFilterListDef(21) = "Panasonic;*panasonic*"
-    arrNotebookFilterListDef(22) = "Pegatron;*pegatron*"
-    arrNotebookFilterListDef(23) = "PROLiNK;*prolink*"
-    arrNotebookFilterListDef(24) = "Quanta;*quanta*"
-    arrNotebookFilterListDef(25) = "Roverbook;*roverbook*"
-    arrNotebookFilterListDef(26) = "Sager;*sager*"
-    arrNotebookFilterListDef(27) = "Samsung;*samsung*"
-    arrNotebookFilterListDef(28) = "Shuttle;*shuttle*"
-    arrNotebookFilterListDef(29) = "SiS;*sis*"
-    arrNotebookFilterListDef(30) = "Sony;*sony*;*vaio*"
-    arrNotebookFilterListDef(31) = "Toshiba;*toshiba*"
-    arrNotebookFilterListDef(32) = "ViewSonic;*viewsonic*;*ViewBook*;*viewbook*"
-    arrNotebookFilterListDef(33) = "VIZIO;*vizio*"
-    arrNotebookFilterListDef(34) = "Wistron;*wistron*"
+    arrNotebookFilterListDef(0) = "Acer;*acer*;*emachines*;*packard*bell*;*gateway*;*aspire*"
+    arrNotebookFilterListDef(1) = "Apple;*apple*"
+    arrNotebookFilterListDef(2) = "Asus;*asus*"
+    arrNotebookFilterListDef(3) = "Clevo;*clevo*;*eurocom*;*sager*;*iru*;*viewsonic*;*viewbook*"
+    arrNotebookFilterListDef(4) = "Dell;*dell*;*alienware*;*arima*;*jetway*;*gericom*"
+    arrNotebookFilterListDef(5) = "Fujitsu;*fujitsu*;*sieme*"
+    arrNotebookFilterListDef(6) = "Gigabyte;*gigabyte*;*ecs*;*elitegroup*;*roverbook*;*rover*"
+    arrNotebookFilterListDef(7) = "HP;*hp*;*hewle*;*compaq*"
+    arrNotebookFilterListDef(8) = "Intel;*intel*"
+    arrNotebookFilterListDef(9) = "Lenovo;*lenovo*;*compal*;*ibm*;*wistron*"
+    arrNotebookFilterListDef(10) = "LG;*lg*"
+    arrNotebookFilterListDef(11) = "MTC;*mitac*;*mtc*;*depo*;*getac*"
+    arrNotebookFilterListDef(12) = "MSI;*msi*;*micro-star*"
+    arrNotebookFilterListDef(13) = "Panasonic;*panasonic*;*matsushita*"
+    arrNotebookFilterListDef(14) = "Quanta;*quanta*;*prolink*;*nec*;*k-systems*;*benq*;*vizio*"
+    arrNotebookFilterListDef(15) = "Pegatron;*pegatron*;*medion*"
+    arrNotebookFilterListDef(16) = "Samsung;*samsung*"
+    arrNotebookFilterListDef(17) = "Shuttle;*shuttle*"
+    arrNotebookFilterListDef(18) = "Sony;*sony*;*vaio*"
+    arrNotebookFilterListDef(19) = "Toshiba;*toshiba*"
+    arrNotebookFilterListDef(20) = "Twinhead;*twinhead*;*durabook*"
+
 End Sub
 
+'Design by SamLab
+'[NotebookVendor]
+'FilterCount = 21
+'Filter_1=Acer;*acer*;*emachines*;*packard*bell*;*gateway*;*aspire*
+'Filter_2=Apple;*apple*
+'Filter_3=Asus;*asus*
+'Filter_4=Clevo;*clevo*;*eurocom*;*sager*;*iru*;*viewsonic*;*viewbook*
+'Filter_5=Dell;*dell*;*alienware*;*arima*;*jetway*;*gericom*
+'Filter_6=Fujitsu;*fujitsu*;*sieme*
+'Filter_7=Gigabyte;*gigabyte*;*ecs*;*elitegroup*;*roverbook*;*rover*
+'Filter_8=HP;*hp*;*hewle*;*compaq*
+'Filter_9=Intel;*intel*
+'Filter_10=Lenovo;*lenovo*;*compal*;*ibm*;*wistron*
+'Filter_11=LG;*lg*
+'Filter_12=MTC;*mitac*;*mtc*;*depo*;*getac*
+'Filter_13=MSI;*msi*;*micro-star*
+'Filter_14=Panasonic;*panasonic*;*matsushita*
+'Filter_15=Quanta;*quanta*;*prolink*;*nec*;*k-systems*;*benq*;*vizio*
+'Filter_16=Pegatron;*pegatron*;*medion*
+'Filter_17=Samsung;*samsung*
+'Filter_18=Shuttle;*shuttle*
+'Filter_19=Sony;*sony*;*vaio*
+'Filter_20=Toshiba;*toshiba*
+'Filter_21=Twinhead;*twinhead*;*durabook*
