@@ -2117,78 +2117,77 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
     If LenB(strDRVOSVer) = 0 Then
 CheckVerByMarkers:
 
-        Select Case strOSCurrentVersion
+        If StrComp(strOSCurrentVersion, "5.1") = 0 Then
 
-            Case "5.1"
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_51x64
+            Else
+                strRegExpMarkerPattern = strVer_51x86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_51x64
-                Else
-                    strRegExpMarkerPattern = strVer_51x86
-                End If
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_51xXX
 
-                strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_51xXX
+        ElseIf StrComp(strOSCurrentVersion, "6.1") = 0 Then
 
-            Case "6.1"
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_61x64
+            Else
+                strRegExpMarkerPattern = strVer_61x86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_61x64
-                Else
-                    strRegExpMarkerPattern = strVer_61x86
-                End If
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_61xXX
 
-                strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_61xXX
+        ElseIf StrComp(strOSCurrentVersion, "6.2") = 0 Then
 
-            Case "6.2"
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_62x64
+            Else
+                strRegExpMarkerPattern = strVer_62x86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_62x64
-                Else
-                    strRegExpMarkerPattern = strVer_62x86
-                End If
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_62xXX
 
-                strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_62xXX
+        ElseIf StrComp(strOSCurrentVersion, "6.3") = 0 Then
 
-            Case "6.3"
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_63x64
+            Else
+                strRegExpMarkerPattern = strVer_63x86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_63x64
-                Else
-                    strRegExpMarkerPattern = strVer_63x86
-                End If
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_63xXX
 
-                strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_63xXX
+        ElseIf StrComp(strOSCurrentVersion, "5.0") = 0 Then
+            
+            strRegExpMarkerPattern = vbNullString
 
-            Case "5.0"
-                strRegExpMarkerPattern = vbNullString
+        ElseIf StrComp(strOSCurrentVersion, "5.2") = 0 Then
 
-            Case "5.2"
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_51x64
+            Else
+                strRegExpMarkerPattern = strVer_51x86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_51x64
-                Else
-                    strRegExpMarkerPattern = strVer_51x86
-                End If
+        ElseIf StrComp(strOSCurrentVersion, "6.0") = 0 Then
 
-            Case "6.0"
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_60x64
+            Else
+                strRegExpMarkerPattern = strVer_60x86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_60x64
-                Else
-                    strRegExpMarkerPattern = strVer_60x86
-                End If
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_60xXX
 
-                strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_60xXX
+        Else
 
-            Case Else
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_Any64
+            Else
+                strRegExpMarkerPattern = strVer_Any86
+            End If
 
-                If mbOSx64 Then
-                    strRegExpMarkerPattern = strVer_Any64
-                Else
-                    strRegExpMarkerPattern = strVer_Any86
-                End If
-
-        End Select
+        End If
 
         ' Добавляем к поиску драйвера для всех ОС или для конкретной разрядности
         If mbOSx64 Then

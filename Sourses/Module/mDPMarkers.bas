@@ -34,25 +34,28 @@ Attribute VB_Name = "mDPMarkers"
 '7x86 - Windows 7 x86
 '8x64 - Windows 8 x64
 '8x86 - Windows 8 x86
-'NTx64 - Windows Vista/7/8 x64
-'NTx86 - Windows Vista/7/8 x86
+'81x64 - Windows 8.1 x64
+'81x86 - Windows 8.1 x86
+'NTx64 - Windows Vista/7/8/8.1 x64
+'NTx86 - Windows Vista/7/8/8.1 x86
 'Allx64 - Все Windows x64
 'Allx86 - Все Windows x86
 'AllXP - Windows XP x86/x64
 'All6 - Windows Vista x86/x64
 'All7 - Windows 7 x86/x64
 'All8 - Windows 8 x86/x64
+'All81 - Windows 8.1 x86/x64
 'WinAll - Все Windows
 'var ver_51x64="5x64";
 'var ver_51x86="5x86";
 'var ver_60x64="6x64|NTx64|AllNT";
 'var ver_60x86="6x86|NTx86|AllNT";
-'var ver_61x64="7x64|NTx64|AllNT";
-'var ver_61x86="7x86|NTx86|AllNT";
-'var ver_62x64="8x64|NTx64|AllNT|All8x64|All8x64";
-'var ver_62x86="8x86|NTx86|AllNT|All8x86";
-'var ver_63x64="81x64|NTx64|AllNT|All8x64";
-'var ver_63x86="81x86|NTx86|AllNT|All8x86";
+'var ver_61x64="7x64|NTx64|AllNT|78x64|781x64";
+'var ver_61x86="7x86|NTx86|AllNT|78x86|781x86";
+'var ver_62x64="8x64|NTx64|AllNT|78x64|All8x64";
+'var ver_62x86="8x86|NTx86|AllNT|78x86|All8x86";
+'var ver_63x64="81x64|NTx64|AllNT|781x64|All8x64";
+'var ver_63x86="81x86|NTx86|AllNT|781x86|All8x86";
 '
 'STRICT - Если маркер следует после другого маркера, то следует что драйвер предназначен только для той ОС
 'Все будущие драйвер-паки будут иметь именно такую структуру
@@ -62,12 +65,12 @@ Option Explicit
 ' поддерживаемые программой маркеры операционных систем
 Public Const strVer_51x64   As String = "5x64"
 Public Const strVer_51x86   As String = "5x86"
-Public Const strVer_60x64   As String = "6x64|NTx64|AllNT"
-Public Const strVer_60x86   As String = "6x86|NTx86|AllNT"
-Public Const strVer_61x64   As String = "7x64|781x64|NTx64|AllNT"
-Public Const strVer_61x86   As String = "7x86|781x86|NTx86|AllNT"
-Public Const strVer_62x64   As String = "8x64|All8x64|NTx64|AllNT"
-Public Const strVer_62x86   As String = "8x86|All8x86|NTx86|AllNT"
+Public Const strVer_60x64   As String = "6x64|67x64|NTx64|AllNT"
+Public Const strVer_60x86   As String = "6x86|67x86|NTx86|AllNT"
+Public Const strVer_61x64   As String = "7x64|67x64|78x64|781x64|NTx64|AllNT"
+Public Const strVer_61x86   As String = "7x86|67x86|78x86|781x86|NTx86|AllNT"
+Public Const strVer_62x64   As String = "8x64|78x64|All8x64|NTx64|AllNT"
+Public Const strVer_62x86   As String = "8x86|78x86|All8x86|NTx86|AllNT"
 Public Const strVer_63x64   As String = "81x64|781x64|All8x64|NTx64|AllNT"
 Public Const strVer_63x86   As String = "81x86|781x86|All8x86|NTx86|AllNT"
 Public Const strVer_XXx64   As String = "Allx64"
