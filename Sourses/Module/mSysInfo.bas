@@ -366,8 +366,8 @@ Public Function OSInfo() As OSInfoStruct
             OSInfo.Name = "Windows " & OSN
             OSInfo.BuildNumber = .dwBuildNumber
             OSInfo.ServicePack = TrimNull(.szCSDVersion)
-            OSInfo.VerFullwBuild = .dwMajorVersion & "." & .dwMinorVersion & "." & .dwBuildNumber
-            OSInfo.VerFull = .dwMajorVersion & "." & .dwMinorVersion
+            OSInfo.VerFullwBuild = .dwMajorVersion & strDot & .dwMinorVersion & strDot & .dwBuildNumber
+            OSInfo.VerFull = .dwMajorVersion & strDot & .dwMinorVersion
             OSInfo.VerMajor = .dwMajorVersion
             OSInfo.VerMinor = .dwMinorVersion
             OSInfo.ClientOrServer = .wProductType = VER_NT_WORKSTATION
@@ -400,7 +400,7 @@ Public Function OSInfoWMI(ByVal Nfo As Long) As String
     Dim strCaption     As String
     Dim strCSDVersion  As String
 
-    strComputer = "."
+    strComputer = strDot
     '   Get the WMI object and query results
     Set objWMI = CreateObject("winmgmts:\\" & strComputer & "\root\CIMV2")
     Set colItems = objWMI.ExecQuery("Select * from Win32_OperatingSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)

@@ -1,5 +1,8 @@
 List of revisions:
 
+07-Apr-2014
+- The Text property of a ColumnHeader in the ListView control is now the 'Default' property. (Same as original from MS)
+
 06-Apr-2014
 - Fixed a bug in the Indentation property of a ListItem in the ListView control.
 - Fixed a bug that the UserControl_Terminate event did not fire in the ListView control.

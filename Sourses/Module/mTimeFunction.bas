@@ -45,16 +45,16 @@ Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Lo
         If mbmSec Then
             ' Итоговое время
             If lngWorkTimeHours = 0 Then
-                CalculateTime = strWorkTimeMinutes & ":" & strWorkTimeSecound & "." & strWorkTimeMilliSecound & " (mm:ss.ms)"
+                CalculateTime = strWorkTimeMinutes & strDvoetochie & strWorkTimeSecound & strDot & strWorkTimeMilliSecound & " (mm:ss.ms)"
             Else
-                CalculateTime = strWorkTimeHours & ":" & strWorkTimeMinutes & ":" & strWorkTimeSecound & "." & strWorkTimeMilliSecound & " (hh:mm:ss.ms)"
+                CalculateTime = strWorkTimeHours & strDvoetochie & strWorkTimeMinutes & strDvoetochie & strWorkTimeSecound & strDot & strWorkTimeMilliSecound & " (hh:mm:ss.ms)"
             End If
         Else
             ' Итоговое время
             If lngWorkTimeHours = 0 Then
-                CalculateTime = strWorkTimeMinutes & ":" & strWorkTimeSecound & " (mm:ss)"
+                CalculateTime = strWorkTimeMinutes & strDvoetochie & strWorkTimeSecound & " (mm:ss)"
             Else
-                CalculateTime = strWorkTimeHours & ":" & strWorkTimeMinutes & ":" & strWorkTimeSecound & " (hh:mm:ss)"
+                CalculateTime = strWorkTimeHours & strDvoetochie & strWorkTimeMinutes & strDvoetochie & strWorkTimeSecound & " (hh:mm:ss)"
             End If
         End If
     Else

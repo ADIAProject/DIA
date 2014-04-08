@@ -378,8 +378,6 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-    SetBtnFontProperties cmdExit
-    SetBtnFontProperties cmdOK
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -413,46 +411,46 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-    With txtFont
+    With txtFont.Font
 
         If optControl.item(0).Value Then
-            strFontTab_Name = .Font.Name
-            miFontTab_Size = .Font.Size
-            mbFontTab_Underline = .Font.Underline
-            mbFontTab_Strikethru = .Font.Strikethrough
-            mbFontTab_Bold = .Font.Bold
-            mbFontTab_Italic = .Font.Italic
-            lngFontTab_Color = .ForeColor
+            strFontTab_Name = .Name
+            miFontTab_Size = .Size
+            mbFontTab_Underline = .Underline
+            mbFontTab_Strikethru = .Strikethrough
+            mbFontTab_Bold = .Bold
+            mbFontTab_Italic = .Italic
+            lngFontTab_Color = txtFont.ForeColor
             
         ElseIf optControl.item(1).Value Then
-            strFontTab2_Name = .Font.Name
-            miFontTab2_Size = .Font.Size
-            mbFontTab2_Underline = .Font.Underline
-            mbFontTab2_Strikethru = .Font.Strikethrough
-            mbFontTab2_Bold = .Font.Bold
-            mbFontTab2_Italic = .Font.Italic
-            lngFontTab2_Color = .ForeColor
+            strFontTab2_Name = .Name
+            miFontTab2_Size = .Size
+            mbFontTab2_Underline = .Underline
+            mbFontTab2_Strikethru = .Strikethrough
+            mbFontTab2_Bold = .Bold
+            mbFontTab2_Italic = .Italic
+            lngFontTab2_Color = txtFont.ForeColor
             
         ElseIf optControl.item(2).Value Then
-            strFontTT_Name = .Font.Name
-            miFontTT_Size = .Font.Size
-            mbFontTT_Underline = .Font.Underline
-            mbFontTT_Strikethru = .Font.Strikethrough
-            mbFontTT_Bold = .Font.Bold
-            mbFontTT_Italic = .Font.Italic
-            lngFontTT_Color = .ForeColor
+            strFontTT_Name = .Name
+            miFontTT_Size = .Size
+            mbFontTT_Underline = .Underline
+            mbFontTT_Strikethru = .Strikethrough
+            mbFontTT_Bold = .Bold
+            mbFontTT_Italic = .Italic
+            lngFontTT_Color = txtFont.ForeColor
             SetTTFontProperties frmOptions.TT
             
         ElseIf optControl.item(3).Value Then
-            strFontBtn_Name = .Font.Name
-            miFontBtn_Size = .Font.Size
-            mbFontBtn_Underline = .Font.Underline
-            mbFontBtn_Strikethru = .Font.Strikethrough
-            mbFontBtn_Bold = .Font.Bold
-            mbFontBtn_Italic = .Font.Italic
-            lngFontBtn_Color = .ForeColor
+            strFontBtn_Name = .Name
+            miFontBtn_Size = .Size
+            mbFontBtn_Underline = .Underline
+            mbFontBtn_Strikethru = .Strikethrough
+            mbFontBtn_Bold = .Bold
+            mbFontBtn_Italic = .Italic
+            lngFontBtn_Color = txtFont.ForeColor
+            frmOptions.cmdFutureButton.ForeColor = txtFont.ForeColor
             SetBtnStatusFontProperties frmOptions.cmdFutureButton
-            frmOptions.cmdFutureButton.ForeColor = .ForeColor
             
         End If
 
@@ -544,14 +542,15 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
-    With txtFont
-        ctlFontCombo.PreviewText = .Text
-        ctlFontCombo.SelectedFont = .Font.Name
-        ctlFontCombo.AddToUsedList .Font.Name
-        txtFontSize.Value = .Font.Size
-        chkBold.Value = .Font.Bold
-        chkItalic.Value = .Font.Italic
-        chkUnderline.Value = .Font.Underline
+    
+    ctlFontCombo.PreviewText = txtFont.Text
+    With txtFont.Font
+        ctlFontCombo.SelectedFont = .Name
+        ctlFontCombo.AddToUsedList .Name
+        txtFontSize.Value = .Size
+        chkBold.Value = .Bold
+        chkItalic.Value = .Italic
+        chkUnderline.Value = .Underline
     End With
 End Sub
 

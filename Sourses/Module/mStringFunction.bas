@@ -14,21 +14,40 @@ Option Explicit
 'Private Declare Function lstrcat Lib "kernel32.dll" Alias "lstrcatA" (ByVal lpString1 As String, ByVal lpString2 As String) As Long
 '******************************************************************************************************************************************************************
 
-Public Const str2vbNullChar As String = vbNullChar & vbNullChar
-Public Const str2vbNewLine As String = vbNewLine & vbNewLine
-Public Const str2VbTab As String = vbTab & vbTab
-Public Const str3VbTab As String = vbTab & vbTab & vbTab
-Public Const str4VbTab As String = vbTab & vbTab & vbTab & vbTab
-Public Const str5VbTab As String = vbTab & vbTab & vbTab & vbTab & vbTab
-Public Const str6VbTab As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
-Public Const str7VbTab As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
-Public Const str8VbTab As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
-Public Const strPercentage As String = "%"
-Public Const strKavichki As String = """" 'ChrW$(34)
-Public Const strSpace As String = " "
-Public Const str2Space As String = "  "
-Public Const str3Space As String = "   "
-Private Const strVopros As Byte = 63
+Public Const str2vbNullChar     As String = vbNullChar & vbNullChar
+Public Const str2vbNewLine      As String = vbNewLine & vbNewLine
+Public Const str2VbTab          As String = vbTab & vbTab
+Public Const str3VbTab          As String = vbTab & vbTab & vbTab
+Public Const str4VbTab          As String = vbTab & vbTab & vbTab & vbTab
+Public Const str5VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab
+Public Const str6VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
+Public Const str7VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
+Public Const str8VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
+Public Const strPercentage      As String = "%"
+Public Const strVopros          As String = "?"
+Public Const strVosklicanie     As String = "!"
+Public Const strDvoetochie      As String = ":"
+Public Const strRavno           As String = "="
+Public Const strDot             As String = "."
+Public Const str2Dot            As String = ".."
+Public Const vbDot              As Integer = 46
+Public Const strComma           As String = ","
+Public Const strCommaDot        As String = ";"
+Public Const strKavichki        As String = """" 'ChrW$(34)
+Public Const strSpace           As String = " "
+Public Const str2Space          As String = "  "
+Public Const str3Space          As String = "   "
+Public Const strUnknownLCase    As String = "unknown"
+Public Const strUnknownUCase    As String = "UNKNOWN"
+
+Private Const bVopros           As Byte = 63 ' "?"
+
+Public Enum eVerCompareResult
+    crLess = -1&
+    crEqual = 0&
+    crGreater = 1&
+    crUnknown = -2&
+End Enum
 
 Private Declare Function lstrlenW Lib "kernel32.dll" (ByVal lpString As Long) As Long
 Private Declare Function MultiByteToWideChar Lib "kernel32.dll" (ByVal CodePage As Long, ByVal dwFlags As Long, ByVal lpMultiByteStr As Long, ByVal cchMultiByte As Long, ByVal lpWideCharStr As Long, ByVal cchWideChar As Long) As Long
@@ -73,8 +92,9 @@ End Sub
 '! Description (Описание)  :   [Check if date1 newer than date2]
 '! Parameters  (Переменные):   Date1 (String)
 '                              Date2 (String)
+'                              strResult (ByRef String)
 '!--------------------------------------------------------------------------------
-Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As String
+Public Sub CompareByDate(ByVal Date1 As String, ByVal Date2 As String, ByRef strResult As String)
 
     Dim objRegExp    As RegExp
     Dim objMatch     As Match
@@ -89,18 +109,17 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
     Dim strDate2     As String
     Dim strDate1_x() As String
     Dim strDate2_x() As String
-    Dim strResult    As String
 
     If mbDebugDetail Then DebugMode str8VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
 
-    If InStr(Date1, "unknown") = 0 Then
-        If InStr(Date1, ",") Then
-            strDate1_x = Split(Trim$(Date1), ",")
+    If InStr(Date1, strUnknownLCase) = 0 Then
+        If InStr(Date1, strComma) Then
+            strDate1_x = Split(Trim$(Date1), strComma)
             Date1 = strDate1_x(0)
         End If
 
-        If InStr(Date2, ",") Then
-            strDate2_x = Split(Trim$(Date2), ",")
+        If InStr(Date2, strComma) Then
+            strDate2_x = Split(Trim$(Date2), strComma)
             Date2 = strDate2_x(0)
         End If
 
@@ -137,21 +156,20 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String) As S
         End If
         
         If mbDateFormatRus Then
-            strDate1 = Y1 & "." & d1 & "." & m1
-            strDate2 = Y2 & "." & d2 & "." & M2
+            strDate1 = Y1 & strDot & d1 & strDot & m1
+            strDate2 = Y2 & strDot & d2 & strDot & M2
         Else
-            strDate1 = Y1 & "." & m1 & "." & d1
-            strDate2 = Y2 & "." & M2 & "." & d2
+            strDate1 = Y1 & strDot & m1 & strDot & d1
+            strDate2 = Y2 & strDot & M2 & strDot & d2
         End If
 
         strResult = CompareByVersion(strDate1, strDate2)
-        CompareByDate = strResult
     Else
-        CompareByDate = "?"
+        strResult = strVopros
     End If
 
     If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & strSpace & strResult & strSpace & Date2
-End Function
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareByVersion
@@ -170,41 +188,44 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
     Dim i                   As Integer
     Dim ResultTemp          As String
 
-    ResultTemp = "?"
+    ResultTemp = strVopros
 
-    If InStr(strVersionBD, "unknown") = 0 Then
-        If InStr(strVersionLocal, "unknown") = 0 Then
+    strVersionBD = Trim$(strVersionBD)
+    strVersionLocal = Trim$(strVersionLocal)
+    If InStr(strVersionBD, strUnknownLCase) = 0 Then
+        If InStr(strVersionLocal, strUnknownLCase) = 0 Then
             
-            strDevVer_x = Split(Trim$(strVersionBD), ",")
-            
-            If UBound(strDevVer_x) Then
-                strDevVer_xx = Trim$(strDevVer_x(1))
+            If InStr(strVersionBD, strComma) Then
+                strDevVer_x = Split(strVersionBD, strComma)
+                strDevVer_xx = LTrim$(strDevVer_x(1))
             Else
                 ResultTemp = "<"
                 strDevVer_xx = strVersionBD
             End If
-
-            strDevVerLocal_x = Split(Trim$(strVersionLocal), ",")
-
-            If UBound(strDevVerLocal_x) Then
-                strDevVerLocal_xx = Trim$(strDevVerLocal_x(1))
+            
+            If InStr(strVersionLocal, strComma) Then
+                strDevVerLocal_x = Split(strVersionLocal, strComma)
+                strDevVerLocal_xx = LTrim$(strDevVerLocal_x(1))
             Else
                 ResultTemp = ">"
                 strDevVerLocal_xx = strVersionLocal
             End If
 
-            If Right$(strDevVer_xx, 1) = "." Then
-                strDevVer_xx = Left$(strDevVer_xx, Len(strDevVer_xx) - 1)
-            End If
-
-            If Right$(strDevVerLocal_xx, 1) = "." Then
-                strDevVer_xx = Left$(strDevVerLocal_xx, Len(strDevVerLocal_xx) - 1)
-            End If
-
-            strVersionBD_x = Split(strDevVer_xx, ".")
-            strVersionLocal_x = Split(strDevVerLocal_xx, ".")
-
-            If LenB(Trim$(strDevVerLocal_xx)) Then
+            If LenB(strDevVerLocal_xx) Then
+            
+                If LenB(strDevVer_xx) Then
+                    If AscW(Right$(strDevVer_xx, 1)) = vbDot Then
+                        strDevVer_xx = Left$(strDevVer_xx, Len(strDevVer_xx) - 1)
+                    End If
+                End If
+                
+                If AscW(Right$(strDevVerLocal_xx, 1)) = vbDot Then
+                    strDevVer_xx = Left$(strDevVerLocal_xx, Len(strDevVerLocal_xx) - 1)
+                End If
+            
+                strVersionBD_x = Split(strDevVer_xx, strDot)
+                strVersionLocal_x = Split(strDevVerLocal_xx, strDot)
+                
                 If UBound(strVersionBD_x) > UBound(strVersionLocal_x) Then
 
                     For i = 0 To UBound(strVersionLocal_x)
@@ -224,13 +245,13 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                                 Else
 
                                     If i = UBound(strVersionBD_x) Then
-                                        ResultTemp = "="
+                                        ResultTemp = strRavno
                                     End If
                                 End If
                             End If
 
                         Else
-                            ResultTemp = "?"
+                            ResultTemp = strVopros
                         End If
 
                     Next
@@ -254,13 +275,13 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                                 Else
 
                                     If i = UBound(strVersionBD_x) Then
-                                        ResultTemp = "="
+                                        ResultTemp = strRavno
                                     End If
                                 End If
                             End If
 
                         Else
-                            ResultTemp = "?"
+                            ResultTemp = strVopros
                         End If
 
                     Next
@@ -268,7 +289,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 End If
 
             Else
-                ResultTemp = "?"
+                ResultTemp = strVopros
             End If
 
         Else
@@ -276,7 +297,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
         End If
 
     Else
-        ResultTemp = "?"
+        ResultTemp = strVopros
     End If
 
 CompareFinish:
@@ -299,7 +320,7 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
     Dim objMatches As MatchCollection
 
     If LenB(dtDate) Then
-        If InStr(dtDate, "unknown") = 0 Then
+        If InStr(dtDate, strUnknownLCase) = 0 Then
             Set objRegExp = New RegExp
 
             With objRegExp
@@ -370,15 +391,15 @@ Public Sub ConvertVerByDate(ByRef strVersion As String)
     Dim strVer_x() As String
 
     If LenB(strVersion) Then
-        If InStr(strVersion, "unknown") = 0 Then
-            If InStr(strVersion, ",") Then
-                strVer_x = Split(strVersion, ",")
+        If InStr(strVersion, strUnknownLCase) = 0 Then
+            If InStr(strVersion, strComma) Then
+                strVer_x = Split(strVersion, strComma)
                 strVersion = strVer_x(0)
                 strVer = strVer_x(1)
             End If
 
             ConvertDate2Rus strVersion
-            strVersion = strVersion & "," & strVer
+            strVersion = strVersion & strComma & strVer
         End If
     End If
 
@@ -392,15 +413,15 @@ End Sub
 Public Sub DelSpaceAfterZPT(ByRef strVersion As String)
 
     If InStr(strVersion, ",   ") Then
-        strVersion = Replace$(strVersion, ",   ", ",", ",")
+        strVersion = Replace$(strVersion, ",   ", strComma)
     End If
 
     If InStr(strVersion, ",  ") Then
-        strVersion = Replace$(strVersion, ",  ", ",")
+        strVersion = Replace$(strVersion, ",  ", strComma)
     End If
 
     If InStr(strVersion, ", ") Then
-        strVersion = Replace$(strVersion, ", ", ",")
+        strVersion = Replace$(strVersion, ", ", strComma)
     End If
 
 End Sub
@@ -424,7 +445,7 @@ Public Sub RemoveUni(ByRef sStr As String)
                  'Clear upper byte
                 Map(i) = 0
                  'Replace low byte
-                Map(i - 1) = strVopros
+                Map(i - 1) = bVopros
             End If
         Next
     End If
@@ -444,8 +465,8 @@ Public Sub ReplaceBadSymbol(ByRef strString As String)
     End If
     
     ' Убираем символ ","
-    If InStr(strString, ",") Then
-        strString = Replace$(strString, ",", vbNullString)
+    If InStr(strString, strComma) Then
+        strString = Replace$(strString, strComma, strSpace)
     End If
 
     ' Убираем символ "*"
@@ -454,8 +475,8 @@ Public Sub ReplaceBadSymbol(ByRef strString As String)
     End If
 
     ' Убираем символ "!"
-    If InStr(strString, "!") Then
-        strString = Replace$(strString, "!", vbNullString)
+    If InStr(strString, strVosklicanie) Then
+        strString = Replace$(strString, strVosklicanie, vbNullString)
     End If
 
     ' Убираем символ "@"
@@ -479,18 +500,21 @@ Public Sub ReplaceBadSymbol(ByRef strString As String)
     End If
 
     ' Убираем символ "?"
-    If InStr(strString, "?") Then
-        strString = Replace$(strString, "?", vbNullString)
+    If InStr(strString, strVopros) Then
+        strString = Replace$(strString, strVopros, vbNullString)
     End If
+'    If InStr(strString, "?") Then
+'        strString = Replace$(strString, "?", vbNullString)
+'    End If
 
     ' Убираем символ ";"
-    If InStr(strString, ";") Then
-        strString = Replace$(strString, ";", vbNullString)
+    If InStr(strString, strCommaDot) Then
+        strString = Replace$(strString, strCommaDot, vbNullString)
     End If
 
     ' Убираем символ ":"
-    If InStr(strString, ":") Then
-        strString = Replace$(strString, ":", vbNullString)
+    If InStr(strString, strDvoetochie) Then
+        strString = Replace$(strString, strDvoetochie, vbNullString)
     End If
 
     ' Убираем символ "   "

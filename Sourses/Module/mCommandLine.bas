@@ -39,15 +39,15 @@ Public Sub CmdLineParsing()
 
     For i = 2 To intArgCount
         strArg = argRetCMD(i)
-        iArgRavno = InStr(strArg, "=")
-        iArgDvoetoch = InStr(strArg, ":")
+        iArgRavno = InStr(strArg, strRavno)
+        iArgDvoetoch = InStr(strArg, strDvoetochie)
 
         If iArgRavno Then
-            strArg_x = Split(strArg, "=")
+            strArg_x = Split(strArg, strRavno)
             strArg = strArg_x(0)
             strArgParam = strArg_x(1)
         ElseIf iArgDvoetoch Then
-            'strArg_x = Split(strArg, ":")
+            'strArg_x = Split(strArg, strDvoetochie)
             strArg = Left$(argRetCMD(i), iArgDvoetoch - 1)
             strArgParam = Right$(argRetCMD(i), Len(argRetCMD(i)) - iArgDvoetoch)
         End If

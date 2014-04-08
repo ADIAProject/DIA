@@ -242,7 +242,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                             frmCheckUpdate.Show vbModal, frmMain
                         End If
 
-                    Case "="
+                    Case strRavno
                         ChangeStatusTextAndDebug strMessages(56)
 
                         If Not Start Then
@@ -357,7 +357,7 @@ Public Sub LoadUpdateData()
             If StrComp(strTextNodeName, "versions") = 0 Then
             
                 strVersionsTemp = xmlNode.childNodes(miNodeIndex).Text
-                strUpdVersions = Split(strVersionsTemp, ";")
+                strUpdVersions = Split(strVersionsTemp, strCommaDot)
                 lngUbound = UBound(strUpdVersions)
 
                 ReDim strUpdDescription(lngUbound, 2)

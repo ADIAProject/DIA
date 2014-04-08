@@ -11,8 +11,6 @@ Option Explicit
 '               online service, or distribute as source
 '               on any media without express permission.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Const vbDot            As Integer = 46
-
 Private fp                       As FILE_PARAMS    'holds search parameters
 Private fp2                      As FOLDER_PARAMS  'holds search parameters
 Private sResultFileList()        As FindListStruct
@@ -141,12 +139,13 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
 
                     'an item with the vbDirectory bit was found
                     'but is it a system folder?
-                    If (Left$(wfd.cFileName, 1) <> ".") And (Left$(wfd.cFileName, 2) <> "..") Then
-                        'nope, it's a user folder
-                        FolderContainsSubfolders = True
-
-                        Exit Do
-
+                    If (Left$(wfd.cFileName, 1) <> strDot) Then
+                        If (Left$(wfd.cFileName, 2) <> str2Dot) Then
+                            'nope, it's a user folder
+                            FolderContainsSubfolders = True
+    
+                            Exit Do
+                        End If
                     End If
                 End If
 

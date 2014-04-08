@@ -63,7 +63,7 @@ Public Function APIFunctionPresent(ByVal FunctionName As String, ByVal DLLName A
     End If
 
     APIFunctionPresent = (lAddr <> 0)
-    If mbDebugDetail Then DebugMode vbTab & "APIFunctionPresent: " & FunctionName & "=" & APIFunctionPresent
+    If mbDebugDetail Then DebugMode vbTab & "APIFunctionPresent: " & FunctionName & strRavno & APIFunctionPresent
 End Function
 
 '!--------------------------------------------------------------------------------

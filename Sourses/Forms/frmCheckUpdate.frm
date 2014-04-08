@@ -282,6 +282,52 @@ Begin VB.Form frmCheckUpdate
       BackStyle       =   0
       Caption         =   "Последняя версия программы: "
    End
+   Begin VB.Menu mnuContextMenu1 
+      Caption         =   "Контекстное меню 1"
+      Begin VB.Menu mnuContextLinkFull 
+         Caption         =   "Посетить сайт 1"
+         Index           =   0
+      End
+      Begin VB.Menu mnuContextLinkFull 
+         Caption         =   "-"
+         Index           =   1
+      End
+      Begin VB.Menu mnuContextLinkFull 
+         Caption         =   "Посетить сайт 2"
+         Index           =   2
+      End
+      Begin VB.Menu mnuContextLinkFull 
+         Caption         =   "-"
+         Index           =   3
+      End
+      Begin VB.Menu mnuContextLinkFull 
+         Caption         =   "Посетить сайт 3"
+         Index           =   4
+      End
+   End
+   Begin VB.Menu mnuContextMenu2 
+      Caption         =   "Контекстное меню 2"
+      Begin VB.Menu mnuContextLinkUpdate 
+         Caption         =   "Посетить сайт 1"
+         Index           =   0
+      End
+      Begin VB.Menu mnuContextLinkUpdate 
+         Caption         =   "-"
+         Index           =   1
+      End
+      Begin VB.Menu mnuContextLinkUpdate 
+         Caption         =   "Посетить сайт 2"
+         Index           =   2
+      End
+      Begin VB.Menu mnuContextLinkUpdate 
+         Caption         =   "-"
+         Index           =   3
+      End
+      Begin VB.Menu mnuContextLinkUpdate 
+         Caption         =   "Посетить сайт 3"
+         Index           =   4
+      End
+   End
 End
 Attribute VB_Name = "frmCheckUpdate"
 Attribute VB_GlobalNameSpace = False
@@ -319,20 +365,14 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-    SetBtnFontProperties cmdUpdate
-    SetBtnFontProperties cmdUpdateFull
-    SetBtnFontProperties cmdHistory
-    SetBtnFontProperties cmdDonate
-    SetBtnFontProperties cmdExit
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadButtonLink
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   ButtonName (ctlXpButton)
-'                              strMassivLink() (String)
+'! Procedure   (Функция)   :   Sub LoadButtonLinkFull
+'! Description (Описание)  :   [Контекстное меню для кнопки скачать дистрибутив]
+'! Parameters  (Переменные):   strMassivLink() (String)
 '!--------------------------------------------------------------------------------
-Private Sub LoadButtonLink(ButtonName As Object, strMassivLink() As String)
+Private Sub LoadButtonLinkFull(strMassivLink() As String)
 
     Dim strMirrorText As String
 
@@ -348,56 +388,123 @@ Private Sub LoadButtonLink(ButtonName As Object, strMassivLink() As String)
                 strMirrorText = "Mirror"
         End Select
 
-        With ButtonName
+        If InStr(1, strMassivLink(cmbVersions.ListIndex, 0), "http", vbTextCompare) Then
+            cmdUpdateFull.DropDownEnable = True
+        ElseIf InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) Then
+            cmdUpdateFull.DropDownEnable = True
+        Else
+            cmdUpdateFull.DropDownEnable = False
+        End If
 
-            If InStr(1, strMassivLink(cmbVersions.ListIndex, 0), "http", vbTextCompare) Then
-                '.MenuExist = True
-            ElseIf InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) Then
-                '.MenuExist = True
-            Else
-                '.MenuExist = False
+        If cmdUpdateFull.DropDownEnable Then
+                            
+            If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
+                mnuContextLinkFull(2).Enabled = False
             End If
 
-'            If .MenuExist Then
-'                If .MenuCount = 0 Then
-'                    .AddMenu strMirrorText & " 1"
-'                    .AddMenu "-"
-'                    .AddMenu strMirrorText & " 2"
-'                    .AddMenu "-"
-'                    .AddMenu strMirrorText & " 3"
-'                End If
-'
-'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
-'                    .MenuEnabled(2) = False
-'                End If
-'
-'                If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
-'                    .MenuEnabled(4) = False
-'                End If
-'
-'                If LenB(strMassivLink(cmbVersions.ListIndex, 1)) = 0 Then
-'                    .MenuVisible(0) = False
-'                    .MenuVisible(1) = False
-'                Else
-'                    .MenuCaption(0) = strMassivLink(cmbVersions.ListIndex, 1)
-'                End If
-'
-'                If LenB(strMassivLink(cmbVersions.ListIndex, 3)) = 0 Then
-'                    .MenuVisible(1) = False
-'                    .MenuVisible(2) = False
-'                Else
-'                    .MenuCaption(2) = strMassivLink(cmbVersions.ListIndex, 3)
-'                End If
-'
-'                If LenB(strMassivLink(cmbVersions.ListIndex, 5)) = 0 Then
-'                    .MenuVisible(3) = False
-'                    .MenuVisible(4) = False
-'                Else
-'                    .MenuCaption(4) = strMassivLink(cmbVersions.ListIndex, 5)
-'                End If
-'            End If
+            If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
+                mnuContextLinkFull(4).Enabled = False
+            End If
 
-        End With
+            If LenB(strMassivLink(cmbVersions.ListIndex, 1)) Then
+                mnuContextLinkFull(0).Visible = True
+                mnuContextLinkFull(1).Visible = True
+                SetUniMenu 0, 0, -1, mnuContextMenu1, strMassivLink(cmbVersions.ListIndex, 1)
+            Else
+                mnuContextLinkFull(0).Visible = False
+                mnuContextLinkFull(1).Visible = False
+            End If
+
+            If LenB(strMassivLink(cmbVersions.ListIndex, 3)) Then
+                mnuContextLinkFull(1).Visible = True
+                mnuContextLinkFull(2).Visible = True
+                SetUniMenu 0, 2, -1, mnuContextMenu1, strMassivLink(cmbVersions.ListIndex, 3)
+            Else
+                mnuContextLinkFull(1).Visible = False
+                mnuContextLinkFull(2).Visible = False
+            End If
+
+            If LenB(strMassivLink(cmbVersions.ListIndex, 5)) Then
+                mnuContextLinkFull(3).Visible = True
+                mnuContextLinkFull(4).Visible = True
+                SetUniMenu 0, 4, -1, mnuContextMenu1, strMassivLink(cmbVersions.ListIndex, 5)
+            Else
+                mnuContextLinkFull(3).Visible = False
+                mnuContextLinkFull(4).Visible = False
+            End If
+        End If
+
+    End If
+    mnuContextMenu1.Visible = False
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadButtonLinkUpdate
+'! Description (Описание)  :   [Контекстное меню для кнопки скачать обновление]
+'! Parameters  (Переменные):   strMassivLink() (String)
+'!--------------------------------------------------------------------------------
+Private Sub LoadButtonLinkUpdate(strMassivLink() As String)
+
+    Dim strMirrorText As String
+
+    If cmbVersions.ListIndex > -1 Then
+
+        ' Отличия работы если русский или английский
+        Select Case strPCLangCurrentID
+
+            Case "0419"
+                strMirrorText = "Зеркало"
+
+            Case Else
+                strMirrorText = "Mirror"
+        End Select
+
+        If InStr(1, strMassivLink(cmbVersions.ListIndex, 0), "http", vbTextCompare) Then
+            cmdUpdate.DropDownEnable = True
+        ElseIf InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) Then
+            cmdUpdate.DropDownEnable = True
+        Else
+            cmdUpdate.DropDownEnable = False
+        End If
+
+        If cmdUpdate.DropDownEnable Then
+                            
+            If InStr(1, strMassivLink(cmbVersions.ListIndex, 2), "http", vbTextCompare) = 0 Then
+                mnuContextLinkUpdate(2).Enabled = False
+            End If
+
+            If InStr(1, strMassivLink(cmbVersions.ListIndex, 4), "http", vbTextCompare) = 0 Then
+                mnuContextLinkUpdate(4).Enabled = False
+            End If
+
+            If LenB(strMassivLink(cmbVersions.ListIndex, 1)) Then
+                mnuContextLinkUpdate(0).Visible = True
+                mnuContextLinkUpdate(1).Visible = True
+                SetUniMenu 1, 0, -1, mnuContextMenu2, strMassivLink(cmbVersions.ListIndex, 1)
+            Else
+                mnuContextLinkUpdate(0).Visible = False
+                mnuContextLinkUpdate(1).Visible = False
+            End If
+
+            If LenB(strMassivLink(cmbVersions.ListIndex, 3)) Then
+                mnuContextLinkUpdate(1).Visible = True
+                mnuContextLinkUpdate(2).Visible = True
+                SetUniMenu 1, 2, -1, mnuContextMenu2, strMassivLink(cmbVersions.ListIndex, 3)
+            Else
+                mnuContextLinkUpdate(1).Visible = False
+                mnuContextLinkUpdate(2).Visible = False
+            End If
+
+            If LenB(strMassivLink(cmbVersions.ListIndex, 5)) Then
+                mnuContextLinkUpdate(3).Visible = True
+                mnuContextLinkUpdate(4).Visible = True
+                SetUniMenu 1, 4, -1, mnuContextMenu2, strMassivLink(cmbVersions.ListIndex, 5)
+            Else
+                mnuContextLinkUpdate(3).Visible = False
+                mnuContextLinkUpdate(4).Visible = False
+            End If
+        End If
 
     End If
 
@@ -423,9 +530,9 @@ Private Sub LoadDescriptionAndLinks()
     End Select
 
     ' Кнопка Скачать обновление
-    LoadButtonLink cmdUpdate, strLink
+    LoadButtonLinkUpdate strLink
     ' Кнопка Скачать дистрибутив
-    LoadButtonLink cmdUpdateFull, strLinkFull
+    LoadButtonLinkFull strLinkFull
 
     ' Описание изменений
     If LenB(strDescriptionTemp) Then
@@ -532,54 +639,12 @@ Private Sub cmdUpdate_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdUpdate_ClickMenu
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   mnuIndex (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub cmdUpdate_ClickMenu(mnuIndex As Integer)
-
-    Select Case mnuIndex
-
-        Case 0
-            RunUtilsShell strLink(cmbVersions.ListIndex, 0), False
-
-        Case 2
-            RunUtilsShell strLink(cmbVersions.ListIndex, 2), False
-
-        Case 4
-            RunUtilsShell strLink(cmbVersions.ListIndex, 4), False
-    End Select
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdUpdateFull_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdUpdateFull_Click()
     RunUtilsShell strLinkFull(cmbVersions.ListIndex, 0), False
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdUpdateFull_ClickMenu
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   mnuIndex (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub cmdUpdateFull_ClickMenu(mnuIndex As Integer)
-
-    Select Case mnuIndex
-
-        Case 0
-            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 0), False
-
-        Case 2
-            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 2), False
-            
-        Case 4
-            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 4), False
-    End Select
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -664,6 +729,25 @@ Private Sub Form_Load()
         FontCharsetChange
     End If
 
+    ' Контекстное меню для кнопки скачать дистрибутив
+    With mnuContextMenu1
+        .Caption = "DIA v." & strProductVersion
+        .Enabled = False
+        cmdUpdateFull.SetPopupMenu mnuContextMenu1
+    End With
+    
+    ' Контекстное меню для кнопки скачать обновление
+    With mnuContextMenu2
+        .Caption = "DIA v." & strProductVersion
+        .Enabled = False
+        cmdUpdate.SetPopupMenu mnuContextMenu2
+    End With
+
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+    cmdUpdate.UnsetPopupMenu
+    cmdUpdateFull.UnsetPopupMenu
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -678,3 +762,44 @@ Private Sub lblWWW_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
     RunUtilsShell strUrl_MainWWWSite, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuContextLinkFull_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub mnuContextLinkFull_Click(Index As Integer)
+    
+    Select Case Index
+
+        Case 0
+            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 0), False
+
+        Case 2
+            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 2), False
+            
+        Case 4
+            RunUtilsShell strLinkFull(cmbVersions.ListIndex, 4), False
+    End Select
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuContextLinkUpdate_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub mnuContextLinkUpdate_Click(Index As Integer)
+    
+    Select Case Index
+
+        Case 0
+            RunUtilsShell strLink(cmbVersions.ListIndex, 0), False
+
+        Case 2
+            RunUtilsShell strLink(cmbVersions.ListIndex, 2), False
+
+        Case 4
+            RunUtilsShell strLink(cmbVersions.ListIndex, 4), False
+    End Select
+    
+End Sub

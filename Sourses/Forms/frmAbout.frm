@@ -323,6 +323,21 @@ Begin VB.Form frmAbout
       BackStyle       =   0
       Caption         =   "Написать E-mail автору программы"
    End
+   Begin VB.Menu mnuContextMenu1 
+      Caption         =   "Контекстное меню 1"
+      Begin VB.Menu mnuContextLink 
+         Caption         =   "Посетить сайт 1"
+         Index           =   0
+      End
+      Begin VB.Menu mnuContextLink 
+         Caption         =   "-"
+         Index           =   1
+      End
+      Begin VB.Menu mnuContextLink 
+         Caption         =   "Посетить сайт 2"
+         Index           =   2
+      End
+   End
 End
 Attribute VB_Name = "frmAbout"
 Attribute VB_GlobalNameSpace = False
@@ -365,11 +380,6 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-    SetBtnFontProperties cmdDonate
-    SetBtnFontProperties cmdLicence
-    SetBtnFontProperties cmdOsZoneNet
-    SetBtnFontProperties cmdHomePage
-    SetBtnFontProperties cmdExit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -520,6 +530,8 @@ Private Sub Localise(ByVal strPathFile As String)
     FontCharsetChange
     ' Название формы
     Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    '  Вызов основной функции для вывода Caption меню с поддержкой Unicode
+    Call LocaliseMenu(strPathFile)
     'Кнопки
     cmdDonate.Caption = LocaliseString(strPathFile, strFormName, "cmdDonate", cmdDonate.Caption)
     cmdCheckUpd.Caption = LocaliseString(strPathFile, strFormName, "cmdCheckUpd", cmdCheckUpd.Caption)
@@ -534,6 +546,20 @@ Private Sub Localise(ByVal strPathFile As String)
     strTranslatorName = LocaliseString(strPathFile, "Lang", "TranslatorName", lblTranslator.Caption)
     strTranslatorUrl = LocaliseString(strPathFile, "Lang", "TranslatorUrl", vbNullString)
     LoadTranslator
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LocaliseMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub LocaliseMenu(ByVal strPathFile As String)
+    mnuContextMenu1.Caption = "DIA v." & strProductVersion
+    
+    SetUniMenu 0, 0, -1, mnuContextMenu1, LocaliseString(strPathFile, strFormName, "mnuContextLink1", mnuContextLink(0).Caption)
+    SetUniMenu 0, 2, -1, mnuContextMenu1, LocaliseString(strPathFile, strFormName, "mnuContextLink2", mnuContextLink(2).Caption)
+    
+    'mnuContextMenu1.Visible = False
 End Sub
 
 Private Sub cmdCheckUpd_Click()
@@ -566,24 +592,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdHomePage_Click()
     RunUtilsShell strUrl_MainWWWSite, False
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdSoftGetNet_ClickMenu
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   mnuIndex (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub cmdHomePage_ClickMenu(mnuIndex As Integer)
-
-    Select Case mnuIndex
-
-        Case 0
-            RunUtilsShell strUrl_MainWWWSite, False
-
-        Case 2
-            RunUtilsShell strUrl_MainWWWForum, False
-    End Select
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -661,16 +669,6 @@ Private Sub Form_Load()
             lblThanks(0).Caption = "My thanks:"
     End Select
 
-'    With cmdHomePage
-'        If .MenuExist Then
-'            If .MenuCount = 0 Then
-'                .AddMenu "Site"
-'                .AddMenu "-"
-'                .AddMenu "Forum"
-'            End If
-'        End If
-'    End With
-
     ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
@@ -680,6 +678,14 @@ Private Sub Form_Load()
     End If
 
     LoadThankYou
+    
+    mnuContextMenu1.Enabled = False
+    cmdHomePage.SetPopupMenu mnuContextMenu1
+    
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+    cmdHomePage.UnsetPopupMenu
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -739,3 +745,22 @@ Private Sub lblTranslator_MouseDown(Button As Integer, Shift As Integer, X As Si
     End If
 
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mnuContextLink_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Index (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub mnuContextLink_Click(Index As Integer)
+
+    Select Case Index
+
+        Case 0
+            RunUtilsShell strUrl_MainWWWSite, False
+
+        Case 2
+            RunUtilsShell strUrl_MainWWWForum, False
+    End Select
+    
+End Sub
+

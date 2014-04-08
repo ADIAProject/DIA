@@ -19,7 +19,7 @@ Public g_UserModeFix As Boolean
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub GetMyAppProperties()
-    strProductVersion = App.Major & "." & App.Minor & "." & App.Revision
+    strProductVersion = App.Major & strDot & App.Minor & strDot & App.Revision
     strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
     strAppPath = App.Path
     strAppPathBackSL = BackslashAdd2Path(strAppPath)

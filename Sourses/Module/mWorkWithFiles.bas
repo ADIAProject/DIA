@@ -399,8 +399,8 @@ Private Function DelTree(ByVal strDir As String) As Long
 
                 Do While Len(strFile)
 
-                    If strFile <> "." Then
-                        If strFile <> ".." Then
+                    If strFile <> strDot Then
+                        If strFile <> str2Dot Then
                             intAttr = GetAttr(strDir & strFile)
 
                             If (intAttr And vbDirectory) Then
@@ -499,7 +499,7 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
         End If
 
         ' Макроподстановка ДАТА %DATE%
-        str_DATE = SafeDir(Replace$(CStr(Now()), ".", "-"))
+        str_DATE = SafeDir(Replace$(CStr(Now()), strDot, "-"))
         ' Макроподстановка %PCMODEL%
         str_PCMODEL = SafeDir(Replace$(strCompModel, "_", "-"))
         
@@ -748,7 +748,7 @@ Public Function GetFileName_woExt(ByVal FileName As String) As String
     GetFileName_woExt = FileName
 
     If LenB(FileName) Then
-        intLastSeparator = InStrRev(FileName, ".")
+        intLastSeparator = InStrRev(FileName, strDot)
 
         If intLastSeparator Then
             GetFileName_woExt = Left$(FileName, intLastSeparator - 1)
@@ -766,7 +766,7 @@ Public Function GetFileNameExtension(ByVal FileName As String) As String
 
     Dim intLastSeparator As Long
 
-    intLastSeparator = InStrRev(FileName, ".")
+    intLastSeparator = InStrRev(FileName, strDot)
 
     If intLastSeparator Then
         GetFileNameExtension = Right$(FileName, Len(FileName) - intLastSeparator)
@@ -854,8 +854,8 @@ Public Function GetFileVersionOnly(ByVal sFileName As String) As String
                 ' Get the version information.
                 With FFI
                     ' File version number.
-                    sResult = Format$(.dwFileVersionMSh) & "." & Format$(.dwFileVersionMSl) & "." & Format$(.dwFileVersionLSh) & "." & Format$(.dwFileVersionLSl)
-                    'sResult = Format$(.dwFileVersionMSh) & "." & Format$(.dwFileVersionMSl) & "." & Format$(.dwFileVersionLSl)
+                    sResult = Format$(.dwFileVersionMSh) & strDot & Format$(.dwFileVersionMSl) & strDot & Format$(.dwFileVersionLSh) & strDot & Format$(.dwFileVersionLSl)
+                    'sResult = Format$(.dwFileVersionMSh) & strDot & Format$(.dwFileVersionMSl) & strDot & Format$(.dwFileVersionLSl)
                 End With
             
                 GetFileVersionOnly = sResult
@@ -1099,7 +1099,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function PathCollect(Path As String) As String
 
-    If InStr(Path, ":") = 2 Then
+    If InStr(Path, strDvoetochie) = 2 Then
         PathCollect = Path
     ElseIf Left$(Path, 2) = vbBackslash And PathIsValidUNC(Path) Then
         PathCollect = Path
@@ -1157,7 +1157,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) As String
 
-    If InStr(Path, ":") = 2 Then
+    If InStr(Path, strDvoetochie) = 2 Then
         PathCollect4Dest = Path
     Else
 
@@ -1306,12 +1306,12 @@ Public Function SafeDir(ByVal str As String) As String
         str = Replace$(str, "*", "-")
     End If
     
-    If InStr(str, ":") Then
-        str = Replace$(str, ":", "-")
+    If InStr(str, strDvoetochie) Then
+        str = Replace$(str, strDvoetochie, "-")
     End If
     
-    If InStr(str, "?") Then
-        str = Replace$(str, "?", "-")
+    If InStr(str, strVopros) Then
+        str = Replace$(str, strVopros, "-")
     End If
     
     If InStr(str, ">") Then
@@ -1365,18 +1365,18 @@ Public Function SafeFileName(ByVal strString As String) As String
     End If
     
     ' Заменяем VbTab
-    If InStr(strString, ",") Then
+    If InStr(strString, vbTab) Then
         strString = Replace$(strString, vbTab, vbNullString)
     End If
 
     ' Отбрасываем все после ","
-    If InStr(strString, ",") Then
-        strString = Left$(strString, InStr(strString, ",") - 1)
+    If InStr(strString, strComma) Then
+        strString = Left$(strString, InStr(strString, strComma) - 1)
     End If
 
     ' Отбрасываем все после ";"
-    If InStr(strString, ";") Then
-        strString = Left$(strString, InStr(strString, ";") - 1)
+    If InStr(strString, strCommaDot) Then
+        strString = Left$(strString, InStr(strString, strCommaDot) - 1)
     End If
 
     SafeFileName = Trim$(strString)
@@ -1394,13 +1394,13 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     Dim Str_x()          As String
     Dim mbAdditionalPath As Boolean
 
-    If InStr(str, ";") Then
-        Str_x = Split(str, ";")
+    If InStr(str, strCommaDot) Then
+        Str_x = Split(str, strCommaDot)
         str = Trim$(Str_x(0))
     End If
 
-    If InStr(str, ",") Then
-        Str_x = Split(str, ",")
+    If InStr(str, strComma) Then
+        Str_x = Split(str, strComma)
         mbAdditionalPath = True
         str = Str_x(0)
     End If

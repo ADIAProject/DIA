@@ -405,11 +405,6 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-    frGroup.Font.Charset = lngFont_Charset
-    SetBtnFontProperties cmdExit
-    SetBtnFontProperties cmdOK
-    SetBtnFontProperties cmdCheckAll
-    SetBtnFontProperties cmdUnCheckAll
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -671,8 +666,8 @@ Private Function LoadList_Folders(ByVal lngButtIndex As Long, Optional ByVal mbV
                 End If
             
                 '=? - установленные
-                If InStr(strMode, "=") Or InStr(strMode, "?") Then
-                    If InStr(strDevDriverPrizn, "=") Or InStr(strDevDriverPrizn, "?") Then
+                If InStr(strMode, strRavno) Or InStr(strMode, strVopros) Then
+                    If InStr(strDevDriverPrizn, strRavno) Or InStr(strDevDriverPrizn, strVopros) Then
     
                         With lvFolders.ListItems.Add(, , strDevHwid)
                             .SubItems(1) = strDevInfPath

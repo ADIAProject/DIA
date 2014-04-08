@@ -52,7 +52,7 @@ Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal
         If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
         
             If LenB(strTmp) Then
-                strTmp = strTmp & "," & strManufSection
+                strTmp = strTmp & strComma & strManufSection
             Else
                 strTmp = strManufSection
             End If
@@ -78,15 +78,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueBoolean(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Boolean
 
-    Dim lngValue As Long
+    Dim LngValue As Long
 
-    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If lngValue = 9999 Then
-        lngValue = lngValueDefault
+    If LngValue = 9999 Then
+        LngValue = lngValueDefault
     End If
 
-    GetIniValueBoolean = CBool(lngValue)
+    GetIniValueBoolean = CBool(LngValue)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -99,15 +99,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Long
 
-    Dim lngValue As Long
+    Dim LngValue As Long
 
-    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If lngValue = 9999 Then
-        lngValue = lngValueDefault
+    If LngValue = 9999 Then
+        LngValue = lngValueDefault
     End If
 
-    GetIniValueLong = lngValue
+    GetIniValueLong = LngValue
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
 
         If intTempSmallBuff Then
             str = arrSectionTemp(0)
-            miRavnoPosition = InStr(str, "=")
+            miRavnoPosition = InStr(str, strRavno)
 
             If miRavnoPosition Then
                 Key = Left$(str, miRavnoPosition - 1)
@@ -213,7 +213,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
                     GoTo Save_StrKey
                 End If
 
-                miRavnoPosition = InStr(str, "=")
+                miRavnoPosition = InStr(str, strRavno)
 
                 If miRavnoPosition Then
                     Key = Left$(str, miRavnoPosition - 1)
@@ -363,7 +363,7 @@ Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strfullpath
 
         End If
 
-        Key_Val = Split(KeyAndVal(intx), "=")
+        Key_Val = Split(KeyAndVal(intx), strRavno)
 
         If UBound(Key_Val) = -1 Then
 

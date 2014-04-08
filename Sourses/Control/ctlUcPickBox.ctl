@@ -793,8 +793,8 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let DefaultExt(ByVal NewValue As String)
 
-    If Left$(NewValue, 1) <> "." Then
-        NewValue = "." & NewValue
+    If Left$(NewValue, 1) <> strDot Then
+        NewValue = strDot & NewValue
     End If
 
     m_DefaultExt = NewValue
@@ -1819,7 +1819,7 @@ Private Function QualifyPath(ByVal sPath As String) As String
         If Not FileExists(sPath) Then
             '   Look for the PathSep
             lStrCnt = InStrRev(sPath, vbBackslash)
-            lStr2Cnt = InStrRev(sPath, ":")
+            lStr2Cnt = InStrRev(sPath, strDvoetochie)
 
             If ((lStrCnt <> Len(sPath)) Or Right$(sPath, 1) <> vbBackslash) And lStrCnt > 1 And lStr2Cnt > 2 Then
                 '   None, so add it...
@@ -2315,11 +2315,11 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
         ElseIf InStr(sInput$, "/") Then
 
-            If InStr(sInput$, ":") Then
+            If InStr(sInput$, strDvoetochie) Then
 
                 'URL
                 'start by triming off the extra params
-                If InStr(sInput$, "?") Then sInput$ = Left$(sInput$, InStr(sInput$, "?") - 1)
+                If InStr(sInput$, strVopros) Then sInput$ = Left$(sInput$, InStr(sInput$, strVopros) - 1)
 
                 'add trailing slash if there is none
                 If Right$(sInput$, 1) <> "/" Then
@@ -2712,8 +2712,8 @@ Retry:
                                 End If
 
                                 '   Fix missing "." in the extension
-                                If (InStr(sExt, ".") = 0) Or (Len(sExt) = 3) Then
-                                    psFile.sFiles(1) = psFile.sFiles(1) & "." & sExt
+                                If (InStr(sExt, strDot) = 0) Or (Len(sExt) = 3) Then
+                                    psFile.sFiles(1) = psFile.sFiles(1) & strDot & sExt
                                 Else
                                     psFile.sFiles(1) = psFile.sFiles(1) & sExt
                                 End If

@@ -90,48 +90,48 @@ Public Sub CollectHwidFromReestr()
 
         If LenB(strDateDRV) Then
             If LenB(strVersionDRV) Then
-                strVersionDRV = strDateDRV & "," & strVersionDRV
+                strVersionDRV = strDateDRV & strComma & strVersionDRV
             Else
-                strVersionDRV = "unknown"
+                strVersionDRV = strUnknownLCase
             End If
         Else
-            strVersionDRV = "unknown"
+            strVersionDRV = strUnknownLCase
         End If
 
         If LenB(strVersionDRV) Then
             arrHwidsLocal(i).VerLocal = Trim$(strVersionDRV)
         Else
-            arrHwidsLocal(i).VerLocal = "unknown"
+            arrHwidsLocal(i).VerLocal = strUnknownLCase
         End If
 
         If LenB(strProviderName) Then
             arrHwidsLocal(i).Provider = Trim$(strProviderName)
         Else
-            arrHwidsLocal(i).Provider = "unknown"
+            arrHwidsLocal(i).Provider = strUnknownLCase
         End If
 
         If LenB(strCompatID) Then
             arrHwidsLocal(i).HWIDCompat = Trim$(strCompatID)
         Else
-            arrHwidsLocal(i).HWIDCompat = "UNKNOWN"
+            arrHwidsLocal(i).HWIDCompat = strUnknownUCase
         End If
 
         If LenB(strStrDescription) Then
             arrHwidsLocal(i).Description = Trim$(strStrDescription)
         Else
-            arrHwidsLocal(i).Description = "unknown"
+            arrHwidsLocal(i).Description = strUnknownLCase
         End If
 
         If LenB(strInfName) Then
             arrHwidsLocal(i).HWIDMatches = UCase$(Trim$(strMatchesID))
         Else
-            arrHwidsLocal(i).HWIDMatches = "UNKNOWN"
+            arrHwidsLocal(i).HWIDMatches = strUnknownUCase
         End If
 
         If LenB(strInfName) Then
             arrHwidsLocal(i).InfName = Trim$(strInfName)
         Else
-            arrHwidsLocal(i).InfName = "unknown"
+            arrHwidsLocal(i).InfName = strUnknownLCase
         End If
 
     Next

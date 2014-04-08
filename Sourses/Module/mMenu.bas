@@ -143,9 +143,7 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
                 .fMask = MIIM_STRING
                 'mnu
                 .dwTypeData = StrPtr(sCaption)
-                
-
-                
+                                
                 If mnuSubItem = -1 Then
                 ' Not DropDown Submenu
                     SetMenuItemInfo hMenu, mnuItem, True, mInfo
@@ -163,4 +161,3 @@ Public Sub SetUniMenu(ByVal mnuParentItem As Long, ByVal mnuItem As Long, ByVal 
     End If
     
 End Sub
-

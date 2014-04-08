@@ -430,13 +430,13 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     End If
         
                     If LenB(strDrvVersion) Then
-                        strVer = strDrvDate & "," & strDrvVersion
+                        strVer = strDrvDate & strComma & strDrvVersion
                     Else
         
                         If LenB(strDrvDate) Then
                             strVer = strDrvDate
                         Else
-                            strVer = "unknown"
+                            strVer = strUnknownLCase
                         End If
                     End If
         
@@ -447,7 +447,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr 'DriverVer' not found: " & strInfFullname
                     strDrvDate = vbNullString
                     strDrvVersion = vbNullString
-                    strVer = "unknown"
+                    strVer = strUnknownLCase
                 End If
         
                 ' Find CatalogFile parametr
@@ -490,7 +490,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                 If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Section [version] not found: " & strInfFullname
                 strDrvDate = vbNullString
                 strDrvVersion = vbNullString
-                strVer = "unknown"
+                strVer = strUnknownLCase
                 lngCatFileExists = 0
             End If
             
@@ -526,7 +526,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 strBaseName = sB
                                 strSectlist = strSectlist & sB
                             Else
-                                strSectlist = strSectlist & (strBaseName & "." & sB)
+                                strSectlist = strSectlist & (strBaseName & strDot & sB)
                             End If
     
                         Next
@@ -552,11 +552,11 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     strSectEmptyList = "-"
                 End If
                             
-                strSectEmptyList4Check = strSectEmptyList & ","
+                strSectEmptyList4Check = strSectEmptyList & strComma
     
                 For K2 = 0 To UBound(strK2Sectlist)
                     ' Если секция пустая, то пропускаем ее обработку (список пустых секций получен ранее)
-                    If InStr(strSectEmptyList4Check, strK2Sectlist(K2) & ",") = 0 Then
+                    If InStr(strSectEmptyList4Check, strK2Sectlist(K2) & strComma) = 0 Then
                         RegExpDevSect.Pattern = strRegEx_devs_l & strK2Sectlist(K2) & strRegEx_devs_r
                         Set objMatchesDevSect = RegExpDevSect.Execute(sFileContent)
         
@@ -590,9 +590,13 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                 Else
                                                     strVarname_x = Split(strVarname, strPercentage)
             
-                                                    For ii = 0 To UBound(strVarname_x)
-                                                        AppendStr strValval, objStringHash.item(strVarname_x(ii))
-                                                    Next ii
+                                                    If UBound(strVarname_x) Then
+                                                        For ii = 0 To UBound(strVarname_x)
+                                                            AppendStr strValval, objStringHash.item(strVarname_x(ii))
+                                                        Next ii
+                                                    Else
+                                                        strValval = objStringHash.item(strVarname_x(ii))
+                                                    End If
                                                                                                                 
                                                 End If
                                                 
@@ -614,12 +618,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                 End If
                                             End If
                                         End If
-            
-'                                        If InStr(strDevName, strPercentage) Then
-'                                            strDevName = Replace$(strDevName, strPercentage, vbNullString)
-'                                            strDevName = objStringHash.item(strDevName)
-'                                        End If
-            
+                        
                                         ' На случай если есть юникодовые символы в имени устройства
                                         RemoveUni strDevName
             

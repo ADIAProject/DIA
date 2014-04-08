@@ -155,7 +155,7 @@ Public Sub SetVideoMode()
     'Изменение настроек монитора, если они меньше 800/600
     If iXres < 800 Or iYres < 600 Then
         If Not mbRunWithParam Then
-            If MsgBox(strMessages(51) & strSpace & iXres & "x" & iYres & "x" & iColor & "." & vbNewLine & strMessages(52), vbYesNo + vbQuestion + vbApplicationModal, strProductName) = vbYes Then
+            If MsgBox(strMessages(51) & strSpace & iXres & "x" & iYres & "x" & iColor & strDot & vbNewLine & strMessages(52), vbYesNo + vbQuestion + vbApplicationModal, strProductName) = vbYes Then
                 ChangeResolution 800, 600, iColor
             End If
 

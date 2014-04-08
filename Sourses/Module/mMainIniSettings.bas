@@ -590,7 +590,7 @@ Public Function GetMainIniParam() As Boolean
     ' DEVCON_EXE
     strDevConExePath = IniStringPrivate("DevCon", "PathExe", strSysIni)
 
-    If InStr(strDevConExePath, ":") Then
+    If InStr(strDevConExePath, strDvoetochie) Then
         mbPatnAbs = True
     End If
 
@@ -607,7 +607,7 @@ Public Function GetMainIniParam() As Boolean
     ' DEVCON_EXE64
     strDevConExePath64 = IniStringPrivate("DevCon", "PathExe64", strSysIni)
 
-    If InStr(strDevConExePath64, ":") Then
+    If InStr(strDevConExePath64, strDvoetochie) Then
         mbPatnAbs = True
     End If
 
@@ -624,7 +624,7 @@ Public Function GetMainIniParam() As Boolean
     ' DEVCON_EXE_W2k
     strDevConExePathW2k = IniStringPrivate("DevCon", "PathExeW2k", strSysIni)
 
-    If InStr(strDevConExePathW2k, ":") Then
+    If InStr(strDevConExePathW2k, strDvoetochie) Then
         mbPatnAbs = True
     End If
 
@@ -642,7 +642,7 @@ Public Function GetMainIniParam() As Boolean
     ' DPInst.exe
     strDPInstExePath86 = IniStringPrivate("DPInst", "PathExe", strSysIni)
 
-    If InStr(strDPInstExePath86, ":") Then
+    If InStr(strDPInstExePath86, strDvoetochie) Then
         mbPatnAbs = True
     End If
 
@@ -660,7 +660,7 @@ Public Function GetMainIniParam() As Boolean
     ' DPInst64.exe
     strDPInstExePath64 = IniStringPrivate("DPInst", "PathExe64", strSysIni)
 
-    If InStr(strDPInstExePath64, ":") Then
+    If InStr(strDPInstExePath64, strDvoetochie) Then
         mbPatnAbs = True
     End If
 
@@ -686,7 +686,7 @@ Public Function GetMainIniParam() As Boolean
     ' 7za.exe
     strArh7zExePATH = IniStringPrivate("Arc", "PathExe", strSysIni)
 
-    If InStr(strArh7zExePATH, ":") Then
+    If InStr(strArh7zExePATH, strDvoetochie) Then
         mbPatnAbs = True
     End If
 

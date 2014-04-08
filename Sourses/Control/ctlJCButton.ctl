@@ -2379,12 +2379,16 @@ Private Sub DrawPicwithCaption()
     End If
 
     ' --Draw Pictures
-    If m_bPicPushOnHover And m_Buttonstate = eStateOver Then
-        lShadowClr = TranslateColor(&HC0C0C0)
-        DrawPicture m_PicRect, lShadowClr
-        CopyRect pRect, m_PicRect
-        OffsetRect pRect, -2, -2
-        DrawPicture pRect
+    If m_bPicPushOnHover Then
+        If m_Buttonstate = eStateOver Then
+            lShadowClr = TranslateColor(&HC0C0C0)
+            DrawPicture m_PicRect, lShadowClr
+            CopyRect pRect, m_PicRect
+            OffsetRect pRect, -2, -2
+            DrawPicture pRect
+        Else
+            DrawPicture m_PicRect
+        End If
     Else
         DrawPicture m_PicRect
     End If
@@ -3807,21 +3811,22 @@ Private Sub DrawButton_Outlook2007(ByVal vState As enumButtonStates)
     lw = ScaleWidth
     bColor = TranslateColor(m_bColors.tBackColor)
 
-    If m_ButtonMode <> ebmCommandButton And m_bValue Then
-        DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&HA9D9FF), TranslateColor(&H6FC0FF), gdVertical
-        DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H3FABFF), TranslateColor(&H75E1FF), gdVertical
-        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
-
-        If m_bMouseInCtl Then
-            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&H58C1FF), TranslateColor(&H51AFFF), gdVertical
-            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H468FFF), TranslateColor(&H5FD3FF), gdVertical
+    If m_ButtonMode <> ebmCommandButton Then
+        If m_bValue Then
+            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&HA9D9FF), TranslateColor(&H6FC0FF), gdVertical
+            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H3FABFF), TranslateColor(&H75E1FF), gdVertical
             DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+    
+            If m_bMouseInCtl Then
+                DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&H58C1FF), TranslateColor(&H51AFFF), gdVertical
+                DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H468FFF), TranslateColor(&H5FD3FF), gdVertical
+                DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+            End If
+    
+            DrawPicwithCaption
+    
+            Exit Sub
         End If
-
-        DrawPicwithCaption
-
-        Exit Sub
-
     End If
 
     Select Case vState
@@ -5030,14 +5035,15 @@ Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single
     End If
 
     ' --Popupmenu enabled
-    If m_bPopupEnabled And m_DropDownEnable Then
-        m_bIsDown = False
-        m_bPopupShown = False
-        m_Buttonstate = eStateNormal
-        RedrawButton
-
-        Exit Sub
-
+    If m_bPopupEnabled Then
+        If m_DropDownEnable Then
+            m_bIsDown = False
+            m_bPopupShown = False
+            m_Buttonstate = eStateNormal
+            RedrawButton
+    
+            Exit Sub
+        End If
     End If
 
     ' --React only to Left mouse button

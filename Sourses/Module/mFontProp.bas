@@ -7,6 +7,7 @@ Public lngFont_Charset       As Long
 ' Шрифт основной формы и шрифта подсказок
 Public strFontMainForm_Name  As String
 Public lngFontMainForm_Size  As Long
+
 ' Шрифт других форм
 Public strFontOtherForm_Name As String
 Public lngFontOtherForm_Size As Long
@@ -56,28 +57,59 @@ Public Sub SetBtnStatusFontProperties(ctlObject As Object)
 
     With ctlObject
         .ForeColor = lngFontBtn_Color
-        .Font.Name = strFontBtn_Name
-        .Font.Size = miFontBtn_Size
-        .Font.Underline = mbFontBtn_Underline
-        .Font.Strikethrough = mbFontBtn_Strikethru
-        .Font.Bold = mbFontBtn_Bold
-        .Font.Italic = mbFontBtn_Italic
-        .Font.Charset = lngFont_Charset
+        With .Font
+            .Name = strFontBtn_Name
+            .Size = miFontBtn_Size
+            .Underline = mbFontBtn_Underline
+            .Strikethrough = mbFontBtn_Strikethru
+            .Bold = mbFontBtn_Bold
+            .Italic = mbFontBtn_Italic
+            .Charset = lngFont_Charset
+        End With
     End With
 
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub SetBtnFontProperties
-'! Description (Описание)  :   [Установка свойств шрифта для Объекта (прочие кнопки)]
+'! Procedure   (Функция)   :   Sub SetTabProperties
+'! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   ctlObject (Object)
 '!--------------------------------------------------------------------------------
-Public Sub SetBtnFontProperties(ctlObject As Object)
+Public Sub SetTabProperties(ctlObject As Object)
 
     With ctlObject
-        .Font.Name = strFontMainForm_Name
-        .Font.Size = lngFontMainForm_Size
-        .Font.Charset = lngFont_Charset
+        .ForeColor = lngFontTab_Color
+        With .Font
+            .Name = strFontTab_Name
+            .Size = miFontTab_Size
+            .Underline = mbFontTab_Underline
+            .Strikethrough = mbFontTab_Strikethru
+            .Bold = mbFontTab_Bold
+            .Italic = mbFontTab_Italic
+            .Charset = lngFont_Charset
+        End With
+    End With
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetTab2Properties
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   ctlObject (Object)
+'!--------------------------------------------------------------------------------
+Public Sub SetTab2Properties(ctlObject As Object)
+
+    With ctlObject
+        .ForeColor = lngFontTab2_Color
+        With .Font
+            .Name = strFontTab2_Name
+            .Size = miFontTab2_Size
+            .Underline = mbFontTab2_Underline
+            .Strikethrough = mbFontTab2_Strikethru
+            .Bold = mbFontTab2_Bold
+            .Italic = mbFontTab2_Italic
+            .Charset = lngFont_Charset
+        End With
     End With
 
 End Sub

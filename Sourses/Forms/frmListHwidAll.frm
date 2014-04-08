@@ -590,15 +590,7 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-    frGroup.Font.Charset = lngFont_Charset
-    frFindDrvInternet.Font.Charset = lngFont_Charset
     
-    SetBtnFontProperties cmdReNewHW
-    SetBtnFontProperties cmdBackUpDrivers
-    SetBtnFontProperties cmdOK
-    SetBtnFontProperties cmdCheckAll
-    SetBtnFontProperties cmdUnCheckAll
-    SetBtnFontProperties cmdGoSite
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1137,7 +1129,7 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
 
         If StrComp(strDevName, strStrDescription, vbTextCompare) <> 0 Then
             If LenB(strStrDescription) Then
-                If InStr(strStrDescription, "unknown") = 0 Then
+                If InStr(strStrDescription, strUnknownLCase) = 0 Then
                     strDevName = strStrDescription
                 End If
             End If
@@ -1182,21 +1174,24 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
             ' OEM - All
             Case 2
 
-                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
+                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 Then
+                    If InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 Then
+                        If InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
 
-                    With lvDevices.ListItems.Add(, , strDevHwid)
-                        .SubItems(1) = strDevName
-                        .SubItems(2) = strDevStatus
-                        .SubItems(3) = strDevDriverLocal
-                        .SubItems(4) = strProvider
-                        .SubItems(5) = strCompatID
-                        .SubItems(6) = strOrigHwid
-                        .SubItems(7) = strInDPacks
-                    End With
-
-                    lngNumRow = lngNumRow + 1
+                            With lvDevices.ListItems.Add(, , strDevHwid)
+                                .SubItems(1) = strDevName
+                                .SubItems(2) = strDevStatus
+                                .SubItems(3) = strDevDriverLocal
+                                .SubItems(4) = strProvider
+                                .SubItems(5) = strCompatID
+                                .SubItems(6) = strOrigHwid
+                                .SubItems(7) = strInDPacks
+                            End With
+        
+                            lngNumRow = lngNumRow + 1
+                        End If
+                    End If
                 End If
-
             ' All - not in base
             Case 4
 
@@ -1238,20 +1233,24 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
             ' OEM - not in base
             Case 6
 
-                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 And InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 And InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
-                    If LenB(strInDPacks) = 0 Then
-
-                        With lvDevices.ListItems.Add(, , strDevHwid)
-                            .SubItems(1) = strDevName
-                            .SubItems(2) = strDevStatus
-                            .SubItems(3) = strDevDriverLocal
-                            .SubItems(4) = strProvider
-                            .SubItems(5) = strCompatID
-                            .SubItems(6) = strOrigHwid
-                            .SubItems(7) = strInDPacks
-                        End With
-
-                        lngNumRow = lngNumRow + 1
+                If InStr(1, strProvider, "microsoft", vbTextCompare) = 0 Then
+                    If InStr(1, strProvider, "майкрософт", vbTextCompare) = 0 Then
+                        If InStr(1, strProvider, "standard", vbTextCompare) = 0 Then
+                            If LenB(strInDPacks) = 0 Then
+        
+                                With lvDevices.ListItems.Add(, , strDevHwid)
+                                    .SubItems(1) = strDevName
+                                    .SubItems(2) = strDevStatus
+                                    .SubItems(3) = strDevDriverLocal
+                                    .SubItems(4) = strProvider
+                                    .SubItems(5) = strCompatID
+                                    .SubItems(6) = strOrigHwid
+                                    .SubItems(7) = strInDPacks
+                                End With
+        
+                                lngNumRow = lngNumRow + 1
+                            End If
+                        End If
                     End If
                 End If
 

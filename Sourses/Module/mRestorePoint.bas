@@ -45,7 +45,7 @@ Public Sub CreateRestorePoint()
     Dim errResults    As Long
 
     ChangeStatusTextAndDebug strMessages(118)
-    strComputer = "."
+    strComputer = strDot
 
     On Error GoTo HandErr
 

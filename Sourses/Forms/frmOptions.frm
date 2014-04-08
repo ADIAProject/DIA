@@ -3457,18 +3457,7 @@ Private Sub FontCharsetChange()
         .Size = lngFontOtherForm_Size
         .Charset = lngFont_Charset
     End With
-
-    frDebug.Font.Charset = lngFont_Charset
-    frDesign.Font.Charset = lngFont_Charset
-    frDesign2.Font.Charset = lngFont_Charset
-    frDpInstParam.Font.Charset = lngFont_Charset
-    frMain.Font.Charset = lngFont_Charset
-    frMain2.Font.Charset = lngFont_Charset
-    frMainTools.Font.Charset = lngFont_Charset
-    frOptions.Font.Charset = lngFont_Charset
-    frOS.Font.Charset = lngFont_Charset
-    frOther.Font.Charset = lngFont_Charset
-    frOtherTools.Font.Charset = lngFont_Charset
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -3966,7 +3955,7 @@ Private Sub SaveOptions()
     strLogNameTemp = "DIA-LOG_%DATE%.txt"
 
     If LenB(txtDebugLogName.Text) Then
-        If InStr(txtDebugLogName.Text, ".") Then
+        If InStr(txtDebugLogName.Text, strDot) Then
             strLogNameTemp = txtDebugLogName.Text
         End If
     End If

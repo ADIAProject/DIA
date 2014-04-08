@@ -198,8 +198,6 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
-    SetBtnFontProperties cmdExit
-    SetBtnFontProperties cmdOK
 End Sub
 
 '!--------------------------------------------------------------------------------

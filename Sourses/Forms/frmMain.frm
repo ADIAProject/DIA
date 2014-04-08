@@ -1142,9 +1142,8 @@ Begin VB.Form frmMain
          Caption         =   "-"
       End
       Begin VB.Menu mnuLang 
-         Caption         =   ""
+         Caption         =   "Язык"
          Index           =   0
-         Visible         =   0   'False
       End
    End
    Begin VB.Menu mnuContextMenu 
@@ -1856,7 +1855,7 @@ Private Function CheckDRVbyNotebookVendor(ByVal strInfPath As String) As Boolean
 
     For i = 0 To UBound(arrNotebookFilterList)
         strFilterList = arrNotebookFilterList(i)
-        strFilterList_x() = Split(strFilterList, ";")
+        strFilterList_x() = Split(strFilterList, strCommaDot)
 
         For ii = 0 To UBound(strFilterList_x)
 
@@ -2259,9 +2258,15 @@ CheckVerByMarkersArch:
             ' Если по маркерам определить нельзя, определяем версию по имени DP
             mbArchFromMarkers = False
 
-            If mbMatchHWIDbyDPName And Not mbMarkerCheckExist Then
-                lngDRVx64 = InStr(strDPFileName, "X64")
-                mbArchFromDPName = True
+            If mbMatchHWIDbyDPName Then
+                If Not mbMarkerCheckExist Then
+                    lngDRVx64 = InStr(strDPFileName, "X64")
+                    mbArchFromDPName = True
+                Else
+                    If mbMarkerCheckExist Then
+                        lngDRVx64 = InStr(strDPInfPath, "X64")
+                    End If
+                End If
             Else
 
                 If mbMarkerCheckExist Then
@@ -2314,8 +2319,8 @@ CheckVerByMarkersArch:
     ' Проверка на несовместимые секции
     If mbCompatibleByVer Then
         If InStr(strSectionUnsupported, "-") = 0 Then
-            strSectionUnsupportedTemp = strSectionUnsupported & ","
-            strSection_x = Split(strSection, ".")
+            strSectionUnsupportedTemp = strSectionUnsupported & strComma
+            strSection_x = Split(strSection, strDot)
             strSectionMain = strSection_x(0)
 
             If StrComp(strOSCurrentVersion, "5.0") <> 0 Then
@@ -2353,7 +2358,7 @@ CheckVerByMarkersArch:
                                 mbCompatibleByArch = False
                                 mbCompatibleByVer = False
                             End If
-                        ElseIf CompareByVersion(strOsVer, strDRVOSVerUnsupported) = "=" Then
+                        ElseIf CompareByVersion(strOsVer, strDRVOSVerUnsupported) = strRavno Then
                             ' Если в inf неподдерживаемые секции с версией например 6.0, а драйвер найден в секции 6.1, то драйвер найден правильно, иначе
                             If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = ">" Then
                                 If mbDebugDetail Then DebugMode str6VbTab & "CompatibleDriver4OS: Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported
@@ -2751,7 +2756,7 @@ Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
 
     On Error Resume Next
 
-    DevId_x = Split(strDevID, ";")
+    DevId_x = Split(strDevID, strCommaDot)
 
     ' Если меню уже заполнено, то удаляем его
     If mnuContextCopyHWID2Clipboard.Count > 1 Then
@@ -2812,7 +2817,7 @@ Private Sub CreateMenuDevIDIndexDelMenu(ByVal strDevID As String)
 
     On Error Resume Next
 
-    DevId_x = Split(strDevID, ";")
+    DevId_x = Split(strDevID, strCommaDot)
 
     ' Если меню уже заполнено, то удаляем его
     If mnuContextDeleteDevID.Count > 1 Then
@@ -2980,7 +2985,6 @@ Private Sub DelDuplicateOldDP()
     Dim strDPName_2               As String
     Dim strVerDP_Main             As String
     Dim strResult                 As String
-    Dim strResult1                As String
     Dim strResult2                As String
     Dim strPackFileName2Del       As String
     Dim strPackFileName2DelTemp   As String
@@ -3000,7 +3004,7 @@ Private Sub DelDuplicateOldDP()
             strPackFileName(i, 1) = i
 
             If LenB(strPackFileNames) Then
-                strPackFileNames = strPackFileNames & ";" & acmdPackFiles(i).Tag
+                strPackFileNames = strPackFileNames & strCommaDot & acmdPackFiles(i).Tag
             Else
                 strPackFileNames = acmdPackFiles(i).Tag
             End If
@@ -3063,17 +3067,15 @@ Private Sub DelDuplicateOldDP()
                         lngStrLen2 = Len(strVerDP_2)
 
                         If lngStrLen1 > lngStrLen2 Then
-                            strResult1 = CompareByVersion(Left$(strVerDP_1, lngStrLen2), strVerDP_2)
-                            strResult = strResult1
+                            strResult = CompareByVersion(Left$(strVerDP_1, lngStrLen2), strVerDP_2)
 
                         ElseIf lngStrLen1 < lngStrLen2 Then
-                            strResult1 = CompareByVersion(strVerDP_1, Left$(strVerDP_2, lngStrLen1))
-                            strResult = strResult1
+                            strResult = CompareByVersion(strVerDP_1, Left$(strVerDP_2, lngStrLen1))
 
                         Else
                             strResult = CompareByVersion(strVerDP_1, strVerDP_2)
 
-                            If StrComp(strResult, "=") = 0 Then
+                            If StrComp(strResult, strRavno) = 0 Then
                                 If LenB(strVerDP_1_1) Then
                                     If LenB(strVerDP_1_1) Then
                                         strResult2 = CompareByVersion(strVerDP_1_1, strVerDP_2_1)
@@ -3101,9 +3103,9 @@ Private Sub DelDuplicateOldDP()
                         ii = ii + 1
                         ' удаляем из списка пакетов, то что ранее уже проверяли
                         strPackFileNames = Replace$(strPackFileNames, strDPName_1, vbNullString, , , vbTextCompare)
-                        strPackFileNames = Replace$(strPackFileNames, ";;", ";")
+                        strPackFileNames = Replace$(strPackFileNames, ";;", strCommaDot)
                         strPackFileNames = Replace$(strPackFileNames, strDPName_2, vbNullString, , , vbTextCompare)
-                        strPackFileNames = Replace$(strPackFileNames, ";;", ";")
+                        strPackFileNames = Replace$(strPackFileNames, ";;", strCommaDot)
                     Loop
 
                 End If
@@ -3743,7 +3745,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
                     If LenB(strFindMachID) Then
                         If StrComp(strFind, strFindMachID) <> 0 Then
-                            If InStr(strFindMachID, "UNKNOWN") = 0 Then
+                            If InStr(strFindMachID, strUnknownUCase) = 0 Then
                                 If Not MatchSpec(strFindMachID, strExcludeHWID) Then
                                     If InStr(strFindMachID & " | ", strFindCompatIDTemp) = 0 Then
                                         strFindCompatIDTemp = strFindCompatIDTemp & " | " & strFindMachID
@@ -3755,7 +3757,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
 
                     ' Поиск по совместимым HWID
                     If mbCompatiblesHWID Then
-                        If InStr(strFindCompatIDTemp, "UNKNOWN") = 0 Then
+                        If InStr(strFindCompatIDTemp, strUnknownUCase) = 0 Then
                             If LenB(strFindCompatIDTemp) Then
                                 strFindCompatID_x = Split(strFindCompatIDTemp, " | ")
                             End If
@@ -3873,7 +3875,7 @@ ExitFromForNext_iii:
                         strDevVerLocal = arrHwidsLocal(i).VerLocal
 
                         If LenB(strDevVerLocal) = 0 Then
-                            strDevVerLocal = "unknown"
+                            strDevVerLocal = strUnknownLCase
                         End If
 
                         strDevName = strResultByTab_x(6)
@@ -3881,7 +3883,7 @@ ExitFromForNext_iii:
                         If arrHwidsLocal(i).Status = 0 Then
                             mbStatusHwid = False
 
-                            If InStr(strDevVerLocal, "unknown") = 0 Then
+                            If InStr(strDevVerLocal, strUnknownLCase) = 0 Then
                                 If LenB(strDevVerLocal) Then
                                     mbIgnorStatusHwid = True
                                 End If
@@ -3892,9 +3894,9 @@ ExitFromForNext_iii:
                             strPriznakSravnenia = vbNullString
 
                             If mbCompareDrvVerByDate Then
-                                strPriznakSravnenia = CompareByDate(strDevVer, strDevVerLocal)
+                                CompareByDate strDevVer, strDevVerLocal, strPriznakSravnenia
                             Else
-                                strPriznakSravnenia = CompareByVersion(strDevVer, strDevVerLocal)
+                                CompareByVersion strDevVer, strDevVerLocal, strPriznakSravnenia
                             End If
 
                             If StrComp(strPriznakSravnenia, ">") = 0 Then
@@ -3913,7 +3915,7 @@ ExitFromForNext_iii:
 
                             arrHwidsLocal(i).PriznakSravnenia = strPriznakSravnenia
                         Else
-                            strPriznakSravnenia = "?"
+                            strPriznakSravnenia = strVopros
 
                             If arrHwidsLocal(i).Status = 0 Then
                                 mbDRVNotInstall = True
@@ -4056,7 +4058,7 @@ NextStrFind:
 
                     If Not objHashOutput2.Exists(strHwidToDelLine) Then
                         objHashOutput2.item(strHwidToDelLine) = "+"
-                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, i), ";"
+                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, i), strCommaDot
                     End If
 
                     ' Подсчитываем максимальную длину строки в подсказке
@@ -4127,7 +4129,7 @@ NextStrFind:
 
     ReDim Preserve arrTTipSize(lngButtonIndex + 1)
 
-    arrTTipSize(lngButtonIndex) = maxSizeRowAllLine & (";" & lngSizeRow1 & ";" & lngSizeRow2 & ";" & lngSizeRow4 & ";" & lngSizeRow9 & ";" & lngSizeRow5 & ";" & lngSizeRow6)
+    arrTTipSize(lngButtonIndex) = maxSizeRowAllLine & (strCommaDot & lngSizeRow1 & strCommaDot & lngSizeRow2 & strCommaDot & lngSizeRow4 & strCommaDot & lngSizeRow9 & strCommaDot & lngSizeRow5 & strCommaDot & lngSizeRow6)
 
 ExitFromSub:
    
@@ -4199,17 +4201,7 @@ Private Sub FontCharsetChange()
         .Size = lngFontMainForm_Size
         .Charset = lngFont_Charset
     End With
-
-    frCheck.Font.Charset = lngFont_Charset
-    frDescriptionIco.Font.Charset = lngFont_Charset
-    frInfo.Font.Charset = lngFont_Charset
-    frRezim.Font.Charset = lngFont_Charset
-    frRunChecked.Font.Charset = lngFont_Charset
-    frTabPanel.Font.Charset = lngFont_Charset
-    ctlUcStatusBar1.Font.Charset = lngFont_Charset
     
-    SetBtnFontProperties cmdRunTask
-    SetBtnFontProperties cmdBreakUpdateDB
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4966,16 +4958,19 @@ Private Sub LoadListChecked()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadSSTab2Desc
+'! Procedure   (Функция)   :   Sub LoadSSTabDesc
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub LoadSSTab2Desc()
+Private Sub LoadSSTabDesc()
 
     Dim i As Long
 
+    ' Устанавливаем шрифт закладок
+    SetTabProperties SSTab1
     SetTabPropertiesTabDrivers
-
+    
+    ' Устанавливаем caption закладок
     With SSTab2
 
         For i = .LBound To .UBound
@@ -5068,8 +5063,8 @@ Private Sub Localise(ByVal strPathFile As String)
     ' Перегрузка ToolTip
     ToolTipStatusLoad
     ToolTipOtherControlReLoad
-    ' Изменение SSTab2
-    LoadSSTab2Desc
+    ' Изменение SSTab
+    LoadSSTabDesc
     ' Перегрузка сообщений
     LocaliseMessage strPCLangCurrentPath
 
@@ -5080,7 +5075,7 @@ Private Sub Localise(ByVal strPathFile As String)
     ' Установка текста панели
     ctlUcStatusBar1.PanelText(1) = strMessages(127)
 
-    ' Если это не началный запуск программы, то изменяем еще и эти параметры
+    ' Если это не начальный запуск программы, то изменяем еще и эти параметры
     If Not mbFirstStart Then
         ' изменение caption кнопки CmdViewAll
         LoadCmdViewAllDeviceCaption
@@ -5662,7 +5657,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
 
                     'Формируем шапку для подсказки
                     If mbReloadToolTip Then
-                        strTTipSizeHeader_x = Split(arrTTipSize(Index), ";")
+                        strTTipSizeHeader_x = Split(arrTTipSize(Index), strCommaDot)
                         maxLengthRow1 = lngTableHwidHeader1
                         maxLengthRow2 = lngTableHwidHeader2
                         maxLengthRow4 = lngTableHwidHeader4
@@ -5733,7 +5728,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                 arrTTip(Index) = strTTipTextOnlyDrivers
             Else
                 arrTTip(Index) = strTTipText
-                If mbDebugDetail Then DebugMode str4VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & ":" & UBound(arrTTip)
+                If mbDebugDetail Then DebugMode str4VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & strDvoetochie & UBound(arrTTip)
                 If mbDebugStandart Then DebugMode (str4VbTab & "ReadOrSaveToolTip: strTTipText=" & vbNewLine & "=========================================================================================" & vbNewLine) & strTTipText
             End If
         End If
@@ -6293,70 +6288,21 @@ Private Sub SetStartScrollFramePos(ByVal miUnHideTabTemp As Integer)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub SetTabProperties
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub SetTabProperties()
-
-    With SSTab1
-        .Font.Name = strFontTab_Name
-        .Font.Size = miFontTab_Size
-        .Font.Underline = mbFontTab_Underline
-        .Font.Strikethrough = mbFontTab_Strikethru
-        .Font.Bold = mbFontTab_Bold
-        .Font.Italic = mbFontTab_Italic
-        .ForeColor = lngFontTab_Color
-        .Font.Charset = lngFont_Charset
-    End With
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SetTabPropertiesTabDrivers
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SetTabPropertiesTabDrivers()
+    Dim i As Long
+    
+    With SSTab2
 
-    'Сохранение визуально заданых свойств шрифтов в переменных
-    If mbFirstStart Then
+        For i = .LBound To .UBound
+            SetTab2Properties .item(i)
+        Next
 
-        With SSTab2(0)
-            .Font.Name = strFontTab2_Name
-            .Font.Size = miFontTab2_Size
-            .Font.Underline = mbFontTab2_Underline
-            .Font.Strikethrough = mbFontTab2_Strikethru
-            .Font.Bold = mbFontTab2_Bold
-            .Font.Italic = mbFontTab2_Italic
-            .ForeColor = lngFontTab2_Color
-            .Font.Charset = lngFont_Charset
-        End With
+    End With
 
-    Else
-
-        Dim i As Long
-
-        With SSTab2
-
-            For i = .LBound To .UBound
-
-                With .item(i)
-                    .Font.Name = strFontTab2_Name
-                    .Font.Size = miFontTab2_Size
-                    .Font.Underline = mbFontTab2_Underline
-                    .Font.Strikethrough = mbFontTab2_Strikethru
-                    .Font.Bold = mbFontTab2_Bold
-                    .Font.Italic = mbFontTab2_Italic
-                    .ForeColor = lngFontTab2_Color
-                    .Font.Charset = lngFont_Charset
-                End With
-
-            Next
-
-        End With
-
-    End If
 
 End Sub
 
@@ -8156,7 +8102,6 @@ Private Sub Form_Activate()
             'Get the start time
             lStart = GetTickCount
             Me.Enabled = False
-            'CollectHwid
             CollectHwidFromReestr
             Me.Enabled = True
             'Get the end time
@@ -8210,7 +8155,7 @@ Private Sub Form_Activate()
             frTabPanel.Visible = True
             SSTab1.Enabled = True
     
-            ' устанавливаем размера табконтрола и положения FrameScroll
+            ' Устанавливаем размера табконтрола и положения FrameScroll
             With frTabPanel
                 cntFindUnHideTab = FindUnHideTab
     
@@ -8221,13 +8166,19 @@ Private Sub Form_Activate()
     
             End With
     
-            ' подсчитываем кол-во неизвестных драйверов и изменяем текст кнопки
+            ' Подсчитываем кол-во неизвестных драйверов и изменяем текст кнопки
             LoadCmdViewAllDeviceCaption
             
             ' Загружаем описание значков иконок
             ToolTipStatusLoad
-            Unload frmLicence
-            Set frmLicence = Nothing
+            
+            ' Выгрузка формы Показ Лицензионного соглашения, если есть
+            If IsFormLoaded("frmLicence") Then
+                Unload frmLicence
+                Set frmLicence = Nothing
+            End If
+            
+            ' Начало подсчета времени запуска программы
             dtEndTimeProg = GetTickCount
             dtAllTimeProg = CalculateTime(dtStartTimeProg, dtEndTimeProg)
             
@@ -8340,7 +8291,7 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
         If Not mbFirstStart Then
             If KeyCode = vbKeyEscape Then
                 If Not mbCheckUpdNotEnd Then
-                    If VBA.MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
+                    If MsgBox(strMessages(34), vbQuestion + vbYesNo, strProductName) = vbYes Then
                         Unload Me
                     End If
                 End If
@@ -8454,9 +8405,6 @@ Private Sub Form_Load()
         .Top = lngButtonTop + 30
     End With
 
-    ' Устанавливаем шрифт закладок
-    SetTabProperties
-    SetTabPropertiesTabDrivers
     ' Свойства скороллформы
     ctlScrollControl1(0).BorderStyle = vbBSNone
     ctlScrollControlTab1(0).BorderStyle = vbBSNone
@@ -8503,8 +8451,8 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    If mbDebugStandart Then DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & _
-              "PCModel: " & lblPCInfo.Caption
+    If mbDebugStandart Then DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & "PCModel: " & lblPCInfo.Caption
+    
     ' Выставляем шрифт
     FontCharsetChange
 
@@ -9341,15 +9289,13 @@ Private Sub mnuLang_Click(Index As Integer)
     strPCLangCurrentLangName = arrLanguage(2, i)
     lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, i)))
 
-    If InStr(strPCLangCurrentIDTemp, ";") Then
-        strPCLangCurrentID_x = Split(strPCLangCurrentIDTemp, ";")
+    If InStr(strPCLangCurrentIDTemp, strCommaDot) Then
+        strPCLangCurrentID_x = Split(strPCLangCurrentIDTemp, strCommaDot)
         strPCLangCurrentID = strPCLangCurrentID_x(0)
     Else
         strPCLangCurrentID = strPCLangCurrentIDTemp
     End If
     
-    
-
     ' Собственно локализация
     Localise strPCLangCurrentPath
 
