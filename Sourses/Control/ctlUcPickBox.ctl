@@ -793,10 +793,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let DefaultExt(ByVal NewValue As String)
 
-    If Left$(NewValue, 1) <> strDot Then
-        NewValue = strDot & NewValue
+    If LenB(NewValue) Then
+        If AscW(NewValue) <> vbDot Then
+            NewValue = strDot & NewValue
+        End If
     End If
-
+    
     m_DefaultExt = NewValue
     PropertyChanged "DefaultExt"
 End Property
@@ -1819,7 +1821,7 @@ Private Function QualifyPath(ByVal sPath As String) As String
         If Not FileExists(sPath) Then
             '   Look for the PathSep
             lStrCnt = InStrRev(sPath, vbBackslash)
-            lStr2Cnt = InStrRev(sPath, strDvoetochie)
+            lStr2Cnt = InStrRev(sPath, strColon)
 
             If ((lStrCnt <> Len(sPath)) Or Right$(sPath, 1) <> vbBackslash) And lStrCnt > 1 And lStr2Cnt > 2 Then
                 '   None, so add it...
@@ -2315,7 +2317,7 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
         ElseIf InStr(sInput$, "/") Then
 
-            If InStr(sInput$, strDvoetochie) Then
+            If InStr(sInput$, strColon) Then
 
                 'URL
                 'start by triming off the extra params
@@ -2702,7 +2704,7 @@ Retry:
                                 sExt = InputBox("The File Extension is Missing!" & vbCrLf & "Please Enter a Valid Extension Below...", "ucPickBox", , (.Parent.ScaleWidth \ 2) + .Parent.Left - 2700, (.Parent.ScaleHeight \ 2) + .Parent.Top - 800)
 
                                 If LenB(sExt) = 0 Then
-                                    If MsgBox("     The File Extension is Invalid!" & vbCrLf & vbCrLf & "File will be saved with " & strKavichki & ".txt" & strKavichki & " extension.", vbExclamation + vbOKCancel, "ucPickBox") = vbOK Then
+                                    If MsgBox("     The File Extension is Invalid!" & vbCrLf & vbCrLf & "File will be saved with " & strQuotes & ".txt" & strQuotes & " extension.", vbExclamation + vbOKCancel, "ucPickBox") = vbOK Then
                                         '   Just use the default text file type
                                         sExt = ".txt"
                                     Else

@@ -145,7 +145,6 @@ Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CheckEditLicense
 '! Description (Описание)  :   [type_description_here]

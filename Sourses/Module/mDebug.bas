@@ -118,7 +118,7 @@ Public Sub PrintFileInDebugLog(ByVal strFilePath As String)
             If GetFileSizeByPath(strFilePath) Then
                         
                 If mbDebugStandart Then
-                    strTxtFileAll = FileReadData(strFilePath)
+                    FileReadData strFilePath, strTxtFileAll
                     DebugMode vbTab & "Content of file: " & strFilePath & vbNewLine & "*********************BEGIN FILE**************************" & vbNewLine & strTxtFileAll & vbNewLine & "**********************END FILE***************************"
                 End If
             Else

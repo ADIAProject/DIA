@@ -1636,9 +1636,9 @@ End Function
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ChangeFrmMainCaption
 '! Description (Описание)  :   [Изменение Caption Формы]
-'! Parameters  (Переменные):   lngstrPercentage (Long)
+'! Parameters  (Переменные):   lngstrPercent (Long)
 '!--------------------------------------------------------------------------------
-Private Sub ChangeFrmMainCaption(Optional ByVal lngstrPercentage As Long)
+Private Sub ChangeFrmMainCaption(Optional ByVal lngstrPercent As Long)
 
     Dim strProgressValue As String
 
@@ -1653,9 +1653,9 @@ Private Sub ChangeFrmMainCaption(Optional ByVal lngstrPercentage As Long)
             strFrmMainCaptionTempDate = " (Date Build: "
     End Select
 
-    If lngstrPercentage Mod 999 Then
+    If lngstrPercent Mod 999 Then
         If ctlProgressBar1.Visible Then
-            strProgressValue = (lngstrPercentage \ 10) & "% (" & ctlUcStatusBar1.PanelText(1) & ") - "
+            strProgressValue = (lngstrPercent \ 10) & "% (" & ctlUcStatusBar1.PanelText(1) & ") - "
         End If
     End If
 
@@ -1855,7 +1855,7 @@ Private Function CheckDRVbyNotebookVendor(ByVal strInfPath As String) As Boolean
 
     For i = 0 To UBound(arrNotebookFilterList)
         strFilterList = arrNotebookFilterList(i)
-        strFilterList_x() = Split(strFilterList, strCommaDot)
+        strFilterList_x() = Split(strFilterList, strSemiColon)
 
         For ii = 0 To UBound(strFilterList_x)
 
@@ -2055,6 +2055,7 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
     Dim strSectionUnsupportedTemp As String
     Dim mbMarkerFORCEDCheckExist  As Boolean
     Dim strDRVOSVerUnsupported    As String
+    Dim lngResultCompare          As eVerCompareResult
 
     mbOSx64 = mbIsWin64
 
@@ -2290,10 +2291,7 @@ CheckVerByMarkersArch:
             If InStr(strOsVer, strDRVOSVer) Then
                 mbCompatibleByVer = True
             Else
-
-                If CompareByVersion(strOsVer, strDRVOSVer) = ">" Then
-                    mbCompatibleByVer = True
-                End If
+                mbCompatibleByVer = CompareByVersion(strOsVer, strDRVOSVer) = crGreaterVer
             End If
 
         Else
@@ -2318,7 +2316,7 @@ CheckVerByMarkersArch:
 
     ' Проверка на несовместимые секции
     If mbCompatibleByVer Then
-        If InStr(strSectionUnsupported, "-") = 0 Then
+        If InStr(strSectionUnsupported, strDash) = 0 Then
             strSectionUnsupportedTemp = strSectionUnsupported & strComma
             strSection_x = Split(strSection, strDot)
             strSectionMain = strSection_x(0)
@@ -2351,16 +2349,17 @@ CheckVerByMarkersArch:
 
                         ' Если в inf неподдерживаемые секции с версией например 6.0, то неподдериваются ос 6.0 и выше
                         ' т.е если текущая ОС больше чем найденная в inf пустая секция, т.е драйвер не поддерживается
-                        If CompareByVersion(strOsVer, strDRVOSVerUnsupported) = ">" Then
+                        lngResultCompare = CompareByVersion(strOsVer, strDRVOSVerUnsupported)
+                        If lngResultCompare = crGreaterVer Then
                             ' Если в inf неподдерживаемые секции с версией например 6.0, а драйвер найден в секции 6.1, то драйвер найден правильно, иначе
-                            If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = ">" Then
+                            If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = crGreaterVer Then
                                 If mbDebugDetail Then DebugMode str6VbTab & "CompatibleDriver4OS: Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported
                                 mbCompatibleByArch = False
                                 mbCompatibleByVer = False
                             End If
-                        ElseIf CompareByVersion(strOsVer, strDRVOSVerUnsupported) = strRavno Then
+                        ElseIf lngResultCompare = crEqualVer Then
                             ' Если в inf неподдерживаемые секции с версией например 6.0, а драйвер найден в секции 6.1, то драйвер найден правильно, иначе
-                            If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = ">" Then
+                            If CompareByVersion(strDRVOSVerUnsupported, strDRVOSVer) = crGreaterVer Then
                                 If mbDebugDetail Then DebugMode str6VbTab & "CompatibleDriver4OS: Check Inf-Section: " & strSection & " Result: " & CompatibleDriver4OS & " by SectionUnsupported:" & strSectionUnsupported
                                 mbCompatibleByArch = False
                                 mbCompatibleByVer = False
@@ -2434,7 +2433,7 @@ Private Function ConvertDPName(ByVal strButtonName As String) As String
         If InStr(strButtonNameTemp, "-32") Then strButtonName = Replace$(strButtonName, "-32", vbNullString, , , vbTextCompare)
         If InStr(strButtonNameTemp, "x64") Then strButtonName = Replace$(strButtonName, "x64", vbNullString, , , vbTextCompare)
         If InStr(strButtonNameTemp, "_") Then strButtonName = Replace$(strButtonName, "_", strSpace)
-        If InStr(strButtonNameTemp, "-") Then strButtonName = Replace$(strButtonName, "-", strSpace)
+        If InStr(strButtonNameTemp, strDash) Then strButtonName = Replace$(strButtonName, strDash, strSpace)
         If InStr(strButtonName, str3Space) Then strButtonName = Replace$(strButtonName, str3Space, strSpace)
         If InStr(strButtonName, str2Space) Then strButtonName = Replace$(strButtonName, str2Space, strSpace)
         strButtonName = Trim$(strButtonName)
@@ -2756,7 +2755,7 @@ Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
 
     On Error Resume Next
 
-    DevId_x = Split(strDevID, strCommaDot)
+    DevId_x = Split(strDevID, strSemiColon)
 
     ' Если меню уже заполнено, то удаляем его
     If mnuContextCopyHWID2Clipboard.Count > 1 Then
@@ -2817,7 +2816,7 @@ Private Sub CreateMenuDevIDIndexDelMenu(ByVal strDevID As String)
 
     On Error Resume Next
 
-    DevId_x = Split(strDevID, strCommaDot)
+    DevId_x = Split(strDevID, strSemiColon)
 
     ' Если меню уже заполнено, то удаляем его
     If mnuContextDeleteDevID.Count > 1 Then
@@ -2984,8 +2983,8 @@ Private Sub DelDuplicateOldDP()
     Dim strDPName_1               As String
     Dim strDPName_2               As String
     Dim strVerDP_Main             As String
-    Dim strResult                 As String
-    Dim strResult2                As String
+    Dim lngResult                 As eVerCompareResult
+    Dim lngResult2                As eVerCompareResult
     Dim strPackFileName2Del       As String
     Dim strPackFileName2DelTemp   As String
     Dim strPackFileName2Del_x()   As String
@@ -3004,7 +3003,7 @@ Private Sub DelDuplicateOldDP()
             strPackFileName(i, 1) = i
 
             If LenB(strPackFileNames) Then
-                strPackFileNames = strPackFileNames & strCommaDot & acmdPackFiles(i).Tag
+                strPackFileNames = strPackFileNames & strSemiColon & acmdPackFiles(i).Tag
             Else
                 strPackFileNames = acmdPackFiles(i).Tag
             End If
@@ -3039,7 +3038,6 @@ Private Sub DelDuplicateOldDP()
 
                 If .Count > 1 Then
                     strVerDP_Main = vbNullString
-                    strResult = vbNullString
                     strVerDP_1 = vbNullString
                     strVerDP_2 = vbNullString
                     strDPName_1 = vbNullString
@@ -3067,29 +3065,29 @@ Private Sub DelDuplicateOldDP()
                         lngStrLen2 = Len(strVerDP_2)
 
                         If lngStrLen1 > lngStrLen2 Then
-                            strResult = CompareByVersion(Left$(strVerDP_1, lngStrLen2), strVerDP_2)
+                            lngResult = CompareByVersion(Left$(strVerDP_1, lngStrLen2), strVerDP_2)
 
                         ElseIf lngStrLen1 < lngStrLen2 Then
-                            strResult = CompareByVersion(strVerDP_1, Left$(strVerDP_2, lngStrLen1))
+                            lngResult = CompareByVersion(strVerDP_1, Left$(strVerDP_2, lngStrLen1))
 
                         Else
-                            strResult = CompareByVersion(strVerDP_1, strVerDP_2)
+                            lngResult = CompareByVersion(strVerDP_1, strVerDP_2)
 
-                            If StrComp(strResult, strRavno) = 0 Then
+                            If lngResult = crEqualVer Then
                                 If LenB(strVerDP_1_1) Then
                                     If LenB(strVerDP_1_1) Then
-                                        strResult2 = CompareByVersion(strVerDP_1_1, strVerDP_2_1)
+                                        lngResult2 = CompareByVersion(strVerDP_1_1, strVerDP_2_1)
                                     End If
                                 End If
 
-                                strResult = strResult2
+                                lngResult = lngResult2
                             End If
                         End If
 
-                        If StrComp(strResult, ">") = 0 Then
+                        If lngResult = crGreaterVer Then
                             strVerDP_Main = strVerDP_1
                             strPackFileName2DelTemp = strDPName_2
-                        ElseIf StrComp(strResult, "<") = 0 Then
+                        ElseIf lngResult = crLessVer Then
                             strVerDP_Main = strVerDP_2
                             strPackFileName2DelTemp = strDPName_1
                         End If
@@ -3103,9 +3101,9 @@ Private Sub DelDuplicateOldDP()
                         ii = ii + 1
                         ' удаляем из списка пакетов, то что ранее уже проверяли
                         strPackFileNames = Replace$(strPackFileNames, strDPName_1, vbNullString, , , vbTextCompare)
-                        strPackFileNames = Replace$(strPackFileNames, ";;", strCommaDot)
+                        strPackFileNames = Replace$(strPackFileNames, ";;", strSemiColon)
                         strPackFileNames = Replace$(strPackFileNames, strDPName_2, vbNullString, , , vbTextCompare)
-                        strPackFileNames = Replace$(strPackFileNames, ";;", strCommaDot)
+                        strPackFileNames = Replace$(strPackFileNames, ";;", strSemiColon)
                     Loop
 
                 End If
@@ -3477,7 +3475,7 @@ Private Function FindAndInstallPanel(ByVal strArcDRPPath As String, ByVal strIni
                 strTemp = Replace$(strTemp, "%DPSROOT%\", strDPSROOT, , , vbTextCompare)
 
                 ' Если в пути есть переменные окружения, то заменяем их на нормальный путь
-                If InStr(strTemp, strPercentage) Then
+                If InStr(strTemp, strPercent) Then
                     strTemp = GetEnviron(strTemp, True)
                 End If
 
@@ -3522,7 +3520,7 @@ NextTag:
                         strTemp = Replace$(strTemp, "%SystemDrive%\devcon.exe", strDevConExePath, , , vbTextCompare)
 
                         ' Если в пути есть переменные окружения, то заменяем их на нормальный путь
-                        If InStr(strTemp, strPercentage) Then
+                        If InStr(strTemp, strPercent) Then
                             strTemp = GetEnviron(strTemp, True)
                         End If
 
@@ -3660,6 +3658,7 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim lngTTipLocalArrCount     As Long
     Dim miMaxCountArr            As Long
     Dim strPriznakSravnenia      As String
+    Dim lngPriznakSravnenia      As eVerCompareResult
     Dim strHwidToDel             As String
     Dim strHwidToDelLine         As String
     Dim lngMatchesCount          As Long
@@ -3705,12 +3704,12 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
         If Not PathIsAFolder(strPathFileNameDevDB) Then
             ' Считываем содержимое всего файла индекса в буфер
             Erase strFileFull_x
-            strFileFullText = FileReadData(strPathFileNameDevDB)
+            FileReadData strPathFileNameDevDB, strFileFullText
             strFileFull_x = Split(strFileFullText, vbNewLine)
             
             ' Считываем содержимое всего файла HWID в буфер
             Erase strFile_x
-            strFileFullTextHwid = FileReadData(strPathFileNameDevDBHwid)
+            FileReadData strPathFileNameDevDBHwid, strFileFullTextHwid
             strFile_x = Split(strFileFullTextHwid, vbNewLine)
             
             miMaxCountArr = 100
@@ -3894,22 +3893,23 @@ ExitFromForNext_iii:
                             strPriznakSravnenia = vbNullString
 
                             If mbCompareDrvVerByDate Then
-                                CompareByDate strDevVer, strDevVerLocal, strPriznakSravnenia
+                                lngPriznakSravnenia = CompareByDate(strDevVer, strDevVerLocal, strPriznakSravnenia)
                             Else
-                                CompareByVersion strDevVer, strDevVerLocal, strPriznakSravnenia
+                                lngPriznakSravnenia = CompareByVersion(strDevVer, strDevVerLocal, strPriznakSravnenia)
                             End If
 
-                            If StrComp(strPriznakSravnenia, ">") = 0 Then
+                            If lngPriznakSravnenia = crGreaterVer Then
                                 ' В БД новее
                                 mbStatusNewer = True
                                 mbStatusOlder = False
-                            ElseIf StrComp(strPriznakSravnenia, "<") = 0 Then
+                            ElseIf lngPriznakSravnenia = crLessVer Then
                                 ' В БД старее
                                 If Not mbStatusOlder Then
                                     If Not mbStatusNewer Then
                                         mbStatusOlder = True
                                     End If
                                 End If
+                            'Else
                                 ' Дрова равны
                             End If
 
@@ -4058,7 +4058,7 @@ NextStrFind:
 
                     If Not objHashOutput2.Exists(strHwidToDelLine) Then
                         objHashOutput2.item(strHwidToDelLine) = "+"
-                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, i), strCommaDot
+                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, i), strSemiColon
                     End If
 
                     ' Подсчитываем максимальную длину строки в подсказке
@@ -4129,7 +4129,7 @@ NextStrFind:
 
     ReDim Preserve arrTTipSize(lngButtonIndex + 1)
 
-    arrTTipSize(lngButtonIndex) = maxSizeRowAllLine & (strCommaDot & lngSizeRow1 & strCommaDot & lngSizeRow2 & strCommaDot & lngSizeRow4 & strCommaDot & lngSizeRow9 & strCommaDot & lngSizeRow5 & strCommaDot & lngSizeRow6)
+    arrTTipSize(lngButtonIndex) = maxSizeRowAllLine & (strSemiColon & lngSizeRow1 & strSemiColon & lngSizeRow2 & strSemiColon & lngSizeRow4 & strSemiColon & lngSizeRow9 & strSemiColon & lngSizeRow5 & strSemiColon & lngSizeRow6)
 
 ExitFromSub:
    
@@ -5370,7 +5370,7 @@ Private Sub PutAllDrivers2Log()
     
     'Формируем шапку для подсказки
     strTTipTextHeaders = strTTipTextDrv2Install & vbNewLine & _
-                        String$(maxSizeRowAllLineMax, "-") & vbNewLine & _
+                        String$(maxSizeRowAllLineMax, strDash) & vbNewLine & _
                         UCase$(strTableHwidHeader1 & Space$(lngSizeRow1Max - lngTableHwidHeader1 + 1) & "| " & _
                         strTableHwidHeaderDP & Space$(lngSizeRowDPMax - Len(strTableHwidHeaderDP) + 1) & "| " & _
                         strTableHwidHeader2 & Space$(lngSizeRow2Max - lngTableHwidHeader2 + 1) & "| " & _
@@ -5378,7 +5378,7 @@ Private Sub PutAllDrivers2Log()
                         strTableHwidHeader9 & Space$(lngSizeRow9Max - lngTableHwidHeader9 + 1) & "| " & _
                         strTableHwidHeader5 & Space$(lngSizeRow5Max - lngTableHwidHeader5 + 1) & "| " & _
                         strTableHwidHeader6 & Space$(lngSizeRow6Max - lngTableHwidHeader6 + 1) & "| " & _
-                        strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLineMax, "-") & vbNewLine
+                        strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLineMax, strDash) & vbNewLine
 
     If mbDebugStandart Then DebugMode "===============================List of all found a matched driver===================================" & vbNewLine & strTTipTextHeaders
 
@@ -5657,7 +5657,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
 
                     'Формируем шапку для подсказки
                     If mbReloadToolTip Then
-                        strTTipSizeHeader_x = Split(arrTTipSize(Index), strCommaDot)
+                        strTTipSizeHeader_x = Split(arrTTipSize(Index), strSemiColon)
                         maxLengthRow1 = lngTableHwidHeader1
                         maxLengthRow2 = lngTableHwidHeader2
                         maxLengthRow4 = lngTableHwidHeader4
@@ -5699,16 +5699,16 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
     
                     strTTipTextHeaders = strTTipTextHeadersTemp & str2vbNewLine & _
                                          strTTipTextDrv2Install & vbNewLine & _
-                                         String$(maxSizeRowAllLine, "-") & vbNewLine & _
+                                         String$(maxSizeRowAllLine, strDash) & vbNewLine & _
                                          UCase$(strTableHwidHeader1 & Space$(lngSizeRow1 - lngTableHwidHeader1 + 1) & "| " & _
                                          strTableHwidHeader2 & Space$(lngSizeRow2 - lngTableHwidHeader2 + 1) & "| " & _
                                          strTableHwidHeader4 & Space$(lngSizeRow4 - lngTableHwidHeader4 + 1) & "| " & _
                                          strTableHwidHeader9 & Space$(lngSizeRow9 - lngTableHwidHeader9 + 1) & "| " & _
                                          strTableHwidHeader5 & Space$(lngSizeRow5 - lngTableHwidHeader5 + 1) & "| " & _
                                          strTableHwidHeader6 & Space$(lngSizeRow6 - lngTableHwidHeader6 + 1) & "| " & _
-                                         strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLine, "-") & vbNewLine
+                                         strTableHwidHeader7) & vbNewLine & String$(maxSizeRowAllLine, strDash) & vbNewLine
                     'Текст итоговой подсказки
-                    strTTipText = strTTipTextHeaders & strTTipTextTemp & vbNewLine & String$(maxSizeRowAllLine, "-")
+                    strTTipText = strTTipTextHeaders & strTTipTextTemp & vbNewLine & String$(maxSizeRowAllLine, strDash)
                 Else
                     strTTipText = strTTipTextHeadersTemp & str2vbNewLine & strTTipTextDrv4UnsupOS
                     strTTipTextOnlyDrivers = strTTipTextDrv4UnsupOS
@@ -5728,7 +5728,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
                 arrTTip(Index) = strTTipTextOnlyDrivers
             Else
                 arrTTip(Index) = strTTipText
-                If mbDebugDetail Then DebugMode str4VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & strDvoetochie & UBound(arrTTip)
+                If mbDebugDetail Then DebugMode str4VbTab & "ReadOrSaveToolTip: ToolTipArrIndex=" & Index & strColon & UBound(arrTTip)
                 If mbDebugStandart Then DebugMode (str4VbTab & "ReadOrSaveToolTip: strTTipText=" & vbNewLine & "=========================================================================================" & vbNewLine) & strTTipText
             End If
         End If
@@ -5948,7 +5948,7 @@ Private Function RunDPInst(ByVal strWorkPath As String) As Long
     If mbDebugStandart Then DebugMode "RunDPInst-Start" & vbNewLine & _
               "RunDPInst: strWorkPath" & strWorkPath
 
-    cmdString = strKavichki & strDPInstExePath & strKavichki & strSpace & CollectCmdString & "/PATH " & strKavichki & strWorkPath & strKavichki
+    cmdString = strQuotes & strDPInstExePath & strQuotes & strSpace & CollectCmdString & "/PATH " & strQuotes & strWorkPath & strQuotes
     ChangeStatusTextAndDebug strMessages(93)
 
     If RunAndWaitNew(cmdString, GetPathNameFromPath(strDPInstExePath), vbNormalFocus) = False Then
@@ -6302,7 +6302,6 @@ Private Sub SetTabPropertiesTabDrivers()
         Next
 
     End With
-
 
 End Sub
 
@@ -6879,7 +6878,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
     End If
 
     If Not mbDP_Is_aFolder Then
-        cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & ArchTempPath & strKavichki & " -r " & strKavichki & strPathDRP & strPackFileName & strKavichki & strSpace & strMaskFile
+        cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & ArchTempPath & strQuotes & " -r " & strQuotes & strPathDRP & strPackFileName & strQuotes & strSpace & strMaskFile
         ChangeStatusTextAndDebug strMessages(97) & strSpace & strPackFileName
         If mbDebugStandart Then DebugMode "Extract: " & cmdString
 
@@ -7006,7 +7005,7 @@ Private Sub UnPackDPFileAdd(ByVal strPathAddFile As String, ByVal strPathDRP As 
 
     If PathExists(strPathAddFilePath) Then
         If Not PathIsAFolder(strPathAddFilePath) Then
-            cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & strArchTempPath & strKavichki & " -r " & strKavichki & strPathAddFilePath & strKavichki & " *.*"
+            cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & strArchTempPath & strQuotes & " -r " & strQuotes & strPathAddFilePath & strQuotes & " *.*"
             ChangeStatusTextAndDebug strMessages(98) & strSpace & strPathAddFilePath
             If mbDebugStandart Then DebugMode "Extract: " & cmdString
 
@@ -7048,7 +7047,7 @@ Private Function UnpackOtherFile(ByVal strArcDRPPath As String, ByVal strWorkDir
               "UnpackOtherFile: strArcDRPPath=" & strArcDRPPath & vbNewLine & _
               "UnpackOtherFile: strMaskFile=" & strMaskFile
      
-    cmdString = strKavichki & strArh7zExePATH & strKavichki & " x -yo" & strKavichki & strWorkDir & strKavichki & " -r " & strKavichki & strArcDRPPath & strKavichki & strSpace & strMaskFile
+    cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & strWorkDir & strQuotes & " -r " & strQuotes & strArcDRPPath & strQuotes & strSpace & strMaskFile
     ChangeStatusTextAndDebug strMessages(99) & strSpace & strArcDRPPath
     If mbDebugStandart Then DebugMode "Extract: " & cmdString
     UnpackOtherFile = True
@@ -8082,7 +8081,7 @@ Private Sub Form_Activate()
         End With
 
         ChangeFrmMainCaption 100
-
+        
         If mbSearchOnStart Then
             RunDevconRescan lngPauseAfterSearch
         End If
@@ -8310,7 +8309,7 @@ Private Sub Form_Load()
 
     Dim i  As Long
     Dim ii As Long
-
+    
     If mbDebugStandart Then DebugMode "MainForm Show"
     SetupVisualStyles Me
 
@@ -8431,7 +8430,7 @@ Private Sub Form_Load()
         Next
 
     End If
-
+    
     ' Загрузка меню языков и локализация приложения
     If mbMultiLanguage Then
         If mbDebugStandart Then DebugMode "CreateLangList: " & UBound(arrLanguage) + 1
@@ -8504,6 +8503,8 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 
+    Dim i As Long
+    
     ' Проверяем закончена ли проверка обновления, если нет то прерываем выход из программы, иначе программа вылетит
     If mbCheckUpdNotEnd Then
         Cancel = UnloadMode = vbFormControlMenu Or vbFormCode
@@ -8521,8 +8522,7 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
         End If
     End If
 
-    
-    Dim i As Long
+    ' Отключение меню для всех кнопок
     For i = acmdPackFiles.LBound To acmdPackFiles.UBound
         acmdPackFiles(i).UnsetPopupMenu
         acmdPackFiles(i).UnsetPopupMenuRBT
@@ -8546,16 +8546,16 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
     SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP", False
 
     If mbLoadIniTmpAfterRestart Then
-        SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP_PATH", "-"
+        SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP_PATH", strDash
 
         If StrComp(GetFileNameFromPath(strSysIni), "Settings_DIA_TMP.ini", vbTextCompare) = 0 Then
             DeleteFiles strSysIni
         End If
     End If
     
-    If lngFrameTime < 0 Then lngFrameTime = 2
-    If lngFrameCount < 1 Then lngFrameCount = 40
     If Me.WindowState <> vbMinimized Then
+        If lngFrameTime < 0 Then lngFrameTime = 2
+        If lngFrameCount < 1 Then lngFrameCount = 40
         AnimateForm Me, aUnload, eZoomOut, lngFrameTime, lngFrameCount
     End If
 
@@ -9046,7 +9046,7 @@ Private Sub mnuContextTestDRP_Click()
 
     strPackFileName = acmdPackFiles(lngCurrentBtnIndex).Tag
     strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
-    cmdString = strKavichki & strArh7zExePATH & strKavichki & " t " & strKavichki & strPathDRP & strPackFileName & strKavichki & " -r"
+    cmdString = strQuotes & strArh7zExePATH & strQuotes & " t " & strQuotes & strPathDRP & strPackFileName & strQuotes & " -r"
     ChangeStatusTextAndDebug strMessages(109) & strSpace & strPackFileName
     BlockControl False
 
@@ -9289,8 +9289,8 @@ Private Sub mnuLang_Click(Index As Integer)
     strPCLangCurrentLangName = arrLanguage(2, i)
     lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, i)))
 
-    If InStr(strPCLangCurrentIDTemp, strCommaDot) Then
-        strPCLangCurrentID_x = Split(strPCLangCurrentIDTemp, strCommaDot)
+    If InStr(strPCLangCurrentIDTemp, strSemiColon) Then
+        strPCLangCurrentID_x = Split(strPCLangCurrentIDTemp, strSemiColon)
         strPCLangCurrentID = strPCLangCurrentID_x(0)
     Else
         strPCLangCurrentID = strPCLangCurrentIDTemp
@@ -9505,15 +9505,15 @@ Private Sub mnuSaveInfoPC_Click()
         .DialogTitle = strMessages(151)
         If mbIsNotebok Then
             If Not OSCurrVersionStruct.ClientOrServer Then
-                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%")
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%")
             Else
-                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%")
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%")
             End If
         Else
             If Not OSCurrVersionStruct.ClientOrServer Then
-                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%")
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%")
             Else
-                .FileName = ExpandFileNamebyEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
+                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
             End If
         End If
 
@@ -9640,9 +9640,9 @@ Private Sub mnuUtils_Click(Index As Integer)
     Params = arrUtilsList(i, 3)
 
     If LenB(Params) = 0 Then
-        cmdString = strKavichki & PathExe & strKavichki
+        cmdString = strQuotes & PathExe & strQuotes
     Else
-        cmdString = strKavichki & PathExe & strKavichki & strSpace & Params
+        cmdString = strQuotes & PathExe & strQuotes & strSpace & Params
     End If
 
     RunUtilsShell cmdString, False, False, False

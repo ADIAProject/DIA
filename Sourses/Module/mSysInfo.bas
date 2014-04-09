@@ -176,7 +176,7 @@ Public Function GetMB_Model() As String
     Set objRegExp = New RegExp
 
     With objRegExp
-        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
+        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(ELECTRONICS)|(Technology)/ig"
         .IgnoreCase = True
         .Global = True
         'Заменяем найденные значения " "
@@ -204,7 +204,7 @@ Public Function GetMBInfo() As String
 
     If mbMB_Manufacturer Then
         If mbMB_Model Then
-            GetMBInfo = strMB_Manufacturer & "-" & strMB_Model
+            GetMBInfo = strMB_Manufacturer & strDash & strMB_Model
         Else
             GetMBInfo = strMB_Manufacturer
         End If
@@ -217,7 +217,7 @@ Public Function GetMBInfo() As String
     End If
     
     If InStr(GetMBInfo, "_") Then
-        GetMBInfo = Replace$(GetMBInfo, "_", "-")
+        GetMBInfo = Replace$(GetMBInfo, "_", strDash)
     End If
 End Function
 

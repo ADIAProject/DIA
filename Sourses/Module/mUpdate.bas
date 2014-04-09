@@ -120,7 +120,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
     Dim strTextNodeName         As String
     Dim miNodeIndex             As Integer
     Dim strVerTemp              As String
-    Dim strResultCompare        As String
+    Dim lngResultCompare        As eVerCompareResult
     Dim strUrl_TestWWW_Result   As String
     Dim strUrl_Test_Site        As String
     Dim strUrl_Test_Site_Result As String
@@ -209,12 +209,12 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                 Next
 
                 '**** Сравнение версий программ
-                strResultCompare = CompareByVersion(strVersion, strVerTemp)
+                lngResultCompare = CompareByVersion(strVersion, strVerTemp)
 
                 ' Анализ итога сравнения и показ окна
-                Select Case strResultCompare
+                Select Case lngResultCompare
 
-                    Case ">"
+                    Case crGreaterVer
 
                         If StrComp(strRelease, "beta", vbTextCompare) = 0 Then
                             If Not mbUpdateCheckBeta Then
@@ -242,7 +242,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                             frmCheckUpdate.Show vbModal, frmMain
                         End If
 
-                    Case strRavno
+                    Case crEqualVer
                         ChangeStatusTextAndDebug strMessages(56)
 
                         If Not Start Then
@@ -251,7 +251,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                             End If
                         End If
 
-                    Case "<"
+                    Case crLessVer
                         ChangeStatusTextAndDebug strMessages(55)
 
                         If Not Start Then
@@ -357,7 +357,7 @@ Public Sub LoadUpdateData()
             If StrComp(strTextNodeName, "versions") = 0 Then
             
                 strVersionsTemp = xmlNode.childNodes(miNodeIndex).Text
-                strUpdVersions = Split(strVersionsTemp, strCommaDot)
+                strUpdVersions = Split(strVersionsTemp, strSemiColon)
                 lngUbound = UBound(strUpdVersions)
 
                 ReDim strUpdDescription(lngUbound, 2)

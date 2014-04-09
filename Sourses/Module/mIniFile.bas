@@ -63,7 +63,7 @@ Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal
     If LenB(strTmp) Then
         GetIniEmptySectionFromList = strTmp
     Else
-        GetIniEmptySectionFromList = "-"
+        GetIniEmptySectionFromList = strDash
     End If
 
 End Function

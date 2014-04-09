@@ -20,7 +20,6 @@ Begin VB.Form frmDonate
    LinkTopic       =   "Form1"
    ScaleHeight     =   6315
    ScaleWidth      =   9480
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True

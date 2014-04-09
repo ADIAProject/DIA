@@ -5358,7 +5358,6 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
 End Sub
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lvUtils_ItemDblClick
 '! Description (Описание)  :   [Двойнок клик по элементу списка вызывает форму редактирования]
@@ -5605,7 +5604,6 @@ Private Sub ucDevCon64Path_LostFocus()
     HighlightActiveControl Me, ucDevCon64Path, False
 End Sub
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ucDevCon86Path_Click
 '! Description (Описание)  :   [выбор каталога или файла]
@@ -5810,5 +5808,4 @@ End Sub
 Private Sub ucTempPath_LostFocus()
     HighlightActiveControl Me, ucTempPath, False
 End Sub
-
 

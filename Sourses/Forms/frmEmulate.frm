@@ -22,7 +22,6 @@ Begin VB.Form frmEmulate
    MinButton       =   0   'False
    ScaleHeight     =   5055
    ScaleWidth      =   8310
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
    Begin prjDIADBS.ctlJCFrames frFile 
       Height          =   1395
@@ -338,7 +337,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
     Dim i                 As Long
     Dim strContentFile    As String
 
-    strContentFile = FileReadData(strFilePath)
+    FileReadData strFilePath, strContentFile
     arrFileStrings = Split(strContentFile, vbNewLine)
 
     'Переопределяем основной массив с данными об устройствах компьютера
@@ -646,5 +645,4 @@ Private Sub ucFilePath_Click()
     End If
 
 End Sub
-
 

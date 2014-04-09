@@ -22,7 +22,6 @@ Begin VB.Form frmFontDialog
    MinButton       =   0   'False
    ScaleHeight     =   2595
    ScaleWidth      =   4425
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
    Begin prjDIADBS.TextBoxW txtFont 
       Height          =   495
@@ -457,7 +456,6 @@ Private Sub SaveOptions()
     End With
 
 End Sub
-
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkBold_Click

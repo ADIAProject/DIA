@@ -94,7 +94,6 @@ Private Sub LoadIconImageFromFileBtnJC(ByVal btnName As ctlJCbutton, ByVal Pictu
         If mbDebugDetail Then DebugMode str2VbTab & "Path to picture: " & PicturePath & " not Exist. Standard picture Will is used"
     End If
 
-
 ExitFromSub:
 
     Exit Sub

@@ -95,8 +95,6 @@ Private Const lngButtonTopDef            As Long = 100      ' Дефолтные значения
 Private Const lngBtn2BtnLeftDef          As Long = 100      ' Дефолтные значения размеров кнопки - Интервал между кнопками по горизонтали
 Private Const lngBtn2BtnTopDef           As Long = 100      ' Дефолтные значения размеров кнопки - Интервал между кнопками по вертикали
 
-
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CreateIni
 '! Description (Описание)  :   [Сохранение настроек в ини файл если файла нет]
@@ -336,7 +334,7 @@ Public Function GetMainIniParam() As Boolean
     strDebugLogPath = PathCollect(GetPathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%")))
     ' Имя лог-файла
     strDebugLogNameTemp = GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt")
-    strDebugLogName = ExpandFileNamebyEnvironment(GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt"))
+    strDebugLogName = ExpandFileNameByEnvironment(GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt"))
     ' Записывать время в лог-файл
     mbDebugTime2File = GetIniValueBoolean(strSysIni, "Debug", "Time2File", 0)
     ' Создавать лог-файл в подпапке "logs" программы
@@ -590,7 +588,7 @@ Public Function GetMainIniParam() As Boolean
     ' DEVCON_EXE
     strDevConExePath = IniStringPrivate("DevCon", "PathExe", strSysIni)
 
-    If InStr(strDevConExePath, strDvoetochie) Then
+    If InStr(strDevConExePath, strColon) Then
         mbPatnAbs = True
     End If
 
@@ -607,7 +605,7 @@ Public Function GetMainIniParam() As Boolean
     ' DEVCON_EXE64
     strDevConExePath64 = IniStringPrivate("DevCon", "PathExe64", strSysIni)
 
-    If InStr(strDevConExePath64, strDvoetochie) Then
+    If InStr(strDevConExePath64, strColon) Then
         mbPatnAbs = True
     End If
 
@@ -624,7 +622,7 @@ Public Function GetMainIniParam() As Boolean
     ' DEVCON_EXE_W2k
     strDevConExePathW2k = IniStringPrivate("DevCon", "PathExeW2k", strSysIni)
 
-    If InStr(strDevConExePathW2k, strDvoetochie) Then
+    If InStr(strDevConExePathW2k, strColon) Then
         mbPatnAbs = True
     End If
 
@@ -642,7 +640,7 @@ Public Function GetMainIniParam() As Boolean
     ' DPInst.exe
     strDPInstExePath86 = IniStringPrivate("DPInst", "PathExe", strSysIni)
 
-    If InStr(strDPInstExePath86, strDvoetochie) Then
+    If InStr(strDPInstExePath86, strColon) Then
         mbPatnAbs = True
     End If
 
@@ -660,7 +658,7 @@ Public Function GetMainIniParam() As Boolean
     ' DPInst64.exe
     strDPInstExePath64 = IniStringPrivate("DPInst", "PathExe64", strSysIni)
 
-    If InStr(strDPInstExePath64, strDvoetochie) Then
+    If InStr(strDPInstExePath64, strColon) Then
         mbPatnAbs = True
     End If
 
@@ -686,7 +684,7 @@ Public Function GetMainIniParam() As Boolean
     ' 7za.exe
     strArh7zExePATH = IniStringPrivate("Arc", "PathExe", strSysIni)
 
-    If InStr(strArh7zExePATH, strDvoetochie) Then
+    If InStr(strArh7zExePATH, strColon) Then
         mbPatnAbs = True
     End If
 

@@ -22,7 +22,6 @@ Begin VB.Form frmUtilsEdit
    MinButton       =   0   'False
    ScaleHeight     =   2790
    ScaleWidth      =   7665
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.TextBoxW txtParamUtil 
       Height          =   330

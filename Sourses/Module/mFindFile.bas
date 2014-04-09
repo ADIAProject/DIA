@@ -29,7 +29,6 @@ Public Type FindListStruct
     SizeInString    As String
 End Type
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileSizeApi
 '! Description (Описание)  :   [type_description_here]
@@ -116,9 +115,10 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function FolderContainsSubfolders(sRoot As String) As Boolean
 
-    Dim wfd   As WIN32_FIND_DATA
-    Dim hFile As Long
-    Dim lngFilePathPtr As Long
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim lngFilePathPtr  As Long
+    Dim strFileName     As String
 
     If LenB(sRoot) Then
         sRoot = BackslashAdd2Path(sRoot)
@@ -139,8 +139,9 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
 
                     'an item with the vbDirectory bit was found
                     'but is it a system folder?
-                    If (Left$(wfd.cFileName, 1) <> strDot) Then
-                        If (Left$(wfd.cFileName, 2) <> str2Dot) Then
+                    strFileName = TrimNull(wfd.cFileName)
+                    If AscW(strFileName) <> vbDot Then
+                        If StrComp(Left$(strFileName, 2), str2Dot) <> 0 Then
                             'nope, it's a user folder
                             FolderContainsSubfolders = True
     
@@ -207,6 +208,7 @@ Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
     Dim wfd             As WIN32_FIND_DATA
     Dim hFile           As Long
     Dim lngFilePathPtr  As Long
+    Dim strFileName     As String
 
     If PathIsValidUNC(sRoot) = False Then
         lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
@@ -220,10 +222,11 @@ Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
 
         Do
 
-            If Asc(wfd.cFileName) <> vbDot Then
+            strFileName = TrimNull(wfd.cFileName)
+            If AscW(strFileName) <> vbDot Then
                 If (wfd.dwFileAttributes And vbDirectory) Then
                     If fp.bRecurse Then
-                        GetDirectorySize sRoot & TrimNull(wfd.cFileName) & vbBackslash, fp
+                        GetDirectorySize sRoot & strFileName & vbBackslash, fp
                     End If
 
                 Else
@@ -297,7 +300,7 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
         Do
             currFile = TrimNull(wfd.cFileName)
 
-            If Asc(wfd.cFileName) <> vbDot Then
+            If AscW(currFile) <> vbDot Then
                 currSourcePath = sSourcePath & currFile
 
                 If Not PathIsAFolder(currSourcePath) Then
@@ -395,11 +398,11 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, ByRef miMaxCountArr As Long, Optional ByRef mbDelete As Boolean = False, Optional ByVal sRootInit As String = vbNullString)
 
-    Dim wfd         As WIN32_FIND_DATA
-    Dim hFile       As Long
-    Dim sSize       As String
-    Dim strFileName As String
-    Dim lngFilePathPtr As Long
+    Dim wfd             As WIN32_FIND_DATA
+    Dim hFile           As Long
+    Dim sSize           As String
+    Dim strFileName     As String
+    Dim lngFilePathPtr  As Long
 
     If PathIsValidUNC(sRoot) = False Then
         lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
@@ -430,7 +433,7 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
 
             'if a folder, and recurse specified, call method again
             If (wfd.dwFileAttributes And vbDirectory) Then
-                If Asc(strFileName) <> vbDot Then
+                If AscW(strFileName) <> vbDot Then
                     If fp.bRecurse Then
                         SearchForFiles sRoot & strFileName & vbBackslash, False, miMaxCountArr, mbDelete, sRootInit
                     End If
@@ -480,7 +483,6 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
 
         FindClose hFile
     End If
-
 
     ' Переопределение массива на реальное кол-во записей
     If Not mbDelete Then
@@ -534,10 +536,10 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
     If hFile <> INVALID_HANDLE_VALUE Then
 
         Do
-            strFindData = TrimNull(wfd.cFileName)
 
             If (wfd.dwFileAttributes And vbDirectory) Then
-                If Asc(strFindData) <> vbDot Then
+                strFindData = TrimNull(wfd.cFileName)
+                If AscW(strFindData) <> vbDot Then
                                                 
                     If MatchSpec(strFindData, fp2.sFileNameExt) Then
 

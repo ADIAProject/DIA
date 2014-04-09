@@ -22,7 +22,6 @@ Begin VB.Form frmSilent
    MinButton       =   0   'False
    ScaleHeight     =   2310
    ScaleWidth      =   4680
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin VB.Timer tmrSilent 
       Enabled         =   0   'False
@@ -184,7 +183,6 @@ End Property
 Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
-
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange

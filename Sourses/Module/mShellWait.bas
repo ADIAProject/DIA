@@ -328,7 +328,7 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                 .nShow = WindowStyle
 
                 'Expand environment variables
-                If InStr(PathName, strPercentage) Then
+                If InStr(PathName, strPercent) Then
                     SysReAllocStringLen VarPtr(.lpFile), , ExpandEnvironmentStringsW(StrPtr(PathName)) - l
                     ExpandEnvironmentStringsW StrPtr(PathName), StrPtr(.lpFile), Len(.lpFile) + l
                 Else

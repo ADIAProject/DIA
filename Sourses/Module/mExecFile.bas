@@ -182,7 +182,7 @@ Public Sub RunUtilsShell(ByVal strPathUtils As String, Optional ByVal mbCollectP
     End If
 
     If mbPathQuoted Then
-        cmdString = strKavichki & cmdString & strKavichki
+        cmdString = strQuotes & cmdString & strQuotes
     End If
     
     If mbDebugStandart Then DebugMode "cmdString: " & cmdString

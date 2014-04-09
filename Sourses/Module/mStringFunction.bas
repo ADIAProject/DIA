@@ -23,17 +23,18 @@ Public Const str5VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTa
 Public Const str6VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const str7VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
 Public Const str8VbTab          As String = vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab
-Public Const strPercentage      As String = "%"
-Public Const strVopros          As String = "?"
-Public Const strVosklicanie     As String = "!"
-Public Const strDvoetochie      As String = ":"
-Public Const strRavno           As String = "="
+Public Const strPercent         As String = "%"
+Public Const strColon           As String = ":"
+Public Const strSemiColon       As String = ";"
+Public Const strComma           As String = ","
 Public Const strDot             As String = "."
 Public Const str2Dot            As String = ".."
 Public Const vbDot              As Integer = 46
-Public Const strComma           As String = ","
-Public Const strCommaDot        As String = ";"
-Public Const strKavichki        As String = """" 'ChrW$(34)
+Public Const strVopros          As String = "?"
+Public Const strVosklicanie     As String = "!"
+Public Const strRavno           As String = "="
+Public Const strDash            As String = "-"
+Public Const strQuotes          As String = """" 'ChrW$(34)
 Public Const strSpace           As String = " "
 Public Const str2Space          As String = "  "
 Public Const str3Space          As String = "   "
@@ -43,10 +44,10 @@ Public Const strUnknownUCase    As String = "UNKNOWN"
 Private Const bVopros           As Byte = 63 ' "?"
 
 Public Enum eVerCompareResult
-    crLess = -1&
-    crEqual = 0&
-    crGreater = 1&
-    crUnknown = -2&
+    crUnknownVer = -2&
+    crLessVer = -1&
+    crEqualVer = 0&
+    crGreaterVer = 1&
 End Enum
 
 Private Declare Function lstrlenW Lib "kernel32.dll" (ByVal lpString As Long) As Long
@@ -94,7 +95,7 @@ End Sub
 '                              Date2 (String)
 '                              strResult (ByRef String)
 '!--------------------------------------------------------------------------------
-Public Sub CompareByDate(ByVal Date1 As String, ByVal Date2 As String, ByRef strResult As String)
+Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Optional ByRef strResult As String) As eVerCompareResult
 
     Dim objRegExp    As RegExp
     Dim objMatch     As Match
@@ -109,7 +110,8 @@ Public Sub CompareByDate(ByVal Date1 As String, ByVal Date2 As String, ByRef str
     Dim strDate2     As String
     Dim strDate1_x() As String
     Dim strDate2_x() As String
-
+    Dim lngResult As eVerCompareResult
+    
     If mbDebugDetail Then DebugMode str8VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
 
     If InStr(Date1, strUnknownLCase) = 0 Then
@@ -163,13 +165,15 @@ Public Sub CompareByDate(ByVal Date1 As String, ByVal Date2 As String, ByRef str
             strDate2 = Y2 & strDot & M2 & strDot & d2
         End If
 
-        strResult = CompareByVersion(strDate1, strDate2)
+        lngResult = CompareByVersion(strDate1, strDate2)
     Else
-        strResult = strVopros
+        lngResult = crUnknownVer
     End If
 
+    CompareByDate = lngResult
+    strResult = VBA.Choose(lngResult + 3, "?", "<", "=", ">")
     If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & strSpace & strResult & strSpace & Date2
-End Sub
+End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareByVersion
@@ -177,7 +181,7 @@ End Sub
 '! Parameters  (Переменные):   strVersionBD (String)
 '                              strVersionLocal (String)
 '!--------------------------------------------------------------------------------
-Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionLocal As String) As String
+Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionLocal As String, Optional ByRef strResult As String) As eVerCompareResult
 
     Dim strDevVer_x()       As String
     Dim strDevVerLocal_x()  As String
@@ -186,9 +190,9 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
     Dim strVersionBD_x()    As String
     Dim strVersionLocal_x() As String
     Dim i                   As Integer
-    Dim ResultTemp          As String
+    Dim lngResult           As eVerCompareResult
 
-    ResultTemp = strVopros
+    lngResult = crUnknownVer
 
     strVersionBD = Trim$(strVersionBD)
     strVersionLocal = Trim$(strVersionLocal)
@@ -199,7 +203,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 strDevVer_x = Split(strVersionBD, strComma)
                 strDevVer_xx = LTrim$(strDevVer_x(1))
             Else
-                ResultTemp = "<"
+                lngResult = crLessVer
                 strDevVer_xx = strVersionBD
             End If
             
@@ -207,7 +211,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 strDevVerLocal_x = Split(strVersionLocal, strComma)
                 strDevVerLocal_xx = LTrim$(strDevVerLocal_x(1))
             Else
-                ResultTemp = ">"
+                lngResult = crGreaterVer
                 strDevVerLocal_xx = strVersionLocal
             End If
 
@@ -233,25 +237,25 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                         If IsNumeric(strVersionBD_x(i)) Then
                             If IsNumeric(strVersionLocal_x(i)) Then
                                 If CLng(strVersionBD_x(i)) < CLng(strVersionLocal_x(i)) Then
-                                    ResultTemp = "<"
+                                    lngResult = crLessVer
 
                                     Exit For
 
                                 ElseIf CLng(strVersionBD_x(i)) > CLng(strVersionLocal_x(i)) Then
-                                    ResultTemp = ">"
+                                    lngResult = crGreaterVer
 
                                     Exit For
 
                                 Else
 
                                     If i = UBound(strVersionBD_x) Then
-                                        ResultTemp = strRavno
+                                        lngResult = crEqualVer
                                     End If
                                 End If
                             End If
 
                         Else
-                            ResultTemp = strVopros
+                            lngResult = crUnknownVer
                         End If
 
                     Next
@@ -263,25 +267,25 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                         If IsNumeric(strVersionBD_x(i)) Then
                             If IsNumeric(strVersionLocal_x(i)) Then
                                 If CLng(strVersionBD_x(i)) < CLng(strVersionLocal_x(i)) Then
-                                    ResultTemp = "<"
+                                    lngResult = crLessVer
 
                                     Exit For
 
                                 ElseIf CLng(strVersionBD_x(i)) > CLng(strVersionLocal_x(i)) Then
-                                    ResultTemp = ">"
+                                    lngResult = crGreaterVer
 
                                     Exit For
 
                                 Else
 
                                     If i = UBound(strVersionBD_x) Then
-                                        ResultTemp = strRavno
+                                        lngResult = crEqualVer
                                     End If
                                 End If
                             End If
 
                         Else
-                            ResultTemp = strVopros
+                            lngResult = crUnknownVer
                         End If
 
                     Next
@@ -289,20 +293,21 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 End If
 
             Else
-                ResultTemp = strVopros
+                lngResult = crUnknownVer
             End If
 
         Else
-            ResultTemp = ">"
+            lngResult = crGreaterVer
         End If
 
     Else
-        ResultTemp = strVopros
+        lngResult = crUnknownVer
     End If
 
 CompareFinish:
-    CompareByVersion = ResultTemp
-    If mbDebugDetail Then DebugMode str8VbTab & "CompareByVersion-Result: " & strVersionBD & strSpace & ResultTemp & strSpace & strVersionLocal
+    CompareByVersion = lngResult
+    strResult = VBA.Choose(lngResult + 3, "?", "<", "=", ">")
+    If mbDebugDetail Then DebugMode str8VbTab & "CompareByVersion-Result: " & strVersionBD & strSpace & strResult & strSpace & strVersionLocal
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -503,18 +508,15 @@ Public Sub ReplaceBadSymbol(ByRef strString As String)
     If InStr(strString, strVopros) Then
         strString = Replace$(strString, strVopros, vbNullString)
     End If
-'    If InStr(strString, "?") Then
-'        strString = Replace$(strString, "?", vbNullString)
-'    End If
 
     ' Убираем символ ";"
-    If InStr(strString, strCommaDot) Then
-        strString = Replace$(strString, strCommaDot, vbNullString)
+    If InStr(strString, strSemiColon) Then
+        strString = Replace$(strString, strSemiColon, vbNullString)
     End If
 
     ' Убираем символ ":"
-    If InStr(strString, strDvoetochie) Then
-        strString = Replace$(strString, strDvoetochie, vbNullString)
+    If InStr(strString, strColon) Then
+        strString = Replace$(strString, strColon, vbNullString)
     End If
 
     ' Убираем символ "   "

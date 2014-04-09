@@ -275,10 +275,10 @@ Public Function LocaliseString(ByVal strPathFile As String, ByVal strSection As 
 
     Dim strTemp As String
 
-    strTemp = IniStringPrivate(strSection, strParam, strPathFile)
+    strTemp = Trim$(IniStringPrivate(strSection, strParam, strPathFile))
 
-    If strTemp <> "no_key" Then
-        LocaliseString = ConvertString(Trim$(strTemp))
+    If StrComp(strTemp, "no_key") <> 0 Then
+        LocaliseString = ConvertString(strTemp)
     Else
         LocaliseString = strDefValue
     End If

@@ -22,7 +22,6 @@ Begin VB.Form frmLegendIco
    MinButton       =   0   'False
    ScaleHeight     =   7875
    ScaleWidth      =   11805
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Begin VB.PictureBox imgOkAttentionOLD 
       Appearance      =   0  'Flat
@@ -415,7 +414,6 @@ Private Sub Localise(ByVal strPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
 End Sub
-
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdOK_Click

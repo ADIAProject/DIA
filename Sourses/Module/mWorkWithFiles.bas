@@ -397,10 +397,10 @@ Private Function DelTree(ByVal strDir As String) As Long
                 strDir = BackslashAdd2Path(strDir)
                 strFile = Dir$(strDir & ALL_FILES, vbSystem Or vbDirectory Or vbHidden)
 
-                Do While Len(strFile)
+                Do While LenB(strFile)
 
-                    If strFile <> strDot Then
-                        If strFile <> str2Dot Then
+                    If AscW(strFile) <> vbDot Then
+                        If StrComp(strFile, str2Dot) <> 0 Then
                             intAttr = GetAttr(strDir & strFile)
 
                             If (intAttr And vbDirectory) Then
@@ -479,7 +479,7 @@ End Function
 '! Description (Описание)  :   [Расширить имя файла - использование переменных %%]
 '! Parameters  (Переменные):   strFileName (String)
 '!--------------------------------------------------------------------------------
-Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As String
+Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As String
 
     Dim R            As String
     Dim str_OSVer    As String
@@ -487,7 +487,7 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
     Dim str_DATE     As String
     Dim str_PCMODEL  As String
 
-    If InStr(strFileName, strPercentage) Then
+    If InStr(strFileName, strPercent) Then
         ' Макроподстановка версия ОС %OSVer%
         str_OSVer = "wnt" & Left$(strOSCurrentVersion, 1)
 
@@ -499,9 +499,9 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
         End If
 
         ' Макроподстановка ДАТА %DATE%
-        str_DATE = SafeDir(Replace$(CStr(Now()), strDot, "-"))
+        str_DATE = SafeDir(Replace$(CStr(Now()), strDot, strDash))
         ' Макроподстановка %PCMODEL%
-        str_PCMODEL = SafeDir(Replace$(strCompModel, "_", "-"))
+        str_PCMODEL = SafeDir(Replace$(strCompModel, "_", strDash))
         
         ' Замена макросов значениями
         R = strFileName
@@ -511,9 +511,9 @@ Public Function ExpandFileNamebyEnvironment(ByVal strFileName As String) As Stri
         R = Replace$(R, "%OSBit%", str_OSBit, , , vbTextCompare)
         R = Replace$(R, "%DATE%", str_DATE, , , vbTextCompare)
         R = Trim$(R)
-        ExpandFileNamebyEnvironment = R
+        ExpandFileNameByEnvironment = R
     Else
-        ExpandFileNamebyEnvironment = strFileName
+        ExpandFileNameByEnvironment = strFileName
     End If
 
 End Function
@@ -540,9 +540,10 @@ End Function
 '! Procedure   (Функция)   :   Function FileReadData
 '! Description (Описание)  :   [Read data from file with check for unicode yes/no]
 '! Parameters  (Переменные):   sFileName (String)
+'                              ByRef strResult (String)
 '                              LocaleID (Long)
 '!--------------------------------------------------------------------------------
-Public Function FileReadData(ByVal sFileName As String, Optional ByVal LocaleID As Long = 1033) As String
+Public Sub FileReadData(ByVal sFileName As String, ByRef strResult As String, Optional ByVal lngLocaleID As Long = 1033)
 
     Dim sText As String
     Dim fNum As Long
@@ -554,25 +555,25 @@ Public Function FileReadData(ByVal sFileName As String, Optional ByVal LocaleID 
     ' read first 2 byte, for check on Unicode
     Get #fNum, 1, B1()
     
-    ' Если Unicode &HFF and &HFE 255-254
+    ' if Unicode &HFF and &HFE 255-254
     If B1(0) = &HFF And B1(1) = &HFE Then
         'sText = Space$(LOF(fNum) - 2)
         sText = MemAPIs.AllocStr(vbNullString, LOF(fNum) - 2)
         Seek #fNum, 3
         Get #fNum, , sText
-        FileReadData = StrConv(sText, vbFromUnicode, LocaleID)
-    ' Если ANSI
+        strResult = StrConv(sText, vbFromUnicode, lngLocaleID)
+    ' If ANSI
     Else
         'sText = Space$(LOF(fNum))
         sText = MemAPIs.AllocStr(vbNullString, LOF(fNum))
         Seek #fNum, 1
         Get #fNum, , sText
-        FileReadData = sText
+        strResult = sText
     End If
     
     Close #fNum
 
-End Function
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FileWriteData
@@ -713,11 +714,11 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
     Dim strTempEnv     As String
     Dim strNumPosition As Long
 
-    strNumPosition = InStr(strEnv, strPercentage)
+    strNumPosition = InStr(strEnv, strPercent)
 
     If strNumPosition Then
         strTemp = Mid$(strEnv, strNumPosition + 1, Len(strEnv) - strNumPosition)
-        strNumPosition = InStr(strTemp, strPercentage)
+        strNumPosition = InStr(strTemp, strPercent)
 
         If strNumPosition Then
             strTemp = Left$(strTemp, strNumPosition - 1)
@@ -727,7 +728,7 @@ Public Function GetEnviron(ByVal strEnv As String, Optional ByVal mbCollectFull 
     strTempEnv = Environ$(strTemp)
 
     If mbCollectFull Then
-        GetEnviron = Replace$(strEnv, strPercentage & strTemp & strPercentage, strTempEnv, , , vbTextCompare)
+        GetEnviron = Replace$(strEnv, strPercent & strTemp & strPercent, strTempEnv, , , vbTextCompare)
     Else
         GetEnviron = strTempEnv
     End If
@@ -1002,7 +1003,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     Dim r_beg          As String
     Dim r_identS       As String
     Dim r_str          As String
-    Dim FileContent    As String
+    Dim strFileContent As String
     Dim Key            As String
     Dim Value          As String
     Dim i              As Long
@@ -1039,11 +1040,11 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     End With
 
     ' Read INF file
-    FileContent = vbNullString
+    strFileContent = vbNullString
     lngFileDBSize = GetFileSizeByPath(strInfFilePath)
 
     If lngFileDBSize Then
-        FileContent = FileReadData(strInfFilePath)
+        FileReadData strInfFilePath, strFileContent
     Else
         If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfFilePath
     End If
@@ -1051,7 +1052,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     ' Find [strings] section
     Strings = vbNullString
     StringHash.CompareMode = TextCompare
-    Set MatchesStrSect = RegExpStrSect.Execute(FileContent)
+    Set MatchesStrSect = RegExpStrSect.Execute(strFileContent)
 
     If MatchesStrSect.Count Then
         Set objMatch = MatchesStrSect.item(0)
@@ -1069,7 +1070,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
 
             If Not StringHash.Exists(Key) Then
                 StringHash.Add Key, Value
-                StringHash.Add strPercentage & Key & strPercentage, Value
+                StringHash.Add strPercent & Key & strPercent, Value
             End If
 
         Next
@@ -1077,10 +1078,10 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     End If
 
     ' Собственно ищем саму переменную
-    Pos = InStr(strSearchString, strPercentage)
+    Pos = InStr(strSearchString, strPercent)
 
     If Pos Then
-        varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, strPercentage))
+        varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, strPercent))
         valval = StringHash.item(varname)
 
         If LenB(valval) = 0 Then
@@ -1099,7 +1100,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function PathCollect(Path As String) As String
 
-    If InStr(Path, strDvoetochie) = 2 Then
+    If InStr(Path, strColon) = 2 Then
         PathCollect = Path
     ElseIf Left$(Path, 2) = vbBackslash And PathIsValidUNC(Path) Then
         PathCollect = Path
@@ -1117,7 +1118,7 @@ Public Function PathCollect(Path As String) As String
                     PathCollect = PathCombine(strAppPath, Path)
                 Else
 
-                    If InStr(Path, strPercentage) Then
+                    If InStr(Path, strPercent) Then
                         PathCollect = GetEnviron(Path, True)
                     Else
 
@@ -1157,7 +1158,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) As String
 
-    If InStr(Path, strDvoetochie) = 2 Then
+    If InStr(Path, strColon) = 2 Then
         PathCollect4Dest = Path
     Else
 
@@ -1173,7 +1174,7 @@ Public Function PathCollect4Dest(ByVal Path As String, ByVal strDest As String) 
                     PathCollect4Dest = GetPathNameFromPath(strDest) & Mid$(Path, 4, Len(Path) - 1)
                 Else
 
-                    If InStr(Path, strPercentage) Then
+                    If InStr(Path, strPercent) Then
                         PathCollect4Dest = GetEnviron(Path, True)
                     Else
 
@@ -1295,39 +1296,39 @@ End Sub
 Public Function SafeDir(ByVal str As String) As String
 
     If InStr(str, vbBackslash) Then
-        str = Replace$(str, vbBackslash, "-")
+        str = Replace$(str, vbBackslash, strDash)
     End If
     
     If InStr(str, "/") Then
-        str = Replace$(str, "/", "-")
+        str = Replace$(str, "/", strDash)
     End If
     
     If InStr(str, "*") Then
-        str = Replace$(str, "*", "-")
+        str = Replace$(str, "*", strDash)
     End If
     
-    If InStr(str, strDvoetochie) Then
-        str = Replace$(str, strDvoetochie, "-")
+    If InStr(str, strColon) Then
+        str = Replace$(str, strColon, strDash)
     End If
     
     If InStr(str, strVopros) Then
-        str = Replace$(str, strVopros, "-")
+        str = Replace$(str, strVopros, strDash)
     End If
     
     If InStr(str, ">") Then
-       str = Replace$(str, ">", "-")
+       str = Replace$(str, ">", strDash)
     End If
     
     If InStr(str, "<") Then
-        str = Replace$(str, "<", "-")
+        str = Replace$(str, "<", strDash)
     End If
     
     If InStr(str, "|") Then
-        str = Replace$(str, "|", "-")
+        str = Replace$(str, "|", strDash)
     End If
     
     If InStr(str, "@") Then
-        str = Replace$(str, "@", "-")
+        str = Replace$(str, "@", strDash)
     End If
     
     If InStr(str, "'") Then
@@ -1335,19 +1336,19 @@ Public Function SafeDir(ByVal str As String) As String
     End If
         
     If InStr(str, strSpace) Then
-        str = Replace$(str, strSpace, "-")
+        str = Replace$(str, strSpace, strDash)
     End If
     
     If InStr(str, "(R)") Then
-        str = Replace$(str, "(R)", "-")
+        str = Replace$(str, "(R)", strDash)
     End If
         
     If InStr(str, "---") Then
-        str = Replace$(str, "---", "-")
+        str = Replace$(str, "---", strDash)
     End If
     
     If InStr(str, "--") Then
-        str = Replace$(str, "--", "-")
+        str = Replace$(str, "--", strDash)
     End If
         
     SafeDir = Trim$(str)
@@ -1375,8 +1376,8 @@ Public Function SafeFileName(ByVal strString As String) As String
     End If
 
     ' Отбрасываем все после ";"
-    If InStr(strString, strCommaDot) Then
-        strString = Left$(strString, InStr(strString, strCommaDot) - 1)
+    If InStr(strString, strSemiColon) Then
+        strString = Left$(strString, InStr(strString, strSemiColon) - 1)
     End If
 
     SafeFileName = Trim$(strString)
@@ -1394,8 +1395,8 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     Dim Str_x()          As String
     Dim mbAdditionalPath As Boolean
 
-    If InStr(str, strCommaDot) Then
-        Str_x = Split(str, strCommaDot)
+    If InStr(str, strSemiColon) Then
+        Str_x = Split(str, strSemiColon)
         str = Trim$(Str_x(0))
     End If
 
@@ -1644,13 +1645,13 @@ Public Function WhereIsDir(ByVal str As String, ByVal strInfFilePath As String) 
     If mbAdditionalPath Then
         cDir = BackslashAdd2Path(cDir) & Trim$(Str_x(1))
 
-        If InStr(cDir, strPercentage) Then
+        If InStr(cDir, strPercent) Then
             cDir = ParserInf4Strings(strInfFilePath, cDir)
         End If
     End If
 
     cDir = Replace$(cDir, vbTab, vbNullString)
-    cDir = Replace$(cDir, strKavichki, vbNullString)
+    cDir = Replace$(cDir, strQuotes, vbNullString)
     cDir = BackslashAdd2Path(cDir)
     WhereIsDir = TrimNull(cDir)
 End Function

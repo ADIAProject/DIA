@@ -390,7 +390,6 @@ Private Function FindCheckCountList() As Long
     FindCheckCountList = miCount
 End Function
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
 '! Description (Описание)  :   [type_description_here]

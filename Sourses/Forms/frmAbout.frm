@@ -22,7 +22,6 @@ Begin VB.Form frmAbout
    MinButton       =   0   'False
    ScaleHeight     =   7110
    ScaleWidth      =   9630
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ctlJCbutton cmdHomePage 
       Height          =   650
@@ -554,12 +553,9 @@ End Sub
 '! Parameters  (Переменные):   strPathFile (String)
 '!--------------------------------------------------------------------------------
 Private Sub LocaliseMenu(ByVal strPathFile As String)
-    mnuContextMenu1.Caption = "DIA v." & strProductVersion
-    
+    SetUniMenu -1, 0, -1, mnuContextMenu1, LocaliseString(strPathFile, strFormName, "cmdHomePage", cmdHomePage.Caption)
     SetUniMenu 0, 0, -1, mnuContextMenu1, LocaliseString(strPathFile, strFormName, "mnuContextLink1", mnuContextLink(0).Caption)
     SetUniMenu 0, 2, -1, mnuContextMenu1, LocaliseString(strPathFile, strFormName, "mnuContextLink2", mnuContextLink(2).Caption)
-    
-    'mnuContextMenu1.Visible = False
 End Sub
 
 Private Sub cmdCheckUpd_Click()
@@ -676,10 +672,11 @@ Private Sub Form_Load()
         ' Выставляем шрифт
         FontCharsetChange
     End If
-
+    
+    ' Создание списка благодарностей и показ на форме
     LoadThankYou
     
-    mnuContextMenu1.Enabled = False
+    ' Присваиваем меню для кнопки
     cmdHomePage.SetPopupMenu mnuContextMenu1
     
 End Sub

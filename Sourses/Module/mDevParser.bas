@@ -50,16 +50,16 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function CompareDevDBVersion(strDevDBFullFileName As String) As Boolean
 
-    Dim lngValue          As Long
+    Dim LngValue          As Long
     Dim strFilePath_woExt As String
 
     strFilePath_woExt = GetFileName_woExt(strDevDBFullFileName)
-    lngValue = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
+    LngValue = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
 
-    If lngValue = 9999 Then
+    If LngValue = 9999 Then
         CompareDevDBVersion = False
     Else
-        CompareDevDBVersion = Not (lngValue <> lngDevDBVersion)
+        CompareDevDBVersion = Not (LngValue <> lngDevDBVersion)
     End If
 
 End Function
@@ -85,7 +85,7 @@ Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
         End If
     End If
 
-    cmdString = strKavichki & strDevconCmdPath & strKavichki & strSpace & strKavichki & strDevConTemp & strKavichki & strSpace & strKavichki & strHwidsTxtPath & strKavichki & " 4 " & strKavichki & strHwid & strKavichki
+    cmdString = strQuotes & strDevconCmdPath & strQuotes & strSpace & strQuotes & strDevConTemp & strQuotes & strSpace & strQuotes & strHwidsTxtPath & strQuotes & " 4 " & strQuotes & strHwid & strQuotes
 
     If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
@@ -133,7 +133,7 @@ Public Sub DevParserLocalHwids2()
 
     If PathExists(strHwidsTxtPath) Then
         If Not PathIsAFolder(strHwidsTxtPath) Then
-            str = FileReadData(strHwidsTxtPath)
+            FileReadData strHwidsTxtPath, str
             Set MatchesDevcon = RegExpDevcon.Execute(str)
             miMaxCountArr = 100
 
@@ -300,7 +300,7 @@ Public Function RunDevcon() As Boolean
         DeleteFiles strHwidsTxtPath
     End If
 
-    cmdString = "cmd.exe /c " & strKavichki & strKavichki & strDevConExePath & strKavichki & " status * > " & strKavichki & strHwidsTxtPath & strKavichki
+    cmdString = "cmd.exe /c " & strQuotes & strQuotes & strDevConExePath & strQuotes & " status * > " & strQuotes & strHwidsTxtPath & strQuotes
     
     CreateIfNotExistPath strWorkTemp
 
@@ -328,7 +328,7 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
 
     Dim cmdString As String
 
-    cmdString = strKavichki & strDevConExePath & strKavichki & " rescan"
+    cmdString = strQuotes & strDevConExePath & strQuotes & " rescan"
     ChangeStatusTextAndDebug strMessages(96) & strSpace & cmdString
     CreateIfNotExistPath strWorkTemp
 
@@ -349,7 +349,7 @@ Public Function RunDevconView() As Boolean
 
     Dim cmdString As String
 
-    cmdString = strKavichki & strDevconCmdPath & strKavichki & strSpace & strKavichki & strDevConExePath & strKavichki & strSpace & strKavichki & strHwidsTxtPathView & strKavichki & " 3"
+    cmdString = strQuotes & strDevconCmdPath & strQuotes & strSpace & strQuotes & strDevConExePath & strQuotes & strSpace & strQuotes & strHwidsTxtPathView & strQuotes & " 3"
 
     RunDevconView = RunAndWaitNew(cmdString, strWorkTemp, vbHide)
     If Not RunDevconView Then

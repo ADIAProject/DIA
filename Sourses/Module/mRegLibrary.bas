@@ -193,7 +193,6 @@ Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String,
     Dim strPathOcxSystemCache   As String
     Dim strOCXFileName          As String
     Dim strVersionFile          As String
-    Dim strResultCompare        As String
     Dim mbForceReg              As Boolean
     Dim lngMsgRet               As Integer
 
@@ -292,10 +291,9 @@ StartRegOCXForce:
                     End If
                 End If
 
-                strResultCompare = CompareByVersion(strVersionFile, strVerFileOcx)
-
+                
                 ' Анализ итога сравнения
-                If StrComp(strResultCompare, "<") = 0 Then
+                If CompareByVersion(strVersionFile, strVerFileOcx) = crLessVer Then
                     If Not mbRunWithParam Then
                         If mbSilentDLL Then
                             lngMsgRet = vbYes
@@ -344,10 +342,8 @@ StartRegOCXForce:
                     End If
                 End If
 
-                strResultCompare = CompareByVersion(strVersionFile, strVerFileOcx)
-
                 ' Анализ итога сравнения
-                If StrComp(strResultCompare, "<") = 0 Then
+                If CompareByVersion(strVersionFile, strVerFileOcx) = crLessVer Then
                     If Not mbRunWithParam Then
                         If mbSilentDLL Then
                             lngMsgRet = vbYes

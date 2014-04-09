@@ -22,7 +22,6 @@ Begin VB.Form frmOSEdit
    MinButton       =   0   'False
    ScaleHeight     =   5895
    ScaleWidth      =   8355
-   ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.TextBoxW txtOSVer 
       Height          =   375
@@ -572,7 +571,6 @@ Private Sub SaveOptions()
     frmOptions.lvOS.Refresh
     mbAddInList = False
 End Sub
-
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click

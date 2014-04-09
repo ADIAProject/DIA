@@ -116,6 +116,8 @@ Begin VB.Form frmCheckUpdate
       Caption         =   "Скачать дистрибутив"
       CaptionEffects  =   0
       PictureAlign    =   0
+      DropDownSymbol  =   6
+      DropDownSeparator=   -1  'True
       DropDownEnable  =   -1  'True
       ColorScheme     =   3
    End
@@ -141,6 +143,8 @@ Begin VB.Form frmCheckUpdate
       Caption         =   "Скачать обновление"
       CaptionEffects  =   0
       PictureAlign    =   0
+      DropDownSymbol  =   6
+      DropDownSeparator=   -1  'True
       DropDownEnable  =   -1  'True
       ColorScheme     =   3
    End
@@ -435,7 +439,6 @@ Private Sub LoadButtonLinkFull(strMassivLink() As String)
         End If
 
     End If
-    mnuContextMenu1.Visible = False
 
 End Sub
 
@@ -553,7 +556,7 @@ Private Sub Localise(ByVal strPathFile As String)
     FontCharsetChange
     ' Название формы
     Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
-    'Кнопки
+    ' Кнопки
     cmdUpdate.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
     cmdUpdateFull.Caption = LocaliseString(strPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
     cmdHistory.Caption = LocaliseString(strPathFile, strFormName, "cmdHistory", cmdHistory.Caption)
@@ -561,6 +564,8 @@ Private Sub Localise(ByVal strPathFile As String)
     cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
     ' Лейблы
     lblVersion.Caption = LocaliseString(strPathFile, strFormName, "lblVersion", lblVersion.Caption) & strSpace & strVersion & " (" & strDateProg & ")"
+    ' Меню
+    LocaliseMenu strPathFile
 
     If InStr(1, strRelease, "beta", vbTextCompare) Then
         lblVersion.Caption = lblVersion.Caption & " This version may be Unstable!!!"
@@ -569,6 +574,16 @@ Private Sub Localise(ByVal strPathFile As String)
 
     lblVersionList.Caption = LocaliseString(strPathFile, strFormName, "lblVersionList", lblVersionList.Caption)
     lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LocaliseMenu
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub LocaliseMenu(ByVal strPathFile As String)
+    SetUniMenu -1, 0, -1, mnuContextMenu1, LocaliseString(strPathFile, strFormName, "cmdUpdateFull", cmdUpdateFull.Caption)
+    SetUniMenu -1, 1, -1, mnuContextMenu2, LocaliseString(strPathFile, strFormName, "cmdUpdate", cmdUpdate.Caption)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -679,6 +694,12 @@ Private Sub Form_Activate()
     End If
 
     mbFirstStartUpdate = False
+    cmdUpdate.Enabled = True
+    cmdUpdateFull.Enabled = True
+    cmdHistory.Enabled = True
+    cmdDonate.Enabled = True
+    cmdExit.Enabled = True
+    cmbVersions.Enabled = True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -710,6 +731,13 @@ Private Sub Form_Load()
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
 
+    cmdUpdate.Enabled = False
+    cmdUpdateFull.Enabled = False
+    cmdHistory.Enabled = False
+    cmdDonate.Enabled = False
+    cmdExit.Enabled = False
+    cmbVersions.Enabled = False
+    
     mbFirstStartUpdate = True
     lblWait.Visible = True
     DoEvents
@@ -730,18 +758,10 @@ Private Sub Form_Load()
     End If
 
     ' Контекстное меню для кнопки скачать дистрибутив
-    With mnuContextMenu1
-        .Caption = "DIA v." & strProductVersion
-        .Enabled = False
-        cmdUpdateFull.SetPopupMenu mnuContextMenu1
-    End With
-    
+    cmdUpdateFull.SetPopupMenu mnuContextMenu1
+
     ' Контекстное меню для кнопки скачать обновление
-    With mnuContextMenu2
-        .Caption = "DIA v." & strProductVersion
-        .Enabled = False
-        cmdUpdate.SetPopupMenu mnuContextMenu2
-    End With
+    cmdUpdate.SetPopupMenu mnuContextMenu2
 
 End Sub
 
