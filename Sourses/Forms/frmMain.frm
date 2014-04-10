@@ -143,7 +143,6 @@ Begin VB.Form frmMain
          RoundedCorner   =   0   'False
          Caption         =   "Сведения об операционой системе и компьютере..."
          TextBoxHeight   =   20
-         Alignment       =   0
          ThemeColor      =   1
          Begin prjDIADBS.LabelW lblPCInfo 
             Height          =   255

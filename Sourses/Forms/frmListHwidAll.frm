@@ -1271,7 +1271,7 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
                 .item(5).AutoSize LvwColumnHeaderAutoSizeToItems
                 .item(6).AutoSize LvwColumnHeaderAutoSizeToItems
                 .item(7).AutoSize LvwColumnHeaderAutoSizeToItems
-                .item(8).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
             Else
                 .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
                 .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader

@@ -700,6 +700,8 @@ Private Sub Form_Activate()
     cmdDonate.Enabled = True
     cmdExit.Enabled = True
     cmbVersions.Enabled = True
+    mnuContextMenu1.Enabled = True
+    mnuContextMenu2.Enabled = True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -737,6 +739,8 @@ Private Sub Form_Load()
     cmdDonate.Enabled = False
     cmdExit.Enabled = False
     cmbVersions.Enabled = False
+    mnuContextMenu1.Enabled = False
+    mnuContextMenu2.Enabled = False
     
     mbFirstStartUpdate = True
     lblWait.Visible = True

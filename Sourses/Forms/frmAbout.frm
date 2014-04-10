@@ -486,6 +486,8 @@ Private Sub LoadThankYou()
     GenerateThankyou "Giorgio Brausi", "http://nuke.vbcorner.net/"
     'Unicode String Array Sorting Class - cBlizzard.cls
     GenerateThankyou "Rohan Edwards aka Rd", "http://www.Planet-Source-Code.com/vb/scripts/ShowCode.asp?txtCodeId=72576&lngWId=1"
+    'LoadThankYou and other idea
+    GenerateThankyou "Tanner Helland", "http://photodemon.org/"
     ' SortDMArray
     GenerateThankyou "Ellis Dee"
     GenerateThankyou "Zhu JinYong"
@@ -513,6 +515,7 @@ Private Sub LoadTranslator()
             .MouseIcon = lblMailTo.MouseIcon
             .MousePointer = lblMailTo.MousePointer
             .ForeColor = lblMailTo.ForeColor
+            .ToolTipText = strTranslatorUrl
         End With
 
     End If
@@ -665,6 +668,8 @@ Private Sub Form_Load()
             lblThanks(0).Caption = "My thanks:"
     End Select
 
+    mnuContextMenu1.Enabled = False
+    
     ' Локализация приложения
     If mbMultiLanguage Then
         Localise strPCLangCurrentPath
@@ -678,7 +683,16 @@ Private Sub Form_Load()
     
     ' Присваиваем меню для кнопки
     cmdHomePage.SetPopupMenu mnuContextMenu1
+    mnuContextMenu1.Enabled = True
     
+    ' Подсказки и свойства label
+    With lblAuthor
+        .MouseIcon = lblMailTo.MouseIcon
+        .MousePointer = lblMailTo.MousePointer
+        .ForeColor = lblMailTo.ForeColor
+        .ToolTipText = strUrl_MainWWWSite
+    End With
+    lblMailTo.ToolTipText = "roman-novosib@ngs.ru"
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
