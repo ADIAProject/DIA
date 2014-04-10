@@ -1,6 +1,16 @@
 Attribute VB_Name = "mCollectHwid"
 Option Explicit
 
+' Flag to determine intel generation for correct install USB30 driver
+Public mbIUSB_RootHubExist  As Boolean
+Public mbIntel2thGeneration As Boolean
+Public mbIntel4thGeneration As Boolean
+
+' Intel USB3 Root Hub device id
+Private Const strIUSB30     As String = "IUSB3\ROOT_HUB30"
+Private Const strIUSB30_2th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_1E31"
+Private Const strIUSB30_4th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_8C31"
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CollectHwidFromReestr
 '! Description (Описание)  :   [type_description_here]
@@ -46,6 +56,19 @@ Public Sub CollectHwidFromReestr()
             If InStr(strCompatID, "&CTLR_") Then
                 If mbDebugDetail Then DebugMode vbTab & "CollectHwidFromReestr-!!! Replace for HWID: " & strID & " in CompatibleIDs '&CTLR_' ---> &_"
                 strCompatID = Replace$(strCompatID, "&CTLR_", "&_")
+            End If
+            
+            ' Check for USB30 support
+            If InStr(strCompatID, strIUSB30) Then
+                mbIUSB_RootHubExist = True
+            End If
+            ' Check version of intel generation
+            If mbIUSB_RootHubExist Then
+                If InStr(strCompatID, strIUSB30_2th) Then
+                    mbIntel2thGeneration = True
+                ElseIf InStr(strCompatID, strIUSB30_4th) Then
+                    mbIntel4thGeneration = True
+                End If
             End If
         End If
 

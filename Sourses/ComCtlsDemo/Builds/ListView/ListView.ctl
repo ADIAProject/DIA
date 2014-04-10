@@ -2829,7 +2829,7 @@ If ListViewHandle <> 0 Then
         .State = LVIS_SELECTED Or LVIS_FOCUSED
     Else
         .StateMask = LVIS_SELECTED
-        .State = Not LVIS_SELECTED
+        .State = 0
     End If
     End With
     SendMessage ListViewHandle, LVM_SETITEMSTATE, Index - 1, ByVal VarPtr(LVI)
@@ -2867,7 +2867,7 @@ If ListViewHandle <> 0 Then
     If Value = True Then
         .State = LVIS_CUT
     Else
-        .State = Not LVIS_CUT
+        .State = 0
     End If
     End With
     SendMessage ListViewHandle, LVM_SETITEMSTATE, Index - 1, ByVal VarPtr(LVI)
@@ -3261,12 +3261,12 @@ If ListViewHandle <> 0 Then
     With LVC
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-    .Mask = .Mask Or LVCF_IMAGE
+    .Mask = LVCF_FMT Or LVCF_IMAGE
     .iImage = Value - 1
     If Value > 0 Then
-        .fmt = .fmt Or LVCFMT_IMAGE
+        If Not (.fmt And LVCFMT_IMAGE) = LVCFMT_IMAGE Then .fmt = .fmt Or LVCFMT_IMAGE
     Else
-        .fmt = .fmt And Not LVCFMT_IMAGE
+        If (.fmt And LVCFMT_IMAGE) = LVCFMT_IMAGE Then .fmt = .fmt And Not LVCFMT_IMAGE
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -3307,14 +3307,13 @@ If ListViewHandle <> 0 Then
     With LVC
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-    Select Case LVC.fmt And LVCFMT_JUSTIFYMASK
-        Case LVCFMT_LEFT
-            FColumnHeaderAlignment = LvwColumnHeaderAlignmentLeft
-        Case LVCFMT_RIGHT
-            FColumnHeaderAlignment = LvwColumnHeaderAlignmentRight
-        Case LVCFMT_CENTER
-            FColumnHeaderAlignment = LvwColumnHeaderAlignmentCenter
-    End Select
+    If (.fmt And LVCFMT_LEFT) = LVCFMT_LEFT Then
+        FColumnHeaderAlignment = LvwColumnHeaderAlignmentLeft
+    ElseIf (.fmt And LVCFMT_RIGHT) = LVCFMT_RIGHT Then
+        FColumnHeaderAlignment = LvwColumnHeaderAlignmentRight
+    ElseIf (.fmt And LVCFMT_CENTER) = LVCFMT_CENTER Then
+        FColumnHeaderAlignment = LvwColumnHeaderAlignmentCenter
+    End If
     End With
 End If
 End Property
@@ -3327,7 +3326,9 @@ If ListViewHandle <> 0 Then
             With LVC
             .Mask = LVCF_FMT
             SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-            .fmt = .fmt And Not LVCFMT_JUSTIFYMASK
+            If (.fmt And LVCFMT_LEFT) = LVCFMT_LEFT Then .fmt = .fmt And Not LVCFMT_LEFT
+            If (.fmt And LVCFMT_RIGHT) = LVCFMT_RIGHT Then .fmt = .fmt And Not LVCFMT_RIGHT
+            If (.fmt And LVCFMT_CENTER) = LVCFMT_CENTER Then .fmt = .fmt And Not LVCFMT_CENTER
             Select Case Value
                 Case LvwColumnHeaderAlignmentLeft
                     .fmt = .fmt Or LVCFMT_LEFT
@@ -3388,22 +3389,25 @@ End Property
 
 Friend Property Let FColumnHeaderSortArrow(ByVal Index As Long, ByVal Value As LvwColumnHeaderSortArrowConstants)
 If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
-    Dim LVC As LVCOLUMN
-    With LVC
-    .Mask = LVCF_FMT
-    SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     Select Case Value
-        Case LvwColumnHeaderSortArrowNone
-            .fmt = .fmt And Not (HDF_SORTDOWN Or HDF_SORTUP)
-        Case LvwColumnHeaderSortArrowDown
-            .fmt = .fmt Or HDF_SORTDOWN
-            .fmt = .fmt And Not HDF_SORTUP
-        Case LvwColumnHeaderSortArrowUp
-            .fmt = .fmt Or HDF_SORTUP
-            .fmt = .fmt And Not HDF_SORTDOWN
+        Case LvwColumnHeaderSortArrowNone, LvwColumnHeaderSortArrowDown, LvwColumnHeaderSortArrowUp
+            Dim LVC As LVCOLUMN
+            With LVC
+            .Mask = LVCF_FMT
+            SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
+            If (.fmt And HDF_SORTDOWN) = HDF_SORTDOWN Then .fmt = .fmt And Not HDF_SORTDOWN
+            If (.fmt And HDF_SORTUP) = HDF_SORTUP Then .fmt = .fmt And Not HDF_SORTUP
+            Select Case Value
+                Case LvwColumnHeaderSortArrowDown
+                    .fmt = .fmt Or HDF_SORTDOWN
+                Case LvwColumnHeaderSortArrowUp
+                    .fmt = .fmt Or HDF_SORTUP
+            End Select
+            SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
+            End With
+        Case Else
+            Err.Raise 380
     End Select
-    SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-    End With
 End If
 End Property
 
@@ -3425,9 +3429,9 @@ If ListViewHandle <> 0 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        .fmt = .fmt Or HDF_BITMAP_ON_RIGHT
+        If Not (.fmt And HDF_BITMAP_ON_RIGHT) = HDF_BITMAP_ON_RIGHT Then .fmt = .fmt Or HDF_BITMAP_ON_RIGHT
     Else
-        .fmt = .fmt And Not HDF_BITMAP_ON_RIGHT
+        If (.fmt And HDF_BITMAP_ON_RIGHT) = HDF_BITMAP_ON_RIGHT Then .fmt = .fmt And Not HDF_BITMAP_ON_RIGHT
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -3454,9 +3458,9 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        .fmt = .fmt And Not HDF_FIXEDWIDTH
+        If (.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH Then .fmt = .fmt And Not HDF_FIXEDWIDTH
     Else
-        .fmt = .fmt Or HDF_FIXEDWIDTH
+        If Not (.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH Then .fmt = .fmt Or HDF_FIXEDWIDTH
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -3481,9 +3485,9 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        .fmt = .fmt Or HDF_SPLITBUTTON
+        If Not (.fmt And HDF_SPLITBUTTON) = HDF_SPLITBUTTON Then .fmt = .fmt Or HDF_SPLITBUTTON
     Else
-        .fmt = .fmt And Not HDF_SPLITBUTTON
+        If (.fmt And HDF_SPLITBUTTON) = HDF_SPLITBUTTON Then .fmt = .fmt And Not HDF_SPLITBUTTON
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -3508,9 +3512,9 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        .fmt = .fmt Or HDF_CHECKBOX
+        If Not (.fmt And HDF_CHECKBOX) = HDF_CHECKBOX Then .fmt = .fmt Or HDF_CHECKBOX
     Else
-        .fmt = .fmt And Not HDF_CHECKBOX
+        If (.fmt And HDF_CHECKBOX) = HDF_CHECKBOX Then .fmt = .fmt And Not HDF_CHECKBOX
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -3535,9 +3539,9 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        .fmt = .fmt Or HDF_CHECKED
+        If Not (.fmt And HDF_CHECKED) = HDF_CHECKED Then .fmt = .fmt Or HDF_CHECKED
     Else
-        .fmt = .fmt And Not HDF_CHECKED
+        If (.fmt And HDF_CHECKED) = HDF_CHECKED Then .fmt = .fmt And Not HDF_CHECKED
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With

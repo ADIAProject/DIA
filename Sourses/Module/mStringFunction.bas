@@ -453,8 +453,8 @@ Public Sub RemoveUni(ByRef sStr As String)
                 Map(i - 1) = bVopros
             End If
         Next
+        sStr = Map
     End If
-    sStr = Map
 End Sub
 
 '!--------------------------------------------------------------------------------

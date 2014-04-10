@@ -3828,7 +3828,26 @@ ExitFromForNext_iii:
                         strSection = strResultByTab_x(2)
                         ' получение списка секций несовместимых ОС
                         strSectionUnsupported = strResultByTab_x(4)
-
+                        
+                        ' Check for USB30 Intel Version Generation - if wrong driver then bsod
+                        If InStr(strPackFileName, "USB") Then
+                            If mbIUSB_RootHubExist Then
+                                If InStr(strFind, "IUSB3\ROOT_HUB30") Then
+                                    If mbIntel2thGeneration Then
+                                        If InStr(LCase$(strPathInf), "intel_2nd\") = 0 Then
+                                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Not Supported driver for USB3.0 Root HUB HWID=" & strFind & " Inf: " & strPathInf
+                                            GoTo NextStrFind
+                                        End If
+                                    ElseIf mbIntel4thGeneration Then
+                                        If InStr(LCase$(strPathInf), "intel_4th\") = 0 Then
+                                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Not Supported driver for USB3.0 Root HUB HWID=" & strFind & " Inf: " & strPathInf
+                                            GoTo NextStrFind
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                        
                         ' Если драйвер несовместим с текущей ОС (вкладкой), то пропускаем его (анализ имени секции manufactured)
                         If Not CompatibleDriver4OS(strSection, strPackFileName, strPathInf, strSectionUnsupported) Then
                             If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: !!! SKIP. Driver is not compatible for this OS - IniSection: " & strSection & " Inf: " & strPathInf

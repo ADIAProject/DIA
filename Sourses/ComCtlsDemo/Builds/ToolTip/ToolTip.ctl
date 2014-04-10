@@ -625,9 +625,9 @@ If ToolTipHandle <> 0 Then
     Dim TI As TOOLINFO
     If GetToolInfo(ID, TI) = True Then
         If Value = True Then
-            TI.uFlags = TI.uFlags Or TTF_CENTERTIP
+            If Not (TI.uFlags And TTF_CENTERTIP) = TTF_CENTERTIP Then TI.uFlags = TI.uFlags Or TTF_CENTERTIP
         Else
-            TI.uFlags = TI.uFlags And Not TTF_CENTERTIP
+            If (TI.uFlags And TTF_CENTERTIP) = TTF_CENTERTIP Then TI.uFlags = TI.uFlags And Not TTF_CENTERTIP
         End If
         Call SetToolInfo(ID, TI)
     End If
@@ -646,9 +646,9 @@ If ToolTipHandle <> 0 Then
     Dim TI As TOOLINFO
     If GetToolInfo(ID, TI) = True Then
         If Value = True Then
-            TI.uFlags = TI.uFlags Or TTF_TRANSPARENT
+            If Not (TI.uFlags And TTF_TRANSPARENT) = TTF_TRANSPARENT Then TI.uFlags = TI.uFlags Or TTF_TRANSPARENT
         Else
-            TI.uFlags = TI.uFlags And Not TTF_TRANSPARENT
+            If Not (TI.uFlags And TTF_TRANSPARENT) = TTF_TRANSPARENT Then TI.uFlags = TI.uFlags And Not TTF_TRANSPARENT
         End If
         Call SetToolInfo(ID, TI)
     End If

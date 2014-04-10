@@ -92,14 +92,6 @@ PropertyPage=Sourses\ComCtlsDemo\Builds\ListView\PPListViewSorting.pag
 PropertyPage=Sourses\ComCtlsDemo\Builds\ListView\PPListViewImageLists.pag
 Class=LvwColumnHeaders; Sourses\ComCtlsDemo\Builds\ListView\LvwColumnHeaders.cls
 Class=LvwListSubItem; Sourses\ComCtlsDemo\Builds\ListView\LvwListSubItem.cls
-Module=VisualStyles; Sourses\ComCtlsDemo\Common\VisualStyles.bas
-Module=Common; Sourses\ComCtlsDemo\Common\Common.bas
-Module=ComCtlsBase; Sourses\ComCtlsDemo\Builds\ComCtlsBase.bas
-Module=VTableHandle; Sourses\ComCtlsDemo\Builds\VTableHandle.bas
-Class=Enumeration; Sourses\ComCtlsDemo\Builds\Enumeration.cls
-Class=VTableSubclass; Sourses\ComCtlsDemo\Builds\VTableSubclass.cls
-Class=ISubclass; Sourses\ComCtlsDemo\Builds\ISubclass.cls
-Class=CommonDialog; Sourses\ComCtlsDemo\Builds\CommonDialog.cls
 UserControl=Sourses\ComCtlsDemo\Builds\SpinBox\SpinBox.ctl
 PropertyPage=Sourses\ComCtlsDemo\Builds\SpinBox\PPSpinBoxGeneral.pag
 UserControl=Sourses\ComCtlsDemo\Builds\ComboBoxW\ComboBoxW.ctl
@@ -122,6 +114,14 @@ PropertyPage=Sourses\ComCtlsDemo\Builds\ImageList\PPImageListGeneral.pag
 Class=ImlListImages; Sourses\ComCtlsDemo\Builds\ImageList\ImlListImages.cls
 Class=ImlListImage; Sourses\ComCtlsDemo\Builds\ImageList\ImlListImage.cls
 UserControl=Sourses\ComCtlsDemo\Builds\ImageList\ImageList.ctl
+Module=VisualStyles; Sourses\ComCtlsDemo\Common\VisualStyles.bas
+Module=Common; Sourses\ComCtlsDemo\Common\Common.bas
+Module=ComCtlsBase; Sourses\ComCtlsDemo\Builds\ComCtlsBase.bas
+Module=VTableHandle; Sourses\ComCtlsDemo\Builds\VTableHandle.bas
+Class=Enumeration; Sourses\ComCtlsDemo\Builds\Enumeration.cls
+Class=VTableSubclass; Sourses\ComCtlsDemo\Builds\VTableSubclass.cls
+Class=ISubclass; Sourses\ComCtlsDemo\Builds\ISubclass.cls
+Class=CommonDialog; Sourses\ComCtlsDemo\Builds\CommonDialog.cls
 Class=cSelfSubHookCallback; Sourses\Class\cSelfSubHookCallback.cls
 Class=cBlizzard; Sourses\BlizzardSort\cBlizzard.cls
 ResFile32="Sourses\Resource\DriversInstaller.res"
@@ -166,5 +166,3 @@ DebugStartupOption=0
 [MS Transaction Server]
 AutoRefresh=1
 
-[CodeSMART]
-Task_UID=06_01_13_16_52_00
