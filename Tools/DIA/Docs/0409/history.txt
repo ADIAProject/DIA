@@ -8,6 +8,56 @@ The Indications:
 	"*" - Make-up change
 	"!" - An Important notes on working the program.
 
+Version 6.4.11 PreFinal (11.04.2014)
+	* Optimize starting process, the rate increased to ~ 2-3 times
+	* Optimizing the indexing process, the rate increased to ~ 2-3 times
+	* Optimize debug logging programs, reduced the number of messages in the standard mode . Improved readability of the log file
+	* Updated to support the operating system markers and markers laptop manufacturers (idea by SamLab)
+	+ Added support for markers (intel_2nd, intel_4th) to correctly install the driver Intel USB 3.0 (IUSB3\ROOT_HUB30) (idea by BadPointer)
+	* Slightly changed the format of the database (combined the "path" and "inf- file name") .
+	* Changed display prompts for the driver package button (combined the "path" and "the name of the inf- file") .
+	* The program now has a full opportunity to work with the unpacked driver packages
+	* Multiple changes/improvements to the GUI
+	+ Enhanced the ability to change settings through the interface: change the font controls , change the appearance of buttons driver packages
+	- Fixed non font color controls
+	* Changed the icon size for the control buttons (32x32 buttons except the driver packages, they were 24x24)
+	+ Unicode support for all controls (except SStab)
+	- Fixed display of application icons for exe- file and displayed on the Alt + Tab ( for Windows Vista +)
+	* For universality and ease of integration programs in the various collections of drivers, changed the directory structure of the program: subdirectories "Lang", "Graphics", "Docs" moved to DIA folder
+	* Configuration file .\Tools\DriversInstaller.ini renamed .\Tools\DIA.ini
+	* Temporary directory program changed to %temp%\DIA
+	- Stability of the application , the program crashes arbitrary fixed (I very much hope :))
+	* Improved response programs at various operations
+	* Optimization of functions to work with files
+	* Fixed some minor bugs in the indexing process (purity database in terms of determining the device name)
+	+ Added ability to decompress individual drayverpakah, by pressing the right mouse button on the driver package (it was only implemented for group mode)
+	* The process of creating a restore point moved into installation mode driver (previously at startup). Created once per session of the program.
+	* Added AUTO CHANGEOVER column width when switching between all tables
+	- Fixed switching between elements by pressing TAB (added focus)
+	* Improved emulation mode (save/load) to determine the parameters of the emulated system based on the image file name
+	* Changed the "About"
+
+Version 5.12.30 Beta (30.12.2013)
+	! You must recreate the database, the program will tell about the incompatibility of the database
+	* Changed the algorithm for sorting the database on HWID
+	* Changed the algorithm to search for the HWID driver in the database
+	+ In order to accelerate the launch changed selection module drivers for this program for indexing , creates an additional file % driverpackName%. Hwid
+	* Cleaning the database drivers - Removed possible errors in the analysis inf- files
+	As a result of the above changes, downloading programs takes ~ 2 times faster
+	* File devcon_c.cmd no longer used when running , now comes with a direct challenge devcon.exe parameters.
+	- Fixed closing the program if the file was not created hwids.txt - result of the program devcon.exe. The program continued to boot and gave out a lot of errors
+	- Fixed a bug run on windows 2000, the reason was the function to run external applications
+	+ Support of Unicode for almost all controls
+	+ The default font for tips Lucida Console, for all other elements Tahoma. Unless otherwise prescribed in the program settings .
+	+ When you switch to indexing , if not neproindeksirovannyh packages , this selection is set at "All"
+	- Fixed non-creation drivers folder for indexing drivers
+	- Removed all options database drivers are now creating an unconditional
+	- Fixed the calculation time incorrectly calculated the time in milliseconds
+	* Removed dependency on the component richtx32.ocx - Microsoft Rich Textbox Control 6.0.
+	+ Added button to rebuild the window is resized or navigate through the tabs
+	+ Added Arabic thanks MFM Dawdeh - http://www.mfmd.net/forum.php
+	+ Information about the current progress of implementation is now at the beginning of the program header
+
 Version 5.10.29 Final (29.10.2013)
 	+ Added the "Save information about the devices to emulate a program on the other PC"
 	+ Added form for emulation . Now also allows you to select the target operating system.

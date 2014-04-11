@@ -246,7 +246,7 @@ Begin VB.Form frmMain
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   9
-               Charset         =   0
+               Charset         =   204
                Weight          =   400
                Underline       =   0   'False
                Italic          =   0   'False

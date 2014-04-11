@@ -1,7 +1,7 @@
 
 
 
-DevManView v1.35
+DevManView v1.41
 Copyright (c) 2009 - 2013 Nir Sofer
 Web site: http://www.nirsoft.net
 
@@ -37,6 +37,17 @@ system.
 Versions History
 ================
 
+
+* Version 1.41:
+  o Added 'Clear Recent Files List' for the 'Recent Disabled Devices
+    Profile' option.
+
+* Version 1.40:
+  o Added /use_wildcard command-line option. You can use it with
+    /disable, /enable, /disable_enable , and /uninstall commmand-line
+    options to specify wildcard instead of full name, for example:
+    DevManView.exe /disable "USBSTOR\CdRom&???_*" /use_wildcard
+    Use it very carefully !!
 
 * Version 1.35:
   o Added 'Recent Disabled Devices Profile' submenu, which allows you
@@ -301,6 +312,15 @@ Disable and then enable again the specified device.
 
 /uninstall <Device Name>
 Uninstall the specified device.
+
+/use_wildcard
+You can use it with /disable, /enable, /disable_enable , and /uninstall
+commmand-line options to specify wildcard instead of full name, for
+example:
+DevManView.exe /disable "USBSTOR\CdRom&???_*" /use_wildcard
+
+You must specify at least 5 characters in the device name wildcard,
+otherwise it'll not work.
 
 /save_disabled_profile <Config Filename>
 Save all devices that are currently disabled into a simple config file.

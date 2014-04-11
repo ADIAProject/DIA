@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "10/04/2014"
+Public Const strDateProgram         As String = "11/04/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String

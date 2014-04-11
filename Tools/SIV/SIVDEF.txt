@@ -1,0 +1,3 @@
+[SIVDEF]
+Font Weight=400
+Font Name=Tahoma

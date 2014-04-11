@@ -1,4 +1,4 @@
-= Date 2013-08-15 Version 015 Records 715
+= Date 2013-12-15 Version 016 Records 717
 ;
 ; latest version available from http://rh-software.com/downloads/pnpdevs.txt
 ;
@@ -211,6 +211,7 @@ ESS1881=ES1888 AudioDrive
 ESS1882=ES1887 AudioDrive
 ESS6880=ES688 AudioDrive
 ESS6881=ES688 AudioDrive
+ETD0105=ASUS Touchpad
 ETD0500=ELAN PS/2 Port Smart-Pad
 FDC0000=Adaptec AHA-2920 SCSI Host Adapter
 FIXEDBUTTON=ACPI Fixed Feature Button
@@ -429,6 +430,7 @@ PNP0C80=Memory Device
 PNP0CF0=Compaq LTE Lite Support
 PNP0CF1=Compaq LTE Elite Support
 PNP0D10=USB xHCI Compliant Host Controller
+PNP0D15=USB XHCI Compliant Host Controller
 PNP0D20=Standard EHCI-compliant Host Controller
 PNP0D40=SDA Standard Compliant SD Host Controller
 PNP0E00=Intel 82365-Compatible PCMCIA Controller

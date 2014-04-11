@@ -62,8 +62,12 @@
 
 2013_12_27=Added in section 	[frmOptions]		cmdFontColorToolTip
 
-2014_04_04=Added in section 	[frmMain]		mnuContextDeleteDevIDDesc;mnuContextCopyHWIDDesc
+2014_04_11=Added in section 	[frmMain]		mnuContextDeleteDevIDDesc;mnuContextCopyHWIDDesc
+	   Changes in section 	[frmMain]		TableHwidHeader2
 	   Added in section 	[frmFontDialog]		ctlFontColor
+	   Added in section 	[frmAbout]		mnuContextLink1;mnuContextLink2
 	   Added in section 	[frmOptions]		ctlStatusBtnBackColor;lblButtonStyle;lblButtonStyleColor
-	   Added in section 	[Messages]		strMessages151;strMessages152;strMessages153;strMessages154;strMessages155;strMessages156
+	   Changes in section 	[frmOptions]		lblSizeButton;mnuContextCopyHWIDDesc
 	   Added in section 	[frmEmulate]		frFile;frOS;chkisNotebook;lblOSInfo
+	   Added in section 	[Messages]		strMessages151;strMessages152;strMessages153;strMessages154;strMessages155;strMessages156
+	   Changes in section 	[Messages]		strMessages8;strMessages9;strMessages11;strMessages20;strMessages39;strMessages41;strMessages43;strMessages138;strMessages150
