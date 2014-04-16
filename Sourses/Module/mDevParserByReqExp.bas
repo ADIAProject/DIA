@@ -18,7 +18,8 @@ Private RegExpDevID         As RegExp
 Private RegExpDevSect       As RegExp
 Private objHashOutput       As Scripting.Dictionary
 Private objStringHash       As Scripting.Dictionary
-Private cSort               As cBlizzard
+Private objHWIDOutput       As Scripting.Dictionary
+'Private cSort               As cBlizzard
 Private cSort2              As cBlizzard
 
 '!--------------------------------------------------------------------------------
@@ -71,24 +72,17 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim lngCatFileExists          As Long
     Dim strValval                 As String
     Dim sStrings                  As String
-    Dim strRegEx_mansect          As String
-    Dim strRegEx_strsect          As String
-    Dim strRegEx_versect          As String
-    Dim strRegEx_version          As String
     Dim strRegEx_devs_l           As String
     Dim strRegEx_devs_r           As String
-    Dim strRegEx_devid            As String
-    Dim strRegEx_mandef           As String
-    Dim strRegEx_devdef           As String
-    Dim strRegEx_strings          As String
-    Dim strRegEx_sectnames        As String
     Dim sFileContent              As String
     Dim sVerSectContent           As String
     Dim strLinesArr()             As String
     Dim strLinesArrHwid()         As String
     Dim lngNumLines               As Long
+    Dim lngNumLinesHwid           As Long
     Dim strManufSection           As String
     Dim strKey                    As String
+    Dim strKeyPercent             As String
     Dim strValue                  As String
     Dim strVarname                As String
     Dim strSections               As String
@@ -107,12 +101,14 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strVer                    As String
     Dim strSectEmptyList          As String
     Dim strSectEmptyList4Check    As String
-    Dim strRegEx_catFile          As String
     Dim strArchCatFileList        As String
     Dim strArchCatFileListContent As String
     Dim strVarname_x()            As String
     Dim ii                        As Long
     Dim strUnpackMask             As String
+    Dim strInfPathRelative        As String
+    Dim strInfPathTabQuoted       As String
+    Dim strPartString2Index       As String
     
     If mbDebugStandart Then DebugMode vbTab & "DevParserByRegExp-Start"
     
@@ -128,20 +124,13 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Set RegExpDevDef = New RegExp
     Set RegExpDevID = New RegExp
     Set RegExpDevSect = New RegExp
-    Set objStringHash = New Scripting.Dictionary
-    Set objHashOutput = New Scripting.Dictionary
-    objHashOutput.CompareMode = BinaryCompare
-    objStringHash.CompareMode = TextCompare
     
-    If Not mbSortMethodShell Then
-        Set cSort = New cBlizzard
-        cSort.SortMethod = BinaryCompare
-        cSort.SortOrder = Ascending
-        
-        Set cSort2 = New cBlizzard
-        cSort2.SortMethod = BinaryCompare
-        cSort2.SortOrder = Ascending
-    End If
+    Set objHashOutput = New Scripting.Dictionary
+    Set objStringHash = New Scripting.Dictionary
+    Set objHWIDOutput = New Scripting.Dictionary
+    objHashOutput.CompareMode = BinaryCompare
+    objStringHash.CompareMode = BinaryCompare
+    objHWIDOutput.CompareMode = BinaryCompare
 
     ' Должно ускорить распаковку, если выключено чтение файла finish.ini
     If Not mbLoadFinishFile Then
@@ -158,7 +147,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     DoEvents
 
     If PathExists(strWorkDir) Then
-        ChangeStatusTextAndDebug strMessages(81)
+        ChangeStatusBarText strMessages(81)
         DelRecursiveFolder (strWorkDir)
         DoEvents
     End If
@@ -173,7 +162,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     If Not mbDP_Is_aFolder Then
         ' Запуск распаковки
         cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & strInfPathTemp & strQuotes & " -r " & strQuotes & strPathDRP & strPackFileName & strQuotes & strUnpackMask
-        ChangeStatusTextAndDebug strMessages(72) & strSpace & strPackFileName
+        ChangeStatusBarText strMessages(72) & strSpace & strPackFileName
 
         If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
             MsgBox strMessages(13) & str2vbNewLine & cmdString, vbInformation, strProductName
@@ -196,7 +185,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             End If
         End If
 
-        ChangeStatusTextAndDebug strMessages(73) & strSpace & strPackFileName
+        ChangeStatusBarText strMessages(73) & strSpace & strPackFileName
         'Построение списка inf файлов в рабочем каталоге
         strInfPathTempList_x = SearchFilesInRoot(strInfPathTemp, "*.inf", True, False)
     Else
@@ -209,7 +198,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             If mbDebugStandart Then DebugMode strMessages(33) & str2vbNewLine & cmdString
         End If
 
-        ChangeStatusTextAndDebug strMessages(148) & strSpace & strPackFileName
+        ChangeStatusBarText strMessages(148) & strSpace & strPackFileName
         'Построение списка inf файлов в рабочем каталоге
         strInfPathTempList_x = SearchFilesInRoot(strPathDRP & strPackFileName, "*.inf", True, False)
     End If
@@ -223,99 +212,92 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     TimeScriptFinish = GetTickCount
     If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Unpack Inf-file: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
     DoEvents
-    ' sections
-    strRegEx_mansect = "^[ ]*\[manufacturer\](?:([\s\S]*?)^[ #]*(?=\[)|([\s\S]*))"
-    strRegEx_strsect = "^[ ]*\[strings\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
-    strRegEx_versect = "^[ ]*\[version\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
-    'sections "version" - parametrs DriverVer & CatalogFile
-    strRegEx_version = "^[ ]*driverver[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
-    strRegEx_catFile = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86]*[ ]*=[ ]*([^;\r\n]*)"
-    'sections "Devices"
-    strRegEx_devs_l = "^[ ]*\[("
-    strRegEx_devs_r = ")\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
-    ' ,ID,ID, ...
-    strRegEx_devid = ",[ ]*([^ \r\n,][^ \r\n&,]+(?:&(?:[\w/]+))*)"
-    ' name = sectname,suffix,suffix,...
-    strRegEx_mandef = "^[ ]*[^;\r\n=]*=[ ]*([^;\r\n]*)"
-    ' name = driver,ID,ID,...
-    strRegEx_devdef = "^[ ]*((?:[^;=\r\n]*(?:%[^%\r\n]+)*%[^;=\r\n]*)|(?:[^;=\r\n]+))[^=\r\n]*=[^\r\n,]*([^;\r\n]*)"
-    ' variable = "str"
-    strRegEx_strings = "^[ ]*([^; \r\n][^;=\r\n]*[^; \r\n])[ ]*=[ ]*(?:([^\r\n;]*))"
-    ' variable = "sectnames"
-    strRegEx_sectnames = "(?:,?[ ]*,?[ ]*([^,\r\n;]+[^,\r\n ;]))"
-
-    ' Init regexps
+    
+    ' sections [Strings]
     With RegExpStrSect
-        .Pattern = strRegEx_strsect
+        .Pattern = "^[ ]*\[strings\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
         .MultiLine = True
         .IgnoreCase = True
-        .Global = False
-        ' Note: "XP Alternative (by Greg)\D\3\M\A\12\prime.inf" has two [strings] sections
-    End With
-
-    With RegExpStrDefs
-        .Pattern = strRegEx_strings
-        .MultiLine = True
-        '.IgnoreCase = True
         .Global = True
     End With
 
+    ' sections [Version]
     With RegExpVerSect
-        .Pattern = strRegEx_versect
+        .Pattern = "^[ ]*\[version\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
         .MultiLine = True
         .IgnoreCase = True
         .Global = True
     End With
     
-    With RegExpVerParam
-        .Pattern = strRegEx_version
-        .MultiLine = True
-        .Global = True
-    End With
-
-    With RegExpCatParam
-        .Pattern = strRegEx_catFile
-        .MultiLine = True
-        .Global = True
-    End With
-
+    ' sections [Manufacturer]
     With RegExpManSect
-        .Pattern = strRegEx_mansect
+        .Pattern = "^[ ]*\[manufacturer\](?:([\s\S]*?)^[ #]*(?=\[)|([\s\S]*))"
         .MultiLine = True
         .IgnoreCase = True
         .Global = True
     End With
-
-    With RegExpManDef
-        .Pattern = strRegEx_mandef
-        .MultiLine = True
-        '.IgnoreCase = True
-        .Global = True
-    End With
-
-    With RegManID
-        .Pattern = strRegEx_sectnames
-        .MultiLine = True
-        '.IgnoreCase = True
-        .Global = True
-    End With
-
-    With RegExpDevDef
-        .Pattern = strRegEx_devdef
-        .MultiLine = True
-        '.IgnoreCase = True
-        .Global = True
-    End With
-
-    With RegExpDevID
-        .Pattern = strRegEx_devid
-        '.IgnoreCase = True
-        .Global = True
-    End With
-
+    
+    'sections "Devices"
+    strRegEx_devs_l = "^[ ]*\[("
+    strRegEx_devs_r = ")\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
     With RegExpDevSect
         .MultiLine = True
         .IgnoreCase = True
+        .Global = True
+    End With
+    
+    ' sections [Strings] - variable = param
+    With RegExpStrDefs
+        .Pattern = "^[ ]*([^; \r\n][^;=\r\n]*[^; \r\n])[ ]*=[ ]*(?:([^\r\n;]*))"
+        .MultiLine = True
+        .IgnoreCase = False
+        .Global = True
+    End With
+    
+    ' sections [Strings] - parametr driverver=param
+    With RegExpVerParam
+        .Pattern = "^[ ]*driverver[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
+        .MultiLine = True
+        .IgnoreCase = False
+        .Global = True
+    End With
+
+    ' sections [Strings] - parametr catalogfile=param
+    With RegExpCatParam
+        .Pattern = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86]*[ ]*=[ ]*([^;\r\n]*)"
+        .MultiLine = True
+        .IgnoreCase = False
+        .Global = True
+    End With
+
+    ' sections [Manufacturer] - name = sectname,suffix,suffix,...
+    With RegExpManDef
+        .Pattern = "^[ ]*[^;\r\n=]*=[ ]*([^;\r\n]*)"
+        .MultiLine = True
+        .IgnoreCase = False
+        .Global = True
+    End With
+
+    ' variable = "sectnames"
+    With RegManID
+        .Pattern = "(?:,?[ ]*,?[ ]*([^,\r\n;]+[^,\r\n ;]))"
+        .MultiLine = True
+        .IgnoreCase = False
+        .Global = True
+    End With
+    
+    ' name = driver,ID,ID,...
+    With RegExpDevDef
+        .Pattern = "^[ ]*((?:[^;=\r\n]*(?:%[^%\r\n]+)*%[^;=\r\n]*)|(?:[^;=\r\n]+))[^=\r\n]*=[^\r\n,]*([^;\r\n]*)"
+        .MultiLine = True
+        .IgnoreCase = False
+        .Global = True
+    End With
+
+    ' ,ID,ID, ...
+    With RegExpDevID
+        .Pattern = ",[ ]*([^ \r\n,][^ \r\n&,]+(?:&(?:[\w/]+))*)"
+        .IgnoreCase = False
         .Global = True
     End With
 
@@ -335,27 +317,36 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     End If
         
     infCount = UBound(strInfPathTempList_x) + 1
-    ChangeStatusTextAndDebug strMessages(73) & strSpace & strPackFileName & " (" & infCount & " inf-files)"
+    ChangeStatusBarText strMessages(73) & strSpace & strPackFileName & " (" & infCount & " inf-files)"
     
     ' Запускаем цикл обработки inf-файлов
     For infNum = 0 To UBound(strInfPathTempList_x)
-        ' полный путь к файлу inf
-        strInfFullname = strInfPathTempList_x(infNum).FullPath
-        ' Имя inf файла
-        strInfFileName = strInfPathTempList_x(infNum).NameLcase
         
-        If (infNum Mod 20) = 0 Then
-            ChangeStatusTextAndDebug strMessages(73) & strSpace & strPackFileName & " (" & infNum & strSpace & strMessages(124) & strSpace & infCount & ": " & strInfFileName & ")"
-        Else
-            If GetInputState Then
-                DoEvents
+            If strInfPathTempList_x(infNum).Size Then
+            
+            ' полный путь к файлу inf
+            strInfFullname = strInfPathTempList_x(infNum).FullPath
+            ' Имя inf файла
+            strInfFileName = strInfPathTempList_x(infNum).NameLcase
+            
+            If (infNum Mod 20) = 0 Then
+                ChangeStatusBarText strMessages(73) & strSpace & strPackFileName & " (" & infNum & strSpace & strMessages(124) & strSpace & infCount & ": " & strInfFileName & ")"
+            Else
+                If GetInputState Then
+                    DoEvents
+                End If
             End If
-        End If
-
-        ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
-        strInfPath = strInfPathTempList_x(infNum).RelativePath
-
-        If strInfPathTempList_x(infNum).Size Then
+        
+            ' Очистка буфера значений уникальных строк HWID
+            Set objHashOutput = New Scripting.Dictionary
+            ' Очистка буфера значений секции strings
+            Set objStringHash = New Scripting.Dictionary
+            
+            ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
+            strInfPath = strInfPathTempList_x(infNum).RelativePath
+            strInfPathRelative = strInfPathTempList_x(infNum).RelativePath & strInfFileName
+            strInfPathTabQuoted = vbTab & strInfPathRelative & vbTab
+            
             ' Read INF file
             FileReadData strInfFullname, sFileContent
 
@@ -373,19 +364,22 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             Set objMatchesStrSect = RegExpStrSect.Execute(sFileContent)
     
             If objMatchesStrSect.Count Then
-                Set objMatch = objMatchesStrSect.item(0)
+                Set objMatch = objMatchesStrSect.Item(0)
                 
                 sStrings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
                 Set objMatchesStrDefs = RegExpStrDefs.Execute(sStrings)
     
                 For i = 0 To objMatchesStrDefs.Count - 1
-                    Set objMatch = objMatchesStrDefs.item(i)
-                    strKey = Trim$(objMatch.SubMatches(0))
+                    Set objMatch = objMatchesStrDefs.Item(i)
+                    strKey = Trim$(LCase$(objMatch.SubMatches(0)))
                     strValue = Trim$(objMatch.SubMatches(1))
     
                     If Not objStringHash.Exists(strKey) Then
                         objStringHash.Add strKey, strValue
-                        objStringHash.Add strPercent & strKey & strPercent, strValue
+                        strKeyPercent = strPercent & strKey & strPercent
+                        If Not objStringHash.Exists(strKeyPercent) Then
+                            objStringHash.Add strKeyPercent, strValue
+                        End If
                     End If
     
                 Next
@@ -395,18 +389,18 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             ' Find [version] section
             Set objMatchesVerSect = RegExpVerSect.Execute(sFileContent)
             If objMatchesVerSect.Count Then
-                sVerSectContent = LCase$(objMatchesVerSect.item(0))
+                sVerSectContent = LCase$(objMatchesVerSect.Item(0))
             
                 ' Find DriverVer parametr
                 Set objMatchesVerParam = RegExpVerParam.Execute(sVerSectContent)
         
                 If objMatchesVerParam.Count Then
-                    Set objMatch = objMatchesVerParam.item(0)
+                    Set objMatch = objMatchesVerParam.Item(0)
                     strDrvDate = objMatch.SubMatches(0)
         
                     If InStr(strDrvDate, strPercent) Then
                         strVarname = Left$(strDrvDate, InStrRev(strDrvDate, strPercent))
-                        strValval = objStringHash.item(strVarname)
+                        strValval = objStringHash.Item(strVarname)
         
                         If LenB(strValval) Then
                             strDrvDate = Replace$(strDrvDate, strVarname, strValval)
@@ -419,7 +413,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         
                     If InStr(strDrvVersion, strPercent) Then
                         strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, strPercent))
-                        strValval = objStringHash.item(strVarname)
+                        strValval = objStringHash.Item(strVarname)
         
                         If LenB(strValval) Then
                             strDrvVersion = Replace$(strDrvVersion, strVarname, strValval)
@@ -453,12 +447,12 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                 Set objMatchesCatParam = RegExpCatParam.Execute(sVerSectContent)
         
                 If objMatchesCatParam.Count Then
-                    Set objMatch = objMatchesCatParam.item(0)
+                    Set objMatch = objMatchesCatParam.Item(0)
                     strDrvCatFileName = objMatch.SubMatches(0)
                     
                     If InStr(strDrvCatFileName, strPercent) Then
                         strVarname = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, strPercent))
-                        strValval = objStringHash.item(strVarname)
+                        strValval = objStringHash.Item(strVarname)
         
                         If LenB(strValval) Then
                             strDrvCatFileName = Replace$(strDrvCatFileName, strVarname, strValval)
@@ -497,7 +491,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             Set objMatchesManSect = RegExpManSect.Execute(sFileContent)
     
             If objMatchesManSect.Count Then
-                Set objMatch = objMatchesManSect.item(0)
+                Set objMatch = objMatchesManSect.Item(0)
                 strSections = objMatch.SubMatches(0) & objMatch.SubMatches(1)
                 strSectlist = vbNullString
                 Set objMatchesManDef = RegExpManDef.Execute(strSections)
@@ -505,13 +499,13 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                 If objMatchesManDef.Count Then
                 
                     For i = 0 To objMatchesManDef.Count - 1
-                        Set objMatch = objMatchesManDef.item(i)
+                        Set objMatch = objMatchesManDef.Item(i)
                         ss = objMatch.SubMatches(0)
                         Set objMatchesManID = RegManID.Execute(ss)
                         strBaseName = vbNullString
     
                         For j = 0 To objMatchesManID.Count - 1
-                            Set objMatch1 = objMatchesManID.item(j)
+                            Set objMatch1 = objMatchesManID.Item(j)
                             sB = RTrim$(objMatch1.SubMatches(0))
     
                             If i <> 0 Then
@@ -549,6 +543,9 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     strK2Sectlist(0) = strSectlist
                     strSectEmptyList = strDash
                 End If
+                
+                ' Часть строки которая будет позже добавлена в индекс
+                strPartString2Index = vbTab & strVer & vbTab & strSectEmptyList & vbTab & lngCatFileExists & vbTab
                             
                 strSectEmptyList4Check = strSectEmptyList & strComma
     
@@ -559,7 +556,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         Set objMatchesDevSect = RegExpDevSect.Execute(sFileContent)
         
                         For K = 0 To objMatchesDevSect.Count - 1
-                            Set objMatch = objMatchesDevSect.item(K)
+                            Set objMatch = objMatchesDevSect.Item(K)
                             strThisSection = objMatch.SubMatches(1) & objMatch.SubMatches(2)
                             strManufSection = UCase$(objMatch.SubMatches(0))
                             ' Find device definitions
@@ -569,7 +566,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                             If objMatchesDevDef.Count Then
                                 ' Handle definition
                                 For i = 0 To objMatchesDevDef.Count - 1
-                                    Set objMatch = objMatchesDevDef.item(i)
+                                    Set objMatch = objMatchesDevDef.Item(i)
                                     strDevIDs = objMatch.SubMatches(1)
                                     strDevName = Trim$(objMatch.SubMatches(0))
             
@@ -584,16 +581,16 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                 strVarname = Mid$(strDevName, Pos + 1, PosRev - 2)
             
                                                 If InStr(strVarname, strPercent) = 0 Then
-                                                    strValval = objStringHash.item(strVarname)
+                                                    strValval = objStringHash.Item(LCase$(strVarname))
                                                 Else
                                                     strVarname_x = Split(strVarname, strPercent)
             
                                                     For ii = 0 To UBound(strVarname_x)
                                                         
                                                         If LenB(strValval) Then
-                                                            strValval = strValval & strSpace & objStringHash.item(strVarname_x(ii))
+                                                            strValval = strValval & strSpace & objStringHash.Item(LCase$(strVarname_x(ii)))
                                                         Else
-                                                            strValval = objStringHash.item(strVarname_x(ii))
+                                                            strValval = objStringHash.Item(LCase$(strVarname_x(ii)))
                                                         End If
 '
                                                     Next ii
@@ -610,7 +607,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             
                                             Else
                                                 strVarname = Replace$(strDevName, strPercent, vbNullString)
-                                                strValval = objStringHash.item(strVarname)
+                                                strValval = objStringHash.Item(LCase$(strVarname))
                                                 If LenB(strValval) Then
                                                     strDevName = strValval
                                                 Else
@@ -636,7 +633,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                     Set objMatchesDevID = RegExpDevID.Execute(strDevIDs)
             
                                     For j = 0 To objMatchesDevID.Count - 1
-                                        Set objMatch = objMatchesDevID.item(j)
+                                        Set objMatch = objMatchesDevID.Item(j)
                                         strValuer = objMatch.SubMatches(0)
             
                                         If InStr(strValuer, strPercent) Then
@@ -646,7 +643,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                 strVarname = Right$(strVarname, Len(strVarname) - InStr(strValuer, strPercent) + 1)
                                             End If
             
-                                            strValval = objStringHash.item(strVarname)
+                                            strValval = objStringHash.Item(LCase$(strVarname))
             
                                             If LenB(strValval) Then
                                                 strValuer = Replace$(strValuer, strVarname, strValval)
@@ -662,15 +659,22 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                             strDevID = strValuer_x(0) & vbBackslash & strValuer_x(1)
                                         End If
         
-                                        ss = strDevID & vbTab & strInfPath & strInfFileName & vbTab & strManufSection
+                                        ss = strDevID & strManufSection
             
                                         If Not objHashOutput.Exists(ss) Then
-                                            objHashOutput.item(ss) = "+"
+                                            objHashOutput.Item(ss) = 1
                                             
                                             'Итоговая строка
-                                            strLinesArr(lngNumLines) = ss & (vbTab & strVer & vbTab & strSectEmptyList & vbTab & lngCatFileExists & vbTab & strDevName)
-                                            strLinesArrHwid(lngNumLines) = strDevID
+                                            'strDevID & vbTab & strInfFileName & vbTab & strManufSection & vbTab & strVer & vbTab & strSectEmptyList & vbTab & lngCatFileExists & vbTab & strDevName
+                                            strLinesArr(lngNumLines) = (strDevID & strInfPathTabQuoted & strManufSection) & (strPartString2Index & strDevName)
                                             lngNumLines = lngNumLines + 1
+                                            
+                                            If Not objHWIDOutput.Exists(strDevID) Then
+                                                objHWIDOutput.Item(strDevID) = 1
+                                                strLinesArrHwid(lngNumLinesHwid) = strDevID
+                                                lngNumLinesHwid = lngNumLinesHwid + 1
+                                            End If
+                                            
                                         End If
             
                                     ' strDevIDs'
@@ -681,13 +685,13 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 
                             Else
                                 ' Если секция непустая, то установка из данного файла запрещена на данной системе
-                                If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strManufSection & "] is Empty -> this OS not Supported by inf: " & strInfPath & strInfFileName
+                                If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strManufSection & "] is Empty -> this OS not Supported by inf: " & strInfPathRelative
                             End If
                         ' dev_Sub_sects
                         Next
                             
                     Else
-                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strK2Sectlist(K2) & "] is Empty -> this OS not Supported by inf: " & strInfPath & strInfFileName
+                        If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strK2Sectlist(K2) & "] is Empty -> this OS not Supported by inf: " & strInfPathRelative
                     '  dev_Sub_sects not empty
                     End If
                     
@@ -696,19 +700,15 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             
             ' sect_list
             End If
-                
-            ' Очистка буфера значений уникальных строк HWID
-            objHashOutput.RemoveAll
-            ' Очистка буфера значений секции strings
-            objStringHash.RemoveAll
         
         Else
-            If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfFullname
+            If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strInfPathTempList_x(infNum).FullPath
         End If
 
     Next
 
-    ChangeStatusTextAndDebug strMessages(121) & strSpace & strPackFileName
+    ChangeStatusBarText strMessages(121) & strSpace & strPackFileName
+    
     strRezultTxt = strWorkTempBackSL & "rezult" & strPackFileName_woExt & ".txt"
     strRezultTxtHwid = strWorkTempBackSL & "rezult" & strPackFileName_woExt & ".hwid"
     strRezultTxtTo = Replace$(PathCombine(strPathDevDB, GetFileNameFromPath(strRezultTxt)), "rezult", vbNullString, , , vbTextCompare)
@@ -720,20 +720,50 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     If lngNumLines Then
 
         ReDim Preserve strLinesArr(lngNumLines - 1)
-        ReDim Preserve strLinesArrHwid(lngNumLines - 1)
+        ReDim Preserve strLinesArrHwid(lngNumLinesHwid - 1)
 
         ' сортируем массивы
         TimeScriptRun = GetTickCount
+    
+        If lngSortMethodShell = 0 Then
         
-        If Not mbSortMethodShell Then
-            cSort.BlizzardStringSort strLinesArr, 0&, lngNumLines - 1, False
-            cSort2.BlizzardStringSort strLinesArrHwid, 0&, lngNumLines - 1, False
+'            Set cSort = New cBlizzard
+'            cSort.SortMethod = BinaryCompare
+'            cSort.SortOrder = Ascending
+            
+            Set cSort2 = New cBlizzard
+            cSort2.SortMethod = BinaryCompare
+            cSort2.SortOrder = Ascending
         
-            Set cSort = Nothing
+            'cSort.BlizzardStringSort strLinesArr, 0&, lngNumLines - 1, False
+            cSort2.BlizzardStringSort strLinesArrHwid, 0&, lngNumLinesHwid - 1, False
+            
+            'Set cSort = Nothing
+            Set cSort2 = Nothing
+            
+        ElseIf lngSortMethodShell = 1 Then
+        
+            'ShellSortAny VarPtr(strLinesArr(0)), lngNumLines, 4&, AddressOf CompareString
+            ShellSortAny VarPtr(strLinesArrHwid(0)), lngNumLinesHwid, 4&, AddressOf CompareString
+            
+        ElseIf lngSortMethodShell = 2 Then
+        
+            'Set cSort = New cBlizzard
+            'cSort.SortMethod = BinaryCompare
+            'cSort.SortOrder = Ascending
+            
+            Set cSort2 = New cBlizzard
+            cSort2.SortMethod = BinaryCompare
+            cSort2.SortOrder = Ascending
+            
+            'cSort.TwisterStringSort strLinesArr, 0&, lngNumLines - 1
+            cSort2.TwisterStringSort strLinesArrHwid, 0&, lngNumLinesHwid - 1
+            
+            'Set cSort = Nothing
             Set cSort2 = Nothing
         Else
-            ShellSortAny VarPtr(strLinesArr(0)), lngNumLines, 4&, AddressOf CompareString
-            ShellSortAny VarPtr(strLinesArrHwid(0)), lngNumLines, 4&, AddressOf CompareString
+            'ShellSortAny VarPtr(strLinesArr(0)), lngNumLines, 4&, AddressOf CompareString
+            ShellSortAny VarPtr(strLinesArrHwid(0)), lngNumLinesHwid, 4&, AddressOf CompareString
         End If
         
         TimeScriptFinish = GetTickCount
@@ -753,6 +783,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         
         TimeScriptFinish = GetTickCount
         If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index Files: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        
         ' Удаление массива, т.е освобождение памяти
         Erase strLinesArr
         Erase strLinesArrHwid

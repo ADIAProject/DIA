@@ -367,7 +367,7 @@ Private Function FindCheckCountList() As Long
 
     For i = 1 To lvFolders.ListItems.Count
 
-        If lvFolders.ListItems.item(i).Checked Then
+        If lvFolders.ListItems.Item(i).Checked Then
             miCount = miCount + 1
         End If
 
@@ -505,11 +505,11 @@ Private Function GetPathList() As String
 
         For i = 1 To .Count
 
-            If .item(i).Checked Then
-                strDevPathShort = GetPathNameFromPath(.item(i).SubItems(1))
+            If .Item(i).Checked Then
+                strDevPathShort = GetPathNameFromPath(.Item(i).SubItems(1))
 
                 If mbGroupTask Then
-                    strDevDPName = .item(i).SubItems(8)
+                    strDevDPName = .Item(i).SubItems(8)
 
                     For ii = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
                         strDevPathList = arrCheckDP(1, ii)
@@ -589,126 +589,127 @@ Private Function LoadList_Folders(ByVal lngButtIndex As Long, Optional ByVal mbV
     strTemp_x = Split(arrTTip(lngButtIndex), vbNewLine)
 
     For i_arr = 0 To UBound(strTemp_x)
-        strTempLine_x = Split(strTemp_x(i_arr), " | ")
-
         If LenB(Trim$(strTemp_x(i_arr))) Then
-            miThisListCount = miThisListCount + 1
-            strDevHwid = Trim$(strTempLine_x(0))
-            strDevInfPath = Trim$(strTempLine_x(1))
-            strDevDriverDB = Trim$(strTempLine_x(2))
-            strDevDriverPrizn = Trim$(strTempLine_x(3))
-            strDevDriverLocal = Trim$(strTempLine_x(4))
-            strDevStatus = Trim$(strTempLine_x(5))
-            strDevName = Trim$(strTempLine_x(6))
-
-            '*************************************************************
-            If LenB(strMode) = 0 Then
-
-                With lvFolders.ListItems.Add(, , strDevHwid)
-                    .SubItems(1) = strDevInfPath
-                    .SubItems(2) = strDevDriverDB
-                    .SubItems(3) = strDevDriverPrizn
-                    .SubItems(4) = strDevDriverLocal
-                    .SubItems(5) = strDevStatus
-                    .SubItems(6) = strDevName
-
-                    If mbGroupTask Then
-                        .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
-                    End If
-
-                End With
-
-                lngNumRow = lngNumRow + 1
-            Else
-                '> - обновление
-                If InStr(strMode, ">") Then
-                    If InStr(strDevDriverPrizn, ">") Then
-    
-                        With lvFolders.ListItems.Add(, , strDevHwid)
-                            .SubItems(1) = strDevInfPath
-                            .SubItems(2) = strDevDriverDB
-                            .SubItems(3) = strDevDriverPrizn
-                            .SubItems(4) = strDevDriverLocal
-                            .SubItems(5) = strDevStatus
-                            .SubItems(6) = strDevName
-    
-                            If mbGroupTask Then
-                                .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
-                            End If
-    
-                        End With
-    
-                        lngNumRow = lngNumRow + 1
-                    End If
-                End If
-                
-                '0 - неустановленные
-                If InStr(strMode, "0") Then
-                    If InStr(strDevStatus, "0") Then
-    
-                        With lvFolders.ListItems.Add(, , strDevHwid)
-                            .SubItems(1) = strDevInfPath
-                            .SubItems(2) = strDevDriverDB
-                            .SubItems(3) = strDevDriverPrizn
-                            .SubItems(4) = strDevDriverLocal
-                            .SubItems(5) = strDevStatus
-                            .SubItems(6) = strDevName
-    
-                            If mbGroupTask Then
-                                .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
-                            End If
-    
-                        End With
-    
-                        lngNumRow = lngNumRow + 1
-                    End If
-                End If
+            strTempLine_x = Split(strTemp_x(i_arr), " | ")
             
-                '=? - установленные
-                If InStr(strMode, strRavno) Or InStr(strMode, strVopros) Then
-                    If InStr(strDevDriverPrizn, strRavno) Or InStr(strDevDriverPrizn, strVopros) Then
+            If UBound(strTempLine_x) Then
+                miThisListCount = miThisListCount + 1
+                strDevHwid = Trim$(strTempLine_x(0))
+                strDevInfPath = Trim$(strTempLine_x(1))
+                strDevDriverDB = Trim$(strTempLine_x(2))
+                strDevDriverPrizn = Trim$(strTempLine_x(3))
+                strDevDriverLocal = Trim$(strTempLine_x(4))
+                strDevStatus = Trim$(strTempLine_x(5))
+                strDevName = Trim$(strTempLine_x(6))
     
-                        With lvFolders.ListItems.Add(, , strDevHwid)
-                            .SubItems(1) = strDevInfPath
-                            .SubItems(2) = strDevDriverDB
-                            .SubItems(3) = strDevDriverPrizn
-                            .SubItems(4) = strDevDriverLocal
-                            .SubItems(5) = strDevStatus
-                            .SubItems(6) = strDevName
+                '*************************************************************
+                If LenB(strMode) = 0 Then
     
-                            If mbGroupTask Then
-                                .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
-                            End If
+                    With lvFolders.ListItems.Add(, , strDevHwid)
+                        .SubItems(1) = strDevInfPath
+                        .SubItems(2) = strDevDriverDB
+                        .SubItems(3) = strDevDriverPrizn
+                        .SubItems(4) = strDevDriverLocal
+                        .SubItems(5) = strDevStatus
+                        .SubItems(6) = strDevName
     
-                        End With
+                        If mbGroupTask Then
+                            .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
+                        End If
     
-                        lngNumRow = lngNumRow + 1
+                    End With
+    
+                    lngNumRow = lngNumRow + 1
+                Else
+                    '> - обновление
+                    If InStr(strMode, ">") Then
+                        If InStr(strDevDriverPrizn, ">") Then
+        
+                            With lvFolders.ListItems.Add(, , strDevHwid)
+                                .SubItems(1) = strDevInfPath
+                                .SubItems(2) = strDevDriverDB
+                                .SubItems(3) = strDevDriverPrizn
+                                .SubItems(4) = strDevDriverLocal
+                                .SubItems(5) = strDevStatus
+                                .SubItems(6) = strDevName
+        
+                                If mbGroupTask Then
+                                    .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
+                                End If
+        
+                            End With
+        
+                            lngNumRow = lngNumRow + 1
+                        End If
                     End If
-                End If
+                    
+                    '0 - неустановленные
+                    If InStr(strMode, "0") Then
+                        If InStr(strDevStatus, "0") Then
+        
+                            With lvFolders.ListItems.Add(, , strDevHwid)
+                                .SubItems(1) = strDevInfPath
+                                .SubItems(2) = strDevDriverDB
+                                .SubItems(3) = strDevDriverPrizn
+                                .SubItems(4) = strDevDriverLocal
+                                .SubItems(5) = strDevStatus
+                                .SubItems(6) = strDevName
+        
+                                If mbGroupTask Then
+                                    .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
+                                End If
+        
+                            End With
+        
+                            lngNumRow = lngNumRow + 1
+                        End If
+                    End If
                 
-                '< - старее
-                If InStr(strMode, "<") Then
-                    If InStr(strDevDriverPrizn, "<") Then
-    
-                        With lvFolders.ListItems.Add(, , strDevHwid)
-                            .SubItems(1) = strDevInfPath
-                            .SubItems(2) = strDevDriverDB
-                            .SubItems(3) = strDevDriverPrizn
-                            .SubItems(4) = strDevDriverLocal
-                            .SubItems(5) = strDevStatus
-                            .SubItems(6) = strDevName
-    
-                            If mbGroupTask Then
-                                .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
-                            End If
-    
-                        End With
-    
-                        lngNumRow = lngNumRow + 1
+                    '=? - установленные
+                    If InStr(strMode, strRavno) Or InStr(strMode, strVopros) Then
+                        If InStr(strDevDriverPrizn, strRavno) Or InStr(strDevDriverPrizn, strVopros) Then
+        
+                            With lvFolders.ListItems.Add(, , strDevHwid)
+                                .SubItems(1) = strDevInfPath
+                                .SubItems(2) = strDevDriverDB
+                                .SubItems(3) = strDevDriverPrizn
+                                .SubItems(4) = strDevDriverLocal
+                                .SubItems(5) = strDevStatus
+                                .SubItems(6) = strDevName
+        
+                                If mbGroupTask Then
+                                    .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
+                                End If
+        
+                            End With
+        
+                            lngNumRow = lngNumRow + 1
+                        End If
+                    End If
+                    
+                    '< - старее
+                    If InStr(strMode, "<") Then
+                        If InStr(strDevDriverPrizn, "<") Then
+        
+                            With lvFolders.ListItems.Add(, , strDevHwid)
+                                .SubItems(1) = strDevInfPath
+                                .SubItems(2) = strDevDriverDB
+                                .SubItems(3) = strDevDriverPrizn
+                                .SubItems(4) = strDevDriverLocal
+                                .SubItems(5) = strDevStatus
+                                .SubItems(6) = strDevName
+        
+                                If mbGroupTask Then
+                                    .SubItems(7) = frmMain.acmdPackFiles(lngButtIndex).Tag
+                                End If
+        
+                            End With
+        
+                            lngNumRow = lngNumRow + 1
+                        End If
                     End If
                 End If
             End If
-
             '*************************************************************
         End If
 
@@ -717,28 +718,28 @@ Private Function LoadList_Folders(ByVal lngButtIndex As Long, Optional ByVal mbV
     With lvFolders.ColumnHeaders
         If .Count Then
             If lvFolders.ListItems.Count Then
-                .item(1).AutoSize LvwColumnHeaderAutoSizeToItems
-                .item(2).AutoSize LvwColumnHeaderAutoSizeToItems
-                .item(3).AutoSize LvwColumnHeaderAutoSizeToItems
-                .item(4).AutoSize LvwColumnHeaderAutoSizeToItems
-                .item(5).AutoSize LvwColumnHeaderAutoSizeToItems
-                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(7).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(1).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(2).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(3).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(4).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(5).AutoSize LvwColumnHeaderAutoSizeToItems
+                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(7).AutoSize LvwColumnHeaderAutoSizeToItems
         
                 If mbGroupTask Then
-                    .item(8).AutoSize LvwColumnHeaderAutoSizeToItems
+                    .Item(8).AutoSize LvwColumnHeaderAutoSizeToItems
                 End If
             Else
-                .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .Item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
         
                 If mbGroupTask Then
-                    .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+                    .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
                 End If
             
             End If
@@ -870,8 +871,8 @@ Private Sub cmdCheckAll_Click()
 
         For i = 1 To .Count
 
-            If Not .item(i).Checked Then
-                .item(i).Checked = True
+            If Not .Item(i).Checked Then
+                .Item(i).Checked = True
             End If
 
         Next
@@ -929,8 +930,8 @@ Private Sub cmdUnCheckAll_Click()
 
         For i = 1 To .Count
 
-            If .item(i).Checked Then
-                .item(i).Checked = False
+            If .Item(i).Checked Then
+                .Item(i).Checked = False
             End If
 
         Next
@@ -1172,7 +1173,7 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Checked (Boolean)
 '!--------------------------------------------------------------------------------
-Private Sub lvFolders_ItemCheck(ByVal item As LvwListItem, ByVal Checked As Boolean)
+Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Boolean)
 
     Dim i As Integer
 
@@ -1180,12 +1181,12 @@ Private Sub lvFolders_ItemCheck(ByVal item As LvwListItem, ByVal Checked As Bool
 
         With lvFolders.ListItems
 
-            If item.Checked Then
+            If Item.Checked Then
 
                 For i = 1 To .Count
 
-                    If StrComp(.item(i).SubItems(1), item.SubItems(1), vbTextCompare) = 0 Then
-                        .item(i).Checked = True
+                    If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
+                        .Item(i).Checked = True
                     End If
 
                 Next
@@ -1194,8 +1195,8 @@ Private Sub lvFolders_ItemCheck(ByVal item As LvwListItem, ByVal Checked As Bool
 
                 For i = 1 To .Count
 
-                    If StrComp(.item(i).SubItems(1), item.SubItems(1), vbTextCompare) = 0 Then
-                        .item(i).Checked = False
+                    If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
+                        .Item(i).Checked = False
                     End If
 
                 Next

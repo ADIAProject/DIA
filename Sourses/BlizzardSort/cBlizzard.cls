@@ -138,7 +138,6 @@ Option Explicit
 'End Enum
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Public Enum eOptimal
     ReversePretty = 1&     '0.001<<reverse-pretty-reverse>>0.002
     ReverseOptimal = 2&    '0.002<<reverse-sorting-unsorted>>0.003
@@ -149,7 +148,6 @@ Public Enum eOptimal
 End Enum
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private StrPointers_Header As SAFEARRAY1D
 Private StrPointers() As Long
 
@@ -159,14 +157,16 @@ Private CacheChrs() As Integer
 Private TempChrs() As Integer
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
+Private StackLB() As Long       ' Pending boundary stacks
+Private StackUB() As Long       ' Pending boundary stacks
+Private StackSize As Long       ' Pending boundary stacks
 
-Private StackLB() As Long, StackUB() As Long, StackSize As Long  ' Pending boundary stacks
-Private TwisterBuf() As Long, TwisterBufSize As Long             ' Twister copymemory buffer
+Private TwisterBuf() As Long    ' Twister copymemory buffer
+Private TwisterBufSize As Long  ' Twister copymemory buffer
 
 Private ia() As Long
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Const Default_Order As Long = Ascending
 Private Const Default_Method As Long = BinaryCompare
 
@@ -182,7 +182,6 @@ Private mOrder As eSortOrder
 '  Purpose:    Determines the way strings are compared
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Property Get SortMethod() As eCompareMethod
     SortMethod = mMethod
 End Property
@@ -197,7 +196,6 @@ End Property
 '  Purpose:    Determines the order in which the strings are sorted
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Property Get SortOrder() As eSortOrder
     If mOrder = 0& Then mOrder = Default_Order
     SortOrder = mOrder
@@ -233,23 +231,22 @@ End Property
 '   Fast unicode LCase conversion created by LukeH (selftaught).
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Sub BlizzardStringSort(sArray() As String, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal StrCompCompatibility As Boolean = True)
 
     Dim i As Long
 
     If ubA - lbA < 1& Then Exit Sub
 
-    With StrPointers_Header        ' Point to string array elements
-      .pvData = VarPtr(sArray(lbA))
-      .cElements = ubA - lbA + 1&
-      .lLbound = lbA
+    With StrPointers_Header             ' Point to string array elements
+        .pvData = VarPtr(sArray(lbA))
+        .cElements = ubA - lbA + 1&
+        .lLbound = lbA
     End With
 
     If SortOrder = Ascending Then
-        Do While StrPointers(lbA) = 0& ' Null string fix before main loops
+        Do While StrPointers(lbA) = 0&  ' Null string fix before main loops
             lbA = lbA + 1&
-            If lbA > ubA Then Exit Do  ' Walk up while null strings
+            If lbA > ubA Then Exit Do   ' Walk up while null strings
         Loop
     
         i = lbA + 1&
@@ -263,9 +260,9 @@ Sub BlizzardStringSort(sArray() As String, ByVal lbA As Long, ByVal ubA As Long,
         Loop
 
     Else 'If SortOrder = Descending Then
-        Do While StrPointers(ubA) = 0& ' Null string fix before main loops
+        Do While StrPointers(ubA) = 0&  ' Null string fix before main loops
             ubA = ubA - 1&
-            If ubA < lbA Then Exit Do  ' Walk down while null strings
+            If ubA < lbA Then Exit Do   ' Walk down while null strings
         Loop
     
         i = ubA - 1&
@@ -279,15 +276,23 @@ Sub BlizzardStringSort(sArray() As String, ByVal lbA As Long, ByVal ubA As Long,
         Loop
     End If
 
-    If ubA - lbA < 1& Then Exit Sub ' Sort from lb to ub
+    If ubA - lbA < 1& Then Exit Sub     ' Sort from lb to ub
 
     Select Case SortOrder + SortMethod
-      Case -1:  strSwap5bd lbA, ubA  ' bin/dsc
-      Case 0:   strSwap5td lbA, ubA  ' text/dsc
-                If StrCompCompatibility Then TwisterStringSort sArray, lbA, ubA, RefreshUnsorted
-      Case 1:   strSwap5ba lbA, ubA  ' bin/asc
-      Case 2:   strSwap5ta lbA, ubA  ' text/asc
-                If StrCompCompatibility Then TwisterStringSort sArray, lbA, ubA, RefreshUnsorted
+        ' bin/dsc
+        Case -1
+            strSwap5bd lbA, ubA
+        ' text/dsc
+        Case 0
+            strSwap5td lbA, ubA
+            If StrCompCompatibility Then TwisterStringSort sArray, lbA, ubA, RefreshUnsorted
+        ' bin/asc
+        Case 1
+            strSwap5ba lbA, ubA
+        ' text/asc
+        Case 2
+            strSwap5ta lbA, ubA
+            If StrCompCompatibility Then TwisterStringSort sArray, lbA, ubA, RefreshUnsorted
     End Select
 
 End Sub
@@ -305,66 +310,79 @@ End Sub
 '   Available as a public routine for refresh sorting operations.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Sub TwisterStringSort(sA() As String, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal eOptimalA As eOptimal = RefreshUnsorted)
-    Dim walk As Long, find As Long, midd As Long
-    Dim base As Long, ceil As Long, item As String
-    Dim cast As Long, mezz As Long, run As Long
-    Dim lpStr As Long, lp As Long, lpB As Long
-    Dim idx As Long, optimal As Long
+    Dim walk As Long
+    Dim Find As Long
+    Dim midd As Long
+    Dim base As Long
+    Dim ceil As Long
+    Dim Item As String
+    Dim cast As Long
+    Dim mezz As Long
+    Dim run As Long
+    Dim lpStr As Long
+    Dim lp As Long
+    Dim lpB As Long
+    Dim idx As Long
+    Dim optimal As Long
     Dim eComp As eCompare
-    walk = (ubA - lbA) + 1&                      ' Grab array item count
-    If walk < 2& Then Exit Sub                   ' If nothing to do then exit
-    eComp = SortOrder                            ' Initialize compare variable
-    optimal = InitializeBuffers(walk, eOptimalA) ' Initialize working buffers
-    lpStr = VarPtr(item)                                          ' Cache pointer to the string variable
+    
+    walk = (ubA - lbA) + 1&                                       ' Grab array item count
+    If walk < 2& Then Exit Sub                                    ' If nothing to do then exit
+    eComp = SortOrder                                             ' Initialize compare variable
+    optimal = InitializeBuffers(walk, eOptimalA)                  ' Initialize working buffers
+    lpStr = VarPtr(Item)                                          ' Cache pointer to the string variable
     lp = Sum(VarPtr(sA(lbA)), -(lbA * 4&))                        ' Cache pointer to the array
     lpB = VarPtr(TwisterBuf(0&))                                  ' Cache pointer to the buffer
-    walk = lbA: mezz = ubA                                        ' Initialize our walker variables
+    walk = lbA                                                    ' Initialize our walker variables
+    mezz = ubA                                                    ' Initialize our walker variables
     Do Until walk = mezz ' ----==============================---- ' Do the twist while there's more items
         walk = walk + 1&                                          ' Walk up the array and use binary search to insert each item down into the sorted lower array
         CopyMemByV lpStr, Sum(lp, walk * 4&), 4&                  ' Grab current value into item
-        find = walk                                               ' Default to current position
+        Find = walk                                               ' Default to current position
         ceil = walk - 1&                                          ' Set ceiling to current position - 1
         base = lbA                                                ' Set base to lower bound
-        Do While StrComp(sA(ceil), item, mMethod) = eComp   '  .  ' While current item must move down
+        Do While StrComp(sA(ceil), Item, mMethod) = eComp   '  .  ' While current item must move down
             midd = (base + ceil) \ 2&                             ' Find mid point
-            Do Until StrComp(sA(midd), item, mMethod) = eComp     ' Step back up if equal or below
+            Do Until StrComp(sA(midd), Item, mMethod) = eComp     ' Step back up if equal or below
                 base = midd + 1&                                  ' Bring up the base
                 midd = (base + ceil) \ 2&                         ' Find mid point
                 If midd = ceil Then Exit Do                       ' If we're up to ceiling
             Loop                                                  ' Out of loop > target pos
-            find = midd                                           ' Set provisional to new ceiling
-            If find = base Then Exit Do                           ' If we're down to base
+            Find = midd                                           ' Set provisional to new ceiling
+            If Find = base Then Exit Do                           ' If we're down to base
             ceil = midd - 1&                                      ' Bring down the ceiling
         Loop '-Twister v4 命d-     .      . ...  .             .  ' Out of stable binary search loops
-        If (find < walk) Then                                     ' If current item needs to move down
-            CopyMemByV lpStr, Sum(lp, find * 4&), 4&
+        If Find < walk Then                                       ' If current item needs to move down
+            CopyMemByV lpStr, Sum(lp, Find * 4&), 4&
             run = walk + 1&
             Do Until run > mezz Or run - walk > optimal           ' Runner do loop
-                If Not (StrComp(item, sA(run), mMethod) = eComp) Then Exit Do
+                If Not (StrComp(Item, sA(run), mMethod) = eComp) Then Exit Do
                 run = run + 1&
-            Loop: cast = (run - walk)
+            Loop
+            cast = run - walk
             CopyMemByV lpB, Sum(lp, walk * 4&), cast * 4&         ' Grab current value(s)
-            CopyMemByV Sum(lp, (find + cast) * 4&), Sum(lp, find * 4&), (walk - find) * 4& ' Move up items
-            CopyMemByV Sum(lp, find * 4&), lpB, cast * 4&         ' Re-assign current value(s) into found pos
+            CopyMemByV Sum(lp, (Find + cast) * 4&), Sum(lp, Find * 4&), (walk - Find) * 4& ' Move up items
+            CopyMemByV Sum(lp, Find * 4&), lpB, cast * 4&         ' Re-assign current value(s) into found pos
             If cast > 1& Then
                 If Not run > mezz Then
                     idx = idx + 1&
-                    StackLB(idx) = run - 1&  ' Will increment back
+                    StackLB(idx) = run - 1&                       ' Will increment back
                     StackUB(idx) = mezz
                 End If
-                walk = find
-                mezz = find + cast - 1&
-        End If: End If
+                walk = Find
+                mezz = Find + cast - 1&
+            End If
+        End If
         If walk = mezz Then
             If idx Then
                 walk = StackLB(idx)
                 mezz = StackUB(idx)
                 idx = idx - 1&
-    End If: End If: Loop           ' Out of walker do loop
-    CopyMemByR ByVal lpStr, 0&, 4& ' De-reference pointer to item variable
-    ' ----=================----
+            End If
+        End If
+    Loop                                                          ' Out of walker do loop
+    CopyMemByR ByVal lpStr, 0&, 4&                                ' De-reference pointer to item variable
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
@@ -385,7 +403,6 @@ End Sub
 '   index may be anywhere in the string array.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Sub BlizzardStringSortIndexed(sArray() As String, iArray() As Long, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal StrCompCompatibility As Boolean = True)
 
     Dim i       As Long
@@ -469,10 +486,9 @@ End Sub
 '   Available as a public routine for refresh sorting operations.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Sub TwisterStringSortIndexed(sA() As String, idxA() As Long, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal eOptimalA As eOptimal = RefreshUnsorted)
-    Dim walk As Long, find As Long, midd As Long
-    Dim base As Long, ceil As Long, item As String
+    Dim walk As Long, Find As Long, midd As Long
+    Dim base As Long, ceil As Long, Item As String
     Dim cast As Long, mezz As Long, run As Long
     Dim lpStr As Long, lpS As Long, lpB As Long
     Dim idx As Long, optimal As Long
@@ -482,7 +498,7 @@ Sub TwisterStringSortIndexed(sA() As String, idxA() As Long, ByVal lbA As Long, 
     eComp = SortOrder                            ' Initialize compare variable
     ValidateIndexArray idxA, lbA, ubA            ' Validate the index array
     optimal = InitializeBuffers(walk, eOptimalA) ' Initialize working buffers
-    lpStr = VarPtr(item)                                              ' Cache pointer to the string variable
+    lpStr = VarPtr(Item)                                              ' Cache pointer to the string variable
     lpS = Sum(VarPtr(sA(lbA)), -(lbA * 4&))                           ' Cache pointer to the array
     lpI = Sum(VarPtr(idxA(lbA)), -(lbA * 4&))                         ' Cache pointer to the index array
     lpB = VarPtr(TwisterBuf(0&))                                      ' Cache pointer to the buffer
@@ -490,38 +506,38 @@ Sub TwisterStringSortIndexed(sA() As String, idxA() As Long, ByVal lbA As Long, 
     Do Until walk = mezz ' ----==================================---- ' Do the twist while there's more items
         walk = walk + 1&                                              ' Walk up the array and use binary search to insert each item down into the sorted lower array
         CopyMemByV lpStr, Sum(lpS, idxA(walk) * 4&), 4&               ' Grab current value into item
-        find = walk                                                   ' Default to current position
+        Find = walk                                                   ' Default to current position
         ceil = walk - 1&                                              ' Set ceiling to current position - 1
         base = lbA                                                    ' Set base to lower bound
-        Do While StrComp(sA(idxA(ceil)), item, mMethod) = eComp '  .  ' While current item must move down
+        Do While StrComp(sA(idxA(ceil)), Item, mMethod) = eComp '  .  ' While current item must move down
             midd = (base + ceil) \ 2&                                 ' Find mid point
-            Do Until StrComp(sA(idxA(midd)), item, mMethod) = eComp   ' Step back up if equal or below
+            Do Until StrComp(sA(idxA(midd)), Item, mMethod) = eComp   ' Step back up if equal or below
                 base = midd + 1&                                      ' Bring up the base
                 midd = (base + ceil) \ 2&                             ' Find mid point
                 If midd = ceil Then Exit Do                           ' If we're up to ceiling
             Loop                                                      ' Out of loop > target pos
-            find = midd                                               ' Set provisional to new ceiling
-            If find = base Then Exit Do                               ' If we're down to base
+            Find = midd                                               ' Set provisional to new ceiling
+            If Find = base Then Exit Do                               ' If we're down to base
             ceil = midd - 1&                                          ' Bring down the ceiling
         Loop '-Twister v4i 命d-    .       . ...   .               .  ' Out of stable binary search loops
-        If (find < walk) Then                                         ' If current item needs to move down
-            CopyMemByV lpStr, Sum(lpS, idxA(find) * 4&), 4&
+        If (Find < walk) Then                                         ' If current item needs to move down
+            CopyMemByV lpStr, Sum(lpS, idxA(Find) * 4&), 4&
             run = walk + 1&
             Do Until run > mezz Or run - walk > optimal               ' Runner do loop
-                If Not (StrComp(item, sA(idxA(run)), mMethod) = eComp) Then Exit Do
+                If Not (StrComp(Item, sA(idxA(run)), mMethod) = eComp) Then Exit Do
                 run = run + 1&
             Loop: cast = (run - walk)
             CopyMemByV lpB, Sum(lpI, walk * 4&), cast * 4&            ' Grab current value(s)
-            CopyMemByV Sum(lpI, (find + cast) * 4&), Sum(lpI, find * 4&), (walk - find) * 4& ' Move up items
-            CopyMemByV Sum(lpI, find * 4&), lpB, cast * 4&            ' Re-assign current value(s) into found pos
+            CopyMemByV Sum(lpI, (Find + cast) * 4&), Sum(lpI, Find * 4&), (walk - Find) * 4& ' Move up items
+            CopyMemByV Sum(lpI, Find * 4&), lpB, cast * 4&            ' Re-assign current value(s) into found pos
             If cast > 1& Then
                 If Not run > mezz Then
                     idx = idx + 1&
                     StackLB(idx) = run - 1&  ' Will increment back
                     StackUB(idx) = mezz
                 End If
-                walk = find
-                mezz = find + cast - 1&
+                walk = Find
+                mezz = Find + cast - 1&
         End If: End If
         If walk = mezz Then
             If idx Then
@@ -538,16 +554,23 @@ End Sub
 '  Private non-recursive quicksort routines.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5ba(ByVal lbA As Long, ByVal ubA As Long)
-    Dim iChar As Long, cnt As Long
-    Dim lo As Long, hi As Long
-    InitializeStacks ubA - lbA              ' Initialize pending boundary stacks
-    Do: hi = (ubA + lbA) \ 2&               ' Get pivot index position
-        CacheStr.pvData = StrPointers(hi)   ' Cache mid pivot
-        StrPointers(hi) = StrPointers(ubA)  ' Set current
-        lo = lbA: hi = ubA                  ' Set bounds
-        Do Until (hi = lo)                  ' Storm right in
+    Dim iChar As Long
+    Dim cnt As Long
+    Dim lo As Long
+    Dim hi As Long
+    
+    On Error GoTo UnInit
+    'On Error Resume Next
+    
+    InitializeStacks ubA - lbA                  ' Initialize pending boundary stacks
+    Do
+        hi = (ubA + lbA) \ 2&                   ' Get pivot index position
+        CacheStr.pvData = StrPointers(hi)       ' Cache mid pivot
+        StrPointers(hi) = StrPointers(ubA)      ' Set current
+        lo = lbA
+        hi = ubA                                ' Set bounds
+        Do Until hi = lo                        ' Storm right in
             TempStr.pvData = StrPointers(lo)
             iChar = 0&
             Do While TempChrs(iChar) And (TempChrs(iChar) = CacheChrs(iChar))
@@ -556,7 +579,7 @@ Private Sub strSwap5ba(ByVal lbA As Long, ByVal ubA As Long)
             If Not CacheChrs(iChar) > TempChrs(iChar) Then ' (cache <= lo)
                 StrPointers(hi) = StrPointers(lo)
                 hi = hi - 1&
-                Do Until (hi = lo)
+                Do Until hi = lo
                     TempStr.pvData = StrPointers(hi)
                     iChar = 0&
                     Do While TempChrs(iChar) And (TempChrs(iChar) = CacheChrs(iChar))
@@ -568,25 +591,36 @@ Private Sub strSwap5ba(ByVal lbA As Long, ByVal ubA As Long)
                     End If
                     hi = hi - 1&
                 Loop
-                If (hi = lo) Then Exit Do ' Found swaps or out of loops
+                If hi = lo Then Exit Do         ' Found swaps or out of loops
             End If
             lo = lo + 1&
         Loop '-Blizzard v5 命d-
-        StrPointers(hi) = CacheStr.pvData ' Re-assign current
-        If (lbA < lo - 1&) Then
-            If (ubA > lo + 1&) Then cnt = cnt + 1&: StackLB(cnt) = lo + 1&: StackUB(cnt) = ubA
+        
+        StrPointers(hi) = CacheStr.pvData       ' Re-assign current
+        If lbA < lo - 1& Then
+            If ubA > lo + 1& Then
+                cnt = cnt + 1&
+                StackLB(cnt) = lo + 1&
+                StackUB(cnt) = ubA
+            End If
             ubA = lo - 1&
-        ElseIf (ubA > lo + 1&) Then
+        ElseIf ubA > lo + 1& Then
             lbA = lo + 1&
         Else
             If cnt = 0& Then Exit Do
-            lbA = StackLB(cnt): ubA = StackUB(cnt): cnt = cnt - 1&
+            lbA = StackLB(cnt)
+            ubA = StackUB(cnt)
+            cnt = cnt - 1&
         End If
     Loop
+    
+    Exit Sub
+    
+UnInit:
+Debug.Print "strSwap5ba: lbA=" & lbA & " ubA=" & ubA & " cnt=" & cnt & " lo=" & lo & " hi=" & hi & " iChar=" & iChar
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5ta(ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -634,7 +668,6 @@ Private Sub strSwap5ta(ByVal lbA As Long, ByVal ubA As Long)
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5bd(ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -682,7 +715,6 @@ Private Sub strSwap5bd(ByVal lbA As Long, ByVal ubA As Long)
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5td(ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -734,7 +766,6 @@ End Sub
 '  Private indexed non-recursive quicksort routines.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5bai(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -783,7 +814,6 @@ Private Sub strSwap5bai(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5tai(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -832,7 +862,6 @@ Private Sub strSwap5tai(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5bdi(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -881,7 +910,6 @@ Private Sub strSwap5bdi(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub strSwap5tdi(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
     Dim iChar As Long, cnt As Long
     Dim lo As Long, hi As Long
@@ -936,7 +964,6 @@ End Sub
 '               Build the Unicode Conversion Lookup Table
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub Class_Initialize()
     mOrder = Default_Order
     mMethod = Default_Method
@@ -977,7 +1004,6 @@ End Sub
 '  Purpose:     Nullify the SafeArray Headers
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub Class_Terminate()
 
     'Clear up the array pointers so vb doesn't try to free memory twice
@@ -1000,7 +1026,6 @@ End Sub
 '   This function will work with vb5 or vb6 without modification.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Function ArrayPtr(Arr) As Long
     Dim iDataType As Integer
     On Error GoTo UnInit
@@ -1026,7 +1051,6 @@ End Function
 '   it will return 0 (zero).
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Function InitedArray(Arr, lbA As Long, ubA As Long, Optional ByVal bTestRedimable As Boolean) As Long
     ' Thanks to Francesco Balena who solved the Variant headache,
     ' and to Monte Hansen for the ByRef fix
@@ -1065,7 +1089,6 @@ End Function
 '   Ensures that the index array is in the required pre-sort state.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub ValidateIndexArray(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
     Dim bReDim As Boolean, bReDimPres As Boolean
     Dim lb As Long, ub As Long, j As Long
@@ -1104,7 +1127,6 @@ End Sub
 '   Assumes valid pointer and pointer offset.
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Function Sum(ByVal lPtr As Long, ByVal lOffset As Long) As Long
     If lOffset > 0& Then
         If lPtr And DW_MSB Then ' if ptr < 0
@@ -1133,10 +1155,12 @@ End Function
 '  Purpose:     Initialize the array boundary stacks
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub InitializeStacks(ByVal lSize As Long)
-    Dim i As Long, j As Long
-    i = 1&: j = 32&           ' Allow for likely stack count + 32
+    Dim i As Long
+    Dim j As Long
+    
+    i = 1&
+    j = 32&                   ' Allow for likely stack count + 32
     Do Until i > lSize        ' 10000 -> 14 + 32
         j = j + 1&            ' 100000 -> 17 + 32
         i = i + i             ' 1000000 -> 20 + 32
@@ -1156,7 +1180,6 @@ End Sub
 '               Initializes the Twisters runner buffer
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Function InitializeBuffers(ByVal lCount As Long, ByVal eOpt As eOptimal) As Long
     Dim curve As Long, optimal As Long                       ' CraZy performance curve
     Const n10K As Long = 10000&                              ' .
@@ -1187,7 +1210,6 @@ End Function
 '    ia(i) = AscW(LCase$(ChrW$(i))) '0.0092841408614782 secs
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub BuildUnicodeConversionLookupTable()
     Dim i As Long, j As Long
     ReDim ia(-32768 To 32767) As Long '65535
@@ -1234,7 +1256,6 @@ End Sub
 '  By: Adapted directly from CharLower by selftaught
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
-
 Private Sub LukeLCaseI(ByRef piChar As Long)
 
     Const MakeLCase As Long = 32

@@ -165,7 +165,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
             
             ' загружаем файл реестра обновления
             If Not xmlDoc.Load(strUrl_Request) Then
-                ChangeStatusTextAndDebug strMessages(126)
+                ChangeStatusBarText strMessages(126)
 
                 If Not Start Then
                     MsgBox strMessages(126), vbInformation, strMessages(54)
@@ -219,7 +219,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                         If StrComp(strRelease, "beta", vbTextCompare) = 0 Then
                             If Not mbUpdateCheckBeta Then
                                 If mbDebugStandart Then DebugMode vbTab & "The version on the site is Beta. In options check for beta are disable. Break function!!!"
-                                ChangeStatusTextAndDebug strMessages(56)
+                                ChangeStatusBarText strMessages(56)
 
                                 If Not Start Then
                                     If MsgBox(strMessages(56) & strMessages(144), vbQuestion + vbYesNo, strProductName) = vbYes Then
@@ -231,7 +231,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                                     End If
 
                                 Else
-                                    ChangeStatusTextAndDebug strMessages(56)
+                                    ChangeStatusBarText strMessages(56)
                                 End If
 
                             Else
@@ -243,7 +243,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                         End If
 
                     Case crEqualVer
-                        ChangeStatusTextAndDebug strMessages(56)
+                        ChangeStatusBarText strMessages(56)
 
                         If Not Start Then
                             If MsgBox(strMessages(56) & strMessages(144), vbQuestion + vbYesNo, strProductName) = vbYes Then
@@ -252,7 +252,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                         End If
 
                     Case crLessVer
-                        ChangeStatusTextAndDebug strMessages(55)
+                        ChangeStatusBarText strMessages(55)
 
                         If Not Start Then
                             If MsgBox(strMessages(55) & strMessages(144), vbQuestion + vbYesNo, strProductName) = vbYes Then
@@ -261,7 +261,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
                         End If
 
                     Case Else
-                        ChangeStatusTextAndDebug strMessages(102)
+                        ChangeStatusBarText strMessages(102)
 
                         If Not Start Then
                             MsgBox strMessages(102), vbInformation, strProductName
@@ -275,7 +275,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
 
         Else
             If mbDebugStandart Then DebugMode vbTab & "CheckUPD-Site: " & strMessages(53) & vbNewLine & "Error: " & strUrl_Test_Site_Result
-            ChangeStatusTextAndDebug strMessages(143)
+            ChangeStatusBarText strMessages(143)
 
             If Not Start Then
                 MsgBox strMessages(143) & vbNewLine & "Error: " & strUrl_Test_Site_Result, vbInformation, strMessages(54)
@@ -285,7 +285,7 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
     ' на 99% интернет отсутствует
     Else
         If mbDebugStandart Then DebugMode vbTab & "CheckUPD-Inet: " & strMessages(53) & vbNewLine & "Error: " & strUrl_TestWWW_Result
-        ChangeStatusTextAndDebug strMessages(53)
+        ChangeStatusBarText strMessages(53)
 
         If Not Start Then
             MsgBox strMessages(53) & vbNewLine & "Error: " & strUrl_TestWWW_Result, vbInformation, strMessages(54)
@@ -340,7 +340,7 @@ Public Sub LoadUpdateData()
     xmlDoc.async = False
             
     If Not xmlDoc.Load(strUrl_Request) Then
-        ChangeStatusTextAndDebug strMessages(53)
+        ChangeStatusBarText strMessages(53)
         MsgBox strMessages(53), vbInformation, strMessages(54)
     Else
         Set nodeList = xmlDoc.documentElement.selectNodes(strXMLMainSection)
@@ -409,7 +409,7 @@ Public Sub LoadUpdDescription(ByVal strVer As String, ByVal lngIndexVer As Long)
     xmlDocVers.async = False
     
     If Not xmlDocVers.Load(strUrl_Request) Then
-        ChangeStatusTextAndDebug strMessages(53)
+        ChangeStatusBarText strMessages(53)
         MsgBox strMessages(53), vbInformation, strMessages(54)
     Else
         Set nodeListVers = xmlDocVers.documentElement.selectNodes(strXMLMainSection)

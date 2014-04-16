@@ -187,13 +187,13 @@ Public Sub ReCollectHWID()
     'Поиск новых устройств
     RunDevconRescan
     ' Сбор сведений о PC
-    ChangeStatusTextAndDebug strMessages(94)
+    ChangeStatusBarText strMessages(94)
     RunDevcon
     DevParserLocalHwids2
-    ChangeStatusTextAndDebug strMessages(95)
+    ChangeStatusBarText strMessages(95)
     ' Обновляем данные из реестра
     CollectHwidFromReestr
-    ChangeStatusTextAndDebug strMessages(114)
+    ChangeStatusBarText strMessages(114)
 End Sub
 
 '!--------------------------------------------------------------------------------

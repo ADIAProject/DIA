@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "11/04/2014"
+Public Const strDateProgram         As String = "16/04/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -171,7 +171,7 @@ Public lngSizeRow13                 As Long
 Public maxSizeRowAllLine            As Long
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ChangeStatusTextAndDebug
+'! Procedure   (Функция)   :   Sub ChangeStatusBarText
 '! Description (Описание)  :   [Изменение текста статустной строки и отладочной информации]
 '! Parameters  (Переменные):   strPanel2Text (String)
 '                              strDebugText (String)
@@ -179,7 +179,7 @@ Public maxSizeRowAllLine            As Long
 '                              mbDoEvents (Boolean = True)
 '                              strPanel1Text (String)
 '!--------------------------------------------------------------------------------
-Public Sub ChangeStatusTextAndDebug(ByVal strPanel2Text As String, Optional ByVal strPanel1Text As String = vbNullString, Optional ByVal mbDoEvents As Boolean = True)
+Public Sub ChangeStatusBarText(ByVal strPanel2Text As String, Optional ByVal strPanel1Text As String = vbNullString, Optional ByVal mbDoEvents As Boolean = True)
 
     If LenB(strPanel2Text) Then
 

@@ -490,7 +490,7 @@ Private Sub cmdOK_Click()
         
         ' Обновить список неизвестных дров и описание для кнопки
         frmMain.LoadCmdViewAllDeviceCaption
-        ChangeStatusTextAndDebug strMessages(114)
+        ChangeStatusBarText strMessages(114)
         Unload Me
     End If
 
@@ -560,7 +560,7 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
     Dim ii              As Long
     Dim mbIsServer      As Boolean
     
-    strParse_x = Split(strFilePath, "_")
+    strParse_x = Split(GetFileNameFromPath(strFilePath), "_")
         
     If UBound(strParse_x) = 3 Then
         For i = 1 To UBound(strParse_x)

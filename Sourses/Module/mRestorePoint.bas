@@ -44,7 +44,7 @@ Public Sub CreateRestorePoint()
     Dim objRP         As Object
     Dim errResults    As Long
 
-    ChangeStatusTextAndDebug strMessages(118)
+    ChangeStatusBarText strMessages(118)
     strComputer = strDot
 
     On Error GoTo HandErr
@@ -58,7 +58,7 @@ Public Sub CreateRestorePoint()
 
         If errResults = 0 Then
             If mbDebugStandart Then DebugMode vbTab & "CreateRestorePoint-Success: Name: " & strProductName & " v" & strProductVersion
-            ChangeStatusTextAndDebug strMessages(119) & strSpace & strProductName & " v" & strProductVersion
+            ChangeStatusBarText strMessages(119) & strSpace & strProductName & " v" & strProductVersion
 
             If Not mbSilentRun Then
                 MsgBox strMessages(119) & strSpace & strProductName & " v" & strProductVersion, vbInformation, strProductName
@@ -66,7 +66,7 @@ Public Sub CreateRestorePoint()
 
         Else
             If mbDebugStandart Then DebugMode vbTab & "CreateRestorePoint-Failed: err=" & errResults
-            ChangeStatusTextAndDebug strMessages(117)
+            ChangeStatusBarText strMessages(117)
 
             If Not mbSilentRun Then
                 MsgBox strMessages(117), vbCritical, strProductName
@@ -74,7 +74,7 @@ Public Sub CreateRestorePoint()
         End If
 
     Else
-        ChangeStatusTextAndDebug strMessages(116)
+        ChangeStatusBarText strMessages(116)
 
         If Not mbSilentRun Then
             MsgBox strMessages(116), vbInformation, strProductName

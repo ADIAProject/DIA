@@ -1,7 +1,7 @@
 [
  uuid(C878CB53-7E75-4115-BD13-EECBC9430749),
  helpstring("Memory APIs"),
- version(1.1)
+ version(1.2)
 ]
 library MemAPIs
 {
@@ -126,6 +126,10 @@ typedef enum eSortOrder
     However, this may cause IMallocSpy to assign leaks to the wrong memory user because it
     is not aware of the caching done by Automation. */
 
+/*  String allocation functions with length specified.
+    These functions do not perform any ANSI-to-Unicode translation.
+    The input string can contain embedded null characters and does not need to end with a Null. */
+
     [entry("SysAllocStringByteLen"), helpstring("Takes any string of bytes as input, and returns a pointer to the new BSTR that contains the specified number of bytes. Does not perform any ANSI-to-Unicode translation. If lAddrPtr is zero, the length is allocated but not initialized.")]
      long AllocStrBPtr([in] long lAddrPtr, [in] long cbLenB);
 
@@ -134,9 +138,6 @@ typedef enum eSortOrder
 
     [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns a pointer to the new BSTR. If passed vbNullString (or Len(pStr) < cc), the (extra) length is allocated but not initialized.")]
      long AllocStrPtr([in] BSTR pStr, [in] long ccLen);
-
-    /* Note: This function does NOT convert a char* string into a unicode BSTR.
-       In this case the BSTR returned can only be used with 16 bit applications. */
 
     [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns a pointer to the new BSTR. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
      long AllocStrSpPtr([in] long lStrPtr, [in] long ccLen);
@@ -147,28 +148,62 @@ typedef enum eSortOrder
     [entry("SysAllocStringLen"), helpstring("Allocates a new string, copies cc characters from the passed string into it, and returns the new BSTR. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
      BSTR AllocStrSp([in] long lStrPtr, [in] long ccLen);
 
-    [entry("SysAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, and returns the new BSTR.")]
-     BSTR RTrimZ([in] BSTR pStr);
-
-    [entry("SysReAllocStringLen"), helpstring("Allocates a new string with cc characters from the string to copy, frees the BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero. If vbNullString (or < cc), the (extra) length is allocated but not initialized.")]
-     long ReAllocStr([in] BSTR *pStr, [in] BSTR pStr2Copy, [in] long ccLen);
+    [entry("SysReAllocStringLen"), helpstring("Allocates a new string with cc characters from the string to copy, frees any BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero. If vbNullString (or < cc), the (extra) length is allocated but not initialized.")]
+     long ReAllocStrLen([in] BSTR *pStr, [in] BSTR pStr2Copy, [in] long ccLen);
 
     /* Notice that the first parameter is a pointer to a BSTR, not a BSTR.
        In VB you would pass a BSTR pointer with the VarPtr(sStr) operator.
-       Often the new pointer will be the same as the old pointer, but you
-       shouldn't count on this. You can give the same BSTR for both params
-       if you want to truncate an existing BSTR. */
+       Often the new pointer will be the same as the old pointer, but you shouldn't count on this.
+       You can give the same BSTR for both parameters if you want to truncate an existing BSTR. */
 
-    [entry("SysReAllocStringLen"), helpstring("Allocates a new string with cc characters from the string to copy, frees the BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
-     long ReAllocStrSp([in] BSTR *pStr, [in] long lStrPtr2Copy, [in] long ccLen);
+    [entry("SysReAllocStringLen"), helpstring("Allocates a new string with cc characters from the string to copy, frees any BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero. If lStrPtr is zero (or < cc), the (extra) length is allocated but not initialized.")]
+     long ReAllocStrLenSp([in] BSTR *pStr, [in] long lStrPtr2Copy, [in] long ccLen);
+
+/*  String allocation functions with no length specified.
+    These functions do not perform any ANSI-to-Unicode translation.
+    The input string must be a Unicode string in 32-bit applications, and an ANSI string in 16-bit applications.
+    If Null is passed in, these functions return Null. */
+
+    [entry("SysAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, and returns the new BSTR.")]
+     BSTR RTrimZ([in] BSTR pStr);
+
+    [entry("SysAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, and returns the new BSTR.")]
+     BSTR RTrimZSp([in] long lStrPtr);
+
+    [entry("SysAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, and returns a pointer to the new BSTR.")]
+     long RTrimZSpPtr([in] long lStrPtr);
+
+    [entry("SysReAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, frees any BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero.")]
+     long ReAllocStr([in] BSTR *pStr, [in] BSTR pStr2Copy);
+
+    /* Notice that the first parameter is a pointer to a BSTR, not a BSTR.
+       In VB you would pass a BSTR pointer with the VarPtr(sStr) operator.
+       Often the new pointer will be the same as the old pointer, but you shouldn't count on this.
+       You can give the same BSTR for both parameters if you want to truncate an existing BSTR. */
+
+    [entry("SysReAllocString"), helpstring("Allocates a new string, copies the passed string into it up to the first Null character, frees any BSTR referenced by pStr, and resets pStr to point to the new BSTR. Success returns non-zero.")]
+     long ReAllocStrSp([in] BSTR *pStr, [in] long lStrPtr2Copy);
+
+    [entry("SysFreeString"), helpstring("Frees a BSTR allocated previously by a string allocation function.")]
+     void FreeStr([in] BSTR pStr);
+
+    /* Pass a BSTR allocated previously, or Null. If Null, the function simply returns. */
 
     [entry("SysFreeString"), helpstring("Frees a BSTR pointer returned by a ..Ptr string allocation function.")]
-     void FreeStr([in] long lPtr);
+     void FreeStrSp([in] long lStrPtr);
+
+    /* Returns the allocated length of a BSTR. Valid for 32-bit systems only.
+       The input string must be a valid BSTR allocated previously. It cannot be Null.
+       This function returns the number of characters specified in the len parameter at allocation time. */
 
     [entry("SysStringLen"), helpstring("Returns the allocated length in characters of a BSTR.")]
-     long AllocatedStrLen([in] BSTR pStr);
+     long AllocatedStrLen([in] BSTR pAllocatedStr);
+
+    /* Returns the allocated length (in bytes) of a BSTR. Valid for 32-bit systems only.
+       The input string must be a valid BSTR allocated previously. It cannot be Null.
+       This function returns the number of bytes specified in the len parameter at allocation time. */
 
     [entry("SysStringByteLen"), helpstring("Returns the allocated length in bytes of a BSTR.")]
-     long AllocatedStrLenB([in] BSTR pStr);
+     long AllocatedStrLenB([in] BSTR pAllocatedStr);
     }
 }

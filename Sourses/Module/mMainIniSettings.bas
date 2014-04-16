@@ -63,7 +63,7 @@ Public lngPauseAfterSearch               As Long        ' Паузка после поиска но
 Public mbCalcDriverScore                 As Boolean     ' Использовать при анализе драйверов балл найденного драйвера, на основании различных условий
 Public mbCompatiblesHWID                 As Boolean     ' Использовать для поиска подходящих драйверов секцию CompatiblesHWID, берется из реестра
 Public mbSearchCompatibleDriverOtherOS   As Boolean     ' Искать подходящие драйвера на всех вкладках, а не только на подобранной
-Public mbSortMethodShell                 As Boolean     ' Флаг указывающий применять старый метод сортировки массива
+Public lngSortMethodShell                As Long        ' Параметр указывающий применять метод сортировки массива
 Public lngCompatiblesHWIDCount           As Long        ' Глубина поиска совместимых HWID
 Public mbMatchHWIDbyDPName               As Boolean     ' Анализ имени файла для определния совместимости драйвера
 Public lngMainFormWidth                  As Long        ' Ширина основной формы
@@ -759,7 +759,7 @@ Public Function GetMainIniParam() As Boolean
     ' Обрабатывать совместимые HWID
     mbLoadUnSupportedOS = GetIniValueBoolean(strSysIni, "OS", "LoadUnSupportedOS", 0)
     mbSearchCompatibleDriverOtherOS = GetIniValueBoolean(strSysIni, "OS", "SearchCompatibleDriverOtherOS", 1)
-    mbSortMethodShell = GetIniValueBoolean(strSysIni, "OS", "SortMethodShell", 0)
+    lngSortMethodShell = GetIniValueLong(strSysIni, "OS", "SortMethodShell", 0)
     '[Button]
     ' Шрифт Кнопок
     strFontBtn_Name = GetIniValueString(strSysIni, "Button", "FontName", "Tahoma")
@@ -828,7 +828,7 @@ Public Function GetMainIniParam() As Boolean
 
         For i = 0 To UBound(arrNotebookFilterList) - 1
             numFilter = i + 1
-            arrNotebookFilterList(i) = IniStringPrivate("NotebookVendor", "Filter_" & numFilter, strSysIni)
+            arrNotebookFilterList(i) = UCase$(IniStringPrivate("NotebookVendor", "Filter_" & numFilter, strSysIni))
 
             If arrNotebookFilterList(i) = "no_key" Then
                 arrNotebookFilterList(i) = arrNotebookFilterListDef(i)

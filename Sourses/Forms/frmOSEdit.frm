@@ -537,31 +537,31 @@ Private Sub SaveOptions()
 
         With frmOptions.lvOS
             i = .SelectedItem.Index
-            .ListItems.item(i).Text = txtOSVer
-            .ListItems.item(i).SubItems(1) = txtOSName
-            .ListItems.item(i).SubItems(2) = ucPathDRP.Path
-            .ListItems.item(i).SubItems(3) = ucPathDB.Path
+            .ListItems.Item(i).Text = txtOSVer
+            .ListItems.Item(i).SubItems(1) = txtOSName
+            .ListItems.Item(i).SubItems(2) = ucPathDRP.Path
+            .ListItems.Item(i).SubItems(3) = ucPathDB.Path
 
             If chk64bit.Value Then
                 If chkNotCheckBitOS.Value Then
-                    .ListItems.item(i).SubItems(4) = "3"
+                    .ListItems.Item(i).SubItems(4) = "3"
                 Else
-                    .ListItems.item(i).SubItems(4) = "1"
+                    .ListItems.Item(i).SubItems(4) = "1"
                 End If
 
             Else
 
                 If chkNotCheckBitOS.Value Then
-                    .ListItems.item(i).SubItems(4) = "2"
+                    .ListItems.Item(i).SubItems(4) = "2"
                 Else
-                    .ListItems.item(i).SubItems(4) = "0"
+                    .ListItems.Item(i).SubItems(4) = "0"
                 End If
             End If
 
-            .ListItems.item(i).SubItems(5) = ucPhysXPath.Path
-            .ListItems.item(i).SubItems(6) = ucLangPath.Path
-            .ListItems.item(i).SubItems(7) = ucRuntimesPath.Path
-            .ListItems.item(i).SubItems(8) = txtExcludeFileName
+            .ListItems.Item(i).SubItems(5) = ucPhysXPath.Path
+            .ListItems.Item(i).SubItems(6) = ucLangPath.Path
+            .ListItems.Item(i).SubItems(7) = ucRuntimesPath.Path
+            .ListItems.Item(i).SubItems(8) = txtExcludeFileName
         End With
 
         'FRMOPTIONS

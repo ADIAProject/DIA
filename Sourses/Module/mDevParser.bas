@@ -103,7 +103,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub DevParserLocalHwids2()
 
-    Dim str           As String
+    Dim strContent    As String
     Dim i             As Long
     Dim strCnt        As Long
     Dim miStatus      As Long
@@ -125,7 +125,7 @@ Public Sub DevParserLocalHwids2()
     With RegExpDevcon
         .Pattern = "(^[^\n\r\s][^\n\r]+)\r\n(\s+[^\n\r]+\r\n)*[^\n\r]*((?:DEVICE IS|DEVICE HAS|DRIVER IS|DRIVER HAS)[^\r]+)"
         .MultiLine = True
-        .IgnoreCase = True
+        '.IgnoreCase = True
         .Global = True
     End With
 
@@ -133,8 +133,9 @@ Public Sub DevParserLocalHwids2()
 
     If PathExists(strHwidsTxtPath) Then
         If Not PathIsAFolder(strHwidsTxtPath) Then
-            FileReadData strHwidsTxtPath, str
-            Set MatchesDevcon = RegExpDevcon.Execute(str)
+            FileReadData strHwidsTxtPath, strContent
+            strContent = UCase$(strContent)
+            Set MatchesDevcon = RegExpDevcon.Execute(strContent)
             miMaxCountArr = 100
 
             ' максимальное кол-во элементов в массиве
@@ -145,7 +146,7 @@ Public Sub DevParserLocalHwids2()
 
             'For i = 0 To MatchesDevcon.Count - 1
             For i = 0 To strCnt - 1
-                Set objMatch = MatchesDevcon.item(i)
+                Set objMatch = MatchesDevcon.Item(i)
 
                 ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
                 If RecCountArr = miMaxCountArr Then
@@ -163,7 +164,7 @@ Public Sub DevParserLocalHwids2()
                 End With
 
                 'objMatch
-                strID = UCase$(Trim$(Replace$(strID, vbNewLine, vbNullString)))
+                strID = Trim$(Replace$(strID, vbNewLine, vbNullString))
                 ' разбиваем по "\"
                 strIDOrig = strID
 
@@ -181,7 +182,7 @@ Public Sub DevParserLocalHwids2()
                         miStatus = 0
 
                         ' устройство активно
-                        If InStr(1, strStatus, "running", vbTextCompare) Then
+                        If InStr(strStatus, "RUNNING") Then
                             miStatus = 1
                         End If
 
@@ -191,7 +192,7 @@ Public Sub DevParserLocalHwids2()
                         End If
 
                         strName = Replace$(strName, vbNewLine, vbNullString)
-                        strName = Replace$(strName, "Name:", vbNullString, , , vbTextCompare)
+                        strName = Replace$(strName, "NAME:", vbNullString)
                         strName = Trim$(strName)
 
                         If Len(strID) > 3 Then
@@ -208,7 +209,7 @@ Public Sub DevParserLocalHwids2()
                     miStatus = 0
 
                     ' устройство активно
-                    If InStr(1, strStatus, "running", vbTextCompare) Then
+                    If InStr(strStatus, "RUNNING") Then
                         miStatus = 1
                     End If
 
@@ -218,7 +219,7 @@ Public Sub DevParserLocalHwids2()
                     End If
 
                     strName = Replace$(strName, vbNewLine, vbNullString)
-                    strName = Replace$(strName, "Name:", vbNullString, , , vbTextCompare)
+                    strName = Replace$(strName, "NAME:", vbNullString)
                     strName = Trim$(strName)
 
                     If Len(strID) > 3 Then
@@ -228,8 +229,8 @@ Public Sub DevParserLocalHwids2()
                         arrHwidsLocal(RecCountArr).DevName = strName
                         ' Статус оборудования
                         arrHwidsLocal(RecCountArr).Status = miStatus
-                        arrHwidsLocal(RecCountArr).HWIDOrig = UCase$(strIDOrig)
-                        arrHwidsLocal(RecCountArr).HWIDCutting = UCase$(strIDCutting)
+                        arrHwidsLocal(RecCountArr).HWIDOrig = strIDOrig
+                        arrHwidsLocal(RecCountArr).HWIDCutting = strIDCutting
                         RecCountArr = RecCountArr + 1
                     End If
                 End If
@@ -329,7 +330,7 @@ Public Function RunDevconRescan(Optional ByVal lngPause As Long = 1) As Boolean
     Dim cmdString As String
 
     cmdString = strQuotes & strDevConExePath & strQuotes & " rescan"
-    ChangeStatusTextAndDebug strMessages(96) & strSpace & cmdString
+    ChangeStatusBarText strMessages(96) & strSpace & cmdString
     CreateIfNotExistPath strWorkTemp
 
     RunDevconRescan = RunAndWaitNew(cmdString, strWorkTemp, vbHide)

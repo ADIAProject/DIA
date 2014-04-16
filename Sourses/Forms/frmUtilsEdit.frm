@@ -307,15 +307,15 @@ Private Sub SaveOptions()
 
         With frmOptions.lvUtils
             i = .SelectedItem.Index
-            .ListItems.item(i).Text = txtUtilName
-            .ListItems.item(i).SubItems(1) = ucPathUtil.Path
-            .ListItems.item(i).SubItems(2) = ucPathUtil64.Path
+            .ListItems.Item(i).Text = txtUtilName
+            .ListItems.Item(i).SubItems(1) = ucPathUtil.Path
+            .ListItems.Item(i).SubItems(2) = ucPathUtil64.Path
 
             'frmOptions
             If txtParamUtil.Text <> "Дополнительные параметры запуска" Then
-                .ListItems.item(i).SubItems(3) = txtParamUtil
+                .ListItems.Item(i).SubItems(3) = txtParamUtil
             Else
-                .ListItems.item(i).SubItems(3) = vbNullString
+                .ListItems.Item(i).SubItems(3) = vbNullString
             End If
 
         End With

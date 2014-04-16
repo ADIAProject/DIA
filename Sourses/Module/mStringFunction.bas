@@ -9,8 +9,10 @@ Option Explicit
 'Public Declare Function lstrcmp Lib "kernel32" Alias "lstrcmpW" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long
 'Public Declare Function lstrcmpi Lib "kernel32" Alias "lstrcmpiW" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long
 ' конвертация строк с учетом регистра
-'Private Declare Function CharLower Lib "user32.dll" Alias "CharLowerA" (ByVal lpsz As String) As String
-'Private Declare Function CharUpper Lib "user32.dll" Alias "CharUpperA" (ByVal lpsz As String) As String
+'Public Declare Function CharLower Lib "user32.dll" Alias "CharLowerA" (ByVal lpsz As String) As String
+'Public Declare Function CharUpper Lib "user32.dll" Alias "CharUpperA" (ByVal lpsz As String) As String
+'Public Declare Function CharLowerW Lib "user32.dll" Alias "CharLowerW" (ByVal lpsz As Long) As Long
+'Public Declare Function CharUpperW Lib "user32.dll" Alias "CharUpperW" (ByVal lpsz As Long) As Long
 'Private Declare Function lstrcat Lib "kernel32.dll" Alias "lstrcatA" (ByVal lpString1 As String, ByVal lpString2 As String) As Long
 '******************************************************************************************************************************************************************
 
@@ -137,7 +139,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Opti
         Set objMatches = objRegExp.Execute(Date1)
 
         If objMatches.Count Then
-            Set objMatch = objMatches.item(0)
+            Set objMatch = objMatches.Item(0)
             With objMatch
                 m1 = .SubMatches(0)
                 d1 = .SubMatches(1)
@@ -149,7 +151,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Opti
         Set objMatches = objRegExp.Execute(Date2)
 
         If objMatches.Count Then
-            Set objMatch = objMatches.item(0)
+            Set objMatch = objMatches.Item(0)
             With objMatch
                 M2 = .SubMatches(0)
                 d2 = .SubMatches(1)
@@ -340,7 +342,7 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
             With objMatches
 
                 If .Count Then
-                    Set objMatch = .item(0)
+                    Set objMatch = .Item(0)
                     MM = Format$(objMatch.SubMatches(0), "00")
                     DD = Format$(objMatch.SubMatches(1), "00")
                     YYYY = DateTime.Year(dtDate)

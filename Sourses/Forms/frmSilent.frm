@@ -226,7 +226,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
     tmrSilent.Enabled = False
-    ChangeStatusTextAndDebug strMessages(101)
+    ChangeStatusBarText strMessages(101)
     If mbDebugStandart Then DebugMode "Silent mode break by User"
     tmrSilent.Interval = 0
     mbSilentRun = False
