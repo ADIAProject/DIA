@@ -211,7 +211,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Strings]
     Set RegExpStrSect = New RegExp
     With RegExpStrSect
-        .Pattern = "^[ ]*\[strings\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
+        .Pattern = "^[ ]*\[strings\][ ]*[ \S]*$(?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
         .MultiLine = True
         .IgnoreCase = True
         .Global = False
@@ -220,7 +220,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Version]
     Set RegExpVerSect = New RegExp
     With RegExpVerSect
-        .Pattern = "^[ ]*\[version\](?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
+        .Pattern = "^[ ]*\[version\][ ]*[ \S]*$(?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
         .MultiLine = True
         .IgnoreCase = True
         .Global = False
@@ -229,7 +229,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Manufacturer]
     Set RegExpManSect = New RegExp
     With RegExpManSect
-        '.Pattern = "^[ ]*\[manufacturer\](?:([\s\S]*?)^[ #]*(?=\[)|([\s\S]*))"
         .Pattern = "^[ ]*\[manufacturer\][ ]*[ \S]*$(?:([\s\S]*?)^[ ]*(?=\[)|([\s\S]*))"
         .MultiLine = True
         .IgnoreCase = True
@@ -259,7 +258,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Strings] - parametr driverver=param
     Set RegExpVerParam = New RegExp
     With RegExpVerParam
-        '.Pattern = "^[ ]*driverver[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
         .Pattern = "^[ ]*driverver[ ]*=[ ]*(?:([^\r\n;]*))"
         .MultiLine = True
         .IgnoreCase = False
@@ -269,7 +267,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Strings] - parametr catalogfile=param
     Set RegExpCatParam = New RegExp
     With RegExpCatParam
-        '.Pattern = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86|.ntia64]*[ ]*=[ ]*([^;\r\n]*)"
         .Pattern = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86|.ntia64]*[ ]*=[ ]*(?:([^\r\n;]*))"
         .MultiLine = True
         .IgnoreCase = False
