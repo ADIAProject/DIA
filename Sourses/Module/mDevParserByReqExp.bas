@@ -110,6 +110,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strPartString2Index       As String
     Dim strDevIDs_x()             As String
     Dim mbDevNameIsCollected      As Boolean
+    Dim strVerTemp                As String
+    Dim strVerTemp_x()            As String
     
     If mbDebugStandart Then DebugMode vbTab & "DevParserByRegExp-Start"
     
@@ -257,8 +259,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Strings] - parametr driverver=param
     Set RegExpVerParam = New RegExp
     With RegExpVerParam
-        .Pattern = "^[ ]*driverver[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
-        '^[ ]*DriverVer[ ]*=[ ]*(?:([^\r\n;]*))
+        '.Pattern = "^[ ]*driverver[ ]*=[ ]*(%[^%]*%|(?:[\w/ ])+)(?:[ ]*,[ ]*(%[^%]*%|(?:[\w/ .])+))?"
+        .Pattern = "^[ ]*driverver[ ]*=[ ]*(?:([^\r\n;]*))"
         .MultiLine = True
         .IgnoreCase = False
         .Global = False
@@ -267,7 +269,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' sections [Strings] - parametr catalogfile=param
     Set RegExpCatParam = New RegExp
     With RegExpCatParam
-        .Pattern = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86|.ntia64]*[ ]*=[ ]*([^;\r\n]*)"
+        '.Pattern = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86|.ntia64]*[ ]*=[ ]*([^;\r\n]*)"
+        .Pattern = "^[ ]*catalogfile[.nt|.ntamd64|.ntx86|.ntia64]*[ ]*=[ ]*(?:([^\r\n;]*))"
         .MultiLine = True
         .IgnoreCase = False
         .Global = False
@@ -407,45 +410,79 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         
                 If objMatchesVerParam.Count Then
                     Set objMatch = objMatchesVerParam.Item(0)
-                    strDrvDate = objMatch.SubMatches(0)
-        
-                    If InStr(strDrvDate, strPercent) Then
-                        strVarname = Left$(strDrvDate, InStrRev(strDrvDate, strPercent))
-                        strValval = objStringHash.Item(strVarname)
-        
-                        If LenB(strValval) Then
-                            strDrvDate = Replace$(strDrvDate, strVarname, strValval)
+                    strVerTemp = objMatch.SubMatches(0)
+                    'strDrvDate = objMatch.SubMatches(0)
+                    
+                    If InStr(strVerTemp, strPercent) Then
+                        If InStr(strVerTemp, strComma) Then
+                            strVerTemp_x = Split(strVerTemp, strComma)
+                            strDrvDate = Trim$(strVerTemp_x(0))
+                            strDrvVersion = Trim$(strVerTemp_x(1))
                         Else
-                            If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                            strDrvDate = Trim$(strVerTemp)
                         End If
-                    End If
-        
-                    strDrvVersion = objMatch.SubMatches(1)
-        
-                    If InStr(strDrvVersion, strPercent) Then
-                        strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, strPercent))
-                        strValval = objStringHash.Item(strVarname)
-        
-                        If LenB(strValval) Then
-                            strDrvVersion = Replace$(strDrvVersion, strVarname, strValval)
+                        
+                        If InStr(strDrvDate, strPercent) Then
+                            strVarname = Left$(strDrvDate, InStrRev(strDrvDate, strPercent))
+                            strValval = objStringHash.Item(strVarname)
+            
+                            If LenB(strValval) Then
+                                strDrvDate = Replace$(strDrvDate, strVarname, strValval)
+                            Else
+                                If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                            End If
+                        End If
+            
+                        'strDrvVersion = objMatch.SubMatches(1)
+            
+                        If InStr(strDrvVersion, strPercent) Then
+                            strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, strPercent))
+                            strValval = objStringHash.Item(strVarname)
+            
+                            If LenB(strValval) Then
+                                strDrvVersion = Replace$(strDrvVersion, strVarname, strValval)
+                            Else
+                                If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+                            End If
+                        End If
+                        
+                        If LenB(strDrvVersion) Then
+                            strVer = strDrvDate & strComma & strDrvVersion
                         Else
-                            If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
+            
+                            If LenB(strDrvDate) Then
+                                strVer = strDrvDate
+                            Else
+                                strVer = strUnknownLCase
+                            End If
                         End If
-                    End If
-        
-                    If LenB(strDrvVersion) Then
-                        strVer = strDrvDate & strComma & strDrvVersion
+            
+                        If InStr(strVer, strSpace) Then
+                            strVer = Replace$(strVer, strSpace, vbNullString)
+                        End If
                     Else
-        
-                        If LenB(strDrvDate) Then
-                            strVer = strDrvDate
+                        If InStr(strVerTemp, strComma) Then
+                            strVerTemp_x = Split(strVerTemp, strComma)
+                            strDrvDate = Trim$(strVerTemp_x(0))
+                            strDrvVersion = Trim$(strVerTemp_x(1))
                         Else
-                            strVer = strUnknownLCase
+                            strDrvDate = Trim$(strVerTemp)
                         End If
-                    End If
-        
-                    If InStr(strVer, strSpace) Then
-                        strVer = Replace$(strVer, strSpace, vbNullString)
+                        
+                        If LenB(strDrvVersion) Then
+                            strVer = strDrvDate & strComma & strDrvVersion
+                        Else
+            
+                            If LenB(strDrvDate) Then
+                                strVer = strDrvDate
+                            Else
+                                strVer = strUnknownLCase
+                            End If
+                        End If
+                        
+                        If InStr(strVer, strSpace) Then
+                            strVer = Replace$(strVer, strSpace, vbNullString)
+                        End If
                     End If
                 Else
                     If mbDebugStandart Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Parametr 'DriverVer' not found: " & strInfFullname
