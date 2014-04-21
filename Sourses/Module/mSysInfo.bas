@@ -458,3 +458,23 @@ Public Function OSInfoWMI(ByVal Nfo As Long) As String
     Set objWMI = Nothing
 End Function
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   GetFileName4Snap
+'! Description (Описание)  :   [Получение имени файла для снимка системы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetFileName4Snap() As String
+    If mbIsNotebok Then
+        If Not OSCurrVersionStruct.ClientOrServer Then
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%" & "_%DATE%")
+        Else
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%" & "_%DATE%")
+        End If
+    Else
+        If Not OSCurrVersionStruct.ClientOrServer Then
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%" & "_%DATE%")
+        Else
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%" & "_%DATE%")
+        End If
+    End If
+End Function

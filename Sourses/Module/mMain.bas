@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "18/04/2014"
+Public Const strDateProgram         As String = "21/04/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -369,10 +369,17 @@ Private Sub Main()
     ' Получаем размеры рабочей области программы
     GetWorkArea
     
+    ' Служебные файлы
+    InitializePathHwidsTxt
+    
     ' Проверяем на запуск с параметрами
     If LenB(Command) Then
         ' Запуск парсинга строки запуска
-        CmdLineParsing
+        If CmdLineParsing Then
+            ' Если функция CmdLineParsing=True, то требуется выход из приложения
+            GoTo ExitSub
+        End If
+        
     End If
 
     If APIFunctionPresent("IsUserAnAdmin", "shell32.dll") Then
@@ -438,9 +445,6 @@ Private Sub Main()
     If mbDebugStandart Then DebugMode "OsCurrentVersion: " & strOSCurrentVersion & vbNewLine & _
               "Architecture: " & strOSArchitecture & vbNewLine & _
               "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
-
-    ' Служебные файлы
-    InitializePathHwidsTxt
 
     ' Если не существует каталогов с драйверами прописанных в настройках, то выводим сообщение
     If mbAllFolderDRVNotExist Then

@@ -8149,6 +8149,8 @@ Private Sub Form_Activate()
             SetTTFontProperties TT
             'сохранить найденные драйвера в файл
             SaveHWIDs2File
+            'сохранить снимок системы
+            SaveSnapReport
     
             ' Вывести в лог список всех драйверов
             If lngArrDriversIndex Then
@@ -9529,19 +9531,7 @@ Private Sub mnuSaveInfoPC_Click()
         .DefaultExt = ".txt"
         .InitDir = GetSpecialFolderPath(CSIDL_DESKTOPDIRECTORY)
         .DialogTitle = strMessages(151)
-        If mbIsNotebok Then
-            If Not OSCurrVersionStruct.ClientOrServer Then
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%")
-            Else
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%")
-            End If
-        Else
-            If Not OSCurrVersionStruct.ClientOrServer Then
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%")
-            Else
-                .FileName = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%")
-            End If
-        End If
+        .FileName = GetFileName4Snap
 
         If .ShowSave = True Then
             strFilePathTo = .FileName

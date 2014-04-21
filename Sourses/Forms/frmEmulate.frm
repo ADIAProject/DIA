@@ -562,7 +562,7 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
     
     strParse_x = Split(GetFileNameFromPath(strFilePath), "_")
         
-    If UBound(strParse_x) = 3 Then
+    If UBound(strParse_x) >= 3 Then
         For i = 1 To UBound(strParse_x)
             '"hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%"
             

@@ -17,10 +17,10 @@ Private Declare Function SysReAllocString Lib "oleaut32" (ByVal pbString As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CmdLineParsing
-'! Description (Описание)  :   [Функция анализа коммандной строки и присвоение переменных на основании передеваемых комманд]
+'! Description (Описание)  :   [Функция анализа коммандной строки и присвоение переменных на основании передеваемых комманд, возвращаяет True если трубуется выход]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Sub CmdLineParsing()
+Public Function CmdLineParsing() As Boolean
 
     Dim argRetCMD    As Collection
     Dim i            As Integer
@@ -47,7 +47,6 @@ Public Sub CmdLineParsing()
             strArg = strArg_x(0)
             strArgParam = strArg_x(1)
         ElseIf iArgDvoetoch Then
-            'strArg_x = Split(strArg, strColon)
             strArg = Left$(argRetCMD(i), iArgDvoetoch - 1)
             strArgParam = Right$(argRetCMD(i), Len(argRetCMD(i)) - iArgDvoetoch)
         End If
@@ -55,19 +54,20 @@ Public Sub CmdLineParsing()
         Select Case LCase$(strArg)
 
             Case "/?", "/h", "-help", "/help", "-h", "--h", "--help"
+                
                 ShowHelpMsg
-
-                End
+                CmdLineParsing = True
 
             Case "/extractdll", "-extractdll", "--extractdll"
+                
+                mbSilentRun = True
                 ExtractrResToFolder strArgParam
-
-                End
+                CmdLineParsing = True
 
             Case "/regdll", "-regdll", "--regdll"
+                
                 RegisterAddComponent
-
-                End
+                CmdLineParsing = True
 
             Case "/t", "-t", "--t"
 
@@ -121,23 +121,30 @@ Public Sub CmdLineParsing()
                 mbDebugStandart = True
                 mbUpdateCheck = False
 
-            'todo SaveHWIDs2File
+            ' SaveSnapReport - сохранение снимка системы в файл
             Case "/savereport", "-savereport", "--savereport"
-                'SaveHWIDs2File
-                'strArgParam
                 
-                End
+                mbSilentRun = True
+                ' Получаем данные от devcon.exe и Обновляем данные из реестра
+                If RunDevcon Then
+                    DevParserLocalHwids2
+                    CollectHwidFromReestr
+                    strCompModel = GetMBInfo()
+                    ' Сохраняем снимок
+                    SaveSnapReport strArgParam
+                End If
+                CmdLineParsing = True
                 
             Case Else
+            
                 ShowHelpMsg
-
-                End
+                CmdLineParsing = True
 
         End Select
 
     Next i
 
-End Sub
+End Function
 
 ' (VB-Overwrite)
 '!--------------------------------------------------------------------------------
@@ -153,31 +160,6 @@ Public Function Command() As String
         Command = VBA.Command$()
     End If
 End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub SaveReport
-'! Description (Описание)  :   [Показ окна с параметрами запуска]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub SaveReport(ByVal strFilePathTo As String)
-
-    If LenB(strFilePathTo) Then
-        If PathExists(strResultHwidsExtTxtPath) Then
-            CopyFileTo strResultHwidsExtTxtPath, strFilePathTo
-        Else
-
-            If SaveHwidsArray2File(strResultHwidsExtTxtPath, arrHwidsLocal) Then
-                If PathExists(strResultHwidsExtTxtPath) Then
-                    CopyFileTo strResultHwidsExtTxtPath, strFilePathTo
-                Else
-                    If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFilePathTo
-                End If
-            Else
-                If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFilePathTo
-            End If
-        End If
-    End If
-End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowHelpMsg

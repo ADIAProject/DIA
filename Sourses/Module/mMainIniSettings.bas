@@ -131,7 +131,7 @@ Public Sub CreateIni()
 
         'Секция Debug
         IniWriteStrPrivate "Debug", "DebugEnable", "1", strSysIni
-        IniWriteStrPrivate "Debug", "DebugLogPath", "%SYSTEMDRIVE%", strSysIni
+        IniWriteStrPrivate "Debug", "DebugLogPath", "%WINDIR%\Logs\DIALog\", strSysIni
         IniWriteStrPrivate "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt", strSysIni
         IniWriteStrPrivate "Debug", "CleenHistory", "1", strSysIni
         IniWriteStrPrivate "Debug", "DetailMode", "1", strSysIni
@@ -330,8 +330,8 @@ Public Function GetMainIniParam() As Boolean
     
     '[Debug]
     ' Путь до лог файла
-    strDebugLogPathTemp = GetPathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%"))
-    strDebugLogPath = PathCollect(GetPathNameFromPath(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%SYSTEMDRIVE%")))
+    strDebugLogPathTemp = GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%WINDIR%\Logs\DIALog\")
+    strDebugLogPath = PathCollect(GetIniValueString(strSysIni, "Debug", "DebugLogPath", "%WINDIR%\Logs\DIALog\"))
     ' Имя лог-файла
     strDebugLogNameTemp = GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt")
     strDebugLogName = ExpandFileNameByEnvironment(GetIniValueString(strSysIni, "Debug", "DebugLogName", "DIA-LOG_%DATE%.txt"))
@@ -345,7 +345,7 @@ Public Function GetMainIniParam() As Boolean
     mbCleanHistory = GetIniValueBoolean(strSysIni, "Debug", "CleenHistory", 1)
 
     If Not mbDebugLog2AppPath Then
-        strDebugLogFullPath = strDebugLogPath & strDebugLogName
+        strDebugLogFullPath = PathCombine(strDebugLogPath, strDebugLogName)
 
         If mbDebugStandart Then
             If Not LogNotOnCDRoom Then
@@ -370,7 +370,7 @@ Public Function GetMainIniParam() As Boolean
                     If PathExists(strDebugLogPath) = False Then
                         CreateNewDirectory strDebugLogPath
                     End If
-                    strDebugLogFullPath = strDebugLogPath & strDebugLogName
+                    strDebugLogFullPath = PathCombine(strDebugLogPath, strDebugLogName)
                 Else
                     mbDebugStandart = False
                 End If

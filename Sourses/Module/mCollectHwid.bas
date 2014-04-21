@@ -202,10 +202,53 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub SaveHWIDs2File()
-
+    
     If SaveHwidsArray2File(strResultHwidsExtTxtPath, arrHwidsLocal) = False Then
-        MsgBox strMessages(45) & vbNewLine & strResultHwidsExtTxtPath, vbCritical + vbInformation, strProductName
+        If Not mbSilentRun Then
+            MsgBox strMessages(45) & vbNewLine & strResultHwidsExtTxtPath, vbCritical + vbInformation, strProductName
+        End If
     End If
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SaveSnapReport
+'! Description (Описание)  :   [Сохранение снимка системы для подсистемы эмулирования]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub SaveSnapReport(Optional ByVal strDirPathTo As String = vbNullString)
+    
+    Dim strFileReport       As String
+    Dim strDirPathToExpand  As String
+    
+    If LenB(strDirPathTo) Then
+        strDirPathToExpand = PathCollect(strDirPathTo)
+    Else
+        strDirPathToExpand = GetPathNameFromPath(strDebugLogFullPath)
+    End If
+    
+    If PathExists(strDirPathToExpand) = False Then
+        CreateNewDirectory strDirPathToExpand
+    End If
+    
+    ' Раскрываем параметр strFilePathTo, может содержать пеерменные Environ
+    strFileReport = PathCombine(strDirPathToExpand, GetFileName4Snap & ".txt")
+    
+    ' Если снимок есть, копируем файл снимка по назначению
+    If PathExists(strResultHwidsExtTxtPath) Then
+        CopyFileTo strResultHwidsExtTxtPath, strFileReport
+    Else
+
+        ' Создание временного файла снимка системы
+        If SaveHwidsArray2File(strResultHwidsExtTxtPath, arrHwidsLocal) Then
+            If PathExists(strResultHwidsExtTxtPath) Then
+                CopyFileTo strResultHwidsExtTxtPath, strFileReport
+            Else
+                If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFileReport
+            End If
+        Else
+            If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFileReport
+        End If
+    End If
 End Sub
 
