@@ -62,6 +62,7 @@ Begin VB.Form frmEmulate
          FileFlags       =   2621446
          Filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
          UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.LabelW lblInfo 
          Height          =   495
@@ -451,6 +452,9 @@ Private Sub Localise(ByVal strPathFile As String)
     ' Buttons
     cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    
+    ucFilePath.ToolTipTexts(ucOpen) = strMessages(151)
+    ucFilePath.DialogMsg(ucOpen) = strMessages(151)
 End Sub
 
 '!--------------------------------------------------------------------------------

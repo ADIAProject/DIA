@@ -22,118 +22,6 @@ Begin VB.Form frmOptions
    ScaleHeight     =   8145
    ScaleWidth      =   13725
    StartUpPosition =   1  'CenterOwner
-   Begin prjDIADBS.ImageList ImageListOptions 
-      Left            =   240
-      Top             =   5520
-      _ExtentX        =   1005
-      _ExtentY        =   1005
-      InitListImages  =   "frmOptions.frx":000C
-   End
-   Begin prjDIADBS.ctlJCFrames frOptions 
-      Height          =   5300
-      Left            =   50
-      Top             =   25
-      Width           =   3000
-      _ExtentX        =   5292
-      _ExtentY        =   9340
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   14016736
-      FillColor       =   14016736
-      RoundedCorner   =   0   'False
-      Caption         =   "Настройки"
-      TextBoxHeight   =   18
-      ThemeColor      =   2
-      HeaderStyle     =   1
-      Begin prjDIADBS.ctlJCbutton cmdOK 
-         Height          =   645
-         Left            =   75
-         TabIndex        =   1
-         Top             =   3735
-         Width           =   2850
-         _ExtentX        =   5027
-         _ExtentY        =   1138
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   9
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ButtonStyle     =   8
-         BackColor       =   16765357
-         Caption         =   "Сохранить изменения и выйти"
-         CaptionEffects  =   0
-         PictureAlign    =   0
-         PicturePushOnHover=   -1  'True
-         PictureShadow   =   -1  'True
-      End
-      Begin prjDIADBS.ctlJCbutton cmdExit 
-         Default         =   -1  'True
-         Height          =   645
-         Left            =   75
-         TabIndex        =   2
-         Top             =   4515
-         Width           =   2850
-         _ExtentX        =   5027
-         _ExtentY        =   1138
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   9
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ButtonStyle     =   8
-         BackColor       =   16765357
-         Caption         =   "Выход без сохранения"
-         CaptionEffects  =   0
-         PictureAlign    =   0
-         PicturePushOnHover=   -1  'True
-         PictureShadow   =   -1  'True
-      End
-      Begin prjDIADBS.ListView lvOptions 
-         Height          =   3195
-         Left            =   120
-         TabIndex        =   0
-         Top             =   480
-         Width           =   2775
-         _ExtentX        =   4895
-         _ExtentY        =   5636
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Icons           =   "frmOptions.frx":002C
-         SmallIcons      =   "frmOptions.frx":0058
-         ColumnHeaderIcons=   "frmOptions.frx":0098
-         BorderStyle     =   1
-         View            =   2
-         Arrange         =   3
-         LabelEdit       =   2
-         LabelWrap       =   0   'False
-         HideSelection   =   0   'False
-         ClickableColumnHeaders=   0   'False
-         TrackSizeColumnHeaders=   0   'False
-         ResizableColumnHeaders=   0   'False
-      End
-   End
    Begin prjDIADBS.ctlJCFrames frMain 
       Height          =   5300
       Left            =   3105
@@ -174,7 +62,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":00C4
+         Caption         =   "frmOptions.frx":000C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkUpdate 
@@ -194,7 +82,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":013C
+         Caption         =   "frmOptions.frx":0084
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkReadDPName 
@@ -214,7 +102,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0198
+         Caption         =   "frmOptions.frx":00E0
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkConvertDPName 
@@ -234,7 +122,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":020C
+         Caption         =   "frmOptions.frx":0154
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkHideOtherProcess 
@@ -254,7 +142,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":02DC
+         Caption         =   "frmOptions.frx":0224
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkTempPath 
@@ -274,7 +162,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0342
+         Caption         =   "frmOptions.frx":028A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkUpdateBeta 
@@ -294,7 +182,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0392
+         Caption         =   "frmOptions.frx":02DA
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSilentDll 
@@ -314,7 +202,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0408
+         Caption         =   "frmOptions.frx":0350
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSearchOnStart 
@@ -334,7 +222,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":04A4
+         Caption         =   "frmOptions.frx":03EC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtPauseAfterSearch 
@@ -368,6 +256,8 @@ Begin VB.Form frmOptions
          DefaultExt      =   ""
          Enabled         =   0   'False
          Filters         =   "Supported files|*.*|All Files (*.*)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton optRezim_Intellect 
          Height          =   510
@@ -533,6 +423,118 @@ Begin VB.Form frmOptions
          ForeColor       =   -2147483635
          BackStyle       =   0
          Caption         =   "Режим работы при старте программы"
+      End
+   End
+   Begin prjDIADBS.ImageList ImageListOptions 
+      Left            =   240
+      Top             =   5520
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      InitListImages  =   "frmOptions.frx":046A
+   End
+   Begin prjDIADBS.ctlJCFrames frOptions 
+      Height          =   5300
+      Left            =   50
+      Top             =   25
+      Width           =   3000
+      _ExtentX        =   5292
+      _ExtentY        =   9340
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackColor       =   14016736
+      FillColor       =   14016736
+      RoundedCorner   =   0   'False
+      Caption         =   "Настройки"
+      TextBoxHeight   =   18
+      ThemeColor      =   2
+      HeaderStyle     =   1
+      Begin prjDIADBS.ctlJCbutton cmdOK 
+         Height          =   645
+         Left            =   75
+         TabIndex        =   1
+         Top             =   3735
+         Width           =   2850
+         _ExtentX        =   5027
+         _ExtentY        =   1138
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   9
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ButtonStyle     =   8
+         BackColor       =   16765357
+         Caption         =   "Сохранить изменения и выйти"
+         CaptionEffects  =   0
+         PictureAlign    =   0
+         PicturePushOnHover=   -1  'True
+         PictureShadow   =   -1  'True
+      End
+      Begin prjDIADBS.ctlJCbutton cmdExit 
+         Default         =   -1  'True
+         Height          =   645
+         Left            =   75
+         TabIndex        =   2
+         Top             =   4515
+         Width           =   2850
+         _ExtentX        =   5027
+         _ExtentY        =   1138
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   9
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ButtonStyle     =   8
+         BackColor       =   16765357
+         Caption         =   "Выход без сохранения"
+         CaptionEffects  =   0
+         PictureAlign    =   0
+         PicturePushOnHover=   -1  'True
+         PictureShadow   =   -1  'True
+      End
+      Begin prjDIADBS.ListView lvOptions 
+         Height          =   3195
+         Left            =   120
+         TabIndex        =   0
+         Top             =   480
+         Width           =   2775
+         _ExtentX        =   4895
+         _ExtentY        =   5636
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Icons           =   "frmOptions.frx":048A
+         SmallIcons      =   "frmOptions.frx":04B6
+         ColumnHeaderIcons=   "frmOptions.frx":04F6
+         BorderStyle     =   1
+         View            =   2
+         Arrange         =   3
+         LabelEdit       =   2
+         LabelWrap       =   0   'False
+         HideSelection   =   0   'False
+         ClickableColumnHeaders=   0   'False
+         TrackSizeColumnHeaders=   0   'False
+         ResizableColumnHeaders=   0   'False
       End
    End
    Begin prjDIADBS.ctlJCFrames frMain2 
@@ -752,12 +754,14 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDevCon64Path 
          Height          =   315
          Left            =   2520
          TabIndex        =   31
-         Top             =   850
+         Top             =   840
          Width           =   6000
          _ExtentX        =   10583
          _ExtentY        =   556
@@ -766,6 +770,8 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDevCon86Pathw2k 
          Height          =   315
@@ -780,6 +786,8 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDPInst86Path 
          Height          =   315
@@ -794,6 +802,8 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucDPInst64Path 
          Height          =   315
@@ -808,6 +818,8 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucArchPath 
          Height          =   315
@@ -822,6 +834,8 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucCmdDevconPath 
          Height          =   315
@@ -836,6 +850,8 @@ Begin VB.Form frmOptions
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.*|All Files (*.*)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdPathDefault 
          Height          =   495
@@ -3041,6 +3057,8 @@ Begin VB.Form frmOptions
          DefaultExt      =   ""
          Enabled         =   0   'False
          Filters         =   "Supported files|*.*|All Files (*.*)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkDebugLog2AppPath 
          Height          =   210
@@ -3764,6 +3782,26 @@ Private Sub Localise(ByVal strPathFile As String)
     lblButtonStyle.Caption = LocaliseString(strPathFile, strFormName, "lblButtonStyle", lblButtonStyle.Caption)
     lblButtonStyleColor.Caption = LocaliseString(strPathFile, strFormName, "lblButtonStyleColor", lblButtonStyleColor.Caption)
     chkDP_is_aFolder.Caption = LocaliseString(strPathFile, strFormName, "chkDP_is_aFolder", chkDP_is_aFolder.Caption)
+    
+    ' Сообщения диалогов выбора файлов и каталогов
+    ucArchPath.ToolTipTexts(ucOpen) = strMessages(151)
+    ucArchPath.DialogMsg(ucOpen) = strMessages(151)
+    ucCmdDevconPath.ToolTipTexts(ucOpen) = strMessages(151)
+    ucCmdDevconPath.DialogMsg(ucOpen) = strMessages(151)
+    ucDebugLogPath.ToolTipTexts(ucFolder) = strMessages(152)
+    ucDebugLogPath.DialogMsg(ucFolder) = strMessages(152)
+    ucDevCon64Path.ToolTipTexts(ucOpen) = strMessages(151)
+    ucDevCon64Path.DialogMsg(ucOpen) = strMessages(151)
+    ucDevCon86Path.ToolTipTexts(ucOpen) = strMessages(151)
+    ucDevCon86Path.DialogMsg(ucOpen) = strMessages(151)
+    ucDevCon86Pathw2k.ToolTipTexts(ucOpen) = strMessages(151)
+    ucDevCon86Pathw2k.DialogMsg(ucOpen) = strMessages(151)
+    ucDPInst64Path.ToolTipTexts(ucOpen) = strMessages(151)
+    ucDPInst64Path.DialogMsg(ucOpen) = strMessages(151)
+    ucDPInst86Path.ToolTipTexts(ucOpen) = strMessages(151)
+    ucDPInst86Path.DialogMsg(ucOpen) = strMessages(151)
+    ucTempPath.ToolTipTexts(ucFolder) = strMessages(152)
+    ucTempPath.DialogMsg(ucFolder) = strMessages(152)
     
 End Sub
 
@@ -5471,18 +5509,20 @@ Private Sub ucArchPath_Click()
 
     Dim strTempPath As String
 
-    If ucArchPath.FileCount Then
-        strTempPath = ucArchPath.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucArchPath
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucArchPath.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5512,18 +5552,20 @@ Private Sub ucCmdDevconPath_Click()
 
     Dim strTempPath As String
 
-    If ucCmdDevconPath.FileCount Then
-        strTempPath = ucCmdDevconPath.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucCmdDevconPath
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucCmdDevconPath.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5553,18 +5595,18 @@ Private Sub ucDebugLogPath_Click()
 
     Dim strTempPath As String
 
-    If ucDebugLogPath.FileCount Then
-        strTempPath = ucDebugLogPath.FileName
+    With ucDebugLogPath
+        strTempPath = .FileName
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucDebugLogPath.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5594,18 +5636,20 @@ Private Sub ucDevCon64Path_Click()
 
     Dim strTempPath As String
 
-    If ucDevCon64Path.FileCount Then
-        strTempPath = ucDevCon64Path.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucDevCon64Path
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucDevCon64Path.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5635,18 +5679,20 @@ Private Sub ucDevCon86Path_Click()
 
     Dim strTempPath As String
 
-    If ucDevCon86Path.FileCount Then
-        strTempPath = ucDevCon86Path.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucDevCon86Path
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucDevCon86Path.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5676,18 +5722,20 @@ Private Sub ucDevCon86Pathw2k_Click()
 
     Dim strTempPath As String
 
-    If ucDevCon86Pathw2k.FileCount Then
-        strTempPath = ucDevCon86Pathw2k.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucDevCon86Pathw2k
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucDevCon86Pathw2k.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5717,18 +5765,20 @@ Private Sub ucDPInst64Path_Click()
 
     Dim strTempPath As String
 
-    If ucDPInst64Path.FileCount Then
-        strTempPath = ucDPInst64Path.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucDPInst64Path
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucDPInst64Path.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5758,17 +5808,19 @@ Private Sub ucDPInst86Path_Click()
 
     Dim strTempPath As String
 
-    If ucDPInst86Path.FileCount Then
-        strTempPath = ucDPInst86Path.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+    With ucDPInst86Path
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucDPInst86Path.Path = strTempPath
-    End If
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
 
 End Sub
 
@@ -5799,18 +5851,18 @@ Private Sub ucTempPath_Click()
 
     Dim strTempPath As String
 
-    If ucTempPath.FileCount Then
-        strTempPath = ucTempPath.Path
+    With ucTempPath
+        strTempPath = .Path
 
         If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
             strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
         End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucTempPath.Path = strTempPath
-    End If
-
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------

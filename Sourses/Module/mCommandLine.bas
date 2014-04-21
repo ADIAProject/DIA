@@ -167,5 +167,5 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ShowHelpMsg()
-    MsgBox strMessages(137), vbInformation & vbOKOnly, strProductName
+    MsgBoxEx strMessages(137), vbInformation & vbOKOnly, strProductName, 25
 End Sub

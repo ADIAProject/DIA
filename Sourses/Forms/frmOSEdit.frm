@@ -115,6 +115,7 @@ Begin VB.Form frmOSEdit
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucLangPath 
          Height          =   315
@@ -129,6 +130,7 @@ Begin VB.Form frmOSEdit
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucRuntimesPath 
          Height          =   315
@@ -143,6 +145,7 @@ Begin VB.Form frmOSEdit
          Enabled         =   0   'False
          FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         Locked          =   -1  'True
       End
       Begin prjDIADBS.LabelW lblRuntimes 
          Height          =   255
@@ -283,6 +286,7 @@ Begin VB.Form frmOSEdit
       DefaultExt      =   ""
       Enabled         =   0   'False
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      Locked          =   -1  'True
    End
    Begin prjDIADBS.ctlUcPickBox ucPathDB 
       Height          =   315
@@ -295,6 +299,7 @@ Begin VB.Form frmOSEdit
       DefaultExt      =   ""
       Enabled         =   0   'False
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      Locked          =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
@@ -492,6 +497,18 @@ Private Sub Localise(ByVal strPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    ' Сообщения диалогов выбора файлов и каталогов
+    ucPathDRP.ToolTipTexts(ucFolder) = strMessages(152)
+    ucPathDRP.DialogMsg(ucFolder) = strMessages(152)
+    ucPathDB.ToolTipTexts(ucFolder) = strMessages(152)
+    ucPathDB.DialogMsg(ucFolder) = strMessages(152)
+    ucPhysXPath.ToolTipTexts(ucOpen) = strMessages(151)
+    ucPhysXPath.DialogMsg(ucOpen) = strMessages(151)
+    ucRuntimesPath.ToolTipTexts(ucOpen) = strMessages(151)
+    ucRuntimesPath.DialogMsg(ucOpen) = strMessages(151)
+    ucLangPath.ToolTipTexts(ucOpen) = strMessages(151)
+    ucLangPath.DialogMsg(ucOpen) = strMessages(151)
+     
 End Sub
 
 '!--------------------------------------------------------------------------------

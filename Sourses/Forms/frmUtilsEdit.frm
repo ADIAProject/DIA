@@ -77,6 +77,7 @@ Begin VB.Form frmUtilsEdit
       Enabled         =   0   'False
       FileFlags       =   2621446
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      Locked          =   -1  'True
    End
    Begin prjDIADBS.ctlUcPickBox ucPathUtil64 
       Height          =   315
@@ -92,6 +93,7 @@ Begin VB.Form frmUtilsEdit
       Enabled         =   0   'False
       FileFlags       =   2621446
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      Locked          =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
@@ -282,6 +284,11 @@ Private Sub Localise(ByVal strPathFile As String)
     'Кнопки
     cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
     cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+    ' Сообщения диалогов выбора файлов и каталогов
+    ucPathUtil.ToolTipTexts(ucOpen) = strMessages(151)
+    ucPathUtil.DialogMsg(ucOpen) = strMessages(151)
+    ucPathUtil64.ToolTipTexts(ucOpen) = strMessages(151)
+    ucPathUtil64.DialogMsg(ucOpen) = strMessages(151)
 End Sub
 
 '!--------------------------------------------------------------------------------

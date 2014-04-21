@@ -1064,7 +1064,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let Locked(ByVal lNewLocked As Boolean)
     m_Locked = lNewLocked
-    'm_PrevBackColor = lNewColor
     '   Set the Locked
     UserControl.txtResult.Locked = m_Locked
     PropertyChanged "Locked"
@@ -1110,10 +1109,10 @@ Public Property Let Path(sNewPath As String)
 
     If m_QualifyPaths Then
         m_Path = QualifyPath(sNewPath)
-        DialogMsg(m_DialogType) = (TrimPathByLen(m_Path, UserControl.txtResult.Width - UserControl.cmdPick.Width - 40))
+        UserControl.txtResult.Text = m_Path
     Else
         m_Path = sNewPath
-        DialogMsg(m_DialogType) = (TrimPathByLen(m_Path, UserControl.txtResult.Width - UserControl.cmdPick.Width - 40))
+        UserControl.txtResult.Text = sNewPath
     End If
 
     PropertyChanged "Path"
@@ -1732,6 +1731,8 @@ Metallic:
 
         .pbPick.Refresh
         .pbDrop.Refresh
+        
+        Locked = m_Locked
         LockWindowUpdate 0&
     End With
 
@@ -1852,17 +1853,18 @@ Public Sub Refresh(Optional ByVal Index As Long)
 
     With UserControl
         AutoTheme = GetThemeInfo
-        .txtResult.Locked = False
         Call PaintControl(AutoTheme, Index)
 
         Select Case m_DialogType
 
             Case [ucFolder]
                 '   Update the Folder PickBox Values
-                .txtResult.Locked = m_Locked
+                Locked = m_Locked
 
                 If m_UseDialogText Then
-                    .txtResult.Text = m_DialogMsg([ucFolder])
+                    If LenB(Path) = 0 Then
+                        .txtResult.Text = m_DialogMsg([ucFolder])
+                    End If
                 Else
                     .txtResult.Text = Path
                 End If
@@ -1871,14 +1873,16 @@ Public Sub Refresh(Optional ByVal Index As Long)
 
             Case [ucOpen]
 
+                Locked = m_Locked
                 '   Update the Open PickBox Values
                 If m_UseDialogText Then
                     If (LenB(m_Path) = 0) Or (Left$(m_Path, 3) <> Left$(.txtResult.Text, 3)) Then
-                        .txtResult.Text = m_DialogMsg([ucOpen])
+                        If LenB(Path) = 0 Then
+                            .txtResult.Text = m_DialogMsg([ucOpen])
+                        End If
                     End If
 
                 Else
-                    '.txtResult.Text = vbNullString
                     .txtResult.Text = Path
                 End If
 
@@ -1886,11 +1890,13 @@ Public Sub Refresh(Optional ByVal Index As Long)
 
             Case [ucSave]
 
+                Locked = m_Locked
                 '   Update the Save PickBox Values
                 If m_UseDialogText Then
-                    .txtResult.Text = m_DialogMsg([ucSave])
+                    If LenB(Path) = 0 Then
+                        .txtResult.Text = m_DialogMsg([ucSave])
+                    End If
                 Else
-                    '.txtResult.Text = vbNullString
                     .txtResult.Text = Path
                 End If
 
@@ -1939,9 +1945,9 @@ Public Sub Reset()
     End If
 
     m_ToolTipText([ucSave]) = Def_ToolTipMsgFile
-    m_UseDialogColor = False
-    m_UseDialogText = True
-    m_Locked = False
+    'm_UseDialogColor = False
+    'm_UseDialogText = True
+    'm_Locked = False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1989,6 +1995,8 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
         If m_MultiSelect Then
             .Flags = .Flags Or AllowMultiselect
         End If
+        
+        .sDlgTitle = m_DialogMsg(ucOpen) & FillNullChar(2048)
 
         '   Init the File Names
         .sFile = vbNullString & FillNullChar(2048)
@@ -2578,10 +2586,12 @@ Private Sub cmdPick_Click()
                 With New CommonDialog
                     .InitDir = PathCollect(txtResult.Text)
                     .Flags = CdlBIFNewDialogStyle
-
+                    .DialogTitle = m_DialogMsg(ucFolder)
+                                        
                     If .ShowFolder = True Then
                         sFolder = .FileName
                     End If
+                    
 
                 End With
 
@@ -3075,7 +3085,7 @@ Private Sub txtResult_LostFocus()
 
                     If .txtResult.Text <> m_DialogMsg(m_DialogType) Then
                         '   Pass the value to the textbox
-                        MsgBox "The Name Entered is Invalid!", vbExclamation + vbOKOnly, "ucPickBox"
+                        'MsgBox "The Name Entered is Invalid!", vbExclamation + vbOKOnly, "ucPickBox"
                     End If
                 End If
 
@@ -3176,7 +3186,6 @@ Private Sub UserControl_InitProperties()
     m_Forecolor = &H0
     m_Theme = pbAuto
     m_UseAutoForeColor = False
-    m_Locked = False
 End Sub
 
 '!--------------------------------------------------------------------------------
