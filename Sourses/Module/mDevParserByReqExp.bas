@@ -2,7 +2,7 @@ Attribute VB_Name = "mDevParserByReqExp"
 Option Explicit
 
 ' Текущая версия базы данных
-Public Const lngDevDBVersion        As Long = 6
+Public Const lngDevDBVersion        As Long = 7
 
 ' Рабочие переменные
 Private RegExpStrSect       As RegExp
@@ -408,7 +408,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                 If objMatchesVerParam.Count Then
                     Set objMatch = objMatchesVerParam.Item(0)
                     strVerTemp = objMatch.SubMatches(0)
-                    'strDrvDate = objMatch.SubMatches(0)
                     
                     If InStr(strVerTemp, strPercent) Then
                         If InStr(strVerTemp, strComma) Then
@@ -429,8 +428,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 If mbDebugDetail Then DebugMode str2VbTab & "DevParserbyRegExp: Error in inf: Cannot find '" & strVarname & "'"
                             End If
                         End If
-            
-                        'strDrvVersion = objMatch.SubMatches(1)
             
                         If InStr(strDrvVersion, strPercent) Then
                             strVarname = Left$(strDrvVersion, InStrRev(strDrvVersion, strPercent))
@@ -729,9 +726,9 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                             Else
                                                                 If mbDebugDetail Then DebugMode "Error in inf: " & strInfFullname & " (Variable Name of Device is Empty) for HWID: " & strDevIDs
                                                                 strDevName = "not defined in the inf"
-                                                                '                                If mbIsDesignMode Then
-                                                                '                                    Debug.Print "Not defined variable in [Strings] - " & strPackFileName & vbTab & strInfPath & strInfFileName & vbTab & objMatch.SubMatches(0) & vbTab & objMatchesDevDef.item(i)
-                                                                '                                End If
+                                                                'If mbIsDesignMode Then
+                                                                '    Debug.Print "Not defined variable in [Strings] - " & strPackFileName & vbTab & strInfPath & strInfFileName & vbTab & objMatch.SubMatches(0) & vbTab & objMatchesDevDef.Item(i)
+                                                                'End If
                                                             End If
                                                         End If
                                                         
@@ -852,12 +849,11 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                     Else
                                                         If mbDebugDetail Then DebugMode "Error in inf: " & strInfFullname & " (Variable Name of Device is Empty) for HWID: " & strDevIDs
                                                         strDevName = "not defined in the inf"
-                                                        '                                If mbIsDesignMode Then
-                                                        '                                    Debug.Print "Not defined variable in [Strings] - " & strPackFileName & vbTab & strInfPath & strInfFileName & vbTab & objMatch.SubMatches(0) & vbTab & objMatchesDevDef.item(i)
-                                                        '                                End If
+                                                        'If mbIsDesignMode Then
+                                                        '    Debug.Print "Not defined variable in [Strings] - " & strPackFileName & vbTab & strInfPath & strInfFileName & vbTab & objMatch.SubMatches(0) & vbTab & objMatchesDevDef.Item(i)
+                                                        'End If
                                                     End If
-                                                    
-                                                    
+                                                                                                        
                                                     'Итоговая строка
                                                     'strDevID & vbTab & strInfFileName & vbTab & strManufSection & vbTab & strVer & vbTab & strSectEmptyList & vbTab & lngCatFileExists & vbTab & strDevName
                                                     strLinesArr(lngNumLines) = (strDevID & strInfPathTabQuoted & strManufSection) & (strPartString2Index & strDevName)
@@ -868,7 +864,6 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                         strLinesArrHwid(lngNumLinesHwid) = strDevID
                                                         lngNumLinesHwid = lngNumLinesHwid + 1
                                                     End If
-                                                
                                                 End If
                                             End If
                                         End If

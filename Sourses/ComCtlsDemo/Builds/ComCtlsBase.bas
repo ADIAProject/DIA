@@ -464,6 +464,10 @@ Public Function LvwSortingFunctionDate(ByVal lParam1 As Long, ByVal lParam2 As L
 LvwSortingFunctionDate = This.Message(0, 0, lParam1, lParam2, 14)
 End Function
 
+Public Function LvwSortingFunctionGroups(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+LvwSortingFunctionGroups = This.Message(0, 0, lParam1, lParam2, 0)
+End Function
+
 Public Function TvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
 TvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
 End Function

@@ -34,6 +34,8 @@ Private LvwLabelEditAutomatic, LvwLabelEditManual, LvwLabelEditDisabled
 Private LvwSortOrderAscending, LvwSortOrderDescending
 Private LvwSortTypeBinary, LvwSortTypeText, LvwSortTypeNumeric, LvwSortTypeCurrency, LvwSortTypeDate
 Private LvwPictureAlignmentTopLeft, LvwPictureAlignmentTopRight, LvwPictureAlignmentBottomLeft, LvwPictureAlignmentBottomRight, LvwPictureAlignmentCenter, LvwPictureAlignmentTile
+Private LvwGroupHeaderAlignmentLeft, LvwGroupHeaderAlignmentRight, LvwGroupHeaderAlignmentCenter
+Private LvwGroupFooterAlignmentLeft, LvwGroupFooterAlignmentRight, LvwGroupFooterAlignmentCenter
 #End If
 Public Enum LvwViewConstants
 LvwViewIcon = 0
@@ -87,6 +89,16 @@ LvwPictureAlignmentBottomRight = 3
 LvwPictureAlignmentCenter = 4
 LvwPictureAlignmentTile = 5
 End Enum
+Public Enum LvwGroupHeaderAlignmentConstants
+LvwGroupHeaderAlignmentLeft = 0
+LvwGroupHeaderAlignmentRight = 1
+LvwGroupHeaderAlignmentCenter = 2
+End Enum
+Public Enum LvwGroupFooterAlignmentConstants
+LvwGroupFooterAlignmentLeft = 0
+LvwGroupFooterAlignmentRight = 1
+LvwGroupFooterAlignmentCenter = 2
+End Enum
 Private Type TagInitCommonControlsEx
 dwSize As Long
 dwICC As Long
@@ -136,6 +148,21 @@ cchTextMax As Long
 iImage As Long
 lParam As Long
 iIndent As Long
+End Type
+Private Type LVITEM_V6
+Mask As Long
+iItem As Long
+iSubItem As Long
+State As Long
+StateMask As Long
+pszText As Long
+cchTextMax As Long
+iImage As Long
+lParam As Long
+iIndent As Long
+iGroupId As Long
+cColumns As Long
+puColumns As Long
 End Type
 Private Type LVTILEINFO
 cbSize As Long
@@ -187,6 +214,23 @@ pszImage As String
 cchImageMax As Long
 XOffsetPercent As Long
 YOffsetPercent As Long
+End Type
+Private Type LVGROUP
+cbSize As Long
+Mask As Long
+pszHeader As Long
+cchHeader As Long
+pszFooter As Long
+cchFooter As Long
+iGroupId As Long
+StateMask As Long
+State As Long
+uAlign As Long
+End Type
+Private Type LVINSERTGROUPSORTED
+pfnGroupCompare As Long
+pvData As ISubclass
+LVG As LVGROUP
 End Type
 Private Type NMHDR
 hWndFrom As Long
@@ -558,9 +602,23 @@ Private Const LVM_GETNUMBEROFWORKAREAS As Long = (LVM_FIRST + 73)
 Private Const LVM_SETTOOLTIPS As Long = (LVM_FIRST + 74)
 Private Const LVM_GETTOOLTIPS As Long = (LVM_FIRST + 78)
 Private Const LVM_SORTITEMSEX As Long = (LVM_FIRST + 81)
+Private Const LVM_GETGROUPSTATE As Long = (LVM_FIRST + 92)
+Private Const LVM_GETFOCUSEDGROUP As Long = (LVM_FIRST + 93)
+Private Const LVM_GETGROUPRECT As Long = (LVM_FIRST + 98)
 Private Const LVM_SETSELECTEDCOLUMN As Long = (LVM_FIRST + 140)
 Private Const LVM_SETVIEW As Long = (LVM_FIRST + 142)
 Private Const LVM_GETVIEW As Long = (LVM_FIRST + 143)
+Private Const LVM_INSERTGROUP As Long = (LVM_FIRST + 145)
+Private Const LVM_SETGROUPINFO As Long = (LVM_FIRST + 147)
+Private Const LVM_GETGROUPINFO As Long = (LVM_FIRST + 149)
+Private Const LVM_REMOVEGROUP As Long = (LVM_FIRST + 150)
+Private Const LVM_GETGROUPCOUNT As Long = (LVM_FIRST + 152)
+Private Const LVM_GETGROUPINFOBYINDEX As Long = (LVM_FIRST + 153)
+Private Const LVM_ENABLEGROUPVIEW As Long = (LVM_FIRST + 157)
+Private Const LVM_SORTGROUPS As Long = (LVM_FIRST + 158)
+Private Const LVM_INSERTGROUPSORTED As Long = (LVM_FIRST + 159)
+Private Const LVM_REMOVEALLGROUPS As Long = (LVM_FIRST + 160)
+Private Const LVM_HASGROUP As Long = (LVM_FIRST + 161)
 Private Const LVM_SETTILEVIEWINFO As Long = (LVM_FIRST + 162)
 Private Const LVM_GETTILEVIEWINFO As Long = (LVM_FIRST + 163)
 Private Const LVM_SETTILEINFO As Long = (LVM_FIRST + 164)
@@ -573,6 +631,7 @@ Private Const LVM_SETINSERTMARKCOLOR As Long = (LVM_FIRST + 170)
 Private Const LVM_GETINSERTMARKCOLOR As Long = (LVM_FIRST + 171)
 Private Const LVM_SETINFOTIP As Long = (LVM_FIRST + 173)
 Private Const LVM_GETSELECTEDCOLUMN As Long = (LVM_FIRST + 174)
+Private Const LVM_ISGROUPVIEWENABLED As Long = (LVM_FIRST + 175)
 Private Const LVM_ISITEMVISIBLE As Long = (LVM_FIRST + 182)
 Private Const LVN_FIRST As Long = (-100)
 Private Const LVN_ITEMCHANGING As Long = (LVN_FIRST - 0)
@@ -703,6 +762,31 @@ Private Const LVCF_TEXT As Long = &H4
 Private Const LVCF_SUBITEM As Long = &H8
 Private Const LVCF_IMAGE As Long = &H10
 Private Const LVCF_ORDER As Long = &H20
+Private Const LVGF_NONE As Long = &H0
+Private Const LVGF_HEADER As Long = &H1
+Private Const LVGF_FOOTER As Long = &H2
+Private Const LVGF_STATE As Long = &H4
+Private Const LVGF_ALIGN As Long = &H8
+Private Const LVGF_GROUPID As Long = &H10
+Private Const LVGA_FOOTER_LEFT As Long = &H8
+Private Const LVGA_FOOTER_CENTER As Long = &H10
+Private Const LVGA_FOOTER_RIGHT As Long = &H20
+Private Const LVGA_HEADER_LEFT As Long = &H1
+Private Const LVGA_HEADER_CENTER As Long = &H2
+Private Const LVGA_HEADER_RIGHT As Long = &H4
+Private Const LVGS_NORMAL As Long = &H0
+Private Const LVGS_COLLAPSED As Long = &H1
+Private Const LVGS_HIDDEN As Long = &H2 ' Malfunction
+Private Const LVGS_NOHEADER As Long = &H4
+Private Const LVGS_COLLAPSIBLE As Long = &H8
+Private Const LVGS_FOCUSED As Long = &H10
+Private Const LVGS_SELECTED As Long = &H20
+Private Const LVGS_SUBSETED As Long = &H40
+Private Const LVGS_SUBSETLINKFOCUSED As Long = &H80
+Private Const LVGGR_GROUP As Long = 0
+Private Const LVGGR_HEADER As Long = 1
+Private Const LVGGR_LABEL As Long = 2
+Private Const LVGGR_SUBSETLINK As Long = 3
 Private Const LVSCW_AUTOSIZE As Long = (-1)
 Private Const LVSCW_AUTOSIZE_USEHEADER As Long = (-2)
 Private Const LVIM_AFTER As Long = &H1
@@ -718,6 +802,8 @@ Private Const LVTVIM_COLUMNS As Long = &H2
 Private Const LVTVIM_LABELMARGIN As Long = &H4
 Private Const I_IMAGECALLBACK As Long = (-1)
 Private Const I_COLUMNSCALLBACK As Long = (-1)
+Private Const I_GROUPIDCALLBACK As Long = (-1)
+Private Const I_GROUPIDNONE As Long = (-2)
 Private Const H_MAX As Long = (&HFFFF + 1)
 Private Const NM_FIRST As Long = H_MAX
 Private Const NM_CLICK As Long = (NM_FIRST - 2)
@@ -792,6 +878,7 @@ Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropListItems As LvwListItems
 Private PropColumnHeaders As LvwColumnHeaders
+Private PropGroups As LvwGroups
 Private PropVisualStyles As Boolean
 Private PropOLEDragMode As VBRUN.OLEDragConstants
 Private PropOLEDragDropScroll As Boolean
@@ -838,6 +925,7 @@ Private PropPictureAlignment As LvwPictureAlignmentConstants
 Private PropPictureWatermark As Boolean
 Private PropTileViewLines As Long
 Private PropSnapToGrid As Boolean
+Private PropGroupView As Boolean
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -1009,6 +1097,7 @@ PropPictureAlignment = LvwPictureAlignmentTopLeft
 PropPictureWatermark = False
 PropTileViewLines = 1
 PropSnapToGrid = False
+PropGroupView = False
 Call CreateListView
 Me.FListItemsAdd 0, 1, Ambient.DisplayName
 End Sub
@@ -1065,6 +1154,7 @@ PropPictureAlignment = .ReadProperty("PictureAlignment", LvwPictureAlignmentTopL
 PropPictureWatermark = .ReadProperty("PictureWatermark", False)
 PropTileViewLines = .ReadProperty("TileViewLines", 1)
 PropSnapToGrid = .ReadProperty("SnapToGrid", False)
+PropGroupView = .ReadProperty("GroupView", False)
 End With
 If Ambient.UserMode = True Then
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 3)
@@ -1127,6 +1217,7 @@ With PropBag
 .WriteProperty "PictureWatermark", PropPictureWatermark, False
 .WriteProperty "TileViewLines", PropTileViewLines, 1
 .WriteProperty "SnapToGrid", PropSnapToGrid, False
+.WriteProperty "GroupView", PropGroupView, False
 End With
 End Sub
 
@@ -1251,6 +1342,7 @@ If Not PropListItems Is Nothing Then
     If UserControl.Parent Is Nothing Then
         Set PropListItems = Nothing
         Set PropColumnHeaders = Nothing
+        Set PropGroups = Nothing
     End If
     On Error GoTo 0
 End If
@@ -2661,7 +2753,7 @@ End Property
 
 Public Property Let SnapToGrid(ByVal Value As Boolean)
 PropSnapToGrid = Value
-If ListViewHandle <> 0 Then
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     If PropSnapToGrid = True Then
         SendMessage ListViewHandle, LVM_SETEXTENDEDLISTVIEWSTYLE, LVS_EX_SNAPTOGRID, ByVal LVS_EX_SNAPTOGRID
     Else
@@ -2669,6 +2761,30 @@ If ListViewHandle <> 0 Then
     End If
 End If
 UserControl.PropertyChanged "SnapToGrid"
+End Property
+
+Public Property Get GroupView() As Boolean
+Attribute GroupView.VB_Description = "Returns/sets a value that determines whether or not the list items display as a group. Requires comctl32.dll version 6.0 or higher."
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 And Ambient.UserMode = True Then
+    GroupView = CBool(SendMessage(ListViewHandle, LVM_ISGROUPVIEWENABLED, 0, ByVal 0&) <> 0)
+Else
+    GroupView = PropGroupView
+End If
+End Property
+
+Public Property Let GroupView(ByVal Value As Boolean)
+PropGroupView = Value
+If Ambient.UserMode = True Then
+    If ComCtlsSupportLevel() >= 1 Then
+        If ListViewHandle <> 0 Then
+            SendMessage ListViewHandle, LVM_ENABLEGROUPVIEW, IIf(PropGroupView = True, 1, 0), ByVal 0&
+            Me.Refresh
+        End If
+    Else
+        PropGroupView = False
+    End If
+End If
+UserControl.PropertyChanged "GroupView"
 End Property
 
 Public Property Get ListItems() As LvwListItems
@@ -2894,19 +3010,35 @@ End Property
 
 Friend Property Get FListItemLeft(ByVal Index As Long) As Single
 If ListViewHandle <> 0 Then
-    Dim RC As RECT
-    RC.Left = LVIR_SELECTBOUNDS
-    SendMessage ListViewHandle, LVM_GETITEMRECT, Index - 1, ByVal VarPtr(RC)
-    FListItemLeft = UserControl.ScaleX(RC.Left, vbPixels, vbContainerPosition)
+    Dim P As POINTAPI
+    SendMessage ListViewHandle, LVM_GETITEMPOSITION, Index - 1, ByVal VarPtr(P)
+    FListItemLeft = UserControl.ScaleX(P.X, vbPixels, vbContainerPosition)
+End If
+End Property
+
+Friend Property Let FListItemLeft(ByVal Index As Long, ByVal Value As Single)
+If ListViewHandle <> 0 Then
+    Dim P As POINTAPI
+    SendMessage ListViewHandle, LVM_GETITEMPOSITION, Index - 1, ByVal VarPtr(P)
+    P.X = UserControl.ScaleX(Value, vbContainerPosition, vbPixels)
+    SendMessage ListViewHandle, LVM_SETITEMPOSITION32, Index - 1, ByVal VarPtr(P)
 End If
 End Property
 
 Friend Property Get FListItemTop(ByVal Index As Long) As Single
 If ListViewHandle <> 0 Then
-    Dim RC As RECT
-    RC.Left = LVIR_SELECTBOUNDS
-    SendMessage ListViewHandle, LVM_GETITEMRECT, Index - 1, ByVal VarPtr(RC)
-    FListItemTop = UserControl.ScaleY(RC.Top, vbPixels, vbContainerPosition)
+    Dim P As POINTAPI
+    SendMessage ListViewHandle, LVM_GETITEMPOSITION, Index - 1, ByVal VarPtr(P)
+    FListItemTop = UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition)
+End If
+End Property
+
+Friend Property Let FListItemTop(ByVal Index As Long, ByVal Value As Single)
+If ListViewHandle <> 0 Then
+    Dim P As POINTAPI
+    SendMessage ListViewHandle, LVM_GETITEMPOSITION, Index - 1, ByVal VarPtr(P)
+    P.Y = UserControl.ScaleY(Value, vbContainerPosition, vbPixels)
+    SendMessage ListViewHandle, LVM_SETITEMPOSITION32, Index - 1, ByVal VarPtr(P)
 End If
 End Property
 
@@ -2926,6 +3058,10 @@ If ListViewHandle <> 0 Then
     SendMessage ListViewHandle, LVM_GETITEMRECT, Index - 1, ByVal VarPtr(RC)
     FListItemHeight = UserControl.ScaleY((RC.Bottom - RC.Top), vbPixels, vbContainerSize)
 End If
+End Property
+
+Friend Property Get FListItemVisible(ByVal Index As Long) As Boolean
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then FListItemVisible = CBool(SendMessage(ListViewHandle, LVM_ISITEMVISIBLE, Index - 1, ByVal 0&) <> 0)
 End Property
 
 Friend Sub FListItemEnsureVisible(ByVal Index As Long)
@@ -3018,6 +3154,46 @@ If ListViewHandle <> 0 Then
     Y = UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition)
 End If
 End Function
+
+Friend Property Get FListItemGroup(ByVal Index As Long) As LvwGroup
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    Dim LVI_V6 As LVITEM_V6
+    With LVI_V6
+    .Mask = LVIF_GROUPID
+    .iItem = Index - 1
+    SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V6)
+    If .iGroupId <> I_GROUPIDNONE Then
+        Dim Group As LvwGroup
+        For Each Group In Me.Groups
+            If Group.ID = .iGroupId Then
+                Set FListItemGroup = Group
+                Exit For
+            End If
+        Next Group
+    End If
+    End With
+End If
+End Property
+
+Friend Property Let FListItemGroup(ByVal Index As Long, ByVal Value As LvwGroup)
+Set Me.FListItemGroup(Index) = Value
+End Property
+
+Friend Property Set FListItemGroup(ByVal Index As Long, ByVal Value As LvwGroup)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    Dim LVI_V6 As LVITEM_V6
+    With LVI_V6
+    .Mask = LVIF_GROUPID
+    .iItem = Index - 1
+    If Not Value Is Nothing Then
+        .iGroupId = Value.ID
+    Else
+        .iGroupId = I_GROUPIDNONE
+    End If
+    End With
+    SendMessage ListViewHandle, LVM_SETITEM, 0, ByVal VarPtr(LVI_V6)
+End If
+End Property
 
 Friend Function FListSubItemAlloc(ByVal Key As String) As Long
 FListSubItemAlloc = HeapAlloc(GetProcessHeap(), -HEAP_ZERO_MEMORY, 26)
@@ -3582,6 +3758,460 @@ If ListViewHandle <> 0 Then
 End If
 End Function
 
+Public Property Get Groups() As LvwGroups
+Attribute Groups.VB_Description = "Returns a reference to a collection of the group objects. Any groups assigned appear whenever the view property is other than 'list' view. Requires comctl32.dll version 6.0 or higher."
+If PropGroups Is Nothing Then
+    If ComCtlsSupportLevel() >= 1 Then
+        Set PropGroups = New LvwGroups
+        PropGroups.FInit Me
+    Else
+        Err.Raise Number:=91, Description:="To use this functionality, you must provide a manifest specifying comctl32.dll version 6.0 or higher"
+    End If
+End If
+Set Groups = PropGroups
+End Property
+
+Friend Sub FGroupsAdd(ByVal Index As Long, ByVal NewGroup As LvwGroup, ByVal This As ISubclass, Optional ByVal Header As String, Optional ByVal HeaderAlignment As LvwGroupHeaderAlignmentConstants, Optional ByVal Footer As String, Optional ByVal FooterAlignment As LvwGroupFooterAlignmentConstants)
+If ComCtlsSupportLevel() = 0 Then Exit Sub
+Dim LVG As LVGROUP
+With LVG
+.cbSize = LenB(LVG)
+.Mask = LVGF_GROUPID Or LVGF_ALIGN
+.iGroupId = NextGroupID()
+NewGroup.ID = .iGroupId
+If Not Header = vbNullString Then
+    .Mask = .Mask Or LVGF_HEADER
+    .pszHeader = StrPtr(Header)
+    .cchHeader = Len(Header) + 1
+End If
+Select Case HeaderAlignment
+    Case LvwGroupHeaderAlignmentLeft
+        .uAlign = LVGA_HEADER_LEFT
+    Case LvwGroupHeaderAlignmentRight
+        .uAlign = LVGA_HEADER_RIGHT
+    Case LvwGroupHeaderAlignmentCenter
+        .uAlign = LVGA_HEADER_CENTER
+End Select
+If ComCtlsSupportLevel() >= 2 Then
+    If Not Footer = vbNullString Then
+        .Mask = .Mask Or LVGF_FOOTER
+        .pszFooter = StrPtr(Footer)
+        .cchFooter = Len(Footer) + 1
+    End If
+    Select Case FooterAlignment
+        Case LvwGroupFooterAlignmentLeft
+            .uAlign = .uAlign Or LVGA_FOOTER_LEFT
+        Case LvwGroupFooterAlignmentRight
+            .uAlign = .uAlign Or LVGA_FOOTER_RIGHT
+        Case LvwGroupFooterAlignmentCenter
+            .uAlign = .uAlign Or LVGA_FOOTER_CENTER
+    End Select
+End If
+End With
+If ListViewHandle <> 0 Then
+    If This Is Nothing Then
+        SendMessage ListViewHandle, LVM_INSERTGROUP, Index - 1, ByVal VarPtr(LVG)
+    Else
+        Dim LVIGS As LVINSERTGROUPSORTED
+        With LVIGS
+        LSet .LVG = LVG
+        Set .pvData = This
+        .pfnGroupCompare = ProcPtr(AddressOf LvwSortingFunctionGroups)
+        End With
+        SendMessage ListViewHandle, LVM_INSERTGROUPSORTED, VarPtr(LVIGS), ByVal 0&
+    End If
+End If
+End Sub
+
+Friend Sub FGroupsRemove(ByVal ID As Long)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then SendMessage ListViewHandle, LVM_REMOVEGROUP, ID, ByVal 0&
+End Sub
+
+Friend Sub FGroupsClear()
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    SendMessage ListViewHandle, LVM_REMOVEALLGROUPS, 0, ByVal 0&
+    ' LVM_REMOVEALLGROUPS turns off the group view.
+    ' Thus it is necessary to reapply the group view property.
+    Me.GroupView = PropGroupView
+End If
+Set PropGroups = Nothing
+End Sub
+
+Friend Sub FGroupsSort(ByVal This As ISubclass)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then SendMessage ListViewHandle, LVM_SORTGROUPS, ProcPtr(AddressOf LvwSortingFunctionGroups), ByVal ObjPtr(This)
+End Sub
+
+Friend Property Get FGroupHeader(ByVal ID As Long) As String
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_HEADER
+        Dim Buffer As String
+        Buffer = String(260, vbNullChar)
+        .pszHeader = StrPtr(Buffer)
+        .cchHeader = 260
+        End With
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG)
+        FGroupHeader = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
+    End If
+End If
+End Property
+
+Friend Property Let FGroupHeader(ByVal ID As Long, ByVal Value As String)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_HEADER
+        .pszHeader = StrPtr(Value)
+        .cchHeader = Len(Value) + 1
+        End With
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+    End If
+End If
+End Property
+
+Friend Property Get FGroupHeaderAlignment(ByVal ID As Long) As LvwGroupHeaderAlignmentConstants
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_ALIGN
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If (.uAlign And LVGA_HEADER_LEFT) = LVGA_HEADER_LEFT Then
+            FGroupHeaderAlignment = LvwGroupHeaderAlignmentLeft
+        ElseIf (.uAlign And LVGA_HEADER_RIGHT) = LVGA_HEADER_RIGHT Then
+            FGroupHeaderAlignment = LvwGroupHeaderAlignmentRight
+        ElseIf (.uAlign And LVGA_HEADER_CENTER) = LVGA_HEADER_CENTER Then
+            FGroupHeaderAlignment = LvwGroupHeaderAlignmentCenter
+        End If
+        End With
+    End If
+End If
+End Property
+
+Friend Property Let FGroupHeaderAlignment(ByVal ID As Long, ByVal Value As LvwGroupHeaderAlignmentConstants)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    If IsGroupAvailable(ID) = True Then
+        Select Case Value
+            Case LvwGroupHeaderAlignmentLeft, LvwGroupHeaderAlignmentRight, LvwGroupHeaderAlignmentCenter
+                Dim LVG As LVGROUP
+                With LVG
+                .cbSize = LenB(LVG)
+                .Mask = LVGF_ALIGN
+                SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG)
+                If (.uAlign And LVGA_HEADER_LEFT) = LVGA_HEADER_LEFT Then .uAlign = .uAlign And Not LVGA_HEADER_LEFT
+                If (.uAlign And LVGA_HEADER_RIGHT) = LVGA_HEADER_RIGHT Then .uAlign = .uAlign And Not LVGA_HEADER_RIGHT
+                If (.uAlign And LVGA_HEADER_CENTER) = LVGA_HEADER_CENTER Then .uAlign = .uAlign And Not LVGA_HEADER_CENTER
+                Select Case Value
+                    Case LvwGroupHeaderAlignmentLeft
+                        .uAlign = .uAlign Or LVGA_HEADER_LEFT
+                    Case LvwGroupHeaderAlignmentRight
+                        .uAlign = .uAlign Or LVGA_HEADER_RIGHT
+                    Case LvwGroupHeaderAlignmentCenter
+                        .uAlign = .uAlign Or LVGA_HEADER_CENTER
+                End Select
+                End With
+                SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+                SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+                If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+            Case Else
+                Err.Raise 380
+        End Select
+    End If
+End If
+End Property
+
+Friend Property Get FGroupFooter(ByVal ID As Long) As String
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_FOOTER
+        Dim Buffer As String
+        Buffer = String(260, vbNullChar)
+        .pszFooter = StrPtr(Buffer)
+        .cchFooter = 260
+        End With
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG)
+        FGroupFooter = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
+    End If
+End If
+End Property
+
+Friend Property Let FGroupFooter(ByVal ID As Long, ByVal Value As String)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_FOOTER
+        .pszFooter = StrPtr(Value)
+        .cchFooter = Len(Value) + 1
+        End With
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+    End If
+End If
+End Property
+
+Friend Property Get FGroupFooterAlignment(ByVal ID As Long) As LvwGroupFooterAlignmentConstants
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_ALIGN
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If (.uAlign And LVGA_FOOTER_LEFT) = LVGA_FOOTER_LEFT Then
+            FGroupFooterAlignment = LvwGroupFooterAlignmentLeft
+        ElseIf (.uAlign And LVGA_FOOTER_RIGHT) = LVGA_FOOTER_RIGHT Then
+            FGroupFooterAlignment = LvwGroupFooterAlignmentRight
+        ElseIf (.uAlign And LVGA_FOOTER_CENTER) = LVGA_FOOTER_CENTER Then
+            FGroupFooterAlignment = LvwGroupFooterAlignmentCenter
+        End If
+        End With
+    End If
+End If
+End Property
+
+Friend Property Let FGroupFooterAlignment(ByVal ID As Long, ByVal Value As LvwGroupFooterAlignmentConstants)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Select Case Value
+            Case LvwGroupFooterAlignmentLeft, LvwGroupFooterAlignmentRight, LvwGroupFooterAlignmentCenter
+                Dim LVG As LVGROUP
+                With LVG
+                .cbSize = LenB(LVG)
+                .Mask = LVGF_ALIGN
+                SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG)
+                If (.uAlign And LVGA_FOOTER_LEFT) = LVGA_FOOTER_LEFT Then .uAlign = .uAlign And Not LVGA_FOOTER_LEFT
+                If (.uAlign And LVGA_FOOTER_RIGHT) = LVGA_FOOTER_RIGHT Then .uAlign = .uAlign And Not LVGA_FOOTER_RIGHT
+                If (.uAlign And LVGA_FOOTER_CENTER) = LVGA_FOOTER_CENTER Then .uAlign = .uAlign And Not LVGA_FOOTER_CENTER
+                Select Case Value
+                    Case LvwGroupFooterAlignmentLeft
+                        .uAlign = .uAlign Or LVGA_FOOTER_LEFT
+                    Case LvwGroupFooterAlignmentRight
+                        .uAlign = .uAlign Or LVGA_FOOTER_RIGHT
+                    Case LvwGroupFooterAlignmentCenter
+                        .uAlign = .uAlign Or LVGA_FOOTER_CENTER
+                End Select
+                End With
+                SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+                SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+                If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+            Case Else
+                Err.Raise 380
+        End Select
+    End If
+End If
+End Property
+
+Friend Property Get FGroupCollapsible(ByVal ID As Long) As Boolean
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then FGroupCollapsible = CBool(SendMessage(ListViewHandle, LVM_GETGROUPSTATE, ID, ByVal LVGS_COLLAPSIBLE) <> 0)
+End If
+End Property
+
+Friend Property Let FGroupCollapsible(ByVal ID As Long, ByVal Value As Boolean)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_STATE
+        .StateMask = LVGS_COLLAPSIBLE
+        If Value = True Then
+            .State = LVGS_COLLAPSIBLE
+        Else
+            .State = LVGS_NORMAL
+        End If
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+        End With
+    End If
+End If
+End Property
+
+Friend Property Get FGroupCollapsed(ByVal ID As Long) As Boolean
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then FGroupCollapsed = CBool(SendMessage(ListViewHandle, LVM_GETGROUPSTATE, ID, ByVal LVGS_COLLAPSED) <> 0)
+End If
+End Property
+
+Friend Property Let FGroupCollapsed(ByVal ID As Long, ByVal Value As Boolean)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_STATE
+        .StateMask = LVGS_COLLAPSED
+        If Value = True Then
+            .State = LVGS_COLLAPSED
+        Else
+            .State = LVGS_NORMAL
+        End If
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+        End With
+    End If
+End If
+End Property
+
+Friend Property Get FGroupShowHeader(ByVal ID As Long) As Boolean
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then FGroupShowHeader = CBool(SendMessage(ListViewHandle, LVM_GETGROUPSTATE, ID, ByVal LVGS_NOHEADER) = 0)
+End If
+End Property
+
+Friend Property Let FGroupShowHeader(ByVal ID As Long, ByVal Value As Boolean)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_STATE
+        .StateMask = LVGS_NOHEADER
+        If Value = True Then
+            .State = LVGS_NORMAL
+        Else
+            .State = LVGS_NOHEADER
+        End If
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+        End With
+    End If
+End If
+End Property
+
+Friend Property Get FGroupSelected(ByVal ID As Long) As Boolean
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then FGroupSelected = CBool(SendMessage(ListViewHandle, LVM_GETGROUPSTATE, ID, ByVal LVGS_SELECTED) <> 0)
+End If
+End Property
+
+Friend Property Let FGroupSelected(ByVal ID As Long, ByVal Value As Boolean)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_STATE
+        If Value = True Then
+            .StateMask = LVGS_SELECTED Or LVGS_FOCUSED
+            .State = LVGS_SELECTED Or LVGS_FOCUSED
+        Else
+            .StateMask = LVGS_SELECTED
+            .State = LVGS_NORMAL
+        End If
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+        End With
+    End If
+End If
+End Property
+
+Friend Property Get FGroupPosition(ByVal ID As Long) As Long
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim Count As Long
+        Count = SendMessage(ListViewHandle, LVM_GETGROUPCOUNT, 0, ByVal 0&)
+        If Count > 0 Then
+            Dim LVG As LVGROUP, i As Long
+            With LVG
+            .cbSize = LenB(LVG)
+            .Mask = LVGF_GROUPID
+            For i = 0 To Count - 1
+                SendMessage ListViewHandle, LVM_GETGROUPINFOBYINDEX, i, ByVal VarPtr(LVG)
+                If .iGroupId = ID Then
+                    FGroupPosition = i + 1
+                    Exit For
+                End If
+            Next i
+            End With
+        End If
+    End If
+End If
+End Property
+
+Friend Property Get FGroupLeft(ByVal ID As Long) As Single
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim RC As RECT
+        RC.Top = LVGGR_HEADER
+        SendMessage ListViewHandle, LVM_GETGROUPRECT, ID, ByVal VarPtr(RC)
+        FGroupLeft = UserControl.ScaleX(RC.Left, vbPixels, vbContainerPosition)
+    End If
+End If
+End Property
+
+Friend Property Get FGroupTop(ByVal ID As Long) As Single
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim RC As RECT
+        RC.Top = LVGGR_HEADER
+        SendMessage ListViewHandle, LVM_GETGROUPRECT, ID, ByVal VarPtr(RC)
+        FGroupTop = UserControl.ScaleY(RC.Top, vbPixels, vbContainerPosition)
+    End If
+End If
+End Property
+
+Friend Property Get FGroupWidth(ByVal ID As Long) As Single
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim RC As RECT
+        RC.Top = LVGGR_HEADER
+        SendMessage ListViewHandle, LVM_GETGROUPRECT, ID, ByVal VarPtr(RC)
+        FGroupWidth = UserControl.ScaleX((RC.Right - RC.Left), vbPixels, vbContainerSize)
+    End If
+End If
+End Property
+
+Friend Property Get FGroupHeight(ByVal ID As Long) As Single
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim RC As RECT
+        RC.Top = LVGGR_HEADER
+        SendMessage ListViewHandle, LVM_GETGROUPRECT, ID, ByVal VarPtr(RC)
+        FGroupHeight = UserControl.ScaleY((RC.Bottom - RC.Top), vbPixels, vbContainerSize)
+    End If
+End If
+End Property
+
+Friend Property Get FGroupListItemIndices(ByVal ID As Long) As Collection
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    Set FGroupListItemIndices = New Collection
+    If IsGroupAvailable(ID) = True Then
+        If SendMessage(ListViewHandle, LVM_GETITEMCOUNT, 0, ByVal 0&) > 0 Then
+            Dim LVI_V6 As LVITEM_V6
+            With LVI_V6
+            .Mask = LVIF_GROUPID
+            .iItem = 0
+            SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V6)
+            Do While .iItem > -1
+                If .iGroupId = ID Then FGroupListItemIndices.Add (.iItem + 1)
+                .iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, .iItem, ByVal LVNI_ALL)
+                SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V6)
+            Loop
+            End With
+        End If
+    End If
+End If
+End Property
+
 Private Sub CreateListView()
 If ListViewHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
@@ -3657,6 +4287,7 @@ Me.ResizableColumnHeaders = PropResizableColumnHeaders
 If Not PropPicture Is Nothing Then Set Me.Picture = PropPicture
 Me.TileViewLines = PropTileViewLines
 Me.SnapToGrid = PropSnapToGrid
+Me.GroupView = PropGroupView
 If ListViewHandle <> 0 Then
     If ComCtlsSupportLevel() = 0 Then
         ' According to MSDN:
@@ -3822,7 +4453,7 @@ Attribute SelectedItem.VB_Description = "Returns/sets a reference to the current
 Attribute SelectedItem.VB_MemberFlags = "400"
 If ListViewHandle <> 0 Then
     Dim iItem As Long
-    iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_FOCUSED)
+    iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_ALL Or LVNI_FOCUSED)
     If iItem > -1 Then Set SelectedItem = Me.ListItems(iItem + 1)
 End If
 End Property
@@ -3840,7 +4471,7 @@ If ListViewHandle <> 0 Then
         With LVI
         .Mask = LVIF_STATE
         .StateMask = LVIS_FOCUSED
-        .State = Not LVIS_FOCUSED
+        .State = 0
         End With
         SendMessage ListViewHandle, LVM_SETITEMSTATE, -1, ByVal VarPtr(LVI)
         Call CheckItemFocus(0)
@@ -3853,10 +4484,10 @@ Attribute SelectedIndices.VB_Description = "Returns a reference to a collection 
 If ListViewHandle <> 0 Then
     Set SelectedIndices = New Collection
     Dim iItem As Long
-    iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_SELECTED)
+    iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_ALL Or LVNI_SELECTED)
     Do While iItem > -1
         SelectedIndices.Add (iItem + 1)
-        iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, iItem, ByVal LVNI_SELECTED)
+        iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, iItem, ByVal LVNI_ALL Or LVNI_SELECTED)
     Loop
 End If
 End Function
@@ -4025,7 +4656,7 @@ Attribute DropHighlight.VB_Description = "Returns/sets a reference to a list ite
 Attribute DropHighlight.VB_MemberFlags = "400"
 If ListViewHandle <> 0 Then
     Dim iItem As Long
-    iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_DROPHILITED)
+    iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_ALL Or LVNI_DROPHILITED)
     If iItem > -1 Then Set DropHighlight = Me.ListItems(iItem + 1)
 End If
 End Property
@@ -4040,9 +4671,9 @@ If ListViewHandle <> 0 Then
     LVI.StateMask = LVIS_DROPHILITED
     If Not Value Is Nothing Then
         iItem = Value.Index - 1
-        If iItem <> SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, LVNI_DROPHILITED) Then
+        If iItem <> SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_ALL Or LVNI_DROPHILITED) Then
             With LVI
-            .State = Not LVIS_DROPHILITED
+            .State = 0
             SendMessage ListViewHandle, LVM_SETITEMSTATE, -1, ByVal VarPtr(LVI)
             If iItem > -1 Then
                 .State = LVIS_DROPHILITED
@@ -4051,7 +4682,7 @@ If ListViewHandle <> 0 Then
             End With
         End If
     Else
-        LVI.State = Not LVIS_DROPHILITED
+        LVI.State = 0
         SendMessage ListViewHandle, LVM_SETITEMSTATE, -1, ByVal VarPtr(LVI)
     End If
 End If
@@ -4176,6 +4807,55 @@ If ListViewHandle <> 0 Then
         SendMessage ListViewHandle, LVM_SETWORKAREAS, 0, ByVal 0&
     Else
         Err.Raise 380
+    End If
+End If
+End Property
+
+Public Property Get SelectedGroup() As LvwGroup
+Attribute SelectedGroup.VB_Description = "Returns/sets a reference to the currently selected group. Requires comctl32.dll version 6.1 or higher."
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    Dim Index As Long
+    Index = SendMessage(ListViewHandle, LVM_GETFOCUSEDGROUP, 0, ByVal 0&)
+    If Index > -1 Then
+        Dim LVG As LVGROUP
+        With LVG
+        .cbSize = LenB(LVG)
+        .Mask = LVGF_GROUPID
+        SendMessage ListViewHandle, LVM_GETGROUPINFOBYINDEX, Index, ByVal VarPtr(LVG)
+        Dim Group As LvwGroup
+        For Each Group In Me.Groups
+            If Group.ID = .iGroupId Then
+                Set SelectedGroup = Group
+                Exit For
+            End If
+        Next Group
+        End With
+    End If
+End If
+End Property
+
+Public Property Let SelectedGroup(ByVal Value As LvwGroup)
+Set Me.SelectedGroup = Value
+End Property
+
+Public Property Set SelectedGroup(ByVal Value As LvwGroup)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If Not Value Is Nothing Then
+        Value.Selected = True
+    Else
+        Dim Index As Long
+        Index = SendMessage(ListViewHandle, LVM_GETFOCUSEDGROUP, 0, ByVal 0&)
+        If Index > -1 Then
+            Dim LVG As LVGROUP
+            With LVG
+            .cbSize = LenB(LVG)
+            SendMessage ListViewHandle, LVM_GETGROUPINFOBYINDEX, Index, ByVal VarPtr(LVG)
+            .Mask = LVGF_STATE
+            .StateMask = LVGS_FOCUSED
+            .State = 0
+            SendMessage ListViewHandle, LVM_SETGROUPINFO, .iGroupId, ByVal VarPtr(LVG)
+            End With
+        End If
     End If
 End If
 End Property
@@ -4352,6 +5032,83 @@ ListItemsSortingFunctionDate = Sgn(Date1 - Date2)
 If PropSortOrder = LvwSortOrderDescending Then ListItemsSortingFunctionDate = -ListItemsSortingFunctionDate
 End Function
 
+Private Function GroupsSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal SortOrder As LvwSortOrderConstants) As Long
+Dim Text1 As String, Text2 As String
+Text1 = Me.FGroupHeader(lParam1)
+Text2 = Me.FGroupHeader(lParam2)
+GroupsSortingFunctionBinary = lstrcmp(StrPtr(Text1), StrPtr(Text2))
+If SortOrder = LvwSortOrderDescending Then GroupsSortingFunctionBinary = -GroupsSortingFunctionBinary
+End Function
+
+Private Function GroupsSortingFunctionText(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal SortOrder As LvwSortOrderConstants) As Long
+Dim Text1 As String, Text2 As String
+Text1 = Me.FGroupHeader(lParam1)
+Text2 = Me.FGroupHeader(lParam2)
+GroupsSortingFunctionText = lstrcmpi(StrPtr(Text1), StrPtr(Text2))
+If SortOrder = LvwSortOrderDescending Then GroupsSortingFunctionText = -GroupsSortingFunctionText
+End Function
+
+Private Function GroupsSortingFunctionNumeric(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal SortOrder As LvwSortOrderConstants) As Long
+Dim Text1 As String, Text2 As String
+Text1 = Me.FGroupHeader(lParam1)
+Text2 = Me.FGroupHeader(lParam2)
+Dim DblBlank As Double
+Dim Dbl1 As Double, Dbl2 As Double
+On Error GoTo Handler
+Dbl1 = CDbl(Text1)
+Dbl2 = CDbl(Text2)
+If 0& > 1& Then
+Handler: Dbl1 = DblBlank: Dbl2 = DblBlank
+End If
+On Error GoTo 0
+GroupsSortingFunctionNumeric = Sgn(Dbl1 - Dbl2)
+If SortOrder = LvwSortOrderDescending Then GroupsSortingFunctionNumeric = -GroupsSortingFunctionNumeric
+End Function
+
+Private Function GroupsSortingFunctionCurrency(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal SortOrder As LvwSortOrderConstants) As Long
+Dim Text1 As String, Text2 As String
+Text1 = Me.FGroupHeader(lParam1)
+Text2 = Me.FGroupHeader(lParam2)
+Dim CurBlank As Currency
+Dim Cur1 As Currency, Cur2 As Currency
+On Error GoTo Handler
+Cur1 = CCur(Text1)
+Cur2 = CCur(Text2)
+If 0& > 1& Then
+Handler: Cur1 = CurBlank: Cur2 = CurBlank
+End If
+On Error GoTo 0
+GroupsSortingFunctionCurrency = Sgn(Cur1 - Cur2)
+If SortOrder = LvwSortOrderDescending Then GroupsSortingFunctionCurrency = -GroupsSortingFunctionCurrency
+End Function
+
+Private Function GroupsSortingFunctionDate(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal SortOrder As LvwSortOrderConstants) As Long
+Dim Text1 As String, Text2 As String
+Text1 = Me.FGroupHeader(lParam1)
+Text2 = Me.FGroupHeader(lParam2)
+Dim DateBlank As Date
+Dim Date1 As Date, Date2 As Date
+On Error GoTo Handler
+Date1 = CDate(Text1)
+Date2 = CDate(Text2)
+If 0& > 1& Then
+Handler: Date1 = DateBlank: Date2 = DateBlank
+End If
+On Error GoTo 0
+GroupsSortingFunctionDate = Sgn(Date1 - Date2)
+If SortOrder = LvwSortOrderDescending Then GroupsSortingFunctionDate = -GroupsSortingFunctionDate
+End Function
+
+Private Function NextGroupID() As Long
+Static ID As Long
+ID = ID + 1
+NextGroupID = ID
+End Function
+
+Private Function IsGroupAvailable(ByVal ID As Long) As Boolean
+If ListViewHandle <> 0 Then IsGroupAvailable = CBool(SendMessage(ListViewHandle, LVM_HASGROUP, ID, ByVal 0&) <> 0)
+End Function
+
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
 Select Case dwRefData
     Case 1
@@ -4370,6 +5127,16 @@ Select Case dwRefData
         ISubclass_Message = ListItemsSortingFunctionCurrency(wParam, lParam)
     Case 14
         ISubclass_Message = ListItemsSortingFunctionDate(wParam, lParam)
+    Case 20
+        ISubclass_Message = GroupsSortingFunctionBinary(wParam, lParam, wMsg)
+    Case 21
+        ISubclass_Message = GroupsSortingFunctionText(wParam, lParam, wMsg)
+    Case 22
+        ISubclass_Message = GroupsSortingFunctionNumeric(wParam, lParam, wMsg)
+    Case 23
+        ISubclass_Message = GroupsSortingFunctionCurrency(wParam, lParam, wMsg)
+    Case 24
+        ISubclass_Message = GroupsSortingFunctionDate(wParam, lParam, wMsg)
 End Select
 End Function
 

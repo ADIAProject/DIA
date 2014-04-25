@@ -9,6 +9,14 @@ Begin VB.PropertyPage PPListViewGeneral
    PaletteMode     =   0  'Halftone
    ScaleHeight     =   6000
    ScaleWidth      =   6450
+   Begin VB.CheckBox CheckGroupView 
+      Caption         =   "GroupView"
+      Height          =   285
+      Left            =   4200
+      TabIndex        =   40
+      Top             =   5520
+      Width           =   2160
+   End
    Begin VB.CheckBox CheckUnderlineHot 
       Caption         =   "UnderlineHot"
       Height          =   285
@@ -430,6 +438,7 @@ With PropertyPage.SelectedControls(0)
 .ResizableColumnHeaders = CBool(CheckResizableColumnHeaders.Value = vbChecked)
 .PictureWatermark = CBool(CheckPictureWatermark.Value = vbChecked)
 .SnapToGrid = CBool(CheckSnapToGrid.Value = vbChecked)
+.GroupView = CBool(CheckGroupView.Value = vbChecked)
 End With
 End Sub
 
@@ -499,6 +508,7 @@ CheckTrackSizeColumnHeaders.Value = IIf(.TrackSizeColumnHeaders = True, vbChecke
 CheckResizableColumnHeaders.Value = IIf(.ResizableColumnHeaders = True, vbChecked, vbUnchecked)
 CheckPictureWatermark.Value = IIf(.PictureWatermark = True, vbChecked, vbUnchecked)
 CheckSnapToGrid.Value = IIf(.SnapToGrid = True, vbChecked, vbUnchecked)
+CheckGroupView.Value = IIf(.GroupView = True, vbChecked, vbUnchecked)
 End With
 FreezeChanged = False
 End Sub
@@ -724,6 +734,11 @@ PropertyPage.Changed = True
 End Sub
 
 Private Sub CheckSnapToGrid_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckGroupView_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
 End Sub

@@ -173,9 +173,17 @@ Attribute Left.VB_Description = "Returns the distance between the internal left 
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Left = ShadowListView.FListItemLeft(PropIndex)
 End Property
 
+Public Property Let Left(ByVal Value As Single)
+If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView.FListItemLeft(PropIndex) = Value
+End Property
+
 Public Property Get Top() As Single
 Attribute Top.VB_Description = "Returns the distance between the internal top edge of an object and the top edge of its container."
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Top = ShadowListView.FListItemTop(PropIndex)
+End Property
+
+Public Property Let Top(ByVal Value As Single)
+If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView.FListItemTop(PropIndex) = Value
 End Property
 
 Public Property Get Width() As Single
@@ -183,9 +191,22 @@ Attribute Width.VB_Description = "Returns the width of the list item."
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Width = ShadowListView.FListItemWidth(PropIndex)
 End Property
 
+Public Property Let Width(ByVal Value As Single)
+Err.Raise Number:=383, Description:="Property is read-only"
+End Property
+
 Public Property Get Height() As Single
 Attribute Height.VB_Description = "Returns the height of the list item."
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Height = ShadowListView.FListItemHeight(PropIndex)
+End Property
+
+Public Property Let Height(ByVal Value As Single)
+Err.Raise Number:=383, Description:="Property is read-only"
+End Property
+
+Public Property Get Visible() As Boolean
+Attribute Visible.VB_Description = "Returns/sets a value that determines whether an object is visible or hidden. Requires comctl32.dll version 6.0 or higher."
+If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Visible = ShadowListView.FListItemVisible(PropIndex)
 End Property
 
 Public Sub EnsureVisible()
@@ -206,6 +227,19 @@ Public Function CreateDragImage(Optional ByRef X As Single, Optional ByRef Y As 
 Attribute CreateDragImage.VB_Description = "Retrieves the handle to an image list containing a bitmap that can be used to visualize dragging of this list item.Your application is responsible for destroying the image list when it is no longer needed."
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then CreateDragImage = ShadowListView.FListItemCreateDragImage(PropIndex, X, Y)
 End Function
+
+Public Property Get Group() As LvwGroup
+Attribute Group.VB_Description = "Returns/sets the identifier of the group that the item belongs to. Requires comctl32.dll version 6.0 or higher."
+If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Set Group = ShadowListView.FListItemGroup(PropIndex)
+End Property
+
+Public Property Let Group(ByVal Value As LvwGroup)
+If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView.FListItemGroup(PropIndex) = Value
+End Property
+
+Public Property Set Group(ByVal Value As LvwGroup)
+If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Set ShadowListView.FListItemGroup(PropIndex) = Value
+End Property
 
 Public Property Get ListSubItems() As LvwListSubItems
 Attribute ListSubItems.VB_Description = "Returns/sets a collection of list sub items belonging to the list item."

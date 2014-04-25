@@ -150,6 +150,10 @@ Attribute Left.VB_Description = "Returns/sets the distance between the internal 
 Left = ShadowListView.FColumnHeaderLeft(PropIndex)
 End Property
 
+Public Property Let Left(ByVal Value As Single)
+Err.Raise Number:=383, Description:="Property is read-only"
+End Property
+
 Public Sub AutoSize(ByVal Value As LvwColumnHeaderAutoSizeConstants)
 Attribute AutoSize.VB_Description = "Automatically sizes the column header."
 ShadowListView.FColumnHeaderAutoSize PropIndex, Value
