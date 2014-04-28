@@ -2672,6 +2672,7 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
                 .Top = NextPositionTop + (lngButtonHeight - .Height) / 2
                 .ZOrder 0
                 .Tag = tabN
+                .Refresh
             End With
 
             'Считываем подменяемое имя пакета из файла

@@ -169,7 +169,7 @@ PropToolTipText = Value
 End Property
 
 Public Property Get Left() As Single
-Attribute Left.VB_Description = "Returns the distance between the internal left edge of an object and the left edge of its container."
+Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Left = ShadowListView.FListItemLeft(PropIndex)
 End Property
 
@@ -178,7 +178,7 @@ If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView
 End Property
 
 Public Property Get Top() As Single
-Attribute Top.VB_Description = "Returns the distance between the internal top edge of an object and the top edge of its container."
+Attribute Top.VB_Description = "Returns/sets the distance between the internal top edge of an object and the top edge of its container."
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then Top = ShadowListView.FListItemTop(PropIndex)
 End Property
 

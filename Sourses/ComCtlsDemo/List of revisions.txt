@@ -1,5 +1,17 @@
 List of revisions:
 
+27-Apr-2014
+- Included the DroppedDown property in the CommandButtonW control.
+
+14-Apr-2014
+- Bugfix in the drawing when the HideSelection property is False in the TreeView control.
+
+12-Apr-2014
+- Included the 'Groups' functionality in the ListView control. ('LvwGroup' and 'LvwGroups' classes)
+  In order to use this the new property 'GroupView' must be set to True.
+- Included the 'Visible' property of a ListItem in the ListView control.
+- Bugfix in the Left/Top property of a ListItem (and not read-only anymore) in the ListView control.
+
 09-Apr-2014
 - Minor improvements.
 

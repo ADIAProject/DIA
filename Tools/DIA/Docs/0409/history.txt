@@ -6,7 +6,18 @@ The Indications:
 	"-" - Correct mistake
 	"+" - Added function
 	"*" - Make-up change
-	"!" - An Important notes on working the program.
+	"!" - An Important notes on working the program
+
+Version 6.4.28 PreFinal (28.04.2014)
+	* Optimize starting process, the rate increased by ~ 40 %
+	* Optimizing the indexing process, the rate increased by ~ 10-15%
+	+ Added command /savereport[:DIR] to save the snapshot of the operation system. If the directory [DIR] is not specified, the file is saved to the directory DebugLogPath.
+	+ After you run program the snapshot of the system is stored to the directory DebugLogPath
+	- Fixed a rare bug in the indexing process when some HWID trimmed
+	- Fixed a bug that caused the program to crash if the driver installation starts immediately after indexation ( in the same session of the program )
+	- Fixed selection of drivers for touchpad
+	- Fixed not update the status pictures of the driverpack's after start emulation mode
+	- Several other minor bugs
 
 Version 6.4.11 PreFinal (11.04.2014)
 	* Optimize starting process, the rate increased to ~ 2-3 times
