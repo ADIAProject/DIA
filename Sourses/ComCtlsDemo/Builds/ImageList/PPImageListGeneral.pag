@@ -171,6 +171,7 @@ Else
     .UseMaskColor = CBool(CheckUseMaskColor.Value = vbChecked)
 End If
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

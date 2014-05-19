@@ -65,11 +65,11 @@ Top As Long
 Right As Long
 Bottom As Long
 End Type
-Private Declare Function ImageList_Replace Lib "comctl32" (ByVal hImageList As Long, ByVal ImgIndex As Long, ByVal hbmImage As Long, ByVal hBMMask As Long) As Long
+Private Declare Function ImageList_Replace Lib "comctl32" (ByVal hImageList As Long, ByVal ImgIndex As Long, ByVal hBmpImage As Long, ByVal hBMMask As Long) As Long
 Private Declare Function ImageList_ReplaceIcon Lib "comctl32" (ByVal hImageList As Long, ByVal i As Long, ByVal hIcon As Long) As Long
 Private Declare Function ImageList_Create Lib "comctl32" (ByVal MinCX As Long, ByVal MinCY As Long, ByVal Flags As Long, ByVal cInitial As Long, ByVal cGrow As Long) As Long
-Private Declare Function ImageList_AddMasked Lib "comctl32" (ByVal hImageList As Long, ByVal hbmImage As Long, ByVal crMask As Long) As Long
-Private Declare Function ImageList_Add Lib "comctl32" (ByVal hImageList As Long, ByVal hbmImage As Long, ByRef hBMMask As Long) As Long
+Private Declare Function ImageList_AddMasked Lib "comctl32" (ByVal hImageList As Long, ByVal hBmpImage As Long, ByVal crMask As Long) As Long
+Private Declare Function ImageList_Add Lib "comctl32" (ByVal hImageList As Long, ByVal hBmpImage As Long, ByRef hBMMask As Long) As Long
 Private Declare Function ImageList_Copy Lib "comctl32" (ByVal hImageListDst As Long, ByVal iDst As Long, ByVal hImageListSrc As Long, ByVal iSrc As Long, ByVal uFlags As Long) As Long
 Private Declare Function ImageList_Remove Lib "comctl32" (ByVal hImageList As Long, ByVal ImgIndex As Long) As Long
 Private Declare Function ImageList_AddIcon Lib "comctl32" (ByVal hImageList As Long, ByVal hIcon As Long) As Long
@@ -78,7 +78,7 @@ Private Declare Function ImageList_GetImageCount Lib "comctl32" (ByVal hImageLis
 Private Declare Function ImageList_Destroy Lib "comctl32" (ByVal hImageList As Long) As Long
 Private Declare Function ImageList_Draw Lib "comctl32" (ByVal hImageList As Long, ByVal i As Long, ByVal hDcDst As Long, ByVal X As Long, ByVal Y As Long, ByVal fStyle As Long) As Long
 Private Declare Function ImageList_DrawEx Lib "comctl32" (ByVal hImageList As Long, ByVal i As Long, ByVal hDcDst As Long, ByVal X As Long, ByVal Y As Long, ByVal DX As Long, ByVal DY As Long, ByVal rgbBk As Long, ByVal rgbFg As Long, ByVal fStyle As Long) As Long
-Private Declare Function ImageList_SetBkColor Lib "comctl32" (ByVal hIml As Long, ByVal clrBk As Long) As Long
+Private Declare Function ImageList_SetBkColor Lib "comctl32" (ByVal hImageList As Long, ByVal ClrBk As Long) As Long
 Private Declare Function ImageList_SetOverlayImage Lib "comctl32" (ByVal hImageList As Long, ByVal ImgIndex As Long, ByVal iOverlay As Long) As Boolean
 Private Declare Function CreateDCAsNull Lib "gdi32" Alias "CreateDCW" (ByVal lpDriverName As Long, ByRef lpDeviceName As Any, ByRef lpOutput As Any, ByRef lpInitData As Any) As Long
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long

@@ -440,6 +440,7 @@ With PropertyPage.SelectedControls(0)
 .SnapToGrid = CBool(CheckSnapToGrid.Value = vbChecked)
 .GroupView = CBool(CheckGroupView.Value = vbChecked)
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

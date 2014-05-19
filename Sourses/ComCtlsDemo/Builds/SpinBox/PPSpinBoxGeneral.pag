@@ -285,6 +285,7 @@ With PropertyPage.SelectedControls(0)
 .AllowOnlyNumbers = CBool(CheckAllowOnlyNumbers.Value = vbChecked)
 .HideSelection = CBool(CheckHideSelection.Value = vbChecked)
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

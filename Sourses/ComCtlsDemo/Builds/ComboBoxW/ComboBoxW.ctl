@@ -212,6 +212,7 @@ Private Const CB_DELETESTRING As Long = &H144
 Private Const CB_GETCOUNT As Long = &H146
 Private Const CB_GETCURSEL As Long = &H147
 Private Const CB_INSERTSTRING As Long = &H14A
+Private Const CB_FINDSTRING As Long = &H14C
 Private Const CB_SETCURSEL As Long = &H14E
 Private Const CB_GETDROPPEDCONTROLRECT As Long = &H152
 Private Const CB_GETTOPINDEX As Long = &H15B
@@ -234,6 +235,7 @@ Private Const CB_GETITEMDATA As Long = &H150
 Private Const CB_SETITEMDATA As Long = &H151
 Private Const CB_SETEXTENDEDUI As Long = &H155
 Private Const CB_GETEXTENDEDUI As Long = &H156
+Private Const CB_FINDSTRINGEXACT As Long = &H158
 Private Const CBM_FIRST As Long = &H1700
 Private Const CB_SETMINVISIBLE As Long = (CBM_FIRST + 1)
 Private Const CB_GETMINVISIBLE As Long = (CBM_FIRST + 2)
@@ -917,15 +919,17 @@ MaxDropDownItems = PropMaxDropDownItems
 End Property
 
 Public Property Let MaxDropDownItems(ByVal Value As Integer)
-If Value < 1 Or Value > 30 Then
-    If Ambient.UserMode = False Then
-        MsgBox "Invalid property value", vbCritical + vbOKOnly
-        Exit Property
-    Else
-        Err.Raise 380
-    End If
-End If
-PropMaxDropDownItems = Value
+Select Case Value
+    Case 1 To 30
+        PropMaxDropDownItems = Value
+    Case Else
+        If Ambient.UserMode = False Then
+            MsgBox "Invalid property value", vbCritical + vbOKOnly
+            Exit Property
+        Else
+            Err.Raise 380
+        End If
+End Select
 Call SetDropListHeight(True)
 UserControl.PropertyChanged "MaxDropDownItems"
 End Property
@@ -1471,6 +1475,21 @@ If ComboBoxHandle <> 0 Then
     End If
 End If
 End Property
+
+Public Function FindItem(ByVal Text As String, Optional ByVal Index As Long = -1, Optional ByVal Partial As Boolean) As Long
+Attribute FindItem.VB_Description = "Finds an item in the combo box and returns the index of that item."
+If ComboBoxHandle <> 0 Then
+    If Not SendMessage(ComboBoxHandle, CB_GETLBTEXTLEN, Index, ByVal 0&) = CB_ERR Or Index = -1 Then
+        If Partial = True Then
+            FindItem = SendMessage(ComboBoxHandle, CB_FINDSTRING, Index, ByVal StrPtr(Text))
+        Else
+            FindItem = SendMessage(ComboBoxHandle, CB_FINDSTRINGEXACT, Index, ByVal StrPtr(Text))
+        End If
+    Else
+        Err.Raise 381
+    End If
+End If
+End Function
 
 Public Function GetIdealHorizontalExtent() As Single
 Attribute GetIdealHorizontalExtent.VB_Description = "Gets the ideal value for the horizontal extent property."

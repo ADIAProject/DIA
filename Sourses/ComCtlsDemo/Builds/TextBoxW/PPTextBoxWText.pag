@@ -41,6 +41,7 @@ Private Sub PropertyPage_ApplyChanges()
 With PropertyPage.SelectedControls(0)
 If Not TextObject Is Nothing Then .Text = TextObject.Text
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

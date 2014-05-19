@@ -293,6 +293,7 @@ If .TextMode <> ComboTextMode.ItemData(ComboTextMode.ListIndex) Then .TextMode =
 .SelectionBar = CBool(CheckSelectionBar.Value = vbChecked)
 If Not .FileName = TextFileName.Text Or Not TextFileName.Text = vbNullString Then .FileName = TextFileName.Text
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

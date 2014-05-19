@@ -348,15 +348,23 @@ If lParam And &H80000000 Then Get_Y_lParam = Get_Y_lParam Or &HFFFF8000
 End Function
 
 Public Function StrToVar(ByVal Text As String) As Variant
-Dim B() As Byte
-B() = Text
-StrToVar = B()
+If Text = vbNullString Then
+    StrToVar = Empty
+Else
+    Dim B() As Byte
+    B() = Text
+    StrToVar = B()
+End If
 End Function
 
 Public Function VarToStr(ByVal Bytes As Variant) As String
-Dim B() As Byte
-B() = Bytes
-VarToStr = B()
+If IsEmpty(Bytes) Then
+    VarToStr = vbNullString
+Else
+    Dim B() As Byte
+    B() = Bytes
+    VarToStr = B()
+End If
 End Function
 
 Public Function UnsignedAdd(ByVal Start As Long, ByVal Incr As Long) As Long

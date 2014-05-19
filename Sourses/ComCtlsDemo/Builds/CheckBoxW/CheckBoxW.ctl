@@ -169,6 +169,9 @@ Private Const BS_BITMAP As Long = &H80
 Private Const BS_LEFT As Long = &H100
 Private Const BS_RIGHT As Long = &H200
 Private Const BS_CENTER As Long = &H300
+Private Const BS_TOP As Long = &H400
+Private Const BS_VCENTER As Long = &HC00
+Private Const BS_BOTTOM As Long = &H800
 Private Const BS_PUSHLIKE As Long = &H1000
 Private Const BS_MULTILINE As Long = &H2000
 Private Const BS_NOTIFY As Long = &H4000
@@ -208,6 +211,7 @@ Private PropPicture As IPictureDisp
 Private PropWordWrap As Boolean
 Private PropTransparent As Boolean
 Private PropAppearance As CCAppearanceConstants
+Private PropVerticalAlignment As CCVerticalAlignmentConstants
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -342,6 +346,7 @@ Set PropPicture = Nothing
 PropWordWrap = True
 PropTransparent = False
 PropAppearance = UserControl.Appearance
+PropVerticalAlignment = CCVerticalAlignmentCenter
 Call CreateCheckBox
 End Sub
 
@@ -364,6 +369,7 @@ Set PropPicture = .ReadProperty("Picture", Nothing)
 PropWordWrap = .ReadProperty("WordWrap", True)
 PropTransparent = .ReadProperty("Transparent", False)
 PropAppearance = .ReadProperty("Appearance", CCAppearance3D)
+PropVerticalAlignment = .ReadProperty("VerticalAlignment", CCVerticalAlignmentCenter)
 End With
 Call CreateCheckBox
 End Sub
@@ -387,6 +393,7 @@ With PropBag
 .WriteProperty "WordWrap", PropWordWrap, True
 .WriteProperty "Transparent", PropTransparent, False
 .WriteProperty "Appearance", PropAppearance, CCAppearance3D
+.WriteProperty "VerticalAlignment", PropVerticalAlignment, CCVerticalAlignmentCenter
 End With
 End Sub
 
@@ -678,7 +685,6 @@ End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Integer)
-If Me.Value = NewValue Then Exit Property
 Select Case NewValue
     Case vbUnchecked, vbChecked, vbGrayed
         PropValue = NewValue
@@ -903,6 +909,38 @@ Me.Refresh
 UserControl.PropertyChanged "Appearance"
 End Property
 
+Public Property Get VerticalAlignment() As CCVerticalAlignmentConstants
+Attribute VerticalAlignment.VB_Description = "Returns/sets the vertical alignment."
+VerticalAlignment = PropVerticalAlignment
+End Property
+
+Public Property Let VerticalAlignment(ByVal Value As CCVerticalAlignmentConstants)
+Select Case Value
+    Case CCVerticalAlignmentTop, CCVerticalAlignmentCenter, CCVerticalAlignmentBottom
+        PropVerticalAlignment = Value
+    Case Else
+        Err.Raise 380
+End Select
+If CheckBoxHandle <> 0 Then
+    Dim dwStyle As Long
+    dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+    If (dwStyle And BS_TOP) = BS_TOP Then dwStyle = dwStyle And Not BS_TOP
+    If (dwStyle And BS_VCENTER) = BS_VCENTER Then dwStyle = dwStyle And Not BS_VCENTER
+    If (dwStyle And BS_BOTTOM) = BS_BOTTOM Then dwStyle = dwStyle And Not BS_BOTTOM
+    Select Case PropVerticalAlignment
+        Case CCVerticalAlignmentTop
+            dwStyle = dwStyle Or BS_TOP
+        Case CCVerticalAlignmentCenter
+            dwStyle = dwStyle Or BS_VCENTER
+        Case CCVerticalAlignmentBottom
+            dwStyle = dwStyle Or BS_BOTTOM
+    End Select
+    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+    Me.Refresh
+End If
+UserControl.PropertyChanged "VerticalAlignment"
+End Property
+
 Private Sub CreateCheckBox()
 If CheckBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
@@ -919,6 +957,14 @@ End Select
 If PropPushLike = True Then dwStyle = dwStyle Or BS_PUSHLIKE
 If PropWordWrap = True Then dwStyle = dwStyle Or BS_MULTILINE
 If PropAppearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
+Select Case PropVerticalAlignment
+    Case CCVerticalAlignmentTop
+        dwStyle = dwStyle Or BS_TOP
+    Case CCVerticalAlignmentCenter
+        dwStyle = dwStyle Or BS_VCENTER
+    Case CCVerticalAlignmentBottom
+        dwStyle = dwStyle Or BS_BOTTOM
+End Select
 If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 CheckBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If CheckBoxHandle <> 0 Then Call ComCtlsShowAllUIStates(CheckBoxHandle)

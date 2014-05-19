@@ -183,7 +183,6 @@ Begin VB.Form frmEmulate
          EndProperty
          Text            =   "frmEmulate.frx":000C
          Locked          =   -1  'True
-         CueBanner       =   "frmEmulate.frx":004C
       End
       Begin prjDIADBS.ComboBoxW cmbOS 
          Height          =   315
@@ -203,8 +202,6 @@ Begin VB.Form frmEmulate
             Strikethrough   =   0   'False
          EndProperty
          Locked          =   -1  'True
-         Text            =   "frmEmulate.frx":006C
-         CueBanner       =   "frmEmulate.frx":008C
       End
       Begin prjDIADBS.CheckBoxW chk64bit 
          Height          =   255
@@ -224,7 +221,7 @@ Begin VB.Form frmEmulate
             Strikethrough   =   0   'False
          EndProperty
          BackColor       =   15783104
-         Caption         =   "frmEmulate.frx":00AC
+         Caption         =   "frmEmulate.frx":004C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkIsNotebook 
@@ -245,7 +242,7 @@ Begin VB.Form frmEmulate
             Strikethrough   =   0   'False
          EndProperty
          BackColor       =   15783104
-         Caption         =   "frmEmulate.frx":00EA
+         Caption         =   "frmEmulate.frx":008A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.LabelW lblOSInfo 
@@ -267,7 +264,7 @@ Begin VB.Form frmEmulate
          EndProperty
          Alignment       =   2
          BackStyle       =   0
-         Caption         =   $"frmEmulate.frx":011E
+         Caption         =   $"frmEmulate.frx":00BE
       End
    End
 End

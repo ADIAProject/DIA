@@ -307,8 +307,6 @@ Begin VB.Form frmListHwidAll
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmListHwidAll.frx":00D2
-         CueBanner       =   "frmListHwidAll.frx":00F2
       End
       Begin prjDIADBS.CheckBoxW chkParseHwid 
          Height          =   210
@@ -328,7 +326,7 @@ Begin VB.Form frmListHwidAll
             Strikethrough   =   0   'False
          EndProperty
          BackColor       =   15783104
-         Caption         =   "frmListHwidAll.frx":0112
+         Caption         =   "frmListHwidAll.frx":00D2
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optDevID 
@@ -350,7 +348,7 @@ Begin VB.Form frmListHwidAll
          EndProperty
          BackColor       =   15783104
          Value           =   0   'False
-         Caption         =   "frmListHwidAll.frx":0184
+         Caption         =   "frmListHwidAll.frx":0144
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optMS 
@@ -372,7 +370,7 @@ Begin VB.Form frmListHwidAll
          EndProperty
          BackColor       =   15783104
          Value           =   0   'False
-         Caption         =   "frmListHwidAll.frx":01B8
+         Caption         =   "frmListHwidAll.frx":0178
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.OptionButtonW optGoogle 
@@ -393,7 +391,7 @@ Begin VB.Form frmListHwidAll
             Strikethrough   =   0   'False
          EndProperty
          BackColor       =   15783104
-         Caption         =   "frmListHwidAll.frx":01F2
+         Caption         =   "frmListHwidAll.frx":01B2
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.ctlJCbutton cmdGoSite 
@@ -440,9 +438,9 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Icons           =   "frmListHwidAll.frx":0226
-      SmallIcons      =   "frmListHwidAll.frx":0252
-      ColumnHeaderIcons=   "frmListHwidAll.frx":027E
+      Icons           =   "frmListHwidAll.frx":01E6
+      SmallIcons      =   "frmListHwidAll.frx":0212
+      ColumnHeaderIcons=   "frmListHwidAll.frx":023E
       View            =   3
       Arrange         =   1
       AllowColumnReorder=   -1  'True

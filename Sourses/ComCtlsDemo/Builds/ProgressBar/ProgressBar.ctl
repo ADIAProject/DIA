@@ -122,7 +122,7 @@ Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (By
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
-Private Declare Function SendMessageLong Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function SetParent Lib "user32" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
@@ -519,15 +519,16 @@ End Property
 Public Property Get Min() As Long
 Attribute Min.VB_Description = "Returns/sets the minimum position."
 If ProgressBarHandle <> 0 Then
-    Min = SendMessageLong(ProgressBarHandle, PBM_GETRANGE, 1, 0)
+    Min = SendMessage(ProgressBarHandle, PBM_GETRANGE, 1, ByVal 0&)
 Else
     Min = PropRange.Min
 End If
 End Property
 
 Public Property Let Min(ByVal Value As Long)
-If Value < PropRange.Max Then
+If Value < Me.Max Then
     PropRange.Min = Value
+    PropRange.Max = Me.Max
     If PropValue < PropRange.Min Then PropValue = PropRange.Min
 Else
     If Ambient.UserMode = False Then
@@ -537,21 +538,22 @@ Else
         Err.Raise 380
     End If
 End If
-If ProgressBarHandle <> 0 Then SendMessageLong ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, PropRange.Max
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, ByVal PropRange.Max
 UserControl.PropertyChanged "Min"
 End Property
 
 Public Property Get Max() As Long
 Attribute Max.VB_Description = "Returns/sets the maximum position."
 If ProgressBarHandle = 0 Then
-    Max = SendMessageLong(ProgressBarHandle, PBM_GETRANGE, 0, 0)
+    Max = SendMessage(ProgressBarHandle, PBM_GETRANGE, 0, ByVal 0&)
 Else
     Max = PropRange.Max
 End If
 End Property
 
 Public Property Let Max(ByVal Value As Long)
-If Value > PropRange.Min Then
+If Value > Me.Min Then
+    PropRange.Min = Me.Min
     PropRange.Max = Value
     If PropValue > PropRange.Max Then PropValue = PropRange.Max
 Else
@@ -562,7 +564,7 @@ Else
         Err.Raise 380
     End If
 End If
-If ProgressBarHandle <> 0 Then SendMessageLong ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, PropRange.Max
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, ByVal PropRange.Max
 UserControl.PropertyChanged "Max"
 End Property
 
@@ -570,30 +572,29 @@ Public Property Get Value() As Long
 Attribute Value.VB_Description = "Returns/sets the current position."
 Attribute Value.VB_UserMemId = 0
 If ProgressBarHandle <> 0 Then
-    Value = SendMessageLong(ProgressBarHandle, PBM_GETPOS, 0, 0)
+    Value = SendMessage(ProgressBarHandle, PBM_GETPOS, 0, ByVal 0&)
 Else
     Value = PropValue
 End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Long)
-If Me.Value = NewValue Then Exit Property
-PropValue = NewValue
-Select Case PropValue
-    Case PropRange.Min To PropRange.Max
-        If ProgressBarHandle <> 0 Then SendMessageLong ProgressBarHandle, PBM_SETPOS, PropValue, 0
-    Case Is < PropRange.Min
-        Me.Value = PropRange.Min
-    Case Is > PropRange.Max
-        Me.Value = PropRange.Max
+Select Case NewValue
+    Case Me.Min To Me.Max
+        PropValue = NewValue
+    Case Is < Me.Min
+        PropValue = Me.Min
+    Case Is > Me.Max
+        PropValue = Me.Max
 End Select
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETPOS, PropValue, ByVal 0&
 UserControl.PropertyChanged "Value"
 End Property
 
 Public Property Get Step() As Long
 Attribute Step.VB_Description = "Returns/sets the step value for the 'StepIt' procedure."
 If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
-    Step = SendMessageLong(ProgressBarHandle, PBM_GETSTEP, 0, 0)
+    Step = SendMessage(ProgressBarHandle, PBM_GETSTEP, 0, ByVal 0&)
 Else
     Step = PropStep
 End If
@@ -601,7 +602,7 @@ End Property
 
 Public Property Let Step(ByVal Value As Long)
 PropStep = Value
-If ProgressBarHandle <> 0 Then SendMessageLong ProgressBarHandle, PBM_SETSTEP, PropStep, 0
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETSTEP, PropStep, ByVal 0&
 UserControl.PropertyChanged "Step"
 End Property
 
@@ -635,9 +636,9 @@ Public Property Let MarqueeAnimation(ByVal Value As Boolean)
 PropMarqueeAnimation = Value
 If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     If PropMarqueeAnimation = True Then
-        SendMessageLong ProgressBarHandle, PBM_SETMARQUEE, 1, PropMarqueeSpeed
+        SendMessage ProgressBarHandle, PBM_SETMARQUEE, 1, ByVal PropMarqueeSpeed
     Else
-        SendMessageLong ProgressBarHandle, PBM_SETMARQUEE, 0, PropMarqueeSpeed
+        SendMessage ProgressBarHandle, PBM_SETMARQUEE, 0, ByVal PropMarqueeSpeed
     End If
 End If
 UserControl.PropertyChanged "Marquee"
@@ -651,7 +652,7 @@ End Property
 Public Property Let MarqueeSpeed(ByVal Value As Long)
 PropMarqueeSpeed = Value
 If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
-    If PropMarquee = True Then SendMessageLong ProgressBarHandle, PBM_SETMARQUEE, 1, PropMarqueeSpeed
+    If PropMarquee = True Then SendMessage ProgressBarHandle, PBM_SETMARQUEE, 1, ByVal PropMarqueeSpeed
 End If
 UserControl.PropertyChanged "MarqueeSpeed"
 End Property
@@ -712,35 +713,31 @@ UserControl.PropertyChanged "SmoothReverse"
 End Property
 
 Public Property Get BackColor() As OLE_COLOR
-Attribute BackColor.VB_Description = "Returns/sets the background color used to display text and graphics in an object. Only applicable if visual styles are not used."
+Attribute BackColor.VB_Description = "Returns/sets the background color used to display text and graphics in an object. This has no visible effect if the version of comctl32.dll is 6.0 or higher and the visual styles property is set to true."
 BackColor = PropBackColor
 End Property
 
 Public Property Let BackColor(ByVal Value As OLE_COLOR)
 PropBackColor = Value
-If ProgressBarHandle <> 0 Then
-    SendMessageLong ProgressBarHandle, PBM_SETBKCOLOR, 0, WinColor(PropBackColor)
-End If
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETBKCOLOR, 0, ByVal WinColor(PropBackColor)
 UserControl.PropertyChanged "BackColor"
 End Property
 
 Public Property Get BarColor() As OLE_COLOR
-Attribute BarColor.VB_Description = "Returns/sets the bar color used to display text and graphics in an object. Only applicable if visual styles are not used."
+Attribute BarColor.VB_Description = "Returns/sets the bar color used to display text and graphics in an object. This has no visible effect if the version of comctl32.dll is 6.0 or higher and the visual styles property is set to true."
 BarColor = PropBarColor
 End Property
 
 Public Property Let BarColor(ByVal Value As OLE_COLOR)
 PropBarColor = Value
-If ProgressBarHandle <> 0 Then
-    SendMessageLong ProgressBarHandle, PBM_SETBARCOLOR, 0, WinColor(PropBarColor)
-End If
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETBARCOLOR, 0, ByVal WinColor(PropBarColor)
 UserControl.PropertyChanged "BarColor"
 End Property
 
 Public Property Get State() As PrbStateConstants
 Attribute State.VB_Description = "Returns/sets the state of the progress bar. Requires comctl32.dll version 6.1 or higher."
 If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
-    State = SendMessageLong(ProgressBarHandle, PBM_GETSTATE, 0, 0)
+    State = SendMessage(ProgressBarHandle, PBM_GETSTATE, 0, ByVal 0&)
 Else
     State = PropState
 End If
@@ -749,7 +746,7 @@ End Property
 Public Property Let State(ByVal Value As PrbStateConstants)
 PropState = Value
 If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
-    SendMessageLong ProgressBarHandle, PBM_SETSTATE, PropState, 0
+    SendMessage ProgressBarHandle, PBM_SETSTATE, PropState, ByVal 0&
 End If
 UserControl.PropertyChanged "State"
 End Property
@@ -765,7 +762,7 @@ If ComCtlsSupportLevel() >= 1 Then
     If PropSmoothReverse = True Then dwStyle = dwStyle Or PBS_SMOOTHREVERSE
 End If
 ProgressBarHandle = CreateWindowEx(0, StrPtr("msctls_progress32"), StrPtr("Progress Bar"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
-If ProgressBarHandle <> 0 Then SendMessageLong ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, PropRange.Max
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, ByVal PropRange.Max
 Me.VisualStyles = PropVisualStyles
 Me.Value = PropValue
 Me.Step = PropStep
@@ -782,11 +779,11 @@ Private Sub ReCreateProgressBar()
 If Ambient.UserMode = True Then
     Dim Visible As Boolean
     Visible = Extender.Visible
-    If Visible = True Then SendMessageLong UserControl.hWnd, WM_SETREDRAW, 0, 0
+    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
     Call DestroyProgressBar
     Call CreateProgressBar
     Call UserControl_Resize
-    If Visible = True Then SendMessageLong UserControl.hWnd, WM_SETREDRAW, 1, 0
+    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
     Me.Refresh
 Else
     Call DestroyProgressBar
@@ -804,27 +801,27 @@ DestroyWindow ProgressBarHandle
 ProgressBarHandle = 0
 End Sub
 
-Public Sub StepIt()
-Attribute StepIt.VB_Description = "Advances the current position by the step increment."
-If ProgressBarHandle = 0 Then Exit Sub
-If PropStepAutoReset = True Then
-    SendMessageLong ProgressBarHandle, PBM_STEPIT, 0, 0
-    PropValue = Me.Value
-Else
-    If Me.Value + Me.Step <= Me.Max Then
-        SendMessageLong ProgressBarHandle, PBM_STEPIT, 0, 0
-        PropValue = Me.Value
-    Else
-        Me.Value = Me.Max
-    End If
-End If
-End Sub
-
 Public Sub Refresh()
 Attribute Refresh.VB_Description = "Forces a complete repaint of a object."
 Attribute Refresh.VB_UserMemId = -550
 UserControl.Refresh
 RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
+End Sub
+
+Public Sub StepIt()
+Attribute StepIt.VB_Description = "Advances the current position by the step increment."
+If ProgressBarHandle = 0 Then Exit Sub
+If PropStepAutoReset = True Then
+    SendMessage ProgressBarHandle, PBM_STEPIT, 0, ByVal 0&
+    PropValue = Me.Value
+Else
+    If Me.Value + Me.Step <= Me.Max Then
+        SendMessage ProgressBarHandle, PBM_STEPIT, 0, ByVal 0&
+        PropValue = Me.Value
+    Else
+        Me.Value = Me.Max
+    End If
+End If
 End Sub
 
 Public Sub SetTaskBarProgressState(ByVal State As PrbTaskBarStateConstants)

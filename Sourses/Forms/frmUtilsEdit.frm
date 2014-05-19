@@ -40,8 +40,6 @@ Begin VB.Form frmUtilsEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Text            =   "frmUtilsEdit.frx":000C
-      CueBanner       =   "frmUtilsEdit.frx":002C
    End
    Begin prjDIADBS.TextBoxW txtUtilName 
       Height          =   330
@@ -60,8 +58,6 @@ Begin VB.Form frmUtilsEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Text            =   "frmUtilsEdit.frx":004C
-      CueBanner       =   "frmUtilsEdit.frx":006C
    End
    Begin prjDIADBS.ctlUcPickBox ucPathUtil 
       Height          =   315

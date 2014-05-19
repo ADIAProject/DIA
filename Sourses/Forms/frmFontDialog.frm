@@ -42,7 +42,6 @@ Begin VB.Form frmFontDialog
       EndProperty
       Text            =   "frmFontDialog.frx":000C
       Alignment       =   2
-      CueBanner       =   "frmFontDialog.frx":005E
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -65,7 +64,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":007E
+      Caption         =   "frmFontDialog.frx":005E
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -88,7 +87,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":00AA
+      Caption         =   "frmFontDialog.frx":008A
    End
    Begin prjDIADBS.OptionButtonW optControl 
       Height          =   255
@@ -110,7 +109,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":00DE
+      Caption         =   "frmFontDialog.frx":00BE
    End
    Begin prjDIADBS.SpinBox txtFontSize 
       Height          =   315
@@ -142,7 +141,7 @@ Begin VB.Form frmFontDialog
       Width           =   525
       _ExtentX        =   926
       _ExtentY        =   582
-      Icon            =   "frmFontDialog.frx":0108
+      Icon            =   "frmFontDialog.frx":00E8
    End
    Begin prjDIADBS.CheckBoxW chkItalic 
       Height          =   315
@@ -161,7 +160,7 @@ Begin VB.Form frmFontDialog
          Italic          =   -1  'True
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":068E
+      Caption         =   "frmFontDialog.frx":066E
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.CheckBoxW chkBold 
@@ -181,7 +180,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":06BA
+      Caption         =   "frmFontDialog.frx":069A
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlFontCombo ctlFontCombo 
@@ -222,7 +221,7 @@ Begin VB.Form frmFontDialog
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmFontDialog.frx":06E2
+      Caption         =   "frmFontDialog.frx":06C2
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
@@ -299,7 +298,7 @@ Begin VB.Form frmFontDialog
          Strikethrough   =   0   'False
       EndProperty
       Value           =   0   'False
-      Caption         =   "frmFontDialog.frx":0714
+      Caption         =   "frmFontDialog.frx":06F4
    End
    Begin prjDIADBS.LabelW lblFontSize 
       Height          =   375

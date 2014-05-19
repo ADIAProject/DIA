@@ -96,6 +96,7 @@ With PropertyPage.SelectedControls(0)
 .SmallIcons = ComboSmall.List(ComboSmall.ListIndex)
 .ColumnHeaderIcons = ComboColumnHeader.List(ComboColumnHeader.ListIndex)
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

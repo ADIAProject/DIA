@@ -40,8 +40,6 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Text            =   "frmOSEdit.frx":000C
-      CueBanner       =   "frmOSEdit.frx":002C
    End
    Begin prjDIADBS.FrameW frExcludeFileName 
       Height          =   1250
@@ -60,7 +58,7 @@ Begin VB.Form frmOSEdit
          Strikethrough   =   0   'False
       EndProperty
       ForeColor       =   -2147483635
-      Caption         =   "frmOSEdit.frx":004C
+      Caption         =   "frmOSEdit.frx":000C
       Begin prjDIADBS.TextBoxW txtExcludeFileName 
          Height          =   850
          Left            =   120
@@ -78,10 +76,8 @@ Begin VB.Form frmOSEdit
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Text            =   "frmOSEdit.frx":00D4
          MultiLine       =   -1  'True
          ScrollBars      =   2
-         CueBanner       =   "frmOSEdit.frx":00F4
       End
    End
    Begin prjDIADBS.FrameW frDopFile 
@@ -101,7 +97,7 @@ Begin VB.Form frmOSEdit
          Strikethrough   =   0   'False
       EndProperty
       ForeColor       =   -2147483635
-      Caption         =   "frmOSEdit.frx":0114
+      Caption         =   "frmOSEdit.frx":0094
       Begin prjDIADBS.ctlUcPickBox ucPhysXPath 
          Height          =   315
          Left            =   2760
@@ -231,7 +227,7 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmOSEdit.frx":01D4
+      Caption         =   "frmOSEdit.frx":0154
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.TextBoxW txtOSName 
@@ -251,8 +247,6 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Text            =   "frmOSEdit.frx":0226
-      CueBanner       =   "frmOSEdit.frx":0246
    End
    Begin prjDIADBS.CheckBoxW chkNotCheckBitOS 
       Height          =   255
@@ -271,7 +265,7 @@ Begin VB.Form frmOSEdit
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Caption         =   "frmOSEdit.frx":0266
+      Caption         =   "frmOSEdit.frx":01A6
       Transparent     =   -1  'True
    End
    Begin prjDIADBS.ctlUcPickBox ucPathDRP 

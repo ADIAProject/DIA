@@ -9,6 +9,7 @@ Private CCAppearanceFlat, CCAppearance3D
 Private CCBorderStyleNone, CCBorderStyleSingle, CCBorderStyleThin, CCBorderStyleSunken, CCBorderStyleRaised
 Private CCBackStyleTransparent, CCBackStyleOpaque
 Private CCLeftRightAlignmentLeft, CCLeftRightAlignmentRight
+Private CCVerticalAlignmentTop, CCVerticalAlignmentCenter, CCVerticalAlignmentBottom
 #End If
 Public Enum OLEDropModeConstants
 OLEDropModeNone = vbOLEDropNone
@@ -32,6 +33,11 @@ End Enum
 Public Enum CCLeftRightAlignmentConstants
 CCLeftRightAlignmentLeft = 0
 CCLeftRightAlignmentRight = 1
+End Enum
+Public Enum CCVerticalAlignmentConstants
+CCVerticalAlignmentTop = 0
+CCVerticalAlignmentCenter = 1
+CCVerticalAlignmentBottom = 2
 End Enum
 Private Type DLLVERSIONINFO
 cbSize As Long

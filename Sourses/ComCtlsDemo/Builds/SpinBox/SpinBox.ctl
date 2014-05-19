@@ -134,7 +134,6 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Desti
 Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
-Private Declare Function SendMessageSpecial Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByRef wParam As Long, ByRef lParam As Long) As Long
 Private Declare Function PostMessage Lib "user32" Alias "PostMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
@@ -689,17 +688,24 @@ End Property
 Public Property Get Min() As Long
 Attribute Min.VB_Description = "Returns/sets the minimum value."
 If SpinBoxUpDownHandle <> 0 Then
-    SendMessageSpecial SpinBoxUpDownHandle, UDM_GETRANGE32, Min, 0
+    SendMessage SpinBoxUpDownHandle, UDM_GETRANGE32, VarPtr(Min), ByVal 0&
 Else
     Min = PropMin
 End If
 End Property
 
 Public Property Let Min(ByVal Value As Long)
-PropMin = Value
-If PropMax < PropMin Then PropMax = PropMin
-If Me.Value < PropMin Then Me.Value = PropMin
-If Me.Value > PropMax Then Me.Value = PropMax
+If Value <= Me.Max Then
+    PropMin = Value
+    If Me.Value < PropMin Then Me.Value = PropMin
+Else
+    If Ambient.UserMode = False Then
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise 380
+    End If
+End If
 If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
 Me.Refresh
 UserControl.PropertyChanged "Min"
@@ -708,17 +714,24 @@ End Property
 Public Property Get Max() As Long
 Attribute Max.VB_Description = "Returns/sets the maximum value."
 If SpinBoxUpDownHandle <> 0 Then
-    SendMessageSpecial SpinBoxUpDownHandle, UDM_GETRANGE32, 0, Max
+    SendMessage SpinBoxUpDownHandle, UDM_GETRANGE32, 0, ByVal VarPtr(Max)
 Else
     Max = PropMax
 End If
 End Property
 
 Public Property Let Max(ByVal Value As Long)
-PropMax = Value
-If PropMin > PropMax Then PropMin = PropMax
-If Me.Value < PropMin Then Me.Value = PropMin
-If Me.Value > PropMax Then Me.Value = PropMax
+If Value >= Me.Min Then
+    PropMax = Value
+    If Me.Value > PropMax Then Me.Value = PropMax
+Else
+    If Ambient.UserMode = False Then
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise 380
+    End If
+End If
 If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
 Me.Refresh
 UserControl.PropertyChanged "Max"
@@ -735,22 +748,20 @@ End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Long)
-If Me.Value = NewValue Then Exit Property
-PropValue = NewValue
-If Me.Max > Me.Min Then
-    If PropValue > Me.Max Then
-        PropValue = Me.Max
-    ElseIf PropValue < Me.Min Then
+Select Case NewValue
+    Case Me.Min To Me.Max
+        PropValue = NewValue
+    Case Is < Me.Min
         PropValue = Me.Min
-    End If
-Else
-    If PropValue < Me.Max Then
+    Case Is > Me.Max
         PropValue = Me.Max
-    ElseIf PropValue > Me.Min Then
-        PropValue = Me.Min
-    End If
+End Select
+Dim Changed As Boolean
+Changed = CBool(Me.Value <> PropValue)
+If SpinBoxUpDownHandle <> 0 Then
+    SendMessage SpinBoxUpDownHandle, UDM_SETPOS32, 0, ByVal PropValue
+    If Changed = True Then RaiseEvent Change
 End If
-If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETPOS32, 0, ByVal PropValue
 UserControl.PropertyChanged "Value"
 End Property
 
@@ -987,6 +998,7 @@ If SpinBoxEditHandle <> 0 Then
     SpinBoxUpDownHandle = CreateWindowEx(0, StrPtr("msctls_updown32"), StrPtr("Up Down"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
     If SpinBoxUpDownHandle <> 0 Then
         SendMessage SpinBoxUpDownHandle, UDM_SETUNICODEFORMAT, 1, ByVal 0&
+        SendMessage SpinBoxUpDownHandle, UDM_SETRANGE32, PropMin, ByVal PropMax
         SendMessage SpinBoxUpDownHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
         If PropNumberStyle = SpbNumberStyleHexadecimal Then SendMessage SpinBoxUpDownHandle, UDM_SETBASE, 16, ByVal 0&
     End If
@@ -994,8 +1006,6 @@ End If
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = UserControl.Enabled
-Me.Min = PropMin
-Me.Max = PropMax
 Me.Value = PropValue
 Me.Increment = PropIncrement
 If Ambient.UserMode = True Then

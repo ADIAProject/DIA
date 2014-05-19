@@ -1,5 +1,46 @@
 List of revisions:
 
+18-May-2014
+- Fixed a bug in the LabelW control that the X and Y values in the mouse events are not in twips.
+
+15-May-2014
+- Bugfix in the MinDate/MaxDate property of the MonthView control. (does not cause crashes anymore)
+- Renamed the 'SplitButton' property of the CommandButtonW control to 'ShowSplitButton'.
+
+14-May-2014
+- Included the SplitButtonAlignment property in the CommandButtonW control.
+- Major bugfixes in the Slider, UpDown and SpinBox control.
+  It is recommended to update at least these controls.
+- Other minor improvements.
+
+11-May-2014
+- The Toolbar control is now a control container like the original ToolBar control from MS is also.
+- Some internal improvements in the Slider and ProgressBar control.
+- Renamed the 'TipEnabled' property of the Slider control to 'ShowTip'.
+- Optimized the 'StrToVar' and 'VarToStr' common function.
+- Other minor improvements.
+
+08-May-2014
+- Enhanced the FindItem function in the ComboBoxW, ListBoxW and ListView control.
+- Included the FindItem function in the ImageCombo control.
+
+07-May-2014
+- Included the UseBackColor and BackColor property in the StatusBar control.
+- Included the FindItem function in the ComboBoxW and ListBoxW control.
+
+05-May-2014
+- Improved the HitTestInsertMark function in the ToolBar control.
+- Included the VerticalAlignment property in the CommandButtonW, CheckBoxW and OptionButtonW control.
+
+04-May-2014
+- Included the InsertMark and InsertMarkColor property and the HitTestInsertMark function in the ToolBar control.
+- The DroppedDown property in the CommandButtonW control is now not showing anymore in the property browser.
+- Included the HighLighted property of a Button in the ToolBar control.
+- Fixed a bug in the HighLighted property of a Tab in the TabStrip control.
+
+02-May-2014
+- Included the HitTest function in the ToolBar control.
+
 27-Apr-2014
 - Included the DroppedDown property in the CommandButtonW control.
 

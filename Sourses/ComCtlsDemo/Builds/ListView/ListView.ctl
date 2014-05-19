@@ -4375,7 +4375,7 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     .cbSize = LenB(LVIM)
     SendMessage ListViewHandle, LVM_INSERTMARKHITTEST, VarPtr(P), ByVal VarPtr(LVIM)
     If .iItem > -1 Then Set HitTestInsertMark = Me.ListItems(.iItem + 1)
-    After = CBool(.dwFlags = LVIM_AFTER)
+    After = CBool((.dwFlags And LVIM_AFTER) <> 0)
     End With
 End If
 End Function
@@ -4383,16 +4383,28 @@ End Function
 Public Function FindItem(ByVal Text As String, Optional ByVal Index As Long, Optional ByVal Partial As Boolean, Optional ByVal Wrap As Boolean) As LvwListItem
 Attribute FindItem.VB_Description = "Finds an item in the list and returns a reference to that item."
 If ListViewHandle <> 0 Then
-    If Index > 0 Then Index = Index - 1
-    Dim LVFI As LVFINDINFO
-    With LVFI
-    .psz = StrPtr(Text)
-    .Flags = LVFI_STRING
-    If Partial = True Then .Flags = .Flags Or LVFI_PARTIAL
-    If Wrap = True Then .Flags = .Flags Or LVFI_WRAP
-    End With
-    Index = SendMessage(ListViewHandle, LVM_FINDITEM, Index - 1, ByVal VarPtr(LVFI))
-    If Index > -1 Then Set FindItem = Me.ListItems(Index + 1)
+    If Index >= 0 Then
+        Dim Count As Long
+        Count = SendMessage(ListViewHandle, LVM_GETITEMCOUNT, 0, ByVal 0&)
+        If Count > 0 Then
+            If Index <= Count Then
+                If Index > 0 Then Index = Index - 1
+                Dim LVFI As LVFINDINFO
+                With LVFI
+                .psz = StrPtr(Text)
+                .Flags = LVFI_STRING
+                If Partial = True Then .Flags = .Flags Or LVFI_PARTIAL
+                If Wrap = True Then .Flags = .Flags Or LVFI_WRAP
+                End With
+                Index = SendMessage(ListViewHandle, LVM_FINDITEM, Index - 1, ByVal VarPtr(LVFI))
+                If Index > -1 Then Set FindItem = Me.ListItems(Index + 1)
+            Else
+                Err.Raise 380
+            End If
+        End If
+    Else
+        Err.Raise 380
+    End If
 End If
 End Function
 

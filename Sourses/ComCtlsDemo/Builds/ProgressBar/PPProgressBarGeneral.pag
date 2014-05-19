@@ -251,6 +251,7 @@ With PropertyPage.SelectedControls(0)
 .MarqueeAnimation = CBool(CheckMarqueeAnimation.Value = vbChecked)
 .SmoothReverse = CBool(CheckSmoothReverse.Value = vbChecked)
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

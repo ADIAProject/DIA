@@ -113,6 +113,7 @@ With PropertyPage.SelectedControls(0)
 .SortOrder = ComboSortOrder.ItemData(ComboSortOrder.ListIndex)
 .SortType = ComboSortType.ItemData(ComboSortType.ListIndex)
 End With
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()

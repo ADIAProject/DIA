@@ -216,7 +216,7 @@ If CurrIndex > 0 Then
     Next i
     End With
 End If
-Call DrawImages
+Call PropertyPage_SelectionChanged
 End Sub
 
 Private Sub PropertyPage_SelectionChanged()
