@@ -282,7 +282,7 @@ Public Sub DelFolderBackUp(ByVal strFolderPath As String)
 
     On Error GoTo 0
 
-    If mbDebugStandart Then DebugMode "DelFolderBackUp-End"
+    If mbDebugDetail Then DebugMode "DelFolderBackUp-End"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1055,12 +1055,12 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     Set MatchesStrSect = RegExpStrSect.Execute(strFileContent)
 
     If MatchesStrSect.Count Then
-        Set objMatch = MatchesStrSect.item(0)
+        Set objMatch = MatchesStrSect.Item(0)
         Strings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
         Set MatchesStrDefs = RegExpStrDefs.Execute(Strings)
 
         For i = 0 To MatchesStrDefs.Count - 1
-            Set objMatch1 = MatchesStrDefs.item(i)
+            Set objMatch1 = MatchesStrDefs.Item(i)
             Key = objMatch1.SubMatches(0)
             Value = objMatch1.SubMatches(1)
 
@@ -1082,7 +1082,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
 
     If Pos Then
         varname = Mid$(strSearchString, Pos, InStrRev(strSearchString, strPercent))
-        valval = StringHash.item(varname)
+        valval = StringHash.Item(varname)
 
         If LenB(valval) = 0 Then
             If mbDebugDetail Then DebugMode "ParserInf4Strings: Error in inf: Cannot find '" & strSearchString & "'"

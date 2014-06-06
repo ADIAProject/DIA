@@ -924,11 +924,21 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         
             cSortHWID.BlizzardStringSort strLinesArrHwid, 0&, lngNumLinesHwid - 1, False
             
+            '≈сли требуетс€, то сортируем выходной индексный файл - только дл€ удобства чтени€
+            If mbSortDBTxtFileByHWID Then
+                cSortHWID.BlizzardStringSort strLinesArr, 0&, lngNumLines - 1, False
+            End If
+            
             Set cSortHWID = Nothing
             
         ElseIf lngSortMethodShell = 1 Then
         
             ShellSortAny VarPtr(strLinesArrHwid(0)), lngNumLinesHwid, 4&, AddressOf CompareString
+            
+            '≈сли требуетс€, то сортируем выходной индексный файл - только дл€ удобства чтени€
+            If mbSortDBTxtFileByHWID Then
+                ShellSortAny VarPtr(strLinesArr(0)), lngNumLines, 4&, AddressOf CompareString
+            End If
             
         ElseIf lngSortMethodShell = 2 Then
         
@@ -938,9 +948,19 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             
             cSortHWID.TwisterStringSort strLinesArrHwid, 0&, lngNumLinesHwid - 1
             
+            '≈сли требуетс€, то сортируем выходной индексный файл - только дл€ удобства чтени€
+            If mbSortDBTxtFileByHWID Then
+                cSortHWID.TwisterStringSort strLinesArr, 0&, lngNumLines - 1
+            End If
+            
             Set cSortHWID = Nothing
         Else
             ShellSortAny VarPtr(strLinesArrHwid(0)), lngNumLinesHwid, 4&, AddressOf CompareString
+            
+            '≈сли требуетс€, то сортируем выходной индексный файл - только дл€ удобства чтени€
+            If mbSortDBTxtFileByHWID Then
+                ShellSortAny VarPtr(strLinesArr(0)), lngNumLines, 4&, AddressOf CompareString
+            End If
         End If
         
         TimeScriptFinish = GetTickCount

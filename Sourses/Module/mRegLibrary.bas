@@ -114,7 +114,7 @@ Public Function RegisterAddComponent() As Boolean
     
     Dim lngRet As Long
 
-    If mbDebugStandart Then DebugMode "RegisterAddComponent - Start"
+    If mbDebugDetail Then DebugMode "RegisterAddComponent - Start"
 
     RegisterAddComponent = True
     

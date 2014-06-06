@@ -238,22 +238,13 @@ IDFrom As Long
 Code As Long
 End Type
 Private Const CDDS_PREPAINT As Long = &H1
-Private Const CDDS_POSTPAINT As Long = &H2
-Private Const CDDS_PREERASE As Long = &H3
-Private Const CDDS_POSTERASE As Long = &H4
 Private Const CDDS_ITEM As Long = &H10000
 Private Const CDDS_ITEMPREPAINT As Long = (CDDS_ITEM + 1)
-Private Const CDDS_ITEMPOSTPAINT As Long = (CDDS_ITEM + 2)
 Private Const CDDS_SUBITEM As Long = &H20000
-Private Const CDIS_CHECKED As Long = &H8
-Private Const CDIS_FOCUS As Long = &H10
 Private Const CDIS_HOT As Long = &H40
 Private Const CDRF_DODEFAULT As Long = &H0
 Private Const CDRF_NEWFONT As Long = &H2
-Private Const CDRF_SKIPDEFAULT As Long = &H4
-Private Const CDRF_NOTIFYPOSTPAINT As Long = &H10
 Private Const CDRF_NOTIFYITEMDRAW As Long = &H20
-Private Const CDRF_NOTIFYPOSTERASE As Long = &H40
 Private Const CDRF_NOTIFYSUBITEMDRAW As Long = &H20
 Private Type NMCUSTOMDRAW
 hdr As NMHDR
@@ -870,6 +861,7 @@ Private ListViewListItemsControl As Long
 Private ListViewDragIndexBuffer As Long, ListViewDragIndex As Long
 Private ListViewDragOffsetX As Long, ListViewDragOffsetY As Long
 Private ListViewMemoryColumnWidth As Long
+Private ListViewIsClick As Boolean
 Private DispIDMousePointer As Long
 Private DispIDIcons As Long, IconsArray() As String
 Private DispIDSmallIcons As Long, SmallIconsArray() As String
@@ -1548,12 +1540,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If ListViewHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles ListViewHandle
-        Case False
-            RemoveVisualStyles ListViewHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles ListViewHandle
+    Else
+        RemoveVisualStyles ListViewHandle
+    End If
     Call SetVisualStylesHeader
     SendMessage ListViewHandle, LVM_UPDATE, 0, ByVal 0&
     Me.Refresh
@@ -2457,7 +2448,7 @@ UserControl.PropertyChanged "HighlightHot"
 End Property
 
 Public Property Get UnderlineHot() As Boolean
-Attribute UnderlineHot.VB_Description = "Returns/sets a value that determines whether hot items that may be activated to be displayed with underlined text. Only applicable if the hot tracking property is set to true."
+Attribute UnderlineHot.VB_Description = "Returns/sets a value that determines whether hot items that may be activated to be displayed with underlined text or not. Only applicable if the hot tracking property is set to true."
 UnderlineHot = PropUnderlineHot
 End Property
 
@@ -4876,12 +4867,11 @@ Private Sub SetVisualStylesHeader()
 If ListViewHandle <> 0 Then
     If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
     If ListViewHeaderHandle <> 0 And EnabledVisualStyles() = True Then
-        Select Case Me.VisualStyles
-            Case True
-                ActivateVisualStyles ListViewHeaderHandle
-            Case False
-                RemoveVisualStyles ListViewHeaderHandle
-        End Select
+        If PropVisualStyles = True Then
+            ActivateVisualStyles ListViewHeaderHandle
+        Else
+            RemoveVisualStyles ListViewHeaderHandle
+        End If
     End If
 End If
 End Sub
@@ -5224,12 +5214,15 @@ Select Case wMsg
             Case WM_LBUTTONDOWN
                 RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
                 ListViewButtonDown = vbLeftButton
+                ListViewIsClick = True
             Case WM_MBUTTONDOWN
                 RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
                 ListViewButtonDown = vbMiddleButton
+                ListViewIsClick = True
             Case WM_RBUTTONDOWN
                 RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
                 ListViewButtonDown = vbRightButton
+                ListViewIsClick = True
             Case WM_MOUSEMOVE
                 RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
@@ -5241,9 +5234,12 @@ Select Case wMsg
                     Case WM_RBUTTONUP
                         RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
                 End Select
-                Dim P As POINTAPI
-                GetCursorPos P
-                If WindowFromPoint(P.X, P.Y) = hWnd Then RaiseEvent Click
+                If ListViewIsClick = True Then
+                    ListViewIsClick = False
+                    Dim P As POINTAPI
+                    GetCursorPos P
+                    If WindowFromPoint(P.X, P.Y) = hWnd Then RaiseEvent Click
+                End If
         End Select
     Case WM_NOTIFY
         Dim NM As NMHDR
@@ -5421,6 +5417,7 @@ Select Case wMsg
                         ScreenToClient ListViewHandle, P1
                         RaiseEvent MouseUp(ListViewButtonDown, GetShiftState(), UserControl.ScaleX(P1.X, vbPixels, vbTwips), UserControl.ScaleY(P1.Y, vbPixels, vbTwips))
                         ListViewButtonDown = 0
+                        ListViewIsClick = False
                         RaiseEvent Click
                     End If
                 Case NM_DBLCLK, NM_RDBLCLK
@@ -5540,10 +5537,8 @@ Select Case wMsg
                             Dim ToolTipText As String
                             ToolTipText = Me.ListItems(.iItem + 1).ToolTipText
                             If Not ToolTipText = vbNullString Then
-                                ToolTipText = ToolTipText & vbNullChar
-                                Length = LenB(ToolTipText)
-                                If Length > .cchTextMax Then Length = .cchTextMax
-                                If Length > 0 Then CopyMemory ByVal .pszText, ByVal StrPtr(ToolTipText), Length
+                                ToolTipText = Left$(ToolTipText, .cchTextMax - 1) & vbNullChar
+                                CopyMemory ByVal .pszText, ByVal StrPtr(ToolTipText), LenB(ToolTipText)
                             Else
                                 CopyMemory ByVal .pszText, 0&, 4
                             End If
@@ -5575,14 +5570,8 @@ Select Case wMsg
                     If Not Text = vbNullString Then
                         Dim NMLVEMU As NMLVEMPTYMARKUP
                         CopyMemory NMLVEMU, ByVal lParam, LenB(NMLVEMU)
-                        If Len(Text) > L_MAX_URL_LENGTH Then
-                            Length = L_MAX_URL_LENGTH * 2
-                        Else
-                            Length = LenB(Text)
-                        End If
-                        Dim TextB() As Byte
-                        TextB() = Text
-                        CopyMemory NMLVEMU.szMarkup(0), TextB(0), Length
+                        Text = Left$(Text & vbNullChar, L_MAX_URL_LENGTH)
+                        CopyMemory NMLVEMU.szMarkup(0), ByVal StrPtr(Text), LenB(Text)
                         If Centered = True Then NMLVEMU.dwFlags = EMF_CENTERED
                         CopyMemory ByVal lParam, NMLVEMU, LenB(NMLVEMU)
                         WindowProcUserControl = 1

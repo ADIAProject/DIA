@@ -273,6 +273,7 @@ Private TextBoxHandle As Long
 Private TextBoxFontHandle As Long
 Private TextBoxLogFont As LOGFONT
 Private TextBoxAutoDragInSel As Boolean, TextBoxAutoDragIsActive As Boolean
+Private TextBoxIsClick As Boolean
 Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
@@ -721,12 +722,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If TextBoxHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles TextBoxHandle
-        Case False
-            RemoveVisualStyles TextBoxHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles TextBoxHandle
+    Else
+        RemoveVisualStyles TextBoxHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"
@@ -1451,7 +1451,6 @@ Else
     On Error GoTo 0
     If TextBoxHandle <> 0 Then SendMessage TextBoxHandle, EM_SETMARGINS, EC_LEFTMARGIN, ByVal MakeDWord(IntValue, 0)
 End If
-UserControl.PropertyChanged "LeftMargin"
 End Property
 
 Public Property Get RightMargin() As Single
@@ -1472,7 +1471,6 @@ Else
     On Error GoTo 0
     If TextBoxHandle <> 0 Then SendMessage TextBoxHandle, EM_SETMARGINS, EC_RIGHTMARGIN, ByVal MakeDWord(0, IntValue)
 End If
-UserControl.PropertyChanged "RightMargin"
 End Property
 
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
@@ -1577,10 +1575,12 @@ Select Case wMsg
         Select Case wMsg
             Case WM_LBUTTONDOWN
                 RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                TextBoxIsClick = True
                 If PropOLEDragMode = vbOLEDragAutomatic And TextBoxAutoDragInSel = True Then
                     Dim P4 As POINTAPI
                     GetCursorPos P4
                     If DragDetect(TextBoxHandle, CInt(P4.X), CInt(P4.Y)) <> 0 Then
+                        TextBoxIsClick = False
                         Me.OLEDrag
                     Else
                         WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
@@ -1590,8 +1590,10 @@ Select Case wMsg
                 End If
             Case WM_MBUTTONDOWN
                 RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                TextBoxIsClick = True
             Case WM_RBUTTONDOWN
                 RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                TextBoxIsClick = True
             Case WM_MOUSEMOVE
                 RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
@@ -1603,9 +1605,12 @@ Select Case wMsg
                     Case WM_RBUTTONUP
                         RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
                 End Select
-                Dim P1 As POINTAPI
-                GetCursorPos P1
-                If WindowFromPoint(P1.X, P1.Y) = hWnd Then RaiseEvent Click
+                If TextBoxIsClick = True Then
+                    TextBoxIsClick = False
+                    Dim P1 As POINTAPI
+                    GetCursorPos P1
+                    If WindowFromPoint(P1.X, P1.Y) = hWnd Then RaiseEvent Click
+                End If
         End Select
     Case WM_VSCROLL, WM_HSCROLL
         ' The notification codes EN_HSCROLL and EN_VSCROLL are not sent when clicking the scroll bar thumb itself.

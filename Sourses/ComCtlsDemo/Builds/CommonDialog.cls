@@ -23,6 +23,7 @@ Private CdlHelpContext, CdlHelpQuit, CdlHelpIndex, CdlHelpContents, CdlHelpHelpO
 Private CdlPSDDefaultMinMargins, CdlPSDMinMargins, CdlPSDMargins, CdlPSDInThousandthsOfInches, CdlPSDInHundredthsOfMillimeters, CdlPSDDisableMargins, CdlPSDDisablePrinter, CdlPSDNoWarning, CdlPSDDisableOrientation, CdlPSDDisablePaper, CdlPSDReturnDefault, CdlPSDHelpButton, CdlPSDDisablePagePainting, CdlPSDNoNetworkButton
 Private CdlBIFReturnOnlyFSDirs, CdlBIFDontGoBelowDomain, CdlBIFReturnFSAncestors, CdlBIFEditBox, CdlBIFNewDialogStyle, CdlBIFBrowseIncludeURLs, CdlBIFUseNewUI, CdlBIFUAHint, CdlBIFNoNewFolderButton, CdlBIFNoTranslateTargets, CdlBIFBrowseForComputer, CdlBIFBrowseForPrinter, CdlBIFBrowseIncludeFiles, CdlBIFShareable, CdlBIFBrowseFileJunctions
 Private CdlFRDown, CdlFRWholeWord, CdlFRMatchCase, CdlFRFindNext, CdlFRReplace, CdlFRReplaceAll, CdlFRHelpButton, CdlFRNoUpDown, CdlFRNoMatchCase, CdlFRNoWholeWord, CdlFRHideUpDown, CdlFRHideMatchCase, CdlFRHideWholeWord
+Private CdlOAIFAllowRegistration, CdlOAIFRegisterExt, CdlOAIFExecute, CdlOAIFForceRegistration, CdlOAIFHideRegistration, CdlOAIFURLProtocol
 #End If
 Private Const FNERR_BUFFERTOOSMALL As Long = &H3003
 Private Const FNERR_INVALIDFILENAME As Long = &H3002
@@ -314,6 +315,20 @@ CdlFRHideUpDown = FR_HIDEUPDOWN
 CdlFRHideMatchCase = FR_HIDEMATCHCASE
 CdlFRHideWholeWord = FR_HIDEWHOLEWORD
 End Enum
+Private Const OAIF_ALLOW_REGISTRATION As Long = &H1
+Private Const OAIF_REGISTER_EXT As Long = &H2
+Private Const OAIF_EXEC As Long = &H4
+Private Const OAIF_FORCE_REGISTRATION As Long = &H8
+Private Const OAIF_HIDE_REGISTRATION As Long = &H20
+Private Const OAIF_URL_PROTOCOL As Long = &H40
+Public Enum CdlOAIFConstants
+CdlOAIFAllowRegistration = OAIF_ALLOW_REGISTRATION
+CdlOAIFRegisterExt = OAIF_REGISTER_EXT
+CdlOAIFExecute = OAIF_EXEC
+CdlOAIFForceRegistration = OAIF_FORCE_REGISTRATION
+CdlOAIFHideRegistration = OAIF_HIDE_REGISTRATION
+CdlOAIFURLProtocol = OAIF_URL_PROTOCOL
+End Enum
 Private Type RECT
 Left As Long
 Top As Long
@@ -535,6 +550,11 @@ lCustData As Long
 lpfnHook As Long
 lpTemplateName As Long
 End Type
+Private Type OPENASINFO
+lpszFile As Long
+lpszClass As Long
+Flags As Long
+End Type
 Public Event Help(ByRef Handled As Boolean, ByVal Action As Integer, ByVal hDialog As Long)
 Attribute Help.VB_Description = "Occurs when the user clicks the Help button."
 Public Event FindNext()
@@ -561,6 +581,7 @@ Private Declare Function SHGetFolderLocation Lib "shell32" (ByVal hWndOwner As L
 Private Declare Function ILCreateFromPath Lib "shell32" (ByVal lpszPath As Long) As Long
 Private Declare Function ILCreateFromPath_W2K Lib "shell32" Alias "#157" (ByVal lpszPath As Long) As Long
 Private Declare Function SHGetPathFromIDList Lib "shell32" Alias "SHGetPathFromIDListW" (ByVal lpIDList As Long, ByVal lpBuffer As Long) As Long
+Private Declare Function SHOpenWithDialog Lib "shell32" (ByVal hWndOwner As Long, ByRef lpOpenAsInfo As OPENASINFO) As Long
 Private Declare Function RegisterWindowMessage Lib "user32" Alias "RegisterWindowMessageW" (ByVal lpString As Long) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function PrintDialog Lib "comdlg32" Alias "PrintDlgW" (ByRef lpPrintDlg As PRINTDLG) As Long
@@ -953,6 +974,8 @@ Select Case Value
         Me.ShowFind
     Case 10
         Me.ShowReplace
+    Case 11
+        Me.ShowOpenWith
     Case Else
         Err.Raise 380
 End Select
@@ -1778,6 +1801,46 @@ Else
         Case Else
             Err.Raise Number:=ErrVal, Description:="Unexpected error."
     End Select
+End If
+End Function
+
+Public Function ShowOpenWith() As Boolean
+Attribute ShowOpenWith.VB_Description = "Displays the open with dialog box."
+Dim OAIF As OPENASINFO, hWndOwner As Long, Buffer As String
+With OAIF
+If Not Screen.ActiveForm Is Nothing Then
+    hWndOwner = Screen.ActiveForm.hWnd
+Else
+    hWndOwner = GetActiveWindow()
+End If
+Buffer = PropFileName
+.lpszFile = StrPtr(Buffer)
+If .lpszFile = 0 Then ' This function will crash in case lpszFile is 0.
+    Buffer = ""
+    .lpszFile = StrPtr(Buffer)
+End If
+.lpszClass = StrPtr(PropDefaultExt)
+.Flags = PropFlags
+End With
+If ComCtlsIsNT6OrHigher() = True Then
+    Dim ErrVal As Long
+    ErrVal = SHOpenWithDialog(hWndOwner, OAIF)
+    ' According to MSDN:
+    ' If this function succeeds, it returns S_OK.
+    ' But this might be a error as the function actually returns 1 on success.
+    If ErrVal = 1 Or ErrVal = S_OK Then
+        ShowOpenWith = True
+    Else
+        Const ERROR_CANCELLED As Long = &H800704C7
+        Select Case ErrVal
+            Case ERROR_CANCELLED
+                If PropCancelError = True Then Err.Raise Number:=CdlCancel, Description:="Cancel was selected."
+            Case Else
+                Err.Raise Number:=ErrVal, Description:="Unexpected error."
+        End Select
+    End If
+Else
+    Err.Raise Number:=CdlInitFailure, Description:="The SHOpenWithDialog function is not supported."
 End If
 End Function
 

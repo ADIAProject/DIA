@@ -575,14 +575,13 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If SpinBoxUpDownHandle <> 0 And SpinBoxEditHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles SpinBoxUpDownHandle
-            ActivateVisualStyles SpinBoxEditHandle
-        Case False
-            RemoveVisualStyles SpinBoxUpDownHandle
-            RemoveVisualStyles SpinBoxEditHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles SpinBoxUpDownHandle
+        ActivateVisualStyles SpinBoxEditHandle
+    Else
+        RemoveVisualStyles SpinBoxUpDownHandle
+        RemoveVisualStyles SpinBoxEditHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"
@@ -1360,10 +1359,10 @@ End Function
 Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
     Case WM_NOTIFY
-        Dim NMH As NMHDR
-        CopyMemory NMH, ByVal lParam, Len(NMH)
-        If NMH.hWndFrom = SpinBoxUpDownHandle Then
-            If NMH.Code = UDN_DELTAPOS Then
+        Dim NM As NMHDR
+        CopyMemory NM, ByVal lParam, LenB(NM)
+        If NM.hWndFrom = SpinBoxUpDownHandle Then
+            If NM.Code = UDN_DELTAPOS Then
                 Dim NMUD As NMUPDOWN
                 CopyMemory NMUD, ByVal lParam, LenB(NMUD)
                 RaiseEvent BeforeChange(NMUD.iPos, NMUD.iDelta)

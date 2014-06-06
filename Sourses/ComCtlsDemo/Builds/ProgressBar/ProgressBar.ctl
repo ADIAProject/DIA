@@ -175,6 +175,7 @@ Implements ISubclass
 Implements OLEGuids.IPerPropertyBrowsingVB
 Private ProgressBarHandle As Long
 Private ProgressBarITaskBarList3 As IUnknown
+Private ProgressBarIsClick As Boolean
 Private DispIDMousePointer As Long
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
@@ -437,12 +438,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If ProgressBarHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles ProgressBarHandle
-        Case False
-            RemoveVisualStyles ProgressBarHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles ProgressBarHandle
+    Else
+        RemoveVisualStyles ProgressBarHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"
@@ -885,10 +885,13 @@ Select Case wMsg
         Select Case wMsg
             Case WM_LBUTTONDOWN
                 RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                ProgressBarIsClick = True
             Case WM_MBUTTONDOWN
                 RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                ProgressBarIsClick = True
             Case WM_RBUTTONDOWN
                 RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                ProgressBarIsClick = True
             Case WM_MOUSEMOVE
                 RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
@@ -900,9 +903,12 @@ Select Case wMsg
                     Case WM_RBUTTONUP
                         RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
                 End Select
-                Dim P As POINTAPI
-                GetCursorPos P
-                If WindowFromPoint(P.X, P.Y) = hWnd Then RaiseEvent Click
+                If ProgressBarIsClick = True Then
+                    ProgressBarIsClick = False
+                    Dim P As POINTAPI
+                    GetCursorPos P
+                    If WindowFromPoint(P.X, P.Y) = hWnd Then RaiseEvent Click
+                End If
         End Select
 End Select
 WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)

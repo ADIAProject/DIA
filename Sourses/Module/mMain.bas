@@ -2,7 +2,7 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "19/05/2014"
+Public Const strDateProgram         As String = "06/06/2014"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -406,9 +406,7 @@ Private Sub Main()
 
         If Not mbRunWithParam Then
             If MsgBox(strMessages(138), vbYesNo + vbQuestion, strProductName) = vbNo Then
-
-                End
-
+                GoTo ExitSub
             End If
         End If
     End If

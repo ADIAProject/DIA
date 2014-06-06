@@ -695,12 +695,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If ComboBoxHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles ComboBoxHandle
-        Case False
-            RemoveVisualStyles ComboBoxHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles ComboBoxHandle
+    Else
+        RemoveVisualStyles ComboBoxHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"

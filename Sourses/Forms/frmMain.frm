@@ -230,7 +230,6 @@ Begin VB.Form frmMain
                Italic          =   0   'False
                Strikethrough   =   0   'False
             EndProperty
-            Caption         =   "frmMain.frx":000C
             Transparent     =   -1  'True
          End
          Begin prjDIADBS.ctlJCbutton acmdPackFiles 
@@ -280,7 +279,7 @@ Begin VB.Form frmMain
             ShowFocusRect   =   0   'False
             Enabled         =   0   'False
             ForeColor       =   -2147483630
-            MouseIcon       =   "frmMain.frx":002C
+            MouseIcon       =   "frmMain.frx":000C
             BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
                Name            =   "Tahoma"
                Size            =   8.25
@@ -291,7 +290,7 @@ Begin VB.Form frmMain
                Strikethrough   =   0   'False
             EndProperty
             TabCaption(0)   =   "OSName_1"
-            TabPicture(0)   =   "frmMain.frx":0048
+            TabPicture(0)   =   "frmMain.frx":0028
             Tab(0).ControlEnabled=   -1  'True
             Tab(0).Control(0)=   "lblNoDPInProgram"
             Tab(0).Control(0).Enabled=   0   'False
@@ -299,15 +298,15 @@ Begin VB.Form frmMain
             Tab(0).Control(1).Enabled=   0   'False
             Tab(0).ControlCount=   2
             TabCaption(1)   =   "OSName_2"
-            TabPicture(1)   =   "frmMain.frx":0064
+            TabPicture(1)   =   "frmMain.frx":0044
             Tab(1).ControlEnabled=   0   'False
             Tab(1).ControlCount=   0
             TabCaption(2)   =   "OSName_3"
-            TabPicture(2)   =   "frmMain.frx":0080
+            TabPicture(2)   =   "frmMain.frx":0060
             Tab(2).ControlEnabled=   0   'False
             Tab(2).ControlCount=   0
             TabCaption(3)   =   "OSName_4"
-            TabPicture(3)   =   "frmMain.frx":009C
+            TabPicture(3)   =   "frmMain.frx":007C
             Tab(3).ControlEnabled=   0   'False
             Tab(3).ControlCount=   0
             Begin TabDlg.SSTab SSTab2 
@@ -335,7 +334,7 @@ Begin VB.Form frmMain
                   Strikethrough   =   0   'False
                EndProperty
                TabCaption(0)   =   "Все драйверпаки"
-               TabPicture(0)   =   "frmMain.frx":00B8
+               TabPicture(0)   =   "frmMain.frx":0098
                Tab(0).ControlEnabled=   -1  'True
                Tab(0).Control(0)=   "lblNoDP4Mode"
                Tab(0).Control(0).Enabled=   0   'False
@@ -343,22 +342,22 @@ Begin VB.Form frmMain
                Tab(0).Control(1).Enabled=   0   'False
                Tab(0).ControlCount=   2
                TabCaption(1)   =   "Доступно обновление"
-               TabPicture(1)   =   "frmMain.frx":00D4
+               TabPicture(1)   =   "frmMain.frx":00B4
                Tab(1).ControlEnabled=   0   'False
                Tab(1).Control(0)=   "ctlScrollControlTab1(0)"
                Tab(1).ControlCount=   1
                TabCaption(2)   =   "Неустановленные"
-               TabPicture(2)   =   "frmMain.frx":00F0
+               TabPicture(2)   =   "frmMain.frx":00D0
                Tab(2).ControlEnabled=   0   'False
                Tab(2).Control(0)=   "ctlScrollControlTab2(0)"
                Tab(2).ControlCount=   1
                TabCaption(3)   =   "Установленные"
-               TabPicture(3)   =   "frmMain.frx":010C
+               TabPicture(3)   =   "frmMain.frx":00EC
                Tab(3).ControlEnabled=   0   'False
                Tab(3).Control(0)=   "ctlScrollControlTab3(0)"
                Tab(3).ControlCount=   1
                TabCaption(4)   =   "БД не создана"
-               TabPicture(4)   =   "frmMain.frx":0128
+               TabPicture(4)   =   "frmMain.frx":0108
                Tab(4).ControlEnabled=   0   'False
                Tab(4).Control(0)=   "ctlScrollControlTab4(0)"
                Tab(4).ControlCount=   1
@@ -535,8 +534,7 @@ Begin VB.Form frmMain
                   Strikethrough   =   0   'False
                EndProperty
                Style           =   2
-               Text            =   "frmMain.frx":0144
-               CueBanner       =   "frmMain.frx":0180
+               Text            =   "frmMain.frx":0124
             End
             Begin prjDIADBS.ctlJCbutton cmdCheck 
                Height          =   430
@@ -908,7 +906,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":01A0
+      UseSystemFont   =   0   'False
    End
    Begin prjDIADBS.ToolTip TTStatusIcon 
       Left            =   900
@@ -924,7 +922,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":01C0
+      UseSystemFont   =   0   'False
    End
    Begin prjDIADBS.ToolTip TT 
       Left            =   300
@@ -940,7 +938,7 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Title           =   "frmMain.frx":01E0
+      UseSystemFont   =   0   'False
    End
    Begin VB.Menu mnuRezim 
       Caption         =   "Обновление баз данных"
@@ -967,6 +965,12 @@ Begin VB.Form frmMain
       End
       Begin VB.Menu mnuSaveInfoPC 
          Caption         =   "Сохранить информацию об устройствах для эмуляции на другом ПК"
+      End
+      Begin VB.Menu mnuSep30 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mnuCreateCommonIndex 
+         Caption         =   "Создать обобщенный индексный файл для анализа"
       End
    End
    Begin VB.Menu mnuService 
@@ -6816,8 +6820,8 @@ Private Sub ToolTipStatusLoad()
         .Font.Name = strFontMainForm_Name
         .Font.Size = lngFontMainForm_Size
         .MaxTipWidth = Me.Width
-        .SetDelayTime TipDelayTimeInitial, 200
-        .SetDelayTime TipDelayTimeShow, 15000
+        .DelayTime(TipDelayTimeInitial) = 200
+        .DelayTime(TipDelayTimeShow) = 15000
         .Tools.Add imgOK.hWnd, , arrTTipStatusIcon(0)
         .Tools.Add imgOkAttention.hWnd, , arrTTipStatusIcon(1)
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
@@ -8487,10 +8491,10 @@ Private Sub Form_Load()
     ' Изменяем параметры Всплывающей подсказки для кнопок
     With TT
         .MaxTipWidth = lngRightWorkArea
-        .SetDelayTime TipDelayTimeInitial, 400
-        .SetDelayTime TipDelayTimeShow, 15000
+        .DelayTime(TipDelayTimeInitial) = 400
+        .DelayTime(TipDelayTimeShow) = 15000
         .Title = strTTipTextTitle
-        'SetTTFontProperties TT
+        SetTTFontProperties TT
     End With
 
     ' Изменяем параметры кнопок и картинок
@@ -9174,6 +9178,10 @@ Private Sub mnuCreateBackUp_Click()
             mnuHomePage1_Click
     End Select
 
+End Sub
+
+Private Sub mnuCreateCommonIndex_Click()
+    CreateCommonIndex
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -10234,5 +10242,175 @@ Private Sub SSTab2_Click(Index As Integer, PreviousTab As Integer)
         End If
     End If
 
+End Sub
+
+
+Private Sub CreateCommonIndex()
+    
+    Dim strCommonArr()          As String
+    Dim strCurrentArr()         As String
+    Dim lngNumLines             As Long
+    Dim i                       As Long
+    Dim strFileFullText         As String
+    Dim cSortHWID               As cBlizzard
+    Dim strPathFileNameDevDB    As String
+    Dim strRezultTxt            As String
+    Dim strRezultTxtTo          As String
+    Dim TimeScriptRun           As Long
+    Dim TimeScriptFinish        As Long
+    Dim TabCount                As Long
+    Dim ii                      As Long
+    Dim strPathDRP              As String
+    Dim strPathDevDB            As String
+    Dim strFileListTXT_x()      As FindListStruct
+    Dim strFileListDRP_x()      As FindListStruct
+    Dim strFileListDBExists     As String
+    Dim strDRPFilename          As String
+    Dim strFileNameDB           As String
+    Dim strFile_x()             As String
+
+    ReDim strCommonArr(200000)
+    
+    
+    If mbDebugStandart Then DebugMode "CreateCommonIndex-Start"
+    ctlUcStatusBar1.PanelText(1) = strMessages(127)
+    
+    TabCount = SSTab1.Tabs
+
+    ' В цикле обрабатываем все каталоги
+    For i = 0 To TabCount - 1
+        strPathDRP = arrOSList(i).drpFolderFull
+        strPathDevDB = arrOSList(i).devIDFolderFull
+        strFileListDBExists = vbNullString
+
+        'Построение списка пакетов драйверов
+        If Not mbDP_Is_aFolder Then
+            strFileListDRP_x = SearchFilesInRoot(strPathDRP, "DP*.7z;DP*.zip", True, False)
+        Else
+            strFileListDRP_x = SearchFoldersInRoot(strPathDRP, "DP*")
+        End If
+
+        'Построение списка txt файлов в каталоге БД
+        strFileListTXT_x = SearchFilesInRoot(strPathDevDB, "*DP*.txt", False, False)
+
+        ' Проверка на существование БД
+        For ii = 0 To UBound(strFileListDRP_x)
+            strDRPFilename = strFileListDRP_x(ii).Name
+
+            If CheckExistDB(strPathDevDB, strDRPFilename) Then
+                If InStr(1, strDRPFilename, ".zip", vbTextCompare) Then
+                    strFileNameDB = strPathDevDB & Replace$(strDRPFilename, ".zip", ".txt", , , vbTextCompare)
+                End If
+
+                If InStr(1, strDRPFilename, ".7z", vbTextCompare) Then
+                    strFileNameDB = strPathDevDB & Replace$(strDRPFilename, ".7z", ".txt", , , vbTextCompare)
+                End If
+
+                AppendStr strFileListDBExists, strFileNameDB, vbTab
+
+            End If
+
+        Next
+        
+    Next
+        
+    If LenB(strFileListDBExists) Then
+        
+        strFile_x = Split(strFileListDBExists, vbTab)
+    
+        ' В цикле обрабатываем файлы индексов
+        For i = 0 To UBound(strFile_x)
+
+            strPathFileNameDevDB = strFile_x(i)
+            
+            If PathExists(strPathFileNameDevDB) Then
+                
+                Erase strCurrentArr
+                
+                ' Считываем содержимое всего файла HWID в буфер
+                FileReadData strPathFileNameDevDB, strFileFullText
+                'Создаем массив
+                strCurrentArr = Split(strFileFullText, vbNewLine)
+                'Добавляем к массиву имя пакета драйверов
+                strFileFullText = Join(strCurrentArr, vbTab & GetFileNameFromPath(strPathFileNameDevDB) & vbNewLine)
+                Erase strCurrentArr
+                strCurrentArr = Split(strFileFullText, vbNewLine)
+                
+                'Собственно копирование массива из одного в другой
+                CopyStringArray strCommonArr(), strCurrentArr(), lngNumLines
+                DoEvents
+                'Кол-во записей в массиве
+                lngNumLines = lngNumLines + UBound(strCurrentArr) + 1
+                                       
+            End If
+        Next i
+    End If
+            
+    If lngNumLines Then
+
+        strRezultTxt = strWorkTempBackSL & "ComonDBIndexFile.txt"
+        
+        ReDim Preserve strCommonArr(lngNumLines - 1)
+
+        ' сортируем массив
+        TimeScriptRun = GetTickCount
+    
+        If lngSortMethodShell = 0 Then
+            
+            Set cSortHWID = New cBlizzard
+            cSortHWID.SortMethod = BinaryCompare
+            cSortHWID.SortOrder = Ascending
+        
+            cSortHWID.BlizzardStringSort strCommonArr, 0&, lngNumLines - 1, False
+            
+            Set cSortHWID = Nothing
+            
+        ElseIf lngSortMethodShell = 1 Then
+        
+            ShellSortAny VarPtr(strCommonArr(0)), lngNumLines, 4&, AddressOf CompareString
+            
+        ElseIf lngSortMethodShell = 2 Then
+        
+            Set cSortHWID = New cBlizzard
+            cSortHWID.SortMethod = BinaryCompare
+            cSortHWID.SortOrder = Ascending
+            
+            cSortHWID.TwisterStringSort strCommonArr, 0&, lngNumLines - 1
+            
+            Set cSortHWID = Nothing
+        Else
+            ShellSortAny VarPtr(strCommonArr(0)), lngNumLines, 4&, AddressOf CompareString
+        End If
+        
+        TimeScriptFinish = GetTickCount
+        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Sort Index: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        DoEvents
+        
+        TimeScriptRun = GetTickCount
+        '---------------------------------------------
+        '---------------Выводим итог в файл-----
+        ' Запись в файл индекса
+        FileWriteData strRezultTxt, Join(strCommonArr(), vbNewLine)
+        
+        TimeScriptFinish = GetTickCount
+        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index Files: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        
+        ' Удаление массива, т.е освобождение памяти
+        Erase strCommonArr
+        Erase strCurrentArr
+
+'        strRezultTxtTo = Replace$(PathCombine(strPathDevDB, GetFileNameFromPath(strRezultTxt)), "common", vbNullString, , , vbTextCompare)
+'
+'        If CopyFileTo(strRezultTxt, strRezultTxtTo) Then
+'            'Копируем файл HWID
+'            MsgBox strMessages(31), vbInformation, strProductName
+'            If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtHwidTo
+'        Else
+'            MsgBox strMessages(31), vbInformation, strProductName
+'            If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtTo
+'        End If
+    End If
+    
+    
 End Sub
 

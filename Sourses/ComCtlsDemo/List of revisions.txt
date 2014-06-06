@@ -1,5 +1,43 @@
 List of revisions:
 
+04-Jun-2014
+- Internal improvements on some controls.
+- The ToolTip control does not need to subclass the parent form anymore.
+
+03-Jun-2014
+- Included the LinkGetTipText event and the ShowTips/VisualStyles property in the LinkLabel control.
+- The HitTest function and the Left/Top/Width/Height of a Link in the LinkLabel control
+  are now also working at initialization time. (For instance in the Form_Load event)
+- The internal ToolTip in the TabStrip control considers now the VisualStyles property.
+
+01-Jun-2014
+- Included the ShowOpenWith function in the CommonDialog class.
+
+31-May-2014
+- Included the LinkLabel control. (SysLink window)
+
+30-May-2014
+- Included the UseSystemFont property in the ToolTip control.
+- The internal ToolTip in the Slider, StatusBar and ToolBar control considers now the VisualStyles property.
+- Other minor improvements.
+
+29-May-2014
+- Fixed a bug in the ButtonMenus property page section in the ToolBar control that the 'Separator' property was not saved.
+
+27-May-2014
+- Some internal improvements, bugfixes and enhancements in the ToolTip control.
+
+20-May-2014
+- Fixed a bug in the Animation control that the X and Y values in the mouse events are not in twips.
+
+19-May-2014
+- Optimized the Click event on all concerned controls. (Does now only fire when there was a MouseDown before)
+- Replaced the ASM Design Mode subclass to normal subclass. (As I did not encounter any stability decline with normal subclass)
+  Also with this change there is no problem anymore in a potential OCX when it was compiled with "binary compatibility".
+- Improved the ToolBar control at design time. (WS_EX_TRANSPARENT added at design time)
+  As the BackColor property is anyhow ignored at design time this ensures that no "black" background is drawn.
+  This happened for instance when the IDE (VB6.EXE) uses the comctl32.dll version 6.0 or higher.
+
 18-May-2014
 - Fixed a bug in the LabelW control that the X and Y values in the mouse events are not in twips.
 

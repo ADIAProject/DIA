@@ -569,12 +569,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If CheckBoxHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles CheckBoxHandle
-        Case False
-            RemoveVisualStyles CheckBoxHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles CheckBoxHandle
+    Else
+        RemoveVisualStyles CheckBoxHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"

@@ -1839,6 +1839,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
+         UseSystemFont   =   0   'False
       End
       Begin prjDIADBS.LabelW lblTheme 
          Height          =   225
@@ -3611,8 +3612,8 @@ Dim strTTipTextTitle As String
     ' Изменяем параметры Всплывающей подсказки для кнопки
     With TT
         .MaxTipWidth = lngRightWorkArea
-        .SetDelayTime TipDelayTimeInitial, 400
-        .SetDelayTime TipDelayTimeShow, 15000
+        .DelayTime(TipDelayTimeInitial) = 400
+        .DelayTime(TipDelayTimeShow) = 15000
         .Title = strTTipTextTitle
         .Tools.Add cmdFutureButton.hWnd, , strTTText
         SetTTFontProperties TT
@@ -4277,6 +4278,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub chkButtonDisable_Click()
     cmdFutureButton.Enabled = CBool(chkButtonDisable.Value)
+    chkFutureButton.Enabled = CBool(chkButtonDisable.Value)
 End Sub
 
 '!--------------------------------------------------------------------------------

@@ -13,6 +13,7 @@ End Enum
 Private Declare Function CompareValues Lib "user32.dll" Alias "CallWindowProcW" (ByVal CompareFunc As Long, ByVal First As Long, ByVal Second As Long, ByVal unused1 As Long, ByVal unused2 As Long) As eCompareResult
 'General purpose CopyMemory, but optimized for our purposes using byval longs - since we are working with pointers
 Private Declare Sub CopyMemoryByVal Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Dst As Long, ByVal Src As Long, ByVal ByteCount As Long)
+Private Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (‘ункци€)   :   Function BinarySearch
@@ -343,3 +344,28 @@ Public Function BinarySearchLong(lngArray() As Long, ByVal lngHash As Long) As L
     Loop Until lngFirst > lngLast
 
 End Function
+
+Public Sub CopyStringArray(ByRef Dest() As String, Src() As String, Optional StartIndex As Long = -1)
+   Dim tmpArr() As String, VarSize&, NewUbound&
+  
+   ' —оздаем полную копию копируемого массива
+   tmpArr = Src
+   
+   ' ќпредел€ем число добавл€емых элементов массива
+   VarSize = (UBound(Src) - LBound(Src) + 1)
+  
+   If StartIndex = -1 Then StartIndex = LBound(Dest)
+  
+   ' ¬озможно, копируемый массив не влезет в массив назначени€....
+   If UBound(Dest) < StartIndex + VarSize Then
+      '  ... и тогда увеличим его
+      NewUbound = StartIndex + VarSize
+      ReDim Preserve Dest(LBound(Dest) To NewUbound)
+   End If
+   
+   '  опируем указатели временного массива на место указателей основного
+   CopyMemory ByVal VarPtr(Dest(StartIndex)), ByVal VarPtr(tmpArr(LBound(tmpArr))), VarSize * 4
+   
+   ' ќбнул€ем указатели временного массива (рекомендуетс€, чтобы VB не удалил данные)
+   ZeroMemory ByVal VarPtr(tmpArr(LBound(tmpArr))), VarSize * 4
+End Sub

@@ -717,6 +717,7 @@ Implements OLEGuids.IRichEditOleCallback
 Private RichTextBoxHandle As Long
 Private RichTextBoxFontHandle As Long
 Private RichTextBoxLogFont As LOGFONT
+Private RichTextBoxIsClick As Boolean
 Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
@@ -1089,12 +1090,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If RichTextBoxHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles RichTextBoxHandle
-        Case False
-            RemoveVisualStyles RichTextBoxHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles RichTextBoxHandle
+    Else
+        RemoveVisualStyles RichTextBoxHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"
@@ -3172,10 +3172,13 @@ Select Case wMsg
         Select Case wMsg
             Case WM_LBUTTONDOWN
                 RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                RichTextBoxIsClick = True
             Case WM_MBUTTONDOWN
                 RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RichTextBoxIsClick = True
             Case WM_RBUTTONDOWN
                 RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                RichTextBoxIsClick = True
             Case WM_MOUSEMOVE
                 RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
@@ -3187,9 +3190,12 @@ Select Case wMsg
                     Case WM_RBUTTONUP
                         RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
                 End Select
-                Dim P1 As POINTAPI
-                GetCursorPos P1
-                If WindowFromPoint(P1.X, P1.Y) = hWnd Then RaiseEvent Click
+                If RichTextBoxIsClick = True Then
+                    RichTextBoxIsClick = False
+                    Dim P1 As POINTAPI
+                    GetCursorPos P1
+                    If WindowFromPoint(P1.X, P1.Y) = hWnd Then RaiseEvent Click
+                End If
         End Select
     Case WM_VSCROLL, WM_HSCROLL
         ' The notification codes EN_HSCROLL and EN_VSCROLL are not sent when clicking the scroll bar thumb itself.

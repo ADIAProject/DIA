@@ -63,6 +63,7 @@ Public lngPauseAfterSearch               As Long        ' Паузка после поиска но
 Public mbCalcDriverScore                 As Boolean     ' Использовать при анализе драйверов балл найденного драйвера, на основании различных условий
 Public mbCompatiblesHWID                 As Boolean     ' Использовать для поиска подходящих драйверов секцию CompatiblesHWID, берется из реестра
 Public mbSearchCompatibleDriverOtherOS   As Boolean     ' Искать подходящие драйвера на всех вкладках, а не только на подобранной
+Public mbSortDBTxtFileByHWID             As Boolean     ' Сортировать индексный txt-файл по HWID
 Public lngSortMethodShell                As Long        ' Параметр указывающий применять метод сортировки массива
 Public lngCompatiblesHWIDCount           As Long        ' Глубина поиска совместимых HWID
 Public mbMatchHWIDbyDPName               As Boolean     ' Анализ имени файла для определния совместимости драйвера
@@ -179,6 +180,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS", "MatchHWIDbyDPName", "1", strSysIni
         IniWriteStrPrivate "OS", "DP_is_aFolder", "0", strSysIni
         IniWriteStrPrivate "OS", "SortMethodShell", "0", strSysIni
+        IniWriteStrPrivate "OS", "SortDBTxtFileByHWID", "0", strSysIni
         'Секция OS_1
         IniWriteStrPrivate "OS_1", "Ver", "5.0;5.1;5.2", strSysIni
         IniWriteStrPrivate "OS_1", "Name", "2000/XP/2003 Server", strSysIni
@@ -759,7 +761,10 @@ Public Function GetMainIniParam() As Boolean
     ' Обрабатывать совместимые HWID
     mbLoadUnSupportedOS = GetIniValueBoolean(strSysIni, "OS", "LoadUnSupportedOS", 0)
     mbSearchCompatibleDriverOtherOS = GetIniValueBoolean(strSysIni, "OS", "SearchCompatibleDriverOtherOS", 1)
+    ' Сортировка выходных индексных файлов, методы сортировки (*.hwid всегда, *.txt по умолчанию выключено, для ускорения индексации)
     lngSortMethodShell = GetIniValueLong(strSysIni, "OS", "SortMethodShell", 0)
+    mbSortDBTxtFileByHWID = GetIniValueBoolean(strSysIni, "OS", "SortDBTxtFileByHWID", 0)
+    
     '[Button]
     ' Шрифт Кнопок
     strFontBtn_Name = GetIniValueString(strSysIni, "Button", "FontName", "Tahoma")

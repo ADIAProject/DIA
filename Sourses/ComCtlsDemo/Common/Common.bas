@@ -42,7 +42,6 @@ Data3 As Integer
 Data4(0 To 7) As Byte
 End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function IsBadCodePtr Lib "kernel32" (ByVal lpfn As Long) As Long
 Private Declare Function MessageBoxIndirect Lib "user32" Alias "MessageBoxIndirectW" (ByRef lpMsgBoxParams As MSGBOXPARAMS) As Long
 Private Declare Function GetActiveWindow Lib "user32" () As Long
 Private Declare Function GetForegroundWindow Lib "user32" () As Long
@@ -251,58 +250,6 @@ End Function
 
 Public Function ProcPtr(ByVal Address As Long) As Long
 ProcPtr = Address
-End Function
-
-Public Function SelfAddressOf(ByVal This As Object, ByVal Ordinal As Byte) As Long
-If This Is Nothing Or Not Ordinal > 0 Then Exit Function
-Dim ByteSub As Byte, ByteValue As Byte
-Dim Address As Long, i As Long, j As Long
-CopyMemory ByVal VarPtr(Address), ByVal ObjPtr(This), 4
-If ObjProbe(Address + &H7A4, i, ByteSub) = False Then ' Probe for a UserControl
-    If ObjProbe(Address + &H1C, i, ByteSub) = False Then    ' Probe for a Class
-        If ObjProbe(Address + &H6F8, i, ByteSub) = False Then ' Probe for a Form
-            If ObjProbe(Address + &H710, i, ByteSub) = False Then ' Probe for a PropertyPage
-                Exit Function
-            End If
-        End If
-    End If
-End If
-i = i + 4
-j = i + 2048
-Do While i < j
-    CopyMemory ByVal VarPtr(Address), ByVal i, 4
-    If IsBadCodePtr(Address) <> 0 Then
-        CopyMemory ByVal VarPtr(SelfAddressOf), ByVal i - (Ordinal * 4), 4
-        Exit Do
-    End If
-    CopyMemory ByVal VarPtr(ByteValue), ByVal Address, 1
-    If ByteValue <> ByteSub Then
-        CopyMemory ByVal VarPtr(SelfAddressOf), ByVal i - (Ordinal * 4), 4
-        Exit Do
-    End If
-    i = i + 4
-Loop
-End Function
-
-Private Function ObjProbe(ByVal Start As Long, ByRef Method As Long, ByRef ByteSub As Byte) As Boolean
-Dim ByteValue As Byte
-Dim Address As Long
-Dim Limit As Long, Entry As Long
-Address = Start
-Limit = Address + 64
-Do While Address < Limit
-    CopyMemory ByVal VarPtr(Entry), ByVal Address, 4
-    If Entry <> 0 Then
-        CopyMemory ByVal VarPtr(ByteValue), ByVal Entry, 1
-        If ByteValue = &H33 Or ByteValue = &HE9 Then
-            Method = Address
-            ByteSub = ByteValue
-            ObjProbe = True
-            Exit Do
-        End If
-    End If
-    Address = Address + 4
-Loop
 End Function
 
 Public Function LoByte(ByVal Word As Integer) As Byte

@@ -187,7 +187,6 @@ End Sub
 
 Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
-Set UserControl.Font = PropFont
 PropVisualStyles = True
 PropEnabled = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
@@ -205,7 +204,6 @@ End Sub
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 With PropBag
 Set PropFont = .ReadProperty("Font", Ambient.Font)
-Set UserControl.Font = PropFont
 PropVisualStyles = .ReadProperty("VisualStyles", True)
 Me.BackColor = .ReadProperty("BackColor", vbButtonFace)
 Me.ForeColor = .ReadProperty("ForeColor", vbButtonText)
@@ -431,12 +429,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If FrameGroupBoxHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles FrameGroupBoxHandle
-        Case False
-            RemoveVisualStyles FrameGroupBoxHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles FrameGroupBoxHandle
+    Else
+        RemoveVisualStyles FrameGroupBoxHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"

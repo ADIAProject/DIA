@@ -493,12 +493,11 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If OptionButtonHandle <> 0 And EnabledVisualStyles() = True Then
-    Select Case PropVisualStyles
-        Case True
-            ActivateVisualStyles OptionButtonHandle
-        Case False
-            RemoveVisualStyles OptionButtonHandle
-    End Select
+    If PropVisualStyles = True Then
+        ActivateVisualStyles OptionButtonHandle
+    Else
+        RemoveVisualStyles OptionButtonHandle
+    End If
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"

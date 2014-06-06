@@ -99,7 +99,6 @@ Private Declare Function VirtualFree Lib "kernel32" (ByRef lpAddress As Long, By
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
 Private Const MEM_COMMIT As Long = &H1000
-Private Const MEM_RELEASE As Long = &H8000&
 Private Const PAGE_EXECUTE_READWRITE As Long = &H40
 Private Const GWL_WNDPROC As Long = (-4)
 Private Const GWL_STYLE As Long = (-16)
@@ -346,6 +345,25 @@ End If
 ComCtlsW2KCompatibility = Value
 End Function
 
+Public Function ComCtlsIsNT6OrHigher() As Boolean
+Static Done As Boolean, Value As Boolean
+If Done = False Then
+    Dim Version As OSVERSIONINFO
+    On Error Resume Next
+    Version.dwOSVersionInfoSize = LenB(Version)
+    If GetVersionEx(Version) <> 0 Then
+        With Version
+        Const VER_PLATFORM_WIN32_NT As Long = 2
+        If .dwPlatformID = VER_PLATFORM_WIN32_NT Then
+            If .dwMajorVersion >= 6 Then Value = True
+        End If
+        End With
+    End If
+    Done = True
+End If
+ComCtlsIsNT6OrHigher = Value
+End Function
+
 Public Sub ComCtlsSetSubclass(ByVal hWnd As Long, ByVal This As ISubclass, ByVal dwRefData As Long, Optional ByVal Name As String)
 If hWnd = 0 Then Exit Sub
 If Name = vbNullString Then Name = "ComCtl"
@@ -405,50 +423,6 @@ Else
     ComCtlsSubclassProc = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End If
 End Function
-
-Public Sub ComCtlsSetDesignModeSubclass(ByVal hWnd As Long, ByVal This As Object, ByVal Ordinal As Byte, ByRef ASMWrapper As Long, ByRef PrevWndProc As Long)
-If ASMWrapper <> 0 Then Exit Sub
-ASMWrapper = VirtualAlloc(ByVal 0, 105, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
-If ASMWrapper = 0 Then Exit Sub
-Dim ASM(0 To 104) As Byte, VirtualFreePointer As Long
-VirtualFreePointer = GetProcAddress(GetModuleHandle(StrPtr("kernel32.dll")), "VirtualFree")
-ASM(0) = &H90: ASM(1) = &HFF: ASM(2) = &H5: ASM(7) = &H6A: ASM(8) = &H0: ASM(9) = &H54
-ASM(10) = &HFF: ASM(11) = &H74: ASM(12) = &H24: ASM(13) = &H18: ASM(14) = &HFF: ASM(15) = &H74
-ASM(16) = &H24: ASM(17) = &H18: ASM(18) = &HFF: ASM(19) = &H74: ASM(20) = &H24: ASM(21) = &H18
-ASM(22) = &HFF: ASM(23) = &H74: ASM(24) = &H24: ASM(25) = &H18: ASM(26) = &H68: ASM(31) = &HB8
-ASM(36) = &HFF: ASM(37) = &HD0: ASM(38) = &HFF: ASM(39) = &HD: ASM(44) = &HA1: ASM(49) = &H85
-ASM(50) = &HC0: ASM(51) = &H75: ASM(52) = &H4: ASM(53) = &H58: ASM(54) = &HC2: ASM(55) = &H10
-ASM(56) = &H0: ASM(57) = &HA1: ASM(62) = &H85: ASM(63) = &HC0: ASM(64) = &H74: ASM(65) = &H4
-ASM(66) = &H58: ASM(67) = &HC2: ASM(68) = &H10: ASM(69) = &H0: ASM(70) = &H58: ASM(71) = &H59
-ASM(72) = &H58: ASM(73) = &H58: ASM(74) = &H58: ASM(75) = &H58: ASM(76) = &H68: ASM(77) = &H0
-ASM(78) = &H80: ASM(79) = &H0: ASM(80) = &H0: ASM(81) = &H6A: ASM(82) = &H0: ASM(83) = &H68
-ASM(88) = &H51: ASM(89) = &HB8: ASM(94) = &HFF: ASM(95) = &HE0: ASM(96) = &H0: ASM(97) = &H0
-ASM(98) = &H0: ASM(99) = &H0: ASM(100) = &H0: ASM(101) = &H0: ASM(102) = &H0: ASM(103) = &H0
-CopyMemory ASM(3), UnsignedAdd(ASMWrapper, 96), 4
-CopyMemory ASM(40), UnsignedAdd(ASMWrapper, 96), 4
-CopyMemory ASM(58), UnsignedAdd(ASMWrapper, 96), 4
-CopyMemory ASM(45), UnsignedAdd(ASMWrapper, 100), 4
-CopyMemory ASM(84), ASMWrapper, 4
-CopyMemory ASM(27), ObjPtr(This), 4
-CopyMemory ASM(32), SelfAddressOf(This, Ordinal), 4
-CopyMemory ASM(90), VirtualFreePointer, 4
-CopyMemory ByVal ASMWrapper, ASM(0), 105
-PrevWndProc = SetWindowLong(hWnd, GWL_WNDPROC, ASMWrapper)
-End Sub
-
-Public Sub ComCtlsRemoveDesignModeSubclass(ByVal hWnd As Long, ByRef ASMWrapper As Long, ByRef PrevWndProc As Long)
-If ASMWrapper = 0 Or PrevWndProc = 0 Or hWnd = 0 Then Exit Sub
-SetWindowLong hWnd, GWL_WNDPROC, PrevWndProc
-PrevWndProc = 0
-Dim Counter As Long
-CopyMemory ByVal VarPtr(Counter), ByVal UnsignedAdd(ASMWrapper, 96), 4
-If Counter = 0 Then
-    VirtualFree ByVal ASMWrapper, 0, MEM_RELEASE
-Else
-    CopyMemory ByVal UnsignedAdd(ASMWrapper, 100), 1&, 4
-End If
-ASMWrapper = 0
-End Sub
 
 Public Function LvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
 LvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
@@ -598,7 +572,7 @@ Dim AppForm As Form, CurrControl As Control
 For Each AppForm In Forms
     For Each CurrControl In AppForm.Controls
         Select Case TypeName(CurrControl)
-            Case "Animation", "DTPicker", "MonthView", "Slider", "TabStrip", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar"
+            Case "Animation", "DTPicker", "MonthView", "Slider", "TabStrip", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
             Case "ProgressBar", "FrameW"

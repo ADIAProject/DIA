@@ -51,6 +51,8 @@ Public Function CmdLineParsing() As Boolean
             strArgParam = Right$(argRetCMD(i), Len(argRetCMD(i)) - iArgDvoetoch)
         End If
 
+        mbRunWithParam = True
+        
         Select Case LCase$(strArg)
 
             Case "/?", "/h", "-help", "/help", "-h", "--h", "--help"
@@ -82,6 +84,8 @@ Public Function CmdLineParsing() As Boolean
 
             Case "/s", "-s", "--s"
 
+                mbSilentRun = True
+                
                 Select Case LCase$(strArgParam)
 
                     Case "n"
@@ -120,7 +124,7 @@ Public Function CmdLineParsing() As Boolean
 
                 mbDebugStandart = True
                 mbUpdateCheck = False
-
+                
             ' SaveSnapReport - сохранение снимка системы в файл
             Case "/savereport", "-savereport", "--savereport"
                 

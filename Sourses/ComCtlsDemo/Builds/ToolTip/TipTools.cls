@@ -35,7 +35,6 @@ End Sub
 
 Public Function Add(ByVal hWnd As Long, Optional ByVal Key As String, Optional ByVal Text As String, Optional ByVal Centered As Boolean, Optional ByVal Transparent As Boolean) As TipTool
 Attribute Add.VB_Description = "Adds a tool to the tools collection."
-ShadowToolTip.FToolsAdd hWnd, Text, Centered, Transparent
 Dim NewTool As New TipTool
 NewTool.FInit ShadowToolTip, Key, hWnd
 If Key = vbNullString Then
@@ -44,6 +43,7 @@ Else
     PropTool.Add NewTool, Key
 End If
 NewTool.Index = PropTool.Count
+ShadowToolTip.FToolsAdd NewTool, hWnd, Text, Centered, Transparent
 Set Add = NewTool
 End Function
 
