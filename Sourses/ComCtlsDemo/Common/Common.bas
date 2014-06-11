@@ -41,6 +41,26 @@ Data2 As Integer
 Data3 As Integer
 Data4(0 To 7) As Byte
 End Type
+Private Const LF_FACESIZE As Long = 32
+Private Const FW_NORMAL As Long = 400
+Private Const FW_BOLD As Long = 700
+Private Const DEFAULT_QUALITY As Long = 0
+Private Type LOGFONT
+LFHeight As Long
+LFWidth As Long
+LFEscapement As Long
+LFOrientation As Long
+LFWeight As Long
+LFItalic As Byte
+LFUnderline As Byte
+LFStrikeOut As Byte
+LFCharset As Byte
+LFOutPrecision As Byte
+LFClipPrecision As Byte
+LFQuality As Byte
+LFPitchAndFamily As Byte
+LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
+End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function MessageBoxIndirect Lib "user32" Alias "MessageBoxIndirectW" (ByRef lpMsgBoxParams As MSGBOXPARAMS) As Long
 Private Declare Function GetActiveWindow Lib "user32" () As Long
@@ -63,6 +83,8 @@ Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As L
 Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
 Private Declare Function GetIconInfo Lib "user32" (ByVal hIcon As Long, ByRef pIconInfo As ICONINFO) As Long
 Private Declare Function CreateIconIndirect Lib "user32" (ByRef pIconInfo As ICONINFO) As Long
+Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
+Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function OleTranslateColor Lib "oleaut32" (ByVal Color As Long, ByVal hPal As Long, ByRef ColorRef As Long) As Long
 Private Declare Function OleLoadPicturePath Lib "oleaut32" (ByVal lpszPath As Long, ByVal pUnkCaller As Long, ByVal dwReserved As Long, ByVal ClrReserved As OLE_COLOR, ByRef riid As CLSID, ByRef pIPicture As IPicture) As Long
 Private Declare Function OleCreatePictureIndirect Lib "olepro32" (ByRef pPictDesc As PICTDESC, ByRef riid As Any, ByVal fPictureOwnsHandle As Long, ByRef pIPicture As IPicture) As Long
@@ -215,6 +237,26 @@ Select Case MousePointer
         Const IDC_WAITCD As Long = 32663 ' Undocumented
         MousePointerID = IDC_WAITCD
 End Select
+End Function
+
+Public Function CreateFontFromOLEFont(ByVal Font As StdFont) As Long
+Dim LF As LOGFONT, FontName As String
+With LF
+FontName = Left$(Font.Name, LF_FACESIZE)
+CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
+.LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
+If Font.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
+.LFItalic = IIf(Font.Italic = True, 1, 0)
+.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
+.LFUnderline = IIf(Font.Underline = True, 1, 0)
+.LFQuality = DEFAULT_QUALITY
+.LFCharset = CByte(Font.Charset And &HFF)
+End With
+CreateFontFromOLEFont = CreateFontIndirect(LF)
+End Function
+
+Public Function CloneFont(ByVal Font As IFont) As StdFont
+Font.Clone CloneFont
 End Function
 
 Public Function GetShiftState() As ShiftConstants

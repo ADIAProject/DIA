@@ -1,5 +1,20 @@
 List of revisions:
 
+10-Jun-2014
+- Included the GetIdealSize method in the CommandButtonW control.
+- Fixed a bug that the Appearance property is not considered at creation in the CommandButtonW control.
+
+09-Jun-2014
+- Centralized the font creation to reduce recurring codes. It is necessary to replace all controls and the 'Common.bas'.
+
+08-Jun-2014
+- Property Page is implemented to the ToolTip control.
+- Included the HitTest function and improved the NM_CLICK/NM_DBLCLK handler in the StatusBar control.
+
+07-Jun-2014
+- Property Page is implemented to the LinkLabel control.
+- Minor bugfix in the UserControl_Resize handler in the ComboBoxW control.
+
 04-Jun-2014
 - Internal improvements on some controls.
 - The ToolTip control does not need to subclass the parent form anymore.

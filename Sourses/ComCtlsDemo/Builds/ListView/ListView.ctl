@@ -117,26 +117,6 @@ Private Type SIZEAPI
 CX As Long
 CY As Long
 End Type
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
-Private Const DEFAULT_QUALITY As Long = 0
-Private Type LOGFONT
-LFHeight As Long
-LFWidth As Long
-LFEscapement As Long
-LFOrientation As Long
-LFWeight As Long
-LFItalic As Byte
-LFUnderline As Byte
-LFStrikeOut As Byte
-LFCharset As Byte
-LFOutPrecision As Byte
-LFClipPrecision As Byte
-LFQuality As Byte
-LFPitchAndFamily As Byte
-LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
-End Type
 Private Type LVITEM
 Mask As Long
 iItem As Long
@@ -424,8 +404,6 @@ Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
-Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
@@ -852,7 +830,6 @@ Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IPerPropertyBrowsingVB
 Private ListViewHandle As Long, ListViewHeaderHandle As Long
 Private ListViewFontHandle As Long, ListViewBoldFontHandle As Long, ListViewUnderlineFontHandle As Long, ListViewBoldUnderlineFontHandle As Long
-Private ListViewLogFont As LOGFONT, ListViewBoldLogFont As LOGFONT, ListViewUnderlineLogFont As LOGFONT, ListViewBoldUnderlineLogFont As LOGFONT
 Private ListViewFocusIndex As Long
 Private ListViewLabelInEdit As Boolean
 Private ListViewStartLabelEdit As Boolean
@@ -1466,23 +1443,23 @@ End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
 Dim OldFontHandle As Long, OldBoldFontHandle As Long, OldUnderlineFontHandle As Long, OldBoldUnderlineFontHandle As Long
+Dim TempFont As StdFont
 Set PropFont = NewFont
-Call OLEFontToLogFont(NewFont, ListViewLogFont)
-LSet ListViewBoldLogFont = ListViewLogFont
-LSet ListViewUnderlineLogFont = ListViewLogFont
-LSet ListViewBoldUnderlineLogFont = ListViewLogFont
-ListViewBoldLogFont.LFWeight = FW_BOLD
-ListViewUnderlineLogFont.LFUnderline = 1
-ListViewBoldUnderlineLogFont.LFWeight = FW_BOLD
-ListViewBoldUnderlineLogFont.LFUnderline = 1
 OldFontHandle = ListViewFontHandle
 OldBoldFontHandle = ListViewBoldFontHandle
 OldUnderlineFontHandle = ListViewUnderlineFontHandle
 OldBoldUnderlineFontHandle = ListViewBoldUnderlineFontHandle
-ListViewFontHandle = CreateFontIndirect(ListViewLogFont)
-ListViewBoldFontHandle = CreateFontIndirect(ListViewBoldLogFont)
-ListViewUnderlineFontHandle = CreateFontIndirect(ListViewUnderlineLogFont)
-ListViewBoldUnderlineFontHandle = CreateFontIndirect(ListViewBoldUnderlineLogFont)
+ListViewFontHandle = CreateFontFromOLEFont(PropFont)
+Set TempFont = CloneFont(PropFont)
+TempFont.Bold = True
+ListViewBoldFontHandle = CreateFontFromOLEFont(TempFont)
+Set TempFont = CloneFont(PropFont)
+TempFont.Underline = True
+ListViewUnderlineFontHandle = CreateFontFromOLEFont(TempFont)
+Set TempFont = CloneFont(PropFont)
+TempFont.Bold = True
+TempFont.Underline = True
+ListViewBoldUnderlineFontHandle = CreateFontFromOLEFont(TempFont)
 If ListViewHandle <> 0 Then SendMessage ListViewHandle, WM_SETFONT, ListViewFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 If OldBoldFontHandle <> 0 Then DeleteObject OldBoldFontHandle
@@ -1493,43 +1470,28 @@ End Property
 
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long, OldBoldFontHandle As Long, OldUnderlineFontHandle As Long, OldBoldUnderlineFontHandle As Long
-Call OLEFontToLogFont(PropFont, ListViewLogFont)
-LSet ListViewBoldLogFont = ListViewLogFont
-LSet ListViewUnderlineLogFont = ListViewLogFont
-LSet ListViewBoldUnderlineLogFont = ListViewLogFont
-ListViewBoldLogFont.LFWeight = FW_BOLD
-ListViewUnderlineLogFont.LFUnderline = 1
-ListViewBoldUnderlineLogFont.LFWeight = FW_BOLD
-ListViewBoldUnderlineLogFont.LFUnderline = 1
+Dim TempFont As StdFont
 OldFontHandle = ListViewFontHandle
 OldBoldFontHandle = ListViewBoldFontHandle
 OldUnderlineFontHandle = ListViewUnderlineFontHandle
 OldBoldUnderlineFontHandle = ListViewBoldUnderlineFontHandle
-ListViewFontHandle = CreateFontIndirect(ListViewLogFont)
-ListViewBoldFontHandle = CreateFontIndirect(ListViewBoldLogFont)
-ListViewUnderlineFontHandle = CreateFontIndirect(ListViewUnderlineLogFont)
-ListViewBoldUnderlineFontHandle = CreateFontIndirect(ListViewBoldUnderlineLogFont)
+ListViewFontHandle = CreateFontFromOLEFont(PropFont)
+Set TempFont = CloneFont(PropFont)
+TempFont.Bold = True
+ListViewBoldFontHandle = CreateFontFromOLEFont(TempFont)
+Set TempFont = CloneFont(PropFont)
+TempFont.Underline = True
+ListViewUnderlineFontHandle = CreateFontFromOLEFont(TempFont)
+Set TempFont = CloneFont(PropFont)
+TempFont.Bold = True
+TempFont.Underline = True
+ListViewBoldUnderlineFontHandle = CreateFontFromOLEFont(TempFont)
 If ListViewHandle <> 0 Then SendMessage ListViewHandle, WM_SETFONT, ListViewFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 If OldBoldFontHandle <> 0 Then DeleteObject OldBoldFontHandle
 If OldUnderlineFontHandle <> 0 Then DeleteObject OldUnderlineFontHandle
 If OldBoldUnderlineFontHandle <> 0 Then DeleteObject OldBoldUnderlineFontHandle
 UserControl.PropertyChanged "Font"
-End Sub
-
-Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
-Dim FontName As String
-With LF
-FontName = Left$(Font.Name, LF_FACESIZE)
-CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
-.LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
-If Font.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
-.LFItalic = IIf(Font.Italic = True, 1, 0)
-.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
-.LFUnderline = IIf(Font.Underline = True, 1, 0)
-.LFQuality = DEFAULT_QUALITY
-.LFCharset = CByte(Font.Charset And &HFF)
-End With
 End Sub
 
 Public Property Get VisualStyles() As Boolean

@@ -1785,6 +1785,22 @@ Begin VB.Form frmOptions
          PicturePushOnHover=   -1  'True
          ColorScheme     =   2
       End
+      Begin prjDIADBS.ToolTip TT 
+         Left            =   3480
+         Top             =   1800
+         _ExtentX        =   450
+         _ExtentY        =   450
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Lucida Console"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         UseSystemFont   =   0   'False
+      End
       Begin prjDIADBS.LabelW lblButtonStyleColor 
          Height          =   315
          Left            =   3960
@@ -1824,22 +1840,6 @@ Begin VB.Form frmOptions
          EndProperty
          BackStyle       =   0
          Caption         =   "Стиль оформления кнопки"
-      End
-      Begin prjDIADBS.ToolTip TT 
-         Left            =   3480
-         Top             =   1800
-         _ExtentX        =   450
-         _ExtentY        =   450
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Lucida Console"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         UseSystemFont   =   0   'False
       End
       Begin prjDIADBS.LabelW lblTheme 
          Height          =   225

@@ -1177,8 +1177,18 @@ End Function
 
 Public Function ShowFont() As Boolean
 Attribute ShowFont.VB_Description = "Displays the font dialog box."
-Dim CHFONT As TCHOOSEFONT, LF As LOGFONT
-Call OLEFontToLogFont(PropFont, LF)
+Dim CHFONT As TCHOOSEFONT, FontName As String, LF As LOGFONT
+With LF
+FontName = Left$(PropFont.Name, LF_FACESIZE)
+CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
+.LFHeight = -MulDiv(CLng(PropFont.Size), DPI_Y(), 72)
+If PropFont.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
+.LFItalic = IIf(PropFont.Italic = True, 1, 0)
+.LFStrikeOut = IIf(PropFont.Strikethrough = True, 1, 0)
+.LFUnderline = IIf(PropFont.Underline = True, 1, 0)
+.LFQuality = DEFAULT_QUALITY
+.LFCharset = CByte(PropFont.Charset And &HFF)
+End With
 With CHFONT
 .lStructSize = LenB(CHFONT)
 If Not Screen.ActiveForm Is Nothing Then
@@ -1233,21 +1243,6 @@ Else
     End Select
 End If
 End Function
-
-Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
-Dim FontName As String
-With LF
-FontName = Left$(Font.Name, LF_FACESIZE)
-CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
-.LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
-If Font.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
-.LFItalic = IIf(Font.Italic = True, 1, 0)
-.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
-.LFUnderline = IIf(Font.Underline = True, 1, 0)
-.LFQuality = DEFAULT_QUALITY
-.LFCharset = CByte(Font.Charset And &HFF)
-End With
-End Sub
 
 Public Function ShowPrinter() As Boolean
 Attribute ShowPrinter.VB_Description = "Displays the printer dialog box."

@@ -1,0 +1,254 @@
+VERSION 5.00
+Begin VB.PropertyPage PPToolTipGeneral 
+   Caption         =   "General"
+   ClientHeight    =   3450
+   ClientLeft      =   0
+   ClientTop       =   0
+   ClientWidth     =   5925
+   LockControls    =   -1  'True
+   PaletteMode     =   0  'Halftone
+   ScaleHeight     =   3450
+   ScaleWidth      =   5925
+   Begin VB.CheckBox CheckUseSystemFont 
+      Caption         =   "UseSystemFont"
+      Height          =   285
+      Left            =   4200
+      TabIndex        =   11
+      Top             =   1560
+      Width           =   1620
+   End
+   Begin VB.TextBox TextMaxTipWidth 
+      Height          =   315
+      Left            =   1800
+      TabIndex        =   3
+      Top             =   480
+      Width           =   2235
+   End
+   Begin VB.CheckBox CheckFadeAnimation 
+      Caption         =   "FadeAnimation"
+      Height          =   285
+      Left            =   4200
+      TabIndex        =   10
+      Top             =   1200
+      Width           =   1620
+   End
+   Begin VB.CheckBox CheckCloseButton 
+      Caption         =   "CloseButton"
+      Height          =   285
+      Left            =   4200
+      TabIndex        =   9
+      Top             =   840
+      Width           =   1620
+   End
+   Begin VB.ComboBox ComboIcon 
+      Height          =   315
+      Left            =   1800
+      Style           =   2  'Dropdown List
+      TabIndex        =   7
+      Top             =   1200
+      Width           =   2235
+   End
+   Begin VB.TextBox TextTitle 
+      Height          =   315
+      Left            =   1800
+      TabIndex        =   5
+      Top             =   840
+      Width           =   2235
+   End
+   Begin VB.CheckBox CheckBalloon 
+      Caption         =   "Balloon"
+      Height          =   285
+      Left            =   4200
+      TabIndex        =   8
+      Top             =   480
+      Width           =   1620
+   End
+   Begin VB.CheckBox CheckEnabled 
+      Caption         =   "Enabled"
+      Height          =   285
+      Left            =   120
+      TabIndex        =   0
+      Top             =   120
+      Width           =   1620
+   End
+   Begin VB.CheckBox CheckVisualStyles 
+      Caption         =   "VisualStyles"
+      Height          =   285
+      Left            =   1800
+      TabIndex        =   1
+      Top             =   120
+      Width           =   1620
+   End
+   Begin VB.Label LabelMaxTipWidth 
+      Caption         =   "MaxTipWidth:"
+      Height          =   240
+      Left            =   120
+      TabIndex        =   2
+      Top             =   480
+      Width           =   1620
+   End
+   Begin VB.Label LabelIcon 
+      Caption         =   "Icon:"
+      Height          =   240
+      Left            =   120
+      TabIndex        =   6
+      Top             =   1200
+      Width           =   1620
+   End
+   Begin VB.Label LabelTitle 
+      Caption         =   "Title:"
+      Height          =   240
+      Left            =   120
+      TabIndex        =   4
+      Top             =   840
+      Width           =   1620
+   End
+End
+Attribute VB_Name = "PPToolTipGeneral"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+Private FreezeChanged As Boolean
+
+Private Sub PropertyPage_Initialize()
+With ComboIcon
+.AddItem "0 - None"
+.ItemData(.NewIndex) = TipIconNone
+.AddItem "1 - Info"
+.ItemData(.NewIndex) = TipIconInfo
+.AddItem "2 - Warning"
+.ItemData(.NewIndex) = TipIconWarning
+.AddItem "3 - Error"
+.ItemData(.NewIndex) = TipIconError
+End With
+End Sub
+
+Private Sub PropertyPage_ApplyChanges()
+On Error Resume Next
+PropertyPage.ValidateControls
+If Err.Number = 380 Then Exit Sub
+On Error GoTo 0
+With PropertyPage.SelectedControls(0)
+.Enabled = CBool(CheckEnabled.Value = vbChecked)
+.VisualStyles = CBool(CheckVisualStyles.Value = vbChecked)
+.MaxTipWidth = CSng(TextMaxTipWidth.Text)
+.Title = TextTitle.Text
+.Icon = ComboIcon.ItemData(ComboIcon.ListIndex)
+.Balloon = CBool(CheckBalloon.Value = vbChecked)
+.CloseButton = CBool(CheckCloseButton.Value = vbChecked)
+.FadeAnimation = CBool(CheckFadeAnimation.Value = vbChecked)
+.UseSystemFont = CBool(CheckUseSystemFont.Value = vbChecked)
+End With
+Call PropertyPage_SelectionChanged
+End Sub
+
+Private Sub PropertyPage_SelectionChanged()
+Dim i As Long
+FreezeChanged = True
+With PropertyPage.SelectedControls(0)
+CheckEnabled.Value = IIf(.Enabled = True, vbChecked, vbUnchecked)
+CheckVisualStyles.Value = IIf(.VisualStyles = True, vbChecked, vbUnchecked)
+TextMaxTipWidth.Text = CStr(.MaxTipWidth)
+TextTitle.Text = .Title
+For i = 0 To ComboIcon.ListCount - 1
+    If ComboIcon.ItemData(i) = .Icon Then
+        ComboIcon.ListIndex = i
+        Exit For
+    End If
+Next i
+CheckBalloon.Value = IIf(.Balloon = True, vbChecked, vbUnchecked)
+CheckCloseButton.Value = IIf(.CloseButton = True, vbChecked, vbUnchecked)
+CheckFadeAnimation.Value = IIf(.FadeAnimation = True, vbChecked, vbUnchecked)
+CheckUseSystemFont.Value = IIf(.UseSystemFont = True, vbChecked, vbUnchecked)
+End With
+FreezeChanged = False
+End Sub
+
+Private Sub CheckEnabled_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckVisualStyles_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub TextMaxTipWidth_GotFocus()
+If Not TextMaxTipWidth.SelStart = 0 Then Exit Sub
+TextMaxTipWidth.SelLength = Len(TextMaxTipWidth.Text)
+End Sub
+
+Private Sub TextMaxTipWidth_LostFocus()
+TextMaxTipWidth.SelStart = 0
+End Sub
+
+Private Sub TextMaxTipWidth_Change()
+If FreezeChanged = True Then Exit Sub
+If TextMaxTipWidth.Text = vbNullString Then
+    TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).TabFixedWidth
+    TextMaxTipWidth.SelStart = 0
+    TextMaxTipWidth.SelLength = Len(TextMaxTipWidth.Text)
+End If
+PropertyPage.Changed = True
+End Sub
+
+Private Sub TextMaxTipWidth_Validate(Cancel As Boolean)
+If Not IsNumeric(TextMaxTipWidth.Text) Then
+    MsgBox "Invalid property value", vbCritical + vbOKOnly
+    TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).TabFixedWidth
+    TextMaxTipWidth.SetFocus
+    Cancel = True
+Else
+    Select Case CSng(TextMaxTipWidth.Text)
+        Case Is >= 0, -1
+            TextMaxTipWidth.Text = CSng(TextMaxTipWidth.Text)
+        Case Else
+            MsgBox "Invalid property value", vbCritical + vbOKOnly
+            TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).MaxTipWidth
+            TextMaxTipWidth.SetFocus
+            Cancel = True
+    End Select
+End If
+End Sub
+
+Private Sub TextTitle_GotFocus()
+If Not TextTitle.SelStart = 0 Then Exit Sub
+TextTitle.SelLength = Len(TextTitle.Text)
+End Sub
+
+Private Sub TextTitle_LostFocus()
+TextTitle.SelStart = 0
+End Sub
+
+Private Sub TextTitle_Change()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub ComboIcon_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckBalloon_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckCloseButton_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckFadeAnimation_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckUseSystemFont_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub

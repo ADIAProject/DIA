@@ -906,7 +906,6 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      UseSystemFont   =   0   'False
    End
    Begin prjDIADBS.ToolTip TTStatusIcon 
       Left            =   900
@@ -922,7 +921,6 @@ Begin VB.Form frmMain
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      UseSystemFont   =   0   'False
    End
    Begin prjDIADBS.ToolTip TT 
       Left            =   300
@@ -10413,4 +10411,3 @@ Private Sub CreateCommonIndex()
     
     
 End Sub
-

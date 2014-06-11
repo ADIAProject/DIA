@@ -46,26 +46,6 @@ Private Type SIZEAPI
 CX As Long
 CY As Long
 End Type
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
-Private Const DEFAULT_QUALITY As Long = 0
-Private Type LOGFONT
-LFHeight As Long
-LFWidth As Long
-LFEscapement As Long
-LFOrientation As Long
-LFWeight As Long
-LFItalic As Byte
-LFUnderline As Byte
-LFStrikeOut As Byte
-LFCharset As Byte
-LFOutPrecision As Byte
-LFClipPrecision As Byte
-LFQuality As Byte
-LFPitchAndFamily As Byte
-LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
-End Type
 Private Type COMBOBOXINFO
 cbSize As Long
 RCItem As RECT
@@ -145,8 +125,6 @@ Private Declare Function MapWindowPoints Lib "user32" (ByVal hWndFrom As Long, B
 Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Private Declare Function GetTextExtentPoint32 Lib "gdi32" Alias "GetTextExtentPoint32W" (ByVal hDC As Long, ByVal lpsz As Long, ByVal cbString As Long, ByRef lpSize As SIZEAPI) As Long
 Private Declare Function FindWindowEx Lib "user32" Alias "FindWindowExW" (ByVal hWndParent As Long, ByVal hWndChildAfter As Long, ByVal lpszClass As Long, ByVal lpszWindow As Long) As Long
-Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function SetTextColor Lib "gdi32" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Private Declare Function SetBkMode Lib "gdi32" (ByVal hDC As Long, ByVal nBkMode As Long) As Long
@@ -268,7 +246,6 @@ Implements OLEGuids.IPerPropertyBrowsingVB
 Private ComboBoxHandle As Long, ComboBoxEditHandle As Long
 Private ComboBoxListBackColorBrush As Long
 Private ComboBoxFontHandle As Long
-Private ComboBoxLogFont As LOGFONT
 Private ComboBoxNewIndex As Long
 Private ComboBoxAutoDragInSel As Boolean, ComboBoxAutoDragIsActive As Boolean
 Private ComboBoxAutoDragSelStart As Integer, ComboBoxAutoDragSelEnd As Integer
@@ -511,7 +488,11 @@ If ComboBoxHandle = 0 Then Exit Sub
 With UserControl
 Dim WndRect As RECT
 If PropStyle <> CboStyleSimpleCombo Then
-    MoveWindow ComboBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
+    If .ScaleHeight > 0 Then
+        MoveWindow ComboBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
+    Else
+        MoveWindow ComboBoxHandle, 0, 0, .ScaleWidth, 1, 1
+    End If
     GetWindowRect ComboBoxHandle, WndRect
     If (WndRect.Bottom - WndRect.Top) <> .ScaleHeight Or (WndRect.Right - WndRect.Left) <> .ScaleWidth Then
         InProc = True
@@ -652,9 +633,8 @@ End Property
 Public Property Set Font(ByVal NewFont As StdFont)
 Dim OldFontHandle As Long
 Set PropFont = NewFont
-Call OLEFontToLogFont(NewFont, ComboBoxLogFont)
 OldFontHandle = ComboBoxFontHandle
-ComboBoxFontHandle = CreateFontIndirect(ComboBoxLogFont)
+ComboBoxFontHandle = CreateFontFromOLEFont(PropFont)
 If ComboBoxHandle <> 0 Then SendMessage ComboBoxHandle, WM_SETFONT, ComboBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 Call UserControl_Resize
@@ -663,28 +643,12 @@ End Property
 
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
-Call OLEFontToLogFont(PropFont, ComboBoxLogFont)
 OldFontHandle = ComboBoxFontHandle
-ComboBoxFontHandle = CreateFontIndirect(ComboBoxLogFont)
+ComboBoxFontHandle = CreateFontFromOLEFont(PropFont)
 If ComboBoxHandle <> 0 Then SendMessage ComboBoxHandle, WM_SETFONT, ComboBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 Call UserControl_Resize
 UserControl.PropertyChanged "Font"
-End Sub
-
-Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
-Dim FontName As String
-With LF
-FontName = Left$(Font.Name, LF_FACESIZE)
-CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
-.LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
-If Font.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
-.LFItalic = IIf(Font.Italic = True, 1, 0)
-.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
-.LFUnderline = IIf(Font.Underline = True, 1, 0)
-.LFQuality = DEFAULT_QUALITY
-.LFCharset = CByte(Font.Charset And &HFF)
-End With
 End Sub
 
 Public Property Get VisualStyles() As Boolean

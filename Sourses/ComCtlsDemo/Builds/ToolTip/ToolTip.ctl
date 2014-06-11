@@ -12,7 +12,7 @@ Begin VB.UserControl ToolTip
    ScaleHeight     =   120
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   160
-   ToolboxBitmap   =   "ToolTip.ctx":0023
+   ToolboxBitmap   =   "ToolTip.ctx":0036
 End
 Attribute VB_Name = "ToolTip"
 Attribute VB_GlobalNameSpace = False
@@ -51,26 +51,6 @@ Left As Long
 Top As Long
 Right As Long
 Bottom As Long
-End Type
-Private Const LF_FACESIZE As Long = 32
-Private Const FW_NORMAL As Long = 400
-Private Const FW_BOLD As Long = 700
-Private Const DEFAULT_QUALITY As Long = 0
-Private Type LOGFONT
-LFHeight As Long
-LFWidth As Long
-LFEscapement As Long
-LFOrientation As Long
-LFWeight As Long
-LFItalic As Byte
-LFUnderline As Byte
-LFStrikeOut As Byte
-LFCharset As Byte
-LFOutPrecision As Byte
-LFClipPrecision As Byte
-LFQuality As Byte
-LFPitchAndFamily As Byte
-LFFaceName(0 To ((LF_FACESIZE * 2) - 1)) As Byte
 End Type
 Private Type TOOLINFO
 cbSize As Long
@@ -113,8 +93,6 @@ Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function GetAncestor Lib "user32" (ByVal hWnd As Long, ByVal gaFlags As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function SetParent Lib "user32" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
-Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Const ICC_TAB_CLASSES As Long = &H8
 Private Const GWL_STYLE As Long = (-16)
@@ -161,9 +139,6 @@ Private Const TTM_GETTOOLINFO As Long = TTM_GETTOOLINFOW
 Private Const TTM_SETTOOLINFOA As Long = (WM_USER + 9)
 Private Const TTM_SETTOOLINFOW As Long = (WM_USER + 54)
 Private Const TTM_SETTOOLINFO As Long = TTM_SETTOOLINFOW
-Private Const TTM_HITTESTA As Long = (WM_USER + 10)
-Private Const TTM_HITTESTW As Long = (WM_USER + 55)
-Private Const TTM_HITTEST As Long = TTM_HITTESTW
 Private Const TTM_GETTEXTA As Long = (WM_USER + 11)
 Private Const TTM_GETTEXTW As Long = (WM_USER + 56)
 Private Const TTM_GETTEXT As Long = TTM_GETTEXTW
@@ -207,7 +182,6 @@ Implements ISubclass
 Private ToolTipHandle As Long
 Private ToolTipMaxTipLength As Long
 Private ToolTipFontHandle As Long
-Private ToolTipLogFont As LOGFONT
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropTools As TipTools
@@ -354,9 +328,8 @@ End Property
 Public Property Set Font(ByVal NewFont As StdFont)
 Dim OldFontHandle As Long
 Set PropFont = NewFont
-Call OLEFontToLogFont(NewFont, ToolTipLogFont)
 OldFontHandle = ToolTipFontHandle
-ToolTipFontHandle = CreateFontIndirect(ToolTipLogFont)
+ToolTipFontHandle = CreateFontFromOLEFont(PropFont)
 If ToolTipHandle <> 0 Then
     If PropUseSystemFont = False Then
         SendMessage ToolTipHandle, WM_SETFONT, ToolTipFontHandle, ByVal 1&
@@ -371,9 +344,8 @@ End Property
 
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
-Call OLEFontToLogFont(PropFont, ToolTipLogFont)
 OldFontHandle = ToolTipFontHandle
-ToolTipFontHandle = CreateFontIndirect(ToolTipLogFont)
+ToolTipFontHandle = CreateFontFromOLEFont(PropFont)
 If ToolTipHandle <> 0 Then
     If PropUseSystemFont = False Then
         SendMessage ToolTipHandle, WM_SETFONT, ToolTipFontHandle, ByVal 1&
@@ -384,21 +356,6 @@ End If
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 If Ambient.UserMode = False Then Set UserControl.Font = PropFont
 UserControl.PropertyChanged "Font"
-End Sub
-
-Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
-Dim FontName As String
-With LF
-FontName = Left$(Font.Name, LF_FACESIZE)
-CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
-.LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
-If Font.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
-.LFItalic = IIf(Font.Italic = True, 1, 0)
-.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
-.LFUnderline = IIf(Font.Underline = True, 1, 0)
-.LFQuality = DEFAULT_QUALITY
-.LFCharset = CByte(Font.Charset And &HFF)
-End With
 End Sub
 
 Public Property Get VisualStyles() As Boolean
@@ -468,7 +425,7 @@ End If
 End Property
 
 Public Property Let MaxTipWidth(ByVal Value As Single)
-If Value < -1 Then
+If Value < 0 And Not Value = -1 Then
     If Ambient.UserMode = False Then
         MsgBox "Invalid property value", vbCritical + vbOKOnly
         Exit Property
@@ -513,7 +470,12 @@ Icon = PropIcon
 End Property
 
 Public Property Let Icon(ByVal Value As TipIconConstants)
-PropIcon = Value
+Select Case Value
+    Case TipIconNone, TipIconInfo, TipIconWarning, TipIconError
+        PropIcon = Value
+    Case Else
+        Err.Raise 380
+End Select
 If ToolTipHandle <> 0 Then SendMessage ToolTipHandle, TTM_SETTITLE, PropIcon, ByVal StrPtr(PropTitle)
 UserControl.PropertyChanged "Icon"
 End Property
