@@ -72,6 +72,8 @@ Private Declare Function SetWindowsHookEx Lib "user32" Alias "SetWindowsHookExW"
 Private Declare Function UnhookWindowsHookEx Lib "user32" (ByVal hHook As Long) As Long
 Private Declare Function CallNextHookEx Lib "user32" (ByVal hHook As Long, ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function GetActiveWindow Lib "user32" () As Long
+Private Declare Function GetAncestor Lib "user32" (ByVal hWnd As Long, ByVal gaFlags As Long) As Long
+Private Declare Function GetClassName Lib "user32" Alias "GetClassNameW" (ByVal hWnd As Long, ByVal lpClassName As Long, ByVal nMaxCount As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
 Private Declare Function GetTickCount Lib "kernel32" () As Long
 Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
@@ -362,6 +364,22 @@ If Done = False Then
     Done = True
 End If
 ComCtlsIsNT6OrHigher = Value
+End Function
+
+Public Function ComCtlsRootIsEditor(ByVal hWnd As Long) As Boolean
+Static Done As Boolean, Value As Boolean
+If Done = False Then
+    Const GA_ROOT As Long = 2
+    hWnd = GetAncestor(hWnd, GA_ROOT)
+    If hWnd <> 0 Then
+        Dim Buffer As String, RetVal As Long
+        Buffer = String(256, vbNullChar)
+        RetVal = GetClassName(hWnd, StrPtr(Buffer), Len(Buffer))
+        If RetVal <> 0 Then Value = CBool(Left$(Buffer, RetVal) = "wndclass_desked_gsk")
+    End If
+    Done = True
+End If
+ComCtlsRootIsEditor = Value
 End Function
 
 Public Sub ComCtlsSetSubclass(ByVal hWnd As Long, ByVal This As ISubclass, ByVal dwRefData As Long, Optional ByVal Name As String)

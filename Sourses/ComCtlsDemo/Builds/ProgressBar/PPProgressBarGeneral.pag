@@ -473,7 +473,14 @@ If Not IsNumeric(TextMarqueeSpeed.Text) Then
     TextMarqueeSpeed.SetFocus
     Cancel = True
 Else
-    TextMarqueeSpeed.Text = CLng(TextMarqueeSpeed.Text)
+    If CLng(TextMarqueeSpeed.Text) > 0 Then
+        TextMarqueeSpeed.Text = CLng(TextMarqueeSpeed.Text)
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextMarqueeSpeed.Text = PropertyPage.SelectedControls(0).MarqueeSpeed
+        TextMarqueeSpeed.SetFocus
+        Cancel = True
+    End If
 End If
 End Sub
 

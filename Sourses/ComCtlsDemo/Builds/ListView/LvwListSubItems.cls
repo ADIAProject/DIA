@@ -117,6 +117,7 @@ Dim i As Long
 For i = 1 To PropListSubItem.Count
     Me.Remove 1
 Next i
+Set PropListSubItem = New Collection
 End Sub
 
 Public Sub Remove(ByVal Index As Variant)

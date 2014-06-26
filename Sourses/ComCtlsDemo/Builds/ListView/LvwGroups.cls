@@ -82,6 +82,7 @@ End Property
 Public Sub Clear()
 Attribute Clear.VB_Description = "Removes all groups from the collection."
 ShadowListView.FGroupsClear
+Set PropGroup = New Collection
 End Sub
 
 Public Sub Remove(ByVal Index As Variant)

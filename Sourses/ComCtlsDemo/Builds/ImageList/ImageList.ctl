@@ -449,7 +449,6 @@ End Sub
 
 Friend Sub FListImagesClear()
 If ImageListHandle <> 0 Then Do While ImageList_Remove(ImageListHandle, 0) <> 0: Loop
-Set PropListImages = Nothing
 End Sub
 
 Friend Sub FListImageDraw(ByVal Index As Long, ByVal hDC As Long, Optional ByVal X As Long, Optional ByVal Y As Long, Optional ByVal Style As ImlDrawConstants)

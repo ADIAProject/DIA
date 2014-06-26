@@ -77,6 +77,7 @@ End Property
 Public Sub Clear()
 Attribute Clear.VB_Description = "Removes all list images from the collection."
 ShadowImageList.FListImagesClear
+Set PropListImage = New Collection
 End Sub
 
 Public Sub Remove(ByVal Index As Variant)

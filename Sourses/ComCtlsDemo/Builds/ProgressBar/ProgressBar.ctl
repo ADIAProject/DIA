@@ -374,6 +374,11 @@ Attribute Parent.VB_Description = "Returns the object on which this object is lo
 Set Parent = UserControl.Parent
 End Property
 
+Public Property Get Container() As Object
+Attribute Container.VB_Description = "Returns the container of an object."
+Set Container = Extender.Container
+End Property
+
 Public Property Get Left() As Single
 Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
 Left = Extender.Left
@@ -634,14 +639,8 @@ End Property
 
 Public Property Let MarqueeAnimation(ByVal Value As Boolean)
 PropMarqueeAnimation = Value
-If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
-    If PropMarqueeAnimation = True Then
-        SendMessage ProgressBarHandle, PBM_SETMARQUEE, 1, ByVal PropMarqueeSpeed
-    Else
-        SendMessage ProgressBarHandle, PBM_SETMARQUEE, 0, ByVal PropMarqueeSpeed
-    End If
-End If
-UserControl.PropertyChanged "Marquee"
+If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 1 Then SendMessage ProgressBarHandle, PBM_SETMARQUEE, IIf(PropMarqueeAnimation = True, 1, 0), ByVal PropMarqueeSpeed
+UserControl.PropertyChanged "MarqueeAnimation"
 End Property
 
 Public Property Get MarqueeSpeed() As Long
@@ -650,10 +649,17 @@ MarqueeSpeed = PropMarqueeSpeed
 End Property
 
 Public Property Let MarqueeSpeed(ByVal Value As Long)
-PropMarqueeSpeed = Value
-If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
-    If PropMarquee = True Then SendMessage ProgressBarHandle, PBM_SETMARQUEE, 1, ByVal PropMarqueeSpeed
+If Value > 0 Then
+    PropMarqueeSpeed = Value
+Else
+    If Ambient.UserMode = False Then
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise 380
+    End If
 End If
+If ProgressBarHandle <> 0 And ComCtlsSupportLevel() >= 1 Then SendMessage ProgressBarHandle, PBM_SETMARQUEE, IIf(PropMarqueeAnimation = True, 1, 0), ByVal PropMarqueeSpeed
 UserControl.PropertyChanged "MarqueeSpeed"
 End Property
 

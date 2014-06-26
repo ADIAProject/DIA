@@ -11,6 +11,12 @@ Begin VB.UserControl CheckBoxW
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   160
    ToolboxBitmap   =   "CheckBoxW.ctx":0035
+   Begin VB.Timer TimerImageList 
+      Enabled         =   0   'False
+      Interval        =   1
+      Left            =   0
+      Top             =   0
+   End
 End
 Attribute VB_Name = "CheckBoxW"
 Attribute VB_GlobalNameSpace = False
@@ -18,6 +24,21 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
+#If False Then
+Private ChkImageListAlignmentLeft, ChkImageListAlignmentRight, ChkImageListAlignmentTop, ChkImageListAlignmentBottom, ChkImageListAlignmentCenter
+#End If
+Private Const BUTTON_IMAGELIST_ALIGN_LEFT As Long = 0
+Private Const BUTTON_IMAGELIST_ALIGN_RIGHT As Long = 1
+Private Const BUTTON_IMAGELIST_ALIGN_TOP As Long = 2
+Private Const BUTTON_IMAGELIST_ALIGN_BOTTOM As Long = 3
+Private Const BUTTON_IMAGELIST_ALIGN_CENTER As Long = 4
+Public Enum ChkImageListAlignmentConstants
+ChkImageListAlignmentLeft = BUTTON_IMAGELIST_ALIGN_LEFT
+ChkImageListAlignmentRight = BUTTON_IMAGELIST_ALIGN_RIGHT
+ChkImageListAlignmentTop = BUTTON_IMAGELIST_ALIGN_TOP
+ChkImageListAlignmentBottom = BUTTON_IMAGELIST_ALIGN_BOTTOM
+ChkImageListAlignmentCenter = BUTTON_IMAGELIST_ALIGN_CENTER
+End Enum
 Private Type TagInitCommonControlsEx
 dwSize As Long
 dwICC As Long
@@ -37,9 +58,25 @@ Private Type POINTAPI
 X As Long
 Y As Long
 End Type
+Private Type BUTTON_IMAGELIST
+hImageList As Long
+RCMargin As RECT
+uAlign As Long
+End Type
+Private Type NMHDR
+hWndFrom As Long
+IDFrom As Long
+Code As Long
+End Type
+Private Type NMBCHOTITEM
+hdr As NMHDR
+dwFlags As Long
+End Type
 Public Event Click()
 Attribute Click.VB_Description = "Occurs when the user presses and then releases a mouse button over an object."
 Attribute Click.VB_UserMemId = -600
+Public Event HotChanged()
+Attribute HotChanged.VB_Description = "Occurrs when the check box control's hot state changes. Requires comctl32.dll version 6.0 or higher."
 Public Event PreviewKeyDown(ByVal KeyCode As Integer, ByRef IsInputKey As Boolean)
 Attribute PreviewKeyDown.VB_Description = "Occurs before the KeyDown event."
 Public Event PreviewKeyUp(ByVal KeyCode As Integer, ByRef IsInputKey As Boolean)
@@ -117,6 +154,7 @@ Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
 Private Const WS_EX_RTLREADING As Long = &H2000
 Private Const SW_HIDE As Long = &H0
+Private Const WM_NOTIFY As Long = &H4E
 Private Const WM_MOUSEACTIVATE As Long = &H21, MA_NOACTIVATE As Long = &H3, MA_NOACTIVATEANDEAT As Long = &H4
 Private Const WM_SETFOCUS As Long = &H7
 Private Const WM_KEYDOWN As Long = &H100
@@ -156,12 +194,24 @@ Private Const BS_NOTIFY As Long = &H4000
 Private Const BS_FLAT As Long = &H8000&
 Private Const BM_GETCHECK As Long = &HF0
 Private Const BM_SETCHECK As Long = &HF1
+Private Const BM_GETSTATE As Long = &HF2
 Private Const BM_SETIMAGE As Long = &HF7
+Private Const BCM_FIRST As Long = &H1600
+Private Const BCM_SETIMAGELIST As Long = (BCM_FIRST + 2)
+Private Const BCM_GETIMAGELIST As Long = (BCM_FIRST + 3)
 Private Const BST_UNCHECKED As Long = &H0
 Private Const BST_CHECKED As Long = &H1
 Private Const BST_INDETERMINATE As Long = &H2
+Private Const BST_PUSHED As Long = &H4
+Private Const BST_HOT As Long = &H200
+Private Const BCCL_NOGLYPH As Long = (-1) ' Contrary to MSDN it even works on Windows XP
 Private Const BN_CLICKED As Long = 0
 Private Const BN_DOUBLECLICKED As Long = 5
+Private Const BCN_FIRST As Long = -1250
+Private Const BCN_HOTITEMCHANGE As Long = (BCN_FIRST + 1)
+Private Const HICF_MOUSE As Long = &H1
+Private Const HICF_ENTERING As Long = &H10
+Private Const HICF_LEAVING As Long = &H20
 Private Const IMAGE_BITMAP As Long = 0
 Private Const IMAGE_ICON As Long = 1
 Implements ISubclass
@@ -173,11 +223,15 @@ Private CheckBoxTransparentBrush As Long
 Private CheckBoxAcceleratorHandle As Long
 Private CheckBoxFontHandle As Long
 Private DispIDMousePointer As Long
+Private DispIDImageList As Long, ImageListArray() As String
 Private DispIDValue As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropImageListName As String, PropImageListControl As Object, PropImageListInit As Boolean
+Private PropImageListAlignment As ChkImageListAlignmentConstants
+Private PropImageListMargin As Long
 Private PropValue As Integer
 Private PropCaption As String
 Private PropAlignment As CCLeftRightAlignmentConstants
@@ -277,6 +331,31 @@ Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean
 If DispID = DispIDMousePointer Then
     Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
     Handled = True
+ElseIf DispID = DispIDImageList Then
+    Dim ControlEnum As Object
+    Dim PropUBound As Long
+    On Error GoTo CATCH_EXCEPTION
+    PropUBound = UBound(StringsOut())
+    ReDim Preserve StringsOut(PropUBound + 1) As String
+    ReDim Preserve CookiesOut(PropUBound + 1) As Long
+    StringsOut(PropUBound) = "(None)"
+    CookiesOut(PropUBound) = PropUBound
+    For Each ControlEnum In UserControl.ParentControls
+        If TypeName(ControlEnum) = "ImageList" Then
+            PropUBound = UBound(StringsOut())
+            ReDim Preserve StringsOut(PropUBound + 1) As String
+            ReDim Preserve CookiesOut(PropUBound + 1) As Long
+            StringsOut(PropUBound) = ProperControlName(ControlEnum)
+            CookiesOut(PropUBound) = PropUBound
+        End If
+    Next ControlEnum
+    On Error GoTo 0
+    Dim i As Long
+    ReDim ImageListArray(0 To UBound(StringsOut()))
+    For i = 0 To UBound(StringsOut())
+        ImageListArray(i) = StringsOut(i)
+    Next i
+    Handled = True
 ElseIf DispID = DispIDValue Then
     ReDim StringsOut(0 To (2 + 1)) As String
     ReDim CookiesOut(0 To (2 + 1)) As Long
@@ -285,11 +364,17 @@ ElseIf DispID = DispIDValue Then
     StringsOut(2) = vbGrayed & " - Grayed": CookiesOut(2) = vbGrayed
     Handled = True
 End If
+Exit Sub
+CATCH_EXCEPTION:
+Handled = False
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedValue(ByRef Handled As Boolean, ByVal DispID As Long, ByVal Cookie As Long, ByRef Value As Variant)
 If DispID = DispIDMousePointer Or DispID = DispIDValue Then
     Value = Cookie
+    Handled = True
+ElseIf DispID = DispIDImageList Then
+    If Cookie < UBound(ImageListArray()) Then Value = ImageListArray(Cookie)
     Handled = True
 End If
 End Sub
@@ -306,13 +391,18 @@ Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfaceControl)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
 DispIDMousePointer = GetDispID(Me, "MousePointer")
+DispIDImageList = GetDispID(Me, "ImageList")
 DispIDValue = GetDispID(Me, "Value")
+ReDim ImageListArray(0) As String
 End Sub
 
 Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropImageListName = "(None)": Set PropImageListControl = Nothing
+PropImageListAlignment = ChkImageListAlignmentLeft
+PropImageListMargin = 0
 PropValue = vbUnchecked
 PropCaption = Ambient.DisplayName
 PropAlignment = CCLeftRightAlignmentLeft
@@ -336,6 +426,9 @@ Me.Enabled = .ReadProperty("Enabled", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropImageListName = .ReadProperty("ImageList", "(None)")
+PropImageListAlignment = .ReadProperty("ImageListAlignment", ChkImageListAlignmentLeft)
+PropImageListMargin = .ReadProperty("ImageListMargin", 0)
 PropValue = .ReadProperty("Value", vbUnchecked)
 PropCaption = VarToStr(.ReadProperty("Caption", vbNullString))
 PropAlignment = .ReadProperty("Alignment", CCLeftRightAlignmentLeft)
@@ -348,6 +441,7 @@ PropAppearance = .ReadProperty("Appearance", CCAppearance3D)
 PropVerticalAlignment = .ReadProperty("VerticalAlignment", CCVerticalAlignmentCenter)
 End With
 Call CreateCheckBox
+If Not PropImageListName = "(None)" Then TimerImageList.Enabled = True
 End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
@@ -360,6 +454,9 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "ImageList", PropImageListName, "(None)"
+.WriteProperty "ImageListAlignment", PropImageListAlignment, ChkImageListAlignmentLeft
+.WriteProperty "ImageListMargin", PropImageListMargin, 0
 .WriteProperty "Value", PropValue, vbUnchecked
 .WriteProperty "Caption", StrToVar(PropCaption), vbNullString
 .WriteProperty "Alignment", PropAlignment, CCLeftRightAlignmentLeft
@@ -416,6 +513,14 @@ Call DestroyCheckBox
 Call ComCtlsReleaseShellMod
 End Sub
 
+Private Sub TimerImageList_Timer()
+If PropImageListInit = False Then
+    Me.ImageList = PropImageListName
+    PropImageListInit = True
+End If
+TimerImageList.Enabled = False
+End Sub
+
 Public Property Get Name() As String
 Attribute Name.VB_Description = "Returns the name used in code to identify an object."
 Name = Ambient.DisplayName
@@ -433,6 +538,11 @@ End Property
 Public Property Get Parent() As Object
 Attribute Parent.VB_Description = "Returns the object on which this object is located."
 Set Parent = UserControl.Parent
+End Property
+
+Public Property Get Container() As Object
+Attribute Container.VB_Description = "Returns the container of an object."
+Set Container = Extender.Container
 End Property
 
 Public Property Get Left() As Single
@@ -631,6 +741,130 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get ImageList() As Variant
+Attribute ImageList.VB_Description = "Returns/sets the image list control to be used. The image list should contain either a single image to be used for all states or individual images for each state. Requires comctl32.dll version 6.0 or higher."
+If Ambient.UserMode = True Then
+    If PropImageListInit = False And PropImageListControl Is Nothing Then
+        If Not PropImageListName = "(None)" Then Me.ImageList = PropImageListName
+        PropImageListInit = True
+    End If
+    Set ImageList = PropImageListControl
+Else
+    ImageList = PropImageListName
+End If
+End Property
+
+Public Property Set ImageList(ByVal Value As Variant)
+Me.ImageList = Value
+End Property
+
+Public Property Let ImageList(ByVal Value As Variant)
+If CheckBoxHandle <> 0 Then
+    ' The image list should contain either a single image to be used for all states or
+    ' individual images for each state. The following states are defined as following:
+    ' PBS_NORMAL = 1
+    ' PBS_HOT = 2
+    ' PBS_PRESSED = 3
+    ' PBS_DISABLED = 4
+    ' PBS_DEFAULTED = 5
+    ' PBS_STYLUSHOT = 6
+    Dim Success As Boolean, Handle As Long
+    On Error Resume Next
+    If IsObject(Value) Then
+        If TypeName(Value) = "ImageList" Then
+            Handle = Value.hImageList
+            Success = CBool(Err.Number = 0 And Handle <> 0)
+        End If
+        If Success = True Then
+            Call SetImageList(Handle)
+            PropImageListName = ProperControlName(Value)
+            If Ambient.UserMode = True Then Set PropImageListControl = Value
+        End If
+    ElseIf VarType(Value) = vbString Then
+        Dim ControlEnum As Object, CompareName As String
+        For Each ControlEnum In UserControl.ParentControls
+            If TypeName(ControlEnum) = "ImageList" Then
+                CompareName = ProperControlName(ControlEnum)
+                If CompareName = Value And Not CompareName = vbNullString Then
+                    Err.Clear
+                    Handle = ControlEnum.hImageList
+                    Success = CBool(Err.Number = 0 And Handle <> 0)
+                    If Success = True Then
+                        Call SetImageList(Handle)
+                        PropImageListName = Value
+                        If Ambient.UserMode = True Then Set PropImageListControl = ControlEnum
+                        Exit For
+                    ElseIf Ambient.UserMode = False Then
+                        PropImageListName = Value
+                        Success = True
+                        Exit For
+                    End If
+                End If
+            End If
+        Next ControlEnum
+    End If
+    On Error GoTo 0
+    If Success = False Then
+        Call SetImageList(BCCL_NOGLYPH)
+        PropImageListName = "(None)"
+        Set PropImageListControl = Nothing
+    End If
+End If
+UserControl.PropertyChanged "ImageList"
+End Property
+
+Public Property Get ImageListAlignment() As ChkImageListAlignmentConstants
+Attribute ImageListAlignment.VB_Description = "Returns/sets the alignment used to the image in the image list control. Requires comctl32.dll version 6.0 or higher."
+ImageListAlignment = PropImageListAlignment
+End Property
+
+Public Property Let ImageListAlignment(ByVal Value As ChkImageListAlignmentConstants)
+Select Case Value
+    Case ChkImageListAlignmentLeft, ChkImageListAlignmentRight, ChkImageListAlignmentTop, ChkImageListAlignmentBottom, ChkImageListAlignmentCenter
+        PropImageListAlignment = Value
+    Case Else
+        Err.Raise 380
+End Select
+If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    If Not PropImageListControl Is Nothing Then
+        Me.ImageList = PropImageListControl
+    ElseIf Not PropImageListName = "(None)" Then
+        Me.ImageList = PropImageListName
+    End If
+End If
+UserControl.PropertyChanged "ImageListAlignment"
+End Property
+
+Public Property Get ImageListMargin() As Single
+Attribute ImageListMargin.VB_Description = "Returns/sets the margin (related to the alignment) used to the image in the image list control. Requires comctl32.dll version 6.0 or higher."
+ImageListMargin = UserControl.ScaleX(PropImageListMargin, vbPixels, vbContainerSize)
+End Property
+
+Public Property Let ImageListMargin(ByVal Value As Single)
+If Value < 0 Then
+    If Ambient.UserMode = False Then
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise 380
+    End If
+End If
+Dim LngValue As Long
+On Error Resume Next
+LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
+If Err.Number <> 0 Then LngValue = 0
+On Error GoTo 0
+PropImageListMargin = LngValue
+If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    If Not PropImageListControl Is Nothing Then
+        Me.ImageList = PropImageListControl
+    ElseIf Not PropImageListName = "(None)" Then
+        Me.ImageList = PropImageListName
+    End If
+End If
+UserControl.PropertyChanged "ImageListMargin"
+End Property
+
 Public Property Get Value() As Integer
 Attribute Value.VB_Description = "Returns/sets the value of an object."
 Attribute Value.VB_UserMemId = 0
@@ -769,38 +1003,42 @@ End Property
 Public Property Set Picture(ByVal Value As IPictureDisp)
 Dim dwStyle As Long
 If Value Is Nothing Then
-    If CheckBoxHandle <> 0 And Not PropPicture Is Nothing Then
-        If PropPicture.Handle <> 0 Then
-            dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-            If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
-            If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
-            SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-            If PropPicture.Type = vbPicTypeIcon Then
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
-            Else
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
-            End If
-            Me.Refresh
-        End If
-    End If
     Set PropPicture = Nothing
-Else
-    Set PropPicture = Value
     If CheckBoxHandle <> 0 Then
-        If Value.Handle <> 0 Then
-            dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+        dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+        If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+        If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+        Me.Refresh
+    End If
+Else
+    Set UserControl.Picture = Value
+    Set PropPicture = UserControl.Picture
+    Set UserControl.Picture = Nothing
+    If CheckBoxHandle <> 0 Then
+        dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+        If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+        If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+        If PropPicture.Handle <> 0 Then
             If PropPicture.Type = vbPicTypeIcon Then
-                If Not (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle Or BS_ICON
-                If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+                dwStyle = dwStyle Or BS_ICON
                 SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal Value.Handle
+                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal PropPicture.Handle
             Else
-                If Not (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle Or BS_BITMAP
-                If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+                dwStyle = dwStyle Or BS_BITMAP
                 SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal BitmapHandleFromPicture(PropPicture)
+                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal PropPicture.Handle
             End If
+        Else
+            SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
         End If
+        Me.Refresh
     End If
 End If
 UserControl.PropertyChanged "Picture"
@@ -971,6 +1209,63 @@ UserControl.Refresh
 RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub
 
+Public Property Get Pushed() As Boolean
+Attribute Pushed.VB_Description = "Returns/sets a value that indicates if the check box is in the pushed state."
+Attribute Pushed.VB_MemberFlags = "400"
+If CheckBoxHandle <> 0 Then Pushed = CBool((SendMessage(CheckBoxHandle, BM_GETSTATE, 0, ByVal 0&) And BST_PUSHED) = BST_PUSHED)
+End Property
+
+Public Property Let Pushed(ByVal Value As Boolean)
+Err.Raise Number:=383, Description:="Property is read-only"
+End Property
+
+Public Property Get Hot() As Boolean
+Attribute Hot.VB_Description = "Returns/sets a value that indicates if the check box is hot; that is, the mouse is hovering over it."
+Attribute Hot.VB_MemberFlags = "400"
+If CheckBoxHandle <> 0 Then Hot = CBool((SendMessage(CheckBoxHandle, BM_GETSTATE, 0, ByVal 0&) And BST_HOT) = BST_HOT)
+End Property
+
+Public Property Let Hot(ByVal Value As Boolean)
+Err.Raise Number:=383, Description:="Property is read-only"
+End Property
+
+Private Sub SetImageList(ByVal hImageList As Long)
+If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
+    Dim BTNIML As BUTTON_IMAGELIST
+    With BTNIML
+    .hImageList = hImageList
+    If .hImageList <> 0 Then
+        Dim dwStyle As Long
+        dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+        If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+        If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+    End If
+    With .RCMargin
+    Select Case PropImageListAlignment
+        Case ChkImageListAlignmentLeft
+            .Left = PropImageListMargin
+        Case ChkImageListAlignmentRight
+            .Right = PropImageListMargin
+        Case ChkImageListAlignmentTop
+            .Top = PropImageListMargin
+        Case ChkImageListAlignmentBottom
+            .Bottom = PropImageListMargin
+    End Select
+    End With
+    .uAlign = PropImageListAlignment
+    SendMessage CheckBoxHandle, BCM_SETIMAGELIST, 0, ByVal VarPtr(BTNIML)
+    If .hImageList = BCCL_NOGLYPH Then
+        PropImageListName = "(None)"
+        Set Me.Picture = PropPicture
+    End If
+    End With
+    Me.Refresh
+End If
+End Sub
+
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
 Select Case dwRefData
     Case 1
@@ -1003,7 +1298,7 @@ Select Case wMsg
         Exit Function
     Case WM_MOUSEACTIVATE
         Static InProc As Boolean
-        If GetFocus() <> CheckBoxHandle Then
+        If ComCtlsRootIsEditor(hWnd) = False And GetFocus() <> CheckBoxHandle Then
             If InProc = True Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
                 Case WM_LBUTTONDOWN
@@ -1081,6 +1376,21 @@ Select Case wMsg
                             Me.Value = vbUnchecked
                     End Select
                     RaiseEvent Click
+            End Select
+        End If
+    Case WM_NOTIFY
+        Dim NM As NMHDR
+        CopyMemory NM, ByVal lParam, LenB(NM)
+        If NM.hWndFrom = CheckBoxHandle Then
+            Select Case NM.Code
+                Case BCN_HOTITEMCHANGE
+                    Dim NMBCHI As NMBCHOTITEM
+                    CopyMemory NMBCHI, ByVal lParam, LenB(NMBCHI)
+                    With NMBCHI
+                    If (.dwFlags And HICF_MOUSE) = HICF_MOUSE Then
+                        If (.dwFlags And HICF_ENTERING) = HICF_ENTERING Or (.dwFlags And HICF_LEAVING) = HICF_LEAVING Then RaiseEvent HotChanged
+                    End If
+                    End With
             End Select
         End If
     Case WM_CTLCOLORSTATIC, WM_CTLCOLORBTN

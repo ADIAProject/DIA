@@ -1081,9 +1081,9 @@ PropOLEDragDropScroll = .ReadProperty("OLEDragDropScroll", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
-PropIconsName = VarToStr(.ReadProperty("Icons", "(None)"))
-PropSmallIconsName = VarToStr(.ReadProperty("SmallIcons", "(None)"))
-PropColumnHeaderIconsName = VarToStr(.ReadProperty("ColumnHeaderIcons", "(None)"))
+PropIconsName = .ReadProperty("Icons", "(None)")
+PropSmallIconsName = .ReadProperty("SmallIcons", "(None)")
+PropColumnHeaderIconsName = .ReadProperty("ColumnHeaderIcons", "(None)")
 PropBorderStyle = .ReadProperty("BorderStyle", CCBorderStyleSunken)
 PropBackColor = .ReadProperty("BackColor", vbWindowBackground)
 PropForeColor = .ReadProperty("ForeColor", vbWindowText)
@@ -1144,9 +1144,9 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
-.WriteProperty "Icons", StrToVar(PropIconsName), "(None)"
-.WriteProperty "SmallIcons", StrToVar(PropSmallIconsName), "(None)"
-.WriteProperty "ColumnHeaderIcons", StrToVar(PropColumnHeaderIconsName), "(None)"
+.WriteProperty "Icons", PropIconsName, "(None)"
+.WriteProperty "SmallIcons", PropSmallIconsName, "(None)"
+.WriteProperty "ColumnHeaderIcons", PropColumnHeaderIconsName, "(None)"
 .WriteProperty "BorderStyle", PropBorderStyle, CCBorderStyleSunken
 .WriteProperty "BackColor", PropBackColor, vbWindowBackground
 .WriteProperty "ForeColor", PropForeColor, vbWindowText
@@ -1363,6 +1363,11 @@ End Property
 Public Property Get Parent() As Object
 Attribute Parent.VB_Description = "Returns the object on which this object is located."
 Set Parent = UserControl.Parent
+End Property
+
+Public Property Get Container() As Object
+Attribute Container.VB_Description = "Returns the container of an object."
+Set Container = Extender.Container
 End Property
 
 Public Property Get Left() As Single
@@ -2777,7 +2782,6 @@ End Sub
 
 Friend Sub FListItemsClear()
 If ListViewHandle <> 0 Then SendMessage ListViewHandle, LVM_DELETEALLITEMS, 0, ByVal 0&
-Set PropListItems = Nothing
 Call CheckItemFocus(0)
 End Sub
 
@@ -3342,7 +3346,6 @@ End Sub
 
 Friend Sub FColumnHeadersClear()
 If ListViewHandle <> 0 Then Do While SendMessage(ListViewHandle, LVM_DELETECOLUMN, 0, ByVal 0&) = 1: Loop
-Set PropColumnHeaders = Nothing
 End Sub
 
 Friend Property Get FColumnHeaderText(ByVal Index As Long) As String
@@ -3787,7 +3790,6 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     ' Thus it is necessary to reapply the group view property.
     Me.GroupView = PropGroupView
 End If
-Set PropGroups = Nothing
 End Sub
 
 Friend Sub FGroupsSort(ByVal This As ISubclass)
@@ -4213,7 +4215,7 @@ If PropHideColumnHeaders = True Then dwStyle = dwStyle Or LVS_NOCOLUMNHEADER
 If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 ListViewHandle = CreateWindowEx(dwExStyle, StrPtr("SysListView32"), StrPtr("List View"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If PropView = LvwViewReport Then ListViewHeaderHandle = Me.hWndHeader
-If ListViewHandle <> 0 Then If PropView = LvwViewTile Then SendMessage ListViewHandle, LVM_SETVIEW, LV_VIEW_TILE, ByVal 0&
+If ListViewHandle <> 0 Then If Ambient.UserMode = True And PropView = LvwViewTile Then SendMessage ListViewHandle, LVM_SETVIEW, LV_VIEW_TILE, ByVal 0&
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = UserControl.Enabled
@@ -5113,7 +5115,7 @@ Select Case wMsg
         Static InProc As Boolean
         Dim LabelEditHandle As Long
         LabelEditHandle = Me.hWndLabelEdit
-        If GetFocus() <> ListViewHandle And (GetFocus() <> LabelEditHandle Or LabelEditHandle = 0) Then
+        If ComCtlsRootIsEditor(hWnd) = False And GetFocus() <> ListViewHandle And (GetFocus() <> LabelEditHandle Or LabelEditHandle = 0) Then
             If InProc = True Or LoWord(lParam) = HTBORDER Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
                 Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN

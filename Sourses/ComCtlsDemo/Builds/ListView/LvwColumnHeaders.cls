@@ -78,6 +78,7 @@ End Property
 Public Sub Clear()
 Attribute Clear.VB_Description = "Removes all column headers from the collection."
 ShadowListView.FColumnHeadersClear
+Set PropColumnHeader = New Collection
 End Sub
 
 Public Sub Remove(ByVal Index As Variant)

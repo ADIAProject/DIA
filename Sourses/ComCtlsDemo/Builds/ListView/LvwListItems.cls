@@ -90,6 +90,7 @@ End Property
 Public Sub Clear()
 Attribute Clear.VB_Description = "Removes all list items from the collection."
 ShadowListView.FListItemsClear
+Set PropListItem = New Collection
 End Sub
 
 Public Sub Remove(ByVal Index As Variant)

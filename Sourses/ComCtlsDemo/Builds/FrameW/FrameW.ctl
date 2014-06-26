@@ -294,6 +294,11 @@ Attribute Parent.VB_Description = "Returns the object on which this object is lo
 Set Parent = UserControl.Parent
 End Property
 
+Public Property Get Container() As Object
+Attribute Container.VB_Description = "Returns the container of an object."
+Set Container = Extender.Container
+End Property
+
 Public Property Get Left() As Single
 Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
 Left = Extender.Left
@@ -622,7 +627,7 @@ UserControl.Refresh
 RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
 End Sub
 
-Public Property Get ContainedControls() As Object
+Public Property Get ContainedControls() As VBRUN.ContainedControls
 Attribute ContainedControls.VB_Description = "Returns a collection that allows access to the controls contained within the control that were added to the control by the developer who uses the control."
 Set ContainedControls = UserControl.ContainedControls
 End Property

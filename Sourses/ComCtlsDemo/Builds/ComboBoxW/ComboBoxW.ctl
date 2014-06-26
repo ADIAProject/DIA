@@ -549,6 +549,11 @@ Attribute Parent.VB_Description = "Returns the object on which this object is lo
 Set Parent = UserControl.Parent
 End Property
 
+Public Property Get Container() As Object
+Attribute Container.VB_Description = "Returns the container of an object."
+Set Container = Extender.Container
+End Property
+
 Public Property Get Left() As Single
 Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
 Left = Extender.Left
@@ -1532,7 +1537,7 @@ Select Case wMsg
         Call ActivateIPAO(Me)
     Case WM_MOUSEACTIVATE
         Static InProc As Boolean
-        If GetFocus() <> ComboBoxHandle And (GetFocus() <> ComboBoxEditHandle Or ComboBoxEditHandle = 0) Then
+        If ComCtlsRootIsEditor(hWnd) = False And GetFocus() <> ComboBoxHandle And (GetFocus() <> ComboBoxEditHandle Or ComboBoxEditHandle = 0) Then
             If InProc = True Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
                 Case WM_LBUTTONDOWN

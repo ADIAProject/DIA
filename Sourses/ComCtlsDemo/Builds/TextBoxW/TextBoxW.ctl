@@ -589,6 +589,11 @@ Attribute Parent.VB_Description = "Returns the object on which this object is lo
 Set Parent = UserControl.Parent
 End Property
 
+Public Property Get Container() As Object
+Attribute Container.VB_Description = "Returns the container of an object."
+Set Container = Extender.Container
+End Property
+
 Public Property Get Left() As Single
 Attribute Left.VB_Description = "Returns/sets the distance between the internal left edge of an object and the left edge of its container."
 Left = Extender.Left
@@ -1060,7 +1065,10 @@ If TextBoxHandle <> 0 Then
             dwStyle = dwStyle Or ES_LOWERCASE
     End Select
     SetWindowLong TextBoxHandle, GWL_STYLE, dwStyle
-    If Ambient.UserMode = False Then Me.Text = PropText
+    If Ambient.UserMode = False Then
+        SendMessage TextBoxHandle, WM_SETTEXT, 0, ByVal 0&
+        SendMessage TextBoxHandle, WM_SETTEXT, 0, ByVal StrPtr(PropText)
+    End If
 End If
 UserControl.PropertyChanged "CharacterCasing"
 End Property
@@ -1481,7 +1489,7 @@ Select Case wMsg
         End If
     Case WM_MOUSEACTIVATE
         Static InProc As Boolean
-        If GetFocus() <> TextBoxHandle Then
+        If ComCtlsRootIsEditor(hWnd) = False And GetFocus() <> TextBoxHandle Then
             If InProc = True Or LoWord(lParam) = HTBORDER Then WindowProcControl = MA_NOACTIVATEANDEAT: Exit Function
             Select Case HiWord(lParam)
                 Case WM_LBUTTONDOWN

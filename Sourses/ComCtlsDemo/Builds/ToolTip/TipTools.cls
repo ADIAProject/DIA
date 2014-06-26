@@ -64,7 +64,7 @@ Dim i As Long
 For i = 1 To PropTool.Count
     Me.Remove 1
 Next i
-ShadowToolTip.FToolsClear
+Set PropTool = New Collection
 End Sub
 
 Public Sub Remove(ByVal Index As Variant)

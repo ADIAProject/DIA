@@ -1,5 +1,46 @@
 List of revisions:
 
+25-Jun-2014
+- Included the ImageList/ImageListAlignment/ImageListMargin property in the CheckBoxW and OptionButtonW control.
+- Included the Pushed/Hot run time property in the CommandButtonW, CheckBoxW and OptionButtonW control.
+- Included the HotChanged event in the CommandButtonW, CheckBoxW and OptionButtonW control.
+
+24-Jun-2014
+- Improved the 'Clear' method on the class collection objects.
+- Any control names (ImageList, BuddyControl etc.) in the property bags are now stored as ANSI (Text) instead of Unicode (Byte array).
+  There is no benefit with Unicode in this case as the control names are anyway not Unicode aware. Also the .frx files will be reduced by this change.
+
+23-Jun-2014
+- Some minor improvements on certain property bags.
+
+22-Jun-2014
+- Included the ImageList/ImageListAlignment/ImageListMargin property in the CommandButtonW control.
+
+20-Jun-2014
+- Included the panel style constant 'Kana' in the StatusBar control.
+
+19-Jun-2014
+- Minor internal improvements in the ProgressBar control.
+- Improvement, WM_MOUSEACTIVATE is now not handled (on design mode) when a UserControl is embedded in another UserControl.
+  This is necessary for convenient dragging in design mode. (Same behavior as on the MS controls)
+
+18-Jun-2014
+- Included the SplitButtonGlyph property in the CommandButtonW control.
+
+17-Jun-2014
+- Included the ContainedControls property in the ToolBar control.
+- The ContainedControls property in the FrameW, CoolBar and ToolBar control returns now 'VBRUN.ContainedControls' instead of 'Object'.
+- The Container property is now also available when setting to a shadow object. ('Set' command)
+- Included the SplitButtonNoSplit property in the CommandButtonW control.
+
+15-Jun-2014
+- GDI leak bugfix in the Picture property in the CommandButtonW, CheckBoxW and OptionButtonW control.
+- Improved the bugfix in the drawing when the HideSelection property is False in the TreeView control.
+
+11-Jun-2014
+- Simplified and optimized the updating of the tool tip rects in the StatusBar control.
+- Improvement, no 'WithEvents' attachment needed anymore to the parent form (Intercepts Form_Load) in the MonthView control.
+
 10-Jun-2014
 - Included the GetIdealSize method in the CommandButtonW control.
 - Fixed a bug that the Appearance property is not considered at creation in the CommandButtonW control.
@@ -58,7 +99,6 @@ List of revisions:
 
 15-May-2014
 - Bugfix in the MinDate/MaxDate property of the MonthView control. (does not cause crashes anymore)
-- Renamed the 'SplitButton' property of the CommandButtonW control to 'ShowSplitButton'.
 
 14-May-2014
 - Included the SplitButtonAlignment property in the CommandButtonW control.

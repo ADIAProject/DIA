@@ -223,7 +223,7 @@ Select Case wMsg
         If IsWindowVisible(hWnd) <> 0 Then
             Dim PS As PAINTSTRUCT
             SetProp hWnd, StrPtr("Painted"), 1
-            DrawButton hWnd, BeginPaint(hWnd, PS), Button
+            Call DrawButton(hWnd, BeginPaint(hWnd, PS), Button)
             EndPaint hWnd, PS
             Exit Function
         End If
@@ -281,7 +281,7 @@ Private Sub RemoveRedirectButton(ByVal hWnd As Long, ByVal uIdSubclass As Long)
 RemoveWindowSubclass hWnd, AddressOf RedirectButton, uIdSubclass
 End Sub
 
-Private Sub DrawButton(ByVal hWnd As Long, ByVal hDC As Long, Button As Object)
+Private Sub DrawButton(ByVal hWnd As Long, ByVal hDC As Long, ByVal Button As Object)
 Dim Theme As Long
 Dim ButtonState As UxThemeButtonStates
 Dim Enabled As Boolean, Checked As Boolean, Default As Boolean, Hot As Boolean, Focused As Boolean, Pushed As Boolean

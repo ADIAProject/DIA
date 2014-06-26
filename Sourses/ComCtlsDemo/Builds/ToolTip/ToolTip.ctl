@@ -597,10 +597,6 @@ If ToolTipHandle <> 0 Then
 End If
 End Sub
 
-Friend Sub FToolsClear()
-Set PropTools = Nothing
-End Sub
-
 Friend Property Get FToolText(ByVal ID As Long) As String
 If ToolTipHandle <> 0 Then
     Dim TI As TOOLINFO, Text As String
