@@ -1,4 +1,4 @@
-= Date 2013-07-28 Version 031 Records 1,494
+= Date 2014-05-05 Version 032 Records 1,502
 ;
 ; latest version available from http://rh-software.com/downloads/pcmdevs.txt
 ;
@@ -85,6 +85,9 @@ ACCTON-FAST_ETHERCARD-16_10/100_PC_Card-E1E4=Accton Fast Ethernet-16 10/100 PC C
 ACCTON-PCMCIA-ETHERNET-465B=Accton EN2212 PCMCIA Ethernet Adapter
 ACEEX_CORP.-DM-9624PC-C2B4=Aceex DM-9624PC
 ACEEX_CORP.-FAX&MODEM-AAF1=Aceex DM-1414PC
+ACR-90-93B9=ACR90
+ACR-91-B69C=ACR91
+ACR92_PCMCIA-Smart_Card_Reader-EC36=ACR92 PCMCIA Smart Card Reader
 AD2880WRLD-International_V.34_PC-Card_Modem-5310=Apex ClipperCom World V.34 PC Card
 ADT-TRIDENT_PFM-56K/G-3508=Trident 56K PCMCIA Modem
 AD_PC_CARD-RC288ACL-5DA6=Apex V.34 Cellular PCMCIA Modem
@@ -1190,8 +1193,10 @@ REFLEX_20_V.2-SMART_CARD_READER-4C67=Reflex 20 v.2 Smart card reader
 RICOH-Bay1Controller-F03E=Ricoh MediaCard Controller
 RICOH-Bay2Controller-F960=Ricoh MediaCard Controller
 RICOH-Bay4Controller-CE3E=Ricoh MediaCard Controller
+RICOH-Bay8Controller-5196=RICOH SmartCard Reader
 RICOH-Bay8Controller-7057=RICOH SmartCard Reader
 RICOH-Bay8Controller-72AF=RICOH SmartCard Reader
+RICOH-Bay8Controller-B477=RICOH SmartCard Reader
 RICOH-Bay8Controller-F1B2=RICOH SmartCard Reader
 RICOH-Bay_Controller-03CB=Ricoh MediaCard Controller
 RICOH-Bay_Controller-1632=Ricoh MediaCard Controller
@@ -1230,6 +1235,7 @@ Reflex_20_v3-Smart_card_reader-EDC6=Reflex20 v3 Smart card reader
 Reflex_30-smart_card_reader-E8F8=Schlumberger Reflex 30 PCMCIA Smart Card Reader
 Rockwell_SEM._SYS.-RCDL56ACFW_V.90_&_K56flex-FF69=Rockwell ACFW V.90 PCMCIA Modem
 Rockwell_Sem._Sys.-RCDL56ACFL_K56flex-B20A=Olitec PCMCIA 56000 V.90 & K56Flex
+SCR222_PC_Card-Finger_Print_Reader-355C=SCR222 Fingerprint Reader
 SCR241-Smart_Card_Reader-21DD=SCR24x PCMCIA Smart Card Reader
 SCR241_PCMCIA-Smart_Card_Reader-87CE=SCR24x PCMCIA Smart Card Reader
 SCR241_PCMCIA-Smart_Card_Reader-ADCE=SCR24x PCMCIA Smart Card Reader
@@ -1269,6 +1275,8 @@ SONY-MEMORYSTICK(_64M)-8C2C=Sony Memory Stick
 SONY-MEMORYSTICK(__4M)-E637=Sony Memory Stick
 SONY-MEMORYSTICK(__8M)-9EB3=Sony Memory Stick
 SONY_CORPORATION-PCWA-C100-FFBF=Sony PCWA-C100 Wireless PC Card
+SONY_CORPORATION-RC-S340-105A=FeliCa Port/PaSoRi RCS920 PC Card
+SONY_CORPORATION-RC-S340-EF8F=FeliCa Port/PaSoRi RCS920 PC Card
 SUNTAC-DATA/FAX_MODEM-6EBF=SUNTAC MS56KCZ
 SUNTAC-DATA/FAX_MODEM-8551=SUNTAC MS56KCF
 SUNTAC-DIGITAL_DATA/FAX_CARD-395C=SUNTAC DS96CFE

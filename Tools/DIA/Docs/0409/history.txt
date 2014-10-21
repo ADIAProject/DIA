@@ -8,6 +8,18 @@ The Indications:
 	"*" - Make-up change
 	"!" - An Important notes on working the program
 
+Version 6.9.30 PreFinal (30.09.2014)
+	+ Added support for markers for Windows 9
+	* Expanded definition USB3
+	- Fixed errors in the command line
+	+ Added a new parameter [OS]SortDBTxtFileByHWID to sort the output index file, the default value "0" (off)
+	+ Added an ability to create a common index file for manual analysis. Functionality can be useful for driverpackage creators
+	* Fixed minor GUI issue
+	* Removed program DoubleDriver
+	* Updated Program System Information Viewer to version V4.47
+	* Updated program Unknown Device Identifier to version V8.02
+	* Updated program DevManView to version V1.42
+
 Version 6.4.28 PreFinal (28.04.2014)
 	* Optimize starting process, the rate increased by ~ 40 %
 	* Optimizing the indexing process, the rate increased by ~ 10-15%

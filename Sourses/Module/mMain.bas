@@ -2,7 +2,8 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "26/06/2014"
+Public Const strDateProgram         As String = "13/10/2014"
+Public Const strVerProgram          As String = "6.10.13"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -31,7 +32,7 @@ Public Const strDevManView_Path64   As String = "Tools\DevManView\DevManView-x64
 Public Const strSIV_Path            As String = "Tools\SIV\SIV32X.exe"
 Public Const strSIV_Path64          As String = "Tools\SIV\SIV64X.exe"
 Public Const strUDI_Path            As String = "Tools\UDI\UnknownDeviceIdentifier.exe"
-Public Const strDoubleDriver_Path   As String = "Tools\DoubleDriver\dd.exe"
+'Public Const strDoubleDriver_Path   As String = "Tools\DoubleDriver\dd.exe"
 Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDevices.exe"
 
 'Описание структуры массива информации по HWID
@@ -237,8 +238,10 @@ Private Sub Main()
 
     Dim mbShowFormLicence As Boolean
     Dim strSysIniTMP      As String
-    Dim strLicenceDate    As String  ' дата лицензионного соглашения из реестра
-    Dim mbIsUserAnAdmin   As Boolean ' Пользователь администратор?
+    Dim strLicenceDate    As String
+    ' дата лицензионного соглашения из реестра
+    Dim mbIsUserAnAdmin   As Boolean
+    ' Пользователь администратор?
 
     On Error Resume Next
 

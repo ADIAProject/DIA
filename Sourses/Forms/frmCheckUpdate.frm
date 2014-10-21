@@ -41,8 +41,6 @@ Begin VB.Form frmCheckUpdate
          Strikethrough   =   0   'False
       EndProperty
       Style           =   2
-      Text            =   "frmCheckUpdate.frx":000C
-      CueBanner       =   "frmCheckUpdate.frx":002C
       Sorted          =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
@@ -196,9 +194,7 @@ Begin VB.Form frmCheckUpdate
       MultiLine       =   -1  'True
       ScrollBars      =   2
       WantReturn      =   -1  'True
-      FileName        =   "frmCheckUpdate.frx":004C
-      Text            =   "frmCheckUpdate.frx":006C
-      TextRTF         =   "frmCheckUpdate.frx":008C
+      TextRTF         =   "frmCheckUpdate.frx":000C
    End
    Begin prjDIADBS.LabelW lblWait 
       Height          =   375

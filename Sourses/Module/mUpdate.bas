@@ -80,12 +80,12 @@ Function CheckConnection2Server(ByVal URL As String) As String
     Exit Function
 
 ErrCode:
-    errNum = Err.Number
-    Debug.Print Err.Number & strSpace & Err.Description & strSpace & Err.LastDllError
+    errNum = err.Number
+    Debug.Print err.Number & strSpace & err.Description & strSpace & err.LastDllError
 
     If errNum <> 0 Then
-        If mbDebugStandart Then DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError) & vbNewLine & _
-                  str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
+        If mbDebugStandart Then DebugMode str5VbTab & "CheckConnection2Server: " & " Error: ¹" & err.LastDllError & " - " & ApiErrorText(err.LastDllError) & vbNewLine & _
+                  str5VbTab & "CheckConnection2Server: Err.Number: " & err.Number & " Err.Description: " & err.Description
     End If
 
 End Function

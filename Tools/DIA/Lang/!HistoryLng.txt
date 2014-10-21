@@ -73,3 +73,5 @@
 	   Changes in section 	[Messages]		strMessages8;strMessages9;strMessages11;strMessages20;strMessages39;strMessages41;strMessages43;strMessages138;strMessages150
 
 2014_04_28=Changes in section 	[Messages]		strMessages137
+
+2014_09_30=Added in section 	[Messages]		strMessages157,strMessages158

@@ -90,6 +90,24 @@ Public Property Let FooterAlignment(ByVal Value As LvwGroupFooterAlignmentConsta
 ShadowListView.FGroupFooterAlignment(PropID) = Value
 End Property
 
+Public Property Get Hint() As String
+Attribute Hint.VB_Description = "Returns/sets the text displayed as a hint below the header for the group. Requires comctl32.dll version 6.1 or higher."
+Hint = ShadowListView.FGroupLink(PropID)
+End Property
+
+Public Property Let Hint(ByVal Value As String)
+ShadowListView.FGroupHint(PropID) = Value
+End Property
+
+Public Property Get Link() As String
+Attribute Link.VB_Description = "Returns/sets the link text for the group. Requires comctl32.dll version 6.1 or higher."
+Link = ShadowListView.FGroupLink(PropID)
+End Property
+
+Public Property Let Link(ByVal Value As String)
+ShadowListView.FGroupLink(PropID) = Value
+End Property
+
 Public Property Get Collapsible() As Boolean
 Attribute Collapsible.VB_Description = "Returns/sets a value that determines whether the group can be collapsed or not. Requires comctl32.dll version 6.1 or higher."
 Collapsible = ShadowListView.FGroupCollapsible(PropID)
@@ -124,6 +142,16 @@ End Property
 
 Public Property Let Selected(ByVal Value As Boolean)
 ShadowListView.FGroupSelected(PropID) = Value
+End Property
+
+Public Property Get Icon() As Long
+Attribute Icon.VB_Description = "Returns/sets the index of an icon in an associated image list control. Requires comctl32.dll version 6.1 or higher."
+Icon = ShadowListView.FGroupIcon(PropIndex)
+End Property
+
+Public Property Let Icon(ByVal Value As Long)
+If Value < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
+ShadowListView.FGroupIcon(PropIndex) = Value
 End Property
 
 Public Property Get Position() As Long

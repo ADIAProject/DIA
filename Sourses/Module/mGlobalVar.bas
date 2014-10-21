@@ -19,10 +19,43 @@ Public g_UserModeFix As Boolean
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub GetMyAppProperties()
-    strProductVersion = App.Major & strDot & App.Minor & strDot & App.Revision
-    strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
+
     strAppPath = App.Path
     strAppPathBackSL = BackslashAdd2Path(strAppPath)
     strAppEXEName = App.EXEName
+    
+    If GetMyAppPropertiesCheck Then
+        strProductVersion = App.Major & strDot & App.Minor & strDot & App.Revision
+    Else
+        strProductVersion = strVerProgram
+    End If
+    
+    On Error Resume Next
+    strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
+    If Error.Number = 326 Then
+        strProductName = "Drivers Installer Assistant" & " v." & strProductVersion & " @" & "Romeo91 (www.adia-project.net)"
+    End If
+
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub GetMyAppPropertiesCheck
+'! Description (Описание)  :   [ппроверка на ошибку Resource with identifier 'VERSION' not found"]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Function GetMyAppPropertiesCheck() As Boolean
+
+Dim sVersion As String
+
+    On Error Resume Next
+    sVersion = App.Major & strDot & App.Minor & strDot & App.Revision
+
+'error 326 - "Resource with identifier 'VERSION' not found"
+    If Error.Number = 326 Then
+        GetMyAppPropertiesCheck = False
+    Else
+        GetMyAppPropertiesCheck = True
+    End If
+End Function
+
 

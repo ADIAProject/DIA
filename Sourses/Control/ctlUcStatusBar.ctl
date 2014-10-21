@@ -436,7 +436,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.BackColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -462,7 +462,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.BackColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.BackColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -484,7 +484,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Font", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -508,7 +508,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Font", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Font", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -530,7 +530,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.ForeColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -556,7 +556,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.ForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.ForeColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -578,7 +578,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.GripShape", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -607,7 +607,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.GripShape", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.GripShape", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -643,7 +643,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelAlignment", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -687,7 +687,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAlignment", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelAlignment", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -711,7 +711,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelAutoSize", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -743,7 +743,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelAutoSize", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelAutoSize", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -766,7 +766,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelCount", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelCount", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -790,7 +790,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelEditable", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -822,7 +822,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelEditable", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelEditable", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -846,7 +846,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelFont", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -878,7 +878,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelFont", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelFont", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -902,7 +902,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelForeColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -934,7 +934,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelForeColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelForeColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -958,7 +958,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelIcon", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -990,7 +990,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelIcon", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelIcon", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1014,7 +1014,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelText", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1046,7 +1046,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelText", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelText", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1070,7 +1070,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelToolTipText", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1102,7 +1102,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelToolTipText", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelToolTipText", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1126,7 +1126,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelWidth", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1158,7 +1158,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PanelWidth", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PanelWidth", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1180,7 +1180,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Sizable", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1216,7 +1216,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Sizable", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Sizable", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1238,7 +1238,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Theme", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1262,7 +1262,7 @@ Prop_ErrHandlerExit:
     Exit Property
 
 Prop_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Theme", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Theme", err.Description, err.HelpFile, err.HelpContext
 
     Resume Prop_ErrHandlerExit:
 
@@ -1349,7 +1349,7 @@ Func_ErrHandlerExit:
     Exit Function
 
 Func_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.AddPanel", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.AddPanel", err.Description, err.HelpFile, err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -1409,7 +1409,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.APILine", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.APILine", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1456,7 +1456,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.BoundControl", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.BoundControl", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1492,7 +1492,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Clear", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Clear", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1555,7 +1555,7 @@ Func_ErrHandlerExit:
     Exit Function
 
 Func_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.GetPanelIndex", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.GetPanelIndex", err.Description, err.HelpFile, err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -1671,7 +1671,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.GrayBlt", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.GrayBlt", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1749,7 +1749,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PaintGradients", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PaintGradients", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -1855,7 +1855,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PaintGrip", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PaintGrip", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2140,7 +2140,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PaintPanels", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PaintPanels", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2175,7 +2175,7 @@ Func_ErrHandlerExit:
     Exit Function
 
 Func_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.PtInRect", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.PtInRect", err.Description, err.HelpFile, err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -2295,7 +2295,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.Refresh", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.Refresh", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2339,7 +2339,7 @@ Func_ErrHandlerExit:
     Exit Function
 
 Func_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.ShiftColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.ShiftColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -2565,7 +2565,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.TransBltEx", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.TransBltEx", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2590,7 +2590,7 @@ Func_ErrHandlerExit:
     Exit Function
 
 Func_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.TranslateColor", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.TranslateColor", err.Description, err.HelpFile, err.HelpContext
 
     Resume Func_ErrHandlerExit:
 
@@ -2642,7 +2642,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.txtEdit_KeyUp", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.txtEdit_KeyUp", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2668,7 +2668,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.txtEdit_LostFocus", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.txtEdit_LostFocus", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2695,7 +2695,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_Click", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_Click", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2757,7 +2757,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_DblClick", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_DblClick", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2796,7 +2796,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_InitProperties", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_InitProperties", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2819,7 +2819,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_KeyDown", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_KeyDown", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2841,7 +2841,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_KeyPress", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_KeyPress", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2864,7 +2864,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_KeyUp", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_KeyUp", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2890,7 +2890,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_LostFocus", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_LostFocus", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2925,7 +2925,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_MouseDown", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_MouseDown", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2957,7 +2957,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_MouseMove", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_MouseMove", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -2983,7 +2983,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_MouseUp", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_MouseUp", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3005,7 +3005,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_Paint", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_Paint", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3067,7 +3067,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_ReadProperties", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_ReadProperties", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3102,7 +3102,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_Resize", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_Resize", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3124,7 +3124,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_Show", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_Show", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 
@@ -3184,7 +3184,7 @@ Sub_ErrHandlerExit:
     Exit Sub
 
 Sub_ErrHandler:
-    Err.Raise Err.Number, "ucStatusBar.UserControl_WriteProperties", Err.Description, Err.HelpFile, Err.HelpContext
+    err.Raise err.Number, "ucStatusBar.UserControl_WriteProperties", err.Description, err.HelpFile, err.HelpContext
 
     Resume Sub_ErrHandlerExit:
 

@@ -1,7 +1,7 @@
 License Agreement
 
 Unknown Device Identifier
-Copyright (C) 1996-2013 Huntersoft
+Copyright (C) 1996-2015 Huntersoft
 All Rights Reserved
 
 

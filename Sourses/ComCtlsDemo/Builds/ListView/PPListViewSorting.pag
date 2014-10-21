@@ -1,13 +1,13 @@
 VERSION 5.00
 Begin VB.PropertyPage PPListViewSorting 
    Caption         =   "Sorting"
-   ClientHeight    =   6000
+   ClientHeight    =   6300
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   6450
    LockControls    =   -1  'True
    PaletteMode     =   0  'Halftone
-   ScaleHeight     =   6000
+   ScaleHeight     =   6300
    ScaleWidth      =   6450
    Begin VB.Frame FrameSorting 
       Caption         =   "Sorting"
@@ -83,21 +83,21 @@ Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
 With ComboSortOrder
-.AddItem "0 - Ascending"
+.AddItem LvwSortOrderAscending & " - Ascending"
 .ItemData(.NewIndex) = LvwSortOrderAscending
-.AddItem "1 - Descending"
+.AddItem LvwSortOrderDescending & " - Descending"
 .ItemData(.NewIndex) = LvwSortOrderDescending
 End With
 With ComboSortType
-.AddItem "0 - Binary"
+.AddItem LvwSortTypeBinary & " - Binary"
 .ItemData(.NewIndex) = LvwSortTypeBinary
-.AddItem "1 - Text"
+.AddItem LvwSortTypeText & " - Text"
 .ItemData(.NewIndex) = LvwSortTypeText
-.AddItem "2 - Numeric"
+.AddItem LvwSortTypeNumeric & " - Numeric"
 .ItemData(.NewIndex) = LvwSortTypeNumeric
-.AddItem "3 - Currency"
+.AddItem LvwSortTypeCurrency & " - Currency"
 .ItemData(.NewIndex) = LvwSortTypeCurrency
-.AddItem "4 - Date"
+.AddItem LvwSortTypeDate & " - Date"
 .ItemData(.NewIndex) = LvwSortTypeDate
 End With
 End Sub

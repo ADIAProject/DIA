@@ -76,13 +76,13 @@ Public Function CopyFileTo(ByVal PathFrom As String, ByVal PathTo As String) As 
             ResetReadOnly4File PathTo
         Else
             CopyFileTo = False
-            MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError), vbExclamation, strProductName
-            If mbDebugStandart Then DebugMode vbTab & "Copy file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError), vbExclamation, strProductName
+            If mbDebugStandart Then DebugMode vbTab & "Copy file: False: " & PathFrom & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         End If
 
     Else
         CopyFileTo = False
-        If mbDebugStandart Then DebugMode vbTab & "Copy file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode vbTab & "Copy file: False : " & PathFrom & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
     End If
 
 End Function
@@ -171,7 +171,7 @@ Public Sub CreateNewDirectory(ByVal NewDirectory As String)
             ret = CreateDirectory(sTempDir, SecAttrib)
 
             If ret = 0 Then
-                If mbDebugStandart Then DebugMode str2VbTab & "CreateNewDirectory: False : " & sTempDir & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+                If mbDebugStandart Then DebugMode str2VbTab & "CreateNewDirectory: False : " & sTempDir & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
             End If
         End If
     Loop
@@ -198,14 +198,14 @@ Public Function DeleteFiles(ByVal PathFile As String) As Boolean
 
     If ret = 0 Then
         ' Если нет доступа, то возможно атрибут только для чтения, пытаемся снять и снова удалить файл
-        If Err.LastDllError = 5 Then
+        If err.LastDllError = 5 Then
             ResetReadOnly4File PathFile
             ret = DeleteFile(lngFilePathPtr)
             If ret = 0 Then
-                If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+                If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
             End If
         Else
-            If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "DeleteFiles: False : " & PathFile & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         End If
         
     End If
@@ -236,10 +236,10 @@ Public Function DeleteFolder(ByVal strFolderPath As String) As Boolean
 
     If ret = 0 Then
         ' Папка не пуста
-        If Err.LastDllError = 145 Then
-            If mbDebugDetail Then DebugMode vbTab & "DeleteFiles: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+        If err.LastDllError = 145 Then
+            If mbDebugDetail Then DebugMode vbTab & "DeleteFiles: False : " & strFolderPath & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         Else
-            If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "DeleteFolder: False : " & strFolderPath & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         End If
     End If
 
@@ -276,7 +276,7 @@ Public Sub DelFolderBackUp(ByVal strFolderPath As String)
         ret = RemoveDirectory(lngFilePathPtr)
         
         If ret = 0 Then
-            If mbDebugStandart Then DebugMode vbTab & "DelFolderBackUp: False : " & strFolderPath & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "DelFolderBackUp: False : " & strFolderPath & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         End If
     End If
 
@@ -356,7 +356,7 @@ Public Sub DelTemp()
         ret = RemoveDirectory(lngFilePathPtr)
         
         If ret = 0 Then
-            If mbDebugStandart Then DebugMode vbTab & "DelTemp: False : " & strWorkTemp & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "DelTemp: False : " & strWorkTemp & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         End If
         
     End If
@@ -410,8 +410,8 @@ Private Function DelTree(ByVal strDir As String) As Long
                                 If intAttr <> vbNormal Then
                                     SetAttr strDir & strFile, vbNormal
 
-                                    If Err Then
-                                        DelTree = Err.Number
+                                    If err Then
+                                        DelTree = err.Number
                                     End If
 
                                     Exit Function
@@ -420,8 +420,8 @@ Private Function DelTree(ByVal strDir As String) As Long
 
                                 DeleteFiles strDir & strFile
 
-                                If Err Then
-                                    DelTree = Err.Number
+                                If err Then
+                                    DelTree = err.Number
                                 End If
 
                                 Exit Function
@@ -453,15 +453,15 @@ Private Function DelTree(ByVal strDir As String) As Long
                 End If
 
                 If ret = 0 Then
-                    retLasrErr = Err.LastDllError
+                    retLasrErr = err.LastDllError
                     If mbDebugStandart Then DebugMode vbTab & "DelTree: False : " & strDir & " Error: №" & retLasrErr & " - " & ApiErrorText(retLasrErr)
                     DelTree = retLasrErr
                 Else
                     DelTree = 0
                 End If
 
-                If Err Then
-                    DelTree = Err.Number
+                If err Then
+                    DelTree = err.Number
                 Else
                     DelTree = 0
                 End If
@@ -629,10 +629,10 @@ Private Sub FileWriteDataAPI(ByVal sFilePath As String, ByVal strData As String)
             'Close the file.
             CloseHandle fHandle
         Else
-            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPI: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPI: WriteFile - ReturnCode: " & ApiErrorText(err.LastDllError)
         End If
     Else
-        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPI: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPI: CreateFile - ReturnCode: " & ApiErrorText(err.LastDllError)
     End If
 End Sub
 
@@ -677,10 +677,10 @@ Private Sub FileWriteDataAPIUni(ByVal sFilePath As String, ByVal strData As Stri
             'Close the file.
             CloseHandle fHandle
         Else
-            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPIUni: WriteFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPIUni: WriteFile - ReturnCode: " & ApiErrorText(err.LastDllError)
         End If
     Else
-        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPIUni: CreateFile - ReturnCode: " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode str2VbTab & "FileWriteDataAPIUni: CreateFile - ReturnCode: " & ApiErrorText(err.LastDllError)
     End If
 End Sub
 
@@ -968,13 +968,13 @@ Public Function MoveFileTo(PathFrom As String, PathTo As String) As Boolean
                 ResetReadOnly4File PathTo
             Else
                 MoveFileTo = False
-                MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError), vbExclamation, strProductName
-                If mbDebugStandart Then DebugMode vbTab & "Move file: False: " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+                MsgBox strMessages(42) & vbNewLine & "From: " & PathFrom & vbNewLine & "To:" & PathTo & vbNewLine & "Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError), vbExclamation, strProductName
+                If mbDebugStandart Then DebugMode vbTab & "Move file: False: " & PathFrom & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
             End If
 
         Else
             MoveFileTo = False
-            If mbDebugStandart Then DebugMode vbTab & "Move file: False : " & PathFrom & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
+            If mbDebugStandart Then DebugMode vbTab & "Move file: False : " & PathFrom & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
         End If
 
     Else

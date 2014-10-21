@@ -234,6 +234,15 @@ library OLEGuids
 	{
 		// Not done, guid placeholder only
     	};
+    	[
+        	uuid(CB5BDC81-93C1-11CF-8F20-00805F2CD064),
+        	odl,
+    	]
+    	interface IObjectSafety : IUnknown
+	{
+        	HRESULT GetInterfaceSafetyOptions([in] REFIID riid, [in, out] LONG *pdwSupportedOptions, [in, out] LONG *pdwEnabledOptions);
+        	HRESULT SetInterfaceSafetyOptions([in] REFIID riid, [in] LONG dwOptionSetMask, [in] LONG dwEnabledOptions);
+    	};
 	[
 		uuid(38584260-0CFB-45E7-8FBB-5D20B311F5B8),
 		odl,

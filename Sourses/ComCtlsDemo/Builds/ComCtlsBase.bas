@@ -10,6 +10,7 @@ Private CCBorderStyleNone, CCBorderStyleSingle, CCBorderStyleThin, CCBorderStyle
 Private CCBackStyleTransparent, CCBackStyleOpaque
 Private CCLeftRightAlignmentLeft, CCLeftRightAlignmentRight
 Private CCVerticalAlignmentTop, CCVerticalAlignmentCenter, CCVerticalAlignmentBottom
+Private CCIMEModeNoControl, CCIMEModeOn, CCIMEModeOff, CCIMEModeDisable, CCIMEModeHiragana, CCIMEModeKatakana, CCIMEModeKatakanaHalf, CCIMEModeAlphaFull, CCIMEModeAlpha, CCIMEModeHangulFull, CCIMEModeHangul
 #End If
 Public Enum OLEDropModeConstants
 OLEDropModeNone = vbOLEDropNone
@@ -39,6 +40,23 @@ CCVerticalAlignmentTop = 0
 CCVerticalAlignmentCenter = 1
 CCVerticalAlignmentBottom = 2
 End Enum
+Public Enum CCIMEModeConstants
+CCIMEModeNoControl = 0
+CCIMEModeOn = 1
+CCIMEModeOff = 2
+CCIMEModeDisable = 3
+CCIMEModeHiragana = 4
+CCIMEModeKatakana = 5
+CCIMEModeKatakanaHalf = 6
+CCIMEModeAlphaFull = 7
+CCIMEModeAlpha = 8
+CCIMEModeHangulFull = 9
+CCIMEModeHangul = 10
+End Enum
+Private Type TagInitCommonControlsEx
+dwSize As Long
+dwICC As Long
+End Type
 Private Type DLLVERSIONINFO
 cbSize As Long
 dwMajor As Long
@@ -67,8 +85,9 @@ Time As Long
 PT As POINTAPI
 End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
-Private Declare Function SetWindowsHookEx Lib "user32" Alias "SetWindowsHookExW" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadId As Long) As Long
+Private Declare Function SetWindowsHookEx Lib "user32" Alias "SetWindowsHookExW" (ByVal IDHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
 Private Declare Function UnhookWindowsHookEx Lib "user32" (ByVal hHook As Long) As Long
 Private Declare Function CallNextHookEx Lib "user32" (ByVal hHook As Long, ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function GetActiveWindow Lib "user32" () As Long
@@ -78,6 +97,17 @@ Private Declare Function GetFocus Lib "user32" () As Long
 Private Declare Function GetTickCount Lib "kernel32" () As Long
 Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal VKey As Long) As Integer
+Private Declare Function GetKeyboardLayout Lib "user32" (ByVal dwThreadID As Long) As Long
+Private Declare Function ImmIsIME Lib "imm32" (ByVal hKL As Long) As Long
+Private Declare Function ImmCreateContext Lib "imm32" () As Long
+Private Declare Function ImmDestroyContext Lib "imm32" (ByVal hIMC As Long) As Long
+Private Declare Function ImmGetContext Lib "imm32" (ByVal hWnd As Long) As Long
+Private Declare Function ImmReleaseContext Lib "imm32" (ByVal hWnd As Long, ByVal hIMC As Long) As Long
+Private Declare Function ImmGetOpenStatus Lib "imm32" (ByVal hIMC As Long) As Long
+Private Declare Function ImmSetOpenStatus Lib "imm32" (ByVal hIMC As Long, ByVal fOpen As Long) As Long
+Private Declare Function ImmAssociateContext Lib "imm32" (ByVal hWnd As Long, ByVal hIMC As Long) As Long
+Private Declare Function ImmGetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByRef lpfdwConversion As Long, ByRef lpfdwSentence As Long) As Long
+Private Declare Function ImmSetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByVal lpfdwConversion As Long, ByVal lpfdwSentence As Long) As Long
 Private Declare Function IsDialogMessage Lib "user32" Alias "IsDialogMessageW" (ByVal hDialog As Long, ByRef lpMsg As TMSG) As Long
 Private Declare Function DllGetVersion Lib "comctl32" (ByRef pdvi As DLLVERSIONINFO) As Long
 Private Declare Function GetVersionEx Lib "kernel32" Alias "GetVersionExW" (ByRef lpVersionInfo As OSVERSIONINFO) As Long
@@ -188,10 +218,35 @@ If ShellModCount = 0 And ShellModHandle <> 0 Then
 End If
 End Sub
 
+Public Sub ComCtlsInitCC(ByVal ICC As Long)
+Dim ICCEX As TagInitCommonControlsEx
+With ICCEX
+.dwSize = LenB(ICCEX)
+.dwICC = ICC
+End With
+InitCommonControlsEx ICCEX
+End Sub
+
 Public Sub ComCtlsShowAllUIStates(ByVal hWnd As Long)
 Const WM_CHANGEUISTATE As Long = &H127
 Const UIS_CLEAR As Long = 2, UISF_HIDEFOCUS As Long = &H1, UISF_HIDEACCEL As Long = &H2
 SendMessage hWnd, WM_CHANGEUISTATE, MakeDWord(UIS_CLEAR, UISF_HIDEFOCUS Or UISF_HIDEACCEL), ByVal 0&
+End Sub
+
+Public Sub ComCtlsInitBorderStyle(ByRef dwStyle As Long, ByRef dwExStyle As Long, ByVal Value As CCBorderStyleConstants)
+Const WS_BORDER As Long = &H800000, WS_DLGFRAME As Long = &H400000
+Const WS_EX_CLIENTEDGE As Long = &H200, WS_EX_STATICEDGE As Long = &H20000, WS_EX_WINDOWEDGE As Long = &H100
+Select Case Value
+    Case CCBorderStyleSingle
+        dwStyle = dwStyle Or WS_BORDER
+    Case CCBorderStyleThin
+        dwExStyle = dwExStyle Or WS_EX_STATICEDGE
+    Case CCBorderStyleSunken
+        dwExStyle = dwExStyle Or WS_EX_CLIENTEDGE
+    Case CCBorderStyleRaised
+        dwExStyle = dwExStyle Or WS_EX_WINDOWEDGE
+        dwStyle = dwStyle Or WS_DLGFRAME
+End Select
 End Sub
 
 Public Sub ComCtlsChangeBorderStyle(ByVal hWnd As Long, ByVal Value As CCBorderStyleConstants)
@@ -220,6 +275,87 @@ SetWindowLong hWnd, GWL_STYLE, dwStyle
 SetWindowLong hWnd, GWL_EXSTYLE, dwExStyle
 Const SWP_FRAMECHANGED As Long = &H20, SWP_NOMOVE As Long = &H2, SWP_NOOWNERZORDER As Long = &H200, SWP_NOSIZE As Long = &H1, SWP_NOZORDER As Long = &H4
 SetWindowPos hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_FRAMECHANGED
+End Sub
+
+Public Sub ComCtlsCreateIMC(ByVal hWnd As Long, ByRef hIMC As Long)
+If hIMC = 0 Then
+    hIMC = ImmCreateContext()
+    If hIMC <> 0 Then ImmAssociateContext hWnd, hIMC
+End If
+End Sub
+
+Public Sub ComCtlsDestroyIMC(ByVal hWnd As Long, ByRef hIMC As Long)
+If hIMC <> 0 Then
+    ImmAssociateContext hWnd, 0
+    ImmDestroyContext hIMC
+    hIMC = 0
+End If
+End Sub
+
+Public Sub ComCtlsSetIMEMode(ByVal hWnd As Long, ByVal hIMCOrig As Long, ByVal Value As CCIMEModeConstants)
+Const IME_CMODE_ALPHANUMERIC As Long = &H0, IME_CMODE_NATIVE As Long = &H1, IME_CMODE_KATAKANA As Long = &H2, IME_CMODE_FULLSHAPE As Long = &H8
+Dim hKL As Long
+hKL = GetKeyboardLayout(0)
+If ImmIsIME(hKL) = 0 Or hIMCOrig = 0 Then Exit Sub
+Dim hIMC As Long
+hIMC = ImmGetContext(hWnd)
+If Value = CCIMEModeDisable Then
+    If hIMC <> 0 Then
+        ImmReleaseContext hWnd, hIMC
+        ImmAssociateContext hWnd, 0
+    End If
+Else
+    If hIMC = 0 Then
+        ImmAssociateContext hWnd, hIMCOrig
+        hIMC = ImmGetContext(hWnd)
+    End If
+    If hIMC <> 0 And Value <> CCIMEModeNoControl Then
+        Dim dwConversion As Long, dwSentence As Long
+        ImmGetConversionStatus hIMC, dwConversion, dwSentence
+        Select Case Value
+            Case CCIMEModeOn
+                ImmSetOpenStatus hIMC, 1
+            Case CCIMEModeOff
+                ImmSetOpenStatus hIMC, 0
+            Case CCIMEModeHiragana
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion Or IME_CMODE_NATIVE
+                If Not (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion Or IME_CMODE_FULLSHAPE
+                If (dwConversion And IME_CMODE_KATAKANA) = IME_CMODE_KATAKANA Then dwConversion = dwConversion And Not IME_CMODE_KATAKANA
+            Case CCIMEModeKatakana
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion Or IME_CMODE_NATIVE
+                If Not (dwConversion And IME_CMODE_KATAKANA) = IME_CMODE_KATAKANA Then dwConversion = dwConversion Or IME_CMODE_KATAKANA
+                If Not (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion Or IME_CMODE_FULLSHAPE
+            Case CCIMEModeKatakanaHalf
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion Or IME_CMODE_NATIVE
+                If Not (dwConversion And IME_CMODE_KATAKANA) = IME_CMODE_KATAKANA Then dwConversion = dwConversion Or IME_CMODE_KATAKANA
+                If (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion And Not IME_CMODE_FULLSHAPE
+            Case CCIMEModeAlphaFull
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion Or IME_CMODE_FULLSHAPE
+                If (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion And Not IME_CMODE_NATIVE
+                If (dwConversion And IME_CMODE_KATAKANA) = IME_CMODE_KATAKANA Then dwConversion = dwConversion And Not IME_CMODE_KATAKANA
+            Case CCIMEModeAlpha
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_ALPHANUMERIC) = IME_CMODE_ALPHANUMERIC Then dwConversion = dwConversion Or IME_CMODE_ALPHANUMERIC
+                If (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion And Not IME_CMODE_NATIVE
+                If (dwConversion And IME_CMODE_KATAKANA) = IME_CMODE_KATAKANA Then dwConversion = dwConversion And Not IME_CMODE_KATAKANA
+                If (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion And Not IME_CMODE_FULLSHAPE
+            Case CCIMEModeHangulFull
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion Or IME_CMODE_NATIVE
+                If Not (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion Or IME_CMODE_FULLSHAPE
+            Case CCIMEModeHangul
+                ImmSetOpenStatus hIMC, 1
+                If Not (dwConversion And IME_CMODE_NATIVE) = IME_CMODE_NATIVE Then dwConversion = dwConversion Or IME_CMODE_NATIVE
+                If (dwConversion And IME_CMODE_FULLSHAPE) = IME_CMODE_FULLSHAPE Then dwConversion = dwConversion And Not IME_CMODE_FULLSHAPE
+        End Select
+        ImmSetConversionStatus hIMC, dwConversion, dwSentence
+        ImmReleaseContext hWnd, hIMC
+    End If
+End If
 End Sub
 
 Public Sub ComCtlsMousePointerSetDisplayString(ByVal MousePointer As Integer, ByRef DisplayName As String)
@@ -268,8 +404,8 @@ StringsOut(16) = "16 - Arrow and CD": CookiesOut(16) = 16
 StringsOut(17) = "99 - Custom": CookiesOut(17) = 99
 End Sub
 
-Public Sub ComCtlsMousePointerPPInitCombo(ByRef ComboMousePointer As VB.ComboBox)
-With ComboMousePointer
+Public Sub ComCtlsMousePointerPPInitCombo(ByVal ComboBox As Object)
+With ComboBox
 .AddItem "0 - Default"
 .ItemData(.NewIndex) = 0
 .AddItem "1 - Arrow"
@@ -306,6 +442,33 @@ With ComboMousePointer
 .ItemData(.NewIndex) = 16
 .AddItem "99 - Custom"
 .ItemData(.NewIndex) = 99
+End With
+End Sub
+
+Public Sub ComCtlsIMEModePPInitCombo(ByVal ComboBox As Object)
+With ComboBox
+.AddItem CCIMEModeNoControl & " - NoControl"
+.ItemData(.NewIndex) = CCIMEModeNoControl
+.AddItem CCIMEModeOn & " - On"
+.ItemData(.NewIndex) = CCIMEModeOn
+.AddItem CCIMEModeOff & " - Off"
+.ItemData(.NewIndex) = CCIMEModeOff
+.AddItem CCIMEModeDisable & " - Disable"
+.ItemData(.NewIndex) = CCIMEModeDisable
+.AddItem CCIMEModeHiragana & " - Hiragana"
+.ItemData(.NewIndex) = CCIMEModeHiragana
+.AddItem CCIMEModeKatakana & " - Katakana"
+.ItemData(.NewIndex) = CCIMEModeKatakana
+.AddItem CCIMEModeKatakanaHalf & " - KatakanaHalf"
+.ItemData(.NewIndex) = CCIMEModeKatakanaHalf
+.AddItem CCIMEModeAlphaFull & " - AlphaFull"
+.ItemData(.NewIndex) = CCIMEModeAlphaFull
+.AddItem CCIMEModeAlpha & " - Alpha"
+.ItemData(.NewIndex) = CCIMEModeAlpha
+.AddItem CCIMEModeHangulFull & " - HangulFull"
+.ItemData(.NewIndex) = CCIMEModeHangulFull
+.AddItem CCIMEModeHangul & " - Hangul"
+.ItemData(.NewIndex) = CCIMEModeHangul
 End With
 End Sub
 
@@ -590,7 +753,7 @@ Dim AppForm As Form, CurrControl As Control
 For Each AppForm In Forms
     For Each CurrControl In AppForm.Controls
         Select Case TypeName(CurrControl)
-            Case "Animation", "DTPicker", "MonthView", "Slider", "TabStrip", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel"
+            Case "Animation", "DTPicker", "MonthView", "Slider", "TabStrip", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel", "CommandLink"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
             Case "ProgressBar", "FrameW"

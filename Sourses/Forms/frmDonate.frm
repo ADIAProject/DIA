@@ -69,9 +69,7 @@ Begin VB.Form frmDonate
       MultiLine       =   -1  'True
       ScrollBars      =   2
       WantReturn      =   -1  'True
-      FileName        =   "frmDonate.frx":000C
-      Text            =   "frmDonate.frx":002C
-      TextRTF         =   "frmDonate.frx":004C
+      TextRTF         =   "frmDonate.frx":000C
    End
    Begin prjDIADBS.ctlJCbutton cmdSMSCoin 
       Height          =   850
@@ -94,7 +92,7 @@ Begin VB.Form frmDonate
       BackColor       =   12244692
       Caption         =   "Donate via SMSCoin"
       CaptionEffects  =   0
-      PictureNormal   =   "frmDonate.frx":01A8
+      PictureNormal   =   "frmDonate.frx":0168
       PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16645372
@@ -122,7 +120,7 @@ Begin VB.Form frmDonate
       Caption         =   "Donate via"
       CaptionEffects  =   0
       CaptionAlign    =   2
-      PictureNormal   =   "frmDonate.frx":1E82
+      PictureNormal   =   "frmDonate.frx":1E42
       PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16777215
@@ -150,7 +148,7 @@ Begin VB.Form frmDonate
       Caption         =   "Donate via"
       CaptionEffects  =   0
       CaptionAlign    =   2
-      PictureNormal   =   "frmDonate.frx":3F7C
+      PictureNormal   =   "frmDonate.frx":3F3C
       PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16185078

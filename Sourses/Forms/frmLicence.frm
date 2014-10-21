@@ -63,9 +63,7 @@ Begin VB.Form frmLicence
       MultiLine       =   -1  'True
       ScrollBars      =   2
       WantReturn      =   -1  'True
-      FileName        =   "frmLicence.frx":0082
-      Text            =   "frmLicence.frx":00A2
-      TextRTF         =   "frmLicence.frx":00C2
+      TextRTF         =   "frmLicence.frx":0082
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650

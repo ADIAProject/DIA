@@ -21,25 +21,16 @@ Attribute VB_Exposed = False
 Option Explicit
 #If False Then
 Private SpbOrientationVertical, SpbOrientationHorizontal
-Private SpbAlignmentLeft, SpbAlignmentRight
 Private SpbNumberStyleDecimal, SpbNumberStyleHexadecimal
 #End If
 Public Enum SpbOrientationConstants
 SpbOrientationVertical = 0
 SpbOrientationHorizontal = 1
 End Enum
-Public Enum SpbAlignmentConstants
-SpbAlignmentLeft = 0
-SpbAlignmentRight = 1
-End Enum
 Public Enum SpbNumberStyleConstants
 SpbNumberStyleDecimal = 0
 SpbNumberStyleHexadecimal = 1
 End Enum
-Private Type TagInitCommonControlsEx
-dwSize As Long
-dwICC As Long
-End Type
 Private Type RECT
 Left As Long
 Top As Long
@@ -111,7 +102,6 @@ Attribute OLESetData.VB_Description = "Occurs at the OLE drag/drop source contro
 Public Event OLEStartDrag(Data As DataObject, AllowedEffects As Long)
 Attribute OLEStartDrag.VB_Description = "Occurs when an OLE drag/drop operation is initiated either manually or automatically."
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function PostMessage Lib "user32" Alias "PostMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
@@ -226,7 +216,7 @@ Private PropValue As Long, PropIncrement As Long
 Private PropWrap As Boolean
 Private PropHotTrack As Boolean
 Private PropOrientation As SpbOrientationConstants
-Private PropAlignment As SpbAlignmentConstants
+Private PropAlignment As CCLeftRightAlignmentConstants
 Private PropThousandsSeparator As Boolean
 Private PropNumberStyle As SpbNumberStyleConstants
 Private PropArrowKeysChange As Boolean
@@ -284,12 +274,7 @@ End Sub
 
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
-Dim ICCEX As TagInitCommonControlsEx
-With ICCEX
-.dwSize = LenB(ICCEX)
-.dwICC = ICC_STANDARD_CLASSES Or ICC_UPDOWN_CLASS
-End With
-InitCommonControlsEx ICCEX
+Call ComCtlsInitCC(ICC_STANDARD_CLASSES Or ICC_UPDOWN_CLASS)
 Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
 DispIDMousePointer = GetDispID(Me, "MousePointer")
@@ -306,7 +291,7 @@ PropIncrement = 1
 PropWrap = False
 PropHotTrack = True
 PropOrientation = SpbOrientationVertical
-PropAlignment = SpbAlignmentRight
+PropAlignment = CCLeftRightAlignmentRight
 PropThousandsSeparator = True
 PropNumberStyle = SpbNumberStyleDecimal
 PropArrowKeysChange = True
@@ -334,7 +319,7 @@ PropIncrement = .ReadProperty("Increment", 1)
 PropWrap = .ReadProperty("Wrap", False)
 PropHotTrack = .ReadProperty("HotTrack", True)
 PropOrientation = .ReadProperty("Orientation", SpbOrientationVertical)
-PropAlignment = .ReadProperty("Alignment", SpbAlignmentRight)
+PropAlignment = .ReadProperty("Alignment", CCLeftRightAlignmentRight)
 PropThousandsSeparator = .ReadProperty("ThousandsSeparator", True)
 PropNumberStyle = .ReadProperty("NumberStyle", SpbNumberStyleDecimal)
 PropArrowKeysChange = .ReadProperty("ArrowKeysChange", True)
@@ -363,7 +348,7 @@ With PropBag
 .WriteProperty "Wrap", PropWrap, False
 .WriteProperty "HotTrack", PropHotTrack, True
 .WriteProperty "Orientation", PropOrientation, SpbOrientationVertical
-.WriteProperty "Alignment", PropAlignment, SpbAlignmentRight
+.WriteProperty "Alignment", PropAlignment, CCLeftRightAlignmentRight
 .WriteProperty "ThousandsSeparator", PropThousandsSeparator, True
 .WriteProperty "NumberStyle", PropNumberStyle, SpbNumberStyleDecimal
 .WriteProperty "ArrowKeysChange", PropArrowKeysChange, True
@@ -789,14 +774,14 @@ If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "Orientation"
 End Property
 
-Public Property Get Alignment() As SpbAlignmentConstants
+Public Property Get Alignment() As CCLeftRightAlignmentConstants
 Attribute Alignment.VB_Description = "Returns/sets the alignment."
 Alignment = PropAlignment
 End Property
 
-Public Property Let Alignment(ByVal Value As SpbAlignmentConstants)
+Public Property Let Alignment(ByVal Value As CCLeftRightAlignmentConstants)
 Select Case Value
-    Case SpbAlignmentLeft, SpbAlignmentRight
+    Case CCLeftRightAlignmentLeft, CCLeftRightAlignmentRight
         PropAlignment = Value
     Case Else
         Err.Raise 380
@@ -936,9 +921,9 @@ If PropWrap = True Then dwStyle = dwStyle Or UDS_WRAP
 If PropHotTrack = True Then dwStyle = dwStyle Or UDS_HOTTRACK
 If PropOrientation = SpbOrientationHorizontal Then dwStyle = dwStyle Or UDS_HORZ
 Select Case PropAlignment
-    Case SpbAlignmentLeft
+    Case CCLeftRightAlignmentLeft
         dwStyle = dwStyle Or UDS_ALIGNLEFT
-    Case SpbAlignmentRight
+    Case CCLeftRightAlignmentRight
         dwStyle = dwStyle Or UDS_ALIGNRIGHT
 End Select
 If PropThousandsSeparator = False Then dwStyle = dwStyle Or UDS_NOTHOUSANDS

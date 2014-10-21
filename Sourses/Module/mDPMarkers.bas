@@ -45,6 +45,7 @@ Attribute VB_Name = "mDPMarkers"
 'All7 - Windows 7 x86/x64
 'All8 - Windows 8 x86/x64
 'All81 - Windows 8.1 x86/x64
+'All9 - Windows 9 x86/x64
 'WinAll - Все Windows
 'var ver_51x64="5x64";
 'var ver_51x86="5x86";
@@ -56,6 +57,8 @@ Attribute VB_Name = "mDPMarkers"
 'var ver_62x86="8x86|NTx86|AllNT|78x86|All8x86";
 'var ver_63x64="81x64|NTx64|AllNT|781x64|All8x64";
 'var ver_63x86="81x86|NTx86|AllNT|781x86|All8x86";
+'var ver_64x64="9x64|NTx64|AllNT|7819x64|All8x64";
+'var ver_64x86="9x86|NTx86|AllNT|7819x86|All8x86";
 '
 'STRICT - Если маркер следует после другого маркера, то следует что драйвер предназначен только для той ОС
 'Все будущие драйвер-паки будут иметь именно такую структуру
@@ -73,6 +76,8 @@ Public Const strVer_62x64   As String = "8x64|78x64|All8x64|NTx64|AllNT"
 Public Const strVer_62x86   As String = "8x86|78x86|All8x86|NTx86|AllNT"
 Public Const strVer_63x64   As String = "81x64|781x64|All8x64|NTx64|AllNT"
 Public Const strVer_63x86   As String = "81x86|781x86|All8x86|NTx86|AllNT"
+Public Const strVer_64x64   As String = "9x64|7819x64|All8x64|NTx64|AllNT"
+Public Const strVer_64x86   As String = "9x86|7819x86|All8x86|NTx86|AllNT"
 Public Const strVer_XXx64   As String = "Allx64"
 Public Const strVer_XXx86   As String = "Allx86"
 Public Const strVer_51xXX   As String = "AllXP"
@@ -80,6 +85,7 @@ Public Const strVer_60xXX   As String = "All6"
 Public Const strVer_61xXX   As String = "All7"
 Public Const strVer_62xXX   As String = "All8"
 Public Const strVer_63xXX   As String = "All81"
+Public Const strVer_64xXX   As String = "All9"
 Public Const strVer_XXxXX   As String = "WinAll"
 Public Const strVerSTRICT   As String = "STRICT"
 Public Const strVerFORCED   As String = "FORCED"
@@ -100,10 +106,10 @@ Public arrNotebookFilterListDef()        As String ' Массив производителей ноутб
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub GetSummaryDPMarkers()
-    strVer_Known_Ver = strVer_51x64 + "|" + strVer_51x86 + "|" + strVer_60x64 + "|" + strVer_60x86 + "|" + strVer_61x64 + "|" + strVer_61x86 + "|" + strVer_62x64 + "|" + strVer_62x86 + "|" + strVer_63x64 + "|" + strVer_63x86
-    strVer_Any86 = strVer_51x86 + "|" + strVer_60x86 + "|" + strVer_61x86 + "|" + strVer_62x86 + "|" + strVer_63x86 + "|" + strVer_XXx86
-    strVer_Any64 = strVer_51x64 + "|" + strVer_60x64 + "|" + strVer_61x64 + "|" + strVer_62x64 + "|" + strVer_63x64 + "|" + strVer_XXx64
-    strVer_All_Known_Ver = strVer_Any86 + "|" + strVer_Any64 + "|" + strVer_51xXX + "|" + strVer_60xXX + "|" + strVer_61xXX + "|" + strVer_62xXX + "|" + strVer_63xXX + "|" + strVer_XXxXX
+    strVer_Known_Ver = strVer_51x64 + "|" + strVer_51x86 + "|" + strVer_60x64 + "|" + strVer_60x86 + "|" + strVer_61x64 + "|" + strVer_61x86 + "|" + strVer_62x64 + "|" + strVer_62x86 + "|" + strVer_63x64 + "|" + strVer_63x86 + "|" + strVer_64x64 + "|" + strVer_64x86
+    strVer_Any86 = strVer_51x86 + "|" + strVer_60x86 + "|" + strVer_61x86 + "|" + strVer_62x86 + "|" + strVer_63x86 + "|" + strVer_64x86 + "|" + strVer_XXx86
+    strVer_Any64 = strVer_51x64 + "|" + strVer_60x64 + "|" + strVer_61x64 + "|" + strVer_62x64 + "|" + strVer_63x64 + "|" + strVer_64x64 + "|" + strVer_XXx64
+    strVer_All_Known_Ver = strVer_Any86 + "|" + strVer_Any64 + "|" + strVer_51xXX + "|" + strVer_60xXX + "|" + strVer_61xXX + "|" + strVer_62xXX + "|" + strVer_63xXX + "|" + strVer_64xXX + "|" + strVer_XXxXX
 End Sub
 
 '!--------------------------------------------------------------------------------

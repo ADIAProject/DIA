@@ -208,23 +208,23 @@ Private FreezeChanged As Boolean
 Private Sub PropertyPage_Initialize()
 Call ComCtlsMousePointerPPInitCombo(ComboMousePointer)
 With ComboOrientation
-.AddItem "0 - Horizontal"
+.AddItem PrbOrientationHorizontal & " - Horizontal"
 .ItemData(.NewIndex) = PrbOrientationHorizontal
-.AddItem "1 - Vertical"
+.AddItem PrbOrientationVertical & " - Vertical"
 .ItemData(.NewIndex) = PrbOrientationVertical
 End With
 With ComboScrolling
-.AddItem "0 - Standard"
+.AddItem PrbScrollingStandard & " - Standard"
 .ItemData(.NewIndex) = PrbScrollingStandard
-.AddItem "1 - Smooth"
+.AddItem PrbScrollingSmooth & " - Smooth"
 .ItemData(.NewIndex) = PrbScrollingSmooth
 End With
 With ComboState
-.AddItem "0 - InProgress"
+.AddItem PrbStateInProgress & " - InProgress"
 .ItemData(.NewIndex) = PrbStateInProgress
-.AddItem "1 - Error"
+.AddItem PrbStateError & " - Error"
 .ItemData(.NewIndex) = PrbStateError
-.AddItem "2 - Paused"
+.AddItem PrbStatePaused & " - Paused"
 .ItemData(.NewIndex) = PrbStatePaused
 End With
 End Sub
@@ -238,13 +238,13 @@ With PropertyPage.SelectedControls(0)
 .Enabled = CBool(CheckEnabled.Value = vbChecked)
 .VisualStyles = CBool(CheckVisualStyles.Value = vbChecked)
 .MousePointer = ComboMousePointer.ItemData(ComboMousePointer.ListIndex)
-.Min = CInt(TextMin.Text)
-.Max = CInt(TextMax.Text)
-.Value = CInt(TextValue.Text)
+.Min = CLng(TextMin.Text)
+.Max = CLng(TextMax.Text)
+.Value = CLng(TextValue.Text)
 .Orientation = ComboOrientation.ItemData(ComboOrientation.ListIndex)
 .Scrolling = ComboScrolling.ItemData(ComboScrolling.ListIndex)
 .State = ComboState.ItemData(ComboState.ListIndex)
-.Step = CInt(TextStep.Text)
+.Step = CLng(TextStep.Text)
 .MarqueeSpeed = CLng(TextMarqueeSpeed.Text)
 .StepAutoReset = CBool(CheckStepAutoReset.Value = vbChecked)
 .Marquee = CBool(CheckMarquee.Value = vbChecked)
@@ -266,9 +266,9 @@ For i = 0 To ComboMousePointer.ListCount - 1
         Exit For
     End If
 Next i
-TextMin.Text = .Min
-TextMax.Text = .Max
-TextValue.Text = .Value
+TextMin.Text = CStr(.Min)
+TextMax.Text = CStr(.Max)
+TextValue.Text = CStr(.Value)
 For i = 0 To ComboOrientation.ListCount - 1
     If ComboOrientation.ItemData(i) = .Orientation Then
         ComboOrientation.ListIndex = i
@@ -287,8 +287,8 @@ For i = 0 To ComboState.ListCount - 1
         Exit For
     End If
 Next i
-TextStep.Text = .Step
-TextMarqueeSpeed.Text = .MarqueeSpeed
+TextStep.Text = CStr(.Step)
+TextMarqueeSpeed.Text = CStr(.MarqueeSpeed)
 CheckStepAutoReset.Value = IIf(.StepAutoReset = True, vbChecked, vbUnchecked)
 CheckMarquee.Value = IIf(.Marquee = True, vbChecked, vbUnchecked)
 CheckMarqueeAnimation.Value = IIf(.MarqueeAnimation = True, vbChecked, vbUnchecked)
@@ -338,7 +338,18 @@ If Not IsNumeric(TextMin.Text) Then
     TextMin.SetFocus
     Cancel = True
 Else
-    TextMin.Text = CLng(TextMin.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextMin.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextMin.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextMin.Text = PropertyPage.SelectedControls(0).Min
+        TextMin.SetFocus
+    End If
 End If
 End Sub
 
@@ -368,7 +379,18 @@ If Not IsNumeric(TextMax.Text) Then
     TextMax.SetFocus
     Cancel = True
 Else
-    TextMax.Text = CLng(TextMax.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextMax.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextMax.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextMax.Text = PropertyPage.SelectedControls(0).Max
+        TextMax.SetFocus
+    End If
 End If
 End Sub
 
@@ -398,7 +420,18 @@ If Not IsNumeric(TextValue.Text) Then
     TextValue.SetFocus
     Cancel = True
 Else
-    TextValue.Text = CLng(TextValue.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextValue.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextValue.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextValue.Text = PropertyPage.SelectedControls(0).Value
+        TextValue.SetFocus
+    End If
 End If
 End Sub
 
@@ -443,7 +476,18 @@ If Not IsNumeric(TextStep.Text) Then
     TextStep.SetFocus
     Cancel = True
 Else
-    TextStep.Text = CLng(TextStep.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextStep.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextStep.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextStep.Text = PropertyPage.SelectedControls(0).Step
+        TextStep.SetFocus
+    End If
 End If
 End Sub
 
@@ -466,6 +510,10 @@ End If
 PropertyPage.Changed = True
 End Sub
 
+Private Sub TextMarqueeSpeed_KeyPress(KeyAscii As Integer)
+Call OnlyNumeric(KeyAscii)
+End Sub
+
 Private Sub TextMarqueeSpeed_Validate(Cancel As Boolean)
 If Not IsNumeric(TextMarqueeSpeed.Text) Then
     MsgBox "Invalid property value", vbCritical + vbOKOnly
@@ -473,13 +521,18 @@ If Not IsNumeric(TextMarqueeSpeed.Text) Then
     TextMarqueeSpeed.SetFocus
     Cancel = True
 Else
-    If CLng(TextMarqueeSpeed.Text) > 0 Then
-        TextMarqueeSpeed.Text = CLng(TextMarqueeSpeed.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextMarqueeSpeed.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If LngValue <= 0 Then Cancel = True
+    If Cancel = False Then
+        TextMarqueeSpeed.Text = LngValue
     Else
         MsgBox "Invalid property value", vbCritical + vbOKOnly
         TextMarqueeSpeed.Text = PropertyPage.SelectedControls(0).MarqueeSpeed
         TextMarqueeSpeed.SetFocus
-        Cancel = True
     End If
 End If
 End Sub
@@ -502,4 +555,14 @@ End Sub
 Private Sub CheckSmoothReverse_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
+End Sub
+
+Private Sub OnlyNumeric(ByRef KeyAscii As Integer)
+If (KeyAscii >= Asc("0")) And (KeyAscii <= Asc("9")) Then
+Else
+    If KeyAscii = 8 Then
+    Else
+        KeyAscii = 0
+    End If
+End If
 End Sub

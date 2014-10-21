@@ -1060,6 +1060,7 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuUtils_DoubleDriver 
          Caption         =   "DoubleDriver"
          Shortcut        =   ^{F3}
+         Visible         =   0   'False
       End
       Begin VB.Menu mnuUtils_SIV 
          Caption         =   "System Information Viewer"
@@ -2009,9 +2010,9 @@ Private Sub CheckMenuUtilsPath()
         End If
     End If
 
-    If PathExists(PathCollect(strDoubleDriver_Path)) = False Then
-        mnuUtils_DoubleDriver.Enabled = False
-    End If
+'    If PathExists(PathCollect(strDoubleDriver_Path)) = False Then
+'        mnuUtils_DoubleDriver.Enabled = False
+'    End If
 
     If PathExists(PathCollect(strUDI_Path)) = False Then
         mnuUtils_UDI.Enabled = False
@@ -8268,31 +8269,38 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 
         Select Case KeyCode
 
-            Case vbKeyA '65
+            Case vbKeyA
+            '65
                 ' Ctrl+A (Выделение всех пакетов для установки)
                 CheckAllButton True
 
-            Case vbKeyZ '90
+            Case vbKeyZ
+            '90
                 ' Ctrl+Z (Отмена выделения всех)
                 CheckAllButton False
 
-            Case vbKeyS '83
+            Case vbKeyS
+            '83
                 ' Ctrl+S (Выделение всех пакетов на вкладке)
                 SelectAllOnTabDP True
 
-            Case vbKeyN '78
+            Case vbKeyN
+            '78
                 ' Ctrl+N (Выделение всех пакетов с новыми драйверами)
                 SelectRecommendedDP True
 
-            Case vbKeyQ '81
+            Case vbKeyQ
+            '81
                 ' Ctrl+Q (Выделение пакетов с не установленными)
                 SelectNotInstalledDP True
 
-            Case vbKeyI '73
+            Case vbKeyI
+            '73
                 ' Ctrl+I (Установка выделенных пакетов)
                 InsOrUpdSelectedDP True
 
-            Case vbKeyU '85
+            Case vbKeyU
+            '85
                 ' Ctrl+U (Обновление БД выделенных пакетов)
                 InsOrUpdSelectedDP False
 
@@ -8308,7 +8316,8 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
                     mbBreakUpdateDBAll = True
                 End If
             
-            Case vbKeyX '88
+            Case vbKeyX
+            '88
                 ' Ctrl+X (Прерывание групповой обработки в IDE)
                 If cmdBreakUpdateDB.Visible Then
                     mbBreakUpdateDBAll = True
@@ -9179,7 +9188,12 @@ Private Sub mnuCreateBackUp_Click()
 End Sub
 
 Private Sub mnuCreateCommonIndex_Click()
+    ' Блокируем форму при создании точки восстановления
+    BlockControl False
+    ' Собственно создание индекса
     CreateCommonIndex
+    ' РазБлокируем форму после создания точки восстановления
+    BlockControl True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9700,9 +9714,9 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub mnuUtils_DoubleDriver_Click()
-    RunUtilsShell strDoubleDriver_Path
-End Sub
+'Private Sub mnuUtils_DoubleDriver_Click()
+'    RunUtilsShell strDoubleDriver_Path
+'End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuUtils_SIV_Click
@@ -10267,11 +10281,11 @@ Private Sub CreateCommonIndex()
     Dim strFileNameDB           As String
     Dim strFile_x()             As String
 
-    ReDim strCommonArr(200000)
+    ReDim strCommonArr(2000000)
     
     
     If mbDebugStandart Then DebugMode "CreateCommonIndex-Start"
-    ctlUcStatusBar1.PanelText(1) = strMessages(127)
+    ChangeStatusBarText strMessages(157), strMessages(128)
     
     TabCount = SSTab1.Tabs
 
@@ -10346,7 +10360,7 @@ Private Sub CreateCommonIndex()
             
     If lngNumLines Then
 
-        strRezultTxt = strWorkTempBackSL & "ComonDBIndexFile.txt"
+        strRezultTxt = strWorkTempBackSL & "CommonDBIndexFile.txt"
         
         ReDim Preserve strCommonArr(lngNumLines - 1)
 
@@ -10396,18 +10410,17 @@ Private Sub CreateCommonIndex()
         ' Удаление массива, т.е освобождение памяти
         Erase strCommonArr
         Erase strCurrentArr
-
-'        strRezultTxtTo = Replace$(PathCombine(strPathDevDB, GetFileNameFromPath(strRezultTxt)), "common", vbNullString, , , vbTextCompare)
-'
-'        If CopyFileTo(strRezultTxt, strRezultTxtTo) Then
-'            'Копируем файл HWID
-'            MsgBox strMessages(31), vbInformation, strProductName
-'            If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtHwidTo
-'        Else
-'            MsgBox strMessages(31), vbInformation, strProductName
-'            If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Error of the saving file in directory database driver: " & strRezultTxtTo
-'        End If
-    End If
     
+        If FileExists(strRezultTxt) Then
+            ChangeStatusBarText strMessages(158) & " " & strMessages(70) & ": CommonDBIndexFile.txt"
+            'RunUtilsShell strRezultTxt, False
+            ' Запустить проводник и выбрать файл
+            RunAndWaitNew "explorer.exe /select," & strRezultTxt, strWorkTemp, vbNormalFocus, 1000
+        Else
+            ChangeStatusBarText strMessages(45) & vbNewLine & strRezultTxt
+            MsgBox strMessages(45) & vbNewLine & strRezultTxt, vbOKOnly + vbCritical, strProductName
+        End If
+        
+    End If
     
 End Sub

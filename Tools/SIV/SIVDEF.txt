@@ -1,0 +1,5 @@
+[SIVDEF]
+Font Weight=400
+Font Name=Tahoma
+[SIVCMD]
+SIVCMD=-keys -nowizard

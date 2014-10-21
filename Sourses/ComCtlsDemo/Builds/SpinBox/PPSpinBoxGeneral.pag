@@ -233,29 +233,29 @@ Private FreezeChanged As Boolean
 Private Sub PropertyPage_Initialize()
 Call ComCtlsMousePointerPPInitCombo(ComboMousePointer)
 With ComboOrientation
-.AddItem "0 - Vertical"
+.AddItem SpbOrientationVertical & " - Vertical"
 .ItemData(.NewIndex) = SpbOrientationVertical
-.AddItem "1 - Horizontal"
+.AddItem SpbOrientationHorizontal & " - Horizontal"
 .ItemData(.NewIndex) = SpbOrientationHorizontal
 End With
 With ComboAlignment
-.AddItem "0 - Left"
-.ItemData(.NewIndex) = SpbAlignmentLeft
-.AddItem "1 - Right"
-.ItemData(.NewIndex) = SpbAlignmentRight
+.AddItem CCLeftRightAlignmentLeft & " - Left"
+.ItemData(.NewIndex) = CCLeftRightAlignmentLeft
+.AddItem CCLeftRightAlignmentRight & " - Right"
+.ItemData(.NewIndex) = CCLeftRightAlignmentRight
 End With
 With ComboNumberStyle
-.AddItem "0 - Decimal"
+.AddItem SpbNumberStyleDecimal & " - Decimal"
 .ItemData(.NewIndex) = SpbNumberStyleDecimal
-.AddItem "1 - Hexadecimal"
+.AddItem SpbNumberStyleHexadecimal & " - Hexadecimal"
 .ItemData(.NewIndex) = SpbNumberStyleHexadecimal
 End With
 With ComboTextAlignment
-.AddItem "0 - Left Justify"
+.AddItem vbLeftJustify & " - Left Justify"
 .ItemData(.NewIndex) = vbLeftJustify
-.AddItem "1 - Right Justify"
+.AddItem vbRightJustify & " - Right Justify"
 .ItemData(.NewIndex) = vbRightJustify
-.AddItem "2 - Center"
+.AddItem vbCenter & " - Center"
 .ItemData(.NewIndex) = vbCenter
 End With
 End Sub
@@ -295,10 +295,10 @@ With PropertyPage.SelectedControls(0)
 CheckEnabled.Value = IIf(.Enabled = True, vbChecked, vbUnchecked)
 CheckLocked.Value = IIf(.Locked = True, vbChecked, vbUnchecked)
 CheckVisualStyles.Value = IIf(.VisualStyles = True, vbChecked, vbUnchecked)
-TextMin.Text = .Min
-TextMax.Text = .Max
-TextValue.Text = .Value
-TextIncrement.Text = .Increment
+TextMin.Text = CStr(.Min)
+TextMax.Text = CStr(.Max)
+TextValue.Text = CStr(.Value)
+TextIncrement.Text = CStr(.Increment)
 For i = 0 To ComboMousePointer.ListCount - 1
     If ComboMousePointer.ItemData(i) = .MousePointer Then
         ComboMousePointer.ListIndex = i
@@ -380,7 +380,18 @@ If Not IsNumeric(TextMin.Text) Then
     TextMin.SetFocus
     Cancel = True
 Else
-    TextMin.Text = CLng(TextMin.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextMin.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextMin.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextMin.Text = PropertyPage.SelectedControls(0).Min
+        TextMin.SetFocus
+    End If
 End If
 End Sub
 
@@ -410,7 +421,18 @@ If Not IsNumeric(TextMax.Text) Then
     TextMax.SetFocus
     Cancel = True
 Else
-    TextMax.Text = CLng(TextMax.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextMax.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextMax.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextMax.Text = PropertyPage.SelectedControls(0).Max
+        TextMax.SetFocus
+    End If
 End If
 End Sub
 
@@ -440,7 +462,18 @@ If Not IsNumeric(TextValue.Text) Then
     TextValue.SetFocus
     Cancel = True
 Else
-    TextValue.Text = CLng(TextValue.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextValue.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextValue.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextValue.Text = PropertyPage.SelectedControls(0).Value
+        TextValue.SetFocus
+    End If
 End If
 End Sub
 
@@ -456,7 +489,7 @@ End Sub
 Private Sub TextIncrement_Change()
 If FreezeChanged = True Then Exit Sub
 If TextIncrement.Text = vbNullString Then
-    TextIncrement.Text = PropertyPage.SelectedControls(0).SmallChange
+    TextIncrement.Text = PropertyPage.SelectedControls(0).Increment
     TextIncrement.SelStart = 0
     TextIncrement.SelLength = Len(TextIncrement.Text)
 End If
@@ -466,11 +499,22 @@ End Sub
 Private Sub TextIncrement_Validate(Cancel As Boolean)
 If Not IsNumeric(TextIncrement.Text) Then
     MsgBox "Invalid property value", vbCritical + vbOKOnly
-    TextIncrement.Text = PropertyPage.SelectedControls(0).SmallChange
+    TextIncrement.Text = PropertyPage.SelectedControls(0).Increment
     TextIncrement.SetFocus
     Cancel = True
 Else
-    TextIncrement.Text = CLng(TextIncrement.Text)
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextIncrement.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If Cancel = False Then
+        TextIncrement.Text = LngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextIncrement.Text = PropertyPage.SelectedControls(0).Increment
+        TextIncrement.SetFocus
+    End If
 End If
 End Sub
 

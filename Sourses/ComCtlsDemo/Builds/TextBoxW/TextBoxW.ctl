@@ -39,10 +39,6 @@ TxtIconInfo = TTI_INFO
 TxtIconWarning = TTI_WARNING
 TxtIconError = TTI_ERROR
 End Enum
-Private Type TagInitCommonControlsEx
-dwSize As Long
-dwICC As Long
-End Type
 Private Type RECT
 Left As Long
 Top As Long
@@ -108,7 +104,6 @@ Attribute OLESetData.VB_Description = "Occurs at the OLE drag/drop source contro
 Public Event OLEStartDrag(Data As DataObject, AllowedEffects As Long)
 Attribute OLEStartDrag.VB_Description = "Occurs when an OLE drag/drop operation is initiated either manually or automatically."
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
@@ -149,11 +144,6 @@ Private Const GWL_STYLE As Long = (-16)
 Private Const CF_UNICODETEXT As Long = 13
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
-Private Const WS_BORDER As Long = &H800000
-Private Const WS_DLGFRAME As Long = &H400000
-Private Const WS_EX_CLIENTEDGE As Long = &H200
-Private Const WS_EX_STATICEDGE As Long = &H20000
-Private Const WS_EX_WINDOWEDGE As Long = &H100
 Private Const WS_EX_RTLREADING As Long = &H2000
 Private Const WS_HSCROLL As Long = &H100000
 Private Const WS_VSCROLL As Long = &H200000
@@ -168,6 +158,8 @@ Private Const WM_COMMAND As Long = &H111
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_INPUTLANGCHANGE As Long = &H51
+Private Const WM_IME_SETCONTEXT As Long = &H281
 Private Const WM_IME_CHAR As Long = &H286
 Private Const WM_LBUTTONDOWN As Long = &H201
 Private Const WM_LBUTTONUP As Long = &H202
@@ -249,6 +241,7 @@ Implements OLEGuids.IOleControlVB
 Implements OLEGuids.IPerPropertyBrowsingVB
 Private TextBoxHandle As Long
 Private TextBoxFontHandle As Long
+Private TextBoxIMCHandle As Long
 Private TextBoxAutoDragInSel As Boolean, TextBoxAutoDragIsActive As Boolean
 Private TextBoxIsClick As Boolean
 Private DispIDMousePointer As Long
@@ -273,6 +266,7 @@ Private PropScrollBars As VBRUN.ScrollBarConstants
 Private PropCueBanner As String
 Private PropCharacterCasing As TxtCharacterCasingConstants
 Private PropWantReturn As Boolean
+Private PropIMEMode As CCIMEModeConstants
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -333,12 +327,7 @@ End Sub
 
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
-Dim ICCEX As TagInitCommonControlsEx
-With ICCEX
-.dwSize = LenB(ICCEX)
-.dwICC = ICC_STANDARD_CLASSES
-End With
-InitCommonControlsEx ICCEX
+Call ComCtlsInitCC(ICC_STANDARD_CLASSES)
 Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfaceControl)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
@@ -366,6 +355,7 @@ PropScrollBars = vbSBNone
 PropCueBanner = vbNullString
 PropCharacterCasing = TxtCharacterCasingNormal
 PropWantReturn = False
+PropIMEMode = CCIMEModeNoControl
 Call CreateTextBox
 End Sub
 
@@ -395,6 +385,7 @@ PropScrollBars = .ReadProperty("ScrollBars", vbSBNone)
 PropCueBanner = VarToStr(.ReadProperty("CueBanner", vbNullString))
 PropCharacterCasing = .ReadProperty("CharacterCasing", TxtCharacterCasingNormal)
 PropWantReturn = .ReadProperty("WantReturn", False)
+PropIMEMode = .ReadProperty("IMEMode", CCIMEModeNoControl)
 End With
 Call CreateTextBox
 End Sub
@@ -425,6 +416,7 @@ With PropBag
 .WriteProperty "CueBanner", StrToVar(PropCueBanner), vbNullString
 .WriteProperty "CharacterCasing", PropCharacterCasing, TxtCharacterCasingNormal
 .WriteProperty "WantReturn", PropWantReturn, False
+.WriteProperty "IMEMode", PropIMEMode, CCIMEModeNoControl
 End With
 End Sub
 
@@ -1088,21 +1080,29 @@ End If
 UserControl.PropertyChanged "WantReturn"
 End Property
 
+Public Property Get IMEMode() As CCIMEModeConstants
+Attribute IMEMode.VB_Description = "Returns/sets the Input Method Editor (IME) mode."
+IMEMode = PropIMEMode
+End Property
+
+Public Property Let IMEMode(ByVal Value As CCIMEModeConstants)
+Select Case Value
+    Case CCIMEModeNoControl, CCIMEModeOn, CCIMEModeOff, CCIMEModeDisable, CCIMEModeHiragana, CCIMEModeKatakana, CCIMEModeKatakanaHalf, CCIMEModeAlphaFull, CCIMEModeAlpha, CCIMEModeHangulFull, CCIMEModeHangul
+        PropIMEMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+If TextBoxHandle <> 0 And Ambient.UserMode = True Then
+    If GetFocus() = TextBoxHandle Then Call ComCtlsSetIMEMode(TextBoxHandle, TextBoxIMCHandle, PropIMEMode)
+End If
+UserControl.PropertyChanged "IMEMode"
+End Property
+
 Private Sub CreateTextBox()
 If TextBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE
-Select Case PropBorderStyle
-    Case CCBorderStyleSingle
-        dwStyle = dwStyle Or WS_BORDER
-    Case CCBorderStyleThin
-        dwExStyle = dwExStyle Or WS_EX_STATICEDGE
-    Case CCBorderStyleSunken
-        dwExStyle = dwExStyle Or WS_EX_CLIENTEDGE
-    Case CCBorderStyleRaised
-        dwExStyle = dwExStyle Or WS_EX_WINDOWEDGE
-        dwStyle = dwStyle Or WS_DLGFRAME
-End Select
+Call ComCtlsInitBorderStyle(dwStyle, dwExStyle, PropBorderStyle)
 If PropAllowOnlyNumbers = True Then dwStyle = dwStyle Or ES_NUMBER
 Select Case PropAlignment
     Case vbLeftJustify
@@ -1150,6 +1150,7 @@ If Not PropCueBanner = vbNullString Then Me.CueBanner = PropCueBanner
 If Ambient.UserMode = True Then
     If TextBoxHandle <> 0 Then Call ComCtlsSetSubclass(TextBoxHandle, Me, 1)
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 2)
+    Call ComCtlsCreateIMC(TextBoxHandle, TextBoxIMCHandle)
 End If
 End Sub
 
@@ -1196,6 +1197,7 @@ Private Sub DestroyTextBox()
 If TextBoxHandle = 0 Then Exit Sub
 Call ComCtlsRemoveSubclass(TextBoxHandle)
 Call ComCtlsRemoveSubclass(UserControl.hWnd)
+Call ComCtlsDestroyIMC(TextBoxHandle, TextBoxIMCHandle)
 ShowWindow TextBoxHandle, SW_HIDE
 SetParent TextBoxHandle, 0
 DestroyWindow TextBoxHandle
@@ -1413,10 +1415,7 @@ If Value = EC_USEFONTINFO Or Value = -1 Then
 Else
     If Value < 0 Then Err.Raise 380
     Dim IntValue As Integer
-    On Error Resume Next
     IntValue = CInt(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-    If Err.Number <> 0 Then IntValue = 0
-    On Error GoTo 0
     If TextBoxHandle <> 0 Then SendMessage TextBoxHandle, EM_SETMARGINS, EC_LEFTMARGIN, ByVal MakeDWord(IntValue, 0)
 End If
 End Property
@@ -1433,10 +1432,7 @@ If Value = EC_USEFONTINFO Or Value = -1 Then
 Else
     If Value < 0 Then Err.Raise 380
     Dim IntValue As Integer
-    On Error Resume Next
     IntValue = CInt(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-    If Err.Number <> 0 Then IntValue = 0
-    On Error GoTo 0
     If TextBoxHandle <> 0 Then SendMessage TextBoxHandle, EM_SETMARGINS, EC_RIGHTMARGIN, ByVal MakeDWord(0, IntValue)
 End If
 End Property
@@ -1530,6 +1526,10 @@ Select Case wMsg
         Else
             wParam = CIntToUInt(KeyChar)
         End If
+    Case WM_INPUTLANGCHANGE
+        Call ComCtlsSetIMEMode(hWnd, TextBoxIMCHandle, PropIMEMode)
+    Case WM_IME_SETCONTEXT
+        If wParam <> 0 Then Call ComCtlsSetIMEMode(hWnd, TextBoxIMCHandle, PropIMEMode)
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function

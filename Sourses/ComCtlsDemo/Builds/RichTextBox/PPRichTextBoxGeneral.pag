@@ -9,6 +9,14 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
    PaletteMode     =   0  'Halftone
    ScaleHeight     =   4350
    ScaleWidth      =   6450
+   Begin VB.ComboBox ComboIMEMode 
+      Height          =   315
+      Left            =   1800
+      Style           =   2  'Dropdown List
+      TabIndex        =   20
+      Top             =   3360
+      Width           =   2235
+   End
    Begin VB.TextBox TextUndoLimit 
       Height          =   315
       Left            =   1800
@@ -57,7 +65,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "SelectionBar"
       Height          =   285
       Left            =   4200
-      TabIndex        =   27
+      TabIndex        =   29
       Top             =   3720
       Width           =   2160
    End
@@ -65,7 +73,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "AutoURLDetect"
       Height          =   285
       Left            =   4200
-      TabIndex        =   26
+      TabIndex        =   28
       Top             =   3360
       Width           =   2160
    End
@@ -73,7 +81,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "DisableNoScroll"
       Height          =   285
       Left            =   4200
-      TabIndex        =   25
+      TabIndex        =   27
       Top             =   3000
       Width           =   2160
    End
@@ -81,7 +89,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "WantReturn"
       Height          =   285
       Left            =   4200
-      TabIndex        =   24
+      TabIndex        =   26
       Top             =   2640
       Width           =   2160
    End
@@ -89,7 +97,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "MultiLine"
       Height          =   285
       Left            =   4200
-      TabIndex        =   23
+      TabIndex        =   25
       Top             =   2280
       Width           =   2160
    End
@@ -97,7 +105,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "UseSystemPasswordChar"
       Height          =   285
       Left            =   4200
-      TabIndex        =   22
+      TabIndex        =   24
       Top             =   1920
       Width           =   2160
    End
@@ -105,7 +113,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "HideSelection"
       Height          =   285
       Left            =   4200
-      TabIndex        =   21
+      TabIndex        =   23
       Top             =   1560
       Width           =   2160
    End
@@ -113,7 +121,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "Locked"
       Height          =   285
       Left            =   4200
-      TabIndex        =   20
+      TabIndex        =   22
       Top             =   1200
       Width           =   2160
    End
@@ -121,7 +129,7 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Caption         =   "OLEDragDrop"
       Height          =   285
       Left            =   4200
-      TabIndex        =   19
+      TabIndex        =   21
       Top             =   840
       Width           =   2160
    End
@@ -162,6 +170,14 @@ Begin VB.PropertyPage PPRichTextBoxGeneral
       Left            =   120
       TabIndex        =   0
       Top             =   120
+      Width           =   1620
+   End
+   Begin VB.Label LabelIMEMode 
+      Caption         =   "IMEMode:"
+      Height          =   240
+      Left            =   120
+      TabIndex        =   19
+      Top             =   3360
       Width           =   1620
    End
    Begin VB.Label LabelUndoLimit 
@@ -250,11 +266,12 @@ With ComboScrollBars
 .ItemData(.NewIndex) = vbBoth
 End With
 With ComboTextMode
-.AddItem "0 - RichText"
+.AddItem RtfTextModeRichText & " - RichText"
 .ItemData(.NewIndex) = RtfTextModeRichText
-.AddItem "1 - PlainText"
+.AddItem RtfTextModePlainText & " - PlainText"
 .ItemData(.NewIndex) = RtfTextModePlainText
 End With
+Call ComCtlsIMEModePPInitCombo(ComboIMEMode)
 End Sub
 
 Private Sub PropertyPage_ApplyChanges()
@@ -282,6 +299,7 @@ With PropertyPage.SelectedControls(0)
 .BulletIndent = CSng(TextBulletIndent.Text)
 If .TextMode <> ComboTextMode.ItemData(ComboTextMode.ListIndex) Then .TextMode = ComboTextMode.ItemData(ComboTextMode.ListIndex)
 .UndoLimit = CLng(TextUndoLimit.Text)
+.IMEMode = ComboIMEMode.ItemData(ComboIMEMode.ListIndex)
 .OLEDragDrop = CBool(CheckOLEDragDrop.Value = vbChecked)
 .Locked = CBool(CheckLocked.Value = vbChecked)
 .HideSelection = CBool(CheckHideSelection.Value = vbChecked)
@@ -324,6 +342,12 @@ For i = 0 To ComboTextMode.ListCount - 1
     End If
 Next i
 TextUndoLimit.Text = CStr(.UndoLimit)
+For i = 0 To ComboIMEMode.ListCount - 1
+    If ComboIMEMode.ItemData(i) = .IMEMode Then
+        ComboIMEMode.ListIndex = i
+        Exit For
+    End If
+Next i
 CheckOLEDragDrop.Value = IIf(.OLEDragDrop = True, vbChecked, vbUnchecked)
 CheckLocked.Value = IIf(.Locked = True, vbChecked, vbUnchecked)
 CheckHideSelection.Value = IIf(.HideSelection = True, vbChecked, vbUnchecked)
@@ -425,6 +449,10 @@ End If
 PropertyPage.Changed = True
 End Sub
 
+Private Sub TextMaxLength_KeyPress(KeyAscii As Integer)
+Call OnlyNumeric(KeyAscii)
+End Sub
+
 Private Sub TextMaxLength_Validate(Cancel As Boolean)
 If Not IsNumeric(TextMaxLength.Text) Then
     MsgBox "Invalid property value", vbCritical + vbOKOnly
@@ -432,13 +460,18 @@ If Not IsNumeric(TextMaxLength.Text) Then
     TextMaxLength.SetFocus
     Cancel = True
 Else
-    If CLng(TextMaxLength.Text) < 0 Then
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextMaxLength.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If LngValue < 0 Then Cancel = True
+    If Cancel = False Then
+        TextMaxLength.Text = LngValue
+    Else
         MsgBox "Invalid property value", vbCritical + vbOKOnly
         TextMaxLength.Text = PropertyPage.SelectedControls(0).MaxLength
         TextMaxLength.SetFocus
-        Cancel = True
-    Else
-        TextMaxLength.Text = CLng(TextMaxLength.Text)
     End If
 End If
 End Sub
@@ -474,13 +507,18 @@ If Not IsNumeric(TextBulletIndent.Text) Then
     TextBulletIndent.SetFocus
     Cancel = True
 Else
-    If CSng(TextBulletIndent.Text) < 0 Then
+    Dim SngValue As Single
+    On Error Resume Next
+    SngValue = CSng(TextBulletIndent.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If SngValue < 0 Then Cancel = True
+    If Cancel = False Then
+        TextBulletIndent.Text = SngValue
+    Else
         MsgBox "Invalid property value", vbCritical + vbOKOnly
         TextBulletIndent.Text = PropertyPage.SelectedControls(0).BulletIndent
         TextBulletIndent.SetFocus
-        Cancel = True
-    Else
-        TextBulletIndent.Text = CSng(TextBulletIndent.Text)
     End If
 End If
 End Sub
@@ -509,6 +547,10 @@ End If
 PropertyPage.Changed = True
 End Sub
 
+Private Sub TextUndoLimit_KeyPress(KeyAscii As Integer)
+Call OnlyNumeric(KeyAscii)
+End Sub
+
 Private Sub TextUndoLimit_Validate(Cancel As Boolean)
 If Not IsNumeric(TextUndoLimit.Text) Then
     MsgBox "Invalid property value", vbCritical + vbOKOnly
@@ -516,15 +558,25 @@ If Not IsNumeric(TextUndoLimit.Text) Then
     TextUndoLimit.SetFocus
     Cancel = True
 Else
-    If CLng(TextUndoLimit.Text) < 0 Then
+    Dim LngValue As Long
+    On Error Resume Next
+    LngValue = CLng(TextUndoLimit.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If LngValue < 0 Then Cancel = True
+    If Cancel = False Then
+        TextUndoLimit.Text = LngValue
+    Else
         MsgBox "Invalid property value", vbCritical + vbOKOnly
         TextUndoLimit.Text = PropertyPage.SelectedControls(0).UndoLimit
         TextUndoLimit.SetFocus
-        Cancel = True
-    Else
-        TextUndoLimit.Text = CLng(TextUndoLimit.Text)
     End If
 End If
+End Sub
+
+Private Sub ComboIMEMode_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
 End Sub
 
 Private Sub CheckOLEDragDrop_Click()
@@ -570,4 +622,14 @@ End Sub
 Private Sub CheckSelectionBar_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
+End Sub
+
+Private Sub OnlyNumeric(ByRef KeyAscii As Integer)
+If (KeyAscii >= Asc("0")) And (KeyAscii <= Asc("9")) Then
+Else
+    If KeyAscii = 8 Then
+    Else
+        KeyAscii = 0
+    End If
+End If
 End Sub

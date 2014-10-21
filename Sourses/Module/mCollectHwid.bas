@@ -9,8 +9,8 @@ Public mbIntel4thGeneration As Boolean
 ' Intel USB3 Root Hub device id
 Private Const strIUSB30     As String = "IUSB3\ROOT_HUB30"
 Private Const strIUSB30_2th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_1E31"
-Private Const strIUSB30_4th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_8C31"
-
+Private Const strIUSB30_4th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_8C31|IUSB3\ROOT_HUB30&VID_8086&PID_9C31|IUSB3\ROOT_HUB30&VID_8086&PID_0F35|IUSB3\ROOT_HUB30&VID_8086&PID_8CB1|IUSB3\ROOT_HUB30&VID_8086&PID_9CB1"
+                                      
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CollectHwidFromReestr
 '! Description (Описание)  :   [type_description_here]
@@ -27,6 +27,8 @@ Public Sub CollectHwidFromReestr()
     Dim strMatchesID      As String
     Dim strStrDescription As String
     Dim i                 As Long
+    Dim ii                As Long
+    Dim strIUSB30_4th_x() As String
     Dim regNameEnum       As String
     Dim regDriverClass    As String
     Dim regNameClass      As String
@@ -36,6 +38,7 @@ Public Sub CollectHwidFromReestr()
 
     If mbDebugDetail Then DebugMode vbTab & "CollectHwidFromReestr-Start"
 
+    strIUSB30_4th_x = Split(strIUSB30_4th, "|")
     ' максимальное кол-во элементов в массиве
     For i = 0 To UBound(arrHwidsLocal)
         strID = arrHwidsLocal(i).HWIDOrig
@@ -66,8 +69,14 @@ Public Sub CollectHwidFromReestr()
             If mbIUSB_RootHubExist Then
                 If InStr(strCompatID, strIUSB30_2th) Then
                     mbIntel2thGeneration = True
-                ElseIf InStr(strCompatID, strIUSB30_4th) Then
-                    mbIntel4thGeneration = True
+                Else
+                    
+                    For ii = LBound(strIUSB30_4th_x) To UBound(strIUSB30_4th_x)
+                        If InStr(strCompatID, strIUSB30_4th_x(ii)) Then
+                            mbIntel4thGeneration = True
+                            Exit For
+                        End If
+                    Next ii
                 End If
             End If
         End If

@@ -123,8 +123,8 @@ End Type
 Private Type MEASUREITEMSTRUCT
     CtlType                             As Long
     CtlID                               As Long
-    itemID                              As Long
-    itemWidth                           As Long
+    ItemID                              As Long
+    ItemWidth                           As Long
     ItemHeight                          As Long
     ItemData                            As Long
 End Type
@@ -132,8 +132,8 @@ End Type
 Private Type DRAWITEMSTRUCT
     CtlType                             As Long
     CtlID                               As Long
-    itemID                              As Long
-    itemAction                          As Long
+    ItemID                              As Long
+    ItemAction                          As Long
     ItemState                           As Long
     hWndItem                            As Long
     hDC                                 As Long
@@ -384,13 +384,17 @@ Public Function AddImageFromStream(ByRef bvData() As Byte, Optional bGhosted As 
     Dim hIcon                           As Long
     Dim hBmp                            As Long
 
-    If Not IsArrayDim(VarPtrArray(bvData)) Then Exit Function
+    If Not IsArrayDim(VarPtrArray(bvData)) Then
+        Exit Function
+    End If
 
     If bvData(2) = vbResIcon Or bvData(2) = vbResCursor Then
 
         hIcon = LoadIconFromStream(bvData)
 
-        If hIcon = 0 Then Exit Function
+        If hIcon = 0 Then
+            Exit Function
+        End If
 
         If IsAlphaIcon(hIcon) Then
             hImage = AlphaIconToBmp(hIcon, hBmp)
@@ -539,7 +543,9 @@ Private Sub DrawDIB(ByVal DestHdc As Long, ByVal X As Long, ByVal Y As Long, ByV
     Dim tMatrixColor                    As COLORMATRIX
     Dim tMatrixGray                     As COLORMATRIX
 
-    If Index < 0 Or Index > Me.ImageCount Then Exit Sub
+    If Index < 0 Or Index > Me.ImageCount Then
+        Exit Sub
+    End If
 
     If GdipCreateBitmapFromScan0(m_lWidth, m_lHeight, m_lWidth * 4&, PixelFormat32bppARGB, ByVal mDIB(Index).Ptr, hImage) = 0 Then
 
@@ -717,7 +723,8 @@ End Function
 
 Private Function KeyExists(ByVal sKey As String) As Boolean
     On Error GoTo HandleError:
-    Dim tVal                            As String                              'Variant
+    Dim tVal                            As String
+    'Variant
 
     tVal = cColl(sKey)
 
@@ -725,7 +732,7 @@ Private Function KeyExists(ByVal sKey As String) As Boolean
     Exit Function
 
 HandleError:
-    Err.Clear
+    err.Clear
 End Function
 
 Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
@@ -767,7 +774,9 @@ Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
             End If
         Next
 
-        If IconID = -1 Then Exit Function
+        If IconID = -1 Then
+            Exit Function
+        End If
 
         With tIconEntry(IconID)
             hIcon = CreateIconFromResourceEx(bytIcoData(.ieImageOffset), .ieBytesInRes, 1, IconVersion, m_lWidth, m_lHeight, &H0)
@@ -816,7 +825,9 @@ Public Function PutImageToApiMenu(ByVal imageID As Long, ByVal hMenu As Long, By
         .fMask = MIIM_ID
     End With
 
-    If GetMenuItemInfo(hMenu, MenuPos, True, MII) = 0 Then Exit Function
+    If GetMenuItemInfo(hMenu, MenuPos, True, MII) = 0 Then
+        Exit Function
+    End If
 
     sKey = hMenu & "-" & MII.wid
 
@@ -875,13 +886,16 @@ Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, P
         .fMask = MIIM_ID
     End With
 
-    If GetMenuItemInfo(hSubMenu, MenuPos, True, MII) = 0 Then Exit Function
+    If GetMenuItemInfo(hSubMenu, MenuPos, True, MII) = 0 Then
+        Exit Function
+    End If
 
     sKey = hSubMenu & "-" & MII.wid
 
     With MII
         '.cbSize = Len(MII)
-        .fMask = MIIM_BITMAP                                                   'Or MIIM_DATA
+        .fMask = MIIM_BITMAP
+        'Or MIIM_DATA
 
         If imageID = -1 Then
             .hbmpItem = 0
@@ -967,7 +981,9 @@ Public Function RemoveImage(ByVal Index As Long) As Boolean
 
     Dim i                               As Long
 
-    If Index < 0 Or Index > Me.ImageCount Then Exit Function
+    If Index < 0 Or Index > Me.ImageCount Then
+        Exit Function
+    End If
 
     With mDIB(Index)
         Call DeleteObject(.hDIB)
@@ -1109,7 +1125,8 @@ Private Sub z_myWndProc(ByVal bBefore As Boolean, _
 
     Select Case uMsg
 
-        Case WM_MENUSELECT, WM_ENTERIDLE                                       'put here what you need :)
+        Case WM_MENUSELECT, WM_ENTERIDLE
+        'put here what you need :)
             RaiseEvent MenuMessages(lng_hWnd, uMsg, wParam, lParam)
 
         Case WM_MEASUREITEM
@@ -1125,9 +1142,9 @@ Private Sub z_myWndProc(ByVal bBefore As Boolean, _
                 End If
 
                 If IsWinVistaOrLater Then
-                    If classicThemeWorkaround Then MIS.itemWidth = MIS.itemWidth + m_lWidth + 12
+                    If classicThemeWorkaround Then MIS.ItemWidth = MIS.ItemWidth + m_lWidth + 12
                 Else
-                    MIS.itemWidth = MIS.itemWidth + m_lWidth + 2
+                    MIS.ItemWidth = MIS.ItemWidth + m_lWidth + 2
                 End If
 
                 CopyMemory ByVal lParam, MIS, Len(MIS)
@@ -1180,7 +1197,7 @@ Private Sub z_myWndProc(ByVal bBefore As Boolean, _
                 'Tanner edit: this is used to prevent a bug where the hDC value is invalid for disabled and non-hovered menu entries
                 ' for users of the "classic theme"
                 If Not (classicThemeWorkaround And IsDisabled) Then
-                    DrawDIB DIS.hDC, lLeft - 4, DIS.RCItem.Top + 2, cColl(DIS.hWndItem & "-" & DIS.itemID), IsDisabled
+                    DrawDIB DIS.hDC, lLeft - 4, DIS.RCItem.Top + 2, cColl(DIS.hWndItem & "-" & DIS.ItemID), IsDisabled
                 End If
 
                 lReturn = 1

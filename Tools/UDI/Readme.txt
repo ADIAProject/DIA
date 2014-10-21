@@ -1,6 +1,6 @@
  Unknown Device Identifier
           README
-       Version 8.01
+       Version 8.02
      Language: English
                French
 
@@ -31,11 +31,11 @@ are available for downloading
 
    Driver pattern database is updated weekly, so if you have an Internet connection, you might update the software weekly by downloading the latest pattern from our website.
 
-   OS Support: Windows 95, Windows 98, Windows 98SE, Windows Me, Windows 2000, Windows XP, Windows Server 2003, Windows Vista, Windows Server 2008, Windows 7, Windows 8, Windows Server 2012. Future OS are supported via the online update. You might even run the small freeware utility from CD or floppy. 
+   OS Support: Windows 95, Windows 98, Windows 98SE, Windows Me, Windows 2000, Windows XP, Windows Server 2003, Windows Vista, Windows Server 2008, Windows 7, Windows 8, Windows Server 2012, Windows 8.1, Windows 9. Future OS are supported via the online update. You might even run the small freeware utility from CD or floppy.
 
 [Version Info]
  
-   Latest Version is 8.01, July 10, 2013         
+   Latest Version is 8.02, Sep 6, 2014         
 
 [Software Language]
 

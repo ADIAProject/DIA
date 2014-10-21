@@ -438,9 +438,6 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Icons           =   "frmListHwidAll.frx":01E6
-      SmallIcons      =   "frmListHwidAll.frx":0212
-      ColumnHeaderIcons=   "frmListHwidAll.frx":023E
       View            =   3
       Arrange         =   1
       AllowColumnReorder=   -1  'True

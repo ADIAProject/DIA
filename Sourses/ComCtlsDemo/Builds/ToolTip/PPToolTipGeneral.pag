@@ -114,13 +114,13 @@ Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
 With ComboIcon
-.AddItem "0 - None"
+.AddItem TipIconNone & " - None"
 .ItemData(.NewIndex) = TipIconNone
-.AddItem "1 - Info"
+.AddItem TipIconInfo & " - Info"
 .ItemData(.NewIndex) = TipIconInfo
-.AddItem "2 - Warning"
+.AddItem TipIconWarning & " - Warning"
 .ItemData(.NewIndex) = TipIconWarning
-.AddItem "3 - Error"
+.AddItem TipIconError & " - Error"
 .ItemData(.NewIndex) = TipIconError
 End With
 End Sub
@@ -188,7 +188,7 @@ End Sub
 Private Sub TextMaxTipWidth_Change()
 If FreezeChanged = True Then Exit Sub
 If TextMaxTipWidth.Text = vbNullString Then
-    TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).TabFixedWidth
+    TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).MaxTipWidth
     TextMaxTipWidth.SelStart = 0
     TextMaxTipWidth.SelLength = Len(TextMaxTipWidth.Text)
 End If
@@ -198,19 +198,23 @@ End Sub
 Private Sub TextMaxTipWidth_Validate(Cancel As Boolean)
 If Not IsNumeric(TextMaxTipWidth.Text) Then
     MsgBox "Invalid property value", vbCritical + vbOKOnly
-    TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).TabFixedWidth
+    TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).MaxTipWidth
     TextMaxTipWidth.SetFocus
     Cancel = True
 Else
-    Select Case CSng(TextMaxTipWidth.Text)
-        Case Is >= 0, -1
-            TextMaxTipWidth.Text = CSng(TextMaxTipWidth.Text)
-        Case Else
-            MsgBox "Invalid property value", vbCritical + vbOKOnly
-            TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).MaxTipWidth
-            TextMaxTipWidth.SetFocus
-            Cancel = True
-    End Select
+    Dim SngValue As Single
+    On Error Resume Next
+    SngValue = CSng(TextMaxTipWidth.Text)
+    Cancel = CBool(Err.Number <> 0)
+    On Error GoTo 0
+    If SngValue < 0 And Not SngValue = -1 Then Cancel = True
+    If Cancel = False Then
+        TextMaxTipWidth.Text = SngValue
+    Else
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        TextMaxTipWidth.Text = PropertyPage.SelectedControls(0).MaxTipWidth
+        TextMaxTipWidth.SetFocus
+    End If
 End If
 End Sub
 

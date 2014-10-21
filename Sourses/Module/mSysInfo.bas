@@ -355,12 +355,28 @@ Public Function OSInfo() As OSInfoStruct
                         OSN = "Server 2012 R2"
                     End If
 
+                ElseIf .dwMinorVersion = 4 Then
+
+                    If .wProductType = VER_NT_WORKSTATION Then
+                        OSN = "10"
+                    Else
+                        OSN = "Server 2014"
+                    End If
+
+                ElseIf .dwMinorVersion = 5 Then
+
+                    If .wProductType = VER_NT_WORKSTATION Then
+                        OSN = "10.1 ?"
+                    Else
+                        OSN = "Server 2014 R2 ?"
+                    End If
+
                 Else
-                    OSN = "9 ?"
+                    OSN = "11 ?"
                 End If
 
             Else
-                OSN = "9 ?"
+                OSN = "11 ?"
             End If
 
             OSInfo.Name = "Windows " & OSN

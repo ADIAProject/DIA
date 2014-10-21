@@ -41,7 +41,6 @@ Begin VB.Form frmShowMessage
       Locked          =   -1  'True
       MultiLine       =   -1  'True
       ScrollBars      =   3
-      CueBanner       =   "frmShowMessage.frx":003E
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650

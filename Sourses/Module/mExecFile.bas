@@ -111,7 +111,7 @@ Public Function RunAndWait(ComLine As String, DefaultDir As String, ShowFlag As 
     nRet = CreateProcess(vbNullString, ComLine, 0&, 0&, 1&, NORMAL_PRIORITY_CLASS, 0&, DefaultDir, SI, PI)
     WaitForSingleObject PI.hProcess, INFINITE
     GetExitCodeProcess PI.hProcess, nRet
-    If mbDebugStandart Then DebugMode str2VbTab & "RunAndWait-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
+    If mbDebugStandart Then DebugMode str2VbTab & "RunAndWait-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(err.LastDllError)
     
     CloseHandle PI.hProcess
     lngExitProc = nRet
@@ -127,7 +127,7 @@ End Function
 '                              DefaultDir (String)
 '                              ShowFlag (VbAppWinStyle)
 '!--------------------------------------------------------------------------------
-Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle) As Boolean
+Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag As VbAppWinStyle, Optional lngWaitTime As Long) As Boolean
 
     Dim nRet As Long
 
@@ -144,11 +144,15 @@ Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag 
             End If
         End If
     
-        nRet = ShellW(ComLine, ShowFlag, INFINITE)
+        If lngWaitTime > 0 Then
+            nRet = ShellW(ComLine, ShowFlag, lngWaitTime)
+        Else
+            nRet = ShellW(ComLine, ShowFlag, INFINITE)
+        End If
         lngExitProc = nRet
         RunAndWaitNew = True
         
-        If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
+        If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(err.LastDllError)
     Else
         ' Если Windows2k, то вызываем старую функцию RunAndWait
         RunAndWaitNew = RunAndWait(ComLine, DefaultDir, ShowFlag)

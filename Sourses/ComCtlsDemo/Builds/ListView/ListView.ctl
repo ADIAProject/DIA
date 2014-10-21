@@ -99,10 +99,6 @@ LvwGroupFooterAlignmentLeft = 0
 LvwGroupFooterAlignmentRight = 1
 LvwGroupFooterAlignmentCenter = 2
 End Enum
-Private Type TagInitCommonControlsEx
-dwSize As Long
-dwICC As Long
-End Type
 Private Type POINTAPI
 X As Long
 Y As Long
@@ -129,17 +125,8 @@ iImage As Long
 lParam As Long
 iIndent As Long
 End Type
-Private Type LVITEM_V6
-Mask As Long
-iItem As Long
-iSubItem As Long
-State As Long
-StateMask As Long
-pszText As Long
-cchTextMax As Long
-iImage As Long
-lParam As Long
-iIndent As Long
+Private Type LVITEM_V60
+LVI As LVITEM
 iGroupId As Long
 cColumns As Long
 puColumns As Long
@@ -156,7 +143,7 @@ dwMask As Long
 dwFlags As Long
 SizeTile As SIZEAPI
 cLines As Long
-rcLabelMargin As RECT
+RCLabelMargin As RECT
 End Type
 Private Type LVFINDINFO
 Flags As Long
@@ -206,6 +193,23 @@ iGroupId As Long
 StateMask As Long
 State As Long
 uAlign As Long
+End Type
+Private Type LVGROUP_V61
+LVG As LVGROUP
+pszSubtitle As Long
+cchSubtitle As Long
+pszTask As Long
+cchTask As Long
+pszDescriptionTop As Long
+cchDescriptionTop As Long
+pszDescriptionBottom As Long
+cchDescriptionBottom As Long
+iTitleImage As Long
+iExtendedImage As Long
+iFirstItem As Long
+cItems As Long
+pszSubsetTitle As Long
+cchSubsetTitle As Long
 End Type
 Private Type LVINSERTGROUPSORTED
 pfnGroupCompare As Long
@@ -281,6 +285,32 @@ hdr As NMHDR
 dwFlags As Long
 szMarkup(0 To ((L_MAX_URL_LENGTH * 2) - 1)) As Byte
 End Type
+Private Type NMLVSCROLL
+hdr As NMHDR
+DX As Long
+DY As Long
+End Type
+Private Type NMLVGROUP
+hdr As NMHDR
+iGroupId As Long
+uNewState As Long
+uOldState As Long
+End Type
+Private Const MAX_LINKID_TEXT As Long = 48
+Private Type LITEM
+Mask As Long
+iLink As Long
+State As Long
+StateMask As Long
+szID(0 To ((MAX_LINKID_TEXT * 2) - 1)) As Byte
+szURL(0 To ((L_MAX_URL_LENGTH * 2) - 1)) As Byte
+End Type
+Private Type NMLVLINK
+hdr As NMHDR
+Item As LITEM
+iItem As Long
+iGroupId As Long
+End Type
 Private Type NMHEADER
 hdr As NMHDR
 iItem As Long
@@ -304,6 +334,10 @@ Attribute Click.VB_UserMemId = -600
 Public Event DblClick()
 Attribute DblClick.VB_Description = "Occurs when the user presses and releases a mouse button and then presses and releases it again over an object."
 Attribute DblClick.VB_UserMemId = -601
+Public Event BeforeScroll(ByVal DeltaX As Single, ByVal DeltaY As Single)
+Attribute BeforeScroll.VB_Description = "Occurs when the control is about to be scrolled. Requires comctl32.dll version 6.0 or higher."
+Public Event AfterScroll(ByVal DeltaX As Single, ByVal DeltaY As Single)
+Attribute AfterScroll.VB_Description = "Occurs when the control has been scrolled. Requires comctl32.dll version 6.0 or higher."
 Public Event ContextMenu(ByVal X As Single, ByVal Y As Single)
 Attribute ContextMenu.VB_Description = "Occurs when the user clicked the right mouse button or types SHIFT + F10."
 Public Event ItemClick(ByVal Item As LvwListItem, ByVal Button As Integer)
@@ -340,8 +374,16 @@ Public Event ColumnDropDown(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnDropDown.VB_Description = "Occurs when the drop-down arrow on the split button of a column header is clicked. Requires comctl32.dll version 6.1 or higher."
 Public Event ColumnCheck(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnCheck.VB_Description = "Occurs when a column header is checked. Requires comctl32.dll version 6.1 or higher."
+Public Event ColumnChevronPushed(ByVal ColumnHeader As LvwColumnHeader)
+Attribute ColumnChevronPushed.VB_Description = "Occurs when a chevron button of a column header is pushed. Requires comctl32.dll version 6.1 or higher."
 Public Event GetEmptyMarkup(ByRef Text As String, ByRef Centered As Boolean)
 Attribute GetEmptyMarkup.VB_Description = "Occurs when the list view has no list items. This is a request to provide a markup text. Requires comctl32.dll version 6.1 or higher."
+Public Event GroupCollapsedChanged(ByVal Group As LvwGroup)
+Attribute GroupCollapsedChanged.VB_Description = "Occurrs when the group's collapsed state changes. Requires comctl32.dll version 6.1 or higher."
+Public Event GroupSelectedChanged(ByVal Group As LvwGroup)
+Attribute GroupSelectedChanged.VB_Description = "Occurrs when the group's selected state changes. Requires comctl32.dll version 6.1 or higher."
+Public Event GroupLinkClick(ByVal Group As LvwGroup)
+Attribute GroupLinkClick.VB_Description = "Occurs when a link in a group is clicked. Requires comctl32.dll version 6.1 or higher."
 Public Event BeginMarqueeSelection(ByRef Cancel As Boolean)
 Attribute BeginMarqueeSelection.VB_Description = "Occurs when a bounding box (marquee) selection has begun. Only applicable if the multi select property is set to true."
 Public Event PreviewKeyDown(ByVal KeyCode As Integer, ByRef IsInputKey As Boolean)
@@ -383,7 +425,6 @@ Private Declare Function lstrlen Lib "kernel32" Alias "lstrlenW" (ByVal lpString
 Private Declare Function lstrcmp Lib "kernel32" Alias "lstrcmpW" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long
 Private Declare Function lstrcmpi Lib "kernel32" Alias "lstrcmpiW" (ByVal lpString1 As Long, ByVal lpString2 As Long) As Long
 Private Declare Function SetWindowTheme Lib "uxtheme" (ByVal hWnd As Long, ByVal pSubAppName As Long, ByVal pSubIDList As Long) As Long
-Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function SetRect Lib "user32" (ByRef lpRect As RECT, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Private Declare Function GetProcessHeap Lib "kernel32" () As Long
 Private Declare Function HeapAlloc Lib "kernel32" (ByVal hHeap As Long, ByVal dwFlags As Long, ByVal dwBytes As Long) As Long
@@ -427,11 +468,6 @@ Private Const CF_UNICODETEXT As Long = 13
 Private Const HEAP_ZERO_MEMORY As Long = &H8
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
-Private Const WS_BORDER As Long = &H800000
-Private Const WS_DLGFRAME As Long = &H400000
-Private Const WS_EX_CLIENTEDGE As Long = &H200
-Private Const WS_EX_STATICEDGE As Long = &H20000
-Private Const WS_EX_WINDOWEDGE As Long = &H100
 Private Const WS_EX_RTLREADING As Long = &H2000
 Private Const WS_HSCROLL As Long = &H100000
 Private Const WS_VSCROLL As Long = &H200000
@@ -632,7 +668,12 @@ Private Const LVN_MARQUEEBEGIN As Long = (LVN_FIRST - 56)
 Private Const LVN_GETINFOTIPA As Long = (LVN_FIRST - 57)
 Private Const LVN_GETINFOTIPW As Long = (LVN_FIRST - 58)
 Private Const LVN_GETINFOTIP As Long = LVN_GETINFOTIPW
+Private Const LVN_COLUMNOVERFLOWCLICK As Long = (LVN_FIRST - 66)
+Private Const LVN_BEGINSCROLL As Long = (LVN_FIRST - 80)
+Private Const LVN_ENDSCROLL As Long = (LVN_FIRST - 81)
+Private Const LVN_LINKCLICK As Long = (LVN_FIRST - 84)
 Private Const LVN_GETEMPTYMARKUP As Long = (LVN_FIRST - 87)
+Private Const LVN_GROUPCHANGED As Long = (LVN_FIRST - 88) ' Undocumented
 Private Const LVA_DEFAULT As Long = &H0
 Private Const LVA_ALIGNLEFT As Long = &H1
 Private Const LVA_ALIGNTOP As Long = &H2
@@ -686,6 +727,7 @@ Private Const LVGIT_UNFOLDED As Long = &H1
 Private Const LVSIL_NORMAL As Long = 0
 Private Const LVSIL_SMALL As Long = 1
 Private Const LVSIL_STATE As Long = 2
+Private Const LVSIL_GROUPHEADER As Long = 3
 Private Const LVHT_NOWHERE As Long = &H1
 Private Const LVHT_ONITEMICON As Long = &H2
 Private Const LVHT_ONITEMLABEL As Long = &H4
@@ -714,6 +756,7 @@ Private Const HDS_HOTTRACK As Long = &H4
 Private Const HDS_CHECKBOXES As Long = &H400
 Private Const HDS_FULLDRAG As Long = &H80
 Private Const HDS_NOSIZING As Long = &H800
+Private Const HDS_OVERFLOW As Long = &H1000
 Private Const HDN_FIRST As Long = (-300)
 Private Const HDN_BEGINTRACKA As Long = (HDN_FIRST - 6)
 Private Const HDN_BEGINTRACKW As Long = (HDN_FIRST - 26)
@@ -737,6 +780,9 @@ Private Const LVGF_FOOTER As Long = &H2
 Private Const LVGF_STATE As Long = &H4
 Private Const LVGF_ALIGN As Long = &H8
 Private Const LVGF_GROUPID As Long = &H10
+Private Const LVGF_SUBTITLE As Long = &H100
+Private Const LVGF_TASK As Long = &H200
+Private Const LVGF_TITLEIMAGE As Long = &H1000
 Private Const LVGA_FOOTER_LEFT As Long = &H8
 Private Const LVGA_FOOTER_CENTER As Long = &H10
 Private Const LVGA_FOOTER_RIGHT As Long = &H20
@@ -769,6 +815,8 @@ Private Const LVCFMT_COL_HAS_IMAGES As Long = &H8000&
 Private Const LVTVIM_TILESIZE As Long = &H1
 Private Const LVTVIM_COLUMNS As Long = &H2
 Private Const LVTVIM_LABELMARGIN As Long = &H4
+Private Const IIL_UNCHECKED As Long = 1
+Private Const IIL_CHECKED As Long = 2
 Private Const I_IMAGECALLBACK As Long = (-1)
 Private Const I_COLUMNSCALLBACK As Long = (-1)
 Private Const I_GROUPIDCALLBACK As Long = (-1)
@@ -820,6 +868,8 @@ Private Const LVS_EX_TWOCLICKACTIVATE As Long = &H80
 Private Const LVS_EX_UNDERLINEHOT As Long = &H800
 Private Const LVS_EX_BORDERSELECT As Long = &H8000&
 Private Const LVS_EX_SNAPTOGRID As Long = &H80000
+Private Const LVS_EX_TRANSPARENTBKGND As Long = &H400000
+Private Const LVS_EX_COLUMNOVERFLOW As Long = &H80000000 ' Malfunction
 Private Const LV_VIEW_ICON As Long = &H0
 Private Const LV_VIEW_DETAILS As Long = &H1
 Private Const LV_VIEW_SMALLICON As Long = &H2
@@ -843,6 +893,7 @@ Private DispIDMousePointer As Long
 Private DispIDIcons As Long, IconsArray() As String
 Private DispIDSmallIcons As Long, SmallIconsArray() As String
 Private DispIDColumnHeaderIcons As Long, ColumnHeaderIconsArray() As String
+Private DispIDGroupIcons As Long, GroupIconsArray() As String
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropListItems As LvwListItems
@@ -855,6 +906,7 @@ Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
 Private PropIconsName As String, PropIconsControl As Object, PropIconsInit As Boolean
 Private PropSmallIconsName As String, PropSmallIconsControl As Object, PropSmallIconsInit As Boolean
 Private PropColumnHeaderIconsName As String, PropColumnHeaderIconsControl As Object, PropColumnHeaderIconsInit As Boolean
+Private PropGroupIconsName As String, PropGroupIconsControl As Object, PropGroupIconsInit As Boolean
 Private PropBorderStyle As CCBorderStyleConstants
 Private PropBackColor As OLE_COLOR
 Private PropForeColor As OLE_COLOR
@@ -895,6 +947,7 @@ Private PropPictureWatermark As Boolean
 Private PropTileViewLines As Long
 Private PropSnapToGrid As Boolean
 Private PropGroupView As Boolean
+Private PropUseColumnChevron As Boolean
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -940,6 +993,9 @@ ElseIf DispID = DispIDSmallIcons Then
 ElseIf DispID = DispIDColumnHeaderIcons Then
     DisplayName = PropColumnHeaderIconsName
     Handled = True
+ElseIf DispID = DispIDGroupIcons Then
+    DisplayName = PropGroupIconsName
+    Handled = True
 End If
 End Sub
 
@@ -947,7 +1003,7 @@ Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean
 If DispID = DispIDMousePointer Then
     Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
     Handled = True
-ElseIf DispID = DispIDIcons Or DispID = DispIDSmallIcons Or DispID = DispIDColumnHeaderIcons Then
+ElseIf DispID = DispIDIcons Or DispID = DispIDSmallIcons Or DispID = DispIDColumnHeaderIcons Or DispID = DispIDGroupIcons Then
     Dim ControlEnum As Object
     Dim PropUBound As Long
     On Error GoTo CATCH_EXCEPTION
@@ -970,10 +1026,12 @@ ElseIf DispID = DispIDIcons Or DispID = DispIDSmallIcons Or DispID = DispIDColum
     ReDim IconsArray(0 To UBound(StringsOut()))
     ReDim SmallIconsArray(0 To UBound(StringsOut()))
     ReDim ColumnHeaderIconsArray(0 To UBound(StringsOut()))
+    ReDim GroupIconsArray(0 To UBound(StringsOut()))
     For i = 0 To UBound(StringsOut())
         IconsArray(i) = StringsOut(i)
         SmallIconsArray(i) = StringsOut(i)
         ColumnHeaderIconsArray(i) = StringsOut(i)
+        GroupIconsArray(i) = StringsOut(i)
     Next i
     Handled = True
 End If
@@ -995,26 +1053,26 @@ ElseIf DispID = DispIDSmallIcons Then
 ElseIf DispID = DispIDColumnHeaderIcons Then
     If Cookie < UBound(ColumnHeaderIconsArray()) Then Value = ColumnHeaderIconsArray(Cookie)
     Handled = True
+ElseIf DispID = DispIDGroupIcons Then
+    If Cookie < UBound(GroupIconsArray()) Then Value = GroupIconsArray(Cookie)
+    Handled = True
 End If
 End Sub
 
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
-Dim ICCEX As TagInitCommonControlsEx
-With ICCEX
-.dwSize = LenB(ICCEX)
-.dwICC = ICC_LISTVIEW_CLASSES
-End With
-InitCommonControlsEx ICCEX
+Call ComCtlsInitCC(ICC_LISTVIEW_CLASSES)
 Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
 DispIDMousePointer = GetDispID(Me, "MousePointer")
 DispIDIcons = GetDispID(Me, "Icons")
 DispIDSmallIcons = GetDispID(Me, "SmallIcons")
 DispIDColumnHeaderIcons = GetDispID(Me, "ColumnHeaderIcons")
+DispIDGroupIcons = GetDispID(Me, "GroupIcons")
 ReDim IconsArray(0) As String
 ReDim SmallIconsArray(0) As String
 ReDim ColumnHeaderIconsArray(0) As String
+ReDim GroupIconsArray(0) As String
 End Sub
 
 Private Sub UserControl_InitProperties()
@@ -1027,6 +1085,7 @@ PropMousePointer = 0: Set PropMouseIcon = Nothing
 PropIconsName = "(None)": Set PropIconsControl = Nothing
 PropSmallIconsName = "(None)": Set PropSmallIconsControl = Nothing
 PropColumnHeaderIconsName = "(None)": Set PropColumnHeaderIconsControl = Nothing
+PropGroupIconsName = "(None)": Set PropGroupIconsControl = Nothing
 PropBorderStyle = CCBorderStyleSunken
 PropBackColor = vbWindowBackground
 PropForeColor = vbWindowText
@@ -1067,6 +1126,7 @@ PropPictureWatermark = False
 PropTileViewLines = 1
 PropSnapToGrid = False
 PropGroupView = False
+PropUseColumnChevron = False
 Call CreateListView
 Me.FListItemsAdd 0, 1, Ambient.DisplayName
 End Sub
@@ -1084,6 +1144,7 @@ Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
 PropIconsName = .ReadProperty("Icons", "(None)")
 PropSmallIconsName = .ReadProperty("SmallIcons", "(None)")
 PropColumnHeaderIconsName = .ReadProperty("ColumnHeaderIcons", "(None)")
+PropGroupIconsName = .ReadProperty("GroupIcons", "(None)")
 PropBorderStyle = .ReadProperty("BorderStyle", CCBorderStyleSunken)
 PropBackColor = .ReadProperty("BackColor", vbWindowBackground)
 PropForeColor = .ReadProperty("ForeColor", vbWindowText)
@@ -1124,10 +1185,11 @@ PropPictureWatermark = .ReadProperty("PictureWatermark", False)
 PropTileViewLines = .ReadProperty("TileViewLines", 1)
 PropSnapToGrid = .ReadProperty("SnapToGrid", False)
 PropGroupView = .ReadProperty("GroupView", False)
+PropUseColumnChevron = .ReadProperty("UseColumnChevron", False)
 End With
 If Ambient.UserMode = True Then
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 3)
-    If Not PropIconsName = "(None)" Or Not PropSmallIconsName = "(None)" Or Not PropColumnHeaderIconsName = "(None)" Then TimerImageList.Enabled = True
+    If Not PropIconsName = "(None)" Or Not PropSmallIconsName = "(None)" Or Not PropColumnHeaderIconsName = "(None)" Or Not PropGroupIconsName = "(None)" Then TimerImageList.Enabled = True
 Else
     Call CreateListView
     Me.FListItemsAdd 0, 2, Ambient.DisplayName
@@ -1147,6 +1209,7 @@ With PropBag
 .WriteProperty "Icons", PropIconsName, "(None)"
 .WriteProperty "SmallIcons", PropSmallIconsName, "(None)"
 .WriteProperty "ColumnHeaderIcons", PropColumnHeaderIconsName, "(None)"
+.WriteProperty "GroupIcons", PropGroupIconsName, "(None)"
 .WriteProperty "BorderStyle", PropBorderStyle, CCBorderStyleSunken
 .WriteProperty "BackColor", PropBackColor, vbWindowBackground
 .WriteProperty "ForeColor", PropForeColor, vbWindowText
@@ -1187,6 +1250,7 @@ With PropBag
 .WriteProperty "TileViewLines", PropTileViewLines, 1
 .WriteProperty "SnapToGrid", PropSnapToGrid, False
 .WriteProperty "GroupView", PropGroupView, False
+.WriteProperty "UseColumnChevron", PropUseColumnChevron, False
 End With
 End Sub
 
@@ -1338,10 +1402,14 @@ If PropColumnHeaderIconsInit = False Then
     If Not PropColumnHeaderIconsName = "(None)" Then Me.ColumnHeaderIcons = PropColumnHeaderIconsName
     PropColumnHeaderIconsInit = True
 End If
+If PropGroupIconsInit = False Then
+    If Not PropGroupIconsName = "(None)" Then Me.GroupIcons = PropGroupIconsName
+    PropGroupIconsInit = True
+End If
 TimerImageList.Enabled = False
 End Sub
 
-Public Property Get ControlsEnum() As Object
+Public Property Get ControlsEnum() As VBRUN.ParentControls
 Attribute ControlsEnum.VB_MemberFlags = "40"
 Set ControlsEnum = UserControl.ParentControls
 End Property
@@ -1863,6 +1931,74 @@ End If
 UserControl.PropertyChanged "ColumnHeaderIcons"
 End Property
 
+Public Property Get GroupIcons() As Variant
+Attribute GroupIcons.VB_Description = "Returns/sets the image list control to be used for the group header icons. Requires comctl32.dll version 6.1 or higher."
+If Ambient.UserMode = True Then
+    If PropGroupIconsInit = False And PropGroupIconsControl Is Nothing Then
+        If Not PropGroupIconsName = "(None)" Then Me.GroupIcons = PropGroupIconsName
+        PropGroupIconsInit = True
+    End If
+    Set GroupIcons = PropGroupIconsControl
+Else
+    GroupIcons = PropGroupIconsName
+End If
+End Property
+
+Public Property Set GroupIcons(ByVal Value As Variant)
+Me.GroupIcons = Value
+End Property
+
+Public Property Let GroupIcons(ByVal Value As Variant)
+If Ambient.UserMode = True Then
+    If ListViewHandle <> 0 Then
+        Dim Success As Boolean, Handle As Long
+        On Error Resume Next
+        If IsObject(Value) Then
+            If TypeName(Value) = "ImageList" Then
+                Handle = Value.hImageList
+                Success = CBool(Err.Number = 0 And Handle <> 0)
+            End If
+            If Success = True Then
+                If ComCtlsSupportLevel() >= 2 Then SendMessage ListViewHandle, LVM_SETIMAGELIST, LVSIL_GROUPHEADER, ByVal Handle
+                PropGroupIconsName = ProperControlName(Value)
+                Set PropGroupIconsControl = Value
+            End If
+        ElseIf VarType(Value) = vbString Then
+            Dim ControlEnum As Object, CompareName As String
+            For Each ControlEnum In UserControl.ParentControls
+                If TypeName(ControlEnum) = "ImageList" Then
+                    CompareName = ProperControlName(ControlEnum)
+                    If CompareName = Value And Not CompareName = vbNullString Then
+                        Err.Clear
+                        Handle = ControlEnum.hImageList
+                        Success = CBool(Err.Number = 0 And Handle <> 0)
+                        If Success = True Then
+                            If ComCtlsSupportLevel() >= 2 Then SendMessage ListViewHandle, LVM_SETIMAGELIST, LVSIL_GROUPHEADER, ByVal Handle
+                            PropGroupIconsName = Value
+                            Set PropGroupIconsControl = ControlEnum
+                            Exit For
+                        ElseIf Ambient.UserMode = False Then
+                            PropGroupIconsName = Value
+                            Success = True
+                            Exit For
+                        End If
+                    End If
+                End If
+            Next ControlEnum
+        End If
+        On Error GoTo 0
+        If Success = False Then
+            If ComCtlsSupportLevel() >= 2 Then SendMessage ListViewHandle, LVM_SETIMAGELIST, LVSIL_GROUPHEADER, ByVal 0&
+            PropGroupIconsName = "(None)"
+            Set PropGroupIconsControl = Nothing
+        End If
+    End If
+Else
+    PropGroupIconsName = Value
+End If
+UserControl.PropertyChanged "GroupIcons"
+End Property
+
 Public Property Get BorderStyle() As CCBorderStyleConstants
 Attribute BorderStyle.VB_Description = "Returns/sets the border style."
 Attribute BorderStyle.VB_UserMemId = -504
@@ -2368,7 +2504,7 @@ End If
 End Property
 
 Public Property Let HoverSelectionTime(ByVal Value As Long)
-If Value < -1 Or Value = 0 Then
+If Value <= 0 And Not Value = -1 Then
     If Ambient.UserMode = False Then
         MsgBox "Invalid property value", vbCritical + vbOKOnly
         Exit Property
@@ -2745,6 +2881,31 @@ End If
 UserControl.PropertyChanged "GroupView"
 End Property
 
+Public Property Get UseColumnChevron() As Boolean
+Attribute UseColumnChevron.VB_Description = "Returns/sets a value indicating if a chevron button is used when the column headers are wider than the control width. Requires comctl32.dll version 6.1 or higher."
+UseColumnChevron = PropUseColumnChevron
+End Property
+
+Public Property Let UseColumnChevron(ByVal Value As Boolean)
+PropUseColumnChevron = Value
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
+    If ListViewHeaderHandle <> 0 Then
+        Dim dwStyle As Long
+        dwStyle = GetWindowLong(ListViewHeaderHandle, GWL_STYLE)
+        If Not PropUseColumnChevron = CBool((dwStyle And HDS_OVERFLOW) = HDS_OVERFLOW) Then
+            If PropUseColumnChevron = True Then
+                If Not (dwStyle And HDS_OVERFLOW) = HDS_OVERFLOW Then dwStyle = dwStyle Or HDS_OVERFLOW
+            Else
+                If (dwStyle And HDS_OVERFLOW) = HDS_OVERFLOW Then dwStyle = dwStyle And Not HDS_OVERFLOW
+            End If
+            SetWindowLong ListViewHeaderHandle, GWL_STYLE, dwStyle
+        End If
+    End If
+End If
+UserControl.PropertyChanged "UseColumnChevron"
+End Property
+
 Public Property Get ListItems() As LvwListItems
 Attribute ListItems.VB_Description = "Returns a reference to a collection of the list item objects."
 If PropListItems Is Nothing Then
@@ -2910,18 +3071,18 @@ End If
 End Property
 
 Friend Property Get FListItemChecked(ByVal Index As Long) As Boolean
-If ListViewHandle <> 0 Then FListItemChecked = CBool((SendMessage(ListViewHandle, LVM_GETITEMSTATE, Index - 1, ByVal LVIS_STATEIMAGEMASK) And &H2000) = &H2000)
+If ListViewHandle <> 0 Then FListItemChecked = CBool(StateImageMaskToIndex(SendMessage(ListViewHandle, LVM_GETITEMSTATE, Index - 1, ByVal LVIS_STATEIMAGEMASK) And LVIS_STATEIMAGEMASK) = IIL_CHECKED)
 End Property
 
 Friend Property Let FListItemChecked(ByVal Index As Long, ByVal Value As Boolean)
 If ListViewHandle <> 0 Then
     Dim LVI As LVITEM
     With LVI
-    .StateMask = &H3000
+    .StateMask = LVIS_STATEIMAGEMASK
     If Value = True Then
-        .State = &H2000
+        .State = IndexToStateImageMask(IIL_CHECKED)
     Else
-        .State = &H1000
+        .State = IndexToStateImageMask(IIL_UNCHECKED)
     End If
     End With
     SendMessage ListViewHandle, LVM_SETITEMSTATE, Index - 1, ByVal VarPtr(LVI)
@@ -2960,7 +3121,7 @@ If ListViewHandle <> 0 Then
     If Value = True Then
         SendMessage ListViewHandle, LVM_SETHOTITEM, Index - 1, ByVal 0&
     Else
-        SendMessage ListViewHandle, LVM_SETHOTITEM, -1, ByVal 0&
+        If SendMessage(ListViewHandle, LVM_GETHOTITEM, 0, ByVal 0&) = Index - 1 Then SendMessage ListViewHandle, LVM_SETHOTITEM, -1, ByVal 0&
     End If
 End If
 End Property
@@ -3114,11 +3275,11 @@ End Function
 
 Friend Property Get FListItemGroup(ByVal Index As Long) As LvwGroup
 If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
-    Dim LVI_V6 As LVITEM_V6
-    With LVI_V6
-    .Mask = LVIF_GROUPID
-    .iItem = Index - 1
-    SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V6)
+    Dim LVI_V60 As LVITEM_V60
+    With LVI_V60
+    .LVI.Mask = LVIF_GROUPID
+    .LVI.iItem = Index - 1
+    SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V60)
     If .iGroupId <> I_GROUPIDNONE Then
         Dim Group As LvwGroup
         For Each Group In Me.Groups
@@ -3138,17 +3299,17 @@ End Property
 
 Friend Property Set FListItemGroup(ByVal Index As Long, ByVal Value As LvwGroup)
 If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
-    Dim LVI_V6 As LVITEM_V6
-    With LVI_V6
-    .Mask = LVIF_GROUPID
-    .iItem = Index - 1
+    Dim LVI_V60 As LVITEM_V60
+    With LVI_V60
+    .LVI.Mask = LVIF_GROUPID
+    .LVI.iItem = Index - 1
     If Not Value Is Nothing Then
         .iGroupId = Value.ID
     Else
         .iGroupId = I_GROUPIDNONE
     End If
     End With
-    SendMessage ListViewHandle, LVM_SETITEM, 0, ByVal VarPtr(LVI_V6)
+    SendMessage ListViewHandle, LVM_SETITEM, 0, ByVal VarPtr(LVI_V60)
 End If
 End Property
 
@@ -3970,6 +4131,76 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
 End If
 End Property
 
+Friend Property Get FGroupHint(ByVal ID As Long) As String
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG_V61 As LVGROUP_V61
+        With LVG_V61
+        .LVG.cbSize = LenB(LVG_V61)
+        .LVG.Mask = LVGF_SUBTITLE
+        Dim Buffer As String
+        Buffer = String(260, vbNullChar)
+        .pszSubtitle = StrPtr(Buffer)
+        .cchSubtitle = 260
+        End With
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG_V61)
+        FGroupHint = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
+    End If
+End If
+End Property
+
+Friend Property Let FGroupHint(ByVal ID As Long, ByVal Value As String)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG_V61 As LVGROUP_V61
+        With LVG_V61
+        .LVG.cbSize = LenB(LVG_V61)
+        .LVG.Mask = LVGF_SUBTITLE
+        .pszSubtitle = StrPtr(Value)
+        .cchSubtitle = Len(Value) + 1
+        End With
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG_V61)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+    End If
+End If
+End Property
+
+Friend Property Get FGroupLink(ByVal ID As Long) As String
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG_V61 As LVGROUP_V61
+        With LVG_V61
+        .LVG.cbSize = LenB(LVG_V61)
+        .LVG.Mask = LVGF_TASK
+        Dim Buffer As String
+        Buffer = String(260, vbNullChar)
+        .pszTask = StrPtr(Buffer)
+        .cchTask = 260
+        End With
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG_V61)
+        FGroupLink = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
+    End If
+End If
+End Property
+
+Friend Property Let FGroupLink(ByVal ID As Long, ByVal Value As String)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG_V61 As LVGROUP_V61
+        With LVG_V61
+        .LVG.cbSize = LenB(LVG_V61)
+        .LVG.Mask = LVGF_TASK
+        .pszTask = StrPtr(Value)
+        .cchTask = Len(Value) + 1
+        End With
+        SendMessage ListViewHandle, WM_SETREDRAW, 0, ByVal 0&
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG_V61)
+        If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
+    End If
+End If
+End Property
+
 Friend Property Get FGroupCollapsible(ByVal ID As Long) As Boolean
 If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     If IsGroupAvailable(ID) = True Then FGroupCollapsible = CBool(SendMessage(ListViewHandle, LVM_GETGROUPSTATE, ID, ByVal LVGS_COLLAPSIBLE) <> 0)
@@ -4079,6 +4310,34 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
 End If
 End Property
 
+Friend Property Get FGroupIcon(ByVal ID As Long) As Long
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG_V61 As LVGROUP_V61
+        With LVG_V61
+        .LVG.cbSize = LenB(LVG_V61)
+        .LVG.Mask = LVGF_TITLEIMAGE
+        SendMessage ListViewHandle, LVM_GETGROUPINFO, ID, ByVal VarPtr(LVG_V61)
+        FGroupIcon = .iTitleImage + 1
+        End With
+    End If
+End If
+End Property
+
+Friend Property Let FGroupIcon(ByVal ID As Long, ByVal Value As Long)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
+    If IsGroupAvailable(ID) = True Then
+        Dim LVG_V61 As LVGROUP_V61
+        With LVG_V61
+        .LVG.cbSize = LenB(LVG_V61)
+        .LVG.Mask = LVGF_TITLEIMAGE
+        .iTitleImage = Value - 1
+        SendMessage ListViewHandle, LVM_SETGROUPINFO, ID, ByVal VarPtr(LVG_V61)
+        End With
+    End If
+End If
+End Property
+
 Friend Property Get FGroupPosition(ByVal ID As Long) As Long
 If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     If IsGroupAvailable(ID) = True Then
@@ -4151,15 +4410,15 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     Set FGroupListItemIndices = New Collection
     If IsGroupAvailable(ID) = True Then
         If SendMessage(ListViewHandle, LVM_GETITEMCOUNT, 0, ByVal 0&) > 0 Then
-            Dim LVI_V6 As LVITEM_V6
-            With LVI_V6
-            .Mask = LVIF_GROUPID
-            .iItem = 0
-            SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V6)
-            Do While .iItem > -1
-                If .iGroupId = ID Then FGroupListItemIndices.Add (.iItem + 1)
-                .iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, .iItem, ByVal LVNI_ALL)
-                SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V6)
+            Dim LVI_V60 As LVITEM_V60
+            With LVI_V60
+            .LVI.Mask = LVIF_GROUPID
+            .LVI.iItem = 0
+            SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V60)
+            Do While .LVI.iItem > -1
+                If .iGroupId = ID Then FGroupListItemIndices.Add (.LVI.iItem + 1)
+                .LVI.iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, .LVI.iItem, ByVal LVNI_ALL)
+                SendMessage ListViewHandle, LVM_GETITEM, 0, ByVal VarPtr(LVI_V60)
             Loop
             End With
         End If
@@ -4171,17 +4430,7 @@ Private Sub CreateListView()
 If ListViewHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or LVS_SHAREIMAGELISTS
-Select Case PropBorderStyle
-    Case CCBorderStyleSingle
-        dwStyle = dwStyle Or WS_BORDER
-    Case CCBorderStyleThin
-        dwExStyle = dwExStyle Or WS_EX_STATICEDGE
-    Case CCBorderStyleSunken
-        dwExStyle = dwExStyle Or WS_EX_CLIENTEDGE
-    Case CCBorderStyleRaised
-        dwExStyle = dwExStyle Or WS_EX_WINDOWEDGE
-        dwStyle = dwStyle Or WS_DLGFRAME
-End Select
+Call ComCtlsInitBorderStyle(dwStyle, dwExStyle, PropBorderStyle)
 If Ambient.UserMode = True Then
     If ComCtlsSupportLevel() = 0 And PropView = LvwViewTile Then PropView = LvwViewIcon
     Select Case PropView
@@ -4243,6 +4492,7 @@ If Not PropPicture Is Nothing Then Set Me.Picture = PropPicture
 Me.TileViewLines = PropTileViewLines
 Me.SnapToGrid = PropSnapToGrid
 Me.GroupView = PropGroupView
+Me.UseColumnChevron = PropUseColumnChevron
 If ListViewHandle <> 0 Then
     If ComCtlsSupportLevel() = 0 Then
         ' According to MSDN:
@@ -4559,6 +4809,76 @@ Else
     Err.Raise 380
 End If
 End Property
+
+Public Property Get IconSpacingWidth() As Single
+Attribute IconSpacingWidth.VB_Description = "Returns/sets the spacing width between icons in 'icon' and 'small icon' view."
+Attribute IconSpacingWidth.VB_MemberFlags = "400"
+If PropView = LvwViewIcon Then
+    If ListViewHandle <> 0 Then IconSpacingWidth = UserControl.ScaleX(LoWord(SendMessage(ListViewHandle, LVM_GETITEMSPACING, 0, ByVal 0&)), vbPixels, vbContainerSize)
+ElseIf PropView = LvwViewSmallIcon Then
+    If ListViewHandle <> 0 Then IconSpacingWidth = UserControl.ScaleX(LoWord(SendMessage(ListViewHandle, LVM_GETITEMSPACING, 1, ByVal 0&)), vbPixels, vbContainerSize)
+Else
+    Err.Raise Number:=394, Description:="Get supported in 'icon' and 'small icon' view only"
+End If
+End Property
+
+Public Property Let IconSpacingWidth(ByVal Value As Single)
+If Value < 0 Then Err.Raise 380
+Dim LngValueX As Long, LngValueY As Long
+LngValueX = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
+If LngValueX >= 0 Then
+    If PropView = LvwViewIcon Then
+        If ListViewHandle <> 0 Then
+            LngValueY = HiWord(SendMessage(ListViewHandle, LVM_GETITEMSPACING, 0, ByVal 0&))
+            SendMessage ListViewHandle, LVM_SETICONSPACING, 0, ByVal MakeDWord(LngValueX, LngValueY)
+            Me.Refresh
+        End If
+    Else
+        Err.Raise Number:=383, Description:="Set supported in 'icon' view only"
+    End If
+Else
+    Err.Raise 380
+End If
+End Property
+
+Public Property Get IconSpacingHeight() As Single
+Attribute IconSpacingHeight.VB_Description = "Returns/sets the spacing height between icons in 'icon' and 'small icon' view."
+Attribute IconSpacingHeight.VB_MemberFlags = "400"
+If PropView = LvwViewIcon Then
+    If ListViewHandle <> 0 Then IconSpacingHeight = UserControl.ScaleY(HiWord(SendMessage(ListViewHandle, LVM_GETITEMSPACING, 0, ByVal 0&)), vbPixels, vbContainerSize)
+ElseIf PropView = LvwViewSmallIcon Then
+    If ListViewHandle <> 0 Then IconSpacingHeight = UserControl.ScaleY(HiWord(SendMessage(ListViewHandle, LVM_GETITEMSPACING, 1, ByVal 0&)), vbPixels, vbContainerSize)
+Else
+    Err.Raise Number:=394, Description:="Get supported in 'icon' and 'small icon' view only"
+End If
+End Property
+
+Public Property Let IconSpacingHeight(ByVal Value As Single)
+If Value < 0 Then Err.Raise 380
+Dim LngValueX As Long, LngValueY As Long
+LngValueY = CLng(UserControl.ScaleY(Value, vbContainerSize, vbPixels))
+If LngValueY >= 0 Then
+    If PropView = LvwViewIcon Then
+        If ListViewHandle <> 0 Then
+            LngValueX = LoWord(SendMessage(ListViewHandle, LVM_GETITEMSPACING, 0, ByVal 0&))
+            SendMessage ListViewHandle, LVM_SETICONSPACING, 0, ByVal MakeDWord(LngValueX, LngValueY)
+            Me.Refresh
+        End If
+    Else
+        Err.Raise Number:=383, Description:="Set supported in 'icon' view only"
+    End If
+Else
+    Err.Raise 380
+End If
+End Property
+
+Public Sub ResetIconSpacing()
+Attribute ResetIconSpacing.VB_Description = "Resets the spacing between icons to the default spacing width and height in 'icon' view."
+If ListViewHandle <> 0 Then
+    SendMessage ListViewHandle, LVM_SETICONSPACING, 0, ByVal -1&
+    Me.Refresh
+End If
+End Sub
 
 Public Sub StartLabelEdit()
 Attribute StartLabelEdit.VB_Description = "Begins a label editing operation on a list item. This method will fail if the label edit property is set to disabled."
@@ -4877,23 +5197,22 @@ End If
 End Sub
 
 Private Sub CheckHeaderControl()
-If ListViewHeaderHandle = 0 Then
-    ListViewHeaderHandle = Me.hWndHeader
-    If ListViewHeaderHandle <> 0 Then
-        If Not PropColumnHeaderIconsName = "(None)" Then
-            If PropColumnHeaderIconsControl Is Nothing Then
-                Me.ColumnHeaderIcons = PropColumnHeaderIconsName
-            End If
+If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
+If ListViewHeaderHandle <> 0 Then
+    If Not PropColumnHeaderIconsName = "(None)" Then
+        If PropColumnHeaderIconsControl Is Nothing Then
+            Me.ColumnHeaderIcons = PropColumnHeaderIconsName
         End If
-        Call SetVisualStylesHeader
-        Me.AllowColumnCheckboxes = PropAllowColumnCheckboxes
-        Me.ClickableColumnHeaders = PropClickableColumnHeaders
-        Me.HighlightColumnHeaders = PropHighlightColumnHeaders
-        Me.TrackSizeColumnHeaders = PropTrackSizeColumnHeaders
-        Me.ResizableColumnHeaders = PropResizableColumnHeaders
-        SendMessage ListViewHandle, LVM_UPDATE, 0, ByVal 0&
-        Me.Refresh
     End If
+    Call SetVisualStylesHeader
+    Me.AllowColumnCheckboxes = PropAllowColumnCheckboxes
+    Me.ClickableColumnHeaders = PropClickableColumnHeaders
+    Me.HighlightColumnHeaders = PropHighlightColumnHeaders
+    Me.TrackSizeColumnHeaders = PropTrackSizeColumnHeaders
+    Me.ResizableColumnHeaders = PropResizableColumnHeaders
+    Me.UseColumnChevron = PropUseColumnChevron
+    SendMessage ListViewHandle, LVM_UPDATE, 0, ByVal 0&
+    Me.Refresh
 End If
 End Sub
 
@@ -5073,6 +5392,26 @@ End Function
 
 Private Function IsGroupAvailable(ByVal ID As Long) As Boolean
 If ListViewHandle <> 0 Then IsGroupAvailable = CBool(SendMessage(ListViewHandle, LVM_HASGROUP, ID, ByVal 0&) <> 0)
+End Function
+
+Private Function GetGroupFromID(ByVal ID As Long) As LvwGroup
+If IsGroupAvailable(ID) = True Then
+    Dim Group As LvwGroup
+    For Each Group In Me.Groups
+        If Group.ID = ID Then
+            Set GetGroupFromID = Group
+            Exit For
+        End If
+    Next Group
+End If
+End Function
+
+Private Function IndexToStateImageMask(ByVal ImgIndex As Long) As Long
+IndexToStateImageMask = ImgIndex * (2 ^ 12)
+End Function
+
+Private Function StateImageMaskToIndex(ByVal ImgState As Long) As Long
+StateImageMaskToIndex = ImgState / (2 ^ 12)
 End Function
 
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
@@ -5549,6 +5888,36 @@ Select Case wMsg
                         WindowProcUserControl = 0
                     End If
                     Exit Function
+                Case LVN_COLUMNOVERFLOWCLICK
+                    CopyMemory NMLV, ByVal lParam, LenB(NMLV)
+                    RaiseEvent ColumnChevronPushed(Me.ColumnHeaders(NMLV.iSubItem + 1))
+                Case LVN_BEGINSCROLL, LVN_ENDSCROLL
+                    Dim NMLVS As NMLVSCROLL
+                    CopyMemory NMLVS, ByVal lParam, LenB(NMLVS)
+                    If NM.Code = LVN_BEGINSCROLL Then
+                        RaiseEvent BeforeScroll(UserControl.ScaleX(NMLVS.DX, vbPixels, vbContainerPosition), UserControl.ScaleY(NMLVS.DY, vbPixels, vbContainerPosition))
+                    ElseIf NM.Code = LVN_ENDSCROLL Then
+                        RaiseEvent AfterScroll(UserControl.ScaleX(NMLVS.DX, vbPixels, vbContainerPosition), UserControl.ScaleY(NMLVS.DY, vbPixels, vbContainerPosition))
+                    End If
+                Case LVN_LINKCLICK
+                    Dim NMLVL As NMLVLINK
+                    CopyMemory NMLVL, ByVal lParam, LenB(NMLVL)
+                    With NMLVL
+                    If .iGroupId <> 0 Then RaiseEvent GroupLinkClick(GetGroupFromID(.iGroupId))
+                    End With
+                Case LVN_GROUPCHANGED
+                    Dim NMLVG As NMLVGROUP
+                    CopyMemory NMLVG, ByVal lParam, LenB(NMLVG)
+                    With NMLVG
+                    If .iGroupId <> 0 Then
+                        If CBool((.uNewState And LVGS_COLLAPSED) = LVGS_COLLAPSED) Xor CBool((.uOldState And LVGS_COLLAPSED) = LVGS_COLLAPSED) Then
+                            RaiseEvent GroupCollapsedChanged(GetGroupFromID(.iGroupId))
+                        End If
+                        If CBool((.uNewState And (LVGS_SELECTED Or LVGS_FOCUSED)) = (LVGS_SELECTED Or LVGS_FOCUSED)) Xor CBool((.uOldState And (LVGS_SELECTED Or LVGS_FOCUSED)) = (LVGS_SELECTED Or LVGS_FOCUSED)) Then
+                            RaiseEvent GroupSelectedChanged(GetGroupFromID(.iGroupId))
+                        End If
+                    End If
+                    End With
             End Select
         End If
     Case WM_CONTEXTMENU

@@ -148,7 +148,7 @@ If VTableHeaderPointer <> 0 Then Exit Sub
 If GetComCtlVersion >= 6 Then
     VTable(2) = Address
     VTableHeaderPointer = VarPtr(VTable(0))
-    CopyMemory IUnk, VarPtr(VTableHeaderPointer), 4
+    CopyMemory IUnk, ByVal VTableHeaderPointer, 4
 End If
 End Sub
 

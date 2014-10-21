@@ -39,10 +39,6 @@ ChkImageListAlignmentTop = BUTTON_IMAGELIST_ALIGN_TOP
 ChkImageListAlignmentBottom = BUTTON_IMAGELIST_ALIGN_BOTTOM
 ChkImageListAlignmentCenter = BUTTON_IMAGELIST_ALIGN_CENTER
 End Enum
-Private Type TagInitCommonControlsEx
-dwSize As Long
-dwICC As Long
-End Type
 Private Type TACCEL
 FVirt As Byte
 Key As Integer
@@ -115,7 +111,6 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Desti
 Private Declare Function CreateAcceleratorTable Lib "user32" Alias "CreateAcceleratorTableW" (ByVal lpAccel As Long, ByVal cEntries As Long) As Long
 Private Declare Function DestroyAcceleratorTable Lib "user32" (ByVal hAccel As Long) As Long
 Private Declare Function VkKeyScan Lib "user32" Alias "VkKeyScanW" (ByVal cChar As Integer) As Integer
-Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
@@ -195,6 +190,7 @@ Private Const BS_FLAT As Long = &H8000&
 Private Const BM_GETCHECK As Long = &HF0
 Private Const BM_SETCHECK As Long = &HF1
 Private Const BM_GETSTATE As Long = &HF2
+Private Const BM_SETSTATE As Long = &HF3
 Private Const BM_SETIMAGE As Long = &HF7
 Private Const BCM_FIRST As Long = &H1600
 Private Const BCM_SETIMAGELIST As Long = (BCM_FIRST + 2)
@@ -381,12 +377,7 @@ End Sub
 
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
-Dim ICCEX As TagInitCommonControlsEx
-With ICCEX
-.dwSize = LenB(ICCEX)
-.dwICC = ICC_STANDARD_CLASSES
-End With
-InitCommonControlsEx ICCEX
+Call ComCtlsInitCC(ICC_STANDARD_CLASSES)
 Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfaceControl)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
@@ -849,12 +840,7 @@ If Value < 0 Then
         Err.Raise 380
     End If
 End If
-Dim LngValue As Long
-On Error Resume Next
-LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-If Err.Number <> 0 Then LngValue = 0
-On Error GoTo 0
-PropImageListMargin = LngValue
+PropImageListMargin = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
 If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     If Not PropImageListControl Is Nothing Then
         Me.ImageList = PropImageListControl
@@ -1161,7 +1147,7 @@ Select Case PropVerticalAlignment
     Case CCVerticalAlignmentBottom
         dwStyle = dwStyle Or BS_BOTTOM
 End Select
-If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
+If Ambient.RightToLeft = True Then dwExStyle = WS_EX_RTLREADING
 CheckBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If CheckBoxHandle <> 0 Then Call ComCtlsShowAllUIStates(CheckBoxHandle)
 Set Me.Font = PropFont
@@ -1216,13 +1202,13 @@ If CheckBoxHandle <> 0 Then Pushed = CBool((SendMessage(CheckBoxHandle, BM_GETST
 End Property
 
 Public Property Let Pushed(ByVal Value As Boolean)
-Err.Raise Number:=383, Description:="Property is read-only"
+If CheckBoxHandle <> 0 Then SendMessage CheckBoxHandle, BM_SETSTATE, IIf(Value = True, 1, 0), ByVal 0&
 End Property
 
 Public Property Get Hot() As Boolean
-Attribute Hot.VB_Description = "Returns/sets a value that indicates if the check box is hot; that is, the mouse is hovering over it."
+Attribute Hot.VB_Description = "Returns/sets a value that indicates if the check box is hot; that is, the mouse is hovering over it. Requires comctl32.dll version 6.0 or higher."
 Attribute Hot.VB_MemberFlags = "400"
-If CheckBoxHandle <> 0 Then Hot = CBool((SendMessage(CheckBoxHandle, BM_GETSTATE, 0, ByVal 0&) And BST_HOT) = BST_HOT)
+If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then Hot = CBool((SendMessage(CheckBoxHandle, BM_GETSTATE, 0, ByVal 0&) And BST_HOT) = BST_HOT)
 End Property
 
 Public Property Let Hot(ByVal Value As Boolean)

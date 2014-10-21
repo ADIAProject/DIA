@@ -42,10 +42,6 @@ TipIconInfo = TTI_INFO
 TipIconWarning = TTI_WARNING
 TipIconError = TTI_ERROR
 End Enum
-Private Type TagInitCommonControlsEx
-dwSize As Long
-dwICC As Long
-End Type
 Private Type RECT
 Left As Long
 Top As Long
@@ -84,7 +80,6 @@ Attribute LinkClick.VB_Description = "Occurs when clicking on a text link inside
 Public Event NeedText(ByVal Tool As TipTool, ByRef Text As String)
 Attribute NeedText.VB_Description = "Occurs when a tool tip has no text. Use this event to assign a text dynamically to a tool tip."
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
@@ -188,7 +183,7 @@ Private PropTools As TipTools
 Private PropVisualStyles As Boolean
 Private PropBackColor As OLE_COLOR
 Private PropForeColor As OLE_COLOR
-Private PropMaxTipWidth As Single
+Private PropMaxTipWidth As Long
 Private PropTitle As String
 Private PropIcon As TipIconConstants
 Private PropBalloon As Boolean
@@ -198,12 +193,7 @@ Private PropUseSystemFont As Boolean
 
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
-Dim ICCEX As TagInitCommonControlsEx
-With ICCEX
-.dwSize = LenB(ICCEX)
-.dwICC = ICC_TAB_CLASSES
-End With
-InitCommonControlsEx ICCEX
+Call ComCtlsInitCC(ICC_TAB_CLASSES)
 End Sub
 
 Private Sub UserControl_InitProperties()
@@ -410,7 +400,7 @@ UserControl.PropertyChanged "Enabled"
 End Property
 
 Public Property Get MaxTipWidth() As Single
-Attribute MaxTipWidth.VB_Description = "Returns/sets the maximum width for a tool tip window. A value of -1 indicates that any width is allowed."
+Attribute MaxTipWidth.VB_Description = "Returns/sets the maximum width for a tool tip window. A value of -1 or 0 indicates that any width is allowed. When set to -1 the text will be always single lined."
 Dim LngValue As Long
 If ToolTipHandle <> 0 Then
     LngValue = SendMessage(ToolTipHandle, TTM_GETMAXTIPWIDTH, 0, ByVal 0&)
@@ -433,21 +423,24 @@ If Value < 0 And Not Value = -1 Then
         Err.Raise 380
     End If
 End If
-Dim LngValue As Long
-On Error Resume Next
+Dim LngValue As Long, ErrValue As Long
 If Value = -1 Then
     LngValue = -1
 Else
+    On Error Resume Next
     LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
+    ErrValue = Err.Number
+    On Error GoTo 0
 End If
-If Err.Number <> 0 Then LngValue = -1
-On Error GoTo 0
-PropMaxTipWidth = LngValue
-If ToolTipHandle <> 0 Then
-    If PropMaxTipWidth = -1 Then
-        SendMessage ToolTipHandle, TTM_SETMAXTIPWIDTH, 0, ByVal -1
+If (LngValue >= 0 Or LngValue = -1) And ErrValue = 0 Then
+    PropMaxTipWidth = LngValue
+    If ToolTipHandle <> 0 Then SendMessage ToolTipHandle, TTM_SETMAXTIPWIDTH, 0, ByVal PropMaxTipWidth
+Else
+    If Ambient.UserMode = False Then
+        MsgBox "Invalid property value", vbCritical + vbOKOnly
+        Exit Property
     Else
-        SendMessage ToolTipHandle, TTM_SETMAXTIPWIDTH, 0, ByVal CLng(UserControl.ScaleX(PropMaxTipWidth, vbContainerSize, vbPixels))
+        Err.Raise 380
     End If
 End If
 UserControl.PropertyChanged "MaxTipWidth"
@@ -683,12 +676,12 @@ If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 Dim hWndParent As Long
 hWndParent = GetAncestor(UserControl.ContainerHwnd, GA_ROOT)
 If hWndParent <> 0 Then ToolTipHandle = CreateWindowEx(dwExStyle, StrPtr("tooltips_class32"), StrPtr("Tool Tip"), dwStyle, 0, 0, 0, 0, hWndParent, 0, App.hInstance, ByVal 0&)
+If ToolTipHandle <> 0 Then SendMessage ToolTipHandle, TTM_SETMAXTIPWIDTH, 0, ByVal PropMaxTipWidth
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = UserControl.Enabled
 Me.BackColor = PropBackColor
 Me.ForeColor = PropForeColor
-Me.MaxTipWidth = PropMaxTipWidth
 Me.Title = PropTitle
 If Ambient.UserMode = True Then Call ComCtlsSetSubclass(UserControl.hWnd, Me, 0)
 End Sub
@@ -767,10 +760,7 @@ End Property
 Public Property Let LeftMargin(ByVal Value As Single)
 If Value < 0 Then Err.Raise 380
 Dim LngValue As Long
-On Error Resume Next
 LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-If Err.Number <> 0 Then LngValue = 0
-On Error GoTo 0
 If ToolTipHandle <> 0 Then
     Dim RC As RECT
     SendMessage ToolTipHandle, TTM_GETMARGIN, 0, ByVal VarPtr(RC)
@@ -792,10 +782,7 @@ End Property
 Public Property Let TopMargin(ByVal Value As Single)
 If Value < 0 Then Err.Raise 380
 Dim LngValue As Long
-On Error Resume Next
 LngValue = CLng(UserControl.ScaleY(Value, vbContainerSize, vbPixels))
-If Err.Number <> 0 Then LngValue = 0
-On Error GoTo 0
 If ToolTipHandle <> 0 Then
     Dim RC As RECT
     SendMessage ToolTipHandle, TTM_GETMARGIN, 0, ByVal VarPtr(RC)
@@ -817,10 +804,7 @@ End Property
 Public Property Let RightMargin(ByVal Value As Single)
 If Value < 0 Then Err.Raise 380
 Dim LngValue As Long
-On Error Resume Next
 LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-If Err.Number <> 0 Then LngValue = 0
-On Error GoTo 0
 If ToolTipHandle <> 0 Then
     Dim RC As RECT
     SendMessage ToolTipHandle, TTM_GETMARGIN, 0, ByVal VarPtr(RC)
@@ -842,10 +826,7 @@ End Property
 Public Property Let BottomMargin(ByVal Value As Single)
 If Value < 0 Then Err.Raise 380
 Dim LngValue As Long
-On Error Resume Next
 LngValue = CLng(UserControl.ScaleY(Value, vbContainerSize, vbPixels))
-If Err.Number <> 0 Then LngValue = 0
-On Error GoTo 0
 If ToolTipHandle <> 0 Then
     Dim RC As RECT
     SendMessage ToolTipHandle, TTM_GETMARGIN, 0, ByVal VarPtr(RC)

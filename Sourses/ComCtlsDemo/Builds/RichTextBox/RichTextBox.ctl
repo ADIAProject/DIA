@@ -308,6 +308,9 @@ Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC A
 Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpszProgID As Long, ByRef pCLSID As Any) As Long
 Private Declare Function StgCreateDocFile Lib "ole32" Alias "StgCreateDocfile" (ByVal pwcsName As Long, ByVal grfMode As Long, ByVal Reserved As Long, ByRef ppStgOpen As OLEGuids.IStorage) As Long
 Private Declare Function OleSetContainedObject Lib "ole32" (ByVal pUnknown As IUnknown, ByVal fContained As Long) As Long
+Private Declare Function OleQueryCreateFromData Lib "ole32" (ByVal pSrcDataObject As OLEGuids.IDataObject) As Long
+Private Declare Function OleCreateStaticFromData Lib "ole32" (ByVal pSrcDataObject As OLEGuids.IDataObject, ByRef riid As Any, ByVal RenderOpt As Long, ByVal lpFormatEtc As Long, ByVal pClientSite As OLEGuids.IOleClientSite, ByVal pStg As OLEGuids.IStorage, ByRef ppvObj As OLEGuids.IOleObject) As Long
+Private Declare Function OleCreateFromData Lib "ole32" (ByVal pSrcDataObject As OLEGuids.IDataObject, ByRef riid As Any, ByVal RenderOpt As Long, ByVal lpFormatEtc As Long, ByVal pClientSite As OLEGuids.IOleClientSite, ByVal pStg As OLEGuids.IStorage, ByRef ppvObj As OLEGuids.IOleObject) As Long
 Private Declare Function CreateFile Lib "kernel32" Alias "CreateFileW" (ByVal lpFileName As Long, ByVal dwDesiredAccess As Long, ByVal dwShareMode As Long, ByVal lpSecurityAttributes As Long, ByVal dwCreationDisposition As Long, ByVal dwFlagsAndAttributes As Long, ByVal hTemplateFile As Long) As Long
 Private Declare Function GetFileSize Lib "kernel32" (ByVal hFile As Long, ByRef lpFileSizeHigh As Long) As Long
 Private Declare Function ReadFile Lib "kernel32" (ByVal hFile As Long, ByVal lpBuffer As Long, ByVal NumberOfBytesToRead As Long, ByRef NumberOfBytesRead As Long, ByVal lpOverlapped As Long) As Long
@@ -385,6 +388,8 @@ Private Const WM_COMMAND As Long = &H111
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_INPUTLANGCHANGE As Long = &H51
+Private Const WM_IME_SETCONTEXT As Long = &H281
 Private Const WM_IME_CHAR As Long = &H286
 Private Const WM_LBUTTONDOWN As Long = &H201
 Private Const WM_LBUTTONUP As Long = &H202
@@ -471,6 +476,7 @@ Private Const EM_REDO As Long = (WM_USER + 84)
 Private Const EM_CANREDO As Long = (WM_USER + 85)
 Private Const EM_GETUNDONAME As Long = (WM_USER + 86)
 Private Const EM_GETREDONAME As Long = (WM_USER + 87)
+Private Const EM_STOPGROUPTYPING As Long = (WM_USER + 88)
 Private Const EM_SETTEXTMODE As Long = (WM_USER + 89)
 Private Const EM_GETTEXTMODE As Long = (WM_USER + 90)
 Private Const EM_AUTOURLDETECT As Long = (WM_USER + 91)
@@ -673,6 +679,10 @@ Private Const REO_OPEN As Long = &H4000000
 Private Const REO_SELECTED As Long = &H8000000
 Private Const REO_STATIC As Long = &H40000000
 Private Const REO_LINK As Long = &H80000000
+Private Const OLE_S_STATIC As Long = &H40001
+Private Const S_FALSE As Long = &H1
+Private Const S_OK As Long = &H0
+Private Const OLERENDER_DRAW As Long = 1
 Private Const DVASPECT_CONTENT As Long = 1
 Private Const DVASPECT_THUMBNAIL As Long = 2
 Private Const DVASPECT_ICON As Long = 4
@@ -696,7 +706,10 @@ Implements OLEGuids.IPerPropertyBrowsingVB
 Implements OLEGuids.IRichEditOleCallback
 Private RichTextBoxHandle As Long
 Private RichTextBoxFontHandle As Long
+Private RichTextBoxIMCHandle As Long
 Private RichTextBoxIsClick As Boolean
+Private RichTextBoxDataObjectValue As Variant
+Private RichTextBoxDataObjectFormat As Variant
 Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
@@ -720,6 +733,7 @@ Private PropSelectionBar As Boolean
 Private PropFileName As String
 Private PropTextMode As RtfTextModeConstants
 Private PropUndoLimit As Long
+Private PropIMEMode As CCIMEModeConstants
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -840,6 +854,7 @@ PropSelectionBar = False
 PropFileName = vbNullString
 PropTextMode = RtfTextModeRichText
 PropUndoLimit = 100
+PropIMEMode = CCIMEModeNoControl
 Call CreateRichTextBox
 Me.Text = Ambient.DisplayName
 End Sub
@@ -869,6 +884,7 @@ PropSelectionBar = .ReadProperty("SelectionBar", False)
 PropFileName = VarToStr(.ReadProperty("FileName", vbNullString))
 PropTextMode = .ReadProperty("TextMode", RtfTextModeRichText)
 PropUndoLimit = .ReadProperty("UndoLimit", 100)
+PropIMEMode = .ReadProperty("IMEMode", CCIMEModeNoControl)
 End With
 Call CreateRichTextBox
 If PropTextMode = RtfTextModeRichText Then
@@ -903,9 +919,66 @@ With PropBag
 .WriteProperty "FileName", StrToVar(PropFileName), vbNullString
 .WriteProperty "TextMode", PropTextMode, RtfTextModeRichText
 .WriteProperty "UndoLimit", PropUndoLimit, 100
+.WriteProperty "IMEMode", PropIMEMode, CCIMEModeNoControl
 .WriteProperty "Text", StrToVar(Me.Text), vbNullString
 .WriteProperty "TextRTF", StrToVar(Me.TextRTF), vbNullString
 End With
+End Sub
+
+Private Sub UserControl_OLEStartDrag(Data As DataObject, AllowedEffects As Long)
+If Not IsEmpty(RichTextBoxDataObjectValue) Then
+    AllowedEffects = vbDropEffectNone
+    If RichTextBoxHandle <> 0 Then
+        Dim OLEInstance As OLEGuids.IRichEditOle
+        Set OLEInstance = Me.GetOLEInterface
+        If Not OLEInstance Is Nothing Then
+            If IsEmpty(RichTextBoxDataObjectFormat) Then
+                Data.SetData RichTextBoxDataObjectValue
+            Else
+                Data.SetData RichTextBoxDataObjectValue, RichTextBoxDataObjectFormat
+            End If
+            Dim PropDataObject As OLEGuids.IDataObject, TempObj As Object
+            ' VB stores a pointer to the IDataObject interface.
+            ' OLEStartDrag event: In the 5th Long from the object pointer. (+20)
+            ' OLEDragDrop event: In the 4th Long from the object pointer. (+16)
+            CopyMemory TempObj, ByVal UnsignedAdd(ObjPtr(Data), 20), 4
+            Set PropDataObject = TempObj
+            CopyMemory TempObj, 0&, 4
+            If Not PropDataObject Is Nothing Then
+                Dim PropOleObject As OLEGuids.IOleObject, PropClientSite As OLEGuids.IOleClientSite, PropStorage As OLEGuids.IStorage
+                Set PropClientSite = OLEInstance.GetClientSite
+                StgCreateDocFile 0, STGM_CREATE Or STGM_READWRITE Or STGM_SHARE_EXCLUSIVE Or STGM_DELETEONRELEASE, 0, PropStorage
+                Const IID_IOleObject As String = "{00000112-0000-0000-C000-000000000046}"
+                Dim IID As OLEGuids.OLECLSID
+                CLSIDFromString StrPtr(IID_IOleObject), IID
+                Select Case OleQueryCreateFromData(PropDataObject)
+                    Case OLE_S_STATIC
+                        OleCreateStaticFromData PropDataObject, IID, OLERENDER_DRAW, 0, PropClientSite, PropStorage, PropOleObject
+                    Case S_OK
+                        OleCreateFromData PropDataObject, IID, OLERENDER_DRAW, 0, PropClientSite, PropStorage, PropOleObject
+                End Select
+                If Not PropOleObject Is Nothing Then
+                    OleSetContainedObject PropOleObject, 1
+                    Dim REOBJ As REOBJECT
+                    With REOBJ
+                    .cbStruct = LenB(REOBJ)
+                    LSet .riid = IID
+                    .dvAspect = DVASPECT_CONTENT
+                    .CharPos = REO_CP_SELECTION
+                    .dwFlags = REO_DYNAMICSIZE Or REO_RESIZABLE Or REO_BELOWBASELINE
+                    .Size.CX = 0
+                    .Size.CY = 0
+                    .dwUser = 0
+                    Set .pStorage = PropStorage
+                    Set .pOleSite = PropClientSite
+                    Set .pOleObject = PropOleObject
+                    End With
+                    OLEInstance.InsertObject REOBJ
+                End If
+            End If
+        End If
+    End If
+End If
 End Sub
 
 Private Sub UserControl_Resize()
@@ -1387,12 +1460,12 @@ If Value < 0 Then
         Err.Raise 380
     End If
 End If
-Dim LngValue As Long
+Dim LngValue As Long, ErrValue As Long
 On Error Resume Next
 LngValue = CLng(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-If Err.Number <> 0 Then LngValue = 0
+ErrValue = Err.Number
 On Error GoTo 0
-If LngValue >= 0 Then
+If LngValue >= 0 And ErrValue = 0 Then
     PropBulletIndent = LngValue
 Else
     If Ambient.UserMode = False Then
@@ -1532,6 +1605,24 @@ End If
 UserControl.PropertyChanged "UndoLimit"
 End Property
 
+Public Property Get IMEMode() As CCIMEModeConstants
+Attribute IMEMode.VB_Description = "Returns/sets the Input Method Editor (IME) mode."
+IMEMode = PropIMEMode
+End Property
+
+Public Property Let IMEMode(ByVal Value As CCIMEModeConstants)
+Select Case Value
+    Case CCIMEModeNoControl, CCIMEModeOn, CCIMEModeOff, CCIMEModeDisable, CCIMEModeHiragana, CCIMEModeKatakana, CCIMEModeKatakanaHalf, CCIMEModeAlphaFull, CCIMEModeAlpha, CCIMEModeHangulFull, CCIMEModeHangul
+        PropIMEMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+If RichTextBoxHandle <> 0 And Ambient.UserMode = True Then
+    If GetFocus() = RichTextBoxHandle Then Call ComCtlsSetIMEMode(RichTextBoxHandle, RichTextBoxIMCHandle, PropIMEMode)
+End If
+UserControl.PropertyChanged "IMEMode"
+End Property
+
 Private Sub CreateRichTextBox()
 If RichTextBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
@@ -1587,6 +1678,7 @@ If Ambient.UserMode = True Then
         Call ComCtlsSetSubclass(RichTextBoxHandle, Me, 1)
     End If
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 2)
+    Call ComCtlsCreateIMC(RichTextBoxHandle, RichTextBoxIMCHandle)
 End If
 End Sub
 
@@ -1630,6 +1722,7 @@ Private Sub DestroyRichTextBox()
 If RichTextBoxHandle = 0 Then Exit Sub
 Call ComCtlsRemoveSubclass(RichTextBoxHandle)
 Call ComCtlsRemoveSubclass(UserControl.hWnd)
+Call ComCtlsDestroyIMC(RichTextBoxHandle, RichTextBoxIMCHandle)
 ShowWindow RichTextBoxHandle, SW_HIDE
 SetParent RichTextBoxHandle, 0
 DestroyWindow RichTextBoxHandle
@@ -1695,8 +1788,13 @@ Attribute CanUndo.VB_Description = "Determines whether there are any actions in 
 If RichTextBoxHandle <> 0 Then CanUndo = CBool(SendMessage(RichTextBoxHandle, EM_CANUNDO, 0, ByVal 0&) <> 0)
 End Function
 
-Public Sub ResetUndoFlag()
-Attribute ResetUndoFlag.VB_Description = "Resets the undo flag."
+Public Sub StopUndoAction()
+Attribute StopUndoAction.VB_Description = "Stops the rich text box control from collecting additional typing actions into the current undo action."
+If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_STOPGROUPTYPING, 0, ByVal 0&
+End Sub
+
+Public Sub ResetUndoQueue()
+Attribute ResetUndoQueue.VB_Description = "Resets the undo queue."
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_EMPTYUNDOBUFFER, 0, ByVal 0&
 End Sub
 
@@ -2306,6 +2404,7 @@ End Property
 
 Public Property Get SelFontCharset() As Variant
 Attribute SelFontCharset.VB_Description = "Returns/sets a value that specifies the charset of the font used to display the currently selected text."
+Attribute SelFontCharset.VB_MemberFlags = "400"
 If RichTextBoxHandle <> 0 Then
     Dim RECF2 As RECHARFORMAT2
     With RECF2
@@ -2768,10 +2867,7 @@ If Value = EC_USEFONTINFO Or Value = -1 Then
 Else
     If Value < 0 Then Err.Raise 380
     Dim IntValue As Integer
-    On Error Resume Next
     IntValue = CInt(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-    If Err.Number <> 0 Then IntValue = 0
-    On Error GoTo 0
     If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETMARGINS, EC_LEFTMARGIN, ByVal MakeDWord(IntValue, 0)
 End If
 UserControl.PropertyChanged "LeftMargin"
@@ -2789,10 +2885,7 @@ If Value = EC_USEFONTINFO Or Value = -1 Then
 Else
     If Value < 0 Then Err.Raise 380
     Dim IntValue As Integer
-    On Error Resume Next
     IntValue = CInt(UserControl.ScaleX(Value, vbContainerSize, vbPixels))
-    If Err.Number <> 0 Then IntValue = 0
-    On Error GoTo 0
     If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETMARGINS, EC_RIGHTMARGIN, ByVal MakeDWord(0, IntValue)
 End If
 UserControl.PropertyChanged "RightMargin"
@@ -2861,6 +2954,40 @@ If RichTextBoxHandle <> 0 Then
         Set .pOleObject = PropOleObject
         End With
         OLEInstance.InsertObject REOBJ
+    End If
+End If
+End Sub
+
+Public Sub OLEObjectsAddFromPicture(ByVal Picture As IPictureDisp, Optional ByVal Format As Variant)
+Attribute OLEObjectsAddFromPicture.VB_Description = "Inserts an OLE object (from picture object) into a rich text box control."
+If Not Picture Is Nothing Then
+    If Picture.Handle <> 0 Then
+        Select Case Picture.Type
+            Case vbPicTypeBitmap, vbPicTypeMetafile, vbPicTypeEMetafile
+                If IsMissing(Format) = True Then
+                    RichTextBoxDataObjectFormat = Empty
+                Else
+                    Select Case VarType(Format)
+                        Case vbLong, vbInteger, vbByte
+                            Select Case Format
+                                Case vbCFBitmap, vbCFDIB, vbCFMetafile, vbCFEMetafile
+                                    RichTextBoxDataObjectFormat = Format
+                                Case Else
+                                    Err.Raise Number:=461, Description:="Specified format doesn't match format of data"
+                            End Select
+                        Case Else
+                            Err.Raise 13
+                    End Select
+                End If
+                Set RichTextBoxDataObjectValue = Picture
+                ' Start of a fake OLE drag/drop event.
+                ' Actual picture insertion happens in the OLEStartDrag event.
+                UserControl.OLEDrag
+                RichTextBoxDataObjectValue = Empty
+                RichTextBoxDataObjectFormat = Empty
+            Case Else
+                Err.Raise 380
+        End Select
     End If
 End If
 End Sub
@@ -3126,6 +3253,10 @@ Select Case wMsg
         Else
             wParam = CIntToUInt(KeyChar)
         End If
+    Case WM_INPUTLANGCHANGE
+        Call ComCtlsSetIMEMode(hWnd, RichTextBoxIMCHandle, PropIMEMode)
+    Case WM_IME_SETCONTEXT
+        If wParam <> 0 Then Call ComCtlsSetIMEMode(hWnd, RichTextBoxIMCHandle, PropIMEMode)
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function

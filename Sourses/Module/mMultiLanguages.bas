@@ -32,7 +32,7 @@ Public mbAutoLanguage                 As Boolean
 Public strStartLanguageID             As String
 
 ' Массив служебных сообщений
-Public strMessages(156)               As String
+Public strMessages(158)               As String
 
 ' Api - переменные для работы с языками
 Public Const LOCALE_ILANGUAGE         As Long = &H1     'language id

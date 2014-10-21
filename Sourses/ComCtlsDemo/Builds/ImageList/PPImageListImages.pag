@@ -97,6 +97,7 @@ Begin VB.PropertyPage PPImageListImages
          Left            =   720
          Locked          =   -1  'True
          TabIndex        =   2
+         Text            =   "0 of 0"
          Top             =   240
          Width           =   1230
       End
@@ -398,7 +399,7 @@ If ImageListHandle <> 0 Then
 End If
 FreezeChanged = True
 If Count = 0 Then
-    TextIndex.Text = vbNullString
+    TextIndex.Text = "0 of 0"
     TextIndex.Enabled = False
     TextKey.Text = vbNullString
     TextKey.Enabled = False
@@ -412,6 +413,7 @@ Else
     TextTag.Text = PropShadowListImages(CurrIndex).Tag
     TextTag.Enabled = True
 End If
+PropertyPage.Refresh
 FreezeChanged = False
 End With
 End Sub
@@ -443,26 +445,31 @@ If OpenFileDialog.ShowOpen = True Then
         Dim i As Long, Picture As IPictureDisp
         For i = LBound(FileNames()) To UBound(FileNames())
             Set Picture = PictureFromPath(Path & FileNames(i))
-            With PropertyPage.SelectedControls(0)
-            Dim PictureWidth As Long, PictureHeight As Long
-            PictureWidth = PropertyPage.ScaleX(Picture.Width, vbHimetric, vbPixels)
-            PictureHeight = PropertyPage.ScaleY(Picture.Height, vbHimetric, vbPixels)
-            If PictureWidth = .ImageWidth And PictureHeight = .ImageHeight Then
-                CurrIndex = CurrIndex + 1
-                .ListImages.Add CurrIndex, , Picture
-                Call ApplyControlStates
-                Call FillShadowListImages
-                Call DrawImages
-                PropertyPage.Changed = True
+            If Not Picture Is Nothing Then
+                With PropertyPage.SelectedControls(0)
+                Dim PictureWidth As Long, PictureHeight As Long
+                PictureWidth = PropertyPage.ScaleX(Picture.Width, vbHimetric, vbPixels)
+                PictureHeight = PropertyPage.ScaleY(Picture.Height, vbHimetric, vbPixels)
+                If PictureWidth = .ImageWidth And PictureHeight = .ImageHeight Then
+                    CurrIndex = CurrIndex + 1
+                    .ListImages.Add CurrIndex, , Picture
+                    Call ApplyControlStates
+                    Call FillShadowListImages
+                    Call DrawImages
+                    PropertyPage.Changed = True
+                Else
+                    Dim Text As String
+                    Text = "The size of the selected picture '" & FileNames(i) & "' is not compatible"
+                    If PictureHeight <> .ImageHeight Then Text = Text & vbNewLine & "- Height is not " & .ImageHeight & " pixels"
+                    If PictureWidth <> .ImageWidth Then Text = Text & vbNewLine & "- Width is not " & .ImageWidth & " pixels"
+                    MsgBox Text, vbExclamation + vbOKOnly
+                    Exit For
+                End If
+                End With
             Else
-                Dim Text As String
-                Text = "The size of the selected picture '" & FileNames(i) & "' is not compatible"
-                If PictureHeight <> .ImageHeight Then Text = Text & vbNewLine & "- Height is not " & .ImageHeight & " pixels"
-                If PictureWidth <> .ImageWidth Then Text = Text & vbNewLine & "- Width is not " & .ImageWidth & " pixels"
-                MsgBox Text, vbExclamation + vbOKOnly
+                MsgBox "Invalid picture", vbExclamation + vbOKOnly
                 Exit For
             End If
-            End With
         Next i
     End If
 End If

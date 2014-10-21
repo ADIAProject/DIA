@@ -258,7 +258,7 @@ PROC_EXIT:
 PROC_ERR:
 
     If Not mbSilentRun Then
-        MsgBox "Error:  Err.Number: " & Err.Number & " Err.Description: " & Err.Description, vbExclamation + vbOKOnly, "GetValueString"
+        MsgBox "Error:  Err.Number: " & err.Number & " Err.Description: " & err.Description, vbExclamation + vbOKOnly, "GetValueString"
     End If
 
     Resume PROC_EXIT

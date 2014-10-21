@@ -37,9 +37,6 @@ Begin VB.Form frmListHwid
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
-      Icons           =   "frmListHwid.frx":000C
-      SmallIcons      =   "frmListHwid.frx":0038
-      ColumnHeaderIcons=   "frmListHwid.frx":0064
       View            =   3
       Arrange         =   1
       AllowColumnReorder=   -1  'True
@@ -93,7 +90,7 @@ Begin VB.Form frmListHwid
          EndProperty
          BackColor       =   15783104
          Value           =   1
-         Caption         =   "frmListHwid.frx":0090
+         Caption         =   "frmListHwid.frx":000C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkGrp4 
@@ -115,7 +112,7 @@ Begin VB.Form frmListHwid
          EndProperty
          BackColor       =   15783104
          Value           =   1
-         Caption         =   "frmListHwid.frx":00EE
+         Caption         =   "frmListHwid.frx":006A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkGrp3 
@@ -136,7 +133,7 @@ Begin VB.Form frmListHwid
             Strikethrough   =   0   'False
          EndProperty
          BackColor       =   15783104
-         Caption         =   "frmListHwid.frx":0140
+         Caption         =   "frmListHwid.frx":00BC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkGrp2 
@@ -158,7 +155,7 @@ Begin VB.Form frmListHwid
          EndProperty
          BackColor       =   15783104
          Value           =   1
-         Caption         =   "frmListHwid.frx":017A
+         Caption         =   "frmListHwid.frx":00F6
          Transparent     =   -1  'True
       End
    End
@@ -288,7 +285,7 @@ Begin VB.Form frmListHwid
          Strikethrough   =   0   'False
       EndProperty
       BackStyle       =   0
-      Caption         =   $"frmListHwid.frx":01C0
+      Caption         =   $"frmListHwid.frx":013C
    End
 End
 Attribute VB_Name = "frmListHwid"

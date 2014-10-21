@@ -37,8 +37,8 @@ ExitFromSub:
 
 HandErr:
 
-    If Err.Number = 326 Then
-        If MsgBox("Error ¹: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'GetBinaryFileFromResource'." & vbNewLine & _
+    If err.Number = 326 Then
+        If MsgBox("Error ¹: " & err.Number & vbNewLine & "Description: " & err.Description & str2vbNewLine & "This Error in Function 'GetBinaryFileFromResource'." & vbNewLine & _
                                     "Executable file is corrupted, or required library removed from the resources of program." & str2vbNewLine & "Download the latest re-distribution program!!!" & vbNewLine & _
                                     "If the error persists, please report it to the developer." & str2vbNewLine & "Normal work of program is not guaranteed, you want to continue?", vbCritical + vbYesNo, strProductName) = vbNo Then
 
@@ -46,7 +46,7 @@ HandErr:
 
         End If
 
-    ElseIf Err.Number <> 0 Then
+    ElseIf err.Number <> 0 Then
         GoTo ExitFromSub
     End If
 

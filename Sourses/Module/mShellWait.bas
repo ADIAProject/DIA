@@ -311,7 +311,7 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
     Dim TimedOut As Boolean, Tmr1 As Long, Tmr2 As Long, M As Msg, SEI As SHELLEXECUTEINFO
     
     'Reset Err object everytime this function is called
-    Err.Clear
+    err.Clear
 
     'This function shouldn't be called
     If Not Busy Then
@@ -388,7 +388,7 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
 
                                 'Check the message queue for WM_TIMER messages only
                                 If PeekMessageW(M, -l, WM_TIMER, WM_TIMER, PM_QS_POSTMESSAGE) Then
-                                    If M.wParam = Tmr1 Then Err.Clear
+                                    If M.wParam = Tmr1 Then err.Clear
 
                                     Exit Do
                                 
@@ -414,10 +414,10 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                             Tmr1 = GetExitCodeProcess(.hProcess, ShellW)
                             Debug.Assert Tmr1
                             'Return the terminated
-                            Err = vbObjectError
+                            err = vbObjectError
                             'Set the Err object's properties instead of raising an error;
                             'this is similar to the API's use of Get/SetLastError
-                            Err.Description = "Exit Code"
+                            err.Description = "Exit Code"
                         End If
                         
                     End If
