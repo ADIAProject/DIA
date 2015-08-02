@@ -354,7 +354,7 @@ Public Event ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Boolean)
 Attribute ItemCheck.VB_Description = "Occurs when a list item is checked."
 Public Event ItemDrag(ByVal Item As LvwListItem, ByVal Button As Integer)
 Attribute ItemDrag.VB_Description = "Occurs when a list item initiate a drag-and-drop operation."
-Public Event ItemBkColor(ByVal Item As LvwListItem, ByRef ColorRef As Long)
+Public Event ItemBkColor(ByVal Item As LvwListItem, ByRef RGBColor As Long)
 Attribute ItemBkColor.VB_Description = "Occurs when a list item is about to draw the background in 'report' view. This is a request to provide an alternative back color. The back color is passed in an RGB format."
 Public Event BeforeLabelEdit(ByRef Cancel As Boolean)
 Attribute BeforeLabelEdit.VB_Description = "Occurs when a user attempts to edit the label of the currently selected list item."
@@ -432,7 +432,6 @@ Private Declare Function HeapFree Lib "kernel32" (ByVal hHeap As Long, ByVal dwF
 Private Declare Function SysAllocString Lib "oleaut32" (ByVal lpString As Long) As Long
 Private Declare Function SysFreeString Lib "oleaut32" (ByVal lpString As Long) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
-Private Declare Function SendMessageSort Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As ISubclass, ByRef lParam As Any) As Long
 Private Declare Function ImageList_GetIconSize Lib "comctl32" (ByVal hImageList As Long, ByRef CX As Long, ByRef CY As Long) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
@@ -445,8 +444,10 @@ Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
+Private Declare Function InvalidateRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As Any, ByVal bErase As Long) As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
+Private Declare Function SetTextColor Lib "gdi32" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function WindowFromPoint Lib "user32" (ByVal X As Long, ByVal Y As Long) As Long
@@ -485,6 +486,7 @@ Private Const WM_KILLFOCUS As Long = &H8
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_UNICHAR As Long = &H109, UNICODE_NOCHAR As Long = &HFFFF&
 Private Const WM_IME_CHAR As Long = &H286
 Private Const WM_LBUTTONDOWN As Long = &H201
 Private Const WM_LBUTTONUP As Long = &H202
@@ -880,6 +882,7 @@ Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IPerPropertyBrowsingVB
 Private ListViewHandle As Long, ListViewHeaderHandle As Long
 Private ListViewFontHandle As Long, ListViewBoldFontHandle As Long, ListViewUnderlineFontHandle As Long, ListViewBoldUnderlineFontHandle As Long
+Private ListViewCharCodeCache As Long
 Private ListViewFocusIndex As Long
 Private ListViewLabelInEdit As Boolean
 Private ListViewStartLabelEdit As Boolean
@@ -890,6 +893,7 @@ Private ListViewDragOffsetX As Long, ListViewDragOffsetY As Long
 Private ListViewMemoryColumnWidth As Long
 Private ListViewIsClick As Boolean
 Private DispIDMousePointer As Long
+Private DispIDHotMousePointer As Long
 Private DispIDIcons As Long, IconsArray() As String
 Private DispIDSmallIcons As Long, SmallIconsArray() As String
 Private DispIDColumnHeaderIcons As Long, ColumnHeaderIconsArray() As String
@@ -903,6 +907,7 @@ Private PropVisualStyles As Boolean
 Private PropOLEDragMode As VBRUN.OLEDragConstants
 Private PropOLEDragDropScroll As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropHotMousePointer As Integer, PropHotMouseIcon As IPictureDisp
 Private PropIconsName As String, PropIconsControl As Object, PropIconsInit As Boolean
 Private PropSmallIconsName As String, PropSmallIconsControl As Object, PropSmallIconsInit As Boolean
 Private PropColumnHeaderIconsName As String, PropColumnHeaderIconsControl As Object, PropColumnHeaderIconsInit As Boolean
@@ -982,7 +987,10 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
+    Handled = True
+ElseIf DispID = DispIDHotMousePointer Then
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropHotMousePointer, DisplayName)
     Handled = True
 ElseIf DispID = DispIDIcons Then
     DisplayName = PropIconsName
@@ -1000,8 +1008,8 @@ End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
-If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+If DispID = DispIDMousePointer Or DispID = DispIDHotMousePointer Then
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 ElseIf DispID = DispIDIcons Or DispID = DispIDSmallIcons Or DispID = DispIDColumnHeaderIcons Or DispID = DispIDGroupIcons Then
     Dim ControlEnum As Object
@@ -1041,7 +1049,7 @@ Handled = False
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedValue(ByRef Handled As Boolean, ByVal DispID As Long, ByVal Cookie As Long, ByRef Value As Variant)
-If DispID = DispIDMousePointer Then
+If DispID = DispIDMousePointer Or DispID = DispIDHotMousePointer Then
     Value = Cookie
     Handled = True
 ElseIf DispID = DispIDIcons Then
@@ -1065,6 +1073,7 @@ Call ComCtlsInitCC(ICC_LISTVIEW_CLASSES)
 Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
 DispIDMousePointer = GetDispID(Me, "MousePointer")
+DispIDHotMousePointer = GetDispID(Me, "HotMousePointer")
 DispIDIcons = GetDispID(Me, "Icons")
 DispIDSmallIcons = GetDispID(Me, "SmallIcons")
 DispIDColumnHeaderIcons = GetDispID(Me, "ColumnHeaderIcons")
@@ -1082,6 +1091,7 @@ PropOLEDragMode = vbOLEDragManual
 PropOLEDragDropScroll = True
 Me.OLEDropMode = vbOLEDropNone
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropHotMousePointer = 0: Set PropHotMouseIcon = Nothing
 PropIconsName = "(None)": Set PropIconsControl = Nothing
 PropSmallIconsName = "(None)": Set PropSmallIconsControl = Nothing
 PropColumnHeaderIconsName = "(None)": Set PropColumnHeaderIconsControl = Nothing
@@ -1141,6 +1151,8 @@ PropOLEDragDropScroll = .ReadProperty("OLEDragDropScroll", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropHotMousePointer = .ReadProperty("HotMousePointer", 0)
+Set PropHotMouseIcon = .ReadProperty("HotMouseIcon", Nothing)
 PropIconsName = .ReadProperty("Icons", "(None)")
 PropSmallIconsName = .ReadProperty("SmallIcons", "(None)")
 PropColumnHeaderIconsName = .ReadProperty("ColumnHeaderIcons", "(None)")
@@ -1206,6 +1218,8 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "HotMousePointer", PropHotMousePointer, 0
+.WriteProperty "HotMouseIcon", PropHotMouseIcon, Nothing
 .WriteProperty "Icons", PropIconsName, "(None)"
 .WriteProperty "SmallIcons", PropSmallIconsName, "(None)"
 .WriteProperty "ColumnHeaderIcons", PropColumnHeaderIconsName, "(None)"
@@ -1686,6 +1700,66 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get HotMousePointer() As Integer
+Attribute HotMousePointer.VB_Description = "Returns/sets the type of mouse pointer displayed when over an item while hot tracking is enabled."
+HotMousePointer = PropHotMousePointer
+End Property
+
+Public Property Let HotMousePointer(ByVal Value As Integer)
+Select Case Value
+    Case 0 To 16, 99
+        PropHotMousePointer = Value
+        If ListViewHandle <> 0 Then
+            If MousePointerID(PropHotMousePointer) <> 0 Then
+                SendMessage ListViewHandle, LVM_SETHOTCURSOR, 0, ByVal LoadCursor(0, MousePointerID(PropHotMousePointer))
+            ElseIf PropHotMousePointer = 99 And Not PropHotMouseIcon Is Nothing Then
+                SendMessage ListViewHandle, LVM_SETHOTCURSOR, 0, ByVal PropHotMouseIcon.Handle
+            Else
+                SendMessage ListViewHandle, LVM_SETHOTCURSOR, 0, ByVal 0&
+            End If
+        End If
+    Case Else
+        Err.Raise 380
+End Select
+UserControl.PropertyChanged "HotMousePointer"
+End Property
+
+Public Property Get HotMouseIcon() As IPictureDisp
+Attribute HotMouseIcon.VB_Description = "Returns/sets a custom hot mouse icon."
+Set HotMouseIcon = PropHotMouseIcon
+End Property
+
+Public Property Let HotMouseIcon(ByVal Value As IPictureDisp)
+Set Me.HotMouseIcon = Value
+End Property
+
+Public Property Set HotMouseIcon(ByVal Value As IPictureDisp)
+If Value Is Nothing Then
+    Set PropHotMouseIcon = Nothing
+Else
+    If Value.Type = vbPicTypeIcon Or Value.Handle = 0 Then
+        Set PropHotMouseIcon = Value
+    Else
+        If Ambient.UserMode = False Then
+            MsgBox "Invalid property value", vbCritical + vbOKOnly
+            Exit Property
+        Else
+            Err.Raise 380
+        End If
+    End If
+End If
+If ListViewHandle <> 0 Then
+    If MousePointerID(PropHotMousePointer) <> 0 Then
+        SendMessage ListViewHandle, LVM_SETHOTCURSOR, 0, ByVal LoadCursor(0, MousePointerID(PropHotMousePointer))
+    ElseIf PropHotMousePointer = 99 And Not PropHotMouseIcon Is Nothing Then
+        SendMessage ListViewHandle, LVM_SETHOTCURSOR, 0, ByVal PropHotMouseIcon.Handle
+    Else
+        SendMessage ListViewHandle, LVM_SETHOTCURSOR, 0, ByVal 0&
+    End If
+End If
+UserControl.PropertyChanged "HotMouseIcon"
+End Property
+
 Public Property Get Icons() As Variant
 Attribute Icons.VB_Description = "Returns/sets the image list control to be used for the icons."
 If Ambient.UserMode = True Then
@@ -2023,13 +2097,11 @@ BackColor = PropBackColor
 End Property
 
 Public Property Let BackColor(ByVal Value As OLE_COLOR)
+If Value = CLR_NONE Then Err.Raise 380
 PropBackColor = Value
 If ListViewHandle <> 0 Then
-    If Value <> CLR_NONE Then
-        SendMessage ListViewHandle, LVM_SETBKCOLOR, 0, ByVal WinColor(PropBackColor)
-    Else
-        Err.Raise 380
-    End If
+    SendMessage ListViewHandle, LVM_SETBKCOLOR, 0, ByVal WinColor(PropBackColor)
+    If PropTextBackground = CCBackStyleOpaque Then SendMessage ListViewHandle, LVM_SETTEXTBKCOLOR, 0, ByVal WinColor(PropBackColor)
     Me.Refresh
     If Not PropPicture Is Nothing Then
         If PropPicture.Type = vbPicTypeIcon Then Set Me.Picture = PropPicture
@@ -2757,9 +2829,8 @@ Else
                         Set Me.SelectedColumn = Nothing
                         .ulFlags = .ulFlags Or LVBKIF_STYLE_TILE
                         If ComCtlsSupportLevel() >= 2 And PropView = LvwViewReport Then
-                            Dim HeaderHandle As Long
-                            If HeaderHandle = 0 Then HeaderHandle = Me.hWndHeader
-                            If HeaderHandle <> 0 Then
+                            If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
+                            If ListViewHeaderHandle <> 0 Then
                                 .ulFlags = .ulFlags Or LVBKIF_FLAG_TILEOFFSET
                                 Dim RC As RECT
                                 GetWindowRect ListViewHeaderHandle, RC
@@ -3509,6 +3580,16 @@ Friend Sub FColumnHeadersClear()
 If ListViewHandle <> 0 Then Do While SendMessage(ListViewHandle, LVM_DELETECOLUMN, 0, ByVal 0&) = 1: Loop
 End Sub
 
+Friend Sub FColumnHeadersRedraw()
+If ListViewHandle <> 0 Then
+    If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
+    If ListViewHeaderHandle <> 0 Then
+        InvalidateRect ListViewHeaderHandle, ByVal 0&, 1
+        UpdateWindow ListViewHeaderHandle
+    End If
+End If
+End Sub
+
 Friend Property Get FColumnHeaderText(ByVal Index As Long) As String
 If ListViewHandle <> 0 Then
     Dim LVC As LVCOLUMN
@@ -3933,7 +4014,7 @@ If ListViewHandle <> 0 Then
         With LVIGS
         LSet .LVG = LVG
         Set .pvData = This
-        .pfnGroupCompare = ProcPtr(AddressOf LvwSortingFunctionGroups)
+        .pfnGroupCompare = ProcPtr(AddressOf ComCtlsLvwSortingFunctionGroups)
         End With
         SendMessage ListViewHandle, LVM_INSERTGROUPSORTED, VarPtr(LVIGS), ByVal 0&
     End If
@@ -3954,7 +4035,7 @@ End If
 End Sub
 
 Friend Sub FGroupsSort(ByVal This As ISubclass)
-If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then SendMessage ListViewHandle, LVM_SORTGROUPS, ProcPtr(AddressOf LvwSortingFunctionGroups), ByVal ObjPtr(This)
+If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then SendMessage ListViewHandle, LVM_SORTGROUPS, ProcPtr(AddressOf ComCtlsLvwSortingFunctionGroups), ByVal ObjPtr(This)
 End Sub
 
 Friend Property Get FGroupHeader(ByVal ID As Long) As String
@@ -4468,6 +4549,7 @@ If ListViewHandle <> 0 Then If Ambient.UserMode = True And PropView = LvwViewTil
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = UserControl.Enabled
+Me.HotMousePointer = PropHotMousePointer
 Me.BackColor = PropBackColor
 Me.ForeColor = PropForeColor
 If PropRedraw = False Then Me.Redraw = False
@@ -5147,6 +5229,64 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
 End If
 End Property
 
+Public Property Get ColumnOrder() As Variant
+Attribute ColumnOrder.VB_Description = "Returns/sets the column order of the list view. All the position indexes are zero-based."
+Attribute ColumnOrder.VB_MemberFlags = "400"
+If ListViewHandle <> 0 Then
+    Dim Count As Long
+    Count = Me.ColumnHeaders.Count
+    If Count > 0 Then
+        Dim ArgList() As Long
+        ReDim ArgList(0 To (Count - 1)) As Long
+        SendMessage ListViewHandle, LVM_GETCOLUMNORDERARRAY, Count, ByVal VarPtr(ArgList(0))
+        ColumnOrder = ArgList()
+    Else
+        ColumnOrder = Empty
+    End If
+End If
+End Property
+
+Public Property Let ColumnOrder(ByVal ArgList As Variant)
+If ListViewHandle <> 0 Then
+    If IsArray(ArgList) Then
+        Dim Ptr As Long
+        CopyMemory Ptr, ByVal UnsignedAdd(VarPtr(ArgList), 8), 4
+        If Ptr <> 0 Then
+            Dim RetVal As Long
+            CopyMemory ByVal VarPtr(RetVal), Ptr, 4
+            If RetVal <> 0 Then
+                Dim DimensionCount As Integer
+                CopyMemory DimensionCount, ByVal Ptr, 2
+                If DimensionCount = 1 Then
+                    Dim Arr() As Long, Count As Long, i As Long
+                    For i = LBound(ArgList) To UBound(ArgList)
+                        Select Case VarType(ArgList(i))
+                            Case vbLong, vbInteger, vbByte
+                                If ArgList(i) >= 0 Then
+                                    ReDim Preserve Arr(0 To Count) As Long
+                                    Arr(Count) = ArgList(i)
+                                    Count = Count + 1
+                                End If
+                        End Select
+                    Next i
+                    If Count > 0 Then
+                        If SendMessage(ListViewHandle, LVM_SETCOLUMNORDERARRAY, Count, ByVal VarPtr(Arr(0))) = 0 Then Err.Raise 5
+                    End If
+                Else
+                    Err.Raise Number:=5, Description:="Array must be single dimensioned"
+                End If
+            Else
+                Err.Raise Number:=91, Description:="Array is not allocated"
+            End If
+        Else
+            Err.Raise 5
+        End If
+    Else
+        If Not IsEmpty(ArgList) Then Err.Raise 380
+    End If
+End If
+End Property
+
 Private Sub SetVisualStylesHeader()
 If ListViewHandle <> 0 Then
     If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
@@ -5235,17 +5375,21 @@ If ListViewHandle <> 0 Then
         Dim Address As Long
         Select Case PropSortType
             Case LvwSortTypeBinary
-                Address = ProcPtr(AddressOf LvwSortingFunctionBinary)
+                Address = ProcPtr(AddressOf ComCtlsLvwSortingFunctionBinary)
             Case LvwSortTypeText
-                Address = ProcPtr(AddressOf LvwSortingFunctionText)
+                Address = ProcPtr(AddressOf ComCtlsLvwSortingFunctionText)
             Case LvwSortTypeNumeric
-                Address = ProcPtr(AddressOf LvwSortingFunctionNumeric)
+                Address = ProcPtr(AddressOf ComCtlsLvwSortingFunctionNumeric)
             Case LvwSortTypeCurrency
-                Address = ProcPtr(AddressOf LvwSortingFunctionCurrency)
+                Address = ProcPtr(AddressOf ComCtlsLvwSortingFunctionCurrency)
             Case LvwSortTypeDate
-                Address = ProcPtr(AddressOf LvwSortingFunctionDate)
+                Address = ProcPtr(AddressOf ComCtlsLvwSortingFunctionDate)
         End Select
-        If Address <> 0 Then SendMessageSort ListViewHandle, LVM_SORTITEMSEX, Me, ByVal Address
+        If Address <> 0 Then
+            Dim This As ISubclass
+            Set This = Me
+            SendMessage ListViewHandle, LVM_SORTITEMSEX, ObjPtr(This), ByVal Address
+        End If
     End If
 End If
 End Sub
@@ -5496,15 +5640,24 @@ Select Case wMsg
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
             RaiseEvent KeyDown(KeyCode, GetShiftState())
+            ListViewCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
             RaiseEvent KeyUp(KeyCode, GetShiftState())
         End If
         wParam = KeyCode
     Case WM_CHAR
         Dim KeyChar As Integer
-        KeyChar = CUIntToInt(wParam And &HFFFF&)
+        If ListViewCharCodeCache <> 0 Then
+            KeyChar = CUIntToInt(ListViewCharCodeCache And &HFFFF&)
+            ListViewCharCodeCache = 0
+        Else
+            KeyChar = CUIntToInt(wParam And &HFFFF&)
+        End If
         RaiseEvent KeyPress(KeyChar)
         wParam = CIntToUInt(KeyChar)
+    Case WM_UNICHAR
+        If wParam = UNICODE_NOCHAR Then WindowProcControl = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function
@@ -5589,6 +5742,26 @@ Select Case wMsg
                         RaiseEvent ColumnCheck(Me.ColumnHeaders(NMHDR.iItem + 1))
                         Exit Function
                     End If
+                Case NM_CUSTOMDRAW
+                    Dim FontHandle As Long
+                    Dim NMCD As NMCUSTOMDRAW
+                    CopyMemory NMCD, ByVal lParam, LenB(NMCD)
+                    Select Case NMCD.dwDrawStage
+                        Case CDDS_PREPAINT
+                            WindowProcControl = CDRF_NOTIFYITEMDRAW
+                            Exit Function
+                        Case CDDS_ITEMPREPAINT
+                            FontHandle = ListViewFontHandle
+                            If NMCD.dwItemSpec > -1 Then
+                                With Me.ColumnHeaders(NMCD.dwItemSpec + 1)
+                                SetTextColor NMCD.hDC, WinColor(.ForeColor)
+                                If .Bold = True Then FontHandle = ListViewBoldFontHandle
+                                End With
+                            End If
+                            SelectObject NMCD.hDC, FontHandle
+                            WindowProcControl = CDRF_NEWFONT
+                            Exit Function
+                    End Select
             End Select
         End If
 End Select
@@ -5596,7 +5769,21 @@ WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
 Private Function WindowProcLabelEdit(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-If wMsg = WM_IME_CHAR Then SendMessage hWnd, WM_CHAR, wParam, ByVal lParam: Exit Function
+Select Case wMsg
+    Case WM_KEYDOWN
+        ListViewCharCodeCache = ComCtlsPeekCharCode(hWnd)
+    Case WM_CHAR
+        If ListViewCharCodeCache <> 0 Then
+            wParam = ListViewCharCodeCache
+            ListViewCharCodeCache = 0
+        End If
+    Case WM_UNICHAR
+        If wParam = UNICODE_NOCHAR Then WindowProcLabelEdit = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
+    Case WM_IME_CHAR
+        SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
+End Select
 WindowProcLabelEdit = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 

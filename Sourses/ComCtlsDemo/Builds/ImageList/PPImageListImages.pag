@@ -195,6 +195,7 @@ Private PropShadowListImages() As ShadowListImageStruct
 Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
+Call ComCtlsShowAllUIStates(PropertyPage.hWnd)
 CurrIndex = 0
 ImageFrameWidth = 42
 ImageFrameHeight = 42

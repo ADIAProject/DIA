@@ -1,5 +1,106 @@
 List of revisions:
 
+01-Jun-2015
+- Fixed a bug in the handling of the DisabledPicture property in the CommandButtonW control and VisualStyles.bas.
+
+31-May-2015
+- Included the ForeColor/Style/DownPicture/DisabledPicture/UseMaskColor/MaskColor/DrawMode property and OwnerDraw event in the CommandButtonW control.
+- Some other minor improvements.
+
+25-May-2015
+- Included the ForeColor and Bold property of a column header in the ListView control.
+- Included the ContextMenu event in the MonthView control.
+
+20-May-2015
+- Included the CharacterCasing property in the ComboBoxW control.
+
+07-May-2015
+- In the printer dialogs the resulting printer name is not truncated anymore to 30 characters in the CommonDialog class.
+
+30-Apr-2015
+- Fixed a bug that it was not possible to use the default file name in the show open dialog in the CommonDialog class.
+
+11-Feb-2015
+- Fixed a bug in the auto sizing in the LabelW control.
+- Included the ContextMenu event in the Slider control.
+- Removed the ToolTip control.
+
+19-Jan-2015
+- Some enhancements and modifications are done in the CommonDialog class:
+  - Removed the function 'ShowOpenWith' as it does not fit into the concept.
+    Because the open with dialog works as a execution and not like the others as a user input.
+  - Renamed the function 'ShowFolder' to 'ShowFolderBrowser'.
+  - Included the constants CdlCFApply, CdlBIFValidate and CdlBIFStatusText.
+  - Included the events InitDialog, FileValidate, ColorValidate, FontApply and FolderBrowserValidateFailed.
+  - Included the property 'HookEvents'. (indicates if the dialog box can raise events that requires a hook callback)
+  - The folder browser dialog (if CdlBIFBrowseIncludeFiles flag is set) will now also set the FileOffset property, if necessary.
+    The RootFolder is now a property and not a optional argument of the folder browser dialog function anymore.
+    The OK button is now disabled (CdlBIFReturnOnlyFSDirs flag must be set) if the user selects a "\\ServerName" item. (SHGetPathFromIDList API fails)
+  - The page min margins are now as properties and not as optional arguments of the page setup dialog function anymore.
+  - The Font object property is removed and replaced with the underlying properties.
+    The FontName property is for example now by default empty, as it is not dependent on a object anymore.
+    This enables a more appropriate use of the font dialog. This way is the same as in the original CommonDialog control from MS.
+  - The find and replace dialog uses now a WH_GETMESSAGE hook instead of a WH_KEYBOARD hook. (more reliable/compact; PostMessage API can now be used)
+- Some other minor improvements.
+
+29-Dec-2014
+- The behavior of the Text property in the ListBoxW and ComboBoxW control is now equal to the original controls from MS.
+- The embedded tool tips (in TabStrip, ToolBar etc.) supports now multiline also for comctl32.dll version 5.8x.
+
+27-Dec-2014
+- Included the HotMousePointer/HotMouseIcon property in the ListView control.
+- Included the IMEMode property in the ComboBoxW and ImageCombo control.
+- The SaveToolBar/RestoreToolBar methods are now unicode aware in the ToolBar control.
+- Fixed a bug in the Locked property in the ComboBoxW control.
+- Included the ColumnOrder run time property in the ListView control.
+
+20-Dec-2014
+- Fixed a bug that the tool tips did not display correctly when using comctl32.dll version 5.8x.
+  Reason is that multiline tool tips (TTM_SETMAXTIPWIDTH with value 0) are only supported in comctl32.dll version 6.0 or higher.
+- Certain property bags will not crash anymore when migrating from the MS controls.
+- Included the DTFormat property of a panel in the StatusBar control.
+- Enhanced the Style property (enum values) of a panel in the StatusBar control.
+- Included the OLEObjectsAddFromFile method in the RichTextBox control.
+
+22-Nov-2014
+- Included the GetTickPosition function and HideThumb property in the Slider control.
+- The ImageList control increments/decrements now the shell mod count.
+  This missing element could cause an application not to start, especially on Windows XP.
+- Some bugfixes and improvements.
+
+15-Nov-2014
+- Included the ThumbLeft/-Top/-Width/-Height and ChannelLeft/-Top/-Width/-Height property in the Slider control.
+
+14-Nov-2014
+- Fixed a bug in the UserControl_Resize handler and GetIdealSize method in the ToolBar control.
+
+12-Nov-2014
+- Included a WM_UNICHAR handler on all controls that process the WM_CHAR message.
+
+10-Nov-2014
+- Fix in the KeyChar param in the KeyPress events. The param is now a correct translated unicode character.
+  This fix was necessary as the internal VB's TranslateMessage is not 'full' unicode aware.
+
+02-Nov-2014
+- On WinXP (but only when IDE uses comctl32.dll version 6.0) there were on some property pages
+  black backgrounds on those CommandButton controls that were placed on a Frame control. (Known WinXP bug)
+  This issue is now solved by the trick to put a PictureBox between the Frame and CommandButton.
+
+31-Oct-2014
+- Fixed a bug in the CustomFormat property in the DTPicker control.
+  The CustomFormat takes now only in visible effect when the Format property is set to 'Custom'.
+
+26-Oct-2014
+- Fixed the issue that the property pages did not show the focus rectangles and accelerator keys.
+  Though this was only the case when the VB6 IDE uses comctl32.dll version 6.0 or higher.
+
+25-Oct-2014
+- Fixed a bug in the 'ActualWidth' of a panel in the StatusBar control. (effects WinXP only)
+- Renamed the BarColor property to 'ForeColor' in the ProgressBar control.
+- Discarded the UseBackColor property in the StatusBar control.
+- Included the ForeColor and Bold property of a panel in the StatusBar control.
+- Included the 'SbrPanelProperties' class in the StatusBar control. (for the ForeColor property)
+
 19-Oct-2014
 - Replaced the 'SpbAlignmentConstants' to 'CCLeftRightAlignmentConstants' in the SpinBox control.
 - Included the BackColor property in the MCIWnd control.

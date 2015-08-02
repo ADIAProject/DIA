@@ -15,6 +15,12 @@ Option Explicit
 Private ShadowListView As ListView
 Private PropIndex As Long, PropKey As String
 Private PropTag As String
+Private PropBold As Boolean
+Private PropForeColor As OLE_COLOR
+
+Private Sub Class_Initialize()
+PropForeColor = vbButtonText
+End Sub
 
 Friend Sub FInit(ByVal Object As ListView, ByVal Key As String)
 Set ShadowListView = Object
@@ -143,6 +149,26 @@ End Property
 
 Public Property Let Checked(ByVal Value As Boolean)
 ShadowListView.FColumnHeaderChecked(PropIndex) = Value
+End Property
+
+Public Property Get Bold() As Boolean
+Attribute Bold.VB_Description = "Returns/sets a value that determines whether the text is displayed with a bold font or not."
+Bold = PropBold
+End Property
+
+Public Property Let Bold(ByVal Value As Boolean)
+PropBold = Value
+ShadowListView.FColumnHeadersRedraw
+End Property
+
+Public Property Get ForeColor() As OLE_COLOR
+Attribute ForeColor.VB_Description = "Returns/sets the foreground color used to display text and graphics in an object."
+ForeColor = PropForeColor
+End Property
+
+Public Property Let ForeColor(ByVal Value As OLE_COLOR)
+PropForeColor = Value
+ShadowListView.FColumnHeadersRedraw
 End Property
 
 Public Property Get Left() As Single

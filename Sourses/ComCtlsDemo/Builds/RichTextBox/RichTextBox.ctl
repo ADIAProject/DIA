@@ -308,6 +308,8 @@ Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC A
 Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpszProgID As Long, ByRef pCLSID As Any) As Long
 Private Declare Function StgCreateDocFile Lib "ole32" Alias "StgCreateDocfile" (ByVal pwcsName As Long, ByVal grfMode As Long, ByVal Reserved As Long, ByRef ppStgOpen As OLEGuids.IStorage) As Long
 Private Declare Function OleSetContainedObject Lib "ole32" (ByVal pUnknown As IUnknown, ByVal fContained As Long) As Long
+Private Declare Function OleCreateFromFile Lib "ole32" (ByRef pCLSID As Any, ByVal lpszFileName As Long, ByRef riid As Any, ByVal RenderOpt As Long, ByVal lpFormatEtc As Long, ByVal pClientSite As OLEGuids.IOleClientSite, ByVal pStg As OLEGuids.IStorage, ByRef ppvObj As OLEGuids.IOleObject) As Long
+Private Declare Function OleCreateLinkToFile Lib "ole32" (ByVal lpszFileName As Long, ByRef riid As Any, ByVal RenderOpt As Long, ByVal lpFormatEtc As Long, ByVal pClientSite As OLEGuids.IOleClientSite, ByVal pStg As OLEGuids.IStorage, ByRef ppvObj As OLEGuids.IOleObject) As Long
 Private Declare Function OleQueryCreateFromData Lib "ole32" (ByVal pSrcDataObject As OLEGuids.IDataObject) As Long
 Private Declare Function OleCreateStaticFromData Lib "ole32" (ByVal pSrcDataObject As OLEGuids.IDataObject, ByRef riid As Any, ByVal RenderOpt As Long, ByVal lpFormatEtc As Long, ByVal pClientSite As OLEGuids.IOleClientSite, ByVal pStg As OLEGuids.IStorage, ByRef ppvObj As OLEGuids.IOleObject) As Long
 Private Declare Function OleCreateFromData Lib "ole32" (ByVal pSrcDataObject As OLEGuids.IDataObject, ByRef riid As Any, ByVal RenderOpt As Long, ByVal lpFormatEtc As Long, ByVal pClientSite As OLEGuids.IOleClientSite, ByVal pStg As OLEGuids.IStorage, ByRef ppvObj As OLEGuids.IOleObject) As Long
@@ -388,6 +390,7 @@ Private Const WM_COMMAND As Long = &H111
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_UNICHAR As Long = &H109, UNICODE_NOCHAR As Long = &HFFFF&
 Private Const WM_INPUTLANGCHANGE As Long = &H51
 Private Const WM_IME_SETCONTEXT As Long = &H281
 Private Const WM_IME_CHAR As Long = &H286
@@ -707,6 +710,7 @@ Implements OLEGuids.IRichEditOleCallback
 Private RichTextBoxHandle As Long
 Private RichTextBoxFontHandle As Long
 Private RichTextBoxIMCHandle As Long
+Private RichTextBoxCharCodeCache As Long
 Private RichTextBoxIsClick As Boolean
 Private RichTextBoxDataObjectValue As Variant
 Private RichTextBoxDataObjectFormat As Variant
@@ -773,14 +777,14 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -1678,7 +1682,7 @@ If Ambient.UserMode = True Then
         Call ComCtlsSetSubclass(RichTextBoxHandle, Me, 1)
     End If
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 2)
-    Call ComCtlsCreateIMC(RichTextBoxHandle, RichTextBoxIMCHandle)
+    If RichTextBoxHandle <> 0 Then Call ComCtlsCreateIMC(RichTextBoxHandle, RichTextBoxIMCHandle)
 End If
 End Sub
 
@@ -2110,24 +2114,24 @@ If RichTextBoxHandle <> 0 Then
 End If
 End Property
 
-Public Property Get SelStrikeThru() As Variant
-Attribute SelStrikeThru.VB_Description = "Returns/set the strikethru format of the currently selected text."
-Attribute SelStrikeThru.VB_MemberFlags = "400"
+Public Property Get SelStrikethru() As Variant
+Attribute SelStrikethru.VB_Description = "Returns/set the strikethru format of the currently selected text."
+Attribute SelStrikethru.VB_MemberFlags = "400"
 If RichTextBoxHandle <> 0 Then
     Dim RECF2 As RECHARFORMAT2
     With RECF2
     .cbSize = LenB(RECF2)
     .dwMask = CFM_STRIKEOUT
     If (SendMessage(RichTextBoxHandle, EM_GETCHARFORMAT, SCF_SELECTION, ByVal VarPtr(RECF2)) And CFM_STRIKEOUT) <> 0 Then
-        SelStrikeThru = CBool((.dwEffects And CFE_STRIKEOUT) = CFE_STRIKEOUT)
+        SelStrikethru = CBool((.dwEffects And CFE_STRIKEOUT) = CFE_STRIKEOUT)
     Else
-        SelStrikeThru = Null
+        SelStrikethru = Null
     End If
     End With
 End If
 End Property
 
-Public Property Let SelStrikeThru(ByVal Value As Variant)
+Public Property Let SelStrikethru(ByVal Value As Variant)
 If RichTextBoxHandle <> 0 Then
     Dim RECF2 As RECHARFORMAT2
     With RECF2
@@ -2938,22 +2942,65 @@ If RichTextBoxHandle <> 0 Then
         Const IID_IOleObject As String = "{00000112-0000-0000-C000-000000000046}"
         Dim IID As OLEGuids.OLECLSID
         CLSIDFromString StrPtr(IID_IOleObject), IID
-        OleSetContainedObject PropOleObject, 1
-        Dim REOBJ As REOBJECT
-        With REOBJ
-        .cbStruct = LenB(REOBJ)
-        LSet .riid = IID
-        .dvAspect = DVASPECT_CONTENT
-        .CharPos = REO_CP_SELECTION
-        .dwFlags = REO_DYNAMICSIZE Or REO_RESIZABLE Or REO_BELOWBASELINE
-        .Size.CX = 0
-        .Size.CY = 0
-        .dwUser = 0
-        Set .pStorage = PropStorage
-        Set .pOleSite = PropClientSite
-        Set .pOleObject = PropOleObject
-        End With
-        OLEInstance.InsertObject REOBJ
+        If Not PropOleObject Is Nothing Then
+            OleSetContainedObject PropOleObject, 1
+            Dim REOBJ As REOBJECT
+            With REOBJ
+            .cbStruct = LenB(REOBJ)
+            LSet .riid = IID
+            .dvAspect = DVASPECT_CONTENT
+            .CharPos = REO_CP_SELECTION
+            .dwFlags = REO_DYNAMICSIZE Or REO_RESIZABLE Or REO_BELOWBASELINE
+            .Size.CX = 0
+            .Size.CY = 0
+            .dwUser = 0
+            Set .pStorage = PropStorage
+            Set .pOleSite = PropClientSite
+            Set .pOleObject = PropOleObject
+            End With
+            OLEInstance.InsertObject REOBJ
+        End If
+    End If
+End If
+End Sub
+
+Public Sub OLEObjectsAddFromFile(ByVal FileName As String, Optional ByVal LinkToFile As Boolean)
+Attribute OLEObjectsAddFromFile.VB_Description = "Inserts an OLE object (from file) into a rich text box control."
+If RichTextBoxHandle <> 0 Then
+    Dim OLEInstance As OLEGuids.IRichEditOle
+    Set OLEInstance = Me.GetOLEInterface
+    If Not OLEInstance Is Nothing Then
+        Dim PropOleObject As OLEGuids.IOleObject, PropClientSite As OLEGuids.IOleClientSite, PropStorage As OLEGuids.IStorage
+        Set PropClientSite = OLEInstance.GetClientSite
+        StgCreateDocFile 0, STGM_CREATE Or STGM_READWRITE Or STGM_SHARE_EXCLUSIVE Or STGM_DELETEONRELEASE, 0, PropStorage
+        Const IID_IOleObject As String = "{00000112-0000-0000-C000-000000000046}"
+        Dim IID As OLEGuids.OLECLSID
+        CLSIDFromString StrPtr(IID_IOleObject), IID
+        Dim IID_NULL As OLEGuids.OLECLSID
+        Const STG_E_FILENOTFOUND As Long = &H80030002
+        If LinkToFile = False Then
+            If OleCreateFromFile(IID_NULL, StrPtr(FileName), IID, OLERENDER_DRAW, 0, PropClientSite, PropStorage, PropOleObject) = STG_E_FILENOTFOUND Then Err.Raise 53
+        Else
+            If OleCreateLinkToFile(StrPtr(FileName), IID, OLERENDER_DRAW, 0, PropClientSite, PropStorage, PropOleObject) = STG_E_FILENOTFOUND Then Err.Raise 53
+        End If
+        If Not PropOleObject Is Nothing Then
+            OleSetContainedObject PropOleObject, 1
+            Dim REOBJ As REOBJECT
+            With REOBJ
+            .cbStruct = LenB(REOBJ)
+            LSet .riid = IID
+            .dvAspect = DVASPECT_CONTENT
+            .CharPos = REO_CP_SELECTION
+            .dwFlags = REO_DYNAMICSIZE Or REO_RESIZABLE Or REO_BELOWBASELINE
+            .Size.CX = 0
+            .Size.CY = 0
+            .dwUser = 0
+            Set .pStorage = PropStorage
+            Set .pOleSite = PropClientSite
+            Set .pOleObject = PropOleObject
+            End With
+            OLEInstance.InsertObject REOBJ
+        End If
     End If
 End If
 End Sub
@@ -3240,19 +3287,28 @@ Select Case wMsg
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
             RaiseEvent KeyDown(KeyCode, GetShiftState())
+            RichTextBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
             RaiseEvent KeyUp(KeyCode, GetShiftState())
         End If
         wParam = KeyCode
     Case WM_CHAR
         Dim KeyChar As Integer
-        KeyChar = CUIntToInt(wParam And &HFFFF&)
+        If RichTextBoxCharCodeCache <> 0 Then
+            KeyChar = CUIntToInt(RichTextBoxCharCodeCache And &HFFFF&)
+            RichTextBoxCharCodeCache = 0
+        Else
+            KeyChar = CUIntToInt(wParam And &HFFFF&)
+        End If
         RaiseEvent KeyPress(KeyChar)
         If (wParam And &HFFFF&) <> 0 And KeyChar = 0 Then
             Exit Function
         Else
             wParam = CIntToUInt(KeyChar)
         End If
+    Case WM_UNICHAR
+        If wParam = UNICODE_NOCHAR Then WindowProcControl = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
     Case WM_INPUTLANGCHANGE
         Call ComCtlsSetIMEMode(hWnd, RichTextBoxIMCHandle, PropIMEMode)
     Case WM_IME_SETCONTEXT

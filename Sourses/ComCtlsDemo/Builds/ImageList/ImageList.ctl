@@ -83,7 +83,7 @@ Private Declare Function ImageList_SetOverlayImage Lib "comctl32" (ByVal hImageL
 Private Declare Function CreateDCAsNull Lib "gdi32" Alias "CreateDCW" (ByVal lpDriverName As Long, ByRef lpDeviceName As Any, ByRef lpOutput As Any, ByRef lpInitData As Any) As Long
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function DrawEdge Lib "user32" (ByVal hDC As Long, ByRef qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
-Private Declare Function DrawState Lib "user32" Alias "DrawStateW" (ByVal hDC As Long, ByVal hBrush As Long, ByVal lpDrawStateProc As Long, ByVal lParam As Long, ByVal wParam As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal fuFlags As Long) As Long
+Private Declare Function DrawState Lib "user32" Alias "DrawStateW" (ByVal hDC As Long, ByVal hBrush As Long, ByVal lpDrawStateProc As Long, ByVal lData As Long, ByVal wData As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal fFlags As Long) As Long
 Private Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 Private Declare Function DestroyIcon Lib "user32" (ByVal hIcon As Long) As Long
 Private Const ILD_NORMAL As Long = 0
@@ -119,6 +119,10 @@ Private PropMaskColor As OLE_COLOR
 Private PropUseBackColor As Boolean
 Private PropBackColor As OLE_COLOR
 
+Private Sub UserControl_Initialize()
+Call ComCtlsLoadShellMod
+End Sub
+
 Private Sub UserControl_InitProperties()
 PropImageWidth = 16
 PropImageHeight = 16
@@ -142,7 +146,9 @@ PropMaskColor = .ReadProperty("MaskColor", &HC0C0C0)
 End With
 Call CreateImageList
 With New PropertyBag
+On Error Resume Next
 .Contents = PropBag.ReadProperty("InitListImages", 0)
+On Error GoTo 0
 ImageListInitListImagesCount = .ReadProperty("InitListImagesCount", 0)
 If ImageListInitListImagesCount > 0 Then
     Dim i As Long
@@ -217,6 +223,7 @@ End Sub
 
 Private Sub UserControl_Terminate()
 Call DestroyImageList
+Call ComCtlsReleaseShellMod
 End Sub
 
 Public Property Get Name() As String

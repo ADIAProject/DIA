@@ -69,7 +69,6 @@ Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmd
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
-Private Declare Function UpdateWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
@@ -117,7 +116,6 @@ Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
-Private PropEnabled As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
 Private PropBorder As Boolean
 Private PropAppearance As CCAppearanceConstants
@@ -126,14 +124,14 @@ Private PropTransparent As Boolean
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -155,7 +153,6 @@ End Sub
 Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 PropVisualStyles = True
-PropEnabled = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
 PropBorder = True
 PropAppearance = UserControl.Appearance
@@ -193,7 +190,7 @@ With PropBag
 .WriteProperty "VisualStyles", PropVisualStyles, True
 .WriteProperty "BackColor", Me.BackColor, vbButtonFace
 .WriteProperty "ForeColor", Me.ForeColor, vbButtonText
-.WriteProperty "Enabled", PropEnabled, True
+.WriteProperty "Enabled", Me.Enabled, True
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
@@ -421,13 +418,12 @@ End Property
 Public Property Get Enabled() As Boolean
 Attribute Enabled.VB_Description = "Returns/sets a value that determines whether an object can respond to user-generated events."
 Attribute Enabled.VB_UserMemId = -514
-Enabled = PropEnabled
+Enabled = UserControl.Enabled
 End Property
 
 Public Property Let Enabled(ByVal Value As Boolean)
-PropEnabled = Value
-If Ambient.UserMode = True Then UserControl.Enabled = PropEnabled
-If FrameGroupBoxHandle <> 0 Then EnableWindow FrameGroupBoxHandle, IIf(PropEnabled = True, 1, 0)
+UserControl.Enabled = Value
+If FrameGroupBoxHandle <> 0 Then EnableWindow FrameGroupBoxHandle, IIf(Value = True, 1, 0)
 UserControl.PropertyChanged "Enabled"
 End Property
 
@@ -581,7 +577,7 @@ If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 FrameGroupBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
-Me.Enabled = PropEnabled
+Me.Enabled = UserControl.Enabled
 Me.Border = PropBorder
 Me.Caption = PropCaption
 If Ambient.UserMode = True Then Call ComCtlsSetSubclass(UserControl.hWnd, Me, 0)

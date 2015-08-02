@@ -122,6 +122,7 @@ Option Explicit
 Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
+Call ComCtlsShowAllUIStates(PropertyPage.hWnd)
 With ComboColorDepth
 .AddItem "16 Colors (4 bit)"
 .ItemData(.NewIndex) = ImlColorDepth4Bit
@@ -316,7 +317,7 @@ TextImageHeight.SelStart = 0
 End Sub
 
 Private Sub TextImageHeight_KeyPress(KeyAscii As Integer)
-Call OnlyNumeric(KeyAscii)
+Call ComCtlsPPKeyPressOnlyNumeric(KeyAscii)
 End Sub
 
 Private Sub TextImageWidth_Change()
@@ -362,7 +363,7 @@ TextImageWidth.SelStart = 0
 End Sub
 
 Private Sub TextImageWidth_KeyPress(KeyAscii As Integer)
-Call OnlyNumeric(KeyAscii)
+Call ComCtlsPPKeyPressOnlyNumeric(KeyAscii)
 End Sub
 
 Private Sub ComboColorDepth_Click()
@@ -378,14 +379,4 @@ End Sub
 Private Sub CheckUseMaskColor_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
-End Sub
-
-Private Sub OnlyNumeric(ByRef KeyAscii As Integer)
-If (KeyAscii >= Asc("0")) And (KeyAscii <= Asc("9")) Then
-Else
-    If (KeyAscii = 8) Then
-    Else
-        KeyAscii = 0
-    End If
-End If
 End Sub

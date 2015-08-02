@@ -22,6 +22,7 @@ Private WithEvents TextObjectEvents As TextBoxW
 Attribute TextObjectEvents.VB_VarHelpID = -1
 
 Private Sub PropertyPage_Initialize()
+Call ComCtlsShowAllUIStates(PropertyPage.hWnd)
 On Error Resume Next
 Err.Raise 5
 Set TextObject = PropertyPage.Controls.Add(Err.Source & ".TextBoxW", "TextObject", Me)

@@ -92,6 +92,7 @@ Private ImageListEnumerated As Boolean
 Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
+Call ComCtlsShowAllUIStates(PropertyPage.hWnd)
 With ComboNormal
 .AddItem "(None)"
 .ListIndex = 0

@@ -76,6 +76,13 @@ Private Type POINTAPI
 X As Long
 Y As Long
 End Type
+Private Type CWPRETSTRUCT
+lResult As Long
+lParam As Long
+wParam As Long
+Message As Long
+hWnd As Long
+End Type
 Private Type TMSG
 hWnd As Long
 Message As Long
@@ -87,16 +94,12 @@ End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
+Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageW" (ByRef lpMsg As TMSG, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
 Private Declare Function SetWindowsHookEx Lib "user32" Alias "SetWindowsHookExW" (ByVal IDHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
 Private Declare Function UnhookWindowsHookEx Lib "user32" (ByVal hHook As Long) As Long
 Private Declare Function CallNextHookEx Lib "user32" (ByVal hHook As Long, ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function GetActiveWindow Lib "user32" () As Long
 Private Declare Function GetAncestor Lib "user32" (ByVal hWnd As Long, ByVal gaFlags As Long) As Long
 Private Declare Function GetClassName Lib "user32" Alias "GetClassNameW" (ByVal hWnd As Long, ByVal lpClassName As Long, ByVal nMaxCount As Long) As Long
-Private Declare Function GetFocus Lib "user32" () As Long
-Private Declare Function GetTickCount Lib "kernel32" () As Long
-Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
-Private Declare Function GetAsyncKeyState Lib "user32" (ByVal VKey As Long) As Integer
 Private Declare Function GetKeyboardLayout Lib "user32" (ByVal dwThreadID As Long) As Long
 Private Declare Function ImmIsIME Lib "imm32" (ByVal hKL As Long) As Long
 Private Declare Function ImmCreateContext Lib "imm32" () As Long
@@ -108,7 +111,7 @@ Private Declare Function ImmSetOpenStatus Lib "imm32" (ByVal hIMC As Long, ByVal
 Private Declare Function ImmAssociateContext Lib "imm32" (ByVal hWnd As Long, ByVal hIMC As Long) As Long
 Private Declare Function ImmGetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByRef lpfdwConversion As Long, ByRef lpfdwSentence As Long) As Long
 Private Declare Function ImmSetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByVal lpfdwConversion As Long, ByVal lpfdwSentence As Long) As Long
-Private Declare Function IsDialogMessage Lib "user32" Alias "IsDialogMessageW" (ByVal hDialog As Long, ByRef lpMsg As TMSG) As Long
+Private Declare Function IsDialogMessage Lib "user32" Alias "IsDialogMessageW" (ByVal hDlg As Long, ByRef lpMsg As TMSG) As Long
 Private Declare Function DllGetVersion Lib "comctl32" (ByRef pdvi As DLLVERSIONINFO) As Long
 Private Declare Function GetVersionEx Lib "kernel32" Alias "GetVersionExW" (ByRef lpVersionInfo As OSVERSIONINFO) As Long
 Private Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryW" (ByVal lpLibFileName As Long) As Long
@@ -138,9 +141,11 @@ Private Const GWL_EXSTYLE As Long = (-20)
 Private Const WM_DESTROY As Long = &H2
 Private Const WM_NCDESTROY As Long = &H82
 Private Const WM_UAHDESTROYWINDOW As Long = &H90
+Private Const WM_INITDIALOG As Long = &H110
 Private ShellModHandle As Long, ShellModCount As Long
-Private CdlShowFindReplaceHookHandle As Long
-Private CdlShowFindReplaceDialogHandle() As Long, CdlShowFindReplaceDialogCount As Long
+Private CdlPDEXHookHandle As Long, CdlPDEXHookCustData As Long
+Private CdlFRHookHandle As Long
+Private CdlFRDialogHandle() As Long, CdlFRDialogCount As Long
 
 #If ImplementIDEStopProtection = True Then
 
@@ -358,7 +363,7 @@ Else
 End If
 End Sub
 
-Public Sub ComCtlsMousePointerSetDisplayString(ByVal MousePointer As Integer, ByRef DisplayName As String)
+Public Sub ComCtlsIPPBSetDisplayStringMousePointer(ByVal MousePointer As Integer, ByRef DisplayName As String)
 Select Case MousePointer
     Case 0: DisplayName = "0 - Default"
     Case 1: DisplayName = "1 - Arrow"
@@ -381,7 +386,7 @@ Select Case MousePointer
 End Select
 End Sub
 
-Public Sub ComCtlsMousePointerSetPredefinedStrings(ByRef StringsOut() As String, ByRef CookiesOut() As Long)
+Public Sub ComCtlsIPPBSetPredefinedStringsMousePointer(ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 ReDim StringsOut(0 To (17 + 1)) As String
 ReDim CookiesOut(0 To (17 + 1)) As Long
 StringsOut(0) = "0 - Default": CookiesOut(0) = 0
@@ -404,7 +409,7 @@ StringsOut(16) = "16 - Arrow and CD": CookiesOut(16) = 16
 StringsOut(17) = "99 - Custom": CookiesOut(17) = 99
 End Sub
 
-Public Sub ComCtlsMousePointerPPInitCombo(ByVal ComboBox As Object)
+Public Sub ComCtlsPPInitComboMousePointer(ByVal ComboBox As Object)
 With ComboBox
 .AddItem "0 - Default"
 .ItemData(.NewIndex) = 0
@@ -445,7 +450,7 @@ With ComboBox
 End With
 End Sub
 
-Public Sub ComCtlsIMEModePPInitCombo(ByVal ComboBox As Object)
+Public Sub ComCtlsPPInitComboIMEMode(ByVal ComboBox As Object)
 With ComboBox
 .AddItem CCIMEModeNoControl & " - NoControl"
 .ItemData(.NewIndex) = CCIMEModeNoControl
@@ -471,6 +476,16 @@ With ComboBox
 .ItemData(.NewIndex) = CCIMEModeHangul
 End With
 End Sub
+
+Public Sub ComCtlsPPKeyPressOnlyNumeric(ByRef KeyAscii As Integer)
+If KeyAscii < 48 Or KeyAscii > 57 Then If KeyAscii <> 8 Then KeyAscii = 0
+End Sub
+
+Public Function ComCtlsPeekCharCode(ByVal hWnd As Long) As Long
+Dim Msg As TMSG
+Const PM_NOREMOVE As Long = &H0, WM_CHAR As Long = &H102
+If PeekMessage(Msg, hWnd, WM_CHAR, WM_CHAR, PM_NOREMOVE) <> 0 Then ComCtlsPeekCharCode = Msg.wParam
+End Function
 
 Public Function ComCtlsSupportLevel() As Byte
 Static Done As Boolean, Value As Byte
@@ -508,25 +523,6 @@ If Done = False Then
     Done = True
 End If
 ComCtlsW2KCompatibility = Value
-End Function
-
-Public Function ComCtlsIsNT6OrHigher() As Boolean
-Static Done As Boolean, Value As Boolean
-If Done = False Then
-    Dim Version As OSVERSIONINFO
-    On Error Resume Next
-    Version.dwOSVersionInfoSize = LenB(Version)
-    If GetVersionEx(Version) <> 0 Then
-        With Version
-        Const VER_PLATFORM_WIN32_NT As Long = 2
-        If .dwPlatformID = VER_PLATFORM_WIN32_NT Then
-            If .dwMajorVersion >= 6 Then Value = True
-        End If
-        End With
-    End If
-    Done = True
-End If
-ComCtlsIsNT6OrHigher = Value
 End Function
 
 Public Function ComCtlsRootIsEditor(ByVal hWnd As Long) As Boolean
@@ -605,119 +601,295 @@ Else
 End If
 End Function
 
-Public Function LvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-LvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
+Public Function ComCtlsLvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsLvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
 End Function
 
-Public Function LvwSortingFunctionText(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-LvwSortingFunctionText = This.Message(0, 0, lParam1, lParam2, 11)
+Public Function ComCtlsLvwSortingFunctionText(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsLvwSortingFunctionText = This.Message(0, 0, lParam1, lParam2, 11)
 End Function
 
-Public Function LvwSortingFunctionNumeric(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-LvwSortingFunctionNumeric = This.Message(0, 0, lParam1, lParam2, 12)
+Public Function ComCtlsLvwSortingFunctionNumeric(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsLvwSortingFunctionNumeric = This.Message(0, 0, lParam1, lParam2, 12)
 End Function
 
-Public Function LvwSortingFunctionCurrency(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-LvwSortingFunctionCurrency = This.Message(0, 0, lParam1, lParam2, 13)
+Public Function ComCtlsLvwSortingFunctionCurrency(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsLvwSortingFunctionCurrency = This.Message(0, 0, lParam1, lParam2, 13)
 End Function
 
-Public Function LvwSortingFunctionDate(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-LvwSortingFunctionDate = This.Message(0, 0, lParam1, lParam2, 14)
+Public Function ComCtlsLvwSortingFunctionDate(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsLvwSortingFunctionDate = This.Message(0, 0, lParam1, lParam2, 14)
 End Function
 
-Public Function LvwSortingFunctionGroups(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-LvwSortingFunctionGroups = This.Message(0, 0, lParam1, lParam2, 0)
+Public Function ComCtlsLvwSortingFunctionGroups(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsLvwSortingFunctionGroups = This.Message(0, 0, lParam1, lParam2, 0)
 End Function
 
-Public Function TvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-TvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
+Public Function ComCtlsTvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsTvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
 End Function
 
-Public Function TvwSortingFunctionText(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
-TvwSortingFunctionText = This.Message(0, 0, lParam1, lParam2, 11)
+Public Function ComCtlsTvwSortingFunctionText(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
+ComCtlsTvwSortingFunctionText = This.Message(0, 0, lParam1, lParam2, 11)
 End Function
 
-Public Function CdlShowFolderCallback(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Const BFFM_INITIALIZED As Long = 1
-If wMsg = BFFM_INITIALIZED Then
-    Const WM_USER As Long = &H400
-    Const BFFM_SETSELECTIONA As Long = (WM_USER + 102)
-    Const BFFM_SETSELECTIONW As Long = (WM_USER + 103)
-    Const BFFM_SETSELECTION As Long = BFFM_SETSELECTIONW
-    If lParam <> 0 Then SendMessage hWnd, BFFM_SETSELECTION, 1, ByVal lParam
-End If
-CdlShowFolderCallback = 0
-End Function
-
-Public Sub CdlShowFindReplaceAddHook(ByVal hDialog As Long)
-If (CdlShowFindReplaceHookHandle Or CdlShowFindReplaceDialogCount) = 0 Then
-    Const WH_KEYBOARD As Long = 2
-    CdlShowFindReplaceHookHandle = SetWindowsHookEx(WH_KEYBOARD, AddressOf CdlShowFindReplaceKeyboardHookProc, 0, App.ThreadID)
-    ReDim CdlShowFindReplaceDialogHandle(0) As Long
-    CdlShowFindReplaceDialogHandle(0) = hDialog
+Public Function ComCtlsCdlOFN1CallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlOFN1CallbackProcCustData"))
 Else
-    ReDim Preserve CdlShowFindReplaceDialogHandle(0 To CdlShowFindReplaceDialogCount) As Long
-    CdlShowFindReplaceDialogHandle(CdlShowFindReplaceDialogCount) = hDialog
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 64), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlOFN1CallbackProcCustData"), lCustData
 End If
-CdlShowFindReplaceDialogCount = CdlShowFindReplaceDialogCount + 1
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlOFN1CallbackProc = This.Message(hDlg, wMsg, wParam, lParam, -1)
+Else
+    ComCtlsCdlOFN1CallbackProc = 0
+End If
+End Function
+
+Public Function ComCtlsCdlOFN1CallbackProcOldStyle(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlOFN1CallbackProcOldStyleCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 64), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlOFN1CallbackProcOldStyleCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlOFN1CallbackProcOldStyle = This.Message(hDlg, wMsg, wParam, lParam, -1001)
+Else
+    ComCtlsCdlOFN1CallbackProcOldStyle = 0
+End If
+End Function
+
+Public Function ComCtlsCdlOFN2CallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlOFN2CallbackProcCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 64), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlOFN2CallbackProcCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlOFN2CallbackProc = This.Message(hDlg, wMsg, wParam, lParam, -2)
+Else
+    ComCtlsCdlOFN2CallbackProc = 0
+End If
+End Function
+
+Public Function ComCtlsCdlOFN2CallbackProcOldStyle(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlOFN2CallbackProcOldStyleCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 64), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlOFN2CallbackProcOldStyleCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlOFN2CallbackProcOldStyle = This.Message(hDlg, wMsg, wParam, lParam, -1002)
+Else
+    ComCtlsCdlOFN2CallbackProcOldStyle = 0
+End If
+End Function
+
+Public Function ComCtlsCdlCCCallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlCCCallbackProcCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 24), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlCCCallbackProcCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlCCCallbackProc = This.Message(hDlg, wMsg, wParam, lParam, -3)
+Else
+    ComCtlsCdlCCCallbackProc = 0
+End If
+End Function
+
+Public Function ComCtlsCdlCFCallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlCFCallbackProcCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 28), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlCFCallbackProcCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlCFCallbackProc = This.Message(hDlg, wMsg, wParam, lParam, -4)
+Else
+    ComCtlsCdlCFCallbackProc = 0
+End If
+End Function
+
+Public Function ComCtlsCdlPDCallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlPDCallbackProcCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 38), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlPDCallbackProcCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlPDCallbackProc = This.Message(hDlg, wMsg, wParam, lParam, -5)
+Else
+    ComCtlsCdlPDCallbackProc = 0
+End If
+End Function
+
+Public Sub ComCtlsCdlPDEXSetHook(ByVal This As ISubclass)
+If CdlPDEXHookHandle = 0 Then
+    CdlPDEXHookCustData = ObjPtr(This)
+    Const WH_CALLWNDPROCRET As Long = 12
+    CdlPDEXHookHandle = SetWindowsHookEx(WH_CALLWNDPROCRET, AddressOf ComCtlsCdlPDEXHookProc, 0, App.ThreadID)
+End If
 End Sub
 
-Public Sub CdlShowFindReplaceReleaseHook(ByVal hDialog As Long)
-CdlShowFindReplaceDialogCount = CdlShowFindReplaceDialogCount - 1
-If CdlShowFindReplaceDialogCount = 0 And CdlShowFindReplaceHookHandle <> 0 Then
-    UnhookWindowsHookEx CdlShowFindReplaceHookHandle
-    CdlShowFindReplaceHookHandle = 0
-    Erase CdlShowFindReplaceDialogHandle()
-Else
-    If CdlShowFindReplaceDialogCount > 0 Then
-        Dim i As Long
-        For i = 0 To CdlShowFindReplaceDialogCount
-            If CdlShowFindReplaceDialogHandle(i) = hDialog And i < CdlShowFindReplaceDialogCount Then
-                CdlShowFindReplaceDialogHandle(i) = CdlShowFindReplaceDialogHandle(i + 1)
-            End If
-        Next i
-        ReDim Preserve CdlShowFindReplaceDialogHandle(0 To CdlShowFindReplaceDialogCount - 1) As Long
-    End If
+Public Sub ComCtlsCdlPDEXRemoveHook()
+If CdlPDEXHookHandle <> 0 Then
+    UnhookWindowsHookEx CdlPDEXHookHandle
+    CdlPDEXHookHandle = 0
+    CdlPDEXHookCustData = 0
 End If
 End Sub
 
-Private Function CdlShowFindReplaceKeyboardHookProc(ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Function ComCtlsCdlPDEXHookProc(ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+ComCtlsCdlPDEXHookProc = CallNextHookEx(CdlPDEXHookHandle, nCode, wParam, lParam)
 Const HC_ACTION As Long = 0
-If nCode = HC_ACTION Then
-    Dim hWnd As Long, IsDialogWindow As Boolean
-    hWnd = GetActiveWindow()
-    If CdlShowFindReplaceDialogCount > 0 Then
+If nCode >= HC_ACTION Then
+    Dim CWPRET As CWPRETSTRUCT
+    CopyMemory CWPRET, ByVal lParam, LenB(CWPRET)
+    If CWPRET.Message = WM_INITDIALOG Then
+        Dim This As ISubclass
+        If CdlPDEXHookCustData <> 0 Then Set This = PtrToObj(CdlPDEXHookCustData)
+        Call ComCtlsCdlPDEXRemoveHook
+        If Not This Is Nothing Then This.Message CWPRET.hWnd, CWPRET.Message, CWPRET.wParam, CWPRET.lParam, -5
+    End If
+End If
+End Function
+
+Public Function ComCtlsCdlPSDCallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Dim lCustData As Long
+If wMsg <> WM_INITDIALOG Then
+    lCustData = GetProp(hDlg, StrPtr("ComCtlsCdlPSDCallbackProcCustData"))
+Else
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 64), 4
+    SetProp hDlg, StrPtr("ComCtlsCdlPSDCallbackProcCustData"), lCustData
+End If
+If lCustData <> 0 Then
+    Dim This As ISubclass
+    Set This = PtrToObj(lCustData)
+    ComCtlsCdlPSDCallbackProc = This.Message(hDlg, wMsg, wParam, lParam, -7)
+Else
+    ComCtlsCdlPSDCallbackProc = 0
+End If
+End Function
+
+Public Function ComCtlsCdlBIFCallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal lParam As Long, ByVal This As ISubclass) As Long
+ComCtlsCdlBIFCallbackProc = This.Message(hDlg, wMsg, 0, lParam, -8)
+End Function
+
+Public Function ComCtlsCdlFR1CallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+If wMsg <> WM_INITDIALOG Then
+    ComCtlsCdlFR1CallbackProc = 0
+Else
+    Dim lCustData As Long
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 28), 4
+    If lCustData <> 0 Then
+        Dim This As ISubclass
+        Set This = PtrToObj(lCustData)
+        This.Message hDlg, wMsg, wParam, lParam, -9
+    End If
+    ' Need to return a nonzero value or else the dialog box will not be shown.
+    ComCtlsCdlFR1CallbackProc = 1
+End If
+End Function
+
+Public Function ComCtlsCdlFR2CallbackProc(ByVal hDlg As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+If wMsg <> WM_INITDIALOG Then
+    ComCtlsCdlFR2CallbackProc = 0
+Else
+    Dim lCustData As Long
+    CopyMemory lCustData, ByVal UnsignedAdd(lParam, 28), 4
+    If lCustData <> 0 Then
+        Dim This As ISubclass
+        Set This = PtrToObj(lCustData)
+        This.Message hDlg, wMsg, wParam, lParam, -10
+    End If
+    ' Need to return a nonzero value or else the dialog box will not be shown.
+    ComCtlsCdlFR2CallbackProc = 1
+End If
+End Function
+
+Public Sub ComCtlsCdlFRAddHook(ByVal hDlg As Long)
+If (CdlFRHookHandle Or CdlFRDialogCount) = 0 Then
+    Const WH_GETMESSAGE As Long = 3
+    CdlFRHookHandle = SetWindowsHookEx(WH_GETMESSAGE, AddressOf ComCtlsCdlFRHookProc, 0, App.ThreadID)
+    ReDim CdlFRDialogHandle(0) As Long
+    CdlFRDialogHandle(0) = hDlg
+Else
+    ReDim Preserve CdlFRDialogHandle(0 To CdlFRDialogCount) As Long
+    CdlFRDialogHandle(CdlFRDialogCount) = hDlg
+End If
+CdlFRDialogCount = CdlFRDialogCount + 1
+End Sub
+
+Public Sub ComCtlsCdlFRReleaseHook(ByVal hDlg As Long)
+CdlFRDialogCount = CdlFRDialogCount - 1
+If CdlFRDialogCount = 0 And CdlFRHookHandle <> 0 Then
+    UnhookWindowsHookEx CdlFRHookHandle
+    CdlFRHookHandle = 0
+    Erase CdlFRDialogHandle()
+Else
+    If CdlFRDialogCount > 0 Then
         Dim i As Long
-        For i = 0 To CdlShowFindReplaceDialogCount - 1
-            If hWnd = CdlShowFindReplaceDialogHandle(i) Then
-                IsDialogWindow = True
-                Exit For
+        For i = 0 To CdlFRDialogCount
+            If CdlFRDialogHandle(i) = hDlg And i < CdlFRDialogCount Then
+                CdlFRDialogHandle(i) = CdlFRDialogHandle(i + 1)
             End If
         Next i
+        ReDim Preserve CdlFRDialogHandle(0 To CdlFRDialogCount - 1) As Long
     End If
-    If IsDialogWindow = True Then
-        Dim Msg As TMSG
-        With Msg
-        .hWnd = GetFocus()
-        .Time = GetTickCount()
-        GetCursorPos .PT
-        .wParam = wParam
-        .lParam = lParam
-        If (GetAsyncKeyState(wParam) And &H8000&) = &H8000& Then
-            Const WM_KEYDOWN = &H100
-            .Message = WM_KEYDOWN
-        Else
-            Const WM_KEYUP = &H101
-            .Message = WM_KEYUP
-        End If
-        End With
-        If IsDialogMessage(hWnd, Msg) <> 0 Then
-            CdlShowFindReplaceKeyboardHookProc = 1
-        Else
-            CdlShowFindReplaceKeyboardHookProc = CallNextHookEx(CdlShowFindReplaceHookHandle, nCode, wParam, lParam)
+End If
+End Sub
+
+Private Function ComCtlsCdlFRHookProc(ByVal nCode As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Const HC_ACTION As Long = 0, PM_REMOVE As Long = &H1
+Const WM_KEYFIRST As Long = &H100, WM_KEYLAST As Long = &H108, WM_NULL As Long = &H0
+If nCode >= HC_ACTION And wParam = PM_REMOVE Then
+    Dim Msg As TMSG
+    CopyMemory Msg, ByVal lParam, LenB(Msg)
+    If Msg.Message >= WM_KEYFIRST And Msg.Message <= WM_KEYLAST Then
+        If CdlFRDialogCount > 0 Then
+            Dim i As Long
+            For i = 0 To CdlFRDialogCount - 1
+                If IsDialogMessage(CdlFRDialogHandle(i), Msg) <> 0 Then
+                    Msg.Message = WM_NULL
+                    Msg.wParam = 0
+                    Msg.lParam = 0
+                    CopyMemory ByVal lParam, Msg, LenB(Msg)
+                    Exit For
+                End If
+            Next i
         End If
     End If
 End If
+ComCtlsCdlFRHookProc = CallNextHookEx(CdlFRHookHandle, nCode, wParam, lParam)
 End Function
 
 Public Sub ComCtlsInitIDEStopProtection()
@@ -729,7 +901,7 @@ If InIDE() = True Then
     ASMWrapper = VirtualAlloc(ByVal 0, 20, MEM_COMMIT, PAGE_EXECUTE_READWRITE)
     OldAddress = GetProcAddress(GetModuleHandle(StrPtr("vba6.dll")), "EbProjectReset")
     RestorePointer = HookIATEntry("vb6.exe", "vba6.dll", "EbProjectReset", ASMWrapper)
-    WriteCall ASMWrapper, AddressOf IDEStopProtectionHandler
+    WriteCall ASMWrapper, AddressOf ComCtlsIDEStopProtectionHandler
     WriteByte ASMWrapper, &HC7 ' MOV
     WriteByte ASMWrapper, &H5
     WriteLong ASMWrapper, RestorePointer ' IAT Entry
@@ -743,7 +915,7 @@ End Sub
 
 #If ImplementIDEStopProtection = True Then
 
-Private Sub IDEStopProtectionHandler()
+Private Sub ComCtlsIDEStopProtectionHandler()
 On Error Resume Next
 Call RemoveAllVTableSubclass(VTableInterfaceInPlaceActiveObject)
 Call RemoveAllVTableSubclass(VTableInterfaceControl)
@@ -756,13 +928,11 @@ For Each AppForm In Forms
             Case "Animation", "DTPicker", "MonthView", "Slider", "TabStrip", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel", "CommandLink"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
-            Case "ProgressBar", "FrameW"
+            Case "ProgressBar", "FrameW", "ToolTip"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
             Case "StatusBar"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
-                Call ComCtlsRemoveSubclass(AppForm.hWnd, ProperControlName(CurrControl))
-            Case "ToolTip"
                 Call ComCtlsRemoveSubclass(AppForm.hWnd, ProperControlName(CurrControl))
             Case "ImageCombo"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
@@ -774,12 +944,12 @@ For Each AppForm In Forms
         End Select
     Next CurrControl
 Next AppForm
-If CdlShowFindReplaceDialogCount > 0 Then
+If CdlFRDialogCount > 0 Then
     Dim DialogHandle() As Long
-    DialogHandle() = CdlShowFindReplaceDialogHandle()
+    DialogHandle() = CdlFRDialogHandle()
     Const WM_CLOSE As Long = &H10
     Dim i As Long
-    For i = 0 To CdlShowFindReplaceDialogCount - 1
+    For i = 0 To CdlFRDialogCount - 1
         SendMessage DialogHandle(i), WM_CLOSE, 0, ByVal 0&
         DoEvents
     Next i

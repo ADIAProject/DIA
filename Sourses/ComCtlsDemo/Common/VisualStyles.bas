@@ -80,7 +80,7 @@ Private Declare Function DrawFocusRect Lib "user32" (ByVal hDC As Long, ByRef lp
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function DrawText Lib "user32" Alias "DrawTextW" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal wFormat As Long) As Long
 Private Declare Function TrackMouseEvent Lib "user32" (ByRef lpEventTrack As TRACKMOUSEEVENTSTRUCT) As Long
-Private Declare Function TransparentBlt Lib "msimg32" (ByVal hDcDest As Long, ByVal nXOriginDest As Long, ByVal nYOriginDest As Long, ByVal nWidthDest As Long, ByVal hHeightDest As Long, ByVal hDCSrc As Long, ByVal nXOriginSrc As Long, ByVal nYOriginSrc As Long, ByVal nWidthSrc As Long, ByVal nHeightSrc As Long, ByVal crTransparent As Long) As Long
+Private Declare Function TransparentBlt Lib "msimg32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal nWidthSrc As Long, ByVal nHeightSrc As Long, ByVal crTransparent As Long) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByRef pRect As RECT, ByRef pClipRect As RECT) As Long
 Private Declare Function DrawThemeText Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByVal pszText As Long, ByVal iCharCount As Long, ByVal dwTextFlags As Long, ByVal dwTextFlags2 As Long, ByRef pRect As RECT) As Long
 Private Declare Function OpenThemeData Lib "uxtheme" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
@@ -127,9 +127,9 @@ Private Const TME_HOVER As Long = 1
 Private Const TME_LEAVE As Long = 2
 Private Const RGN_DIFF As Long = 4
 Private Const RGN_COPY As Long = 5
-Private Const DSS_NORMAL As Long = &H0
 Private Const DST_ICON As Long = &H3
 Private Const DST_BITMAP As Long = &H4
+Private Const DSS_NORMAL As Long = &H0
 Private Const DSS_DISABLED As Long = &H20
 
 Public Sub InitVisualStyles()
@@ -286,10 +286,10 @@ Dim Theme As Long
 Dim ButtonState As UxThemeButtonStates
 Dim Enabled As Boolean, Checked As Boolean, Default As Boolean, Hot As Boolean, Focused As Boolean, Pushed As Boolean
 Dim FontOld As Long
-Dim ButtonPic As IPicture, ButtonFont As IFont
+Dim ButtonPicture As IPictureDisp, DisabledPictureAvailable As Boolean, ButtonFont As IFont
 Dim RectClient As RECT, RectText As RECT
 Dim RgnClip As Long
-Dim W As Long, H As Long, X As Long, Y As Long
+Dim CX As Long, CY As Long, X As Long, Y As Long
 ButtonState = SendMessage(hWnd, BM_GETSTATE, 0, ByVal 0&)
 Enabled = IIf(GetProp(hWnd, StrPtr("Enabled")) = 1, True, Button.Enabled)
 Select Case TypeName(Button)
@@ -313,32 +313,35 @@ Pushed = IIf((ButtonState And BST_PUSHED) = 0, False, True)
 Focused = IIf((ButtonState And BST_FOCUS) = 0, False, True)
 If Enabled = False Then
     ButtonState = PBS_DISABLED
-    Set ButtonPic = CoalescePic(Button.DisabledPicture, Button.Picture)
+    Set ButtonPicture = CoalescePicture(Button.DisabledPicture, Button.Picture)
+    If Not Button.DisabledPicture Is Nothing Then
+        If Button.DisabledPicture.Handle <> 0 Then DisabledPictureAvailable = True
+    End If
 ElseIf Hot = True And Pushed = False Then
     ButtonState = PBS_HOT
     If Checked = True Then
-        Set ButtonPic = CoalescePic(Button.DownPicture, Button.Picture)
+        Set ButtonPicture = CoalescePicture(Button.DownPicture, Button.Picture)
     Else
-        Set ButtonPic = Button.Picture
+        Set ButtonPicture = Button.Picture
     End If
 ElseIf Checked = True Or Pushed = True Then
     ButtonState = PBS_PRESSED
-    Set ButtonPic = CoalescePic(Button.DownPicture, Button.Picture)
+    Set ButtonPicture = CoalescePicture(Button.DownPicture, Button.Picture)
 ElseIf Focused = True Or Default = True Then
     ButtonState = PBS_DEFAULTED
-    Set ButtonPic = Button.Picture
+    Set ButtonPicture = Button.Picture
 Else
     ButtonState = PBS_NORMAL
-    Set ButtonPic = Button.Picture
+    Set ButtonPicture = Button.Picture
 End If
-If Not ButtonPic Is Nothing Then
-    If ButtonPic.Handle = 0 Then Set ButtonPic = Nothing
+If Not ButtonPicture Is Nothing Then
+    If ButtonPicture.Handle = 0 Then Set ButtonPicture = Nothing
 End If
 GetClientRect hWnd, RectClient
 Theme = OpenThemeData(hWnd, StrPtr("Button"))
 GetThemeBackgroundRegion Theme, hDC, BP_PUSHBUTTON, ButtonState, RectClient, RgnClip
 ExtSelectClipRgn hDC, RgnClip, RGN_DIFF
-If DrawThemeParentBackground(hWnd, hDC, RectClient) <> S_OK Then Call DrawRect(hDC, 0, 0, RectClient.Right, RectClient.Bottom, WinColor(Button.BackColor))
+If DrawThemeParentBackground(hWnd, hDC, RectClient) <> S_OK Then Call DrawRect(hDC, 0, 0, RectClient.Right, RectClient.Bottom, Button.BackColor)
 ExtSelectClipRgn hDC, 0, RGN_COPY
 DeleteObject RgnClip
 DrawThemeBackground Theme, hDC, BP_PUSHBUTTON, ButtonState, RectClient, RectClient
@@ -347,11 +350,11 @@ If Focused = True Then DrawFocusRect hDC, RectClient
 If Not Button.Caption = vbNullString Or Len(Button.Caption) > 0 Then
     Set ButtonFont = Button.Font
     FontOld = SelectObject(hDC, ButtonFont.hFont)
-    RectText = RectClient
+    LSet RectText = RectClient
     DrawText hDC, StrPtr(Button.Caption), -1, RectText, DT_CALCRECT Or DT_WORDBREAK
     RectText.Left = RectClient.Left
     RectText.Right = RectClient.Right
-    If ButtonPic Is Nothing Then
+    If ButtonPicture Is Nothing Then
         RectText.Top = ((RectClient.Bottom - RectText.Bottom) / 2) + 3
         RectText.Bottom = RectText.Top + RectText.Bottom
     Else
@@ -361,85 +364,100 @@ If Not Button.Caption = vbNullString Or Len(Button.Caption) > 0 Then
     DrawThemeText Theme, hDC, BP_PUSHBUTTON, ButtonState, StrPtr(Button.Caption), -1, DT_CENTER Or DT_WORDBREAK, 0, RectText
     SelectObject hDC, FontOld
     RectClient.Bottom = RectText.Top
+    RectClient.Left = RectText.Left
 End If
 CloseThemeData Theme
-If Not ButtonPic Is Nothing Then
-    W = CInt(Button.Parent.ScaleX(ButtonPic.Width, vbHimetric, vbPixels))
-    H = CInt(Button.Parent.ScaleY(ButtonPic.Height, vbHimetric, vbPixels))
-    X = RectClient.Left + ((RectClient.Right - RectClient.Left - W) / 2)
-    Y = RectClient.Top + ((RectClient.Bottom - RectClient.Left - H) / 2)
-    If Enabled = True Then
-        If Button.UseMaskColor = True Then
-            Call DrawTransparentPicture(ButtonPic, hDC, X, Y, W, H, WinColor(Button.MaskColor))
-        Else
-            ButtonPic.Render hDC, X, Y + H, W, -H, 0, 0, ButtonPic.Width, ButtonPic.Height, ByVal 0
-        End If
+If Not ButtonPicture Is Nothing Then
+    CX = Button.Parent.ScaleX(ButtonPicture.Width, vbHimetric, vbPixels)
+    CY = Button.Parent.ScaleY(ButtonPicture.Height, vbHimetric, vbPixels)
+    X = RectClient.Left + ((RectClient.Right - RectClient.Left - CX) / 2)
+    Y = RectClient.Top + ((RectClient.Bottom - RectClient.Top - CY) / 2)
+    If Enabled = False And DisabledPictureAvailable = False Then
+        Call DrawPictureDisabled(ButtonPicture, hDC, X, Y, CX, CY, Button.MaskColor)
     Else
-        Call DrawDisabledPicture(ButtonPic, hDC, X, Y, W, H, WinColor(Button.MaskColor))
+        If Button.UseMaskColor = True Then
+            Call DrawPictureMasked(ButtonPicture, hDC, X, Y, CX, CY, Button.MaskColor)
+        Else
+            With ButtonPicture
+            .Render hDC Or 0&, X Or 0&, Y + CY Or 0&, CX Or 0&, -CY Or 0&, 0&, 0&, .Width, .Height, ByVal 0&
+            End With
+        End If
     End If
 End If
 End Sub
 
-Private Sub DrawTransparentPicture(ByVal PicSource As StdPicture, ByVal hDcDest As Long, ByVal XDest As Long, ByVal YDest As Long, ByVal CXDest As Long, ByVal CYDest As Long, ByVal ClrMask As Long, Optional ByVal XSrc As Long, Optional ByVal YSrc As Long, Optional ByVal CXSrc As Long, Optional ByVal CYSrc As Long)
-Dim hDCScreen As Long, hDCSrc As Long, BmpOld As Long
-If PicSource Is Nothing Then Exit Sub
-If PicSource.Handle = 0 Then Exit Sub
-If CXSrc = 0 Then CXSrc = CXDest
-If CYSrc = 0 Then CYSrc = CYDest
+Private Sub DrawPictureMasked(ByVal Picture As IPictureDisp, ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal MaskColor As OLE_COLOR)
+If Picture Is Nothing Then Exit Sub
+If Picture.Handle = 0 Then Exit Sub
+Dim hDCScreen As Long, hBmp As Long
+Dim hDC1 As Long, hBmpOld1 As Long
 hDCScreen = GetDC(0)
-hDCSrc = CreateCompatibleDC(hDCScreen)
-BmpOld = SelectObject(hDCSrc, CreateCompatibleBitmap(hDCScreen, CXSrc, CYSrc))
-If PicSource.Type = vbPicTypeIcon Then
-    Call DrawRect(hDCSrc, 0, 0, CXSrc, CXSrc, ClrMask)
-    DrawState hDCSrc, 0, 0, PicSource.Handle, 0, 0, 0, CXSrc, CYSrc, DST_ICON Or DSS_NORMAL
-ElseIf PicSource.Type = vbPicTypeBitmap Then
-    DrawState hDCSrc, 0, 0, PicSource.Handle, 0, 0, 0, CXSrc, CYSrc, DST_BITMAP Or DSS_NORMAL
+If hDCScreen <> 0 Then
+    hDC1 = CreateCompatibleDC(hDCScreen)
+    If hDC1 <> 0 Then
+        hBmp = CreateCompatibleBitmap(hDCScreen, CX, CY)
+        If hBmp <> 0 Then
+            hBmpOld1 = SelectObject(hDC1, hBmp)
+            If Picture.Type = vbPicTypeIcon Then
+                Call DrawRect(hDC1, 0, 0, CX, CY, MaskColor)
+                DrawState hDC1, 0, 0, Picture.Handle, 0, 0, 0, CX, CY, DST_ICON Or DSS_NORMAL
+            ElseIf Picture.Type = vbPicTypeBitmap Then
+                DrawState hDC1, 0, 0, Picture.Handle, 0, 0, 0, CX, CY, DST_BITMAP Or DSS_NORMAL
+            End If
+            TransparentBlt hDC, X, Y, CX, CY, hDC1, 0, 0, CX, CY, WinColor(MaskColor)
+            SelectObject hDC1, hBmpOld1
+            DeleteObject hBmp
+        End If
+        DeleteDC hDC1
+    End If
+    ReleaseDC 0, hDCScreen
 End If
-TransparentBlt hDcDest, XDest, YDest, CXDest, CYDest, hDCSrc, XSrc, YSrc, CXSrc, CYSrc, ClrMask
-DeleteObject SelectObject(hDCSrc, BmpOld)
-DeleteDC hDCSrc
-ReleaseDC 0, hDCScreen
 End Sub
 
-Private Sub DrawDisabledPicture(ByVal PicSource As StdPicture, ByVal hDcDest As Long, ByVal XDest As Long, ByVal YDest As Long, ByVal CXDest As Long, ByVal CYDest As Long, ByVal ClrMask As Long)
-Dim hDCScreen As Long
-Dim hDCSrc As Long
-Dim Bmp As Long, BmpOld As Long
-If PicSource Is Nothing Then Exit Sub
-If PicSource.Handle = 0 Then Exit Sub
+Private Sub DrawPictureDisabled(ByVal Picture As IPictureDisp, ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal MaskColor As OLE_COLOR)
+If Picture Is Nothing Then Exit Sub
+If Picture.Handle = 0 Then Exit Sub
+Dim hDCScreen As Long, hBmp As Long
+Dim hDC1 As Long, hBmpOld1 As Long
 hDCScreen = GetDC(0)
-hDCSrc = CreateCompatibleDC(hDCScreen)
-Bmp = CreateCompatibleBitmap(hDCScreen, CXDest, CYDest)
-BmpOld = SelectObject(hDCSrc, Bmp)
-Call DrawRect(hDCSrc, 0, 0, CXDest, CYDest, &HFFFFFF)
-Call DrawTransparentPicture(PicSource, hDCSrc, 0, 0, CXDest, CYDest, ClrMask)
-SelectObject hDCSrc, BmpOld
-DrawState hDcDest, 0, 0, Bmp, 0, XDest, YDest, CXDest, CYDest, DST_BITMAP Or DSS_DISABLED
-DeleteObject Bmp
-DeleteDC hDCSrc
-ReleaseDC 0, hDCScreen
+If hDCScreen <> 0 Then
+    hDC1 = CreateCompatibleDC(hDCScreen)
+    If hDC1 <> 0 Then
+        hBmp = CreateCompatibleBitmap(hDCScreen, CX, CY)
+        If hBmp <> 0 Then
+            hBmpOld1 = SelectObject(hDC1, hBmp)
+            Call DrawRect(hDC1, 0, 0, CX, CY, &HFFFFFF)
+            Call DrawPictureMasked(Picture, hDC1, 0, 0, CX, CY, MaskColor)
+            SelectObject hDC1, hBmpOld1
+            DrawState hDC, 0, 0, hBmp, 0, X, Y, CX, CY, DST_BITMAP Or DSS_DISABLED
+            DeleteObject hBmp
+        End If
+        DeleteDC hDC1
+    End If
+    ReleaseDC 0, hDCScreen
+End If
 End Sub
 
-Private Sub DrawRect(ByVal hDC As Long, ByVal XDest As Long, ByVal YDest As Long, ByVal CXDest As Long, ByVal CYDest As Long, ByVal ClrFill As Long)
+Private Sub DrawRect(ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal Color As OLE_COLOR)
 Dim RC As RECT
 Dim Brush As Long
-Brush = CreateSolidBrush(ClrFill)
+Brush = CreateSolidBrush(WinColor(Color))
 With RC
-.Left = XDest
-.Top = YDest
-.Right = XDest + CXDest
-.Bottom = YDest + CYDest
+.Left = X
+.Top = Y
+.Right = X + CX
+.Bottom = Y + CY
 End With
 FillRect hDC, RC, Brush
 DeleteObject Brush
 End Sub
 
-Private Function CoalescePic(ByVal Pic As StdPicture, ByVal DefaultPic As StdPicture) As StdPicture
-If Pic Is Nothing Then
-    Set CoalescePic = DefaultPic
-ElseIf Pic.Handle = 0 Then
-    Set CoalescePic = DefaultPic
+Private Function CoalescePicture(ByVal Picture As IPictureDisp, ByVal DefaultPicture As IPictureDisp) As IPictureDisp
+If Picture Is Nothing Then
+    Set CoalescePicture = DefaultPicture
+ElseIf Picture.Handle = 0 Then
+    Set CoalescePicture = DefaultPicture
 Else
-    Set CoalescePic = Pic
+    Set CoalescePicture = Picture
 End If
 End Function

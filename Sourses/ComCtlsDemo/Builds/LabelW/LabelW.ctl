@@ -122,14 +122,14 @@ Private PropAppearance As CCAppearanceConstants
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -243,12 +243,31 @@ If Ambient.RightToLeft = True Then Format = Format Or DT_RTLREADING
 If PropUseMnemonic = False Then Format = Format Or DT_NOPREFIX
 If PropWordWrap = True Then Format = Format Or DT_WORDBREAK
 If PropAutoSize = True And LabelAutoSizeFlag = True Then
-    Dim Buffer As String
+    Dim Buffer As String, CalcRect As RECT
     Buffer = PropCaption
     If Buffer = vbNullString Then Buffer = " "
-    DrawText .hDC, StrPtr(Buffer), -1, RC, Format Or DT_CALCRECT
-    .Size .ScaleX((RC.Right - RC.Left) + (BorderWidth * 2), vbPixels, vbTwips), .ScaleY((RC.Bottom - RC.Top) + (BorderHeight * 2), vbPixels, vbTwips)
+    LSet CalcRect = RC
+    DrawText .hDC, StrPtr(Buffer), -1, CalcRect, Format Or DT_CALCRECT
+    Dim OldRight As Single, OldCenter As Single, OldWidth As Single
+    OldRight = .Extender.Left + .Extender.Width
+    OldCenter = .Extender.Left + (.Extender.Width / 2)
+    OldWidth = .Extender.Width
+    .Size .ScaleX((CalcRect.Right - CalcRect.Left) + (BorderWidth * 2), vbPixels, vbTwips), .ScaleY((CalcRect.Bottom - CalcRect.Top) + (BorderHeight * 2), vbPixels, vbTwips)
     LabelAutoSizeFlag = False
+    Select Case PropAlignment
+        Case vbCenter
+            If .Extender.Left <> (OldCenter - (.Extender.Width / 2)) Then
+                .Extender.Left = (OldCenter - (.Extender.Width / 2))
+                .Refresh
+                Exit Sub
+            End If
+        Case vbRightJustify
+            If .Extender.Left <> (OldRight - .Extender.Width) Then
+                .Extender.Left = (OldRight - .Extender.Width)
+                .Refresh
+                Exit Sub
+            End If
+    End Select
 End If
 SetRect RC, RC.Left + BorderWidth, RC.Top + BorderHeight, RC.Right - (BorderWidth * 2), RC.Bottom - (BorderHeight * 2)
 If Not PropCaption = vbNullString Then DrawText .hDC, StrPtr(PropCaption), -1, RC, Format

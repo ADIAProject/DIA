@@ -82,6 +82,7 @@ Option Explicit
 Private FreezeChanged As Boolean
 
 Private Sub PropertyPage_Initialize()
+Call ComCtlsShowAllUIStates(PropertyPage.hWnd)
 With ComboSortOrder
 .AddItem LvwSortOrderAscending & " - Ascending"
 .ItemData(.NewIndex) = LvwSortOrderAscending

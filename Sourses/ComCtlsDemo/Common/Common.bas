@@ -85,7 +85,7 @@ Private Declare Function GetIconInfo Lib "user32" (ByVal hIcon As Long, ByRef pI
 Private Declare Function CreateIconIndirect Lib "user32" (ByRef pIconInfo As ICONINFO) As Long
 Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
-Private Declare Function OleTranslateColor Lib "oleaut32" (ByVal Color As Long, ByVal hPal As Long, ByRef ColorRef As Long) As Long
+Private Declare Function OleTranslateColor Lib "oleaut32" (ByVal Color As Long, ByVal hPal As Long, ByRef RGBResult As Long) As Long
 Private Declare Function OleLoadPicturePath Lib "oleaut32" (ByVal lpszPath As Long, ByVal pUnkCaller As Long, ByVal dwReserved As Long, ByVal ClrReserved As OLE_COLOR, ByRef riid As CLSID, ByRef pIPicture As IPicture) As Long
 Private Declare Function OleCreatePictureIndirect Lib "olepro32" (ByRef pPictDesc As PICTDESC, ByRef riid As Any, ByVal fPictureOwnsHandle As Long, ByRef pIPicture As IPicture) As Long
 
@@ -271,12 +271,12 @@ GetMouseState = GetMouseState Or (-vbMiddleButton * KeyPressed(vbMiddleButton))
 GetMouseState = GetMouseState Or (-vbRightButton * KeyPressed(vbRightButton))
 End Function
 
-Public Function KeyToggled(ByVal VirtKeyCode As KeyCodeConstants) As Boolean
-KeyToggled = CBool(LoByte(GetKeyState(VirtKeyCode)) = 1)
+Public Function KeyToggled(ByVal KeyCode As KeyCodeConstants) As Boolean
+KeyToggled = CBool(LoByte(GetKeyState(KeyCode)) = 1)
 End Function
  
-Public Function KeyPressed(ByVal VirtKeyCode As KeyCodeConstants) As Boolean
-KeyPressed = CBool((GetAsyncKeyState(VirtKeyCode) And &H8000&) = &H8000&)
+Public Function KeyPressed(ByVal KeyCode As KeyCodeConstants) As Boolean
+KeyPressed = CBool((GetAsyncKeyState(KeyCode) And &H8000&) = &H8000&)
 End Function
 
 Public Function InIDE(Optional ByRef B As Boolean = True) As Boolean
@@ -422,18 +422,6 @@ End Function
 
 Public Function WinColor(ByVal Color As Long, Optional ByVal hPal As Long) As Long
 If OleTranslateColor(Color, hPal, WinColor) <> 0 Then WinColor = -1
-End Function
-
-Public Function R(ByVal Color As Long) As Byte
-CopyMemory R, ByVal VarPtr(WinColor(Color)), 1
-End Function
-
-Public Function G(ByVal Color As Long) As Byte
-CopyMemory G, ByVal VarPtr(WinColor(Color)) + 1, 1
-End Function
-
-Public Function B(ByVal Color As Long) As Byte
-CopyMemory B, ByVal VarPtr(WinColor(Color)) + 2, 1
 End Function
 
 Public Function PictureFromPath(ByVal PathName As String) As IPictureDisp

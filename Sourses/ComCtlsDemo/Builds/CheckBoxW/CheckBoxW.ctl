@@ -155,6 +155,7 @@ Private Const WM_SETFOCUS As Long = &H7
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_UNICHAR As Long = &H109, UNICODE_NOCHAR As Long = &HFFFF&
 Private Const WM_IME_CHAR As Long = &H286
 Private Const WM_LBUTTONDOWN As Long = &H201
 Private Const WM_LBUTTONUP As Long = &H202
@@ -218,6 +219,7 @@ Private CheckBoxHandle As Long
 Private CheckBoxTransparentBrush As Long
 Private CheckBoxAcceleratorHandle As Long
 Private CheckBoxFontHandle As Long
+Private CheckBoxCharCodeCache As Long
 Private DispIDMousePointer As Long
 Private DispIDImageList As Long, ImageListArray() As String
 Private DispIDValue As Long
@@ -311,7 +313,7 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 ElseIf DispID = DispIDValue Then
     Select Case PropValue
@@ -325,7 +327,7 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 ElseIf DispID = DispIDImageList Then
     Dim ControlEnum As Object
@@ -1270,15 +1272,24 @@ Select Case wMsg
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
             RaiseEvent KeyDown(KeyCode, GetShiftState())
+            CheckBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
             RaiseEvent KeyUp(KeyCode, GetShiftState())
         End If
         wParam = KeyCode
     Case WM_CHAR
         Dim KeyChar As Integer
-        KeyChar = CUIntToInt(wParam And &HFFFF&)
+        If CheckBoxCharCodeCache <> 0 Then
+            KeyChar = CUIntToInt(CheckBoxCharCodeCache And &HFFFF&)
+            CheckBoxCharCodeCache = 0
+        Else
+            KeyChar = CUIntToInt(wParam And &HFFFF&)
+        End If
         RaiseEvent KeyPress(KeyChar)
         wParam = CIntToUInt(KeyChar)
+    Case WM_UNICHAR
+        If wParam = UNICODE_NOCHAR Then WindowProcControl = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function

@@ -22,12 +22,18 @@ Attribute VB_Exposed = False
 Option Explicit
 #If False Then
 Private CboStyleDropDownCombo, CboStyleSimpleCombo, CboStyleDropDownList
+Private CboCharacterCasingNormal, CboCharacterCasingUpper, CboCharacterCasingLower
 Private CboDrawModeNormal, CboDrawModeOwnerDrawFixed, CboDrawModeOwnerDrawVariable
 #End If
 Public Enum CboStyleConstants
 CboStyleDropDownCombo = 0
 CboStyleSimpleCombo = 1
 CboStyleDropDownList = 2
+End Enum
+Public Enum CboCharacterCasingConstants
+CboCharacterCasingNormal = 0
+CboCharacterCasingUpper = 1
+CboCharacterCasingLower = 2
 End Enum
 Public Enum CboDrawModeConstants
 CboDrawModeNormal = 0
@@ -182,6 +188,9 @@ Private Const WM_SETFOCUS As Long = &H7
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_UNICHAR As Long = &H109, UNICODE_NOCHAR As Long = &HFFFF&
+Private Const WM_INPUTLANGCHANGE As Long = &H51
+Private Const WM_IME_SETCONTEXT As Long = &H281
 Private Const WM_IME_CHAR As Long = &H286
 Private Const WM_CHARTOITEM As Long = &H2F
 Private Const WM_LBUTTONDOWN As Long = &H201
@@ -233,6 +242,7 @@ Private Const CB_GETLBTEXTLEN As Long = &H149
 Private Const CB_GETEDITSEL As Long = &H140
 Private Const CB_SETEDITSEL As Long = &H142
 Private Const CB_RESETCONTENT As Long = &H14B
+Private Const CB_SELECTSTRING As Long = &H14D
 Private Const CB_SETITEMHEIGHT As Long = &H153
 Private Const CB_GETITEMHEIGHT As Long = &H154
 Private Const CB_GETDROPPEDSTATE As Long = &H157
@@ -277,6 +287,8 @@ Implements OLEGuids.IPerPropertyBrowsingVB
 Private ComboBoxHandle As Long, ComboBoxEditHandle As Long
 Private ComboBoxListBackColorBrush As Long
 Private ComboBoxFontHandle As Long
+Private ComboBoxIMCHandle As Long
+Private ComboBoxCharCodeCache As Long
 Private ComboBoxNewIndex As Long
 Private ComboBoxResizeFrozen As Boolean
 Private ComboBoxInitFieldHeight As Long
@@ -305,7 +317,9 @@ Private PropListForeColor As OLE_COLOR
 Private PropSorted As Boolean
 Private PropHorizontalExtent As Long
 Private PropDisableNoScroll As Boolean
+Private PropCharacterCasing As CboCharacterCasingConstants
 Private PropDrawMode As CboDrawModeConstants
+Private PropIMEMode As CCIMEModeConstants
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -342,14 +356,14 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -390,7 +404,9 @@ PropListForeColor = vbWindowText
 PropSorted = False
 PropHorizontalExtent = 0
 PropDisableNoScroll = False
+PropCharacterCasing = CboCharacterCasingNormal
 PropDrawMode = CboDrawModeNormal
+PropIMEMode = CCIMEModeNoControl
 Call CreateComboBox
 End Sub
 
@@ -421,7 +437,9 @@ PropListForeColor = .ReadProperty("ListForeColor", vbWindowText)
 PropSorted = .ReadProperty("Sorted", False)
 PropHorizontalExtent = .ReadProperty("HorizontalExtent", 0)
 PropDisableNoScroll = .ReadProperty("DisableNoScroll", False)
+PropCharacterCasing = .ReadProperty("CharacterCasing", CboCharacterCasingNormal)
 PropDrawMode = .ReadProperty("DrawMode", CboDrawModeNormal)
+PropIMEMode = .ReadProperty("IMEMode", CCIMEModeNoControl)
 End With
 If Ambient.UserMode = True Then
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 3)
@@ -457,7 +475,9 @@ With PropBag
 .WriteProperty "Sorted", PropSorted, False
 .WriteProperty "HorizontalExtent", PropHorizontalExtent, 0
 .WriteProperty "DisableNoScroll", PropDisableNoScroll, False
+.WriteProperty "CharacterCasing", PropCharacterCasing, CboCharacterCasingNormal
 .WriteProperty "DrawMode", PropDrawMode, CboDrawModeNormal
+.WriteProperty "IMEMode", PropIMEMode, CCIMEModeNoControl
 End With
 End Sub
 
@@ -863,8 +883,8 @@ End Property
 Public Property Get Locked() As Boolean
 Attribute Locked.VB_Description = "Returns/sets a value indicating whether the contents can be edited. This property does not have any effect if the style property is set to 'DropDownList'."
 If PropStyle = CboStyleDropDownList Then Exit Property
-If ComboBoxHandle <> 0 And Ambient.UserMode = True Then
-    Locked = CBool((GetWindowLong(ComboBoxHandle, GWL_STYLE) And ES_READONLY) <> 0)
+If ComboBoxHandle <> 0 And ComboBoxEditHandle <> 0 Then
+    Locked = CBool((GetWindowLong(ComboBoxEditHandle, GWL_STYLE) And ES_READONLY) <> 0)
 Else
     Locked = PropLocked
 End If
@@ -873,7 +893,7 @@ End Property
 Public Property Let Locked(ByVal Value As Boolean)
 If PropStyle = CboStyleDropDownList Then Exit Property
 PropLocked = Value
-If ComboBoxHandle <> 0 And Ambient.UserMode = True Then SendMessage ComboBoxEditHandle, EM_SETREADONLY, IIf(PropLocked = True, 1, 0), ByVal 0&
+If ComboBoxHandle <> 0 And ComboBoxEditHandle <> 0 Then SendMessage ComboBoxEditHandle, EM_SETREADONLY, IIf(PropLocked = True, 1, 0), ByVal 0&
 UserControl.PropertyChanged "Locked"
 End Property
 
@@ -908,7 +928,7 @@ Select Case PropStyle
     Case CboStyleDropDownList
         If ComboBoxHandle <> 0 And Ambient.UserMode = True Then
             Dim Index As Long
-            Index = SendMessage(ComboBoxHandle, CB_FINDSTRING, -1, ByVal StrPtr(Value))
+            Index = SendMessage(ComboBoxHandle, CB_FINDSTRINGEXACT, -1, ByVal StrPtr(Value))
             If Not Index = CB_ERR Then
                 Me.ListIndex = Index
             Else
@@ -932,7 +952,7 @@ End Property
 
 Public Property Let ExtendedUI(ByVal Value As Boolean)
 PropExtendedUI = Value
-If ComboBoxHandle <> 0 Then SendMessage ComboBoxHandle, CB_SETEXTENDEDUI, IIf(PropExtendedUI = True, 1, 0), ByVal 0&
+If ComboBoxHandle <> 0 And PropStyle <> CboStyleSimpleCombo Then SendMessage ComboBoxHandle, CB_SETEXTENDEDUI, IIf(PropExtendedUI = True, 1, 0), ByVal 0&
 UserControl.PropertyChanged "ExtendedUI"
 End Property
 
@@ -1096,6 +1116,22 @@ If ComboBoxHandle <> 0 Then Call ReCreateComboBox
 UserControl.PropertyChanged "DisableNoScroll"
 End Property
 
+Public Property Get CharacterCasing() As CboCharacterCasingConstants
+Attribute CharacterCasing.VB_Description = "Returns/sets a value indicating if the combo box modifies the case of characters in both the selection field and the list."
+CharacterCasing = PropCharacterCasing
+End Property
+
+Public Property Let CharacterCasing(ByVal Value As CboCharacterCasingConstants)
+Select Case Value
+    Case CboCharacterCasingNormal, CboCharacterCasingUpper, CboCharacterCasingLower
+        PropCharacterCasing = Value
+    Case Else
+        Err.Raise 380
+End Select
+If ComboBoxHandle <> 0 Then Call ReCreateComboBox
+UserControl.PropertyChanged "CharacterCasing"
+End Property
+
 Public Property Get DrawMode() As CboDrawModeConstants
 Attribute DrawMode.VB_Description = "Returns/sets a value indicating whether your code or the operating system will handle drawing of the elements."
 DrawMode = PropDrawMode
@@ -1114,6 +1150,24 @@ Select Case Value
         Err.Raise 380
 End Select
 UserControl.PropertyChanged "DrawMode"
+End Property
+
+Public Property Get IMEMode() As CCIMEModeConstants
+Attribute IMEMode.VB_Description = "Returns/sets the Input Method Editor (IME) mode."
+IMEMode = PropIMEMode
+End Property
+
+Public Property Let IMEMode(ByVal Value As CCIMEModeConstants)
+Select Case Value
+    Case CCIMEModeNoControl, CCIMEModeOn, CCIMEModeOff, CCIMEModeDisable, CCIMEModeHiragana, CCIMEModeKatakana, CCIMEModeKatakanaHalf, CCIMEModeAlphaFull, CCIMEModeAlpha, CCIMEModeHangulFull, CCIMEModeHangul
+        PropIMEMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+If ComboBoxHandle <> 0 And ComboBoxEditHandle <> 0 And Ambient.UserMode = True Then
+    If GetFocus() = ComboBoxEditHandle Then Call ComCtlsSetIMEMode(ComboBoxEditHandle, ComboBoxIMCHandle, PropIMEMode)
+End If
+UserControl.PropertyChanged "IMEMode"
 End Property
 
 Public Sub AddItem(ByVal Item As String, Optional ByVal Index As Variant)
@@ -1269,6 +1323,12 @@ End Select
 If PropIntegralHeight = False Then dwStyle = dwStyle Or CBS_NOINTEGRALHEIGHT
 If PropSorted = True Then dwStyle = dwStyle Or CBS_SORT
 If PropDisableNoScroll = True Then dwStyle = dwStyle Or CBS_DISABLENOSCROLL
+Select Case PropCharacterCasing
+    Case CboCharacterCasingUpper
+        dwStyle = dwStyle Or CBS_UPPERCASE
+    Case CboCharacterCasingLower
+        dwStyle = dwStyle Or CBS_LOWERCASE
+End Select
 Select Case PropDrawMode
     Case CboDrawModeOwnerDrawFixed
         dwStyle = dwStyle Or CBS_OWNERDRAWFIXED Or CBS_HASSTRINGS
@@ -1314,7 +1374,10 @@ If Ambient.UserMode = True Then
         ComboBoxInitFieldHeight = SendMessage(ComboBoxHandle, CB_GETITEMHEIGHT, -1, ByVal 0&)
         If ComboBoxListBackColorBrush = 0 Then ComboBoxListBackColorBrush = CreateSolidBrush(WinColor(PropListBackColor))
         Call ComCtlsSetSubclass(ComboBoxHandle, Me, 1)
-        If ComboBoxEditHandle <> 0 Then Call ComCtlsSetSubclass(ComboBoxEditHandle, Me, 2)
+        If ComboBoxEditHandle <> 0 Then
+            Call ComCtlsSetSubclass(ComboBoxEditHandle, Me, 2)
+            Call ComCtlsCreateIMC(ComboBoxEditHandle, ComboBoxIMCHandle)
+        End If
     End If
 Else
     If PropStyle = CboStyleDropDownList Then
@@ -1402,7 +1465,10 @@ End Sub
 Private Sub DestroyComboBox()
 If ComboBoxHandle = 0 Then Exit Sub
 Call ComCtlsRemoveSubclass(ComboBoxHandle)
-If ComboBoxEditHandle <> 0 Then Call ComCtlsRemoveSubclass(ComboBoxEditHandle)
+If ComboBoxEditHandle <> 0 Then
+    Call ComCtlsRemoveSubclass(ComboBoxEditHandle)
+    Call ComCtlsDestroyIMC(ComboBoxEditHandle, ComboBoxIMCHandle)
+End If
 ShowWindow ComboBoxHandle, SW_HIDE
 SetParent ComboBoxHandle, 0
 DestroyWindow ComboBoxHandle
@@ -1801,6 +1867,7 @@ Select Case wMsg
             KeyCode = wParam And &HFF&
             If wMsg = WM_KEYDOWN Then
                 RaiseEvent KeyDown(KeyCode, GetShiftState())
+                ComboBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
             ElseIf wMsg = WM_KEYUP Then
                 RaiseEvent KeyUp(KeyCode, GetShiftState())
             End If
@@ -1809,9 +1876,19 @@ Select Case wMsg
     Case WM_CHAR
         If PropStyle = CboStyleDropDownList Then
             Dim KeyChar As Integer
-            KeyChar = CUIntToInt(wParam And &HFFFF&)
+            If ComboBoxCharCodeCache <> 0 Then
+                KeyChar = CUIntToInt(ComboBoxCharCodeCache And &HFFFF&)
+                ComboBoxCharCodeCache = 0
+            Else
+                KeyChar = CUIntToInt(wParam And &HFFFF&)
+            End If
             RaiseEvent KeyPress(KeyChar)
             wParam = CIntToUInt(KeyChar)
+        End If
+    Case WM_UNICHAR
+        If PropStyle = CboStyleDropDownList Then
+            If wParam = UNICODE_NOCHAR Then WindowProcControl = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+            Exit Function
         End If
     Case WM_IME_CHAR
         If PropStyle = CboStyleDropDownList Then
@@ -1890,19 +1967,32 @@ Select Case wMsg
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
             RaiseEvent KeyDown(KeyCode, GetShiftState())
+            ComboBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
             RaiseEvent KeyUp(KeyCode, GetShiftState())
         End If
         wParam = KeyCode
     Case WM_CHAR
         Dim KeyChar As Integer
-        KeyChar = CUIntToInt(wParam And &HFFFF&)
+        If ComboBoxCharCodeCache <> 0 Then
+            KeyChar = CUIntToInt(ComboBoxCharCodeCache And &HFFFF&)
+            ComboBoxCharCodeCache = 0
+        Else
+            KeyChar = CUIntToInt(wParam And &HFFFF&)
+        End If
         RaiseEvent KeyPress(KeyChar)
         If (wParam And &HFFFF&) <> 0 And KeyChar = 0 Then
             Exit Function
         Else
             wParam = CIntToUInt(KeyChar)
         End If
+    Case WM_UNICHAR
+        If wParam = UNICODE_NOCHAR Then WindowProcEdit = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
+    Case WM_INPUTLANGCHANGE
+        Call ComCtlsSetIMEMode(hWnd, ComboBoxIMCHandle, PropIMEMode)
+    Case WM_IME_SETCONTEXT
+        If wParam <> 0 Then Call ComCtlsSetIMEMode(hWnd, ComboBoxIMCHandle, PropIMEMode)
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function

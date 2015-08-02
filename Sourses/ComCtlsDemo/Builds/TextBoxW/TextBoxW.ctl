@@ -158,6 +158,7 @@ Private Const WM_COMMAND As Long = &H111
 Private Const WM_KEYDOWN As Long = &H100
 Private Const WM_KEYUP As Long = &H101
 Private Const WM_CHAR As Long = &H102
+Private Const WM_UNICHAR As Long = &H109, UNICODE_NOCHAR As Long = &HFFFF&
 Private Const WM_INPUTLANGCHANGE As Long = &H51
 Private Const WM_IME_SETCONTEXT As Long = &H281
 Private Const WM_IME_CHAR As Long = &H286
@@ -242,6 +243,7 @@ Implements OLEGuids.IPerPropertyBrowsingVB
 Private TextBoxHandle As Long
 Private TextBoxFontHandle As Long
 Private TextBoxIMCHandle As Long
+Private TextBoxCharCodeCache As Long
 Private TextBoxAutoDragInSel As Boolean, TextBoxAutoDragIsActive As Boolean
 Private TextBoxIsClick As Boolean
 Private DispIDMousePointer As Long
@@ -306,14 +308,14 @@ End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -1150,7 +1152,7 @@ If Not PropCueBanner = vbNullString Then Me.CueBanner = PropCueBanner
 If Ambient.UserMode = True Then
     If TextBoxHandle <> 0 Then Call ComCtlsSetSubclass(TextBoxHandle, Me, 1)
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 2)
-    Call ComCtlsCreateIMC(TextBoxHandle, TextBoxIMCHandle)
+    If TextBoxHandle <> 0 Then Call ComCtlsCreateIMC(TextBoxHandle, TextBoxIMCHandle)
 End If
 End Sub
 
@@ -1513,19 +1515,28 @@ Select Case wMsg
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
             RaiseEvent KeyDown(KeyCode, GetShiftState())
+            TextBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
             RaiseEvent KeyUp(KeyCode, GetShiftState())
         End If
         wParam = KeyCode
     Case WM_CHAR
         Dim KeyChar As Integer
-        KeyChar = CUIntToInt(wParam And &HFFFF&)
+        If TextBoxCharCodeCache <> 0 Then
+            KeyChar = CUIntToInt(TextBoxCharCodeCache And &HFFFF&)
+            TextBoxCharCodeCache = 0
+        Else
+            KeyChar = CUIntToInt(wParam And &HFFFF&)
+        End If
         RaiseEvent KeyPress(KeyChar)
         If (wParam And &HFFFF&) <> 0 And KeyChar = 0 Then
             Exit Function
         Else
             wParam = CIntToUInt(KeyChar)
         End If
+    Case WM_UNICHAR
+        If wParam = UNICODE_NOCHAR Then WindowProcControl = 1 Else SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
+        Exit Function
     Case WM_INPUTLANGCHANGE
         Call ComCtlsSetIMEMode(hWnd, TextBoxIMCHandle, PropIMEMode)
     Case WM_IME_SETCONTEXT
@@ -1610,7 +1621,7 @@ Select Case wMsg
                     If Not Text = vbNullString Then
                         Dim i As Long, InvalidText As Boolean
                         For i = 1 To Len(Text)
-                            If InStr("0123456789", Mid(Text, i, 1)) = 0 Then
+                            If InStr("0123456789", Mid$(Text, i, 1)) = 0 Then
                                 InvalidText = True
                                 Exit For
                             End If

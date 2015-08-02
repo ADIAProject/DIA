@@ -182,19 +182,20 @@ Private PropMarqueeAnimation As Boolean, PropMarqueeSpeed As Long
 Private PropOrientation As PrbOrientationConstants
 Private PropScrolling As PrbScrollingConstants
 Private PropSmoothReverse As Boolean
-Private PropBackColor As OLE_COLOR, PropBarColor As OLE_COLOR
+Private PropBackColor As OLE_COLOR
+Private PropForeColor As OLE_COLOR
 Private PropState As PrbStateConstants
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetDisplayString(PropMousePointer, DisplayName)
+    Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
 End If
 End Sub
 
 Private Sub IPerPropertyBrowsingVB_GetPredefinedStrings(ByRef Handled As Boolean, ByVal DispID As Long, ByRef StringsOut() As String, ByRef CookiesOut() As Long)
 If DispID = DispIDMousePointer Then
-    Call ComCtlsMousePointerSetPredefinedStrings(StringsOut(), CookiesOut())
+    Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 End If
 End Sub
@@ -228,7 +229,7 @@ PropOrientation = PrbOrientationHorizontal
 PropScrolling = PrbScrollingStandard
 PropSmoothReverse = False
 PropBackColor = vbButtonFace
-PropBarColor = vbHighlight
+PropForeColor = vbHighlight
 PropState = PrbStateInProgress
 Call CreateProgressBar
 End Sub
@@ -252,7 +253,7 @@ PropOrientation = .ReadProperty("Orientation", PrbOrientationHorizontal)
 PropScrolling = .ReadProperty("Scrolling", PrbScrollingStandard)
 PropSmoothReverse = .ReadProperty("SmoothReverse", PropSmoothReverse)
 PropBackColor = .ReadProperty("BackColor", vbButtonFace)
-PropBarColor = .ReadProperty("BarColor", vbHighlight)
+PropForeColor = .ReadProperty("ForeColor", vbHighlight)
 PropState = .ReadProperty("State", PrbStateInProgress)
 End With
 Call CreateProgressBar
@@ -277,7 +278,7 @@ With PropBag
 .WriteProperty "Scrolling", PropScrolling, PrbScrollingStandard
 .WriteProperty "SmoothReverse", PropSmoothReverse, False
 .WriteProperty "BackColor", PropBackColor, vbButtonFace
-.WriteProperty "BarColor", PropBarColor, vbHighlight
+.WriteProperty "ForeColor", PropForeColor, vbHighlight
 .WriteProperty "State", PropState, PrbStateInProgress
 End With
 End Sub
@@ -709,7 +710,8 @@ UserControl.PropertyChanged "SmoothReverse"
 End Property
 
 Public Property Get BackColor() As OLE_COLOR
-Attribute BackColor.VB_Description = "Returns/sets the background color used to display text and graphics in an object. This has no visible effect if the version of comctl32.dll is 6.0 or higher and the visual styles property is set to true."
+Attribute BackColor.VB_Description = "Returns/sets the background color used to display text and graphics in an object. This property is ignored if the version of comctl32.dll is 6.0 or higher and the visual styles property is set to true."
+Attribute BackColor.VB_UserMemId = -501
 BackColor = PropBackColor
 End Property
 
@@ -719,15 +721,16 @@ If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETBKCOLOR, 0,
 UserControl.PropertyChanged "BackColor"
 End Property
 
-Public Property Get BarColor() As OLE_COLOR
-Attribute BarColor.VB_Description = "Returns/sets the bar color used to display text and graphics in an object. This has no visible effect if the version of comctl32.dll is 6.0 or higher and the visual styles property is set to true."
-BarColor = PropBarColor
+Public Property Get ForeColor() As OLE_COLOR
+Attribute ForeColor.VB_Description = "Returns/sets the foreground color used to display text and graphics in an object. This property is ignored if the version of comctl32.dll is 6.0 or higher and the visual styles property is set to true."
+Attribute ForeColor.VB_UserMemId = -513
+ForeColor = PropForeColor
 End Property
 
-Public Property Let BarColor(ByVal Value As OLE_COLOR)
-PropBarColor = Value
-If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETBARCOLOR, 0, ByVal WinColor(PropBarColor)
-UserControl.PropertyChanged "BarColor"
+Public Property Let ForeColor(ByVal Value As OLE_COLOR)
+PropForeColor = Value
+If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETBARCOLOR, 0, ByVal WinColor(PropForeColor)
+UserControl.PropertyChanged "ForeColor"
 End Property
 
 Public Property Get State() As PrbStateConstants
@@ -764,7 +767,7 @@ Me.Value = PropValue
 Me.Step = PropStep
 Me.MarqueeAnimation = PropMarqueeAnimation
 Me.BackColor = PropBackColor
-Me.BarColor = PropBarColor
+Me.ForeColor = PropForeColor
 Me.State = PropState
 If Ambient.UserMode = True Then
     If ProgressBarHandle <> 0 Then Call ComCtlsSetSubclass(ProgressBarHandle, Me, 0)
