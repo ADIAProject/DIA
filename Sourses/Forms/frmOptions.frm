@@ -22,6 +22,539 @@ Begin VB.Form frmOptions
    ScaleHeight     =   8145
    ScaleWidth      =   13725
    StartUpPosition =   1  'CenterOwner
+   Begin prjDIADBS.ctlJCFrames frMainTools 
+      Height          =   5295
+      Left            =   3480
+      Top             =   615
+      Width           =   8655
+      _ExtentX        =   15266
+      _ExtentY        =   9340
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackColor       =   14016736
+      FillColor       =   14016736
+      RoundedCorner   =   0   'False
+      Caption         =   "Расположение основных утилит (Tools)"
+      TextBoxHeight   =   18
+      ThemeColor      =   2
+      HeaderStyle     =   1
+      Begin prjDIADBS.ctlUcPickBox ucDevCon86Path 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   29
+         Top             =   450
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         UseAutoForeColor=   0   'False
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucDevCon64Path 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   31
+         Top             =   840
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucDevCon86Pathw2k 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   33
+         Top             =   1250
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucDPInst86Path 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   35
+         Top             =   1650
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucDPInst64Path 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   37
+         Top             =   2050
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucArch86Path 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   39
+         Top             =   2450
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucCmdDevconPath 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   41
+         Top             =   3250
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.*|All Files (*.*)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.ctlJCbutton cmdPathDefault 
+         Height          =   495
+         Left            =   4905
+         TabIndex        =   43
+         Top             =   3700
+         Width           =   3615
+         _ExtentX        =   6376
+         _ExtentY        =   873
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ButtonStyle     =   8
+         BackColor       =   16765357
+         Caption         =   "Сбросить настройки расположения утилит"
+         CaptionEffects  =   0
+         PictureAlign    =   0
+         PicturePushOnHover=   -1  'True
+         PictureShadow   =   -1  'True
+      End
+      Begin prjDIADBS.ctlUcPickBox ucArch64Path 
+         Height          =   315
+         Left            =   2520
+         TabIndex        =   151
+         Top             =   2850
+         Width           =   6000
+         _ExtentX        =   10583
+         _ExtentY        =   556
+         DefaultExt      =   ""
+         DialogType      =   1
+         Enabled         =   0   'False
+         FileFlags       =   2621446
+         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
+         UseDialogText   =   0   'False
+         Locked          =   -1  'True
+      End
+      Begin prjDIADBS.LabelW lblArc64 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   152
+         Top             =   2910
+         Width           =   2355
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "7za (64-bit)"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblDevCon64 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   32
+         Top             =   875
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "DevCon.exe (64-bit)"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblDevCon86w2k 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   34
+         Top             =   1275
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "DevCon.exe (for Windows 2k)"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblCmdDevconPath 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   42
+         Top             =   3275
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "devcon_c.cmd"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblArc86 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   40
+         Top             =   2475
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "7za (32-bit)"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblDPInst64 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   38
+         Top             =   2075
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "DPInst.exe (64-bit)"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblDPInst86 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   36
+         Top             =   1675
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "DPInst.exe (32-bit)"
+         WordWrap        =   0   'False
+      End
+      Begin prjDIADBS.LabelW lblDevCon86 
+         Height          =   315
+         Left            =   100
+         TabIndex        =   30
+         Top             =   475
+         Width           =   2350
+         _ExtentX        =   4154
+         _ExtentY        =   556
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Alignment       =   1
+         BackStyle       =   0
+         Caption         =   "DevCon.exe (32-bit)"
+         WordWrap        =   0   'False
+      End
+   End
+   Begin prjDIADBS.ctlJCFrames frMain2 
+      Height          =   5295
+      Left            =   3300
+      Top             =   300
+      Width           =   8655
+      _ExtentX        =   15266
+      _ExtentY        =   9340
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   204
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      BackColor       =   14016736
+      FillColor       =   14016736
+      RoundedCorner   =   0   'False
+      Caption         =   "Основные настройки программы 2"
+      TextBoxHeight   =   18
+      ThemeColor      =   2
+      HeaderStyle     =   1
+      Begin VB.CommandButton cmdDriverVer 
+         Caption         =   "?"
+         Height          =   255
+         Left            =   300
+         TabIndex        =   24
+         Top             =   1550
+         Width           =   255
+      End
+      Begin prjDIADBS.OptionButtonW optCompareByVersion 
+         Height          =   255
+         Left            =   300
+         TabIndex        =   27
+         Top             =   2250
+         Width           =   8100
+         _ExtentX        =   14288
+         _ExtentY        =   450
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Value           =   0   'False
+         Caption         =   "frmOptions.frx":000C
+         Transparent     =   -1  'True
+      End
+      Begin prjDIADBS.OptionButtonW optCompareByDate 
+         Height          =   255
+         Left            =   300
+         TabIndex        =   26
+         Top             =   1900
+         Width           =   8100
+         _ExtentX        =   14288
+         _ExtentY        =   450
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "frmOptions.frx":008E
+         Transparent     =   -1  'True
+      End
+      Begin prjDIADBS.TextBoxW txtCompareVersionDRV 
+         Height          =   1005
+         Left            =   300
+         TabIndex        =   28
+         Top             =   2600
+         Width           =   8100
+         _ExtentX        =   0
+         _ExtentY        =   0
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         BackColor       =   -2147483633
+         ForeColor       =   255
+         BorderStyle     =   0
+         Text            =   "frmOptions.frx":013C
+         Locked          =   -1  'True
+         MultiLine       =   -1  'True
+         ScrollBars      =   2
+      End
+      Begin prjDIADBS.CheckBoxW chkDateFormatRus 
+         Height          =   210
+         Left            =   300
+         TabIndex        =   22
+         Top             =   850
+         Width           =   8100
+         _ExtentX        =   14288
+         _ExtentY        =   370
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "frmOptions.frx":0330
+         Transparent     =   -1  'True
+      End
+      Begin prjDIADBS.CheckBoxW chkCreateRP 
+         Height          =   210
+         Left            =   300
+         TabIndex        =   21
+         Top             =   500
+         Width           =   8100
+         _ExtentX        =   14288
+         _ExtentY        =   370
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "frmOptions.frx":03AA
+         Transparent     =   -1  'True
+      End
+      Begin prjDIADBS.CheckBoxW chkCompatiblesHWID 
+         Height          =   210
+         Left            =   300
+         TabIndex        =   23
+         Top             =   1200
+         Width           =   8100
+         _ExtentX        =   14288
+         _ExtentY        =   370
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Caption         =   "frmOptions.frx":0432
+         Transparent     =   -1  'True
+      End
+      Begin prjDIADBS.LabelW lblCompareVersionDRV 
+         Height          =   225
+         Left            =   600
+         TabIndex        =   25
+         Top             =   1550
+         Width           =   7800
+         _ExtentX        =   13758
+         _ExtentY        =   397
+         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   204
+            Weight          =   700
+            Underline       =   -1  'True
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   -2147483635
+         BackStyle       =   0
+         Caption         =   "Сравнение версий драйверов"
+      End
+   End
    Begin prjDIADBS.ctlJCFrames frMain 
       Height          =   5300
       Left            =   3105
@@ -62,7 +595,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":000C
+         Caption         =   "frmOptions.frx":04AC
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkUpdate 
@@ -82,7 +615,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0084
+         Caption         =   "frmOptions.frx":0524
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkReadDPName 
@@ -102,7 +635,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":00E0
+         Caption         =   "frmOptions.frx":0580
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkConvertDPName 
@@ -122,7 +655,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0154
+         Caption         =   "frmOptions.frx":05F4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkHideOtherProcess 
@@ -142,7 +675,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0224
+         Caption         =   "frmOptions.frx":06C4
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkTempPath 
@@ -162,7 +695,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":028A
+         Caption         =   "frmOptions.frx":072A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkUpdateBeta 
@@ -182,7 +715,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":02DA
+         Caption         =   "frmOptions.frx":077A
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSilentDll 
@@ -202,7 +735,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":0350
+         Caption         =   "frmOptions.frx":07F0
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.CheckBoxW chkSearchOnStart 
@@ -222,7 +755,7 @@ Begin VB.Form frmOptions
             Italic          =   0   'False
             Strikethrough   =   0   'False
          EndProperty
-         Caption         =   "frmOptions.frx":03EC
+         Caption         =   "frmOptions.frx":088C
          Transparent     =   -1  'True
       End
       Begin prjDIADBS.SpinBox txtPauseAfterSearch 
@@ -430,7 +963,7 @@ Begin VB.Form frmOptions
       Top             =   5520
       _ExtentX        =   1005
       _ExtentY        =   1005
-      InitListImages  =   "frmOptions.frx":046A
+      InitListImages  =   "frmOptions.frx":090A
    End
    Begin prjDIADBS.ctlJCFrames frOptions 
       Height          =   5300
@@ -533,501 +1066,6 @@ Begin VB.Form frmOptions
          ClickableColumnHeaders=   0   'False
          TrackSizeColumnHeaders=   0   'False
          ResizableColumnHeaders=   0   'False
-      End
-   End
-   Begin prjDIADBS.ctlJCFrames frMain2 
-      Height          =   5295
-      Left            =   3300
-      Top             =   300
-      Width           =   8655
-      _ExtentX        =   15266
-      _ExtentY        =   9340
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   14016736
-      FillColor       =   14016736
-      RoundedCorner   =   0   'False
-      Caption         =   "Основные настройки программы 2"
-      TextBoxHeight   =   18
-      ThemeColor      =   2
-      HeaderStyle     =   1
-      Begin VB.CommandButton cmdDriverVer 
-         Caption         =   "?"
-         Height          =   255
-         Left            =   300
-         TabIndex        =   24
-         Top             =   1550
-         Width           =   255
-      End
-      Begin prjDIADBS.OptionButtonW optCompareByVersion 
-         Height          =   255
-         Left            =   300
-         TabIndex        =   27
-         Top             =   2250
-         Width           =   8100
-         _ExtentX        =   14288
-         _ExtentY        =   450
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Value           =   0   'False
-         Caption         =   "frmOptions.frx":048A
-         Transparent     =   -1  'True
-      End
-      Begin prjDIADBS.OptionButtonW optCompareByDate 
-         Height          =   255
-         Left            =   300
-         TabIndex        =   26
-         Top             =   1900
-         Width           =   8100
-         _ExtentX        =   14288
-         _ExtentY        =   450
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Caption         =   "frmOptions.frx":050C
-         Transparent     =   -1  'True
-      End
-      Begin prjDIADBS.TextBoxW txtCompareVersionDRV 
-         Height          =   1005
-         Left            =   300
-         TabIndex        =   28
-         Top             =   2600
-         Width           =   8100
-         _ExtentX        =   0
-         _ExtentY        =   0
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         BackColor       =   -2147483633
-         ForeColor       =   255
-         BorderStyle     =   0
-         Text            =   "frmOptions.frx":05BA
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2
-      End
-      Begin prjDIADBS.CheckBoxW chkDateFormatRus 
-         Height          =   210
-         Left            =   300
-         TabIndex        =   22
-         Top             =   850
-         Width           =   8100
-         _ExtentX        =   14288
-         _ExtentY        =   370
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Caption         =   "frmOptions.frx":07AE
-         Transparent     =   -1  'True
-      End
-      Begin prjDIADBS.CheckBoxW chkCreateRP 
-         Height          =   210
-         Left            =   300
-         TabIndex        =   21
-         Top             =   500
-         Width           =   8100
-         _ExtentX        =   14288
-         _ExtentY        =   370
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Caption         =   "frmOptions.frx":0828
-         Transparent     =   -1  'True
-      End
-      Begin prjDIADBS.CheckBoxW chkCompatiblesHWID 
-         Height          =   210
-         Left            =   300
-         TabIndex        =   23
-         Top             =   1200
-         Width           =   8100
-         _ExtentX        =   14288
-         _ExtentY        =   370
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Caption         =   "frmOptions.frx":08B0
-         Transparent     =   -1  'True
-      End
-      Begin prjDIADBS.LabelW lblCompareVersionDRV 
-         Height          =   225
-         Left            =   600
-         TabIndex        =   25
-         Top             =   1550
-         Width           =   7800
-         _ExtentX        =   13758
-         _ExtentY        =   397
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   700
-            Underline       =   -1  'True
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   -2147483635
-         BackStyle       =   0
-         Caption         =   "Сравнение версий драйверов"
-      End
-   End
-   Begin prjDIADBS.ctlJCFrames frMainTools 
-      Height          =   5295
-      Left            =   3480
-      Top             =   615
-      Width           =   8655
-      _ExtentX        =   15266
-      _ExtentY        =   9340
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   204
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      BackColor       =   14016736
-      FillColor       =   14016736
-      RoundedCorner   =   0   'False
-      Caption         =   "Расположение основных утилит (Tools)"
-      TextBoxHeight   =   18
-      ThemeColor      =   2
-      HeaderStyle     =   1
-      Begin prjDIADBS.ctlUcPickBox ucDevCon86Path 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   29
-         Top             =   450
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         UseAutoForeColor=   0   'False
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlUcPickBox ucDevCon64Path 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   31
-         Top             =   840
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlUcPickBox ucDevCon86Pathw2k 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   33
-         Top             =   1250
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlUcPickBox ucDPInst86Path 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   35
-         Top             =   1650
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlUcPickBox ucDPInst64Path 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   37
-         Top             =   2050
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlUcPickBox ucArchPath 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   39
-         Top             =   2450
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.exe|EXE Files (*.exe)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlUcPickBox ucCmdDevconPath 
-         Height          =   315
-         Left            =   2520
-         TabIndex        =   41
-         Top             =   2850
-         Width           =   6000
-         _ExtentX        =   10583
-         _ExtentY        =   556
-         DefaultExt      =   ""
-         DialogType      =   1
-         Enabled         =   0   'False
-         FileFlags       =   2621446
-         Filters         =   "Supported files|*.*|All Files (*.*)"
-         UseDialogText   =   0   'False
-         Locked          =   -1  'True
-      End
-      Begin prjDIADBS.ctlJCbutton cmdPathDefault 
-         Height          =   495
-         Left            =   4900
-         TabIndex        =   43
-         Top             =   3300
-         Width           =   3615
-         _ExtentX        =   6376
-         _ExtentY        =   873
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ButtonStyle     =   8
-         BackColor       =   16765357
-         Caption         =   "Сбросить настройки расположения утилит"
-         CaptionEffects  =   0
-         PictureAlign    =   0
-         PicturePushOnHover=   -1  'True
-         PictureShadow   =   -1  'True
-      End
-      Begin prjDIADBS.LabelW lblDevCon64 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   32
-         Top             =   875
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "DevCon.exe (64-bit)"
-         WordWrap        =   0   'False
-      End
-      Begin prjDIADBS.LabelW lblDevCon86w2k 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   34
-         Top             =   1275
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "DevCon.exe (for Windows 2k)"
-         WordWrap        =   0   'False
-      End
-      Begin prjDIADBS.LabelW lblCmdDevconPath 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   42
-         Top             =   2875
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "devcon_c.cmd"
-         WordWrap        =   0   'False
-      End
-      Begin prjDIADBS.LabelW lblArc 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   40
-         Top             =   2475
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "7za"
-         WordWrap        =   0   'False
-      End
-      Begin prjDIADBS.LabelW lblDPInst64 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   38
-         Top             =   2075
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "DPInst.exe (64-bit)"
-         WordWrap        =   0   'False
-      End
-      Begin prjDIADBS.LabelW lblDPInst86 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   36
-         Top             =   1675
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "DPInst.exe (32-bit)"
-         WordWrap        =   0   'False
-      End
-      Begin prjDIADBS.LabelW lblDevCon86 
-         Height          =   315
-         Left            =   100
-         TabIndex        =   30
-         Top             =   475
-         Width           =   2350
-         _ExtentX        =   4154
-         _ExtentY        =   556
-         BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-            Name            =   "Tahoma"
-            Size            =   8.25
-            Charset         =   204
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         Alignment       =   1
-         BackStyle       =   0
-         Caption         =   "DevCon.exe (32-bit)"
-         WordWrap        =   0   'False
       End
    End
    Begin prjDIADBS.ctlJCFrames frOtherTools 
@@ -3553,15 +3591,15 @@ End Sub
 Private Sub LoadSkinListCombo(cmbName As Object, strImagePath As String)
 
     Dim strListFolderTemp() As FindListStruct
-    Dim i                   As Integer
+    Dim I                   As Integer
 
     strListFolderTemp = SearchFoldersInRoot(strImagePath, "*")
 
     With cmbName
         .Clear
 
-        For i = 0 To UBound(strListFolderTemp)
-            .AddItem strListFolderTemp(i).Name, i
+        For I = 0 To UBound(strListFolderTemp)
+            .AddItem strListFolderTemp(I).Name, I
         Next
 
     End With
@@ -3756,8 +3794,10 @@ Private Sub Localise(ByVal strPathFile As String)
     chkDP_is_aFolder.Caption = LocaliseString(strPathFile, strFormName, "chkDP_is_aFolder", chkDP_is_aFolder.Caption)
     
     ' Сообщения диалогов выбора файлов и каталогов
-    ucArchPath.ToolTipTexts(ucOpen) = strMessages(151)
-    ucArchPath.DialogMsg(ucOpen) = strMessages(151)
+    ucArch86Path.ToolTipTexts(ucOpen) = strMessages(151)
+    ucArch86Path.DialogMsg(ucOpen) = strMessages(151)
+    ucArch64Path.ToolTipTexts(ucOpen) = strMessages(151)
+    ucArch64Path.DialogMsg(ucOpen) = strMessages(151)
     ucCmdDevconPath.ToolTipTexts(ucOpen) = strMessages(151)
     ucCmdDevconPath.DialogMsg(ucOpen) = strMessages(151)
     ucDebugLogPath.ToolTipTexts(ucFolder) = strMessages(152)
@@ -3850,23 +3890,25 @@ Private Sub ReadOptions()
         ucDevCon86Path.Path = strDevConExePath
         ucDevCon64Path.Path = strDevConExePath64
         ucDevCon86Pathw2k.Path = strDevConExePathW2k
+        ucCmdDevconPath.Path = strDevconCmdPath
         'Секция DPInst
         ucDPInst86Path.Path = strDPInstExePath86
         ucDPInst64Path.Path = strDPInstExePath64
         'Секция Arc
-        ucArchPath.Path = strArh7zExePATH
-        ucCmdDevconPath.Path = strDevconCmdPath
+        ucArch86Path.Path = strArh7zExePath86
+        ucArch64Path.Path = strArh7zExePath64
     Else
         'Секция Devcon
         ucDevCon86Path.Path = Replace$(strDevConExePath, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucDevCon64Path.Path = Replace$(strDevConExePath64, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucDevCon86Pathw2k.Path = Replace$(strDevConExePathW2k, strAppPathBackSL, vbNullString, , , vbTextCompare)
+        ucCmdDevconPath.Path = Replace$(strDevconCmdPath, strAppPathBackSL, vbNullString, , , vbTextCompare)
         'Секция DPInst
         ucDPInst86Path.Path = Replace$(strDPInstExePath86, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucDPInst64Path.Path = Replace$(strDPInstExePath64, strAppPathBackSL, vbNullString, , , vbTextCompare)
         'Секция Arc
-        ucArchPath.Path = Replace$(strArh7zExePATH, strAppPathBackSL, vbNullString, , , vbTextCompare)
-        ucCmdDevconPath.Path = Replace$(strDevconCmdPath, strAppPathBackSL, vbNullString, , , vbTextCompare)
+        ucArch86Path.Path = Replace$(strArh7zExePath86, strAppPathBackSL, vbNullString, , , vbTextCompare)
+        ucArch64Path.Path = Replace$(strArh7zExePath64, strAppPathBackSL, vbNullString, , , vbTextCompare)
     End If
 
     ' Настройки DpInst
@@ -3999,7 +4041,8 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Debug", "Time2File", Abs(mbDebugTime2File), strSysIniTemp
     
     'Секция Arc
-    IniWriteStrPrivate "Arc", "PathExe", ucArchPath.Path, strSysIniTemp
+    IniWriteStrPrivate "Arc", "PathExe", ucArch86Path.Path, strSysIniTemp
+    IniWriteStrPrivate "Arc", "PathExe64", ucArch64Path.Path, strSysIniTemp
     'Секция Devcon
     IniWriteStrPrivate "Devcon", "PathExe", ucDevCon86Path.Path, strSysIniTemp
     IniWriteStrPrivate "Devcon", "PathExe64", ucDevCon64Path.Path, strSysIniTemp
@@ -4018,7 +4061,7 @@ Private Sub SaveOptions()
     
     'Секция OS
     'Число ОС
-    lngOSCountNew = lvOS.ListItems.Count
+    lngOSCountNew = lvOS.ListItems.count
     IniWriteStrPrivate "OS", "OSCount", lngOSCountNew, strSysIniTemp
     ' кол-во табов на строку
     IniWriteStrPrivate "OS", "OSCountPerRow", txtTabPerRowCount.Value, strSysIniTemp
@@ -4071,7 +4114,7 @@ Private Sub SaveOptions()
 
     'Секция Utils
     'Число утилит
-    lngUtilsCountNew = lvUtils.ListItems.Count
+    lngUtilsCountNew = lvUtils.ListItems.count
     IniWriteStrPrivate "Utils", "UtilsCount", lngUtilsCountNew, strSysIniTemp
 
     'Заполяем в цикле подсекции Утилиты
@@ -4181,20 +4224,20 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TransferOSData()
 
-    Dim i As Long
+    Dim I As Long
 
     With lvOS
-        i = .SelectedItem.Index
+        I = .SelectedItem.Index
 
-        If i >= 0 Then
+        If I >= 0 Then
 
-            frmOSEdit.txtOSVer.Text = .ListItems.Item(i).Text
-            frmOSEdit.txtOSName.Text = .ListItems.Item(i).SubItems(1)
-            frmOSEdit.ucPathDRP.Path = .ListItems.Item(i).SubItems(2)
-            frmOSEdit.ucPathDB.Path = .ListItems.Item(i).SubItems(3)
-            frmOSEdit.chk64bit.Value = CBool(.ListItems.Item(i).SubItems(4))
+            frmOSEdit.txtOSVer.Text = .ListItems.Item(I).Text
+            frmOSEdit.txtOSName.Text = .ListItems.Item(I).SubItems(1)
+            frmOSEdit.ucPathDRP.Path = .ListItems.Item(I).SubItems(2)
+            frmOSEdit.ucPathDB.Path = .ListItems.Item(I).SubItems(3)
+            frmOSEdit.chk64bit.Value = CBool(.ListItems.Item(I).SubItems(4))
     
-            Select Case .ListItems.Item(i).SubItems(4)
+            Select Case .ListItems.Item(I).SubItems(4)
     
                 Case 0
                     frmOSEdit.chk64bit.Value = False
@@ -4217,10 +4260,10 @@ Private Sub TransferOSData()
                     frmOSEdit.chkNotCheckBitOS.Value = False
             End Select
     
-            frmOSEdit.ucPhysXPath.Path = .ListItems.Item(i).SubItems(5)
-            frmOSEdit.ucLangPath.Path = .ListItems.Item(i).SubItems(6)
-            frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(i).SubItems(7)
-            frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(i).SubItems(8)
+            frmOSEdit.ucPhysXPath.Path = .ListItems.Item(I).SubItems(5)
+            frmOSEdit.ucLangPath.Path = .ListItems.Item(I).SubItems(6)
+            frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(I).SubItems(7)
+            frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(I).SubItems(8)
             
             frmOSEdit.Show vbModal, Me
         End If
@@ -4236,16 +4279,16 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TransferUtilsData()
 
-    Dim i As Long
+    Dim I As Long
 
     With lvUtils
-        i = .SelectedItem.Index
+        I = .SelectedItem.Index
 
-        If i >= 0 Then
-            frmUtilsEdit.txtUtilName.Text = .ListItems.Item(i).Text
-            frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(i).SubItems(1)
-            frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(i).SubItems(2)
-            frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(i).SubItems(3)
+        If I >= 0 Then
+            frmUtilsEdit.txtUtilName.Text = .ListItems.Item(I).Text
+            frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(I).SubItems(1)
+            frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(I).SubItems(2)
+            frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(I).SubItems(3)
             
             frmUtilsEdit.Show vbModal, Me
         End If
@@ -4637,7 +4680,7 @@ Private Sub cmdDelOS_Click()
 
     With lvOS
 
-        If .ListItems.Count Then
+        If .ListItems.count Then
             .ListItems.Remove (.SelectedItem.Index)
             lngLastIdOS = lngLastIdOS - 1
         End If
@@ -4655,7 +4698,7 @@ Private Sub cmdDelUtil_Click()
 
     With lvUtils
 
-        If .ListItems.Count Then
+        If .ListItems.count Then
             .ListItems.Remove (.SelectedItem.Index)
             lngLastIdUtil = lngLastIdUtil - 1
         End If
@@ -4851,7 +4894,8 @@ Private Sub cmdPathDefault_Click()
     ucDPInst86Path.Path = "Tools\DPInst\DPInst.exe"
     ucDPInst64Path.Path = "Tools\DPInst\DPInst64.exe"
     'Секция Arc
-    ucArchPath.Path = "Tools\Arc\7za.exe"
+    ucArch86Path.Path = "Tools\Arc\7za.exe"
+    ucArch64Path.Path = "Tools\Arc\7za64.exe"
     ucCmdDevconPath.Path = "Tools\Devcon\devcon_c.cmd"
 End Sub
 
@@ -4937,7 +4981,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmOptions", False
+        SetIcon .hWnd, strFormName, False
         .Height = 5850
         .Width = 11900
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
@@ -5037,23 +5081,23 @@ Private Sub LoadList_lvOptions()
     
     ' Загружаем картинки в ImageList
     With ImageListOptions.ListImages
-        If .Count = 0 Then
-            .Add 1, , LoadIconImageFromPath("OPT_MAIN", strPathImageMainWork)
-            .Add 2, , LoadIconImageFromPath("OPT_MAIN2", strPathImageMainWork)
-            .Add 3, , LoadIconImageFromPath("OPT_OSLIST", strPathImageMainWork)
-            .Add 4, , LoadIconImageFromPath("OPT_TOOLS_MAIN", strPathImageMainWork)
-            .Add 5, , LoadIconImageFromPath("OPT_TOOLS_OTHER", strPathImageMainWork)
-            .Add 6, , LoadIconImageFromPath("OPT_DESIGN", strPathImageMainWork)
-            .Add 7, , LoadIconImageFromPath("OPT_DESIGN2", strPathImageMainWork)
-            .Add 8, , LoadIconImageFromPath("OPT_DPINST", strPathImageMainWork)
-            .Add 9, , LoadIconImageFromPath("OPT_DEVPARSER", strPathImageMainWork)
+        If .count = 0 Then
+            .Add 1, , GetImageFromFile("OPT_MAIN", strPathImageMainWork)
+            .Add 2, , GetImageFromFile("OPT_MAIN2", strPathImageMainWork)
+            .Add 3, , GetImageFromFile("OPT_OSLIST", strPathImageMainWork)
+            .Add 4, , GetImageFromFile("OPT_TOOLS_MAIN", strPathImageMainWork)
+            .Add 5, , GetImageFromFile("OPT_TOOLS_OTHER", strPathImageMainWork)
+            .Add 6, , GetImageFromFile("OPT_DESIGN", strPathImageMainWork)
+            .Add 7, , GetImageFromFile("OPT_DESIGN2", strPathImageMainWork)
+            .Add 8, , GetImageFromFile("OPT_DPINST", strPathImageMainWork)
+            .Add 9, , GetImageFromFile("OPT_DEVPARSER", strPathImageMainWork)
         End If
     End With
         
     ' Заполняем ListView названием опций программы
     With lvOptions
         With .ListItems
-            If .Count = 0 Then
+            If .count = 0 Then
                 .Add 1, , strItemOptions1, , 1
                 .Add 2, , strItemOptions8, , 2
                 .Add 3, , strItemOptions2, , 3
@@ -5088,12 +5132,12 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_lvOS()
 
-    Dim i As Long
+    Dim I As Long
 
     With lvOS
         .ListItems.Clear
 
-        If .ColumnHeaders.Count = 0 Then
+        If .ColumnHeaders.count = 0 Then
             .ColumnHeaders.Add 1, , strTableOSHeader1, 80 * Screen.TwipsPerPixelX
             .ColumnHeaders.Add 2, , strTableOSHeader2, 150 * Screen.TwipsPerPixelX
             .ColumnHeaders.Add 3, , strTableOSHeader3, 150 * Screen.TwipsPerPixelX
@@ -5105,17 +5149,17 @@ Private Sub LoadList_lvOS()
             .ColumnHeaders.Add 9, , strTableOSHeader9, 120 * Screen.TwipsPerPixelX
         End If
 
-        For i = 0 To lngOSCount - 1
+        For I = 0 To lngOSCount - 1
 
-            With .ListItems.Add(, , arrOSList(i).Ver)
-                .SubItems(1) = arrOSList(i).Name
-                .SubItems(2) = arrOSList(i).drpFolder
-                .SubItems(3) = arrOSList(i).devIDFolder
-                .SubItems(4) = arrOSList(i).is64bit
-                .SubItems(5) = arrOSList(i).PathPhysX
-                .SubItems(6) = arrOSList(i).PathLanguages
-                .SubItems(7) = arrOSList(i).PathRuntimes
-                .SubItems(8) = arrOSList(i).ExcludeFileName
+            With .ListItems.Add(, , arrOSList(I).Ver)
+                .SubItems(1) = arrOSList(I).Name
+                .SubItems(2) = arrOSList(I).drpFolder
+                .SubItems(3) = arrOSList(I).devIDFolder
+                .SubItems(4) = arrOSList(I).is64bit
+                .SubItems(5) = arrOSList(I).PathPhysX
+                .SubItems(6) = arrOSList(I).PathLanguages
+                .SubItems(7) = arrOSList(I).PathRuntimes
+                .SubItems(8) = arrOSList(I).ExcludeFileName
             End With
 
         Next
@@ -5132,24 +5176,24 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_lvUtils()
 
-    Dim i As Long
+    Dim I As Long
 
     With lvUtils
         .ListItems.Clear
 
-        If .ColumnHeaders.Count = 0 Then
+        If .ColumnHeaders.count = 0 Then
             .ColumnHeaders.Add 1, , strTableUtilHeader1, 200 * Screen.TwipsPerPixelX
             .ColumnHeaders.Add 2, , strTableUtilHeader2, 200 * Screen.TwipsPerPixelX
             .ColumnHeaders.Add 3, , strTableUtilHeader4, 200 * Screen.TwipsPerPixelX
             .ColumnHeaders.Add 4, , strTableUtilHeader3, 120 * Screen.TwipsPerPixelX
         End If
 
-        For i = 0 To lngUtilsCount - 1
+        For I = 0 To lngUtilsCount - 1
 
-            With .ListItems.Add(, , arrUtilsList(i, 0))
-                .SubItems(1) = arrUtilsList(i, 1)
-                .SubItems(2) = arrUtilsList(i, 2)
-                .SubItems(3) = arrUtilsList(i, 3)
+            With .ListItems.Add(, , arrUtilsList(I, 0))
+                .SubItems(1) = arrUtilsList(I, 1)
+                .SubItems(2) = arrUtilsList(I, 2)
+                .SubItems(3) = arrUtilsList(I, 3)
             End With
 
         Next
@@ -5218,7 +5262,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim i As Long
+    Dim I As Long
 
     With lvOS
         .Sorted = False
@@ -5226,10 +5270,10 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
         If ComCtlsSupportLevel() >= 1 Then
 
-            For i = 1 To .ColumnHeaders.Count
+            For I = 1 To .ColumnHeaders.count
 
-                If i <> ColumnHeader.Index Then
-                    .ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
+                If I <> ColumnHeader.Index Then
+                    .ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
 
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -5244,7 +5288,7 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next i
+            Next I
 
             Select Case ColumnHeader.SortArrow
 
@@ -5258,10 +5302,10 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
             .SelectedColumn = ColumnHeader
         Else
 
-            For i = 1 To .ColumnHeaders.Count
+            For I = 1 To .ColumnHeaders.count
 
-                If i <> ColumnHeader.Index Then
-                    .ColumnHeaders(i).Icon = 0
+                If I <> ColumnHeader.Index Then
+                    .ColumnHeaders(I).Icon = 0
                 Else
 
                     If ColumnHeader.Icon = 0 Then
@@ -5276,7 +5320,7 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next i
+            Next I
 
             Select Case ColumnHeader.Icon
 
@@ -5313,7 +5357,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim i As Long
+    Dim I As Long
 
     With lvUtils
         .Sorted = False
@@ -5321,10 +5365,10 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
         If ComCtlsSupportLevel() >= 1 Then
 
-            For i = 1 To .ColumnHeaders.Count
+            For I = 1 To .ColumnHeaders.count
 
-                If i <> ColumnHeader.Index Then
-                    .ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
+                If I <> ColumnHeader.Index Then
+                    .ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
 
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -5339,7 +5383,7 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next i
+            Next I
 
             Select Case ColumnHeader.SortArrow
 
@@ -5353,10 +5397,10 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
             .SelectedColumn = ColumnHeader
         Else
 
-            For i = 1 To .ColumnHeaders.Count
+            For I = 1 To .ColumnHeaders.count
 
-                If i <> ColumnHeader.Index Then
-                    .ColumnHeaders(i).Icon = 0
+                If I <> ColumnHeader.Index Then
+                    .ColumnHeaders(I).Icon = 0
                 Else
 
                     If ColumnHeader.Icon = 0 Then
@@ -5371,7 +5415,7 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next i
+            Next I
 
             Select Case ColumnHeader.Icon
 
@@ -5474,15 +5518,15 @@ Private Sub txtExcludeHWID_LostFocus()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ucArchPath_Click
+'! Procedure   (Функция)   :   Sub ucArch86Path_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub ucArchPath_Click()
+Private Sub ucArch86Path_Click()
 
     Dim strTempPath As String
 
-    With ucArchPath
+    With ucArch86Path
         If .FileCount Then
             strTempPath = .FileName
     
@@ -5499,21 +5543,64 @@ Private Sub ucArchPath_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ucArchPath_GotFocus
+'! Procedure   (Функция)   :   Sub ucArch64Path_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub ucArchPath_GotFocus()
-    HighlightActiveControl Me, ucArchPath, True
+Private Sub ucArch64Path_Click()
+
+    Dim strTempPath As String
+
+    With ucArch64Path
+        If .FileCount Then
+            strTempPath = .FileName
+    
+            If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+            End If
+        End If
+    
+        If LenB(strTempPath) Then
+            .Path = strTempPath
+        End If
+    End With
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ucArchPath_LostFocus
+'! Procedure   (Функция)   :   Sub ucArch86Path_GotFocus
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub ucArchPath_LostFocus()
-    HighlightActiveControl Me, ucArchPath, False
+Private Sub ucArch86Path_GotFocus()
+    HighlightActiveControl Me, ucArch86Path, True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucArch86Path_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucArch86Path_LostFocus()
+    HighlightActiveControl Me, ucArch86Path, False
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucArch64Path_GotFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucArch64Path_GotFocus()
+    HighlightActiveControl Me, ucArch64Path, True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucArch64Path_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucArch64Path_LostFocus()
+    HighlightActiveControl Me, ucArch64Path, False
 End Sub
 
 '!--------------------------------------------------------------------------------

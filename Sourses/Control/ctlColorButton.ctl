@@ -103,9 +103,21 @@ Private Type RECT
     Bottom                              As Long
 End Type
 
-Private Const DT_CENTER                 As Long = &H1
-Private Const DT_SINGLELINE             As Long = &H20
-Private Const DT_VCENTER                As Long = &H4
+' --Formatting Text Consts
+Private Const DT_LEFT           As Long = &H0
+Private Const DT_CENTER         As Long = &H1
+Private Const DT_RIGHT          As Long = &H2
+Private Const DT_NOCLIP         As Long = &H100
+Private Const DT_WORDBREAK      As Long = &H10
+Private Const DT_CALCRECT       As Long = &H400
+Private Const DT_RTLREADING     As Long = &H20000
+Private Const DT_DRAWFLAG       As Long = DT_CENTER Or DT_WORDBREAK
+Private Const DT_TOP            As Long = &H0
+Private Const DT_BOTTOM         As Long = &H8
+Private Const DT_VCENTER        As Long = &H4
+Private Const DT_SINGLELINE     As Long = &H20
+Private Const DT_WORD_ELLIPSIS  As Long = &H40000
+
 Private Const DI_NORMAL                 As Long = &H3
 Private Const BF_RECT                   As Long = &HF
 Private Const BDR_SUNKENOUTER           As Long = &H2

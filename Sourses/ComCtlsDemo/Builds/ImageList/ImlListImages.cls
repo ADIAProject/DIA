@@ -12,8 +12,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowImageList As ImageList
+Private ShadowObjectPointer As Long
 Private PropListImage As Collection
+
+Private Function ShadowImageList() As ImageList
+Set ShadowImageList = PtrToObj(ShadowObjectPointer)
+End Function
 
 Private Sub Class_Initialize()
 Set PropListImage = New Collection
@@ -30,7 +34,7 @@ Set NewEnum = PropListImage.[_NewEnum]
 End Function
 
 Friend Sub FInit(ByVal Object As ImageList)
-Set ShadowImageList = Object
+ShadowObjectPointer = ObjPtr(Object)
 End Sub
 
 Public Function Add(Optional ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Picture As IPictureDisp) As ImlListImage

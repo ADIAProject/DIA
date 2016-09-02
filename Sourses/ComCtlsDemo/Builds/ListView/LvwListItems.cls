@@ -12,10 +12,14 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowListView As ListView
+Private ShadowObjectPointer As Long
 Private PropListItem As Collection
 Private WithEvents PropEnumeration As Enumeration
 Attribute PropEnumeration.VB_VarHelpID = -1
+
+Private Function ShadowListView() As ListView
+Set ShadowListView = PtrToObj(ShadowObjectPointer)
+End Function
 
 Private Sub Class_Initialize()
 Set PropListItem = New Collection
@@ -47,19 +51,29 @@ Set NewEnum = PropEnumeration.GetEnum(ShadowListView.FListItemsControl())
 End Function
 
 Friend Sub FInit(ByVal Object As ListView)
-Set ShadowListView = Object
+ShadowObjectPointer = ObjPtr(Object)
 End Sub
 
-Public Function Add(Optional ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Text As String, Optional ByVal Icon As Long, Optional ByVal SmallIcon As Long) As LvwListItem
+Public Function Add(Optional ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Text As String, Optional ByVal Icon As Variant, Optional ByVal SmallIcon As Variant) As LvwListItem
 Attribute Add.VB_Description = "Adds a list item to the list items collection."
 If Index > (PropListItem.Count + 1) Or Index < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
-If Icon < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
-If SmallIcon < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
+Dim IconIndex As Long
+If IsMissing(Icon) Then
+    Icon = Empty
+Else
+    Call ComCtlsImlListImageIndex(ShadowListView, ShadowListView.Icons, Icon, IconIndex)
+End If
+Dim SmallIconIndex As Long
+If IsMissing(SmallIcon) Then
+    SmallIcon = Empty
+Else
+    Call ComCtlsImlListImageIndex(ShadowListView, ShadowListView.SmallIcons, SmallIcon, SmallIconIndex)
+End If
 Dim NewListItem As New LvwListItem
 Dim Ptr As Long
 Ptr = ObjPtr(NewListItem)
 If Index = 0 Then Index = PropListItem.Count + 1
-NewListItem.FInit ShadowListView, Index, Key, Ptr, Text, Icon, SmallIcon
+NewListItem.FInit ShadowObjectPointer, Index, Key, Ptr, Text, Icon, IconIndex, SmallIcon, SmallIconIndex
 ShadowListView.FListItemsAdd Ptr, Index, Text
 If Key = vbNullString Then
     PropListItem.Add NewListItem

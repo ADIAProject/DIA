@@ -131,81 +131,53 @@ Public Sub DevParserLocalHwids2()
 
     If mbDebugDetail Then DebugMode "DevParserLocalHwids2-Start"
 
-    If PathExists(strHwidsTxtPath) Then
-        If Not PathIsAFolder(strHwidsTxtPath) Then
-            FileReadData strHwidsTxtPath, strContent
-            strContent = UCase$(strContent)
-            Set MatchesDevcon = RegExpDevcon.Execute(strContent)
-            miMaxCountArr = 100
+    If FileExists(strHwidsTxtPath) Then
+        FileReadData strHwidsTxtPath, strContent
+        strContent = UCase$(strContent)
+        Set MatchesDevcon = RegExpDevcon.Execute(strContent)
+        miMaxCountArr = 100
 
-            ' максимальное кол-во элементов в массиве
-            ReDim arrHwidsLocal(miMaxCountArr)
+        ' максимальное кол-во элементов в массиве
+        ReDim arrHwidsLocal(miMaxCountArr)
 
-            strCnt = MatchesDevcon.Count
-            RecCountArr = 0
+        strCnt = MatchesDevcon.Count
+        RecCountArr = 0
 
-            'For i = 0 To MatchesDevcon.Count - 1
-            For i = 0 To strCnt - 1
-                Set objMatch = MatchesDevcon.Item(i)
+        'For i = 0 To MatchesDevcon.Count - 1
+        For i = 0 To strCnt - 1
+            Set objMatch = MatchesDevcon.Item(i)
 
-                ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
-                If RecCountArr = miMaxCountArr Then
-                    miMaxCountArr = miMaxCountArr + miMaxCountArr
+            ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
+            If RecCountArr = miMaxCountArr Then
+                miMaxCountArr = miMaxCountArr + miMaxCountArr
 
-                    ReDim Preserve arrHwidsLocal(miMaxCountArr)
+                ReDim Preserve arrHwidsLocal(miMaxCountArr)
 
-                End If
+            End If
 
-                ' получаем данные
-                With objMatch
-                    strID = .SubMatches(0)
-                    strName = .SubMatches(1)
-                    strStatus = .SubMatches(2)
-                End With
+            ' получаем данные
+            With objMatch
+                strID = .SubMatches(0)
+                strName = .SubMatches(1)
+                strStatus = .SubMatches(2)
+            End With
 
-                'objMatch
-                strID = Trim$(Replace$(strID, vbNewLine, vbNullString))
-                ' разбиваем по "\"
-                strIDOrig = strID
+            'objMatch
+            strID = Trim$(Replace$(strID, vbNewLine, vbNullString))
+            ' разбиваем по "\"
+            strIDOrig = strID
 
-                If InStr(strID, vbBackslash) Then
-                    strID_x = Split(strID, vbBackslash)
-                    strID = strID_x(0) & vbBackslash & strID_x(1)
-                End If
+            If InStr(strID, vbBackslash) Then
+                strID_x = Split(strID, vbBackslash)
+                strID = strID_x(0) & vbBackslash & strID_x(1)
+            End If
 
-                strIDCutting = ParseDoubleHwid(strID)
+            strIDCutting = ParseDoubleHwid(strID)
 
-                'Если не входит в список исключений, то продолжаем
-                If strExcludeHWID <> "*" Then
-                    If Not MatchSpec(strID, strExcludeHWID) Then
-                        '"Ура: " & strID & " present in " & strExcludeHWID
-                        miStatus = 0
-
-                        ' устройство активно
-                        If InStr(strStatus, "RUNNING") Then
-                            miStatus = 1
-                        End If
-
-                        If LenB(strName) Then
-                            strName_x = Split(strName, vbNewLine)
-                            strName = strName_x(0)
-                        End If
-
-                        strName = Replace$(strName, vbNewLine, vbNullString)
-                        strName = Replace$(strName, "NAME:", vbNullString)
-                        strName = Trim$(strName)
-
-                        If Len(strID) > 3 Then
-                            arrHwidsLocal(RecCountArr).HWID = strID
-                            arrHwidsLocal(RecCountArr).DevName = strName
-                            arrHwidsLocal(RecCountArr).Status = miStatus
-                            arrHwidsLocal(RecCountArr).HWIDOrig = strIDOrig
-                            arrHwidsLocal(RecCountArr).HWIDCutting = strIDCutting
-                            RecCountArr = RecCountArr + 1
-                        End If
-                    End If
-
-                Else
+            'Если не входит в список исключений, то продолжаем
+            If strExcludeHWID <> "*" Then
+                If Not MatchSpec(strID, strExcludeHWID) Then
+                    '"Ура: " & strID & " present in " & strExcludeHWID
                     miStatus = 0
 
                     ' устройство активно
@@ -223,11 +195,8 @@ Public Sub DevParserLocalHwids2()
                     strName = Trim$(strName)
 
                     If Len(strID) > 3 Then
-                        ' ID оборудования
                         arrHwidsLocal(RecCountArr).HWID = strID
-                        ' Наименование оборудования
                         arrHwidsLocal(RecCountArr).DevName = strName
-                        ' Статус оборудования
                         arrHwidsLocal(RecCountArr).Status = miStatus
                         arrHwidsLocal(RecCountArr).HWIDOrig = strIDOrig
                         arrHwidsLocal(RecCountArr).HWIDCutting = strIDCutting
@@ -235,22 +204,51 @@ Public Sub DevParserLocalHwids2()
                     End If
                 End If
 
-            Next
-
-            ' Переобъявляем массив на реальное кол-во записей
-            If RecCountArr Then
-
-                ReDim Preserve arrHwidsLocal(RecCountArr - 1)
-
             Else
+                miStatus = 0
 
-                ReDim Preserve arrHwidsLocal(0)
+                ' устройство активно
+                If InStr(strStatus, "RUNNING") Then
+                    miStatus = 1
+                End If
 
+                If LenB(strName) Then
+                    strName_x = Split(strName, vbNewLine)
+                    strName = strName_x(0)
+                End If
+
+                strName = Replace$(strName, vbNewLine, vbNullString)
+                strName = Replace$(strName, "NAME:", vbNullString)
+                strName = Trim$(strName)
+
+                If Len(strID) > 3 Then
+                    ' ID оборудования
+                    arrHwidsLocal(RecCountArr).HWID = strID
+                    ' Наименование оборудования
+                    arrHwidsLocal(RecCountArr).DevName = strName
+                    ' Статус оборудования
+                    arrHwidsLocal(RecCountArr).Status = miStatus
+                    arrHwidsLocal(RecCountArr).HWIDOrig = strIDOrig
+                    arrHwidsLocal(RecCountArr).HWIDCutting = strIDCutting
+                    RecCountArr = RecCountArr + 1
+                End If
             End If
 
-            If SaveHwidsArray2File(strResultHwidsTxtPath, arrHwidsLocal) = False Then
-                MsgBox strMessages(45) & vbNewLine & strResultHwidsTxtPath, vbCritical + vbInformation, strProductName
-            End If
+        Next
+
+        ' Переобъявляем массив на реальное кол-во записей
+        If RecCountArr Then
+
+            ReDim Preserve arrHwidsLocal(RecCountArr - 1)
+
+        Else
+
+            ReDim Preserve arrHwidsLocal(0)
+
+        End If
+
+        If SaveHwidsArray2File(strResultHwidsTxtPath, arrHwidsLocal) = False Then
+            MsgBox strMessages(45) & vbNewLine & strResultHwidsTxtPath, vbCritical + vbInformation, strProductName
         End If
 
     Else
@@ -297,7 +295,7 @@ Public Function RunDevcon() As Boolean
 
     Dim cmdString As String
 
-    If PathExists(strHwidsTxtPath) Then
+    If FileExists(strHwidsTxtPath) Then
         DeleteFiles strHwidsTxtPath
     End If
 

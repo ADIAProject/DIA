@@ -294,10 +294,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-    Dim i As Long
+    Dim I As Long
 
     If mbAddInList Then
-        i = lngLastIdUtil + 1
+        I = lngLastIdUtil + 1
 
         With frmOptions.lvUtils.ListItems.Add(, , txtUtilName)
             .SubItems(1) = ucPathUtil.Path
@@ -309,23 +309,23 @@ Private Sub SaveOptions()
     Else
 
         With frmOptions.lvUtils
-            i = .SelectedItem.Index
-            .ListItems.Item(i).Text = txtUtilName
-            .ListItems.Item(i).SubItems(1) = ucPathUtil.Path
-            .ListItems.Item(i).SubItems(2) = ucPathUtil64.Path
+            I = .SelectedItem.Index
+            .ListItems.Item(I).Text = txtUtilName
+            .ListItems.Item(I).SubItems(1) = ucPathUtil.Path
+            .ListItems.Item(I).SubItems(2) = ucPathUtil64.Path
 
             'frmOptions
             If txtParamUtil.Text <> "Дополнительные параметры запуска" Then
-                .ListItems.Item(i).SubItems(3) = txtParamUtil
+                .ListItems.Item(I).SubItems(3) = txtParamUtil
             Else
-                .ListItems.Item(i).SubItems(3) = vbNullString
+                .ListItems.Item(I).SubItems(3) = vbNullString
             End If
 
         End With
 
     End If
 
-    lngLastIdUtil = frmOptions.lvUtils.ListItems.Count
+    lngLastIdUtil = frmOptions.lvUtils.ListItems.count
     frmOptions.lvUtils.Refresh
     mbAddInList = False
 End Sub
@@ -382,7 +382,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmUtilsEdit", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With

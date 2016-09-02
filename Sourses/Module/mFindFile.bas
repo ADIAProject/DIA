@@ -11,30 +11,50 @@ Option Explicit
 '               online service, or distribute as source
 '               on any media without express permission.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private fp                       As FILE_PARAMS    'holds search parameters
-Private fp2                      As FOLDER_PARAMS  'holds search parameters
-Private sResultFileList()        As FindListStruct
-Private sResultFolderList()      As FindListStruct
+
+Private tFileParams              As FILE_PARAMS    'holds search parameters
+Private tFolderParams            As FOLDER_PARAMS  'holds search parameters
+Private sResultFileList()        As FindListStruct 'result list file parameters
+Private sResultFolderList()      As FindListStruct 'result list folder parameters
 Private lngResultFileListCount   As Long
 Private lngResultFolderListCount As Long
 
+Private Type FILE_PARAMS
+    sFileRoot                    As String
+    sFileNameExt                 As String
+    bRecurse                     As Boolean
+    bDelete                      As Boolean
+    nFileCount                   As Long
+    nFileSize                    As Currency    '64 bit value
+    nSearched                    As Long
+    nSearchedMax                 As Long
+End Type
+
+Private Type FOLDER_PARAMS
+    sFileRoot                    As String
+    sFileNameExt                 As String
+    bRecurse                     As Boolean
+    bDelete                      As Boolean
+    nSearchedMax                 As Long
+End Type
+
 Public Type FindListStruct
-    Path            As String
-    Name            As String
-    FullPath        As String
-    RelativePath    As String
-    NameLcase       As String
-    NameWoExt       As String
-    Size            As Long
-    SizeInString    As String
+    Path                         As String
+    Name                         As String
+    FullPath                     As String
+    RelativePath                 As String
+    NameLCase                    As String
+    NameWoExt                    As String
+    Size                         As Long
+    'SizeInString    As String
 End Type
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileSizeApi
-'! Description (Описание)  :   [type_description_here]
+'! Procedure   (Функция)   :   Function GetFileSizeApiString
+'! Description (Описание)  :   [Get size of file in string format]
 '! Parameters  (Переменные):   sSource (String)
 '!--------------------------------------------------------------------------------
-Public Function FileSizeApi(ByVal sSource As String) As String
+Public Function GetFileSizeApiString(ByVal sSource As String) As String
 
     Dim wfd             As WIN32_FIND_DATA
     Dim hFile           As Long
@@ -54,9 +74,9 @@ Public Function FileSizeApi(ByVal sSource As String) As String
 
         If InStr(1, sSource, TrimNull(wfd.cFileName), vbTextCompare) Then
             StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
-            FileSizeApi = TrimNull(sSize)
+            GetFileSizeApiString = TrimNull(sSize)
         Else
-            FileSizeApi = "0 byte"
+            GetFileSizeApiString = "0 byte"
         End If
         
         FindClose hFile
@@ -66,7 +86,7 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FolderContainsFiles
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Директория содержит файлы]
 '! Parameters  (Переменные):   sRoot (String)
 '!--------------------------------------------------------------------------------
 Public Function FolderContainsFiles(ByVal sRoot As String) As Boolean
@@ -110,7 +130,7 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function FolderContainsSubfolders
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Директория содержит поддиректорию]
 '! Parameters  (Переменные):   sRoot (String)
 '!--------------------------------------------------------------------------------
 Public Function FolderContainsSubfolders(sRoot As String) As Boolean
@@ -124,12 +144,14 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
         sRoot = BackslashAdd2Path(sRoot)
 
         If PathIsValidUNC(sRoot) = False Then
-            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
+            lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FOLDERS_EX)
         Else
             '\\?\UNC\
-            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
+            lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FOLDERS_EX)
         End If
-        hFile = FindFirstFile(lngFilePathPtr, wfd)
+        'hFile = FindFirstFile(lngFilePathPtr, wfd)
+        hFile = FindFirstFileEx(lngFilePathPtr, FINDEX_INFO_LEVELS.FindExInfoBasic, wfd, FINDEX_SEARCH_OPS.FindExSearchLimitToDirectories, 0&, 0&)
+
 
         If hFile <> INVALID_HANDLE_VALUE Then
 
@@ -159,12 +181,12 @@ Public Function FolderContainsSubfolders(sRoot As String) As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FolderSizeApi
-'! Description (Описание)  :   [type_description_here]
+'! Procedure   (Функция)   :   Function GetFolderSizeApiString
+'! Description (Описание)  :   [Получить размер директории в виде строки]
 '! Parameters  (Переменные):   sSource (String)
 '                              bRecursion (Boolean)
 '!--------------------------------------------------------------------------------
-Public Function FolderSizeApi(ByVal sSource As String, ByVal bRecursion As Boolean) As String
+Public Function GetFolderSizeApiString(ByVal sSource As String, ByVal bRecursion As Boolean) As String
 
     Dim fp As FILE_PARAMS
 
@@ -175,15 +197,15 @@ Public Function FolderSizeApi(ByVal sSource As String, ByVal bRecursion As Boole
     End With
 
     GetDirectorySize fp.sFileRoot, fp
-    FolderSizeApi = FormatByteSize(CSng(fp.nFileSize))
+    GetFolderSizeApiString = GetFormatByteSize(CSng(fp.nFileSize))
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FormatByteSize
-'! Description (Описание)  :   [type_description_here]
+'! Procedure   (Функция)   :   Function GetFormatByteSize
+'! Description (Описание)  :   [Получить размер в виде строки на основе размера в байтах]
 '! Parameters  (Переменные):   dwBytes (Single)
 '!--------------------------------------------------------------------------------
-Private Function FormatByteSize(ByVal dwBytes As Single) As String
+Private Function GetFormatByteSize(ByVal dwBytes As Single) As String
 
     Dim sBuff  As String
     Dim dwBuff As Long
@@ -192,18 +214,18 @@ Private Function FormatByteSize(ByVal dwBytes As Single) As String
     dwBuff = Len(sBuff)
 
     If StrFormatByteSize(dwBytes, sBuff, dwBuff) <> 0 Then
-        FormatByteSize = TrimNull(sBuff)
+        GetFormatByteSize = TrimNull(sBuff)
     End If
 
 End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub GetDirectorySize
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Подсчет размер директории]
 '! Parameters  (Переменные):   sRoot (String)
 '                              fp (FILE_PARAMS)
 '!--------------------------------------------------------------------------------
-Private Sub GetDirectorySize(ByVal sRoot As String, fp As FILE_PARAMS)
+Private Sub GetDirectorySize(ByVal sRoot As String, ByRef fp As FILE_PARAMS)
 
     Dim wfd             As WIN32_FIND_DATA
     Dim hFile           As Long
@@ -261,7 +283,7 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function rgbCopyFiles
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Копирование файлов]
 '! Parameters  (Переменные):   sSourcePath (String)
 '                              sDestination (String)
 '                              sFiles (String)
@@ -293,7 +315,7 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
         lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sSourcePath, Len(sSourcePath) - 2) & sFiles)
     End If
     hFile = FindFirstFile(lngFilePathPtr, wfd)
-
+    
     If hFile <> INVALID_HANDLE_VALUE Then
 
         'Copy each file to the new directory
@@ -303,7 +325,7 @@ Public Function rgbCopyFiles(ByVal sSourcePath As String, ByVal sDestination As 
             If AscW(currFile) <> vbDot Then
                 currSourcePath = sSourcePath & currFile
 
-                If Not PathIsAFolder(currSourcePath) Then
+                If FileExists(currSourcePath) Then
                     If MatchSpec(currFile, sFiles) Then
                         'copy the file to the destination directory & increment the count
                         Call CopyFileTo(currSourcePath, sDestination & currFile)
@@ -335,53 +357,53 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SearchFilesInRoot
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Поиск файлов в заданном каталоге, с возможностью рекурсии и удаления]
 '! Parameters  (Переменные):   strRootDir (String)
 '                              strSearchMask (String)
 '                              mbSearchRecursion (Boolean)
 '                              mbOnlyFirstFile (Boolean)
 '                              mbDelete (Boolean = False)
-'                              mbSort (Boolean = False)
 '!--------------------------------------------------------------------------------
-Public Function SearchFilesInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional mbDelete As Boolean = False) As FindListStruct()
+Public Function SearchFilesInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional ByVal mbDelete As Boolean = False) As FindListStruct()
 
-    With fp
+    With tFileParams
         .sFileRoot = BackslashAdd2Path(strRootDir)
         .sFileNameExt = strSearchMask
         .bRecurse = mbSearchRecursion
+        .bDelete = mbDelete
+        .nSearchedMax = 100
     End With
 
-    SearchForFiles fp.sFileRoot, True, 100, mbDelete
+    SearchForFiles tFileParams.sFileRoot, True
 
     If Not mbDelete Then
         If mbOnlyFirstFile Then
             ReDim Preserve sResultFileList(0)
-            SearchFilesInRoot = sResultFileList
-        Else
-
-            SearchFilesInRoot = sResultFileList
         End If
+        SearchFilesInRoot = sResultFileList
     End If
 
 End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SearchFoldersInRoot
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Поиск каталогов в заданном каталоге, с возможностью рекурсии и удаления]
 '! Parameters  (Переменные):   strRootDir (String)
 '                              strSearchMask (String)
-'                              mbSearchRecursion (Boolean)
-'                              mbOnlyFirstFile (Boolean)
+'                              mbSearchRecursion (Boolean = False)
+'                              mbDelete (Boolean = False)
 '!--------------------------------------------------------------------------------
 Public Function SearchFoldersInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, Optional ByVal mbSearchRecursion As Boolean = False, Optional ByVal mbDelete As Boolean = False) As FindListStruct()
 
-    With fp2
+    With tFolderParams
         .sFileRoot = BackslashAdd2Path(strRootDir)
         .sFileNameExt = strSearchMask
         .bRecurse = mbSearchRecursion
+        .bDelete = mbDelete
+        .nSearchedMax = 100
     End With
 
-    SearchForFolders fp2.sFileRoot, True, 100, mbDelete
+    SearchForFolders tFolderParams.sFileRoot, True
     
     If Not mbDelete Then
         SearchFoldersInRoot = sResultFolderList
@@ -390,13 +412,12 @@ End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub SearchForFiles
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Поиск файлов в заданном каталоге, с возможностью рекурсии и удаления]
 '! Parameters  (Переменные):   sRoot (String)
 '                              mbInitial (Boolean)
-'                              miMaxCountArr (Long)
-'                              mbDelete (Boolean = False)
+'                              sRootInit (String)
 '!--------------------------------------------------------------------------------
-Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, ByRef miMaxCountArr As Long, Optional ByRef mbDelete As Boolean = False, Optional ByVal sRootInit As String = vbNullString)
+Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, Optional ByVal sRootInit As String = vbNullString)
 
     Dim wfd             As WIN32_FIND_DATA
     Dim hFile           As Long
@@ -410,18 +431,19 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
         '\\?\UNC\
         lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
     End If
+    
     hFile = FindFirstFile(lngFilePathPtr, wfd)
     
-    If Not mbDelete Then
+    If Not tFileParams.bDelete Then
         If mbInitial Then
         
             lngResultFileListCount = 0
-            ReDim sResultFileList(miMaxCountArr)
+            ReDim sResultFileList(tFileParams.nSearchedMax)
             sRootInit = sRoot
 
         Else
 
-            ReDim Preserve sResultFileList(miMaxCountArr)
+            ReDim Preserve sResultFileList(tFileParams.nSearchedMax)
 
         End If
     End If
@@ -434,47 +456,53 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
             'if a folder, and recurse specified, call method again
             If (wfd.dwFileAttributes And vbDirectory) Then
                 If AscW(strFileName) <> vbDot Then
-                    If fp.bRecurse Then
-                        SearchForFiles sRoot & strFileName & vbBackslash, False, miMaxCountArr, mbDelete, sRootInit
+                    If tFileParams.bRecurse Then
+                        SearchForFiles sRoot & strFileName & vbBackslash, False, sRootInit
                     End If
                 End If
 
             Else
 
                 'must be a file..
-                If MatchSpec(strFileName, fp.sFileNameExt) Then
+                If tFileParams.sFileNameExt = ALL_FILES And tFileParams.bDelete Then
+                    DeleteFiles sRoot & strFileName
+                Else
+                    If MatchSpec(strFileName, tFileParams.sFileNameExt) Then
                         ' Если есть флаг удаления, то запускаем его, иначе добавляем значение в массив
-                    If mbDelete Then
-                        DeleteFiles sRoot & strFileName
-                    Else
-
-                        ' Переопределение массива если превышаем заданную размерность
-                        If lngResultFileListCount >= miMaxCountArr Then
-                            miMaxCountArr = 2 * miMaxCountArr
-
-                            ReDim Preserve sResultFileList(miMaxCountArr)
-
+                        If tFileParams.bDelete Then
+                            DeleteFiles sRoot & strFileName
+                        Else
+    
+                            ' Переопределение массива если превышаем заданную размерность
+                            If lngResultFileListCount >= tFileParams.nSearchedMax Then
+                                tFileParams.nSearchedMax = 2 * tFileParams.nSearchedMax
+    
+                                ReDim Preserve sResultFileList(tFileParams.nSearchedMax)
+    
+                            End If
+    
+                            ' Полный путь файла
+                            sResultFileList(lngResultFileListCount).FullPath = sRoot & strFileName
+                            ' размер файла числовой в байтах
+                            sResultFileList(lngResultFileListCount).Size = wfd.nFileSizeLow
+                            
+                            ' размер файла строковый форматированный учитывая региональные настройки в байт/кбайт/мбайт и т.д
+                            'sSize = FillNullChar(30)
+                            'StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
+                            'sResultFileList(lngResultFileListCount).SizeInString = TrimNull(sSize)
+                            
+                            ' Путь до файла
+                            sResultFileList(lngResultFileListCount).Path = sRoot
+                            If Not mbInitial Then
+                                sResultFileList(lngResultFileListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
+                            End If
+                            ' Имя файла
+                            sResultFileList(lngResultFileListCount).Name = strFileName
+                            ' Имя файла smallcase
+                            sResultFileList(lngResultFileListCount).NameLCase = LCase$(strFileName)
+                            sResultFileList(lngResultFileListCount).NameWoExt = GetFileName_woExt(strFileName)
+                            lngResultFileListCount = lngResultFileListCount + 1
                         End If
-
-                        ' Полный путь файла
-                        sResultFileList(lngResultFileListCount).FullPath = sRoot & strFileName
-                        ' размер файла числовой в байтах
-                        sResultFileList(lngResultFileListCount).Size = wfd.nFileSizeLow
-                        ' размер файла строковый форматированный учитывая региональные настройки в байт/кбайт/мбайт и т.д
-                        sSize = FillNullChar(30)
-                        StrFormatByteSizeW wfd.nFileSizeLow, wfd.nFileSizeHigh, ByVal StrPtr(sSize), 30
-                        sResultFileList(lngResultFileListCount).SizeInString = TrimNull(sSize)
-                        ' Путь до файла
-                        sResultFileList(lngResultFileListCount).Path = sRoot
-                        If Not mbInitial Then
-                            sResultFileList(lngResultFileListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
-                        End If
-                        ' Имя файла
-                        sResultFileList(lngResultFileListCount).Name = strFileName
-                        ' Имя файла smallcase
-                        sResultFileList(lngResultFileListCount).NameLcase = LCase$(strFileName)
-                        sResultFileList(lngResultFileListCount).NameWoExt = GetFileName_woExt(strFileName)
-                        lngResultFileListCount = lngResultFileListCount + 1
                     End If
                 End If
             End If
@@ -485,7 +513,7 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, By
     End If
 
     ' Переопределение массива на реальное кол-во записей
-    If Not mbDelete Then
+    If Not tFileParams.bDelete Then
         If mbInitial Then
             If lngResultFileListCount Then
                 ReDim Preserve sResultFileList(lngResultFileListCount - 1)
@@ -502,33 +530,35 @@ End Sub
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sRoot (String)
 '                              mbInitial (Boolean)
-'                              miMaxCountArr (Long)
+'                              sRootInit (String)
 '!--------------------------------------------------------------------------------
-Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, ByRef miMaxCountArr As Long, Optional ByRef mbDelete As Boolean = False, Optional ByVal sRootInit As String = vbNullString)
+Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, Optional ByVal sRootInit As String = vbNullString)
 
-    Dim wfd         As WIN32_FIND_DATA
-    Dim hFile       As Long
-    Dim strFindData As String
-    Dim lngFilePathPtr As Long
+    Dim wfd              As WIN32_FIND_DATA
+    Dim hFile            As Long
+    Dim strFindData      As String
+    Dim lngFolderPathPtr As Long
 
     If PathIsValidUNC(sRoot) = False Then
-        lngFilePathPtr = StrPtr("\\?\" & sRoot & ALL_FILES)
+        lngFolderPathPtr = StrPtr("\\?\" & sRoot & ALL_FOLDERS_EX)
     Else
         '\\?\UNC\
-        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FILES)
+        lngFolderPathPtr = StrPtr("\\?\UNC\" & Right$(sRoot, Len(sRoot) - 2) & ALL_FOLDERS_EX)
     End If
-    hFile = FindFirstFile(lngFilePathPtr, wfd)
     
-    If Not mbDelete Then
+    'hFile = FindFirstFile(lngFolderPathPtr, wfd)
+    hFile = FindFirstFileEx(lngFolderPathPtr, FINDEX_INFO_LEVELS.FindExInfoBasic, wfd, FINDEX_SEARCH_OPS.FindExSearchLimitToDirectories, 0&, 0&)
+    
+    If Not tFolderParams.bDelete Then
         If mbInitial Then
         
             lngResultFolderListCount = 0
-            ReDim sResultFolderList(miMaxCountArr)
+            ReDim sResultFolderList(tFolderParams.nSearchedMax)
             sRootInit = sRoot
     
         Else
     
-            ReDim Preserve sResultFolderList(miMaxCountArr)
+            ReDim Preserve sResultFolderList(tFolderParams.nSearchedMax)
     
         End If
     End If
@@ -541,22 +571,22 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
                 strFindData = TrimNull(wfd.cFileName)
                 If AscW(strFindData) <> vbDot Then
                                                 
-                    If MatchSpec(strFindData, fp2.sFileNameExt) Then
+                    If MatchSpec(strFindData, tFolderParams.sFileNameExt) Then
 
                         ' Если есть флаг удаления, то запускаем его, иначе добавляем значение в массив
-                        If mbDelete Then
-                            If fp2.bRecurse Then
+                        If tFolderParams.bDelete Then
+                            If tFolderParams.bRecurse Then
                                 'if a folder, and recurse specified, call  method again
-                                SearchForFolders sRoot & strFindData & vbBackslash, False, miMaxCountArr, mbDelete, sRootInit
+                                SearchForFolders sRoot & strFindData & vbBackslash, False, sRootInit
                             End If
                             DeleteFolder sRoot & strFindData & vbBackslash
                         Else
                     
                             ' Переопределение массива если превышаем заданную размерность
-                            If lngResultFolderListCount = miMaxCountArr Then
-                                miMaxCountArr = 2 * miMaxCountArr
+                            If lngResultFolderListCount = tFolderParams.nSearchedMax Then
+                                tFolderParams.nSearchedMax = 2 * tFolderParams.nSearchedMax
     
-                                ReDim Preserve sResultFolderList(miMaxCountArr)
+                                ReDim Preserve sResultFolderList(tFolderParams.nSearchedMax)
     
                             End If
     
@@ -564,15 +594,15 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
                             sResultFolderList(lngResultFolderListCount).FullPath = sRoot & strFindData
                             sResultFolderList(lngResultFolderListCount).Path = sRoot
                             sResultFolderList(lngResultFolderListCount).Name = strFindData
-                            sResultFolderList(lngResultFolderListCount).NameLcase = LCase$(strFindData)
+                            sResultFolderList(lngResultFolderListCount).NameLCase = LCase$(strFindData)
                             If Not mbInitial Then
                                 sResultFolderList(lngResultFolderListCount).RelativePath = Replace$(sRoot, sRootInit, vbNullString)
                             End If
                             lngResultFolderListCount = lngResultFolderListCount + 1
                             
-                            If fp2.bRecurse Then
+                            If tFolderParams.bRecurse Then
                                 'if a folder, and recurse specified, call  method again
-                                SearchForFolders sRoot & strFindData & vbBackslash, False, miMaxCountArr, mbDelete
+                                SearchForFolders sRoot & strFindData & vbBackslash, False
                             End If
                         
                         End If
@@ -586,7 +616,7 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
     End If
 
     ' Переопределение массива на реальное кол-во записей
-    If Not mbDelete Then
+    If Not tFolderParams.bDelete Then
         If mbInitial Then
             If lngResultFolderListCount Then
                 ReDim Preserve sResultFolderList(lngResultFolderListCount - 1)

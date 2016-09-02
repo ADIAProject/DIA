@@ -233,7 +233,7 @@ End Property
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Sub BlizzardStringSort(sArray() As String, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal StrCompCompatibility As Boolean = True)
 
-    Dim i As Long
+    Dim I As Long
 
     If ubA - lbA < 1& Then Exit Sub
 
@@ -249,14 +249,14 @@ Sub BlizzardStringSort(sArray() As String, ByVal lbA As Long, ByVal ubA As Long,
             If lbA > ubA Then Exit Do   ' Walk up while null strings
         Loop
     
-        i = lbA + 1&
-        Do Until i > ubA
-            If StrPointers(i) = 0& Then ' Swap down any null strings
-                StrPointers(i) = StrPointers(lbA)
+        I = lbA + 1&
+        Do Until I > ubA
+            If StrPointers(I) = 0& Then ' Swap down any null strings
+                StrPointers(I) = StrPointers(lbA)
                 StrPointers(lbA) = 0&
                 lbA = lbA + 1&          ' Set lb above null strings
             End If
-            i = i + 1&
+            I = I + 1&
         Loop
 
     Else 'If SortOrder = Descending Then
@@ -265,14 +265,14 @@ Sub BlizzardStringSort(sArray() As String, ByVal lbA As Long, ByVal ubA As Long,
             If ubA < lbA Then Exit Do   ' Walk down while null strings
         Loop
     
-        i = ubA - 1&
-        Do Until i < lbA
-            If StrPointers(i) = 0& Then ' Swap up any null strings
-                StrPointers(i) = StrPointers(ubA)
+        I = ubA - 1&
+        Do Until I < lbA
+            If StrPointers(I) = 0& Then ' Swap up any null strings
+                StrPointers(I) = StrPointers(ubA)
                 StrPointers(ubA) = 0&
                 ubA = ubA - 1&          ' Set ub below null strings
             End If
-            i = i - 1&
+            I = I - 1&
         Loop
     End If
 
@@ -405,7 +405,7 @@ End Sub
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Sub BlizzardStringSortIndexed(sArray() As String, iArray() As Long, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal StrCompCompatibility As Boolean = True)
 
-    Dim i       As Long
+    Dim I       As Long
     Dim cache   As Long
 
     If ubA - lbA < 1& Then Exit Sub
@@ -424,15 +424,15 @@ Sub BlizzardStringSortIndexed(sArray() As String, iArray() As Long, ByVal lbA As
             If lbA > ubA Then Exit Do  ' Walk up while null strings
         Loop
     
-        i = lbA + 1&
-        Do Until i > ubA
-            If StrPointers(iArray(i)) = 0& Then
-                cache = iArray(i)      ' Swap down any null strings
-                iArray(i) = iArray(lbA)
+        I = lbA + 1&
+        Do Until I > ubA
+            If StrPointers(iArray(I)) = 0& Then
+                cache = iArray(I)      ' Swap down any null strings
+                iArray(I) = iArray(lbA)
                 iArray(lbA) = cache
                 lbA = lbA + 1&         ' Set lb above null strings
             End If
-            i = i + 1&
+            I = I + 1&
         Loop
 
     Else 'If SortOrder = Descending Then
@@ -441,15 +441,15 @@ Sub BlizzardStringSortIndexed(sArray() As String, iArray() As Long, ByVal lbA As
             If ubA < lbA Then Exit Do  ' Walk down while null strings
         Loop
     
-        i = ubA - 1&
-        Do Until i < lbA
-            If StrPointers(iArray(i)) = 0& Then
-                cache = iArray(i)      ' Swap up any null strings
-                iArray(i) = iArray(ubA)
+        I = ubA - 1&
+        Do Until I < lbA
+            If StrPointers(iArray(I)) = 0& Then
+                cache = iArray(I)      ' Swap up any null strings
+                iArray(I) = iArray(ubA)
                 iArray(ubA) = cache
                 ubA = ubA - 1&         ' Set ub below null strings
             End If
-            i = i - 1&
+            I = I - 1&
         Loop
     End If
 
@@ -617,7 +617,7 @@ Private Sub strSwap5ba(ByVal lbA As Long, ByVal ubA As Long)
     Exit Sub
     
 UnInit:
-Debug.Print "strSwap5ba: lbA=" & lbA & " ubA=" & ubA & " cnt=" & cnt & " lo=" & lo & " hi=" & hi & " iChar=" & iChar
+'Debug.Print "strSwap5ba: lbA=" & lbA & " ubA=" & ubA & " cnt=" & cnt & " lo=" & lo & " hi=" & hi & " iChar=" & iChar
 End Sub
 
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
@@ -1091,26 +1091,26 @@ End Function
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Private Sub ValidateIndexArray(idxA() As Long, ByVal lbA As Long, ByVal ubA As Long)
     Dim bReDim As Boolean, bReDimPres As Boolean
-    Dim lb As Long, ub As Long, j As Long
-    lb = &H80000000: ub = &H7FFFFFFF
-    bReDim = Not InitedArray(idxA, lb, ub)
+    Dim LB As Long, ub As Long, J As Long
+    LB = &H80000000: ub = &H7FFFFFFF
+    bReDim = Not InitedArray(idxA, LB, ub)
     If bReDim = False Then
-        bReDim = (lbA < lb)
+        bReDim = (lbA < LB)
         bReDimPres = (ubA > ub)
     End If
     If bReDim Then
         ReDim idxA(lbA To ubA) As Long
     ElseIf bReDimPres Then
-        ReDim Preserve idxA(lb To ubA) As Long
+        ReDim Preserve idxA(LB To ubA) As Long
     End If '-命d-
     If (idxA(ubA) = 0&) Then
         If (idxA(lbA) = 0&) Then
-            For j = lbA To ubA
-                idxA(j) = j
+            For J = lbA To ubA
+                idxA(J) = J
             Next
         ElseIf bReDimPres Then
-            For j = ub + 1& To ubA
-                idxA(j) = j
+            For J = ub + 1& To ubA
+                idxA(J) = J
             Next
         End If
     End If
@@ -1156,19 +1156,19 @@ End Function
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Private Sub InitializeStacks(ByVal lSize As Long)
-    Dim i As Long
-    Dim j As Long
+    Dim I As Long
+    Dim J As Long
     
-    i = 1&
-    j = 32&                   ' Allow for likely stack count + 32
-    Do Until i > lSize        ' 10000 -> 14 + 32
-        j = j + 1&            ' 100000 -> 17 + 32
-        i = i + i             ' 1000000 -> 20 + 32
+    I = 1&
+    J = 32&                   ' Allow for likely stack count + 32
+    Do Until I > lSize        ' 10000 -> 14 + 32
+        J = J + 1&            ' 100000 -> 17 + 32
+        I = I + I             ' 1000000 -> 20 + 32
     Loop                      ' 10000000 -> 24 + 32
-    If j > StackSize Then
-        StackSize = j
-        ReDim StackLB(0& To j) As Long  ' Stack to hold pending lower boundries
-        ReDim StackUB(0& To j) As Long  ' Stack to hold pending upper boundries
+    If J > StackSize Then
+        StackSize = J
+        ReDim StackLB(0& To J) As Long  ' Stack to hold pending lower boundries
+        ReDim StackUB(0& To J) As Long  ' Stack to hold pending upper boundries
     End If
 End Sub
 
@@ -1211,35 +1211,35 @@ End Function
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Private Sub BuildUnicodeConversionLookupTable()
-    Dim i As Long, j As Long
+    Dim I As Long, J As Long
     ReDim ia(-32768 To 32767) As Long '65535
-    For i = -32768 To -224
-       ia(i) = i
+    For I = -32768 To -224
+       ia(I) = I
     Next
-    For i = -223 To 9423
+    For I = -223 To 9423
       'ia(i) = AscW(LCase$(ChrW$(i)))
-       j = i
-       LukeLCaseI j          'For i = 32768 To 65535
-       ia(i) = j             '   j = i               'For i = 32768 To 65535
+       J = I
+       LukeLCaseI J          'For i = 32768 To 65535
+       ia(I) = J             '   j = i               'For i = 32768 To 65535
     Next                     '   LukeLCaseI j        '   ia(i) = ia(i - 65536)
-    For i = 9424 To 32767    '   ia(i) = j           'Next
-       ia(i) = i             'Next
+    For I = 9424 To 32767    '   ia(i) = j           'Next
+       ia(I) = I             'Next
     Next
     ' StrComp compatibility ("_", "@", etc, list before number "0")
-    For i = 15 To 31
-        ia(i) = 14&     '14 (ctrl chars)
+    For I = 15 To 31
+        ia(I) = 14&     '14 (ctrl chars)
     Next
-    For i = 32 To 47
-        ia(i) = i - 17& '15...30
+    For I = 32 To 47
+        ia(I) = I - 17& '15...30
     Next
-    For i = 58 To 64
-        ia(i) = i - 27& '31...37
+    For I = 58 To 64
+        ia(I) = I - 27& '31...37
     Next
-    For i = 91 To 96
-        ia(i) = i - 53& '38...43
+    For I = 91 To 96
+        ia(I) = I - 53& '38...43
     Next
-    For i = 123 To 126
-        ia(i) = i - 79& '44...47
+    For I = 123 To 126
+        ia(I) = I - 79& '44...47
     Next
 End Sub
 
@@ -1448,12 +1448,12 @@ Private Sub LukeLCaseI(ByRef piChar As Long)
     ElseIf piChar > n9423 Then ' 9424..(65535)
         If piChar < n32768 Then ' 9424..32767
         Else 'piChar > n32767  ' 32768..65535
-            Dim i As Long
-            i = piChar - n65536
-            If i >= Neg223 And i <= n9423 Then
-                LukeLCaseI i
+            Dim I As Long
+            I = piChar - n65536
+            If I >= Neg223 And I <= n9423 Then
+                LukeLCaseI I
             End If
-            piChar = i
+            piChar = I
         End If
     ElseIf piChar < n4294 Then '..4293
         If piChar > n1366 And piChar < n4256 Then ' 1367..4255

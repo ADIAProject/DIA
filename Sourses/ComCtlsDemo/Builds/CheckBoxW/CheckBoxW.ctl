@@ -26,6 +26,7 @@ Attribute VB_Exposed = False
 Option Explicit
 #If False Then
 Private ChkImageListAlignmentLeft, ChkImageListAlignmentRight, ChkImageListAlignmentTop, ChkImageListAlignmentBottom, ChkImageListAlignmentCenter
+Private ChkDrawModeNormal, ChkDrawModeOwnerDraw
 #End If
 Private Const BUTTON_IMAGELIST_ALIGN_LEFT As Long = 0
 Private Const BUTTON_IMAGELIST_ALIGN_RIGHT As Long = 1
@@ -38,6 +39,10 @@ ChkImageListAlignmentRight = BUTTON_IMAGELIST_ALIGN_RIGHT
 ChkImageListAlignmentTop = BUTTON_IMAGELIST_ALIGN_TOP
 ChkImageListAlignmentBottom = BUTTON_IMAGELIST_ALIGN_BOTTOM
 ChkImageListAlignmentCenter = BUTTON_IMAGELIST_ALIGN_CENTER
+End Enum
+Public Enum ChkDrawModeConstants
+ChkDrawModeNormal = 0
+ChkDrawModeOwnerDraw = 1
 End Enum
 Private Type TACCEL
 FVirt As Byte
@@ -68,11 +73,24 @@ Private Type NMBCHOTITEM
 hdr As NMHDR
 dwFlags As Long
 End Type
+Private Type DRAWITEMSTRUCT
+CtlType As Long
+CtlID As Long
+ItemID As Long
+ItemAction As Long
+ItemState As Long
+hWndItem As Long
+hDC As Long
+RCItem As RECT
+ItemData As Long
+End Type
 Public Event Click()
 Attribute Click.VB_Description = "Occurs when the user presses and then releases a mouse button over an object."
 Attribute Click.VB_UserMemId = -600
 Public Event HotChanged()
 Attribute HotChanged.VB_Description = "Occurrs when the check box control's hot state changes. Requires comctl32.dll version 6.0 or higher."
+Public Event OwnerDraw(ByVal Action As Long, ByVal State As Long, ByVal hDC As Long, ByVal Left As Long, ByVal Top As Long, ByVal Right As Long, ByVal Bottom As Long)
+Attribute OwnerDraw.VB_Description = "Occurs when a visual aspect of an owner-drawn button has changed."
 Public Event PreviewKeyDown(ByVal KeyCode As Integer, ByRef IsInputKey As Boolean)
 Attribute PreviewKeyDown.VB_Description = "Occurs before the KeyDown event."
 Public Event PreviewKeyUp(ByVal KeyCode As Integer, ByRef IsInputKey As Boolean)
@@ -125,18 +143,25 @@ Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fE
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function SetBkMode Lib "gdi32" (ByVal hDC As Long, ByVal nBkMode As Long) As Long
-Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function CreatePatternBrush Lib "gdi32" (ByVal hBitmap As Long) As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function SetViewportOrgEx Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
+Private Declare Function SetTextColor Lib "gdi32" (ByVal hDC As Long, ByVal crColor As Long) As Long
+Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As Long
+Private Declare Function SetPixel Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function FillRect Lib "user32" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal hBrush As Long) As Long
+Private Declare Function TransparentBlt Lib "msimg32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal nWidthSrc As Long, ByVal nHeightSrc As Long, ByVal crTransparent As Long) As Long
+Private Declare Function DrawState Lib "user32" Alias "DrawStateW" (ByVal hDC As Long, ByVal hBrush As Long, ByVal lpDrawStateProc As Long, ByVal lData As Long, ByVal wData As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal fFlags As Long) As Long
+Private Declare Function DrawFocusRect Lib "user32" (ByVal hDC As Long, ByRef lpRect As RECT) As Long
+Private Declare Function DrawFrameControl Lib "user32" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal nCtlType As Long, ByVal nFlags As Long) As Long
+Private Declare Function DrawText Lib "user32" Alias "DrawTextW" (ByVal hDC As Long, ByVal lpchText As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal uFormat As Long) As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
 Private Const RDW_UPDATENOW As Long = &H100
 Private Const RDW_INVALIDATE As Long = &H1
@@ -163,9 +188,15 @@ Private Const WM_MBUTTONDOWN As Long = &H207
 Private Const WM_MBUTTONUP As Long = &H208
 Private Const WM_RBUTTONDOWN As Long = &H204
 Private Const WM_RBUTTONUP As Long = &H205
+Private Const WM_LBUTTONDBLCLK As Long = &H203
 Private Const WM_MOUSEMOVE As Long = &H200
 Private Const WM_COMMAND As Long = &H111
+Private Const WM_DRAWITEM As Long = &H2B, ODT_BUTTON As Long = &H4, ODS_SELECTED As Long = &H1, ODS_DISABLED As Long = &H4, ODS_FOCUS As Long = &H10, ODS_NOACCEL As Long = &H100, ODS_NOFOCUSRECT As Long = &H200
+Private Const WM_DESTROY As Long = &H2
+Private Const WM_NCDESTROY As Long = &H82
+Private Const WM_STYLECHANGED As Long = &H7D
 Private Const WM_SETFONT As Long = &H30
+Private Const WM_SETREDRAW As Long = &HB
 Private Const WM_SETCURSOR As Long = &H20, HTCLIENT As Long = 1
 Private Const WM_CTLCOLORSTATIC As Long = &H138
 Private Const WM_CTLCOLORBTN As Long = &H135
@@ -173,7 +204,9 @@ Private Const WM_PAINT As Long = &HF
 Private Const WM_GETTEXTLENGTH As Long = &HE
 Private Const WM_GETTEXT As Long = &HD
 Private Const WM_SETTEXT As Long = &HC
+Private Const DFC_BUTTON As Long = &H4, DFCS_BUTTONPUSH As Long = &H10, DFCS_INACTIVE As Long = &H100, DFCS_PUSHED As Long = &H200, DFCS_CHECKED As Long = &H400, DFCS_ADJUSTRECT As Long = &H2000, DFCS_FLAT As Long = &H4000
 Private Const BS_TEXT As Long = &H0
+Private Const BS_OWNERDRAW As Long = &HB
 Private Const BS_3STATE As Long = &H5
 Private Const BS_RIGHTBUTTON As Long = &H20
 Private Const BS_ICON As Long = &H40
@@ -192,6 +225,7 @@ Private Const BM_GETCHECK As Long = &HF0
 Private Const BM_SETCHECK As Long = &HF1
 Private Const BM_GETSTATE As Long = &HF2
 Private Const BM_SETSTATE As Long = &HF3
+Private Const BM_GETIMAGE As Long = &HF6
 Private Const BM_SETIMAGE As Long = &HF7
 Private Const BCM_FIRST As Long = &H1600
 Private Const BCM_SETIMAGELIST As Long = (BCM_FIRST + 2)
@@ -211,15 +245,24 @@ Private Const HICF_ENTERING As Long = &H10
 Private Const HICF_LEAVING As Long = &H20
 Private Const IMAGE_BITMAP As Long = 0
 Private Const IMAGE_ICON As Long = 1
+Private Const DT_CENTER As Long = &H1
+Private Const DT_WORDBREAK As Long = &H10
+Private Const DT_CALCRECT As Long = &H400
+Private Const DT_HIDEPREFIX As Long = &H100000
+Private Const DST_ICON As Long = &H3
+Private Const DST_BITMAP As Long = &H4
+Private Const DSS_DISABLED As Long = &H20
 Implements ISubclass
 Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IOleControlVB
 Implements OLEGuids.IPerPropertyBrowsingVB
 Private CheckBoxHandle As Long
 Private CheckBoxTransparentBrush As Long
+Private CheckBoxOwnerDrawCheckedBrush As Long
 Private CheckBoxAcceleratorHandle As Long
 Private CheckBoxFontHandle As Long
 Private CheckBoxCharCodeCache As Long
+Private CheckBoxImageListHandle As Long
 Private DispIDMousePointer As Long
 Private DispIDImageList As Long, ImageListArray() As String
 Private DispIDValue As Long
@@ -238,8 +281,13 @@ Private PropPushLike As Boolean
 Private PropPicture As IPictureDisp
 Private PropWordWrap As Boolean
 Private PropTransparent As Boolean
-Private PropAppearance As CCAppearanceConstants
 Private PropVerticalAlignment As CCVerticalAlignmentConstants
+Private PropStyle As VBRUN.ButtonConstants
+Private PropDisabledPicture As IPictureDisp
+Private PropDownPicture As IPictureDisp
+Private PropUseMaskColor As Boolean
+Private PropMaskColor As OLE_COLOR
+Private PropDrawMode As ChkDrawModeConstants
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -315,6 +363,9 @@ Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, By
 If DispID = DispIDMousePointer Then
     Call ComCtlsIPPBSetDisplayStringMousePointer(PropMousePointer, DisplayName)
     Handled = True
+ElseIf DispID = DispIDImageList Then
+    DisplayName = PropImageListName
+    Handled = True
 ElseIf DispID = DispIDValue Then
     Select Case PropValue
         Case vbUnchecked: DisplayName = vbUnchecked & " - Unchecked"
@@ -330,29 +381,9 @@ If DispID = DispIDMousePointer Then
     Call ComCtlsIPPBSetPredefinedStringsMousePointer(StringsOut(), CookiesOut())
     Handled = True
 ElseIf DispID = DispIDImageList Then
-    Dim ControlEnum As Object
-    Dim PropUBound As Long
     On Error GoTo CATCH_EXCEPTION
-    PropUBound = UBound(StringsOut())
-    ReDim Preserve StringsOut(PropUBound + 1) As String
-    ReDim Preserve CookiesOut(PropUBound + 1) As Long
-    StringsOut(PropUBound) = "(None)"
-    CookiesOut(PropUBound) = PropUBound
-    For Each ControlEnum In UserControl.ParentControls
-        If TypeName(ControlEnum) = "ImageList" Then
-            PropUBound = UBound(StringsOut())
-            ReDim Preserve StringsOut(PropUBound + 1) As String
-            ReDim Preserve CookiesOut(PropUBound + 1) As Long
-            StringsOut(PropUBound) = ProperControlName(ControlEnum)
-            CookiesOut(PropUBound) = PropUBound
-        End If
-    Next ControlEnum
+    Call ComCtlsIPPBSetPredefinedStringsImageList(StringsOut(), CookiesOut(), UserControl.ParentControls, ImageListArray())
     On Error GoTo 0
-    Dim i As Long
-    ReDim ImageListArray(0 To UBound(StringsOut()))
-    For i = 0 To UBound(StringsOut())
-        ImageListArray(i) = StringsOut(i)
-    Next i
     Handled = True
 ElseIf DispID = DispIDValue Then
     ReDim StringsOut(0 To (2 + 1)) As String
@@ -404,8 +435,13 @@ PropPushLike = False
 Set PropPicture = Nothing
 PropWordWrap = True
 PropTransparent = False
-PropAppearance = UserControl.Appearance
 PropVerticalAlignment = CCVerticalAlignmentCenter
+PropStyle = vbButtonStandard
+Set PropDisabledPicture = Nothing
+Set PropDownPicture = Nothing
+PropUseMaskColor = False
+PropMaskColor = &HC0C0C0
+PropDrawMode = ChkDrawModeNormal
 Call CreateCheckBox
 End Sub
 
@@ -413,6 +449,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 With PropBag
 Set PropFont = .ReadProperty("Font", Ambient.Font)
 PropVisualStyles = .ReadProperty("VisualStyles", True)
+Me.Appearance = .ReadProperty("Appearance", CCAppearance3D)
 Me.BackColor = .ReadProperty("BackColor", vbButtonFace)
 Me.ForeColor = .ReadProperty("ForeColor", vbButtonText)
 Me.Enabled = .ReadProperty("Enabled", True)
@@ -430,8 +467,13 @@ PropPushLike = .ReadProperty("PushLike", False)
 Set PropPicture = .ReadProperty("Picture", Nothing)
 PropWordWrap = .ReadProperty("WordWrap", True)
 PropTransparent = .ReadProperty("Transparent", False)
-PropAppearance = .ReadProperty("Appearance", CCAppearance3D)
 PropVerticalAlignment = .ReadProperty("VerticalAlignment", CCVerticalAlignmentCenter)
+PropStyle = .ReadProperty("Style", vbButtonStandard)
+Set PropDisabledPicture = .ReadProperty("DisabledPicture", Nothing)
+Set PropDownPicture = .ReadProperty("DownPicture", Nothing)
+PropUseMaskColor = .ReadProperty("UseMaskColor", False)
+PropMaskColor = .ReadProperty("MaskColor", &HC0C0C0)
+PropDrawMode = .ReadProperty("DrawMode", ChkDrawModeNormal)
 End With
 Call CreateCheckBox
 If Not PropImageListName = "(None)" Then TimerImageList.Enabled = True
@@ -441,6 +483,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 With PropBag
 .WriteProperty "Font", PropFont, Ambient.Font
 .WriteProperty "VisualStyles", PropVisualStyles, True
+.WriteProperty "Appearance", Me.Appearance, CCAppearance3D
 .WriteProperty "BackColor", Me.BackColor, vbButtonFace
 .WriteProperty "ForeColor", Me.ForeColor, vbButtonText
 .WriteProperty "Enabled", Me.Enabled, True
@@ -458,8 +501,13 @@ With PropBag
 .WriteProperty "Picture", PropPicture, Nothing
 .WriteProperty "WordWrap", PropWordWrap, True
 .WriteProperty "Transparent", PropTransparent, False
-.WriteProperty "Appearance", PropAppearance, CCAppearance3D
 .WriteProperty "VerticalAlignment", PropVerticalAlignment, CCVerticalAlignmentCenter
+.WriteProperty "Style", PropStyle, vbButtonStandard
+.WriteProperty "DisabledPicture", PropDisabledPicture, Nothing
+.WriteProperty "DownPicture", PropDownPicture, Nothing
+.WriteProperty "UseMaskColor", PropUseMaskColor, False
+.WriteProperty "MaskColor", PropMaskColor, &HC0C0C0
+.WriteProperty "DrawMode", PropDrawMode, ChkDrawModeNormal
 End With
 End Sub
 
@@ -493,9 +541,17 @@ UserControl.OLEDrag
 End Sub
 
 Private Sub UserControl_Resize()
+Static InProc As Boolean
+If InProc = True Then Exit Sub
+InProc = True
 With UserControl
+If DPICorrectionFactor() <> 1 Then
+    .Extender.Move .Extender.Left + .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top + .ScaleY(1, vbPixels, vbContainerPosition)
+    .Extender.Move .Extender.Left - .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top - .ScaleY(1, vbPixels, vbContainerPosition)
+End If
 If CheckBoxHandle <> 0 Then MoveWindow CheckBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
 End With
+InProc = False
 End Sub
 
 Private Sub UserControl_Terminate()
@@ -536,6 +592,10 @@ End Property
 Public Property Get Container() As Object
 Attribute Container.VB_Description = "Returns the container of an object."
 Set Container = Extender.Container
+End Property
+
+Public Property Set Container(ByVal Value As Object)
+Set Extender.Container = Value
 End Property
 
 Public Property Get Left() As Single
@@ -583,6 +643,52 @@ Public Property Let Visible(ByVal Value As Boolean)
 Extender.Visible = Value
 End Property
 
+Public Property Get ToolTipText() As String
+Attribute ToolTipText.VB_Description = "Returns/sets the text displayed when the mouse is paused over the control."
+ToolTipText = Extender.ToolTipText
+End Property
+
+Public Property Let ToolTipText(ByVal Value As String)
+Extender.ToolTipText = Value
+End Property
+
+Public Property Get DragIcon() As IPictureDisp
+Attribute DragIcon.VB_Description = "Returns/sets the icon to be displayed as the pointer in a drag-and-drop operation."
+Set DragIcon = Extender.DragIcon
+End Property
+
+Public Property Let DragIcon(ByVal Value As IPictureDisp)
+Extender.DragIcon = Value
+End Property
+
+Public Property Set DragIcon(ByVal Value As IPictureDisp)
+Set Extender.DragIcon = Value
+End Property
+
+Public Property Get DragMode() As Integer
+Attribute DragMode.VB_Description = "Returns/sets a value that determines whether manual or automatic drag mode is used."
+DragMode = Extender.DragMode
+End Property
+
+Public Property Let DragMode(ByVal Value As Integer)
+Extender.DragMode = Value
+End Property
+
+Public Sub Drag(Optional ByRef Action As Variant)
+Attribute Drag.VB_Description = "Begins, ends, or cancels a drag operation of any object except Line, Menu, Shape, and Timer."
+If IsMissing(Action) Then Extender.Drag Else Extender.Drag Action
+End Sub
+
+Public Sub SetFocus()
+Attribute SetFocus.VB_Description = "Moves the focus to the specified object."
+Extender.SetFocus
+End Sub
+
+Public Sub ZOrder(Optional ByRef Position As Variant)
+Attribute ZOrder.VB_Description = "Places a specified object at the front or back of the z-order within its graphical level."
+If IsMissing(Position) Then Extender.ZOrder Else Extender.ZOrder Position
+End Sub
+
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_Description = "Returns a handle to a control."
 Attribute hWnd.VB_UserMemId = -515
@@ -605,10 +711,11 @@ Set Me.Font = NewFont
 End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
+If NewFont Is Nothing Then Set NewFont = Ambient.Font
 Dim OldFontHandle As Long
 Set PropFont = NewFont
 OldFontHandle = CheckBoxFontHandle
-CheckBoxFontHandle = CreateFontFromOLEFont(PropFont)
+CheckBoxFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If CheckBoxHandle <> 0 Then SendMessage CheckBoxHandle, WM_SETFONT, CheckBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
@@ -617,7 +724,7 @@ End Property
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
 OldFontHandle = CheckBoxFontHandle
-CheckBoxFontHandle = CreateFontFromOLEFont(PropFont)
+CheckBoxFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If CheckBoxHandle <> 0 Then SendMessage CheckBoxHandle, WM_SETFONT, CheckBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
@@ -639,6 +746,36 @@ If CheckBoxHandle <> 0 And EnabledVisualStyles() = True Then
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"
+End Property
+
+Public Property Get Appearance() As CCAppearanceConstants
+Attribute Appearance.VB_Description = "Returns/sets a value that determines whether an object is painted two-dimensional or with 3-D effects."
+Attribute Appearance.VB_UserMemId = -520
+Appearance = UserControl.Appearance
+End Property
+
+Public Property Let Appearance(ByVal Value As CCAppearanceConstants)
+Select Case Value
+    Case CCAppearanceFlat, CCAppearance3D
+        UserControl.Appearance = Value
+    Case Else
+        Err.Raise 380
+End Select
+UserControl.ForeColor = IIf(UserControl.Appearance = CCAppearanceFlat, vbWindowText, vbButtonText)
+If CheckBoxHandle <> 0 Then
+    Dim dwStyle As Long
+    dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+    If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        If UserControl.Appearance = CCAppearanceFlat Then
+            If Not (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle Or BS_FLAT
+        Else
+            If (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle And Not BS_FLAT
+        End If
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+    End If
+End If
+Me.Refresh
+UserControl.PropertyChanged "Appearance"
 End Property
 
 Public Property Get BackColor() As OLE_COLOR
@@ -771,7 +908,7 @@ If CheckBoxHandle <> 0 Then
         If Success = True Then
             Call SetImageList(Handle)
             PropImageListName = ProperControlName(Value)
-            If Ambient.UserMode = True Then Set PropImageListControl = Value
+            Set PropImageListControl = Value
         End If
     ElseIf VarType(Value) = vbString Then
         Dim ControlEnum As Object, CompareName As String
@@ -801,6 +938,8 @@ If CheckBoxHandle <> 0 Then
         Call SetImageList(BCCL_NOGLYPH)
         PropImageListName = "(None)"
         Set PropImageListControl = Nothing
+    ElseIf Handle = 0 Then
+        Call SetImageList(BCCL_NOGLYPH)
     End If
 End If
 UserControl.PropertyChanged "ImageList"
@@ -858,7 +997,11 @@ Attribute Value.VB_Description = "Returns/sets the value of an object."
 Attribute Value.VB_UserMemId = 0
 Attribute Value.VB_MemberFlags = "103c"
 If CheckBoxHandle <> 0 Then
-    Value = SendMessage(CheckBoxHandle, BM_GETCHECK, 0, ByVal 0&)
+    If Not (GetWindowLong(CheckBoxHandle, GWL_STYLE) And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        Value = SendMessage(CheckBoxHandle, BM_GETCHECK, 0, ByVal 0&)
+    Else
+        Value = PropValue
+    End If
 Else
     Value = PropValue
 End If
@@ -875,7 +1018,13 @@ Select Case NewValue
     Case Else
         Err.Raise 380
 End Select
-If CheckBoxHandle <> 0 Then SendMessage CheckBoxHandle, BM_SETCHECK, PropValue, ByVal 0&
+If CheckBoxHandle <> 0 Then
+    If Not (GetWindowLong(CheckBoxHandle, GWL_STYLE) And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        SendMessage CheckBoxHandle, BM_SETCHECK, PropValue, ByVal 0&
+    Else
+        Me.Refresh
+    End If
+End If
 UserControl.PropertyChanged "Value"
 End Property
 
@@ -915,13 +1064,15 @@ End Select
 If CheckBoxHandle <> 0 Then
     Dim dwStyle As Long
     dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-    If PropAlignment = CCLeftRightAlignmentRight Then
-        If Not (dwStyle And BS_RIGHTBUTTON) = BS_RIGHTBUTTON Then dwStyle = dwStyle Or BS_RIGHTBUTTON
-    ElseIf PropAlignment = CCLeftRightAlignmentLeft Then
-        If (dwStyle And BS_RIGHTBUTTON) = BS_RIGHTBUTTON Then dwStyle = dwStyle And Not BS_RIGHTBUTTON
+    If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        If PropAlignment = CCLeftRightAlignmentRight Then
+            If Not (dwStyle And BS_RIGHTBUTTON) = BS_RIGHTBUTTON Then dwStyle = dwStyle Or BS_RIGHTBUTTON
+        ElseIf PropAlignment = CCLeftRightAlignmentLeft Then
+            If (dwStyle And BS_RIGHTBUTTON) = BS_RIGHTBUTTON Then dwStyle = dwStyle And Not BS_RIGHTBUTTON
+        End If
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        Me.Refresh
     End If
-    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-    Me.Refresh
 End If
 UserControl.PropertyChanged "Alignment"
 End Property
@@ -941,19 +1092,21 @@ End Select
 If CheckBoxHandle <> 0 Then
     Dim dwStyle As Long
     dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-    If (dwStyle And BS_LEFT) = BS_LEFT Then dwStyle = dwStyle And Not BS_LEFT
-    If (dwStyle And BS_CENTER) = BS_CENTER Then dwStyle = dwStyle And Not BS_CENTER
-    If (dwStyle And BS_RIGHT) = BS_RIGHT Then dwStyle = dwStyle And Not BS_RIGHT
-    Select Case PropTextAlignment
-        Case vbLeftJustify
-            dwStyle = dwStyle Or BS_LEFT
-        Case vbCenter
-            dwStyle = dwStyle Or BS_CENTER
-        Case vbRightJustify
-            dwStyle = dwStyle Or BS_RIGHT
-    End Select
-    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-    Me.Refresh
+    If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        If (dwStyle And BS_LEFT) = BS_LEFT Then dwStyle = dwStyle And Not BS_LEFT
+        If (dwStyle And BS_CENTER) = BS_CENTER Then dwStyle = dwStyle And Not BS_CENTER
+        If (dwStyle And BS_RIGHT) = BS_RIGHT Then dwStyle = dwStyle And Not BS_RIGHT
+        Select Case PropTextAlignment
+            Case vbLeftJustify
+                dwStyle = dwStyle Or BS_LEFT
+            Case vbCenter
+                dwStyle = dwStyle Or BS_CENTER
+            Case vbRightJustify
+                dwStyle = dwStyle Or BS_RIGHT
+        End Select
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        Me.Refresh
+    End If
 End If
 UserControl.PropertyChanged "TextAlignment"
 End Property
@@ -968,13 +1121,15 @@ PropPushLike = Value
 If CheckBoxHandle <> 0 Then
     Dim dwStyle As Long
     dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-    If PropPushLike = True Then
-        If Not (dwStyle And BS_PUSHLIKE) = BS_PUSHLIKE Then dwStyle = dwStyle Or BS_PUSHLIKE
-    Else
-        If (dwStyle And BS_PUSHLIKE) = BS_PUSHLIKE Then dwStyle = dwStyle And Not BS_PUSHLIKE
+    If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        If PropPushLike = True Then
+            If Not (dwStyle And BS_PUSHLIKE) = BS_PUSHLIKE Then dwStyle = dwStyle Or BS_PUSHLIKE
+        Else
+            If (dwStyle And BS_PUSHLIKE) = BS_PUSHLIKE Then dwStyle = dwStyle And Not BS_PUSHLIKE
+        End If
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        Me.Refresh
     End If
-    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-    Me.Refresh
 End If
 UserControl.PropertyChanged "PushLike"
 End Property
@@ -992,43 +1147,49 @@ Public Property Set Picture(ByVal Value As IPictureDisp)
 Dim dwStyle As Long
 If Value Is Nothing Then
     Set PropPicture = Nothing
-    If CheckBoxHandle <> 0 Then
+    If CheckBoxHandle <> 0 And CheckBoxImageListHandle = 0 Then
         dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-        If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
-        If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
-        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
-        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
-        Me.Refresh
+        If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+            If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+            If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+            SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+            Me.Refresh
+        End If
     End If
 Else
     Set UserControl.Picture = Value
     Set PropPicture = UserControl.Picture
     Set UserControl.Picture = Nothing
-    If CheckBoxHandle <> 0 Then
+    If CheckBoxHandle <> 0 And CheckBoxImageListHandle = 0 Then
         dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-        If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
-        If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
-        If PropPicture.Handle <> 0 Then
-            If PropPicture.Type = vbPicTypeIcon Then
-                dwStyle = dwStyle Or BS_ICON
-                SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal PropPicture.Handle
+        If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+            If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+            If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+            If PropPicture.Handle <> 0 Then
+                If PropPicture.Type = vbPicTypeIcon Then
+                    dwStyle = dwStyle Or BS_ICON
+                    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+                    SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+                    SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal PropPicture.Handle
+                Else
+                    dwStyle = dwStyle Or BS_BITMAP
+                    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+                    SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+                    SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal PropPicture.Handle
+                End If
             Else
-                dwStyle = dwStyle Or BS_BITMAP
-                SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
                 SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
-                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal PropPicture.Handle
+                SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+                SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
             End If
-        Else
-            SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
-            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+            Me.Refresh
         End If
-        Me.Refresh
     End If
 End If
+If dwStyle = 0 Then dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
+If (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then Me.Refresh
 UserControl.PropertyChanged "Picture"
 End Property
 
@@ -1042,13 +1203,15 @@ PropWordWrap = Value
 If CheckBoxHandle <> 0 Then
     Dim dwStyle As Long
     dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-    If PropWordWrap = True Then
-        If Not (dwStyle And BS_MULTILINE) = BS_MULTILINE Then dwStyle = dwStyle Or BS_MULTILINE
-    Else
-        If (dwStyle And BS_MULTILINE) = BS_MULTILINE Then dwStyle = dwStyle And Not BS_MULTILINE
+    If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        If PropWordWrap = True Then
+            If Not (dwStyle And BS_MULTILINE) = BS_MULTILINE Then dwStyle = dwStyle Or BS_MULTILINE
+        Else
+            If (dwStyle And BS_MULTILINE) = BS_MULTILINE Then dwStyle = dwStyle And Not BS_MULTILINE
+        End If
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        Me.Refresh
     End If
-    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-    Me.Refresh
 End If
 UserControl.PropertyChanged "WordWrap"
 End Property
@@ -1062,35 +1225,6 @@ Public Property Let Transparent(ByVal Value As Boolean)
 PropTransparent = Value
 Me.Refresh
 UserControl.PropertyChanged "Transparent"
-End Property
-
-Public Property Get Appearance() As CCAppearanceConstants
-Attribute Appearance.VB_Description = "Returns/sets a value that determines whether an object is painted two-dimensional or with 3-D effects."
-Attribute Appearance.VB_UserMemId = -520
-Appearance = PropAppearance
-End Property
-
-Public Property Let Appearance(ByVal Value As CCAppearanceConstants)
-Select Case Value
-    Case CCAppearanceFlat, CCAppearance3D
-        PropAppearance = Value
-    Case Else
-        Err.Raise 380
-End Select
-UserControl.Appearance = PropAppearance
-UserControl.ForeColor = IIf(PropAppearance = CCAppearanceFlat, vbWindowText, vbButtonText)
-If CheckBoxHandle <> 0 Then
-    Dim dwStyle As Long
-    dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-    If PropAppearance = CCAppearanceFlat Then
-        If Not (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle Or BS_FLAT
-    Else
-        If (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle And Not BS_FLAT
-    End If
-    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-End If
-Me.Refresh
-UserControl.PropertyChanged "Appearance"
 End Property
 
 Public Property Get VerticalAlignment() As CCVerticalAlignmentConstants
@@ -1108,27 +1242,134 @@ End Select
 If CheckBoxHandle <> 0 Then
     Dim dwStyle As Long
     dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-    If (dwStyle And BS_TOP) = BS_TOP Then dwStyle = dwStyle And Not BS_TOP
-    If (dwStyle And BS_VCENTER) = BS_VCENTER Then dwStyle = dwStyle And Not BS_VCENTER
-    If (dwStyle And BS_BOTTOM) = BS_BOTTOM Then dwStyle = dwStyle And Not BS_BOTTOM
-    Select Case PropVerticalAlignment
-        Case CCVerticalAlignmentTop
-            dwStyle = dwStyle Or BS_TOP
-        Case CCVerticalAlignmentCenter
-            dwStyle = dwStyle Or BS_VCENTER
-        Case CCVerticalAlignmentBottom
-            dwStyle = dwStyle Or BS_BOTTOM
-    End Select
-    SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-    Me.Refresh
+    If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+        If (dwStyle And BS_TOP) = BS_TOP Then dwStyle = dwStyle And Not BS_TOP
+        If (dwStyle And BS_VCENTER) = BS_VCENTER Then dwStyle = dwStyle And Not BS_VCENTER
+        If (dwStyle And BS_BOTTOM) = BS_BOTTOM Then dwStyle = dwStyle And Not BS_BOTTOM
+        Select Case PropVerticalAlignment
+            Case CCVerticalAlignmentTop
+                dwStyle = dwStyle Or BS_TOP
+            Case CCVerticalAlignmentCenter
+                dwStyle = dwStyle Or BS_VCENTER
+            Case CCVerticalAlignmentBottom
+                dwStyle = dwStyle Or BS_BOTTOM
+        End Select
+        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        Me.Refresh
+    End If
 End If
 UserControl.PropertyChanged "VerticalAlignment"
+End Property
+
+Public Property Get Style() As VBRUN.ButtonConstants
+Attribute Style.VB_Description = "Returns/sets the appearance of the control, whether standard or graphical."
+Style = PropStyle
+End Property
+
+Public Property Let Style(ByVal Value As VBRUN.ButtonConstants)
+Select Case Value
+    Case vbButtonStandard, vbButtonGraphical
+        If PropDrawMode <> ChkDrawModeNormal And Value = vbButtonGraphical Then
+            If Ambient.UserMode = False Then
+                MsgBox "Style must be 0 - Standard when DrawMode is not 0 - Normal", vbCritical + vbOKOnly
+                Exit Property
+            Else
+                Err.Raise Number:=383, Description:="Style must be 0 - Standard when DrawMode is not 0 - Normal"
+            End If
+        End If
+        PropStyle = Value
+    Case Else
+        Err.Raise 380
+End Select
+If CheckBoxHandle <> 0 Then Call ReCreateCheckBox
+UserControl.PropertyChanged "Style"
+End Property
+
+Public Property Get DisabledPicture() As IPictureDisp
+Attribute DisabledPicture.VB_Description = "Returns/sets a graphic to be displayed when the button is disabled. Only applicable if the style property is set to 1."
+Set DisabledPicture = PropDisabledPicture
+End Property
+
+Public Property Let DisabledPicture(ByVal Value As IPictureDisp)
+Set Me.DisabledPicture = Value
+End Property
+
+Public Property Set DisabledPicture(ByVal Value As IPictureDisp)
+If Value Is Nothing Then
+    Set PropDisabledPicture = Nothing
+Else
+    Set UserControl.Picture = Value
+    Set PropDisabledPicture = UserControl.Picture
+    Set UserControl.Picture = Nothing
+End If
+Me.Refresh
+UserControl.PropertyChanged "DisabledPicture"
+End Property
+
+Public Property Get DownPicture() As IPictureDisp
+Attribute DownPicture.VB_Description = "Returns/sets a graphic to be displayed when the button is in the down position. Only applicable if the style property is set to 1."
+Set DownPicture = PropDownPicture
+End Property
+
+Public Property Let DownPicture(ByVal Value As IPictureDisp)
+Set Me.DownPicture = Value
+End Property
+
+Public Property Set DownPicture(ByVal Value As IPictureDisp)
+If Value Is Nothing Then
+    Set PropDownPicture = Nothing
+Else
+    Set UserControl.Picture = Value
+    Set PropDownPicture = UserControl.Picture
+    Set UserControl.Picture = Nothing
+End If
+Me.Refresh
+UserControl.PropertyChanged "DownPicture"
+End Property
+
+Public Property Get UseMaskColor() As Boolean
+Attribute UseMaskColor.VB_Description = "Returns/sets a value which determines if the button control will use the mask color property. Only applicable if the style property is set to 1."
+UseMaskColor = PropUseMaskColor
+End Property
+
+Public Property Let UseMaskColor(ByVal Value As Boolean)
+PropUseMaskColor = Value
+Me.Refresh
+UserControl.PropertyChanged "UseMaskColor"
+End Property
+
+Public Property Get MaskColor() As OLE_COLOR
+Attribute MaskColor.VB_Description = "Returns/sets a color in a picture to be a 'mask' (that is, transparent). Only applicable if the style property is set to 1."
+MaskColor = PropMaskColor
+End Property
+
+Public Property Let MaskColor(ByVal Value As OLE_COLOR)
+PropMaskColor = Value
+Me.Refresh
+UserControl.PropertyChanged "MaskColor"
+End Property
+
+Public Property Get DrawMode() As ChkDrawModeConstants
+Attribute DrawMode.VB_Description = "Returns/sets a value indicating whether your code or the operating system will handle drawing of the elements."
+DrawMode = PropDrawMode
+End Property
+
+Public Property Let DrawMode(ByVal Value As ChkDrawModeConstants)
+Select Case Value
+    Case ChkDrawModeNormal, ChkDrawModeOwnerDraw
+        PropDrawMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+If CheckBoxHandle <> 0 Then Call ReCreateCheckBox
+UserControl.PropertyChanged "DrawMode"
 End Property
 
 Private Sub CreateCheckBox()
 If CheckBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or BS_3STATE Or BS_TEXT Or BS_NOTIFY
+If Me.Appearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
 If PropAlignment = CCLeftRightAlignmentRight Then dwStyle = dwStyle Or BS_RIGHTBUTTON
 Select Case PropTextAlignment
     Case vbLeftJustify
@@ -1140,7 +1381,6 @@ Select Case PropTextAlignment
 End Select
 If PropPushLike = True Then dwStyle = dwStyle Or BS_PUSHLIKE
 If PropWordWrap = True Then dwStyle = dwStyle Or BS_MULTILINE
-If PropAppearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
 Select Case PropVerticalAlignment
     Case CCVerticalAlignmentTop
         dwStyle = dwStyle Or BS_TOP
@@ -1149,6 +1389,14 @@ Select Case PropVerticalAlignment
     Case CCVerticalAlignmentBottom
         dwStyle = dwStyle Or BS_BOTTOM
 End Select
+If PropDrawMode <> ChkDrawModeNormal Then PropStyle = vbButtonStandard
+If PropStyle = vbButtonGraphical Then dwStyle = dwStyle Or BS_OWNERDRAW
+If PropDrawMode = ChkDrawModeOwnerDraw Then dwStyle = dwStyle Or BS_OWNERDRAW
+If (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+    ' According to MSDN:
+    ' The BS_OWNERDRAW style cannot be combined with any other button style.
+    dwStyle = WS_CHILD Or WS_VISIBLE Or BS_OWNERDRAW
+End If
 If Ambient.RightToLeft = True Then dwExStyle = WS_EX_RTLREADING
 CheckBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If CheckBoxHandle <> 0 Then Call ComCtlsShowAllUIStates(CheckBoxHandle)
@@ -1161,6 +1409,30 @@ If Not PropPicture Is Nothing Then Set Me.Picture = PropPicture
 If Ambient.UserMode = True Then
     If CheckBoxHandle <> 0 Then Call ComCtlsSetSubclass(CheckBoxHandle, Me, 1)
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 2)
+Else
+    If PropStyle = vbButtonGraphical Then
+        Call ComCtlsSetSubclass(UserControl.hWnd, Me, 3)
+        Me.Refresh
+    End If
+End If
+End Sub
+
+Private Sub ReCreateCheckBox()
+If Ambient.UserMode = True Then
+    Dim Visible As Boolean
+    Visible = Extender.Visible
+    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Call DestroyCheckBox
+    Call CreateCheckBox
+    Call UserControl_Resize
+    If Not PropImageListControl Is Nothing Then Set Me.ImageList = PropImageListControl
+    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    Me.Refresh
+Else
+    Call DestroyCheckBox
+    Call CreateCheckBox
+    Call UserControl_Resize
+    If Not PropImageListName = "(None)" Then Me.ImageList = PropImageListName
 End If
 End Sub
 
@@ -1184,6 +1456,11 @@ If CheckBoxTransparentBrush <> 0 Then
     DeleteObject CheckBoxTransparentBrush
     CheckBoxTransparentBrush = 0
 End If
+If CheckBoxOwnerDrawCheckedBrush <> 0 Then
+    DeleteObject CheckBoxOwnerDrawCheckedBrush
+    CheckBoxOwnerDrawCheckedBrush = 0
+End If
+CheckBoxImageListHandle = 0
 End Sub
 
 Public Sub Refresh()
@@ -1192,6 +1469,10 @@ Attribute Refresh.VB_UserMemId = -550
 If CheckBoxTransparentBrush <> 0 Then
     DeleteObject CheckBoxTransparentBrush
     CheckBoxTransparentBrush = 0
+End If
+If CheckBoxOwnerDrawCheckedBrush <> 0 Then
+    DeleteObject CheckBoxOwnerDrawCheckedBrush
+    CheckBoxOwnerDrawCheckedBrush = 0
 End If
 UserControl.Refresh
 RedrawWindow UserControl.hWnd, 0, 0, RDW_UPDATENOW Or RDW_INVALIDATE Or RDW_ERASE Or RDW_ALLCHILDREN
@@ -1222,14 +1503,19 @@ If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     Dim BTNIML As BUTTON_IMAGELIST
     With BTNIML
     .hImageList = hImageList
-    If .hImageList <> 0 Then
+    If .hImageList = 0 Then .hImageList = BCCL_NOGLYPH
+    CheckBoxImageListHandle = hImageList
+    If CheckBoxImageListHandle = BCCL_NOGLYPH Then CheckBoxImageListHandle = 0
+    If .hImageList <> BCCL_NOGLYPH Then
         Dim dwStyle As Long
         dwStyle = GetWindowLong(CheckBoxHandle, GWL_STYLE)
-        If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
-        If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
-        SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
-        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
-        SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+        If Not (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
+            If (dwStyle And BS_ICON) = BS_ICON Then dwStyle = dwStyle And Not BS_ICON
+            If (dwStyle And BS_BITMAP) = BS_BITMAP Then dwStyle = dwStyle And Not BS_BITMAP
+            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_ICON, ByVal 0&
+            SendMessage CheckBoxHandle, BM_SETIMAGE, IMAGE_BITMAP, ByVal 0&
+            SetWindowLong CheckBoxHandle, GWL_STYLE, dwStyle
+        End If
     End If
     With .RCMargin
     Select Case PropImageListAlignment
@@ -1245,14 +1531,30 @@ If CheckBoxHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
     End With
     .uAlign = PropImageListAlignment
     SendMessage CheckBoxHandle, BCM_SETIMAGELIST, 0, ByVal VarPtr(BTNIML)
-    If .hImageList = BCCL_NOGLYPH Then
-        PropImageListName = "(None)"
-        Set Me.Picture = PropPicture
-    End If
+    If .hImageList = BCCL_NOGLYPH Then Set Me.Picture = PropPicture
     End With
     Me.Refresh
 End If
 End Sub
+
+Private Sub OffsetRect(ByRef RC As RECT, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long)
+With RC
+.Left = .Left + X1
+.Top = .Top + Y1
+.Right = .Right + X2
+.Bottom = .Bottom + Y2
+End With
+End Sub
+
+Private Function CoalescePicture(ByVal Picture As IPictureDisp, ByVal DefaultPicture As IPictureDisp) As IPictureDisp
+If Picture Is Nothing Then
+    Set CoalescePicture = DefaultPicture
+ElseIf Picture.Handle = 0 Then
+    Set CoalescePicture = DefaultPicture
+Else
+    Set CoalescePicture = Picture
+End If
+End Function
 
 Private Function ISubclass_Message(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal dwRefData As Long) As Long
 Select Case dwRefData
@@ -1260,6 +1562,8 @@ Select Case dwRefData
         ISubclass_Message = WindowProcControl(hWnd, wMsg, wParam, lParam)
     Case 2
         ISubclass_Message = WindowProcUserControl(hWnd, wMsg, wParam, lParam)
+    Case 3
+        ISubclass_Message = WindowProcUserControlDesignMode(hWnd, wMsg, wParam, lParam)
 End Select
 End Function
 
@@ -1332,6 +1636,16 @@ Select Case wMsg
                 End If
             End If
         End If
+    Case WM_LBUTTONDBLCLK
+        If (GetWindowLong(hWnd, GWL_STYLE) And BS_OWNERDRAW) = BS_OWNERDRAW Then
+            ' Buttons having the BS_OWNERDRAW style will not respond to double click as normal buttons do.
+            ' Thus the default window procedure of the button will be called with WM_LBUTTONDOWN instead of the actual WM_LBUTTONDBLCLK.
+            WindowProcControl = ComCtlsDefaultProc(hWnd, WM_LBUTTONDOWN, wParam, lParam)
+            Exit Function
+        End If
+End Select
+WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+Select Case wMsg
     Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
         Dim X As Single
         Dim Y As Single
@@ -1357,7 +1671,6 @@ Select Case wMsg
                 End Select
         End Select
 End Select
-WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
 Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
@@ -1394,37 +1707,160 @@ Select Case wMsg
         WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
         If PropTransparent = True Then
             SetBkMode wParam, 1
-            Dim hDCScreen As Long, hDCBmp As Long
+            Dim hDCBmp As Long
             Dim hBmp As Long, hBmpOld As Long
             With UserControl
             If CheckBoxTransparentBrush = 0 Then
-                hDCScreen = GetDC(0)
-                If hDCScreen <> 0 Then
-                    hDCBmp = CreateCompatibleDC(hDCScreen)
-                    If hDCBmp <> 0 Then
-                        hBmp = CreateCompatibleBitmap(hDCScreen, .ScaleWidth, .ScaleHeight)
-                        If hBmp <> 0 Then
-                            hBmpOld = SelectObject(hDCBmp, hBmp)
-                            Dim P As POINTAPI
-                            ClientToScreen hWnd, P
-                            ScreenToClient .ContainerHwnd, P
-                            SetViewportOrgEx hDCBmp, -P.X, -P.Y, P
-                            SendMessage .ContainerHwnd, WM_PAINT, hDCBmp, ByVal 0&
-                            SetViewportOrgEx hDCBmp, P.X, P.Y, P
-                            CheckBoxTransparentBrush = CreatePatternBrush(hBmp)
-                            SelectObject hDCBmp, hBmpOld
-                            DeleteObject hBmp
-                        End If
-                        DeleteDC hDCBmp
+                hDCBmp = CreateCompatibleDC(wParam)
+                If hDCBmp <> 0 Then
+                    hBmp = CreateCompatibleBitmap(wParam, .ScaleWidth, .ScaleHeight)
+                    If hBmp <> 0 Then
+                        hBmpOld = SelectObject(hDCBmp, hBmp)
+                        Dim P As POINTAPI
+                        ClientToScreen hWnd, P
+                        ScreenToClient .ContainerHwnd, P
+                        SetViewportOrgEx hDCBmp, -P.X, -P.Y, P
+                        SendMessage .ContainerHwnd, WM_PAINT, hDCBmp, ByVal 0&
+                        SetViewportOrgEx hDCBmp, P.X, P.Y, P
+                        CheckBoxTransparentBrush = CreatePatternBrush(hBmp)
+                        SelectObject hDCBmp, hBmpOld
+                        DeleteObject hBmp
                     End If
-                    ReleaseDC 0, hDCScreen
+                    DeleteDC hDCBmp
                 End If
             End If
             End With
             If CheckBoxTransparentBrush <> 0 Then WindowProcUserControl = CheckBoxTransparentBrush
         End If
         Exit Function
+    Case WM_DRAWITEM
+        Dim DIS As DRAWITEMSTRUCT
+        CopyMemory DIS, ByVal lParam, LenB(DIS)
+        If DIS.CtlType = ODT_BUTTON And DIS.hWndItem = CheckBoxHandle Then
+            If PropStyle = vbButtonGraphical Then
+                Dim Flags As Long
+                Flags = DFCS_BUTTONPUSH
+                If (DIS.ItemState And ODS_SELECTED) = ODS_SELECTED Then Flags = Flags Or DFCS_PUSHED
+                If (DIS.ItemState And ODS_DISABLED) = ODS_DISABLED Then Flags = Flags Or DFCS_INACTIVE
+                If Me.Appearance = CCAppearanceFlat Then Flags = Flags Or DFCS_FLAT
+                If PropValue = vbChecked Then Flags = Flags Or DFCS_CHECKED
+                DrawFrameControl DIS.hDC, DIS.RCItem, DFC_BUTTON, Flags Or DFCS_ADJUSTRECT
+                Dim Brush As Long
+                If PropValue = vbChecked Then
+                    If CheckBoxOwnerDrawCheckedBrush = 0 Then
+                        Dim hDCBmp2 As Long
+                        Dim hBmp2 As Long, hBmpOld2 As Long
+                        hDCBmp2 = CreateCompatibleDC(DIS.hDC)
+                        If hDCBmp2 <> 0 Then
+                            hBmp2 = CreateCompatibleBitmap(DIS.hDC, 2, 2)
+                            If hBmp2 <> 0 Then
+                                hBmpOld2 = SelectObject(hDCBmp2, hBmp2)
+                                SetPixel hDCBmp2, 0, 0, vbWhite
+                                SetPixel hDCBmp2, 1, 1, vbWhite
+                                SetPixel hDCBmp2, 0, 1, WinColor(UserControl.BackColor)
+                                SetPixel hDCBmp2, 1, 0, WinColor(UserControl.BackColor)
+                                CheckBoxOwnerDrawCheckedBrush = CreatePatternBrush(hBmp2)
+                                SelectObject hDCBmp2, hBmpOld2
+                                DeleteObject hBmp2
+                            End If
+                            DeleteDC hDCBmp2
+                        End If
+                    End If
+                    If CheckBoxOwnerDrawCheckedBrush <> 0 Then FillRect DIS.hDC, DIS.RCItem, CheckBoxOwnerDrawCheckedBrush
+                Else
+                    Brush = CreateSolidBrush(WinColor(UserControl.BackColor))
+                    FillRect DIS.hDC, DIS.RCItem, Brush
+                    DeleteObject Brush
+                End If
+                If (DIS.ItemState And ODS_DISABLED) = ODS_DISABLED Then SetTextColor DIS.hDC, WinColor(vbGrayText)
+                Call OffsetRect(DIS.RCItem, 1, 1, -1, -1)
+                If (DIS.ItemState And ODS_FOCUS) = ODS_FOCUS Then
+                    If Not (DIS.ItemState And ODS_NOFOCUSRECT) = ODS_NOFOCUSRECT Then DrawFocusRect DIS.hDC, DIS.RCItem
+                End If
+                Dim OldBkMode As Long
+                OldBkMode = SetBkMode(DIS.hDC, 1)
+                Dim TextRect As RECT, Text As String, ButtonPicture As IPictureDisp, DisabledPictureAvailable As Boolean
+                LSet TextRect = DIS.RCItem
+                Text = Me.Caption
+                If (DIS.ItemState And ODS_DISABLED) = ODS_DISABLED Then
+                    Set ButtonPicture = CoalescePicture(PropDisabledPicture, PropPicture)
+                    If Not PropDisabledPicture Is Nothing Then
+                        If PropDisabledPicture.Handle <> 0 Then DisabledPictureAvailable = True
+                    End If
+                ElseIf (DIS.ItemState And ODS_SELECTED) = ODS_SELECTED Or PropValue = vbChecked Then
+                    Set ButtonPicture = CoalescePicture(PropDownPicture, PropPicture)
+                Else
+                    Set ButtonPicture = PropPicture
+                End If
+                If Not ButtonPicture Is Nothing Then
+                    If ButtonPicture.Handle = 0 Then Set ButtonPicture = Nothing
+                End If
+                DrawText DIS.hDC, StrPtr(Text), -1, TextRect, DT_CALCRECT Or DT_WORDBREAK Or CLng(IIf((DIS.ItemState And ODS_NOACCEL) = ODS_NOACCEL, DT_HIDEPREFIX, 0))
+                TextRect.Left = DIS.RCItem.Left
+                TextRect.Right = DIS.RCItem.Right
+                If ButtonPicture Is Nothing Then
+                    TextRect.Top = ((DIS.RCItem.Bottom - TextRect.Bottom) / 2) + 3
+                    TextRect.Bottom = TextRect.Top + TextRect.Bottom
+                Else
+                    TextRect.Top = (DIS.RCItem.Bottom - TextRect.Bottom) + 1
+                    TextRect.Bottom = DIS.RCItem.Bottom
+                End If
+                If (DIS.ItemState And ODS_SELECTED) = ODS_SELECTED Or PropValue = vbChecked Then Call OffsetRect(TextRect, 1, 1, 1, 1)
+                DrawText DIS.hDC, StrPtr(Text), -1, TextRect, DT_CENTER Or DT_WORDBREAK Or CLng(IIf((DIS.ItemState And ODS_NOACCEL) = ODS_NOACCEL, DT_HIDEPREFIX, 0))
+                DIS.RCItem.Bottom = TextRect.Top
+                DIS.RCItem.Left = TextRect.Left
+                If Not ButtonPicture Is Nothing Then
+                    Dim CX As Long, CY As Long, X As Long, Y As Long
+                    CX = UserControl.ScaleX(ButtonPicture.Width, vbHimetric, vbPixels)
+                    CY = UserControl.ScaleY(ButtonPicture.Height, vbHimetric, vbPixels)
+                    X = DIS.RCItem.Left + ((DIS.RCItem.Right - DIS.RCItem.Left - CX) / 2)
+                    Y = DIS.RCItem.Top + ((DIS.RCItem.Bottom - DIS.RCItem.Top - CY) / 2)
+                    If Not (DIS.ItemState And ODS_DISABLED) = ODS_DISABLED Or DisabledPictureAvailable = True Then
+                        If ButtonPicture.Type = vbPicTypeBitmap And PropUseMaskColor = True Then
+                            Dim hDC1 As Long, hBmpOld1 As Long
+                            hDC1 = CreateCompatibleDC(DIS.hDC)
+                            If hDC1 <> 0 Then
+                                hBmpOld1 = SelectObject(hDC1, ButtonPicture.Handle)
+                                TransparentBlt DIS.hDC, X, Y, CX, CY, hDC1, 0, 0, CX, CY, WinColor(PropMaskColor)
+                                SelectObject hDC1, hBmpOld1
+                                DeleteDC hDC1
+                            End If
+                        Else
+                            With ButtonPicture
+                            .Render DIS.hDC Or 0&, X Or 0&, Y + CY Or 0&, CX Or 0&, -CY Or 0&, 0&, 0&, .Width, .Height, ByVal 0&
+                            End With
+                        End If
+                    Else
+                        If ButtonPicture.Type = vbPicTypeIcon Then
+                            DrawState DIS.hDC, 0, 0, ButtonPicture.Handle, 0, X, Y, CX, CY, DST_ICON Or DSS_DISABLED
+                        ElseIf ButtonPicture.Type = vbPicTypeBitmap Then
+                            DrawState DIS.hDC, 0, 0, ButtonPicture.Handle, 0, X, Y, CX, CY, DST_BITMAP Or DSS_DISABLED
+                        End If
+                    End If
+                End If
+                SetBkMode DIS.hDC, OldBkMode
+            Else
+                With DIS
+                RaiseEvent OwnerDraw(.ItemAction, .ItemState, .hDC, .RCItem.Left, .RCItem.Top, .RCItem.Right, .RCItem.Bottom)
+                End With
+            End If
+            WindowProcUserControl = 1
+            Exit Function
+        End If
 End Select
 WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 If wMsg = WM_SETFOCUS Then SetFocusAPI CheckBoxHandle
+End Function
+
+Private Function WindowProcUserControlDesignMode(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Select Case wMsg
+    Case WM_CTLCOLORBTN, WM_DRAWITEM
+        WindowProcUserControlDesignMode = WindowProcUserControl(hWnd, wMsg, wParam, lParam)
+        Exit Function
+End Select
+WindowProcUserControlDesignMode = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+Select Case wMsg
+    Case WM_DESTROY, WM_NCDESTROY, WM_STYLECHANGED
+        Call ComCtlsRemoveSubclass(hWnd)
+End Select
 End Function

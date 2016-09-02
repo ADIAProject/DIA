@@ -74,12 +74,10 @@ Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVa
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Private Declare Function SetBkMode Lib "gdi32" (ByVal hDC As Long, ByVal nBkMode As Long) As Long
 Private Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal dwRop As Long) As Long
-Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function CreatePatternBrush Lib "gdi32" (ByVal hBitmap As Long) As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
@@ -106,6 +104,9 @@ Private Const WM_GETTEXT As Long = &HD
 Private Const WM_SETTEXT As Long = &HC
 Private Const BS_TEXT As Long = &H0
 Private Const BS_GROUPBOX As Long = &H7
+Private Const BS_LEFT As Long = &H100
+Private Const BS_RIGHT As Long = &H200
+Private Const BS_CENTER As Long = &H300
 Private Const BS_FLAT As Long = &H8000&
 Implements ISubclass
 Implements OLEGuids.IPerPropertyBrowsingVB
@@ -118,8 +119,8 @@ Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
 Private PropBorder As Boolean
-Private PropAppearance As CCAppearanceConstants
 Private PropCaption As String
+Private PropAlignment As VBRUN.AlignmentConstants
 Private PropTransparent As Boolean
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
@@ -155,8 +156,8 @@ Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
 PropBorder = True
-PropAppearance = UserControl.Appearance
 PropCaption = Ambient.DisplayName
+PropAlignment = vbLeftJustify
 PropTransparent = False
 Call CreateFrame
 End Sub
@@ -169,6 +170,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 With PropBag
 Set PropFont = .ReadProperty("Font", Ambient.Font)
 PropVisualStyles = .ReadProperty("VisualStyles", True)
+Me.Appearance = .ReadProperty("Appearance", CCAppearance3D)
 Me.BackColor = .ReadProperty("BackColor", vbButtonFace)
 Me.ForeColor = .ReadProperty("ForeColor", vbButtonText)
 Me.Enabled = .ReadProperty("Enabled", True)
@@ -177,8 +179,8 @@ PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
 Me.MousePointer = PropMousePointer
 PropBorder = .ReadProperty("Border", True)
-PropAppearance = .ReadProperty("Appearance", CCAppearance3D)
 PropCaption = VarToStr(.ReadProperty("Caption", vbNullString))
+PropAlignment = .ReadProperty("Alignment", vbLeftJustify)
 PropTransparent = .ReadProperty("Transparent", False)
 End With
 Call CreateFrame
@@ -188,6 +190,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 With PropBag
 .WriteProperty "Font", PropFont, Ambient.Font
 .WriteProperty "VisualStyles", PropVisualStyles, True
+.WriteProperty "Appearance", Me.Appearance, CCAppearance3D
 .WriteProperty "BackColor", Me.BackColor, vbButtonFace
 .WriteProperty "ForeColor", Me.ForeColor, vbButtonText
 .WriteProperty "Enabled", Me.Enabled, True
@@ -195,8 +198,8 @@ With PropBag
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
 .WriteProperty "Border", PropBorder, True
-.WriteProperty "Appearance", PropAppearance, CCAppearance3D
 .WriteProperty "Caption", StrToVar(PropCaption), vbNullString
+.WriteProperty "Alignment", PropAlignment, vbLeftJustify
 .WriteProperty "Transparent", PropTransparent, False
 End With
 End Sub
@@ -251,9 +254,17 @@ UserControl.OLEDrag
 End Sub
 
 Private Sub UserControl_Resize()
+Static InProc As Boolean
+If InProc = True Then Exit Sub
+InProc = True
 With UserControl
+If DPICorrectionFactor() <> 1 Then
+    .Extender.Move .Extender.Left + .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top + .ScaleY(1, vbPixels, vbContainerPosition)
+    .Extender.Move .Extender.Left - .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top - .ScaleY(1, vbPixels, vbContainerPosition)
+End If
 If FrameGroupBoxHandle <> 0 Then MoveWindow FrameGroupBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
 End With
+InProc = False
 End Sub
 
 Private Sub UserControl_Terminate()
@@ -284,6 +295,10 @@ End Property
 Public Property Get Container() As Object
 Attribute Container.VB_Description = "Returns the container of an object."
 Set Container = Extender.Container
+End Property
+
+Public Property Set Container(ByVal Value As Object)
+Set Extender.Container = Value
 End Property
 
 Public Property Get Left() As Single
@@ -331,6 +346,47 @@ Public Property Let Visible(ByVal Value As Boolean)
 Extender.Visible = Value
 End Property
 
+Public Property Get ToolTipText() As String
+Attribute ToolTipText.VB_Description = "Returns/sets the text displayed when the mouse is paused over the control."
+ToolTipText = Extender.ToolTipText
+End Property
+
+Public Property Let ToolTipText(ByVal Value As String)
+Extender.ToolTipText = Value
+End Property
+
+Public Property Get DragIcon() As IPictureDisp
+Attribute DragIcon.VB_Description = "Returns/sets the icon to be displayed as the pointer in a drag-and-drop operation."
+Set DragIcon = Extender.DragIcon
+End Property
+
+Public Property Let DragIcon(ByVal Value As IPictureDisp)
+Extender.DragIcon = Value
+End Property
+
+Public Property Set DragIcon(ByVal Value As IPictureDisp)
+Set Extender.DragIcon = Value
+End Property
+
+Public Property Get DragMode() As Integer
+Attribute DragMode.VB_Description = "Returns/sets a value that determines whether manual or automatic drag mode is used."
+DragMode = Extender.DragMode
+End Property
+
+Public Property Let DragMode(ByVal Value As Integer)
+Extender.DragMode = Value
+End Property
+
+Public Sub Drag(Optional ByRef Action As Variant)
+Attribute Drag.VB_Description = "Begins, ends, or cancels a drag operation of any object except Line, Menu, Shape, and Timer."
+If IsMissing(Action) Then Extender.Drag Else Extender.Drag Action
+End Sub
+
+Public Sub ZOrder(Optional ByRef Position As Variant)
+Attribute ZOrder.VB_Description = "Places a specified object at the front or back of the z-order within its graphical level."
+If IsMissing(Position) Then Extender.ZOrder Else Extender.ZOrder Position
+End Sub
+
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_Description = "Returns a handle to a control."
 Attribute hWnd.VB_UserMemId = -515
@@ -353,10 +409,11 @@ Set Me.Font = NewFont
 End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
+If NewFont Is Nothing Then Set NewFont = Ambient.Font
 Dim OldFontHandle As Long
 Set PropFont = NewFont
 OldFontHandle = FrameFontHandle
-FrameFontHandle = CreateFontFromOLEFont(PropFont)
+FrameFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If FrameGroupBoxHandle <> 0 Then SendMessage FrameGroupBoxHandle, WM_SETFONT, FrameFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 Me.Refresh
@@ -366,7 +423,7 @@ End Property
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
 OldFontHandle = FrameFontHandle
-FrameFontHandle = CreateFontFromOLEFont(PropFont)
+FrameFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If FrameGroupBoxHandle <> 0 Then SendMessage FrameGroupBoxHandle, WM_SETFONT, FrameFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 Me.Refresh
@@ -389,6 +446,34 @@ If FrameGroupBoxHandle <> 0 And EnabledVisualStyles() = True Then
     Me.Refresh
 End If
 UserControl.PropertyChanged "VisualStyles"
+End Property
+
+Public Property Get Appearance() As CCAppearanceConstants
+Attribute Appearance.VB_Description = "Returns/sets a value that determines whether an object is painted two-dimensional or with 3-D effects."
+Attribute Appearance.VB_UserMemId = -520
+Appearance = UserControl.Appearance
+End Property
+
+Public Property Let Appearance(ByVal Value As CCAppearanceConstants)
+Select Case Value
+    Case CCAppearanceFlat, CCAppearance3D
+        UserControl.Appearance = Value
+    Case Else
+        Err.Raise 380
+End Select
+UserControl.ForeColor = IIf(UserControl.Appearance = CCAppearanceFlat, vbWindowText, vbButtonText)
+If FrameGroupBoxHandle <> 0 Then
+    Dim dwStyle As Long
+    dwStyle = GetWindowLong(FrameGroupBoxHandle, GWL_STYLE)
+    If UserControl.Appearance = CCAppearanceFlat Then
+        If Not (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle Or BS_FLAT
+    Else
+        If (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle And Not BS_FLAT
+    End If
+    SetWindowLong FrameGroupBoxHandle, GWL_STYLE, dwStyle
+End If
+Me.Refresh
+UserControl.PropertyChanged "Appearance"
 End Property
 
 Public Property Get BackColor() As OLE_COLOR
@@ -509,35 +594,6 @@ If FrameGroupBoxHandle <> 0 Then ShowWindow FrameGroupBoxHandle, IIf(PropBorder 
 UserControl.PropertyChanged "Border"
 End Property
 
-Public Property Get Appearance() As CCAppearanceConstants
-Attribute Appearance.VB_Description = "Returns/sets a value that determines whether an object is painted two-dimensional or with 3-D effects."
-Attribute Appearance.VB_UserMemId = -520
-Appearance = PropAppearance
-End Property
-
-Public Property Let Appearance(ByVal Value As CCAppearanceConstants)
-Select Case Value
-    Case CCAppearanceFlat, CCAppearance3D
-        PropAppearance = Value
-    Case Else
-        Err.Raise 380
-End Select
-UserControl.Appearance = PropAppearance
-UserControl.ForeColor = IIf(PropAppearance = CCAppearanceFlat, vbWindowText, vbButtonText)
-If FrameGroupBoxHandle <> 0 Then
-    Dim dwStyle As Long
-    dwStyle = GetWindowLong(FrameGroupBoxHandle, GWL_STYLE)
-    If PropAppearance = CCAppearanceFlat Then
-        If Not (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle Or BS_FLAT
-    Else
-        If (dwStyle And BS_FLAT) = BS_FLAT Then dwStyle = dwStyle And Not BS_FLAT
-    End If
-    SetWindowLong FrameGroupBoxHandle, GWL_STYLE, dwStyle
-End If
-Me.Refresh
-UserControl.PropertyChanged "Appearance"
-End Property
-
 Public Property Get Caption() As String
 Attribute Caption.VB_Description = "Returns/sets the text displayed in an object's title bar or below an object's icon."
 Attribute Caption.VB_UserMemId = -518
@@ -556,6 +612,38 @@ Me.Refresh
 UserControl.PropertyChanged "Caption"
 End Property
 
+Public Property Get Alignment() As VBRUN.AlignmentConstants
+Attribute Alignment.VB_Description = "Returns/sets the alignment."
+Alignment = PropAlignment
+End Property
+
+Public Property Let Alignment(ByVal Value As VBRUN.AlignmentConstants)
+Select Case Value
+    Case vbLeftJustify, vbCenter, vbRightJustify
+        PropAlignment = Value
+    Case Else
+        Err.Raise 380
+End Select
+If FrameGroupBoxHandle <> 0 Then
+    Dim dwStyle As Long
+    dwStyle = GetWindowLong(FrameGroupBoxHandle, GWL_STYLE)
+    If (dwStyle And BS_LEFT) = BS_LEFT Then dwStyle = dwStyle And Not BS_LEFT
+    If (dwStyle And BS_CENTER) = BS_CENTER Then dwStyle = dwStyle And Not BS_CENTER
+    If (dwStyle And BS_RIGHT) = BS_RIGHT Then dwStyle = dwStyle And Not BS_RIGHT
+    Select Case PropAlignment
+        Case vbLeftJustify
+            dwStyle = dwStyle Or BS_LEFT
+        Case vbCenter
+            dwStyle = dwStyle Or BS_CENTER
+        Case vbRightJustify
+            dwStyle = dwStyle Or BS_RIGHT
+    End Select
+    SetWindowLong FrameGroupBoxHandle, GWL_STYLE, dwStyle
+    Me.Refresh
+End If
+UserControl.PropertyChanged "Alignment"
+End Property
+
 Public Property Get Transparent() As Boolean
 Attribute Transparent.VB_Description = "Returns/sets a value indicating if the background is a replica of the underlying background to simulate transparency. This property is ignored at design time."
 Transparent = PropTransparent
@@ -571,7 +659,15 @@ Private Sub CreateFrame()
 If FrameGroupBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or WS_CLIPSIBLINGS Or BS_TEXT Or BS_GROUPBOX
-If PropAppearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
+If Me.Appearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
+Select Case PropAlignment
+    Case vbLeftJustify
+        dwStyle = dwStyle Or BS_LEFT
+    Case vbCenter
+        dwStyle = dwStyle Or BS_CENTER
+    Case vbRightJustify
+        dwStyle = dwStyle Or BS_RIGHT
+End Select
 dwExStyle = WS_EX_TRANSPARENT
 If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 FrameGroupBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
@@ -628,44 +724,40 @@ Select Case wMsg
         WindowProcUserControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
         If PropTransparent = True Then
             SetBkMode wParam, 1
-            Dim hDCScreen As Long, hDCBmp As Long
+            Dim hDCBmp As Long
             Dim hBmp As Long, hBmpOld As Long
             With UserControl
             If FrameTransparentBrush = 0 Then
-                hDCScreen = GetDC(0)
-                If hDCScreen <> 0 Then
-                    hDCBmp = CreateCompatibleDC(hDCScreen)
-                    If hDCBmp <> 0 Then
-                        hBmp = CreateCompatibleBitmap(hDCScreen, .ScaleWidth, .ScaleHeight)
-                        If hBmp <> 0 Then
-                            hBmpOld = SelectObject(hDCBmp, hBmp)
-                            Dim P As POINTAPI
-                            ClientToScreen hWnd, P
-                            ScreenToClient .ContainerHwnd, P
-                            SetViewportOrgEx hDCBmp, -P.X, -P.Y, P
-                            SendMessage .ContainerHwnd, WM_PAINT, hDCBmp, ByVal 0&
-                            SetViewportOrgEx hDCBmp, P.X, P.Y, P
-                            FrameTransparentBrush = CreatePatternBrush(hBmp)
-                            Dim hDCBmp2 As Long
-                            Dim hBmp2 As Long, hBmpOld2 As Long
-                            hDCBmp2 = CreateCompatibleDC(hDCBmp)
-                            If hDCBmp2 <> 0 Then
-                                hBmp2 = CreateCompatibleBitmap(hDCBmp, .ScaleWidth, .ScaleHeight)
-                                If hBmp2 <> 0 Then
-                                    hBmpOld2 = SelectObject(hDCBmp2, hBmp2)
-                                    BitBlt hDCBmp2, 0, 0, .ScaleWidth, .ScaleHeight, hDCBmp, 0, 0, vbSrcCopy
-                                    hBmp2 = SelectObject(hDCBmp2, hBmpOld2)
-                                    DeleteDC hDCBmp2
-                                End If
+                hDCBmp = CreateCompatibleDC(wParam)
+                If hDCBmp <> 0 Then
+                    hBmp = CreateCompatibleBitmap(wParam, .ScaleWidth, .ScaleHeight)
+                    If hBmp <> 0 Then
+                        hBmpOld = SelectObject(hDCBmp, hBmp)
+                        Dim P As POINTAPI
+                        ClientToScreen hWnd, P
+                        ScreenToClient .ContainerHwnd, P
+                        SetViewportOrgEx hDCBmp, -P.X, -P.Y, P
+                        SendMessage .ContainerHwnd, WM_PAINT, hDCBmp, ByVal 0&
+                        SetViewportOrgEx hDCBmp, P.X, P.Y, P
+                        FrameTransparentBrush = CreatePatternBrush(hBmp)
+                        Dim hDCBmp2 As Long
+                        Dim hBmp2 As Long, hBmpOld2 As Long
+                        hDCBmp2 = CreateCompatibleDC(hDCBmp)
+                        If hDCBmp2 <> 0 Then
+                            hBmp2 = CreateCompatibleBitmap(hDCBmp, .ScaleWidth, .ScaleHeight)
+                            If hBmp2 <> 0 Then
+                                hBmpOld2 = SelectObject(hDCBmp2, hBmp2)
+                                BitBlt hDCBmp2, 0, 0, .ScaleWidth, .ScaleHeight, hDCBmp, 0, 0, vbSrcCopy
+                                hBmp2 = SelectObject(hDCBmp2, hBmpOld2)
+                                DeleteDC hDCBmp2
                             End If
-                            Set UserControl.Picture = PictureFromHandle(hBmp2, vbPicTypeBitmap)
-                            If FrameGroupBoxHandle <> 0 Then RedrawWindow FrameGroupBoxHandle, 0, 0, RDW_INVALIDATE
-                            SelectObject hDCBmp, hBmpOld
-                            DeleteObject hBmp
                         End If
-                        DeleteDC hDCBmp
+                        Set UserControl.Picture = PictureFromHandle(hBmp2, vbPicTypeBitmap)
+                        If FrameGroupBoxHandle <> 0 Then RedrawWindow FrameGroupBoxHandle, 0, 0, RDW_INVALIDATE
+                        SelectObject hDCBmp, hBmpOld
+                        DeleteObject hBmp
                     End If
-                    ReleaseDC 0, hDCScreen
+                    DeleteDC hDCBmp
                 End If
             End If
             If FrameTransparentBrush <> 0 Then WindowProcUserControl = FrameTransparentBrush

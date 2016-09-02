@@ -23,6 +23,15 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
+#If False Then
+Private LblEllipsisFormatNone, LblEllipsisFormatEnd, LblEllipsisFormatPath, LblEllipsisFormatWord
+#End If
+Public Enum LblEllipsisFormatConstants
+LblEllipsisFormatNone = 0
+LblEllipsisFormatEnd = 1
+LblEllipsisFormatPath = 2
+LblEllipsisFormatWord = 3
+End Enum
 Private Type RECT
 Left As Long
 Top As Long
@@ -107,6 +116,7 @@ Private Const BF_BOTTOM As Long = &H8
 Private Const BF_RECT As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
 Implements OLEGuids.IPerPropertyBrowsingVB
 Private LabelAutoSizeFlag As Boolean
+Private LabelDisplayedCaption As String
 Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
@@ -118,7 +128,8 @@ Private PropCaption As String
 Private PropUseMnemonic As Boolean
 Private PropAutoSize As Boolean
 Private PropWordWrap As Boolean
-Private PropAppearance As CCAppearanceConstants
+Private PropEllipsisFormat As LblEllipsisFormatConstants
+Private PropVerticalAlignment As CCVerticalAlignmentConstants
 
 Private Sub IPerPropertyBrowsingVB_GetDisplayString(ByRef Handled As Boolean, ByVal DispID As Long, ByRef DisplayName As String)
 If DispID = DispIDMousePointer Then
@@ -156,13 +167,15 @@ PropCaption = Ambient.DisplayName
 PropUseMnemonic = True
 PropAutoSize = False
 PropWordWrap = True
-PropAppearance = UserControl.Appearance
+PropEllipsisFormat = LblEllipsisFormatNone
+PropVerticalAlignment = CCVerticalAlignmentTop
 End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 With PropBag
 Set PropFont = .ReadProperty("Font", Ambient.Font)
 Set UserControl.Font = PropFont
+Me.Appearance = .ReadProperty("Appearance", CCAppearance3D)
 Me.BackColor = .ReadProperty("BackColor", vbButtonFace)
 Me.ForeColor = .ReadProperty("ForeColor", vbButtonText)
 Me.Enabled = .ReadProperty("Enabled", True)
@@ -177,7 +190,8 @@ PropCaption = .ReadProperty("Caption", vbNullString)
 PropUseMnemonic = .ReadProperty("UseMnemonic", True)
 PropAutoSize = .ReadProperty("AutoSize", False)
 PropWordWrap = .ReadProperty("WordWrap", True)
-PropAppearance = .ReadProperty("Appearance", CCAppearance3D)
+PropEllipsisFormat = .ReadProperty("EllipsisFormat", LblEllipsisFormatNone)
+PropVerticalAlignment = .ReadProperty("VerticalAlignment", CCVerticalAlignmentTop)
 End With
 If PropUseMnemonic = True Then
     UserControl.AccessKeys = ChrW(AccelCharCode(PropCaption))
@@ -189,6 +203,7 @@ End Sub
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 With PropBag
 .WriteProperty "Font", PropFont, Ambient.Font
+.WriteProperty "Appearance", Me.Appearance, CCAppearance3D
 .WriteProperty "BackColor", Me.BackColor, vbButtonFace
 .WriteProperty "ForeColor", Me.ForeColor, vbButtonText
 .WriteProperty "Enabled", Me.Enabled, True
@@ -202,12 +217,13 @@ With PropBag
 .WriteProperty "UseMnemonic", PropUseMnemonic, True
 .WriteProperty "AutoSize", PropAutoSize, False
 .WriteProperty "WordWrap", PropWordWrap, True
-.WriteProperty "Appearance", PropAppearance, CCAppearance3D
+.WriteProperty "EllipsisFormat", PropEllipsisFormat, LblEllipsisFormatNone
+.WriteProperty "VerticalAlignment", PropVerticalAlignment, CCVerticalAlignmentTop
 End With
 End Sub
 
 Private Sub UserControl_Paint()
-Dim RC As RECT, Format As Long
+Dim RC As RECT, CalcRect As RECT, Format As Long, Buffer As String
 Dim BorderWidth As Long, BorderHeight As Long
 With UserControl
 SetRect RC, 0, 0, .ScaleWidth, .ScaleHeight
@@ -243,34 +259,79 @@ If Ambient.RightToLeft = True Then Format = Format Or DT_RTLREADING
 If PropUseMnemonic = False Then Format = Format Or DT_NOPREFIX
 If PropWordWrap = True Then Format = Format Or DT_WORDBREAK
 If PropAutoSize = True And LabelAutoSizeFlag = True Then
-    Dim Buffer As String, CalcRect As RECT
     Buffer = PropCaption
     If Buffer = vbNullString Then Buffer = " "
     LSet CalcRect = RC
     DrawText .hDC, StrPtr(Buffer), -1, CalcRect, Format Or DT_CALCRECT
-    Dim OldRight As Single, OldCenter As Single, OldWidth As Single
+    Dim OldRight As Single, OldCenter As Single, OldBottom As Single, OldVCenter As Single
     OldRight = .Extender.Left + .Extender.Width
     OldCenter = .Extender.Left + (.Extender.Width / 2)
-    OldWidth = .Extender.Width
-    .Size .ScaleX((CalcRect.Right - CalcRect.Left) + (BorderWidth * 2), vbPixels, vbTwips), .ScaleY((CalcRect.Bottom - CalcRect.Top) + (BorderHeight * 2), vbPixels, vbTwips)
+    OldBottom = .Extender.Top + .Extender.Height
+    OldVCenter = .Extender.Top + (.Extender.Height / 2)
+    If DPICorrectionFactor() <> 1 Then
+        .Extender.Move .Extender.Left, .Extender.Top, .ScaleX((CalcRect.Right - CalcRect.Left) + (BorderWidth * 2), vbPixels, vbContainerSize), .ScaleY((CalcRect.Bottom - CalcRect.Top) + (BorderHeight * 2), vbPixels, vbContainerSize)
+    Else
+        .Size .ScaleX((CalcRect.Right - CalcRect.Left) + (BorderWidth * 2), vbPixels, vbTwips), .ScaleY((CalcRect.Bottom - CalcRect.Top) + (BorderHeight * 2), vbPixels, vbTwips)
+    End If
     LabelAutoSizeFlag = False
+    Dim Changed As Boolean
     Select Case PropAlignment
         Case vbCenter
             If .Extender.Left <> (OldCenter - (.Extender.Width / 2)) Then
                 .Extender.Left = (OldCenter - (.Extender.Width / 2))
-                .Refresh
-                Exit Sub
+                Changed = True
             End If
         Case vbRightJustify
             If .Extender.Left <> (OldRight - .Extender.Width) Then
                 .Extender.Left = (OldRight - .Extender.Width)
-                .Refresh
-                Exit Sub
+                Changed = True
             End If
     End Select
+    Select Case PropVerticalAlignment
+        Case CCVerticalAlignmentCenter
+            If .Extender.Top <> (OldVCenter - (.Extender.Height / 2)) Then
+                .Extender.Top = (OldVCenter - (.Extender.Height / 2))
+                Changed = True
+            End If
+        Case CCVerticalAlignmentBottom
+            If .Extender.Top <> (OldBottom - .Extender.Height) Then
+                .Extender.Top = (OldBottom - .Extender.Height)
+                Changed = True
+            End If
+    End Select
+    If Changed = True Then
+        .Refresh
+        Exit Sub
+    End If
+Else
+    Select Case PropEllipsisFormat
+        Case LblEllipsisFormatEnd
+            Format = Format Or DT_END_ELLIPSIS
+        Case LblEllipsisFormatPath
+            Format = Format Or DT_PATH_ELLIPSIS
+        Case LblEllipsisFormatWord
+            Format = Format Or DT_WORD_ELLIPSIS
+    End Select
+    If PropVerticalAlignment <> CCVerticalAlignmentTop Then
+        Dim Height As Long, Result As Long
+        Buffer = PropCaption
+        If Buffer = vbNullString Then Buffer = " "
+        LSet CalcRect = RC
+        Height = DrawText(.hDC, StrPtr(Buffer), -1, CalcRect, Format Or DT_CALCRECT)
+        Select Case PropVerticalAlignment
+            Case CCVerticalAlignmentCenter
+                Result = ((((RC.Bottom - RC.Top) - (BorderHeight * 2)) - Height) / 2)
+            Case CCVerticalAlignmentBottom
+                Result = (((RC.Bottom - RC.Top) - (BorderHeight * 2)) - Height)
+        End Select
+        If Result > 0 Then RC.Top = RC.Top + Result
+    End If
 End If
 SetRect RC, RC.Left + BorderWidth, RC.Top + BorderHeight, RC.Right - (BorderWidth * 2), RC.Bottom - (BorderHeight * 2)
-If Not PropCaption = vbNullString Then DrawText .hDC, StrPtr(PropCaption), -1, RC, Format
+If Not PropCaption = vbNullString Then
+    LabelDisplayedCaption = PropCaption
+    DrawText .hDC, StrPtr(LabelDisplayedCaption), -1, RC, Format Or DT_MODIFYSTRING
+End If
 End With
 End Sub
 
@@ -324,7 +385,17 @@ UserControl.OLEDrag
 End Sub
 
 Private Sub UserControl_Resize()
+Static InProc As Boolean
+If InProc = True Then Exit Sub
+InProc = True
+If DPICorrectionFactor() <> 1 Then
+    With UserControl
+    .Extender.Move .Extender.Left + .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top + .ScaleY(1, vbPixels, vbContainerPosition)
+    .Extender.Move .Extender.Left - .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top - .ScaleY(1, vbPixels, vbContainerPosition)
+    End With
+End If
 Me.Refresh
+InProc = False
 End Sub
 
 Private Sub UserControl_HitTest(X As Single, Y As Single, HitResult As Integer)
@@ -357,6 +428,10 @@ End Property
 Public Property Get Container() As Object
 Attribute Container.VB_Description = "Returns the container of an object."
 Set Container = Extender.Container
+End Property
+
+Public Property Set Container(ByVal Value As Object)
+Set Extender.Container = Value
 End Property
 
 Public Property Get Left() As Single
@@ -404,6 +479,47 @@ Public Property Let Visible(ByVal Value As Boolean)
 Extender.Visible = Value
 End Property
 
+Public Property Get ToolTipText() As String
+Attribute ToolTipText.VB_Description = "Returns/sets the text displayed when the mouse is paused over the control."
+ToolTipText = Extender.ToolTipText
+End Property
+
+Public Property Let ToolTipText(ByVal Value As String)
+Extender.ToolTipText = Value
+End Property
+
+Public Property Get DragIcon() As IPictureDisp
+Attribute DragIcon.VB_Description = "Returns/sets the icon to be displayed as the pointer in a drag-and-drop operation."
+Set DragIcon = Extender.DragIcon
+End Property
+
+Public Property Let DragIcon(ByVal Value As IPictureDisp)
+Extender.DragIcon = Value
+End Property
+
+Public Property Set DragIcon(ByVal Value As IPictureDisp)
+Set Extender.DragIcon = Value
+End Property
+
+Public Property Get DragMode() As Integer
+Attribute DragMode.VB_Description = "Returns/sets a value that determines whether manual or automatic drag mode is used."
+DragMode = Extender.DragMode
+End Property
+
+Public Property Let DragMode(ByVal Value As Integer)
+Extender.DragMode = Value
+End Property
+
+Public Sub Drag(Optional ByRef Action As Variant)
+Attribute Drag.VB_Description = "Begins, ends, or cancels a drag operation of any object except Line, Menu, Shape, and Timer."
+If IsMissing(Action) Then Extender.Drag Else Extender.Drag Action
+End Sub
+
+Public Sub ZOrder(Optional ByRef Position As Variant)
+Attribute ZOrder.VB_Description = "Places a specified object at the front or back of the z-order within its graphical level."
+If IsMissing(Position) Then Extender.ZOrder Else Extender.ZOrder Position
+End Sub
+
 Public Property Get Font() As StdFont
 Attribute Font.VB_Description = "Returns a Font object."
 Attribute Font.VB_UserMemId = -512
@@ -415,6 +531,7 @@ Set Me.Font = NewFont
 End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
+If NewFont Is Nothing Then Set NewFont = Ambient.Font
 Set PropFont = NewFont
 Set UserControl.Font = PropFont
 LabelAutoSizeFlag = PropAutoSize
@@ -428,6 +545,29 @@ LabelAutoSizeFlag = PropAutoSize
 Me.Refresh
 UserControl.PropertyChanged "Font"
 End Sub
+
+Public Property Get Appearance() As CCAppearanceConstants
+Attribute Appearance.VB_Description = "Returns/sets a value that determines whether an object is painted two-dimensional or with 3-D effects."
+Attribute Appearance.VB_UserMemId = -520
+Appearance = UserControl.Appearance
+End Property
+
+Public Property Let Appearance(ByVal Value As CCAppearanceConstants)
+Select Case Value
+    Case CCAppearanceFlat, CCAppearance3D
+        UserControl.Appearance = Value
+    Case Else
+        Err.Raise 380
+End Select
+UserControl.ForeColor = IIf(UserControl.Appearance = CCAppearanceFlat, vbWindowText, vbButtonText)
+If UserControl.Appearance = CCAppearanceFlat Then
+    If Not PropBorderStyle = CCBorderStyleNone Then PropBorderStyle = CCBorderStyleSingle
+Else
+    If Not PropBorderStyle = CCBorderStyleNone Then PropBorderStyle = CCBorderStyleSunken
+End If
+Me.Refresh
+UserControl.PropertyChanged "Appearance"
+End Property
 
 Public Property Get BackColor() As OLE_COLOR
 Attribute BackColor.VB_Description = "Returns/sets the background color used to display text and graphics in an object."
@@ -551,30 +691,6 @@ Me.Refresh
 UserControl.PropertyChanged "TextAlignment"
 End Property
 
-Public Property Get Appearance() As CCAppearanceConstants
-Attribute Appearance.VB_Description = "Returns/sets a value that determines whether an object is painted two-dimensional or with 3-D effects."
-Attribute Appearance.VB_UserMemId = -520
-Appearance = PropAppearance
-End Property
-
-Public Property Let Appearance(ByVal Value As CCAppearanceConstants)
-Select Case Value
-    Case CCAppearanceFlat, CCAppearance3D
-        PropAppearance = Value
-    Case Else
-        Err.Raise 380
-End Select
-UserControl.Appearance = PropAppearance
-UserControl.ForeColor = IIf(PropAppearance = CCAppearanceFlat, vbWindowText, vbButtonText)
-If PropAppearance = CCAppearanceFlat Then
-    If Not PropBorderStyle = CCBorderStyleNone Then PropBorderStyle = CCBorderStyleSingle
-Else
-    If Not PropBorderStyle = CCBorderStyleNone Then PropBorderStyle = CCBorderStyleSunken
-End If
-Me.Refresh
-UserControl.PropertyChanged "Appearance"
-End Property
-
 Public Property Get BorderStyle() As CCBorderStyleConstants
 Attribute BorderStyle.VB_Description = "Returns/sets the border style."
 Attribute BorderStyle.VB_UserMemId = -504
@@ -683,8 +799,48 @@ Me.Refresh
 UserControl.PropertyChanged "WordWrap"
 End Property
 
+Public Property Get EllipsisFormat() As LblEllipsisFormatConstants
+Attribute EllipsisFormat.VB_Description = "Returns/sets a value indicating if and where the ellipsis character is appended, denoting that the caption extends beyond the length of the label. The auto size and the word wrap property may be set to false to see the ellipsis character."
+EllipsisFormat = PropEllipsisFormat
+End Property
+
+Public Property Let EllipsisFormat(ByVal Value As LblEllipsisFormatConstants)
+Select Case Value
+    Case LblEllipsisFormatNone, LblEllipsisFormatEnd, LblEllipsisFormatPath, LblEllipsisFormatWord
+        PropEllipsisFormat = Value
+    Case Else
+        Err.Raise 380
+End Select
+LabelAutoSizeFlag = PropAutoSize
+Me.Refresh
+UserControl.PropertyChanged "EllipsisFormat"
+End Property
+
+Public Property Get VerticalAlignment() As CCVerticalAlignmentConstants
+Attribute VerticalAlignment.VB_Description = "Returns/sets the vertical alignment."
+VerticalAlignment = PropVerticalAlignment
+End Property
+
+Public Property Let VerticalAlignment(ByVal Value As CCVerticalAlignmentConstants)
+Select Case Value
+    Case CCVerticalAlignmentTop, CCVerticalAlignmentCenter, CCVerticalAlignmentBottom
+        PropVerticalAlignment = Value
+    Case Else
+        Err.Raise 380
+End Select
+LabelAutoSizeFlag = PropAutoSize
+Me.Refresh
+UserControl.PropertyChanged "VerticalAlignment"
+End Property
+
 Public Sub Refresh()
 Attribute Refresh.VB_Description = "Forces a complete repaint of a object."
 Attribute Refresh.VB_UserMemId = -550
 UserControl.Refresh
 End Sub
+
+Public Property Get DisplayedCaption() As String
+Attribute DisplayedCaption.VB_Description = "Returns the modified string to match the displayed text."
+Attribute DisplayedCaption.VB_MemberFlags = "400"
+DisplayedCaption = LabelDisplayedCaption
+End Property

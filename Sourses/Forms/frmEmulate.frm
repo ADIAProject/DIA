@@ -332,7 +332,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
 
     Dim arrFileStrings()  As String
     Dim ColumnByStrings() As String
-    Dim i                 As Long
+    Dim I                 As Long
     Dim strContentFile    As String
 
     FileReadData strFilePath, strContentFile
@@ -341,10 +341,10 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
     'Переопределяем основной массив с данными об устройствах компьютера
     ReDim arrHwidsLocal(UBound(arrFileStrings))
 
-    For i = 0 To UBound(arrFileStrings)
-        ColumnByStrings = Split(arrFileStrings(i), vbTab)
+    For I = 0 To UBound(arrFileStrings)
+        ColumnByStrings = Split(arrFileStrings(I), vbTab)
 
-        With arrHwidsLocal(i)
+        With arrHwidsLocal(I)
             .HWID = ColumnByStrings(0)
             .DevName = ColumnByStrings(1)
             .Status = ColumnByStrings(2)
@@ -362,7 +362,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
             .DRVScore = 0
         End With
 
-    Next i
+    Next I
 
 End Sub
 
@@ -373,7 +373,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadDefaultParam()
 
-    Dim i            As Long
+    Dim I            As Long
     Dim strVerClient As String
 
     ' Выставляем текущую версию ОС, анализом из списка
@@ -383,20 +383,20 @@ Private Sub LoadDefaultParam()
         strVerClient = "*" & OSCurrVersionStruct.VerFull & "*"
     End If
 
-    For i = 0 To cmbOS.ListCount - 1
+    For I = 0 To cmbOS.ListCount - 1
 
-        If MatchSpec(cmbOS.List(i), strVerClient) Then
-            cmbOS.ListIndex = i
+        If MatchSpec(cmbOS.List(I), strVerClient) Then
+            cmbOS.ListIndex = I
 
             Exit For
 
         End If
 
-    Next i
+    Next I
 
     ' Выставляем текущую разрядность ОС
     chk64bit.Value = CBool(mbIsWin64)
-    chkIsNotebook.Value = CBool(mbIsNotebok)
+    chkIsNotebook.Value = CBool(mbIsNotebook)
     txtPCModel = strCompModel
     ' Выставляем стартовый каталог
     ucFilePath.Path = strAppPathBackSL
@@ -442,7 +442,7 @@ Private Sub Localise(ByVal strPathFile As String)
     frOS.Caption = LocaliseString(strPathFile, strFormName, "frOS", frOS.Caption)
     ' Labels
     lblInfo.Caption = LocaliseString(strPathFile, strFormName, "lblInfo", lblInfo.Caption)
-    lblOSInfo.Caption = LocaliseString(strPathFile, strFormName, "lblOSInfo", lblOSInfo.Caption)
+    lblOsInfo.Caption = LocaliseString(strPathFile, strFormName, "lblOSInfo", lblOsInfo.Caption)
     ' CheckBoxes
     chk64bit.Caption = LocaliseString(strPathFile, strFormName, "chk64bit", chk64bit.Caption)
     chkIsNotebook.Caption = LocaliseString(strPathFile, strFormName, "chkIsNotebook", chkIsNotebook.Caption)
@@ -483,7 +483,7 @@ Private Sub cmdOK_Click()
         strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
         
         'Переопределение модели компьютера
-        mbIsNotebok = CBool(chkIsNotebook.Value)
+        mbIsNotebook = CBool(chkIsNotebook.Value)
         strCompModel = txtPCModel
         
         ' А теперь обновляем статус всех пакетов
@@ -522,7 +522,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmUtilsEdit", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
@@ -557,17 +557,17 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
     
     Dim strParse_x()    As String
     Dim strTemp         As String
-    Dim i               As Long
+    Dim I               As Long
     Dim ii              As Long
     Dim mbIsServer      As Boolean
     
     strParse_x = Split(GetFileNameFromPath(strFilePath), "_")
         
     If UBound(strParse_x) >= 3 Then
-        For i = 1 To UBound(strParse_x)
+        For I = 1 To UBound(strParse_x)
             '"hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%"
             
-            Select Case i
+            Select Case I
                 '%PCMODEL%-Notebook
                 Case 1
                     strTemp = strParse_x(1)
@@ -611,7 +611,7 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
                         chk64bit.Value = 0
                     End If
             End Select
-        Next i
+        Next I
         ParseFileName = True
     End If
 End Function

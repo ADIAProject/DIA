@@ -3,7 +3,7 @@ Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TabCtl32.Ocx"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    Caption         =   "Помощник установки драйверов (Drivers Installer Assistant)"
-   ClientHeight    =   10575
+   ClientHeight    =   10350
    ClientLeft      =   3540
    ClientTop       =   4215
    ClientWidth     =   11265
@@ -20,14 +20,14 @@ Begin VB.Form frmMain
    Icon            =   "frmMain.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
-   ScaleHeight     =   10575
+   ScaleHeight     =   10350
    ScaleWidth      =   11265
    Begin prjDIADBS.ctlUcStatusBar ctlUcStatusBar1 
       Align           =   2  'Align Bottom
       Height          =   705
       Left            =   0
       TabIndex        =   29
-      Top             =   9870
+      Top             =   9645
       Width           =   11265
       _ExtentX        =   19870
       _ExtentY        =   1244
@@ -52,7 +52,7 @@ Begin VB.Form frmMain
       ScaleWidth      =   11265
       TabIndex        =   27
       TabStop         =   0   'False
-      Top             =   9345
+      Top             =   9120
       Visible         =   0   'False
       Width           =   11265
       Begin prjDIADBS.ctlJCbutton cmdBreakUpdateDB 
@@ -372,6 +372,7 @@ Begin VB.Form frmMain
                   _ExtentX        =   7329
                   _ExtentY        =   2778
                   AutoScrollToFocus=   0   'False
+                  UseHandsCursor  =   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab1 
                   Height          =   1575
@@ -384,6 +385,7 @@ Begin VB.Form frmMain
                   _ExtentX        =   7223
                   _ExtentY        =   2778
                   AutoScrollToFocus=   0   'False
+                  UseHandsCursor  =   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab2 
                   Height          =   1575
@@ -396,6 +398,7 @@ Begin VB.Form frmMain
                   _ExtentX        =   7223
                   _ExtentY        =   2778
                   AutoScrollToFocus=   0   'False
+                  UseHandsCursor  =   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab3 
                   Height          =   1575
@@ -408,6 +411,7 @@ Begin VB.Form frmMain
                   _ExtentX        =   7223
                   _ExtentY        =   2778
                   AutoScrollToFocus=   0   'False
+                  UseHandsCursor  =   0   'False
                End
                Begin prjDIADBS.ctlScrollControl ctlScrollControlTab4 
                   Height          =   1575
@@ -420,6 +424,7 @@ Begin VB.Form frmMain
                   _ExtentX        =   7223
                   _ExtentY        =   2778
                   AutoScrollToFocus=   0   'False
+                  UseHandsCursor  =   0   'False
                End
                Begin prjDIADBS.LabelW lblNoDP4Mode 
                   Height          =   285
@@ -938,6 +943,12 @@ Begin VB.Form frmMain
       EndProperty
       UseSystemFont   =   0   'False
    End
+   Begin prjDIADBS.SysInfo SysInfo1 
+      Left            =   1920
+      Top             =   8880
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+   End
    Begin VB.Menu mnuRezim 
       Caption         =   "Обновление баз данных"
       Begin VB.Menu mnuRezimBaseDrvUpdateALL 
@@ -1288,7 +1299,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private lngCntBtn                   As Long
+Private lngBtnNumber                As Long
 Private lngSSTabCurrentOS           As Long
 Private lngFirstActiveTabIndex      As Long
 Private lngNotFinedDriversInDP      As Long
@@ -1360,12 +1371,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Optional ByVal mbTasks As Boolean = False)
 
-    Dim ButtIndex             As Long
-    Dim ButtCount             As Long
-    Dim i                     As Integer
-    Dim TimeScriptRun         As Long
-    Dim TimeScriptFinish      As Long
-    Dim AllTimeScriptRun      As String
+    Dim lngButtIndex          As Long
+    Dim lngButtCount          As Long
+    Dim I                     As Integer
+    Dim lngTimeScriptRun      As Long
+    Dim lngTimeScriptFinish   As Long
+    Dim strTimeScriptTotal    As String
     Dim miPbInterval          As Long
     Dim miPbNext              As Long
     Dim strTextNew            As String
@@ -1409,17 +1420,17 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
 
     SSTab1.Tab = lngFirstActiveTabIndex
     cmdBreakUpdateDB.Visible = True
-    TimeScriptRun = 0
-    AllTimeScriptRun = vbNullString
-    TimeScriptRun = GetTickCount
-    ButtIndex = acmdPackFiles.UBound
-    ButtCount = acmdPackFiles.Count
+    lngTimeScriptRun = 0
+    strTimeScriptTotal = vbNullString
+    lngTimeScriptRun = GetTickCount
+    lngButtIndex = acmdPackFiles.UBound
+    lngButtCount = acmdPackFiles.count
     ' Отображаем ProgressBar
     CreateProgressNew
 
-    If ButtIndex Then
+    If lngButtIndex Then
         ' В цикле обрабатываем обновление
-        miPbInterval = 1000 / ButtCount
+        miPbInterval = 1000 / lngButtCount
 
         If mbTasks Then
             lngFindCheckCountTemp = FindCheckCount
@@ -1431,10 +1442,10 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
 
         miPbNext = 0
 
-        For i = 0 To ButtIndex
+        For I = 0 To lngButtIndex
             lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
 
-            Do While i >= lngNumButtOnTab
+            Do While I >= lngNumButtOnTab
                 SSTab1.Tab = SSTab1.Tab + 1
                 DoEvents
                 lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
@@ -1442,16 +1453,16 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
 
             ' Прерываем процесс обновления
             If mbBreakUpdateDBAll Then
-                MsgBox strMessages(27) & vbNewLine & acmdPackFiles(i).Tag, vbInformation, strProductName
+                MsgBox strMessages(27) & vbNewLine & acmdPackFiles(I).Tag, vbInformation, strProductName
 
                 Exit For
 
             End If
 
             If mbOnlyNew Then
-                If acmdPackFiles(i).PictureNormal = imgNoDB.Picture Then
+                If acmdPackFiles(I).PictureNormal = imgNoDB.Picture Then
                     mbDpNoDBExist = True
-                    acmdPackFiles_Click i
+                    acmdPackFiles_Click I
                     miPbNext = miPbNext + miPbInterval
                 End If
 
@@ -1459,18 +1470,18 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
                 mbDpNoDBExist = True
 
                 If mbTasks Then
-                    If chkPackFiles(i).Value Then
-                        acmdPackFiles_Click i
+                    If chkPackFiles(I).Value Then
+                        acmdPackFiles_Click I
                         miPbNext = miPbNext + miPbInterval
 
-                        If chkPackFiles(i).Value Then
-                            chkPackFiles(i).Value = False
+                        If chkPackFiles(I).Value Then
+                            chkPackFiles(I).Value = False
                             FindCheckCount
                         End If
                     End If
 
                 Else
-                    acmdPackFiles_Click i
+                    acmdPackFiles_Click I
                     miPbNext = miPbNext + miPbInterval
                 End If
             End If
@@ -1506,21 +1517,21 @@ Private Sub BaseUpdateOrRunTask(Optional ByVal mbOnlyNew As Boolean = False, Opt
         End If
     End If
 
-    TimeScriptFinish = GetTickCount
-    AllTimeScriptRun = CalculateTime(TimeScriptRun, TimeScriptFinish)
+    lngTimeScriptFinish = GetTickCount
+    strTimeScriptTotal = CalculateTime(lngTimeScriptRun, lngTimeScriptFinish)
 
     If mbBreakUpdateDBAll Then
         cmdBreakUpdateDB.Visible = False
-        If mbDebugStandart Then DebugMode strMessages(66) & strSpace & AllTimeScriptRun
-        ChangeStatusBarText strMessages(66) & strSpace & AllTimeScriptRun
+        If mbDebugStandart Then DebugMode strMessages(66) & strSpace & strTimeScriptTotal
+        ChangeStatusBarText strMessages(66) & strSpace & strTimeScriptTotal
     Else
 
         If mbDpNoDBExist Then
-            If mbDebugStandart Then DebugMode strMessages(67) & strSpace & AllTimeScriptRun
-            ChangeStatusBarText strMessages(67) & strSpace & AllTimeScriptRun
+            If mbDebugStandart Then DebugMode strMessages(67) & strSpace & strTimeScriptTotal
+            ChangeStatusBarText strMessages(67) & strSpace & strTimeScriptTotal
         Else
-            If mbDebugStandart Then DebugMode strMessages(68) & strSpace & AllTimeScriptRun
-            ChangeStatusBarText strMessages(68) & strSpace & AllTimeScriptRun
+            If mbDebugStandart Then DebugMode strMessages(68) & strSpace & strTimeScriptTotal
+            ChangeStatusBarText strMessages(68) & strSpace & strTimeScriptTotal
         End If
     End If
 
@@ -1564,7 +1575,7 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     imgNoDB.Enabled = mbBlock
     imgOK.Enabled = mbBlock
     imgOkAttention.Enabled = mbBlock
-    imgOkAttentionOLD.Enabled = mbBlock
+    imgOkAttentionOld.Enabled = mbBlock
     imgOkNew.Enabled = mbBlock
     imgOkOld.Enabled = mbBlock
     imgUpdBD.Enabled = mbBlock
@@ -1678,33 +1689,39 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVal strPackFileName As String, ByVal ButtonIndex As Long) As String
 
-    Dim strTextHwids As String
-    Dim mbUnSuppOS   As Boolean
+    Dim strTextHwids        As String
+    Dim mbUnSuppOS          As Boolean
+    Dim strPackFileNameTemp As String
 
     If mbDebugDetail Then DebugMode str4VbTab & "ChangeStatusAndPictureButton: strPackFileName=" & strPackFileName
               
     ' Небольшое прерывание для большего отклика от приложения
     DoEvents
+    
     ChangeStatusAndPictureButton = vbNullString
+    strPackFileNameTemp = UCase$(GetFileNameFromPath(strPackFileName))
 
     With acmdPackFiles(ButtonIndex)
+        'Set .PictureNormal = Nothing
 
         If CheckExistDB(strPathDevDB, strPackFileName) Then
 
             ' Ищем совпадения HWID в DP в новом режиме
             If mbFirstStart Then
                 If mbLoadUnSupportedOS Then
-                    strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
+                    strTextHwids = FindHwidInBase(strPathDevDB, strPackFileNameTemp, ButtonIndex)
                 Else
 
                     If InStr(arrOSList(SSTab1.Tab).Ver, strOSCurrentVersion) Then
                         If arrOSList(SSTab1.Tab).is64bit = 2 Then
-                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
+                            strTextHwids = FindHwidInBase(strPathDevDB, strPackFileNameTemp, ButtonIndex)
+                        
                         ElseIf arrOSList(SSTab1.Tab).is64bit = 3 Then
-                            strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
+                            strTextHwids = FindHwidInBase(strPathDevDB, strPackFileNameTemp, ButtonIndex)
+                        
                         Else
                             If mbIsWin64 = CBool(arrOSList(SSTab1.Tab).is64bit) Then
-                                strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
+                                strTextHwids = FindHwidInBase(strPathDevDB, strPackFileNameTemp, ButtonIndex)
                             Else
                                 mbUnSuppOS = True
                             End If
@@ -1716,7 +1733,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                 End If
 
             Else
-                strTextHwids = FindHwidInBaseNew(strPathDevDB, UCase$(GetFileNameFromPath(strPackFileName)), ButtonIndex)
+                strTextHwids = FindHwidInBase(strPathDevDB, strPackFileNameTemp, ButtonIndex)
             End If
             
             If LenB(strTextHwids) Then
@@ -1725,15 +1742,14 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
 
                 If mbStatusHwid Then
                     If mbStatusNewer Then
-                        Set .PictureNormal = Nothing
                         Set .PictureNormal = imgOkNew.Picture
                         If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkNew"
+                        
                     ElseIf mbStatusOlder Then
-                        Set .PictureNormal = Nothing
                         Set .PictureNormal = imgOkOld.Picture
                         If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkOld"
+                    
                     Else
-                        Set .PictureNormal = Nothing
                         Set .PictureNormal = imgOK.Picture
                         If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOK"
                     End If
@@ -1743,15 +1759,15 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                     If mbIgnorStatusHwid Then
                         If mbDRVNotInstall Then
                             If mbStatusNewer Then
-                                Set .PictureNormal = Nothing
                                 Set .PictureNormal = imgOkAttentionNew.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
+                            
                             ElseIf mbStatusOlder Then
-                                Set .PictureNormal = Nothing
-                                Set .PictureNormal = imgOkAttentionOLD.Picture
+                                
+                                Set .PictureNormal = imgOkAttentionOld.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
+                            
                             Else
-                                Set .PictureNormal = Nothing
                                 Set .PictureNormal = imgOkAttention.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttention"
                             End If
@@ -1759,15 +1775,14 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                         Else
 
                             If mbStatusNewer Then
-                                Set .PictureNormal = Nothing
                                 Set .PictureNormal = imgOkNew.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkNew"
+                            
                             ElseIf mbStatusOlder Then
-                                Set .PictureNormal = Nothing
                                 Set .PictureNormal = imgOkOld.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkOld"
+                            
                             Else
-                                Set .PictureNormal = Nothing
                                 Set .PictureNormal = imgOK.Picture
                                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOK"
                             End If
@@ -1776,15 +1791,14 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                     Else
 
                         If mbStatusNewer Then
-                            Set .PictureNormal = Nothing
                             Set .PictureNormal = imgOkAttentionNew.Picture
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionNew"
+                        
                         ElseIf mbStatusOlder Then
-                            Set .PictureNormal = Nothing
-                            Set .PictureNormal = imgOkAttentionOLD.Picture
+                            Set .PictureNormal = imgOkAttentionOld.Picture
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttentionOld"
+                        
                         Else
-                            Set .PictureNormal = Nothing
                             Set .PictureNormal = imgOkAttention.Picture
                             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgOkAttention"
                         End If
@@ -1795,7 +1809,7 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
                 .SetPopupMenu mnuContextMenu4
                 .SetPopupMenuRBT mnuContextMenu
             Else
-                Set .PictureNormal = Nothing
+                
                 Set .PictureNormal = imgNo.Picture
                 If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgNo"
                 .SetPopupMenuRBT mnuContextMenu
@@ -1807,7 +1821,6 @@ Private Function ChangeStatusAndPictureButton(ByVal strPathDevDB As String, ByVa
             End If
 
         Else
-            Set .PictureNormal = Nothing
             Set .PictureNormal = imgNoDB.Picture
             If mbDebugDetail Then DebugMode str3VbTab & "ChangeStatusAndPictureButton-ImageForButton: imgNoDB"
             .DropDownEnable = False
@@ -1824,14 +1837,14 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
 
-    Dim i As Long
+    Dim I As Long
 
     With acmdPackFiles
-        For i = .LBound To .UBound
+        For I = .LBound To .UBound
     
-            If Not (.Item(i).PictureNormal Is Nothing) Then
-                If .Item(i).Visible Then
-                    chkPackFiles(i).Value = mbCheckAll
+            If Not (.Item(I).PictureNormal Is Nothing) Then
+                If .Item(I).Visible Then
+                    chkPackFiles(I).Value = mbCheckAll
                 End If
             End If
     
@@ -1841,22 +1854,21 @@ Private Sub CheckAllButton(ByVal mbCheckAll As Boolean)
     cmdRunTask.Enabled = FindCheckCount
 End Sub
 
-' проверяем совместимость драйвера по вендору ноутбука
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckDRVbyNotebookVendor
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [проверяем совместимость драйвера по вендору ноутбука]
 '! Parameters  (Переменные):   strInfPath (String)
 '!--------------------------------------------------------------------------------
 Private Function CheckDRVbyNotebookVendor(ByVal strInfPath As String) As Boolean
 
-    Dim i                 As Long
+    Dim I                 As Long
     Dim ii                As Long
     Dim strFilterList     As String
     Dim strFilterList_x() As String
     Dim mbFind            As Boolean
 
-    For i = 0 To UBound(arrNotebookFilterList)
-        strFilterList = UCase$(arrNotebookFilterList(i))
+    For I = 0 To UBound(arrNotebookFilterList)
+        strFilterList = UCase$(arrNotebookFilterList(I))
         strFilterList_x() = Split(strFilterList, strSemiColon)
 
         For ii = 0 To UBound(strFilterList_x)
@@ -1904,7 +1916,7 @@ Private Function CheckExistByRegExp(ByVal strSourceText As String, ByVal strSear
         Set objMatchesCheck = .Execute(strSourceText)
     End With
 
-    CheckExistByRegExp = objMatchesCheck.Count
+    CheckExistByRegExp = objMatchesCheck.count
 
     If mbGetText Then
         If CheckExistByRegExp Then
@@ -1929,31 +1941,18 @@ Private Function CheckExistDB(ByVal strDevDBPath As String, ByVal strPackFileNam
     Dim strPathFileNameDevDB     As String
     Dim strPathFileNameDevDBHwid As String
     Dim lngFileDBSize            As Long
-
-    strFileNameDevDB = Replace$(strPackFileName, ".7Z", ".TXT", , , vbTextCompare)
-
-    If InStr(1, strPackFileName, ".zip", vbTextCompare) Then
-        strFileNameDevDB = Replace$(strPackFileName, ".ZIP", ".TXT", , , vbTextCompare)
-    End If
-
-    strDevDBPath = BackslashAdd2Path(strDevDBPath)
-
-    If Not mbDP_Is_aFolder Then
-        strPathFileNameDevDB = PathCombine(strDevDBPath, GetFileNameFromPath(strFileNameDevDB))
-        strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
-    Else
-        strPathFileNameDevDB = PathCombine(strDevDBPath, GetFileNameFromPath(strPackFileName) & ".TXT")
-        strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
-    End If
-
+    
+    strFileNameDevDB = GetFileName_woExt(GetFileNameFromPath(strPackFileName)) & ".TXT"
+    strPathFileNameDevDB = PathCombine(strDevDBPath, strFileNameDevDB)
+    strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
     strCurSelButtonPath = strPathFileNameDevDB
 
-    If PathExists(strPathFileNameDevDBHwid) Then
+    If FileExists(strPathFileNameDevDBHwid) Then
         lngFileDBSize = GetFileSizeByPath(strPathFileNameDevDBHwid)
         If mbDebugDetail Then DebugMode str5VbTab & "CheckExistDB: Find file=" & strPathFileNameDevDBHwid & " (FileSize: " & lngFileDBSize & " bytes)"
 
         If lngFileDBSize Then
-            If PathExists(strPathFileNameDevDB) Then
+            If FileExists(strPathFileNameDevDB) Then
                 lngFileDBSize = GetFileSizeByPath(strPathFileNameDevDB)
                 If mbDebugDetail Then DebugMode str5VbTab & "CheckExistDB: Find file=" & strPathFileNameDevDB & " (FileSize: " & lngFileDBSize & " bytes)"
 
@@ -1987,38 +1986,34 @@ End Function
 Private Sub CheckMenuUtilsPath()
 
     If mbIsWin64 Then
-        If PathExists(PathCollect(strDevManView_Path64)) = False Then
+        If FileExists(PathCollect(strDevManView_Path64)) = False Then
             mnuUtils_DevManView.Enabled = False
         End If
 
-        If PathExists(PathCollect(strSIV_Path64)) = False Then
+        If FileExists(PathCollect(strSIV_Path64)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOSInfo.MousePointer = 0
-            lblOSInfo.ToolTipText = vbNullString
+            lblOsInfo.MousePointer = 0
+            lblOsInfo.ToolTipText = vbNullString
         End If
 
     Else
 
-        If PathExists(PathCollect(strDevManView_Path)) = False Then
+        If FileExists(PathCollect(strDevManView_Path)) = False Then
             mnuUtils_DevManView.Enabled = False
         End If
 
-        If PathExists(PathCollect(strSIV_Path)) = False Then
+        If FileExists(PathCollect(strSIV_Path)) = False Then
             mnuUtils_SIV.Enabled = False
-            lblOSInfo.MousePointer = 0
-            lblOSInfo.ToolTipText = vbNullString
+            lblOsInfo.MousePointer = 0
+            lblOsInfo.ToolTipText = vbNullString
         End If
     End If
 
-'    If PathExists(PathCollect(strDoubleDriver_Path)) = False Then
-'        mnuUtils_DoubleDriver.Enabled = False
-'    End If
-
-    If PathExists(PathCollect(strUDI_Path)) = False Then
+    If FileExists(PathCollect(strUDI_Path)) = False Then
         mnuUtils_UDI.Enabled = False
     End If
 
-    If PathExists(PathCollect(strUnknownDevices_Path)) = False Then
+    If FileExists(PathCollect(strUnknownDevices_Path)) = False Then
         mnuUtils_UnknownDevices.Enabled = False
     End If
 
@@ -2092,7 +2087,7 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
         Set objRegExpCompat = New RegExp
 
         With objRegExpCompat
-            .Pattern = "\.NT(X86|AMD64|IA64|)(?:\.(\d(?:.\d)))?"
+            .Pattern = "\.NT(X86|AMD64|IA64|)(?:\.(\d(?:.\d)|\d\d(?:.\d)))?"
             .IgnoreCase = True
             'strSection = "AMD.NTAMD64.5.1.1"
             Set objMatches = .Execute(strSection)
@@ -2100,7 +2095,7 @@ Private Function CompatibleDriver4OS(ByVal strSection As String, ByVal strDPFile
 
         'Получаем значения версии ОС драйвера и архитектуры
         'данные берем из секции Manufactured
-        If objMatches.Count Then
+        If objMatches.count Then
             Set objMatch = objMatches.Item(0)
             strDRVx64 = UCase$(Trim$(objMatch.SubMatches(0)))
             strDRVOSVer = UCase$(Trim$(objMatch.SubMatches(1)))
@@ -2129,6 +2124,16 @@ CheckVerByMarkers:
 
             strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_51xXX
 
+        ElseIf StrComp(strOSCurrentVersion, "10.0") = 0 Then
+
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_100x64
+            Else
+                strRegExpMarkerPattern = strVer_100x86
+            End If
+
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_100xXX
+            
         ElseIf StrComp(strOSCurrentVersion, "6.1") = 0 Then
 
             If mbOSx64 Then
@@ -2138,7 +2143,7 @@ CheckVerByMarkers:
             End If
 
             strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_61xXX
-
+            
         ElseIf StrComp(strOSCurrentVersion, "6.2") = 0 Then
 
             If mbOSx64 Then
@@ -2158,6 +2163,16 @@ CheckVerByMarkers:
             End If
 
             strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_63xXX
+        
+        ElseIf StrComp(strOSCurrentVersion, "6.4") = 0 Then
+
+            If mbOSx64 Then
+                strRegExpMarkerPattern = strVer_64x64
+            Else
+                strRegExpMarkerPattern = strVer_64x86
+            End If
+
+            strRegExpMarkerPattern = strRegExpMarkerPattern & "|" & strVer_64xXX
 
         ElseIf StrComp(strOSCurrentVersion, "5.0") = 0 Then
             
@@ -2213,7 +2228,7 @@ CheckVerByMarkers:
                     ElseIf InStr(strDPFileName, "WNT5") Then
                         strDRVOSVer = "5.0;5.1;5.2"
                     ElseIf InStr(strDPFileName, "WNT6") Then
-                        strDRVOSVer = "6.0;6.1;6.2;6.3"
+                        strDRVOSVer = "6.0;6.1;6.2;6.3;6.4"
                     Else
 
                         If mbOSx64 Then
@@ -2343,7 +2358,7 @@ CheckVerByMarkersArch:
 
                 'Если несовместиые секции найдены
                 'данные берем из секции Manufactured
-                If objMatches.Count Then
+                If objMatches.count Then
                     Set objMatch = objMatches.Item(0)
                     strDRVOSVerUnsupported = Trim$(objMatch.SubMatches(0))
 
@@ -2391,7 +2406,7 @@ CheckVerByMarkersArch:
     ' Если это ноутбук, и пакет дров от тачпада, то проверяем совместимость драйвера по вендору ноутбука
     If CompatibleDriver4OS Then
         If InStr(strDPFileName, "TOUCHPAD") Then
-            If mbIsNotebok Then
+            If mbIsNotebook Then
                 If InStr(strDPInfPath, "_NB\") Then
                     CompatibleDriver4OS = CheckDRVbyNotebookVendor(strDPInfPath)
                 End If
@@ -2602,7 +2617,7 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             ' Изменяем имя пакета драйверов (удаление лишних Символов)
             strButtonName = ConvertDPName(strButtonName)
 
-            If lngCntBtn = 0 Then
+            If lngBtnNumber = 0 Then
                 NextPositionLeft = StartPositionLeft
                 NextPositionTop = StartPositionTop
             Else
@@ -2613,7 +2628,7 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
                     NextPositionTop = StartPositionTop
                     mbNextTab = False
                 Else
-                    DeltaPositionLeft = acmdPackFiles(lngCntBtn - 1).Left + lngButtonWidth + lngBtn2BtnLeft - StartPositionLeft
+                    DeltaPositionLeft = acmdPackFiles(lngBtnNumber - 1).Left + lngButtonWidth + lngBtn2BtnLeft - StartPositionLeft
                     NextPositionLeft = StartPositionLeft + DeltaPositionLeft
 
                     ' Если Кол-во ОС больше кол-ва вкладок на строку
@@ -2648,19 +2663,19 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             End If
 
             ' Загружаем кнопку и чекбокс
-            If lngCntBtn Then
-                Load acmdPackFiles(lngCntBtn)
-                Load chkPackFiles(lngCntBtn)
+            If lngBtnNumber Then
+                Load acmdPackFiles(lngBtnNumber)
+                Load chkPackFiles(lngBtnNumber)
             Else
                 mbNextTab = False
             End If
 
             ' Присваиваем кнопку табконтролу
-            Set acmdPackFiles(lngCntBtn).Container = ctlScrollControl1(tabN)
-            Set chkPackFiles(lngCntBtn).Container = ctlScrollControl1(tabN)
+            Set acmdPackFiles(lngBtnNumber).Container = ctlScrollControl1(tabN)
+            Set chkPackFiles(lngBtnNumber).Container = ctlScrollControl1(tabN)
 
             ' Устанавливаем свойства кнопки
-            With acmdPackFiles(lngCntBtn)
+            With acmdPackFiles(lngBtnNumber)
                 .Left = NextPositionLeft
                 .Top = NextPositionTop
                 .Visible = True
@@ -2669,24 +2684,24 @@ Private Sub CreateButtonsOnSSTab(ByVal strDrpPath As String, ByVal strDevDBPath 
             End With
 
             ' Устанавливаем свойства чекбокса
-            With chkPackFiles(lngCntBtn)
+            With chkPackFiles(lngBtnNumber)
                 .Visible = True
                 .Left = NextPositionLeft + 50
                 .Top = NextPositionTop + (lngButtonHeight - .Height) / 2
                 .ZOrder 0
                 .Tag = tabN
-                .Refresh
+                '.Refresh
             End With
 
             'Считываем подменяемое имя пакета из файла
-            EditOrReadDPName lngCntBtn, True
+            EditOrReadDPName lngBtnNumber, True
 
             ' массив HWID для будущего использования для каждой кнопки
             ReDim Preserve arrDevIDs(acmdPackFiles.UBound)
 
             ' Создаем подсказку к файлу, а также меняем иконку и т.д.
-            ReadOrSaveToolTip strDevDBPath, strDrpPath, strPackFileName, lngCntBtn, True
-            lngCntBtn = lngCntBtn + 1
+            ReadOrSaveToolTip strDevDBPath, strDrpPath, strPackFileName, lngBtnNumber, True
+            lngBtnNumber = lngBtnNumber + 1
 NextFiles:
             lngProgressDeltaTemp = (lngProgressDelta / lngFileCount)
 
@@ -2732,7 +2747,7 @@ NextFiles:
     End If
 
 ExitSub:
-    arrOSList(tabN).CntBtn = lngCntBtn
+    arrOSList(tabN).CntBtn = lngBtnNumber
 
     If lngOffSideCountTemp > lngOffSideCount Then
         lngOffSideCount = lngOffSideCountTemp
@@ -2740,7 +2755,7 @@ ExitSub:
 
     On Error GoTo 0
     
-    If mbDebugStandart Then DebugMode str2VbTab & "CreateButtonsonSSTab: cntButton=" & lngCntBtn & vbNewLine & _
+    If mbDebugStandart Then DebugMode str2VbTab & "CreateButtonsonSSTab: cntButton=" & lngBtnNumber & vbNewLine & _
               vbTab & "CreateButtonsonSSTab-End"
 End Sub
 
@@ -2751,7 +2766,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
 
-    Dim i         As Long
+    Dim I         As Long
     Dim ii        As Long
     Dim DevId_x() As String
     Dim strName   As String
@@ -2761,7 +2776,7 @@ Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
     DevId_x = Split(strDevID, strSemiColon)
 
     ' Если меню уже заполнено, то удаляем его
-    If mnuContextCopyHWID2Clipboard.Count > 1 Then
+    If mnuContextCopyHWID2Clipboard.count > 1 Then
 
         For ii = mnuContextCopyHWID2Clipboard.LBound To mnuContextCopyHWID2Clipboard.UBound
             mnuContextCopyHWID2Clipboard(ii).Visible = False
@@ -2781,20 +2796,19 @@ Private Sub CreateMenuDevIDIndexCopyMenu(ByVal strDevID As String)
             mnuContextCopyHWID2Clipboard(0).Visible = True
             mnuContextCopyHWID2Clipboard(0).Caption = strName
         Else
-            'NOT NOT...
-            Load mnuContextCopyHWID2Clipboard(mnuContextCopyHWID2Clipboard.Count)
-            mnuContextCopyHWID2Clipboard(mnuContextCopyHWID2Clipboard.Count - 1).Visible = True
+            Load mnuContextCopyHWID2Clipboard(mnuContextCopyHWID2Clipboard.count)
+            mnuContextCopyHWID2Clipboard(mnuContextCopyHWID2Clipboard.count - 1).Visible = True
 
-            For i = mnuContextCopyHWID2Clipboard.UBound To mnuContextCopyHWID2Clipboard.LBound Step -1
+            For I = mnuContextCopyHWID2Clipboard.UBound To mnuContextCopyHWID2Clipboard.LBound Step -1
 
-                If i = mnuContextCopyHWID2Clipboard.LBound Then
+                If I = mnuContextCopyHWID2Clipboard.LBound Then
                     mnuContextCopyHWID2Clipboard(0).Caption = strName
 
                     Exit For
 
                 End If
 
-                mnuContextCopyHWID2Clipboard(i).Caption = mnuContextCopyHWID2Clipboard(i - 1).Caption
+                mnuContextCopyHWID2Clipboard(I).Caption = mnuContextCopyHWID2Clipboard(I - 1).Caption
             Next
 
         End If
@@ -2812,7 +2826,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub CreateMenuDevIDIndexDelMenu(ByVal strDevID As String)
 
-    Dim i         As Long
+    Dim I         As Long
     Dim ii        As Long
     Dim DevId_x() As String
     Dim strName   As String
@@ -2822,7 +2836,7 @@ Private Sub CreateMenuDevIDIndexDelMenu(ByVal strDevID As String)
     DevId_x = Split(strDevID, strSemiColon)
 
     ' Если меню уже заполнено, то удаляем его
-    If mnuContextDeleteDevID.Count > 1 Then
+    If mnuContextDeleteDevID.count > 1 Then
 
         For ii = mnuContextDeleteDevID.LBound To mnuContextDeleteDevID.UBound
             mnuContextDeleteDevID(ii).Visible = False
@@ -2843,19 +2857,19 @@ Private Sub CreateMenuDevIDIndexDelMenu(ByVal strDevID As String)
             mnuContextDeleteDevID(0).Caption = strName
         Else
             'NOT NOT...
-            Load mnuContextDeleteDevID(mnuContextDeleteDevID.Count)
-            mnuContextDeleteDevID(mnuContextDeleteDevID.Count - 1).Visible = True
+            Load mnuContextDeleteDevID(mnuContextDeleteDevID.count)
+            mnuContextDeleteDevID(mnuContextDeleteDevID.count - 1).Visible = True
 
-            For i = mnuContextDeleteDevID.UBound To mnuContextDeleteDevID.LBound Step -1
+            For I = mnuContextDeleteDevID.UBound To mnuContextDeleteDevID.LBound Step -1
 
-                If i = mnuContextDeleteDevID.LBound Then
+                If I = mnuContextDeleteDevID.LBound Then
                     mnuContextDeleteDevID(0).Caption = strName
 
                     Exit For
 
                 End If
 
-                mnuContextDeleteDevID(i).Caption = mnuContextDeleteDevID(i - 1).Caption
+                mnuContextDeleteDevID(I).Caption = mnuContextDeleteDevID(I - 1).Caption
             Next
 
         End If
@@ -2873,7 +2887,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub CreateMenuIndex(ByVal strName As String)
 
-    Dim i As Long
+    Dim I As Long
 
     On Error Resume Next
 
@@ -2882,19 +2896,19 @@ Private Sub CreateMenuIndex(ByVal strName As String)
         mnuUtils(0).Visible = True
         mnuUtils(0).Caption = strName
     Else
-        Load mnuUtils(mnuUtils.Count)
-        mnuUtils(mnuUtils.Count - 1).Visible = True
+        Load mnuUtils(mnuUtils.count)
+        mnuUtils(mnuUtils.count - 1).Visible = True
 
-        For i = mnuUtils.UBound To mnuUtils.LBound Step -1
+        For I = mnuUtils.UBound To mnuUtils.LBound Step -1
 
-            If i = mnuUtils.LBound Then
+            If I = mnuUtils.LBound Then
                 mnuUtils(0).Caption = strName
 
                 Exit For
 
             End If
 
-            mnuUtils(i).Caption = mnuUtils(i - 1).Caption
+            mnuUtils(I).Caption = mnuUtils(I - 1).Caption
         Next
 
     End If
@@ -2909,7 +2923,7 @@ End Sub
 '! Parameters  (Переменные):   strMenuCaption (String)
 '!--------------------------------------------------------------------------------
 Private Sub CreateMenuLng()
-    Dim i As Long
+    Dim I As Long
     
     On Error Resume Next
 
@@ -2919,18 +2933,18 @@ Private Sub CreateMenuLng()
     End If
     
     ' Создаем динамическое меню
-    For i = UBound(arrLanguage, 2) - 1 To 1 Step -1
-        Load mnuLang(mnuLang.Count)
-        mnuLang(mnuLang.Count).Visible = True
-        mnuLang(mnuLang.Count).Caption = "Lang " & mnuLang.Count
-    Next i
+    For I = UBound(arrLanguage, 2) - 1 To 1 Step -1
+        Load mnuLang(mnuLang.count)
+        mnuLang(mnuLang.count).Visible = True
+        mnuLang(mnuLang.count).Caption = "Lang " & mnuLang.count
+    Next I
     
     ' Присваиваем свойство Caption для меню
-    For i = 0 To UBound(arrLanguage, 2)
+    For I = 0 To UBound(arrLanguage, 2)
         '4  mnuMainLang - "Язык"
         ' 2    mnuLang - "" - Index0 - Visible'False
-        SetUniMenu 4, 2 + i, -1, mnuLang(i), arrLanguage(2, i + 1)
-    Next i
+        SetUniMenu 4, 2 + I, -1, mnuLang(I), arrLanguage(2, I + 1)
+    Next I
         
     On Error GoTo 0
 
@@ -2967,8 +2981,8 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub DelDuplicateOldDP()
 
-    Dim ButtIndex                 As Long
-    Dim i                         As Long
+    Dim lngButtIndex              As Long
+    Dim I                         As Long
     Dim ii                        As Long
     Dim strPackFileName()         As String
     Dim strPackFileNames          As String
@@ -2995,31 +3009,31 @@ Private Sub DelDuplicateOldDP()
     Dim lngStrLen1                As Long
     Dim lngStrLen2                As Long
 
-    ButtIndex = acmdPackFiles.UBound
+    lngButtIndex = acmdPackFiles.UBound
 
-    ReDim strPackFileName(ButtIndex, 2)
+    ReDim strPackFileName(lngButtIndex, 2)
 
-    If ButtIndex Then
+    If lngButtIndex Then
 
-        For i = 0 To ButtIndex
-            strPackFileName(i, 0) = acmdPackFiles(i).Tag
-            strPackFileName(i, 1) = i
+        For I = 0 To lngButtIndex
+            strPackFileName(I, 0) = acmdPackFiles(I).Tag
+            strPackFileName(I, 1) = I
 
             If LenB(strPackFileNames) Then
-                strPackFileNames = strPackFileNames & strSemiColon & acmdPackFiles(i).Tag
+                strPackFileNames = strPackFileNames & strSemiColon & acmdPackFiles(I).Tag
             Else
-                strPackFileNames = acmdPackFiles(i).Tag
+                strPackFileNames = acmdPackFiles(I).Tag
             End If
 
         Next
 
     End If
 
-    For i = LBound(strPackFileName, 1) To UBound(strPackFileName, 1)
-        strPackFileNameTemp = strPackFileName(i, 0)
+    For I = LBound(strPackFileName, 1) To UBound(strPackFileName, 1)
+        strPackFileNameTemp = strPackFileName(I, 0)
 
         If InStr(strPackFileNameTemp, vbBackslash) Then
-            strPackFileNameTemp = GetFileNameFromPath(strPackFileName(i, 0))
+            strPackFileNameTemp = GetFileNameFromPath(strPackFileName(I, 0))
         End If
 
         lngVersionPosition = InStrRev(strPackFileNameTemp, "_", , vbTextCompare)
@@ -3039,7 +3053,7 @@ Private Sub DelDuplicateOldDP()
 
             With objMatches
 
-                If .Count > 1 Then
+                If .count > 1 Then
                     strVerDP_Main = vbNullString
                     strVerDP_1 = vbNullString
                     strVerDP_2 = vbNullString
@@ -3047,7 +3061,7 @@ Private Sub DelDuplicateOldDP()
                     strDPName_2 = vbNullString
                     ii = 0
 
-                    Do While ii + 1 < .Count
+                    Do While ii + 1 < .count
 
                         If LenB(strVerDP_Main) = 0 Then
                             Set objMatch = .Item(ii)
@@ -3122,10 +3136,10 @@ Private Sub DelDuplicateOldDP()
         If ShowMsbBoxForm(strPackFileName2Del, strMessages(139), strMessages(29)) = vbYes Then
             strPackFileName2Del_x = Split(strPackFileName2Del, vbNewLine)
 
-            For i = LBound(strPackFileName2Del_x) To UBound(strPackFileName2Del_x)
-                strPackFileName2DelTemp = strPackFileName2Del_x(i)
+            For I = LBound(strPackFileName2Del_x) To UBound(strPackFileName2Del_x)
+                strPackFileName2DelTemp = strPackFileName2Del_x(I)
 
-                For ii = 0 To ButtIndex
+                For ii = 0 To lngButtIndex
 
                     If StrComp(strPackFileName2DelTemp, acmdPackFiles(ii).Tag, vbTextCompare) = 0 Then
                         lngCurrentBtnIndex = ii
@@ -3135,8 +3149,9 @@ Private Sub DelDuplicateOldDP()
                 Next
             Next
 
-            lngMsgRet = MsgBox(strMessages(141), vbQuestion + vbApplicationModal + vbYesNo, strProductName)
+            lngMsgRet = MsgBox(strMessages(141), vbQuestion + vbApplicationModal + vbYesNoCancel, strProductName)
             mbRestartProgram = lngMsgRet = vbYes
+            If lngMsgRet = vbCancel Then Exit Sub
         End If
 
     Else
@@ -3154,7 +3169,7 @@ End Sub
 Private Sub DeleteUnUsedBase()
 
     Dim TabCount               As Long
-    Dim i                      As Integer
+    Dim I                      As Integer
     Dim ii                     As Integer
     Dim strPathDRP             As String
     Dim strPathDevDB           As String
@@ -3179,9 +3194,9 @@ Private Sub DeleteUnUsedBase()
         TabCount = SSTab1.Tabs
 
         ' В цикле обрабатываем все каталоги
-        For i = 0 To TabCount - 1
-            strPathDRP = arrOSList(i).drpFolderFull
-            strPathDevDB = arrOSList(i).devIDFolderFull
+        For I = 0 To TabCount - 1
+            strPathDRP = arrOSList(I).drpFolderFull
+            strPathDevDB = arrOSList(I).devIDFolderFull
             strFileListDBExists = vbNullString
 
             'Построение списка пакетов драйверов
@@ -3211,7 +3226,7 @@ Private Sub DeleteUnUsedBase()
                     strFileNameDBIni = Replace$(strFileNameDB, ".txt", ".ini", , , vbTextCompare)
                     AppendStr strFileListDBExists, strFileNameDB & vbTab & strFileNameDBHwid, vbTab
 
-                    If PathExists(strFileNameDBIni) Then
+                    If FileExists(strFileNameDBIni) Then
                         strFileListDBExists = IIf(LenB(strFileListDBExists), strFileListDBExists & vbTab, vbNullString) & strFileNameDBIni
                     End If
                 End If
@@ -3225,7 +3240,7 @@ Private Sub DeleteUnUsedBase()
             For ii = 0 To UBound(strFileListTXT_x)
 
                 If InStr(1, strFileListDBExists, strFileListTXT_x(ii).FullPath, vbTextCompare) = 0 Then
-                    If PathExists(strFileListTXT_x(ii).FullPath) Then
+                    If FileExists(strFileListTXT_x(ii).FullPath) Then
                         strFileListDBNotExists = IIf(LenB(strFileListDBNotExists), strFileListDBNotExists & vbNewLine, vbNullString) & Replace$(strFileListTXT_x(ii).FullPath, strAppPath, vbNullString, , , vbTextCompare)
                         'Удаление секции о данном пакете из ini-файла
                         'IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strFileListTXT_x(0, ii))), strFileDBVerIniPath
@@ -3246,12 +3261,12 @@ Private Sub DeleteUnUsedBase()
                 For ii = 0 To UBound(strFileListTXT)
                     strFileName2Del = PathCollect(strFileListTXT(ii))
 
-                    If PathExists(strFileName2Del) Then
+                    If FileExists(strFileName2Del) Then
                         DeleteFiles strFileName2Del
 
                         'Удаление секции о данном пакете из ini-файла
-                        For i = 0 To TabCount - 1
-                            strPathDevDB = arrOSList(i).devIDFolderFull
+                        For I = 0 To TabCount - 1
+                            strPathDevDB = arrOSList(I).devIDFolderFull
                             strFileDBVerIniPath = PathCombine(strPathDevDB, "DevDBVersions.ini")
                             'если файл DevDBVersions.ini нулевого размера, то удаляем и его
                             lngFileDBVerIniSize = GetFileSizeByPath(strFileDBVerIniPath)
@@ -3434,7 +3449,7 @@ Private Function FindAndInstallPanel(ByVal strArcDRPPath As String, ByVal strIni
 
     Dim lngTagFilesCount As Long
     Dim lngCommandsCount As Long
-    Dim i                As Long
+    Dim I                As Long
     Dim strPrefix        As String
     Dim strPrefixTag     As String
     Dim strPrefixCommand As String
@@ -3467,8 +3482,8 @@ Private Function FindAndInstallPanel(ByVal strArcDRPPath As String, ByVal strIni
         If lngTagFilesCount <> 9999 Then
 
             ' получаем список таговых файлов
-            For i = 1 To lngTagFilesCount
-                strTemp = IniStringPrivate(strSection, strPrefixTag & i, strIniPath)
+            For I = 1 To lngTagFilesCount
+                strTemp = IniStringPrivate(strSection, strPrefixTag & I, strIniPath)
 
                 If StrComp(strTemp, "no_key") = 0 Then
                     GoTo ExitWithFalse
@@ -3509,8 +3524,8 @@ NextTag:
                 If lngCommandsCount <> 9999 Then
 
                     ' получаем список Комманд на выполнение
-                    For i = 1 To lngCommandsCount
-                        strTemp = IniStringPrivate(strSection, strPrefixCommand & i, strIniPath)
+                    For I = 1 To lngCommandsCount
+                        strTemp = IniStringPrivate(strSection, strPrefixCommand & I, strIniPath)
 
                         If StrComp(strTemp, "no_key") = 0 Then
                             GoTo NextCommand
@@ -3569,12 +3584,12 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Function FindCheckCount(Optional ByVal mbMsgStatus As Boolean = True) As Long
 
-    Dim i       As Integer
+    Dim I       As Integer
     Dim miCount As Integer
 
-    For i = acmdPackFiles.LBound To acmdPackFiles.UBound
+    For I = acmdPackFiles.LBound To acmdPackFiles.UBound
 
-        If chkPackFiles(i).Value Then
+        If chkPackFiles(I).Value Then
             miCount = miCount + 1
         End If
 
@@ -3619,15 +3634,15 @@ Private Function FindCheckCount(Optional ByVal mbMsgStatus As Boolean = True) As
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FindHwidInBaseNew
+'! Procedure   (Функция)   :   Function FindHwidInBase
 '! Description (Описание)  :   [Поиск вхождения Hwids в БД]
 '! Parameters  (Переменные):   strDevDBPath (String)
 '                              strPackFileName (String)
 '                              lngButtonIndex (Long)
 '!--------------------------------------------------------------------------------
-Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFileName As String, ByVal lngButtonIndex As Long) As String
+Private Function FindHwidInBase(ByVal strDevDBPath As String, ByVal strPackFileName As String, ByVal lngButtonIndex As Long) As String
 
-    Dim i                        As Long
+    Dim I                        As Long
     Dim ii                       As Long
     Dim iii                      As Long
     Dim strFind                  As String
@@ -3674,486 +3689,517 @@ Private Function FindHwidInBaseNew(ByVal strDevDBPath As String, ByVal strPackFi
     Dim lngDriverScorePrev       As Long
     Dim strSectionUnsupported    As String
     Dim strCatFileExists         As String
-    Dim TimeScriptRun            As Long
-    Dim TimeScriptFinish         As Long
+    Dim lngTimeScriptRun         As Long
+    Dim lngTimeScriptFinish      As Long
     Dim strFile_x()              As String
     Dim strFileFull_x()          As String
     Dim strResult_x()            As String
     Dim strResultByTab_x()       As String
     Dim mbFileFullIsLoaded       As Boolean
+    Dim strDirFileDBTemp         As String
+    Dim cmdString                As String
 
-    If mbDebugStandart Then DebugMode str4VbTab & "FindHwidInBaseNew: strPackFileName=" & strPackFileName
+    If mbDebugStandart Then DebugMode str4VbTab & "FindHwidInBase: strPackFileName=" & strPackFileName
               
-    TimeScriptRun = GetTickCount
+    lngTimeScriptRun = GetTickCount
     mbStatusNewer = False
     mbStatusOlder = False
     mbStatusHwid = True
     mbIgnorStatusHwid = False
     mbDRVNotInstall = False
-    strFileNameDevDB = Replace$(strPackFileName, ".7Z", ".TXT")
-                    
-    If InStr(strFileNameDevDB, ".ZIP") Then
-        strFileNameDevDB = Replace$(strFileNameDevDB, ".ZIP", ".TXT")
-    End If
+    
+    strFileNameDevDB = GetFileName_woExt(GetFileNameFromPath(strPackFileName)) & ".TXT"
+    strPathFileNameDevDB = PathCombine(strDevDBPath, strFileNameDevDB)
+    strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
 
-    If Not mbDP_Is_aFolder Then
-        strPathFileNameDevDB = PathCombine(strDevDBPath, strFileNameDevDB)
-        strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
-    Else
-        strPathFileNameDevDB = PathCombine(strDevDBPath, strPackFileName & ".TXT")
-        strPathFileNameDevDBHwid = Replace$(strPathFileNameDevDB, ".TXT", ".HWID")
-    End If
+    If FileExists(strPathFileNameDevDB) Then
+        ' Считываем содержимое всего файла HWID в буфер
+        Erase strFile_x
+        FileReadData strPathFileNameDevDBHwid, strFileFullTextHwid
+        strFile_x = Split(strFileFullTextHwid, vbNewLine)
+        
+        miMaxCountArr = 100
 
-    If PathExists(strPathFileNameDevDB) Then
-        If Not PathIsAFolder(strPathFileNameDevDB) Then
-            ' Считываем содержимое всего файла HWID в буфер
-            Erase strFile_x
-            FileReadData strPathFileNameDevDBHwid, strFileFullTextHwid
-            strFile_x = Split(strFileFullTextHwid, vbNewLine)
+        ReDim strTTipLocalArr(11, miMaxCountArr)
+
+        lngMaxLengthRow1 = lngTableHwidHeader1
+        lngMaxLengthRow2 = lngTableHwidHeader2
+        lngMaxLengthRow4 = lngTableHwidHeader4
+        lngMaxLengthRow5 = lngTableHwidHeader5
+        lngMaxLengthRow6 = lngTableHwidHeader6
+        lngMaxLengthRow9 = lngTableHwidHeader9
+        lngMaxLengthRow13 = lngTableHwidHeader13
+        maxSizeRowAllLine = 0
+
+        For I = 0 To UBound(arrHwidsLocal)
+            strFind = arrHwidsLocal(I).HWIDCutting
+            strFindCompatIDTemp = arrHwidsLocal(I).HWIDCompat
+
+            ' Быстрый поиск совпадений в массиве
+            lngBuffer = BinarySearch(strFile_x(), strFind)
             
-            miMaxCountArr = 100
+            If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBase: PreFind by HWID: " & strFind & " =" & lngBuffer
+            lngFileStartFromSymbol = lngBuffer
 
-            ReDim strTTipLocalArr(11, miMaxCountArr)
+            If lngBuffer < 0 Then
+                ' заносим HWID в индекс, чтобы лишний раз потом его не проверять
+                objHashOutput3.RemoveAll
 
-            lngMaxLengthRow1 = lngTableHwidHeader1
-            lngMaxLengthRow2 = lngTableHwidHeader2
-            lngMaxLengthRow4 = lngTableHwidHeader4
-            lngMaxLengthRow5 = lngTableHwidHeader5
-            lngMaxLengthRow6 = lngTableHwidHeader6
-            lngMaxLengthRow9 = lngTableHwidHeader9
-            lngMaxLengthRow13 = lngTableHwidHeader13
-            maxSizeRowAllLine = 0
+                ' подходящие HWID (т.е обозначение HWID просто может быть записано по другому)
+                strFindMachID = arrHwidsLocal(I).HWIDMatches
 
-            For i = 0 To UBound(arrHwidsLocal)
-                strFind = arrHwidsLocal(i).HWIDCutting
-                strFindCompatIDTemp = arrHwidsLocal(i).HWIDCompat
-
-                ' Быстрый поиск совпадений в массиве
-                lngBuffer = BinarySearch(strFile_x(), strFind)
-                
-                If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: PreFind by HWID: " & strFind & " =" & lngBuffer
-                lngFileStartFromSymbol = lngBuffer
-
-                If lngBuffer < 0 Then
-                    ' заносим HWID в индекс, чтобы лишний раз потом его не проверять
-                    objHashOutput3.RemoveAll
-
-                    ' подходящие HWID (т.е обозначение HWID просто может быть записано по другому)
-                    strFindMachID = arrHwidsLocal(i).HWIDMatches
-
-                    If LenB(strFindMachID) Then
-                        If StrComp(strFind, strFindMachID) <> 0 Then
-                            If InStr(strFindMachID, strUnknownUCase) = 0 Then
-                                If Not MatchSpec(strFindMachID, strExcludeHWID) Then
-                                    If InStr(strFindMachID & " | ", strFindCompatIDTemp) = 0 Then
-                                        strFindCompatIDTemp = strFindCompatIDTemp & " | " & strFindMachID
-                                    End If
+                If LenB(strFindMachID) Then
+                    If StrComp(strFind, strFindMachID) <> 0 Then
+                        If InStr(strFindMachID, strUnknownUCase) = 0 Then
+                            If Not MatchSpec(strFindMachID, strExcludeHWID) Then
+                                If InStr(strFindMachID & " | ", strFindCompatIDTemp) = 0 Then
+                                    strFindCompatIDTemp = strFindCompatIDTemp & " | " & strFindMachID
                                 End If
                             End If
                         End If
                     End If
+                End If
 
-                    ' Поиск по совместимым HWID
-                    If mbCompatiblesHWID Then
-                        If InStr(strFindCompatIDTemp, strUnknownUCase) = 0 Then
-                            If LenB(strFindCompatIDTemp) Then
-                                strFindCompatID_x = Split(strFindCompatIDTemp, " | ")
-                            End If
-
-                        Else
-                            GoTo NextStrFind
-                        End If
-
-                        strFind = vbNullString
-
-                        For iii = 0 To UBound(strFindCompatID_x)
-
-                            'Глубина поиска HWID
-                            If iii > lngCompatiblesHWIDCount Then
-                                Exit For
-                            End If
-
-                            strFindCompatIDFind = strFindCompatID_x(iii)
-                            
-                            If Not MatchSpec(strFindCompatIDFind, strExcludeHWID) Then
-
-                                If Not objHashOutput3.Exists(strFindCompatIDFind) Then
-                                    objHashOutput3.Item(strFindCompatIDFind) = "+"
-                                    lngBuffer2 = 0
-                                    lngBuffer2 = BinarySearch(strFile_x(), strFindCompatIDFind)
-                                    If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: ***PreFind by HWID-Compatibles: " & strFindCompatIDFind & " =" & lngBuffer2
-                                    lngFileStartFromSymbol = lngBuffer2
-
-                                    If lngBuffer2 >= 0 Then
-                                        strFind = strFindCompatIDFind
-                                        lngDriverScore = iii
-                                        GoTo ExitFromForNext_iii
-                                    End If
-                                End If
-                            End If
-
-                        Next iii
-
-                        If LenB(strFind) = 0 Then
-                            GoTo NextStrFind
+                ' Поиск по совместимым HWID
+                If mbCompatiblesHWID Then
+                    If InStr(strFindCompatIDTemp, strUnknownUCase) = 0 Then
+                        If LenB(strFindCompatIDTemp) Then
+                            strFindCompatID_x = Split(strFindCompatIDTemp, " | ")
                         End If
 
                     Else
                         GoTo NextStrFind
                     End If
 
+                    strFind = vbNullString
+
+                    For iii = 0 To UBound(strFindCompatID_x)
+
+                        ' Глубина поиска HWID
+                        If iii > lngCompatiblesHWIDCount Then
+                            Exit For
+                        End If
+
+                        strFindCompatIDFind = strFindCompatID_x(iii)
+                        
+                        If Not MatchSpec(strFindCompatIDFind, strExcludeHWID) Then
+
+                            If Not objHashOutput3.Exists(strFindCompatIDFind) Then
+                                objHashOutput3.Add strFindCompatIDFind, "+"
+                                lngBuffer2 = 0
+                                lngBuffer2 = BinarySearch(strFile_x(), strFindCompatIDFind)
+                                If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBase: ***PreFind by HWID-Compatibles: " & strFindCompatIDFind & " =" & lngBuffer2
+                                lngFileStartFromSymbol = lngBuffer2
+
+                                If lngBuffer2 >= 0 Then
+                                    strFind = strFindCompatIDFind
+                                    lngDriverScore = iii
+                                    GoTo ExitFromForNext_iii
+                                End If
+                            End If
+                        End If
+
+                    Next iii
+
+                    If LenB(strFind) = 0 Then
+                        GoTo NextStrFind
+                    End If
+
                 Else
-                    lngDriverScore = -1
+                    GoTo NextStrFind
                 End If
+
+            Else
+                lngDriverScore = -1
+            End If
 
 ExitFromForNext_iii:
 
-                If lngFileStartFromSymbol < 0 Then
-                    If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!ERROR lngFileStartFromSymbol=0 " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
-                    GoTo NextStrFind
-                Else
-                    'Если хоть что-то найдено в файле *.hwid, то считываем ОДИН раз содержимое файла с полной информацией об индексе
-                    ' Считываем содержимое всего файла индекса в буфер
-                    If Not mbFileFullIsLoaded Then
-                        'Erase strFileFull_x
-                        FileReadData strPathFileNameDevDB, strFileFullText
-                        strFileFull_x = Split(strFileFullText, vbNewLine)
-                        mbFileFullIsLoaded = True
-                    End If
-                End If
-            
-                'Выборка совпадений по HWID из полного файла базы данных
-                Erase strResult_x
-                'FilterB02 strFileFull_x(), strFind & vbTab, strResult_x, True, vbBinaryCompare
-                strResult_x = Filter(strFileFull_x(), strFind & vbTab, True, vbBinaryCompare)
-                lngMatchesCount = UBound(strResult_x)
-
-                If lngMatchesCount >= 0 Then
-                    If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!Find " & lngMatchesCount & " Match in: " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
-
-                    For ii = 0 To lngMatchesCount
-                        strResultByTab_x = Split(strResult_x(ii), vbTab)
-                        ' Получаем имя секции файла inf для дальнейшего анализа
-                        strPathInf = strResultByTab_x(1)
-                        strSection = strResultByTab_x(2)
-                        ' получение списка секций несовместимых ОС
-                        strSectionUnsupported = strResultByTab_x(4)
+            If lngFileStartFromSymbol < 0 Then
+                If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBase: !!!ERROR lngFileStartFromSymbol=0 " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
+                GoTo NextStrFind
+            Else
+                ' Если хоть что-то найдено в файле *.hwid, то считываем ОДИН раз содержимое файла с полной информацией об индексе
+                ' Считываем содержимое всего файла индекса в буфер
+                If Not mbFileFullIsLoaded Then
+                
+                    ' Проверяем что файл базы данных является архивом, если так, то распаковываем его
+                    If FileIs7zip(strPathFileNameDevDB) Then
+                        If mbDebugStandart Then DebugMode str4VbTab & "ChangeStatusAndPictureButton: file is 7-zip archive"
                         
-                        ' Check for USB30 Intel Version Generation - if wrong driver then bsod
-                        If InStr(strPackFileName, "USB") Then
-                            If mbIUSB_RootHubExist Then
-                                If InStr(strFind, "IUSB3\ROOT_HUB30") Then
-                                    If mbIntel2thGeneration Then
-                                        If InStr(LCase$(strPathInf), "intel_2nd\") = 0 Then
-                                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Not Supported driver for USB3.0 Root HUB HWID=" & strFind & " Inf: " & strPathInf
-                                            GoTo NextStrFind
-                                        End If
-                                    ElseIf mbIntel4thGeneration Then
-                                        If InStr(LCase$(strPathInf), "intel_4th\") = 0 Then
-                                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Not Supported driver for USB3.0 Root HUB HWID=" & strFind & " Inf: " & strPathInf
-                                            GoTo NextStrFind
-                                        End If
-                                    End If
-                                End If
-                            End If
+                        ' директория для распаковки файла БД, создаем при необходимости
+                        strDirFileDBTemp = strWorkTempBackSL & "unpacked"
+                        If PathExists(strDirFileDBTemp) = False Then
+                            CreateNewDirectory strDirFileDBTemp
                         End If
                         
-                        ' Если драйвер несовместим с текущей ОС (вкладкой), то пропускаем его (анализ имени секции manufactured)
-                        If Not CompatibleDriver4OS(strSection, strPackFileName, strPathInf, strSectionUnsupported) Then
-                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: !!! SKIP. Driver is not compatible for this OS - IniSection: " & strSection & " Inf: " & strPathInf
-                            GoTo NextLngMatchesCount
-                        End If
-
-                        strDevID = strResultByTab_x(0)
-                        
-                        If StrComp(strDevID, strFind, vbBinaryCompare) <> 0 Then
-                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Seeking HWID included in found HWID from database: HWID=" & strDevID
-                            GoTo NextLngMatchesCount
-                        End If
-                        
-                        strCatFileExists = strResultByTab_x(5)
-
-                        If mbCalcDriverScore Then
-                            ' Проверка и присвоение баллов драйверов
-                            ' Если до этого оценок не было, то добавляем в базу
-                            If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBaseNew: ***Driver find in : " & (strPackFileName & vbBackslash & strPathInf) & " Has Score=" & lngDriverScore
-
-                            If arrHwidsLocal(i).DRVScore = 0 Then
-                                arrHwidsLocal(i).DRVScore = lngDriverScore
-                            Else
-                                lngDriverScorePrev = arrHwidsLocal(i).DRVScore
-
-                                If lngDriverScore > lngDriverScorePrev Then
-                                    If mbDebugStandart Then DebugMode str7VbTab & ii & " FindHwidInBaseNew: ***Driver is WORSE than found previously: ScoredPrev=" & lngDriverScorePrev
-                                    GoTo NextLngMatchesCount
-                                Else
-                                    arrHwidsLocal(i).DRVScore = lngDriverScore
-                                    If mbDebugStandart Then DebugMode str7VbTab & ii & " FindHwidInBaseNew: ***Added! Driver is BETTER OR EQUAL than found previously: ScoredPrev=" & lngDriverScorePrev
-                                End If
-                            End If
-                        End If
-
-                        strDevVer = strResultByTab_x(3)
-
-                        ' если необходимо конвертировать дату в формат dd/mm/yyyy
-                        If mbDateFormatRus Then
-                            ConvertVerByDate strDevVer
-                        End If
-
-                        strDevVerLocal = arrHwidsLocal(i).VerLocal
-
-                        If LenB(strDevVerLocal) = 0 Then
-                            strDevVerLocal = strUnknownLCase
-                        End If
-
-                        strDevName = strResultByTab_x(6)
-
-                        If arrHwidsLocal(i).Status = 0 Then
-                            mbStatusHwid = False
-
-                            If InStr(strDevVerLocal, strUnknownLCase) = 0 Then
-                                If LenB(strDevVerLocal) Then
-                                    mbIgnorStatusHwid = True
-                                End If
-                            End If
-                        End If
-
-                        If LenB(strDevVerLocal) Then
-                            strPriznakSravnenia = vbNullString
-
-                            If mbCompareDrvVerByDate Then
-                                lngPriznakSravnenia = CompareByDate(strDevVer, strDevVerLocal, strPriznakSravnenia)
-                            Else
-                                lngPriznakSravnenia = CompareByVersion(strDevVer, strDevVerLocal, strPriznakSravnenia)
-                            End If
-
-                            If lngPriznakSravnenia = crGreaterVer Then
-                                ' В БД новее
-                                mbStatusNewer = True
-                                mbStatusOlder = False
-                            ElseIf lngPriznakSravnenia = crLessVer Then
-                                ' В БД старее
-                                If Not mbStatusOlder Then
-                                    If Not mbStatusNewer Then
-                                        mbStatusOlder = True
-                                    End If
-                                End If
-                            'Else
-                                ' Дрова равны
-                            End If
-
-                            arrHwidsLocal(i).PriznakSravnenia = strPriznakSravnenia
+                        '7z x -y -o"PathOut" archivename.7z
+                        ' Запуск распаковки файла-индекса
+                        cmdString = strQuotes & strArh7zExePath & strQuotes & " x -y -o" & strQuotes & strDirFileDBTemp & strQuotes & strSpace & strQuotes & strPathFileNameDevDB & strQuotes
+                
+                        If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
+                            MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
                         Else
-                            strPriznakSravnenia = strVopros
+                        
+                            ' Архиватор отработал на все 100%? Если нет то сообщаем
+                            If lngExitProc <> 0 Then
+                                If lngExitProc = 2 Then
+                                    MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                                ElseIf lngExitProc = 7 Then
+                                    MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                                ElseIf lngExitProc = 255 Then
+                                    MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                                End If
+                            End If
+                            
+                        End If
+                        ' Переназначаем индексный файл на временный файл после распаковки
+                        strPathFileNameDevDB = PathCombine(strDirFileDBTemp, strFileNameDevDB)
+                    End If
+        
+                    ' Если файла индекса нет, например ошибка извлечения, то выводим ошибку в лог
+                    If FileExists(strPathFileNameDevDB) Then
+                        FileReadData strPathFileNameDevDB, strFileFullText
+                    Else
+                        strFileFullText = vbNullString
+                        If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBase: !!!Error in read DB-IndexFile: " & strPathFileNameDevDB
+                    End If
+                        
+                    strFileFull_x = Split(strFileFullText, vbNewLine)
+                    mbFileFullIsLoaded = True
+                End If
+            End If
+        
+            ' Выборка совпадений по HWID из полного файла базы данных
+            Erase strResult_x
+            strResult_x = Filter(strFileFull_x(), strFind & vbTab, True, vbBinaryCompare)
+            lngMatchesCount = UBound(strResult_x)
 
-                            If arrHwidsLocal(i).Status = 0 Then
-                                mbDRVNotInstall = True
-                                strPriznakSravnenia = ">"
+            If lngMatchesCount >= 0 Then
+                If mbDebugStandart Then DebugMode str5VbTab & "FindHwidInBase: !!!Find " & lngMatchesCount & " Match in: " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
+
+                For ii = 0 To lngMatchesCount
+                    strResultByTab_x = Split(strResult_x(ii), vbTab)
+                    ' Получаем имя секции файла inf для дальнейшего анализа
+                    strPathInf = strResultByTab_x(1)
+                    strSection = strResultByTab_x(2)
+                    ' получение списка секций несовместимых ОС
+                    strSectionUnsupported = strResultByTab_x(4)
+                    
+                    ' Check for USB30 Intel Version Generation - if wrong driver then bsod
+                    If InStr(strPackFileName, "USB") Then
+                        If mbIUSB_RootHubExist Then
+                            If InStr(strFind, "IUSB3\ROOT_HUB30") Then
+                                If mbIntel2thGeneration Then
+                                    If InStr(LCase$(strPathInf), "intel_2nd\") = 0 Then
+                                        If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBase: ***Not Supported driver for USB3.0 Root HUB HWID=" & strFind & " Inf: " & strPathInf
+                                        GoTo NextStrFind
+                                    End If
+                                ElseIf mbIntel4thGeneration Then
+                                    If InStr(LCase$(strPathInf), "intel_4th\") = 0 Then
+                                        If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBase: ***Not Supported driver for USB3.0 Root HUB HWID=" & strFind & " Inf: " & strPathInf
+                                        GoTo NextStrFind
+                                    End If
+                                End If
                             End If
                         End If
+                    End If
+                    
+                    ' Если драйвер несовместим с текущей ОС (вкладкой), то пропускаем его (анализ имени секции manufactured)
+                    If Not CompatibleDriver4OS(strSection, strPackFileName, strPathInf, strSectionUnsupported) Then
+                        If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBase: !!! SKIP. Driver is not compatible for this OS - IniSection: " & strSection & " Inf: " & strPathInf
+                        GoTo NextLngMatchesCount
+                    End If
 
-                        strDevStatus = arrHwidsLocal(i).Status
-                        arrHwidsLocal(i).InfSection = strSection
-                        strDevIDOrig = ParseDoubleHwid(arrHwidsLocal(i).HWIDOrig)
-                        ' Для этого драйвера есть совпадение в пакете драйверов. Заносим признак и имя пакета
-                        AppendStr arrHwidsLocal(i).DPsList, strPackFileName, " | "
+                    strDevID = strResultByTab_x(0)
+                    
+                    If StrComp(strDevID, strFind, vbBinaryCompare) <> 0 Then
+                        If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBase: ***Seeking HWID included in found HWID from database: HWID=" & strDevID
+                        GoTo NextLngMatchesCount
+                    End If
+                    
+                    strCatFileExists = strResultByTab_x(5)
 
+                    If mbCalcDriverScore Then
+                        ' Проверка и присвоение баллов драйверов
+                        ' Если до этого оценок не было, то добавляем в базу
+                        If mbDebugStandart Then DebugMode str6VbTab & ii & " FindHwidInBase: ***Driver find in : " & (strPackFileName & vbBackslash & strPathInf) & " Has Score=" & lngDriverScore
+
+                        If arrHwidsLocal(I).DRVScore = 0 Then
+                            arrHwidsLocal(I).DRVScore = lngDriverScore
+                        Else
+                            lngDriverScorePrev = arrHwidsLocal(I).DRVScore
+
+                            If lngDriverScore > lngDriverScorePrev Then
+                                If mbDebugStandart Then DebugMode str7VbTab & ii & " FindHwidInBase: ***Driver is WORSE than found previously: ScoredPrev=" & lngDriverScorePrev
+                                GoTo NextLngMatchesCount
+                            Else
+                                arrHwidsLocal(I).DRVScore = lngDriverScore
+                                If mbDebugStandart Then DebugMode str7VbTab & ii & " FindHwidInBase: ***Added! Driver is BETTER OR EQUAL than found previously: ScoredPrev=" & lngDriverScorePrev
+                            End If
+                        End If
+                    End If
+
+                    strDevVer = strResultByTab_x(3)
+
+                    ' если необходимо конвертировать дату в формат dd/mm/yyyy
+                    If mbDateFormatRus Then
+                        ConvertVerByDate strDevVer
+                    End If
+
+                    strDevVerLocal = arrHwidsLocal(I).VerLocal
+
+                    If LenB(strDevVerLocal) = 0 Then
+                        strDevVerLocal = strUnknownLCase
+                    End If
+
+                    strDevName = strResultByTab_x(6)
+
+                    If arrHwidsLocal(I).Status = 0 Then
+                        mbStatusHwid = False
+
+                        If InStr(strDevVerLocal, strUnknownLCase) = 0 Then
+                            If LenB(strDevVerLocal) Then
+                                mbIgnorStatusHwid = True
+                            End If
+                        End If
+                    End If
+
+                    If LenB(strDevVerLocal) Then
+                        strPriznakSravnenia = vbNullString
+
+                        If mbCompareDrvVerByDate Then
+                            lngPriznakSravnenia = CompareByDate(strDevVer, strDevVerLocal, strPriznakSravnenia)
+                        Else
+                            lngPriznakSravnenia = CompareByVersion(strDevVer, strDevVerLocal, strPriznakSravnenia)
+                        End If
+
+                        If lngPriznakSravnenia = crGreaterVer Then
+                            ' В БД новее
+                            mbStatusNewer = True
+                            mbStatusOlder = False
+                        ElseIf lngPriznakSravnenia = crLessVer Then
+                            ' В БД старее
+                            If Not mbStatusOlder Then
+                                If Not mbStatusNewer Then
+                                    mbStatusOlder = True
+                                End If
+                            End If
+                        'Else
+                            ' Дрова равны
+                        End If
+
+                        arrHwidsLocal(I).PriznakSravnenia = strPriznakSravnenia
+                    Else
+                        strPriznakSravnenia = strVopros
+
+                        If arrHwidsLocal(I).Status = 0 Then
+                            mbDRVNotInstall = True
+                            strPriznakSravnenia = ">"
+                        End If
+                    End If
+
+                    strDevStatus = arrHwidsLocal(I).Status
+                    arrHwidsLocal(I).InfSection = strSection
+                    strDevIDOrig = ParseDoubleHwid(arrHwidsLocal(I).HWIDOrig)
+                    ' Для этого драйвера есть совпадение в пакете драйверов. Заносим признак и имя пакета
+                    AppendStr arrHwidsLocal(I).DPsList, strPackFileName, " | "
+
+                    ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
+                    If lngTTipLocalArrCount = miMaxCountArr Then
+                        miMaxCountArr = 2 * miMaxCountArr
+
+                        ReDim Preserve strTTipLocalArr(11, miMaxCountArr)
+
+                    End If
+
+                    ' Заносим данные во временный массив
+                    strTTipLocalArr(0, lngTTipLocalArrCount) = strDevID
+                    strTTipLocalArr(1, lngTTipLocalArrCount) = strPathInf
+                    strTTipLocalArr(2, lngTTipLocalArrCount) = strDevVer
+                    strTTipLocalArr(3, lngTTipLocalArrCount) = strDevVerLocal
+                    strTTipLocalArr(4, lngTTipLocalArrCount) = strDevStatus
+                    strTTipLocalArr(5, lngTTipLocalArrCount) = strDevName
+                    strTTipLocalArr(6, lngTTipLocalArrCount) = strPriznakSravnenia
+                    strTTipLocalArr(7, lngTTipLocalArrCount) = strSection
+                    strTTipLocalArr(8, lngTTipLocalArrCount) = strDevIDOrig
+                    strTTipLocalArr(9, lngTTipLocalArrCount) = lngDriverScore
+                    strTTipLocalArr(10, lngTTipLocalArrCount) = strSectionUnsupported
+                    strTTipLocalArr(11, lngTTipLocalArrCount) = strCatFileExists
+                    lngTTipLocalArrCount = lngTTipLocalArrCount + 1
+
+                    If mbFirstStart Then
+
+                        ' Заносим данные в глобальный массив массив
                         ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
-                        If lngTTipLocalArrCount = miMaxCountArr Then
-                            miMaxCountArr = 2 * miMaxCountArr
+                        If lngArrDriversIndex = lngArrDriversListCountMax Then
+                            lngArrDriversListCountMax = lngArrDriversListCountMax + lngArrDriversListCountMax
 
-                            ReDim Preserve strTTipLocalArr(11, miMaxCountArr)
+                            ReDim Preserve arrDriversList(12, lngArrDriversListCountMax)
 
                         End If
 
-                        ' Заносим данные во временный массив
-                        strTTipLocalArr(0, lngTTipLocalArrCount) = strDevID
-                        strTTipLocalArr(1, lngTTipLocalArrCount) = strPathInf
-                        strTTipLocalArr(2, lngTTipLocalArrCount) = strDevVer
-                        strTTipLocalArr(3, lngTTipLocalArrCount) = strDevVerLocal
-                        strTTipLocalArr(4, lngTTipLocalArrCount) = strDevStatus
-                        strTTipLocalArr(5, lngTTipLocalArrCount) = strDevName
-                        strTTipLocalArr(6, lngTTipLocalArrCount) = strPriznakSravnenia
-                        strTTipLocalArr(7, lngTTipLocalArrCount) = strSection
-                        strTTipLocalArr(8, lngTTipLocalArrCount) = strDevIDOrig
-                        strTTipLocalArr(9, lngTTipLocalArrCount) = lngDriverScore
-                        strTTipLocalArr(10, lngTTipLocalArrCount) = strSectionUnsupported
-                        strTTipLocalArr(11, lngTTipLocalArrCount) = strCatFileExists
-                        lngTTipLocalArrCount = lngTTipLocalArrCount + 1
+                        arrDriversList(0, lngArrDriversIndex) = strDevID
+                        arrDriversList(1, lngArrDriversIndex) = strPathInf
+                        arrDriversList(2, lngArrDriversIndex) = strDevVer
+                        arrDriversList(3, lngArrDriversIndex) = strDevVerLocal
+                        arrDriversList(4, lngArrDriversIndex) = strDevStatus
+                        arrDriversList(5, lngArrDriversIndex) = strDevName
+                        arrDriversList(6, lngArrDriversIndex) = strPriznakSravnenia
+                        arrDriversList(7, lngArrDriversIndex) = strSection
+                        arrDriversList(8, lngArrDriversIndex) = strDevIDOrig
+                        arrDriversList(9, lngArrDriversIndex) = lngDriverScore
+                        arrDriversList(10, lngArrDriversIndex) = strSectionUnsupported
+                        arrDriversList(11, lngArrDriversIndex) = strCatFileExists
+                        arrDriversList(12, lngArrDriversIndex) = strPackFileName
+                        lngArrDriversIndex = lngArrDriversIndex + 1
+                    End If
 
-                        If mbFirstStart Then
+                    'Устанавливаем ширину колонок в таблице
+                    If Len(strDevID) > lngMaxLengthRow1 Then
+                        lngMaxLengthRow1 = Len(strDevID)
+                    End If
 
-                            ' Заносим данные в глобальный массив массив
-                            ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
-                            If lngArrDriversIndex = lngArrDriversListCountMax Then
-                                lngArrDriversListCountMax = lngArrDriversListCountMax + lngArrDriversListCountMax
+                    If Len(strPathInf) > lngMaxLengthRow2 Then
+                        lngMaxLengthRow2 = Len(strPathInf)
+                    End If
 
-                                ReDim Preserve arrDriversList(12, lngArrDriversListCountMax)
+                    If Len(strDevVer) > lngMaxLengthRow4 Then
+                        lngMaxLengthRow4 = Len(strDevVer)
+                    End If
 
-                            End If
+                    If Len(strDevVerLocal) > lngMaxLengthRow5 Then
+                        lngMaxLengthRow5 = Len(strDevVerLocal)
+                    End If
 
-                            arrDriversList(0, lngArrDriversIndex) = strDevID
-                            arrDriversList(1, lngArrDriversIndex) = strPathInf
-                            arrDriversList(2, lngArrDriversIndex) = strDevVer
-                            arrDriversList(3, lngArrDriversIndex) = strDevVerLocal
-                            arrDriversList(4, lngArrDriversIndex) = strDevStatus
-                            arrDriversList(5, lngArrDriversIndex) = strDevName
-                            arrDriversList(6, lngArrDriversIndex) = strPriznakSravnenia
-                            arrDriversList(7, lngArrDriversIndex) = strSection
-                            arrDriversList(8, lngArrDriversIndex) = strDevIDOrig
-                            arrDriversList(9, lngArrDriversIndex) = lngDriverScore
-                            arrDriversList(10, lngArrDriversIndex) = strSectionUnsupported
-                            arrDriversList(11, lngArrDriversIndex) = strCatFileExists
-                            arrDriversList(12, lngArrDriversIndex) = strPackFileName
-                            lngArrDriversIndex = lngArrDriversIndex + 1
-                        End If
+                    If Len(strDevStatus) > lngMaxLengthRow6 Then
+                        lngMaxLengthRow6 = Len(strDevStatus)
+                    End If
 
-                        'Устанавливаем ширину колонок в таблице
-                        If Len(strDevID) > lngMaxLengthRow1 Then
-                            lngMaxLengthRow1 = Len(strDevID)
-                        End If
-
-                        If Len(strPathInf) > lngMaxLengthRow2 Then
-                            lngMaxLengthRow2 = Len(strPathInf)
-                        End If
-
-                        If Len(strDevVer) > lngMaxLengthRow4 Then
-                            lngMaxLengthRow4 = Len(strDevVer)
-                        End If
-
-                        If Len(strDevVerLocal) > lngMaxLengthRow5 Then
-                            lngMaxLengthRow5 = Len(strDevVerLocal)
-                        End If
-
-                        If Len(strDevStatus) > lngMaxLengthRow6 Then
-                            lngMaxLengthRow6 = Len(strDevStatus)
-                        End If
-
-                        If Len(strSection) > lngMaxLengthRow13 Then
-                            lngMaxLengthRow13 = Len(strSection)
-                        End If
+                    If Len(strSection) > lngMaxLengthRow13 Then
+                        lngMaxLengthRow13 = Len(strSection)
+                    End If
 
 NextLngMatchesCount:
 
-                    Next ii
+                Next ii
 
-                Else
-                    If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBaseNew: !!!ERROR Driver NOT find by Regexp in : " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
-                End If
+            Else
+                If mbDebugDetail Then DebugMode str5VbTab & "FindHwidInBase: !!!ERROR Driver NOT find by Regexp in : " & (strPackFileName & vbBackslash & strPathInf) & " by HWID=" & strFind
+            End If
 
 NextStrFind:
 
-            Next i
+        Next I
 
-            If lngTTipLocalArrCount Then
-                ' Обнуляем индексы. Нужны чтобы убрать повторяющиеся строки в подсказках
-                objHashOutput.RemoveAll
-                objHashOutput2.RemoveAll
+        If lngTTipLocalArrCount Then
+            ' Обнуляем индексы. Нужны чтобы убрать повторяющиеся строки в подсказках
+            objHashOutput.RemoveAll
+            objHashOutput2.RemoveAll
 
-                ReDim Preserve strTTipLocalArr(11, lngTTipLocalArrCount - 1)
+            ReDim Preserve strTTipLocalArr(11, lngTTipLocalArrCount - 1)
 
-                For i = 0 To UBound(strTTipLocalArr, 2)
-                    'strDevID
-                    strTemp = strTTipLocalArr(0, i)
-                    strTTipLocalArr(0, i) = strTemp & Space$(lngMaxLengthRow1 - Len(strTemp) + 1) & "| "
-                    'strPathInf
-                    strTemp = strTTipLocalArr(1, i)
-                    strTTipLocalArr(1, i) = strTemp & Space$(lngMaxLengthRow2 - Len(strTemp) + 1) & "| "
-                    'strDevVer
-                    strTemp = strTTipLocalArr(2, i)
-                    strTTipLocalArr(2, i) = strTemp & Space$(lngMaxLengthRow4 - Len(strTemp) + 1) & "| "
-                    'strDevVerLocal
-                    strTemp = strTTipLocalArr(3, i)
-                    strTTipLocalArr(3, i) = strTemp & Space$(lngMaxLengthRow5 - Len(strTemp) + 1) & "| "
-                    ' strPriznakSravnenia
-                    strTemp = strTTipLocalArr(6, i)
-                    strTTipLocalArr(6, i) = strTemp & Space$(lngMaxLengthRow9 - Len(strTemp) + 1) & "| "
-                    'strDevStatus & strDevName
-                    strTemp = strTTipLocalArr(4, i)
-                    strTTipLocalArr(4, i) = strTemp & Space$(lngMaxLengthRow6 - Len(strTemp) + 1) & "| "
-                    ' Секция
-                    strTemp = strTTipLocalArr(7, i)
-                    strTTipLocalArr(7, i) = strTemp & Space$(lngMaxLengthRow13 - Len(strTemp) + 1) & "|"
-                    ' Итоговый
-                    strLineAll = strTTipLocalArr(0, i) & strTTipLocalArr(1, i) & strTTipLocalArr(2, i) & strTTipLocalArr(6, i) & strTTipLocalArr(3, i) & strTTipLocalArr(4, i) & strTTipLocalArr(5, i)
+            For I = 0 To UBound(strTTipLocalArr, 2)
+                'strDevID
+                strTemp = strTTipLocalArr(0, I)
+                strTTipLocalArr(0, I) = strTemp & Space$(lngMaxLengthRow1 - Len(strTemp) + 1) & "| "
+                'strPathInf
+                strTemp = strTTipLocalArr(1, I)
+                strTTipLocalArr(1, I) = strTemp & Space$(lngMaxLengthRow2 - Len(strTemp) + 1) & "| "
+                'strDevVer
+                strTemp = strTTipLocalArr(2, I)
+                strTTipLocalArr(2, I) = strTemp & Space$(lngMaxLengthRow4 - Len(strTemp) + 1) & "| "
+                'strDevVerLocal
+                strTemp = strTTipLocalArr(3, I)
+                strTTipLocalArr(3, I) = strTemp & Space$(lngMaxLengthRow5 - Len(strTemp) + 1) & "| "
+                ' strPriznakSravnenia
+                strTemp = strTTipLocalArr(6, I)
+                strTTipLocalArr(6, I) = strTemp & Space$(lngMaxLengthRow9 - Len(strTemp) + 1) & "| "
+                'strDevStatus & strDevName
+                strTemp = strTTipLocalArr(4, I)
+                strTTipLocalArr(4, I) = strTemp & Space$(lngMaxLengthRow6 - Len(strTemp) + 1) & "| "
+                ' Секция
+                strTemp = strTTipLocalArr(7, I)
+                strTTipLocalArr(7, I) = strTemp & Space$(lngMaxLengthRow13 - Len(strTemp) + 1) & "|"
+                ' Итоговый
+                strLineAll = strTTipLocalArr(0, I) & strTTipLocalArr(1, I) & strTTipLocalArr(2, I) & strTTipLocalArr(6, I) & strTTipLocalArr(3, I) & strTTipLocalArr(4, I) & strTTipLocalArr(5, I)
 
-                    If Not objHashOutput.Exists(strLineAll) Then
-                        objHashOutput.Item(strLineAll) = "+"
-                        AppendStr strAll, strLineAll, vbNewLine
-                    End If
+                If Not objHashOutput.Exists(strLineAll) Then
+                    objHashOutput.Add strLineAll, "+"
+                    AppendStr strAll, strLineAll, vbNewLine
+                End If
 
-                    ' Заполняем массив для удаления драйверов по HWID
-                    strHwidToDelLine = strTTipLocalArr(8, i)
+                ' Заполняем массив для удаления драйверов по HWID
+                strHwidToDelLine = strTTipLocalArr(8, I)
 
-                    If Not objHashOutput2.Exists(strHwidToDelLine) Then
-                        objHashOutput2.Item(strHwidToDelLine) = "+"
-                        AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, i), strSemiColon
-                    End If
+                If Not objHashOutput2.Exists(strHwidToDelLine) Then
+                    objHashOutput2.Add strHwidToDelLine, "+"
+                    AppendStr strHwidToDel, strHwidToDelLine & vbTab & strTTipLocalArr(5, I), strSemiColon
+                End If
 
-                    ' Подсчитываем максимальную длину строки в подсказке
-                    If Len(strLineAll) > lngMaxLengthRowAllLine Then
-                        lngMaxLengthRowAllLine = Len(strLineAll)
-                    End If
+                ' Подсчитываем максимальную длину строки в подсказке
+                If Len(strLineAll) > lngMaxLengthRowAllLine Then
+                    lngMaxLengthRowAllLine = Len(strLineAll)
+                End If
 
-                Next i
+            Next I
 
-            End If
+        End If
 
-            If lngSizeRowDPMax < Len(strPackFileName) Then
-                lngSizeRowDPMax = Len(strPackFileName)
-            End If
+        If lngSizeRowDPMax < Len(strPackFileName) Then
+            lngSizeRowDPMax = Len(strPackFileName)
+        End If
 
-            lngSizeRow1 = lngMaxLengthRow1
+        lngSizeRow1 = lngMaxLengthRow1
 
-            If lngSizeRow1Max < lngSizeRow1 Then
-                lngSizeRow1Max = lngSizeRow1
-            End If
+        If lngSizeRow1Max < lngSizeRow1 Then
+            lngSizeRow1Max = lngSizeRow1
+        End If
 
-            lngSizeRow2 = lngMaxLengthRow2
+        lngSizeRow2 = lngMaxLengthRow2
 
-            If lngSizeRow2Max < lngSizeRow2 Then
-                lngSizeRow2Max = lngSizeRow2
-            End If
+        If lngSizeRow2Max < lngSizeRow2 Then
+            lngSizeRow2Max = lngSizeRow2
+        End If
 
-            lngSizeRow4 = lngMaxLengthRow4
+        lngSizeRow4 = lngMaxLengthRow4
 
-            If lngSizeRow4Max < lngSizeRow4 Then
-                lngSizeRow4Max = lngSizeRow4
-            End If
+        If lngSizeRow4Max < lngSizeRow4 Then
+            lngSizeRow4Max = lngSizeRow4
+        End If
 
-            lngSizeRow5 = lngMaxLengthRow5
+        lngSizeRow5 = lngMaxLengthRow5
 
-            If lngSizeRow5Max < lngSizeRow5 Then
-                lngSizeRow5Max = lngSizeRow5
-            End If
+        If lngSizeRow5Max < lngSizeRow5 Then
+            lngSizeRow5Max = lngSizeRow5
+        End If
 
-            lngSizeRow6 = lngMaxLengthRow6
+        lngSizeRow6 = lngMaxLengthRow6
 
-            If lngSizeRow6Max < lngSizeRow6 Then
-                lngSizeRow6Max = lngSizeRow6
-            End If
+        If lngSizeRow6Max < lngSizeRow6 Then
+            lngSizeRow6Max = lngSizeRow6
+        End If
 
-            lngSizeRow9 = lngMaxLengthRow9
+        lngSizeRow9 = lngMaxLengthRow9
 
-            If lngSizeRow9Max < lngSizeRow9 Then
-                lngSizeRow9Max = lngSizeRow9
-            End If
+        If lngSizeRow9Max < lngSizeRow9 Then
+            lngSizeRow9Max = lngSizeRow9
+        End If
 
-            lngSizeRow13 = lngMaxLengthRow13
+        lngSizeRow13 = lngMaxLengthRow13
 
-            If lngSizeRow13Max < lngSizeRow13 Then
-                lngSizeRow13Max = lngSizeRow13
-            End If
+        If lngSizeRow13Max < lngSizeRow13 Then
+            lngSizeRow13Max = lngSizeRow13
+        End If
 
-            maxSizeRowAllLine = lngMaxLengthRowAllLine
+        maxSizeRowAllLine = lngMaxLengthRowAllLine
 
-            If maxSizeRowAllLineMax < maxSizeRowAllLine Then
-                maxSizeRowAllLineMax = maxSizeRowAllLine
-            End If
+        If maxSizeRowAllLineMax < maxSizeRowAllLine Then
+            maxSizeRowAllLineMax = maxSizeRowAllLine
         End If
     End If
 
-    FindHwidInBaseNew = strAll
+    FindHwidInBase = strAll
     arrDevIDs(lngButtonIndex) = strHwidToDel
 
     ReDim Preserve arrTTipSize(lngButtonIndex + 1)
@@ -4162,8 +4208,8 @@ NextStrFind:
 
 ExitFromSub:
    
-    TimeScriptFinish = GetTickCount
-    If mbDebugStandart Then DebugMode str4VbTab & "FindHwidInBaseNew-Time to Find by HWID - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+    lngTimeScriptFinish = GetTickCount
+    If mbDebugStandart Then DebugMode str4VbTab & "FindHwidInBase-Time to Find by HWID - " & strPackFileName & ": " & CalculateTime(lngTimeScriptRun, lngTimeScriptFinish, True)
 
     Exit Function
 
@@ -4177,13 +4223,13 @@ End Function
 Private Function FindNoDBCount() As Long
 
     Dim miCount As Integer
-    Dim i       As Integer
+    Dim I       As Integer
 
     With acmdPackFiles
-        For i = .LBound To .UBound
+        For I = .LBound To .UBound
     
-            If Not (.Item(i).PictureNormal Is Nothing) Then
-                If .Item(i).PictureNormal = imgNoDB.Picture Then
+            If Not (.Item(I).PictureNormal Is Nothing) Then
+                If .Item(I).PictureNormal = imgNoDB.Picture Then
                     miCount = miCount + 1
                 End If
             End If
@@ -4202,13 +4248,13 @@ End Function
 Private Function FindUnHideTab() As Integer
 
     Dim miCount As Integer
-    Dim i       As Integer
+    Dim I       As Integer
 
     miCount = -1
 
-    For i = 0 To SSTab1.Tabs - 1
+    For I = 0 To SSTab1.Tabs - 1
 
-        If SSTab1.TabVisible(i) Then
+        If SSTab1.TabVisible(I) Then
             miCount = miCount + 1
         End If
 
@@ -4265,30 +4311,30 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub GroupInstallDP()
 
-    Dim ButtIndex             As Long
-    Dim miCheckDPCount        As Long
-    Dim i                     As Long
-    Dim strPackFileName       As String
-    Dim strPathDRP            As String
-    Dim strPathDevDB          As String
+    Dim lngButtIndex             As Long
+    Dim miCheckDPCount           As Long
+    Dim I                        As Long
+    Dim strPackFileName          As String
+    Dim strPathDRP               As String
+    Dim strPathDevDB             As String
     Dim strPackGetFileName_woExt As String
-    Dim ArchTempPath          As String
-    Dim DPInstExitCode        As Long
-    Dim strDevPathShort       As String
-    Dim miCheckDPNumber       As Long
-    Dim strPhysXPath          As String
-    Dim strLangPath           As String
-    Dim strRuntimes           As String
-    Dim ReadExitCodeString    As String
-    Dim miPbInterval          As Long
-    Dim miPbNext              As Long
-    Dim lngFindCheckCountTemp As Long
-    Dim strTemp_x()           As String
-    Dim strTempLine_x()       As String
-    Dim i_arr                 As Long
+    Dim ArchTempPath             As String
+    Dim DPInstExitCode           As Long
+    Dim strDevPathShort          As String
+    Dim miCheckDPNumber          As Long
+    Dim strPhysXPath             As String
+    Dim strLangPath              As String
+    Dim strRuntimes              As String
+    Dim ReadExitCodeString       As String
+    Dim miPbInterval             As Long
+    Dim miPbNext                 As Long
+    Dim lngFindCheckCountTemp    As Long
+    Dim strTemp_x()              As String
+    Dim strTempLine_x()          As String
+    Dim i_arr                    As Long
 
     If mbDebugStandart Then DebugMode "GroupInstallDP-Start"
-    ButtIndex = chkPackFiles.UBound
+    lngButtIndex = chkPackFiles.UBound
     miCheckDPCount = FindCheckCount
     BlockControl False
 
@@ -4296,31 +4342,31 @@ Private Sub GroupInstallDP()
 
         ReDim arrCheckDP(1, miCheckDPCount - 1)
 
-        If ButtIndex Then
+        If lngButtIndex Then
             miCheckDPNumber = 0
 
             ' Составляем список выделенных пакетов
-            For i = 0 To ButtIndex
+            For I = 0 To lngButtIndex
 
                 ' Если галка стоит на кнопке, то обрабатываем эту кнопку
-                If chkPackFiles(i).Value Then
-                    If chkPackFiles(i).Left Then
+                If chkPackFiles(I).Value Then
+                    If chkPackFiles(I).Left Then
                         ' Индексы отмеченых кнопок
-                        arrCheckDP(0, miCheckDPNumber) = i
+                        arrCheckDP(0, miCheckDPNumber) = I
                         miCheckDPNumber = miCheckDPNumber + 1
                     End If
                 End If
 
             Next
 
-        ElseIf ButtIndex = 0 Then
+        ElseIf lngButtIndex = 0 Then
 
             If acmdPackFiles(0).Visible Then
                 miCheckDPNumber = 0
 
                 ' Если галка стоит на кнопке, то обрабатываем эту кнопку
-                If chkPackFiles(i).Value Then
-                    If chkPackFiles(i).Left Then
+                If chkPackFiles(I).Value Then
+                    If chkPackFiles(I).Left Then
                         ' Индексы отмеченых кнопок
                         arrCheckDP(0, 0) = 0
                         miCheckDPNumber = 1
@@ -4380,10 +4426,10 @@ Private Sub GroupInstallDP()
         Else
 
             ' иначе список строится сам
-            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+            For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
 
                 strPathDRPList = vbNullString
-                strTemp_x = Split(arrTTip(arrCheckDP(0, i)), vbNewLine)
+                strTemp_x = Split(arrTTip(arrCheckDP(0, I)), vbNewLine)
 
                 For i_arr = 0 To UBound(strTemp_x)
                     If LenB(Trim$(strTemp_x(i_arr))) Then
@@ -4407,7 +4453,7 @@ Private Sub GroupInstallDP()
                     strPathDRPList = ALL_FILES
                 End If
 
-                arrCheckDP(1, i) = strPathDRPList
+                arrCheckDP(1, I) = strPathDRPList
             Next
 
         End If
@@ -4420,7 +4466,7 @@ Private Sub GroupInstallDP()
         ArchTempPath = strWorkTempBackSL & "GroupInstall"
 
         If PathExists(ArchTempPath) Then
-            DelRecursiveFolder (ArchTempPath)
+            DelRecursiveFolder ArchTempPath
         End If
 
         If mbOnlyUnpackDP Then
@@ -4429,9 +4475,9 @@ Private Sub GroupInstallDP()
             With New CommonDialog
                 .InitDir = strAppPathBackSL & "drivers"
                 .DialogTitle = strMessages(131)
-                .Flags = CdlBIFNewDialogStyle
+                .flags = CdlBIFNewDialogStyle
 
-                If .ShowFolder = True Then
+                If .ShowFolderBrowser = True Then
                     ArchTempPath = .FileName
                 Else
                     ChangeStatusBarText strMessages(132), strMessages(155)
@@ -4472,9 +4518,9 @@ Private Sub GroupInstallDP()
         miPbNext = 0
 
         ' собственно цикл распаковки
-        For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+        For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
 
-            With acmdPackFiles(arrCheckDP(0, i))
+            With acmdPackFiles(arrCheckDP(0, I))
                 
                 .Value = True
                 
@@ -4490,14 +4536,14 @@ Private Sub GroupInstallDP()
                 strPackFileName = .Tag
                 strPackGetFileName_woExt = GetFileName_woExt(strPackFileName)
 
-                If UnPackDPFile(strPathDRP, strPackFileName, arrCheckDP(1, i), ArchTempPath) = False Then
+                If UnPackDPFile(strPathDRP, strPackFileName, arrCheckDP(1, I), ArchTempPath) = False Then
                     If Not mbSilentRun Then
                         MsgBox strMessages(13) & vbNewLine & strPackFileName, vbInformation, strProductName
                     End If
                 End If
 
-                If chkPackFiles(arrCheckDP(0, i)).Value Then
-                    chkPackFiles(arrCheckDP(0, i)).Value = False
+                If chkPackFiles(arrCheckDP(0, I)).Value Then
+                    chkPackFiles(arrCheckDP(0, I)).Value = False
                 End If
 
                 
@@ -4621,18 +4667,18 @@ BreakUnpack:
 
                         ' Обрабатываем файл finish
                         If mbLoadFinishFile Then
-                            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                                strPackFileName = acmdPackFiles(arrCheckDP(0, i)).Tag
+                            For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                                strPackFileName = acmdPackFiles(arrCheckDP(0, I)).Tag
                                 strPackGetFileName_woExt = GetFileName_woExt(strPackFileName)
                                 ArchTempPath = strWorkTempBackSL & strPackGetFileName_woExt
-                                WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, arrCheckDP(1, i)
+                                WorkWithFinish strPathDRP, strPackFileName, ArchTempPath, arrCheckDP(1, I)
                             Next
                         End If
 
                         ' Обновление подсказки
-                        For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                            strPackFileName = acmdPackFiles(arrCheckDP(0, i)).Tag
-                            ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(arrCheckDP(0, i)), True
+                        For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                            strPackFileName = acmdPackFiles(arrCheckDP(0, I)).Tag
+                            ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, CInt(arrCheckDP(0, I)), True
                         Next
 
                     End If
@@ -4642,16 +4688,16 @@ BreakUnpack:
             ChangeStatusBarText strMessages(85) & strSpace & ReadExitCodeString
             If mbDebugStandart Then DebugMode "Install from : " & strPackFileName & " finish."
 
-            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+            For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
 
-                If chkPackFiles(arrCheckDP(0, i)).Value Then
-                    chkPackFiles(arrCheckDP(0, i)).Value = False
+                If chkPackFiles(arrCheckDP(0, I)).Value Then
+                    chkPackFiles(arrCheckDP(0, I)).Value = False
                 End If
 
             Next
 
             If PathExists(ArchTempPath) Then
-                DelRecursiveFolder (ArchTempPath)
+                DelRecursiveFolder ArchTempPath
             End If
 
         Else
@@ -4738,18 +4784,18 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function IsFormLoaded(FormName As String) As Boolean
 
-    Dim i As Integer
+    Dim I As Integer
 
-    For i = 0 To Forms.Count - 1
+    For I = 0 To Forms.count - 1
 
-        If Forms(i).Name = FormName Then
+        If Forms(I).Name = FormName Then
             IsFormLoaded = True
 
             Exit Function
 
         End If
 
-    Next i
+    Next I
 
     IsFormLoaded = False
 End Function
@@ -4770,8 +4816,8 @@ Private Sub lblOsInfoChange()
         str64bit = " x86 Edition"
     End If
 
-    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOSInfo.Caption)
-    lblOSInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
+    lblOsInfoCaption = LocaliseString(strPCLangCurrentPath, strFormName, "lblOsInfo", lblOsInfo.Caption)
+    lblOsInfo.Caption = lblOsInfoCaption & strSpace & OSInfo.Name & strSpace & " (" & OSInfo.VerFullwBuild & strSpace & OSInfo.ServicePack & ")" & str64bit
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4781,7 +4827,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadButton()
 
-    Dim i                As Long
+    Dim I                As Long
     Dim cnt              As Long
     Dim pbStart          As Long
     Dim pbDelta          As Long
@@ -4793,7 +4839,7 @@ Private Sub LoadButton()
     If mbDebugStandart Then DebugMode "LoadButton-Start"
     mbNextTab = False
     frTabPanel.Visible = False
-    lngCntBtn = 0
+    lngBtnNumber = 0
     cnt = UBound(arrOSList)
 
     With ctlProgressBar1
@@ -4808,16 +4854,16 @@ Private Sub LoadButton()
         pbDelta = 1000 - pbStart
     End If
 
-    i = 0
+    I = 0
     ' массив со списком драйверов для будущего использования для каждой кнопки
     lngArrDriversIndex = 0
     lngArrDriversListCountMax = 100
 
     ReDim Preserve arrDriversList(12, lngArrDriversListCountMax)
 
-    For i = 0 To cnt
-        strPathFolderDRP = arrOSList(i).drpFolderFull
-        strPathFolderDB = arrOSList(i).devIDFolderFull
+    For I = 0 To cnt
+        strPathFolderDRP = arrOSList(I).drpFolderFull
+        strPathFolderDB = arrOSList(I).devIDFolderFull
         ChangeStatusBarText strMessages(69) & strSpace & strPathFolderDRP
         
         If mbDebugStandart Then DebugMode vbTab & "Analize Folder DRP: " & strPathFolderDRP & vbNewLine & _
@@ -4825,23 +4871,23 @@ Private Sub LoadButton()
                   
         pbProgressBar.Refresh
 
-        If Not arrOSList(i).DPFolderNotExist Then
+        If Not arrOSList(I).DPFolderNotExist Then
             ' Запуск процедуры создания кнопок на вкладке
-            CreateButtonsOnSSTab strPathFolderDRP, strPathFolderDB, i, pbDelta
+            CreateButtonsOnSSTab strPathFolderDRP, strPathFolderDB, I, pbDelta
         Else
-            SSTab1.TabEnabled(i) = False
+            SSTab1.TabEnabled(I) = False
 
             If mbTabHide Then
-                SSTab1.TabVisible(i) = False
+                SSTab1.TabVisible(I) = False
             End If
 
             ' грузим вкладки , но делаем скрытыми
-            If i Then
-                Load SSTab2(i)
-                Set SSTab2(i).Container = SSTab1
-                Load ctlScrollControl1(i)
-                Set ctlScrollControl1(i).Container = SSTab2(i)
-                SSTab2(i).Visible = False
+            If I Then
+                Load SSTab2(I)
+                Set SSTab2(I).Container = SSTab1
+                Load ctlScrollControl1(I)
+                Set ctlScrollControl1(I).Container = SSTab2(I)
+                SSTab2(I).Visible = False
             End If
         End If
 
@@ -4858,16 +4904,16 @@ Private Sub LoadButton()
     pbProgressBar.Visible = False
     ChangeFrmMainCaption
 
-    If optRezim_Upd.Value Then
-        optRezim_Upd_Click
-    End If
+'    If optRezim_Upd.Value Then
+'        optRezim_Upd_Click
+'    End If
 
     If acmdPackFiles(0).Visible Then
         ChangeStatusBarText strMessages(86)
         If mbDebugStandart Then DebugMode "Create Buttons: True"
     Else
 
-        If acmdPackFiles.Count <= 1 Then
+        If acmdPackFiles.count <= 1 Then
             ChangeStatusBarText strMessages(87)
             If mbDebugStandart Then DebugMode "Create Buttons: False"
             mnuRezimBaseDrvUpdateALL.Enabled = False
@@ -4925,7 +4971,7 @@ Private Sub LoadIconImage()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -4994,7 +5040,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadSSTabDesc()
 
-    Dim i As Long
+    Dim I As Long
 
     ' Устанавливаем шрифт закладок
     SetTabProperties SSTab1
@@ -5003,12 +5049,12 @@ Private Sub LoadSSTabDesc()
     ' Устанавливаем caption закладок
     With SSTab2
 
-        For i = .LBound To .UBound
-            .Item(i).TabCaption(0) = strSSTabTypeDPTab1
-            .Item(i).TabCaption(1) = strSSTabTypeDPTab2
-            .Item(i).TabCaption(2) = strSSTabTypeDPTab3
-            .Item(i).TabCaption(3) = strSSTabTypeDPTab4
-            .Item(i).TabCaption(4) = strSSTabTypeDPTab5
+        For I = .LBound To .UBound
+            .Item(I).TabCaption(0) = strSSTabTypeDPTab1
+            .Item(I).TabCaption(1) = strSSTabTypeDPTab2
+            .Item(I).TabCaption(2) = strSSTabTypeDPTab3
+            .Item(I).TabCaption(3) = strSSTabTypeDPTab4
+            .Item(I).TabCaption(4) = strSSTabTypeDPTab5
         Next
 
     End With
@@ -5388,7 +5434,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub PutAllDrivers2Log()
 
-    Dim i                      As Long
+    Dim I                      As Long
     Dim strTTipTextHeaders     As String
     Dim strTemp                As String
     Dim strLineAll             As String
@@ -5416,33 +5462,33 @@ Private Sub PutAllDrivers2Log()
 
     QuickSortMDArray arrDriversList, 1, 0
 
-    For i = 0 To UBound(arrDriversList, 2)
+    For I = 0 To UBound(arrDriversList, 2)
         'strDevID
-        strTemp = arrDriversList(0, i)
-        arrDriversList(0, i) = strTemp & Space$(lngSizeRow1Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(0, I)
+        arrDriversList(0, I) = strTemp & Space$(lngSizeRow1Max - Len(strTemp) + 1) & "| "
         'strDevPath
-        strTemp = arrDriversList(1, i)
-        arrDriversList(1, i) = strTemp & Space$(lngSizeRow2Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(1, I)
+        arrDriversList(1, I) = strTemp & Space$(lngSizeRow2Max - Len(strTemp) + 1) & "| "
         'strDevVer
-        strTemp = arrDriversList(2, i)
-        arrDriversList(2, i) = strTemp & Space$(lngSizeRow4Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(2, I)
+        arrDriversList(2, I) = strTemp & Space$(lngSizeRow4Max - Len(strTemp) + 1) & "| "
         'strDevVerLocal
-        strTemp = arrDriversList(3, i)
-        arrDriversList(3, i) = strTemp & Space$(lngSizeRow5Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(3, I)
+        arrDriversList(3, I) = strTemp & Space$(lngSizeRow5Max - Len(strTemp) + 1) & "| "
         ' strPriznakSravnenia
-        strTemp = arrDriversList(6, i)
-        arrDriversList(6, i) = strTemp & Space$(lngSizeRow9Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(6, I)
+        arrDriversList(6, I) = strTemp & Space$(lngSizeRow9Max - Len(strTemp) + 1) & "| "
         'strDevStatus & strDevName
-        strTemp = arrDriversList(4, i)
-        arrDriversList(4, i) = strTemp & Space$(lngSizeRow6Max - Len(strTemp) + 1) & "| "
+        strTemp = arrDriversList(4, I)
+        arrDriversList(4, I) = strTemp & Space$(lngSizeRow6Max - Len(strTemp) + 1) & "| "
         ' Секция
-        strTemp = arrDriversList(7, i)
-        arrDriversList(7, i) = strTemp & Space$(lngSizeRow13Max - Len(strTemp) + 1) & "|"
+        strTemp = arrDriversList(7, I)
+        arrDriversList(7, I) = strTemp & Space$(lngSizeRow13Max - Len(strTemp) + 1) & "|"
         ' Имя DP
-        strTemp = arrDriversList(12, i)
-        arrDriversList(12, i) = strTemp & Space$(lngSizeRowDPMax - Len(strTemp) + 1) & "|"
+        strTemp = arrDriversList(12, I)
+        arrDriversList(12, I) = strTemp & Space$(lngSizeRowDPMax - Len(strTemp) + 1) & "|"
         ' Итоговый
-        strLineAll = (arrDriversList(0, i) & arrDriversList(12, i) & arrDriversList(1, i) & arrDriversList(2, i) & arrDriversList(6, i)) & (arrDriversList(3, i) & arrDriversList(4, i) & arrDriversList(5, i))
+        strLineAll = (arrDriversList(0, I) & arrDriversList(12, I) & arrDriversList(1, I) & arrDriversList(2, I) & arrDriversList(6, I)) & (arrDriversList(3, I) & arrDriversList(4, I) & arrDriversList(5, I))
         If mbDebugStandart Then DebugMode strLineAll
     Next
 
@@ -5623,13 +5669,13 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
     Dim maxLengthRow5          As String
     Dim maxLengthRow6          As String
     Dim maxLengthRow9          As String
-    Dim TimeScriptRun          As Long
-    Dim TimeScriptFinish       As Long
+    Dim lngTimeScriptRun       As Long
+    Dim lngTimeScriptFinish    As Long
     Dim objTT                  As TipTool
     Dim mbObjTTNotExist        As Boolean
 
     If mbDebugStandart Then DebugMode str3VbTab & "ReadOrSaveToolTip - Start - Driverpack: " & strPackFileName
-    TimeScriptRun = GetTickCount
+    lngTimeScriptRun = GetTickCount
     ' Небольшое прерывание для большего отклика от приложения
     DoEvents
 
@@ -5639,7 +5685,7 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
         
         'Считываем класс пакета из файла
         If mbReadClasses Then
-            strFinishIniPath = BackslashAdd2Path(strPathDevDB) & GetFileName_woExt(strPackFileName) & ".ini"
+            strFinishIniPath = BackslashAdd2Path(strPathDevDB) & GetFileName_woExt(GetFileNameFromPath(strPackFileName)) & ".ini"
             strClassesName = IniStringPrivate("DriverPack", "classes", strFinishIniPath)
 
             ' Если такого значения в файле нет, то ничего не добавляем
@@ -5649,20 +5695,20 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             
             If LenB(strClassesName) Then
                 If Not mbDP_Is_aFolder Then
-                    strTTipTextHeadersTemp = (strPathDRP & str2vbNewLine & strPackFileName & vbNewLine) & (strTTipTextFileSize & strSpace & FileSizeApi(strPackFileNameFull) & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName)
+                    strTTipTextHeadersTemp = (strPathDRP & str2vbNewLine & strPackFileName & vbNewLine) & (strTTipTextFileSize & strSpace & GetFileSizeApiString(strPackFileNameFull) & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName)
                 Else
                     ' Пока уберем подсчет размера директории, так как очень медленно
-                    'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & FolderSizeApi(strPackFileNameFull, True) & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName
+                    'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & GetFolderSizeApiString(strPackFileNameFull, True) & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName
                     strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextClassDRV & strSpace & strClassesName
                 End If
             End If
         Else
 
             If Not mbDP_Is_aFolder Then
-                strTTipTextHeadersTemp = (strPathDRP & str2vbNewLine & strPackFileName) & (vbNewLine & strTTipTextFileSize & strSpace & FileSizeApi(strPackFileNameFull))
+                strTTipTextHeadersTemp = (strPathDRP & str2vbNewLine & strPackFileName) & (vbNewLine & strTTipTextFileSize & strSpace & GetFileSizeApiString(strPackFileNameFull))
             Else
                 ' Пока уберем подсчет размера директории, так как очень медленно
-                'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & FolderSizeApi(strPackFileNameFull, True)
+                'strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName & vbNewLine & strTTipTextFileSize & strSpace & GetFolderSizeApiString(strPackFileNameFull, True)
                 strTTipTextHeadersTemp = strPathDRP & str2vbNewLine & strPackFileName
             End If
         End If
@@ -5778,8 +5824,8 @@ Private Sub ReadOrSaveToolTip(ByVal strPathDevDB As String, ByVal strPathDRP As 
             TT.Tools.Add acmdPackFiles(Index).hWnd, , strTTipText, True
         End If
         
-        TimeScriptFinish = GetTickCount
-        If mbDebugStandart Then DebugMode str3VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        lngTimeScriptFinish = GetTickCount
+        If mbDebugStandart Then DebugMode str3VbTab & "ReadOrSaveToolTip - End - Time to Read Driverpack's - " & strPackFileName & ": " & CalculateTime(lngTimeScriptRun, lngTimeScriptFinish, True)
     Else
         If mbDebugDetail Then DebugMode str4VbTab & "ReadOrSaveToolTip: Empty Driverpack's Name"
     End If
@@ -5796,7 +5842,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Long, ByVal lngBtnTabCnt As Long, objScrollControl As Object)
 
-    Dim i               As Long
+    Dim I               As Long
     Dim lngStartPosLeft As Long
     Dim lngStartPosTop  As Long
     Dim lngNextPosLeft  As Long
@@ -5819,9 +5865,9 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
         End If
     End If
     
-    For i = lngBtnPrevCnt To lngBtnTabCnt
+    For I = lngBtnPrevCnt To lngBtnTabCnt
 
-        With acmdPackFiles(i)
+        With acmdPackFiles(I)
             If Not (.PictureNormal Is Nothing) Then
     
                 Select Case lngTab2Tab
@@ -5845,7 +5891,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     
                         If .PictureNormal = imgOkAttention.Picture Then
                             GoTo MoveBtn
-                        ElseIf .PictureNormal = imgOkAttentionOLD.Picture Then
+                        ElseIf .PictureNormal = imgOkAttentionOld.Picture Then
                             GoTo MoveBtn
                         ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
                             GoTo MoveBtn
@@ -5858,7 +5904,7 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     
                         If .PictureNormal = imgOK.Picture Then
                             GoTo MoveBtn
-                        ElseIf .PictureNormal = imgOkAttentionOLD.Picture Then
+                        ElseIf .PictureNormal = imgOkAttentionOld.Picture Then
                             GoTo MoveBtn
                         ElseIf .PictureNormal = imgOkAttentionNew.Picture Then
                             GoTo MoveBtn
@@ -5883,11 +5929,11 @@ Private Sub ReOrderBtnOnTab2(ByVal lngTab2Tab As Long, ByVal lngBtnPrevCnt As Lo
     
 MoveBtn:
                 ' Собственно перемещаем кнопки на другую вкладку
-                Set chkPackFiles(i).Container = objScrollControl
+                Set chkPackFiles(I).Container = objScrollControl
                 Set .Container = objScrollControl
     
                 ' положения кнопок
-                If i = 0 Then
+                If I = 0 Then
                     lngNextPosLeft = lngStartPosLeft
                     lngNextPosTop = lngStartPosTop
                 Else
@@ -5903,7 +5949,7 @@ MoveBtn:
                             End If
     
                         Else
-                            If i = lngBtnPrevCnt Then
+                            If I = lngBtnPrevCnt Then
                                 If IsChildOfControl(acmdPackFiles(0).hWnd, objScrollControl.hWnd) = False Then
                                     lngNextPosLeft = lngStartPosLeft
                                     lngNextPosTop = lngStartPosTop
@@ -5933,10 +5979,10 @@ MoveBtn:
                 ' Перемещение кнопок и checkbox по расчитанным ранее параметрам
                 .Move lngNextPosLeft, lngNextPosTop
                 .TabStop = True
-                chkPackFiles(i).Move (lngNextPosLeft + 50), (lngNextPosTop + (lngButtonHeight - chkPackFiles(i).Height) / 2)
-                chkPackFiles(i).ZOrder 0
+                chkPackFiles(I).Move (lngNextPosLeft + 50), (lngNextPosTop + (lngButtonHeight - chkPackFiles(I).Height) / 2)
+                chkPackFiles(I).ZOrder 0
                 ' Увеличиваем счетчики
-                lngBtnPrevNum = i
+                lngBtnPrevNum = I
                 lngNoDP4ModeCnt = lngNoDP4ModeCnt + 1
 NextBtn:
                 ' Clear value
@@ -5945,7 +5991,7 @@ NextBtn:
                 End If
             End If
         End With
-    Next i
+    Next I
 
     If lngNoDP4ModeCnt = 0 Then
 
@@ -6140,36 +6186,26 @@ Private Sub SelectStartMode(Optional miModeTemp As Long = 0, Optional mbTab2 As 
         Case 1
 
             If optRezim_Intellect.Enabled Then
-                'optRezim_Upd.Value = False
-                'optRezim_Intellect.Value = False
                 optRezim_Intellect.Value = True
-                optRezim_Intellect_Click
+                'optRezim_Intellect_Click
             Else
-                'optRezim_Ust.Value = False
-                'optRezim_Intellect.Value = False
                 optRezim_Upd.Value = True
-                optRezim_Upd_Click
+                'optRezim_Upd_Click
             End If
 
         Case 2
 
             If optRezim_Ust.Enabled Then
-                'optRezim_Upd.Value = False
-                'optRezim_Intellect.Value = False
                 optRezim_Ust.Value = True
-                optRezim_Ust_Click
+                'optRezim_Ust_Click
             Else
-                'optRezim_Ust.Value = False
-                'optRezim_Intellect.Value = False
                 optRezim_Upd.Value = True
-                optRezim_Upd_Click
+                'optRezim_Upd_Click
             End If
 
         Case 3
-            'optRezim_Ust.Value = False
-            'optRezim_Intellect.Value = False
             optRezim_Upd.Value = True
-            optRezim_Upd_Click
+            'optRezim_Upd_Click
     End Select
 
     ' выставляем вторую вкладку только при старте программы
@@ -6203,13 +6239,13 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function SetFirstEnableTab() As Long
 
-    Dim i As Long
+    Dim I As Long
 
-    For i = 0 To SSTab1.Tabs - 1
+    For I = 0 To SSTab1.Tabs - 1
 
-        If SSTab1.TabVisible(i) Then
-            If SSTab1.TabEnabled(i) Then
-                SetFirstEnableTab = i
+        If SSTab1.TabVisible(I) Then
+            If SSTab1.TabEnabled(I) Then
+                SetFirstEnableTab = I
 
                 Exit For
 
@@ -6229,7 +6265,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, ByVal lngCntTab As Long)
 
-    Dim i                As Integer
+    Dim I                As Integer
     Dim SSTabHeight      As Long
     Dim SSTabTabHeight   As Long
     Dim miValue3         As Long
@@ -6240,11 +6276,11 @@ Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, By
     SSTabHeight = SSTab1.Height
     miValue3 = frRunChecked.Left + frRunChecked.Width - 50
 
-    For i = SSTab2.LBound To SSTab2.UBound
+    For I = SSTab2.LBound To SSTab2.UBound
 
-        With SSTab2(i)
+        With SSTab2(I)
 
-            If Not (SSTab2.Item(i) Is Nothing) Then
+            If Not (SSTab2.Item(I) Is Nothing) Then
 
                 If lngCntTab > lngOSCountPerRow Then
                     If sgnNum = LngValue Then
@@ -6263,21 +6299,21 @@ Private Sub SetScrollFramePos(ByVal sgnNum As Single, ByVal LngValue As Long, By
                     .Width = miValue3 - 55
                 End If
 
-                .Visible = SSTab1.TabEnabled(i)
+                .Visible = SSTab1.TabEnabled(I)
 
                 If .Visible Then
                     lngControlHeight = .Height - .TabHeight - 120
                     lngControlWidth = .Width - 100
-                    ctlScrollControl1(i).Height = lngControlHeight
-                    ctlScrollControl1(i).Width = lngControlWidth
-                    ctlScrollControlTab1(i).Height = lngControlHeight
-                    ctlScrollControlTab1(i).Width = lngControlWidth
-                    ctlScrollControlTab2(i).Height = lngControlHeight
-                    ctlScrollControlTab2(i).Width = lngControlWidth
-                    ctlScrollControlTab3(i).Height = lngControlHeight
-                    ctlScrollControlTab3(i).Width = lngControlWidth
-                    ctlScrollControlTab4(i).Height = lngControlHeight
-                    ctlScrollControlTab4(i).Width = lngControlWidth
+                    ctlScrollControl1(I).Height = lngControlHeight
+                    ctlScrollControl1(I).Width = lngControlWidth
+                    ctlScrollControlTab1(I).Height = lngControlHeight
+                    ctlScrollControlTab1(I).Width = lngControlWidth
+                    ctlScrollControlTab2(I).Height = lngControlHeight
+                    ctlScrollControlTab2(I).Width = lngControlWidth
+                    ctlScrollControlTab3(I).Height = lngControlHeight
+                    ctlScrollControlTab3(I).Width = lngControlWidth
+                    ctlScrollControlTab4(I).Height = lngControlHeight
+                    ctlScrollControlTab4(I).Width = lngControlWidth
                 End If
             End If
 
@@ -6323,12 +6359,12 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SetTabPropertiesTabDrivers()
-    Dim i As Long
+    Dim I As Long
     
     With SSTab2
 
-        For i = .LBound To .UBound
-            SetTab2Properties .Item(i)
+        For I = .LBound To .UBound
+            SetTab2Properties .Item(I)
         Next
 
     End With
@@ -6342,7 +6378,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
 
-    Dim i               As Long
+    Dim I               As Long
     Dim i_i             As Long
     Dim miTabIndex      As Long
     Dim miFirstTabIndex As Long
@@ -6354,11 +6390,11 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
     Dim lng_x64         As Long
     Dim lngSupportedOS  As Long
 
-    For i = 0 To UBound(arrOSList)
-        strTabName = arrOSList(i).Name
-        lng_x64 = CLng(arrOSList(i).is64bit)
+    For I = 0 To UBound(arrOSList)
+        strTabName = arrOSList(I).Name
+        lng_x64 = CLng(arrOSList(I).is64bit)
 
-        If InStr(arrOSList(i).Ver, strOSCurrentVersion) Then
+        If InStr(arrOSList(I).Ver, strOSCurrentVersion) Then
 
             ' Если в списке есть ОС x64
             If lng_x64 = 1 Then
@@ -6368,24 +6404,24 @@ Private Sub SetTabsNameAndCurrTab(ByVal mbSecondStart As Boolean)
             End If
 
             If lng_x64 = 2 Then
-                miTabIndex = i
+                miTabIndex = I
                 strTabIndex = IIf(LenB(strTabIndex), strTabIndex & strSpace, vbNullString) & CStr(miTabIndex)
                 lngSupportedOS = lngSupportedOS + 1
             ElseIf lng_x64 = 3 Then
-                miTabIndex = i
+                miTabIndex = I
                 strTabIndex = IIf(LenB(strTabIndex), strTabIndex & strSpace, vbNullString) & CStr(miTabIndex)
                 lngSupportedOS = lngSupportedOS + 1
             Else
 
                 If CBool(lng_x64) = mbIsWin64 Then
-                    miTabIndex = i
+                    miTabIndex = I
                     strTabIndex = IIf(LenB(strTabIndex), strTabIndex & strSpace, vbNullString) & CStr(miTabIndex)
                     lngSupportedOS = lngSupportedOS + 1
                 End If
             End If
         End If
 
-        SSTab1.TabCaption(i) = strTabName
+        SSTab1.TabCaption(I) = strTabName
     Next
 
     'Если среди вкладок не найдено поддержки вашей ОС
@@ -6685,13 +6721,13 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TabInstBlockOnUpdate(ByVal mbBlock As Boolean)
 
-    Dim i As Long
+    Dim I As Long
 
-    For i = SSTab2.LBound To SSTab2.UBound
+    For I = SSTab2.LBound To SSTab2.UBound
 
-        If SSTab1.TabVisible(i) Then
+        If SSTab1.TabVisible(I) Then
 
-            With SSTab2(i)
+            With SSTab2(I)
                 .TabEnabled(1) = Not mbBlock
                 .TabEnabled(2) = Not mbBlock
                 .TabEnabled(3) = Not mbBlock
@@ -6712,7 +6748,7 @@ Private Sub ToolTipBtnReLoad()
     If mbDebugStandart Then DebugMode str2VbTab & "ToolTipBtnReLoad-Start"
 
     'Если подсказки уже созданы, то очистка
-    If TT.Tools.Count Then
+    If TT.Tools.count Then
         TT.Tools.Clear
         TT.Title = strTTipTextTitle
     End If
@@ -6732,7 +6768,7 @@ Private Sub ToolTipOtherControlReLoad()
 
     With TTOtherControl
     'Если подсказки уже созданы, то очистка
-        If .Tools.Count Then
+        If .Tools.count Then
             .Tools.Clear
             .Font.Name = strFontMainForm_Name
             .Font.Size = lngFontMainForm_Size
@@ -6812,7 +6848,7 @@ Private Sub ToolTipStatusLoad()
     With TTStatusIcon
 
         'Если уже созданы, то очистка
-        If .Tools.Count Then
+        If .Tools.count Then
             .Tools.Clear
         End If
 
@@ -6826,7 +6862,7 @@ Private Sub ToolTipStatusLoad()
         .Tools.Add imgOkNew.hWnd, , arrTTipStatusIcon(2)
         .Tools.Add imgOkOld.hWnd, , arrTTipStatusIcon(3)
         .Tools.Add imgOkAttentionNew.hWnd, , arrTTipStatusIcon(4)
-        .Tools.Add imgOkAttentionOLD.hWnd, , arrTTipStatusIcon(5)
+        .Tools.Add imgOkAttentionOld.hWnd, , arrTTipStatusIcon(5)
         .Tools.Add imgNo.hWnd, , arrTTipStatusIcon(6)
         .Tools.Add imgNoDB.hWnd, , arrTTipStatusIcon(7)
         .Tools.Add imgUpdBD.hWnd, , arrTTipStatusIcon(8)
@@ -6868,21 +6904,21 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName As String, ByVal strMaskFile As String, ByVal strDest4OnlyUnpack As String) As Boolean
 
-    Dim WorkDir               As String
+    Dim WorkDir                  As String
     Dim strPackGetFileName_woExt As String
-    Dim cmdString             As String
-    Dim ArchTempPath          As String
-    Dim strPhysXPath          As String
-    Dim strLangPath           As String
-    Dim strRuntimes           As String
-    Dim strClassesName        As String
-    Dim strFinishIniPath      As String
-    Dim ret                   As Long
-    Dim strMaskFile_x()       As String
-    Dim i                     As Long
-    Dim strMaskFile_x_TEMP    As String
-    Dim strMaskFile_x_TEMPTo  As String
-    Dim strMaskFile_xx()      As String
+    Dim cmdString                As String
+    Dim ArchTempPath             As String
+    Dim strPhysXPath             As String
+    Dim strLangPath              As String
+    Dim strRuntimes              As String
+    Dim strClassesName           As String
+    Dim strFinishIniPath         As String
+    Dim ret                      As Long
+    Dim strMaskFile_x()          As String
+    Dim I                        As Long
+    Dim strMaskFile_x_TEMP       As String
+    Dim strMaskFile_x_TEMPTo     As String
+    Dim strMaskFile_xx()         As String
 
     If mbDebugStandart Then DebugMode "UnPackDPFile-Start" & vbNewLine & _
               "UnPackDPFile: strMaskFile=" & strMaskFile
@@ -6899,7 +6935,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
             ArchTempPath = strWorkTempBackSL & strPackGetFileName_woExt
 
             If PathExists(WorkDir) Then
-                DelRecursiveFolder (WorkDir)
+                DelRecursiveFolder WorkDir
             End If
         End If
 
@@ -6908,7 +6944,7 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
     End If
 
     If Not mbDP_Is_aFolder Then
-        cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & ArchTempPath & strQuotes & " -r " & strQuotes & strPathDRP & strPackFileName & strQuotes & strSpace & strMaskFile
+        cmdString = strQuotes & strArh7zExePath & strQuotes & " x -y -o" & strQuotes & ArchTempPath & strQuotes & " -r " & strQuotes & strPathDRP & strPackFileName & strQuotes & strSpace & strMaskFile
         ChangeStatusBarText strMessages(97) & strSpace & strPackFileName
         If mbDebugStandart Then DebugMode "Extract: " & cmdString
 
@@ -6990,8 +7026,8 @@ Private Function UnPackDPFile(ByVal strPathDRP As String, ByVal strPackFileName 
         If InStr(strMaskFile, strSpace) Then
             strMaskFile_x = Split(strMaskFile, strSpace)
 
-            For i = 0 To UBound(strMaskFile_x)
-                strMaskFile_x_TEMP = BackslashDelFromPath(strMaskFile_x(i))
+            For I = 0 To UBound(strMaskFile_x)
+                strMaskFile_x_TEMP = BackslashDelFromPath(strMaskFile_x(I))
                 strMaskFile_xx = Split(strMaskFile_x_TEMP, vbBackslash)
 
                 If UBound(strMaskFile_xx) > 1 Then
@@ -7028,14 +7064,14 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub UnPackDPFileAdd(ByVal strPathAddFile As String, ByVal strPathDRP As String, ByVal strArchTempPath As String)
 
-    Dim cmdString As String
+    Dim cmdString          As String
     Dim strPathAddFilePath As String
 
     strPathAddFilePath = PathCombine(strPathDRP, strPathAddFile)
 
     If PathExists(strPathAddFilePath) Then
         If Not PathIsAFolder(strPathAddFilePath) Then
-            cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & strArchTempPath & strQuotes & " -r " & strQuotes & strPathAddFilePath & strQuotes & " *.*"
+            cmdString = strQuotes & strArh7zExePath & strQuotes & " x -y -o" & strQuotes & strArchTempPath & strQuotes & " -r " & strQuotes & strPathAddFilePath & strQuotes & " *.*"
             ChangeStatusBarText strMessages(98) & strSpace & strPathAddFilePath
             If mbDebugStandart Then DebugMode "Extract: " & cmdString
 
@@ -7077,7 +7113,7 @@ Private Function UnpackOtherFile(ByVal strArcDRPPath As String, ByVal strWorkDir
               "UnpackOtherFile: strArcDRPPath=" & strArcDRPPath & vbNewLine & _
               "UnpackOtherFile: strMaskFile=" & strMaskFile
      
-    cmdString = strQuotes & strArh7zExePATH & strQuotes & " x -yo" & strQuotes & strWorkDir & strQuotes & " -r " & strQuotes & strArcDRPPath & strQuotes & strSpace & strMaskFile
+    cmdString = strQuotes & strArh7zExePath & strQuotes & " x -y -o" & strQuotes & strWorkDir & strQuotes & " -r " & strQuotes & strArcDRPPath & strQuotes & strSpace & strMaskFile
     ChangeStatusBarText strMessages(99) & strSpace & strArcDRPPath
     If mbDebugStandart Then DebugMode "Extract: " & cmdString
     UnpackOtherFile = True
@@ -7114,29 +7150,29 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
 
-    Dim ButtIndex        As Long
-    Dim ButtCount        As Long
-    Dim i                As Integer
-    Dim i_Tab            As Integer
-    Dim TimeScriptRun    As Long
-    Dim TimeScriptFinish As Long
-    Dim AllTimeScriptRun As String
-    Dim miPbInterval     As Long
-    Dim miPbNext         As Long
-    Dim mbDpNoDBExist    As Boolean
-    Dim lngSStabStart    As Long
-    Dim strPackFileName  As String
-    Dim strPathDRP       As String
-    Dim strPathDevDB     As String
-    Dim lngTabN          As Long
-    Dim lngNumButtOnTab  As Long
+    Dim lngButtIndex        As Long
+    Dim lngButtCount        As Long
+    Dim I                   As Integer
+    Dim i_Tab               As Integer
+    Dim lngTimeScriptRun    As Long
+    Dim lngTimeScriptFinish As Long
+    Dim strTimeScriptTotal  As String
+    Dim miPbInterval        As Long
+    Dim miPbNext            As Long
+    Dim mbDpNoDBExist       As Boolean
+    Dim lngSStabStart       As Long
+    Dim strPackFileName     As String
+    Dim strPathDRP          As String
+    Dim strPathDevDB        As String
+    Dim lngTabN             As Long
+    Dim lngNumButtOnTab     As Long
 
     If mbDebugStandart Then DebugMode "StatusUpdateAll-Start"
     lngSStabStart = SSTab1.Tab
     ctlUcStatusBar1.PanelText(1) = strMessages(127)
 
     ' Если кнопка всего одна, то проверяем на какой она вкладке и устанавливаем ее активной
-    If acmdPackFiles.Count = 1 Then
+    If acmdPackFiles.count = 1 Then
         If acmdPackFiles(0).Visible Then
 
             With SSTab1
@@ -7172,24 +7208,24 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
     BlockControl False
     DoEvents
     SSTab1.Tab = i_Tab
-    TimeScriptRun = 0
-    AllTimeScriptRun = vbNullString
-    TimeScriptRun = GetTickCount
-    ButtIndex = acmdPackFiles.UBound
-    ButtCount = acmdPackFiles.Count
+    lngTimeScriptRun = 0
+    strTimeScriptTotal = vbNullString
+    lngTimeScriptRun = GetTickCount
+    lngButtIndex = acmdPackFiles.UBound
+    lngButtCount = acmdPackFiles.count
     ' Отображаем ProgressBar
     CreateProgressNew
         
-    If ButtIndex Then
+    If lngButtIndex Then
         ' В цикле обрабатываем обновление
-        miPbInterval = 1000 / ButtCount
+        miPbInterval = 1000 / lngButtCount
         miPbNext = 0
 
-        For i = 0 To ButtIndex
+        For I = 0 To lngButtIndex
             lngTabN = SSTab1.Tab
             lngNumButtOnTab = arrOSList(SSTab1.Tab).CntBtn
 
-            Do While i >= lngNumButtOnTab
+            Do While I >= lngNumButtOnTab
                 lngTabN = lngTabN + 1
                 SSTab1.Tab = lngTabN
                 DoEvents
@@ -7200,7 +7236,7 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
             strPathDRP = arrOSList(lngTabN).drpFolderFull
             strPathDevDB = arrOSList(lngTabN).devIDFolderFull
 
-            With acmdPackFiles(i)
+            With acmdPackFiles(I)
 
                 If Not mbReloadTT Then
                     ' Кнопка выглядит нажатой
@@ -7209,13 +7245,13 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
                     Set .PictureNormal = imgUpdBD.Picture
                                         
                     strPackFileName = .Tag
-                    ChangeStatusBarText "(" & i + 1 & strSpace & strMessages(124) & strSpace & ButtCount & "): " & strMessages(89) & strSpace & strPackFileName
+                    ChangeStatusBarText "(" & I + 1 & strSpace & strMessages(124) & strSpace & lngButtCount & "): " & strMessages(89) & strSpace & strPackFileName
                     ' Обновление подсказки
-                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i, True
+                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, I, True
                 Else
                     strPackFileName = .Tag
                     ' Только обновление подсказки (используется при смене языка, для изменения шапки таблицы в подсказке)
-                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i, , True
+                    ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, I, , True
                 End If
 
             End With
@@ -7245,11 +7281,11 @@ Public Sub UpdateStatusButtonAll(Optional mbReloadTT As Boolean = False)
     End If
 
     ' подсчет времни выполнения и формирования сообщения в статусе
-    TimeScriptFinish = GetTickCount
-    AllTimeScriptRun = CalculateTime(TimeScriptRun, TimeScriptFinish)
+    lngTimeScriptFinish = GetTickCount
+    strTimeScriptTotal = CalculateTime(lngTimeScriptRun, lngTimeScriptFinish)
 
     If mbDpNoDBExist Then
-        ChangeStatusBarText strMessages(67) & strSpace & AllTimeScriptRun
+        ChangeStatusBarText strMessages(67) & strSpace & strTimeScriptTotal
     Else
         ChangeStatusBarText strMessages(68)
     End If
@@ -7271,28 +7307,28 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub UpdateStatusButtonTAB()
 
-    Dim i                 As Integer
-    Dim TimeScriptRun     As Long
-    Dim TimeScriptFinish  As Long
-    Dim AllTimeScriptRun  As String
-    Dim miPbInterval      As Long
-    Dim miPbNext          As Long
-    Dim mbDpNoDBExist     As Boolean
-    Dim strPackFileName   As String
-    Dim strPathDRP        As String
-    Dim strPathDevDB      As String
-    Dim lngCntBtnTab      As Long
-    Dim lngCntBtnPrevious As Long
-    Dim lngSSTab1Tab      As Long
-    Dim lngCurrBtn        As Long
-    Dim lngSummBtn        As Long
+    Dim I                   As Integer
+    Dim lngTimeScriptRun    As Long
+    Dim lngTimeScriptFinish As Long
+    Dim strTimeScriptTotal  As String
+    Dim miPbInterval        As Long
+    Dim miPbNext            As Long
+    Dim mbDpNoDBExist       As Boolean
+    Dim strPackFileName     As String
+    Dim strPathDRP          As String
+    Dim strPathDevDB        As String
+    Dim lngCntBtnTab        As Long
+    Dim lngCntBtnPrevious   As Long
+    Dim lngSSTab1Tab        As Long
+    Dim lngCurrBtn          As Long
+    Dim lngSummBtn          As Long
 
     If mbDebugStandart Then DebugMode "UpdateStatusButtonTAB-Start"
     BlockControl False
     ctlUcStatusBar1.PanelText(1) = strMessages(127)
     DoEvents
-    AllTimeScriptRun = vbNullString
-    TimeScriptRun = GetTickCount
+    strTimeScriptTotal = vbNullString
+    lngTimeScriptRun = GetTickCount
     
     ' Отображаем ProgressBar
     CreateProgressNew
@@ -7320,22 +7356,21 @@ Public Sub UpdateStatusButtonTAB()
         miPbInterval = 1000 / lngSummBtn
         miPbNext = 0
 
-        For i = lngCntBtnPrevious To lngCntBtnTab
+        For I = lngCntBtnPrevious To lngCntBtnTab
             lngCurrBtn = lngCurrBtn + 1
             mbDpNoDBExist = True
             strPathDRP = arrOSList(lngSSTab1Tab).drpFolderFull
             strPathDevDB = arrOSList(lngSSTab1Tab).devIDFolderFull
 
-            With acmdPackFiles(i)
+            With acmdPackFiles(I)
                 ' Кнопка выглядит нажатой
                 .Value = True
-                
                 Set .PictureNormal = imgUpdBD.Picture
                 
                 strPackFileName = .Tag
                 ChangeStatusBarText "(" & lngCurrBtn & strSpace & strMessages(124) & strSpace & lngSummBtn & "): " & strMessages(89) & strSpace & strPackFileName
                 ' Обновление подсказки
-                ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, i
+                ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, I
                                 
             End With
 
@@ -7358,11 +7393,11 @@ Public Sub UpdateStatusButtonTAB()
     End If
 
     ' подсчет времни выполнения и формирования сообщения в статусе
-    TimeScriptFinish = GetTickCount
-    AllTimeScriptRun = CalculateTime(TimeScriptRun, TimeScriptFinish)
+    lngTimeScriptFinish = GetTickCount
+    strTimeScriptTotal = CalculateTime(lngTimeScriptRun, lngTimeScriptFinish)
 
     If mbDpNoDBExist Then
-        ChangeStatusBarText strMessages(67) & strSpace & AllTimeScriptRun
+        ChangeStatusBarText strMessages(67) & strSpace & strTimeScriptTotal
     Else
         ChangeStatusBarText strMessages(68)
     End If
@@ -7381,8 +7416,12 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub VerModules()
-    MsgBox strMessages(35) & vbNewLine & "DPinst.exe (x86)" & vbTab & GetFileVersionOnly(strDPInstExePath) & vbNewLine & "DPinst.exe (x64)" & vbTab & GetFileVersionOnly(strDPInstExePath64) & vbNewLine & "DevCon.exe (x86)" & vbTab & _
-                                GetFileVersionOnly(strDevConExePath) & vbNewLine & "7za.exe (x86)" & vbTab & GetFileVersionOnly(strArh7zExePATH), vbInformation, strProductName
+    MsgBox strMessages(35) & vbNewLine & _
+           "DPinst.exe (x86)" & vbTab & GetFileVersionOnly(strDPInstExePath86) & vbNewLine & _
+           "DPinst.exe (x64)" & vbTab & GetFileVersionOnly(strDPInstExePath64) & vbNewLine & _
+           "DevCon.exe (x86)" & vbTab & GetFileVersionOnly(strDevConExePath) & vbNewLine & _
+           "7za.exe (x86)" & vbTab & GetFileVersionOnly(strArh7zExePath86) & vbNewLine & _
+           "7za.exe (x64)" & vbTab & GetFileVersionOnly(strArh7zExePath64), vbInformation, strProductName
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -7399,7 +7438,7 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
     Dim strSectionName     As String
     Dim strFinishIniPath   As String
     Dim lngEXCCount        As Long
-    Dim i                  As Long
+    Dim I                  As Long
     Dim ii                 As Long
 
     If mbDebugStandart Then DebugMode "WorkWithFinish-Start"
@@ -7411,7 +7450,7 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
             For ii = 0 To UBound(strPathDRPList_x)
                 strSectionName = GetFileNameFromPath(BackslashDelFromPath(strPathDRPList_x(ii)))
                 ChangeStatusBarText strMessages(100) & " '" & strSectionName & "'"
-                strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, GetFileName_woExt(strPackFileName) & ".ini")
+                strFinishIniPath = PathCombine(arrOSList(SSTab1.Tab).devIDFolderFull, GetFileName_woExt(GetFileNameFromPath(strPackFileName)) & ".ini")
 
                 If PathExists(strFinishIniPath) Then
                     If Not PathIsAFolder(strFinishIniPath) Then
@@ -7424,8 +7463,8 @@ Private Sub WorkWithFinish(ByVal strPathDRP As String, ByVal strPackFileName As 
 
                         If lngEXCCount Then
 
-                            For i = 1 To lngEXCCount
-                                FindAndInstallPanel strPathDRP & strPackFileName, strFinishIniPath, strSectionName, i, strWorkPath
+                            For I = 1 To lngEXCCount
+                                FindAndInstallPanel strPathDRP & strPackFileName, strFinishIniPath, strSectionName, I, strWorkPath
                             Next
 
                         End If
@@ -7450,9 +7489,9 @@ Private Sub acmdPackFiles_Click(Index As Integer)
     Dim strPackFileName       As String
     Dim strPathDRP            As String
     Dim strPathDevDB          As String
-    Dim TimeScriptRun         As Long
-    Dim TimeScriptFinish      As Long
-    Dim AllTimeScriptRun      As String
+    Dim lngTimeScriptRun      As Long
+    Dim lngTimeScriptFinish   As Long
+    Dim strTimeScriptTotal    As String
     Dim strFileName_woExt     As String
     Dim cmdString             As String
     Dim ArchTempPath          As String
@@ -7496,21 +7535,21 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                 If mbIsDriveCDRoom Then
                     MsgBox strMessages(16), vbInformation, strProductName
                 Else
-                    TimeScriptRun = 0
-                    TimeScriptFinish = 0
-                    AllTimeScriptRun = vbNullString
+                    lngTimeScriptRun = 0
+                    lngTimeScriptFinish = 0
+                    strTimeScriptTotal = vbNullString
                     Set acmdPackFiles(Index).PictureNormal = imgUpdBD.Picture
                     ' изменение положения прогресс-анимации
                     ChangeStatusBarText strMessages(61) & strSpace & strPackFileName, strMessages(128)
-                    TimeScriptRun = GetTickCount
+                    lngTimeScriptRun = GetTickCount
                     ' запуск построения БД
                     DevParserByRegExp strPackFileName, strPathDRP, strPathDevDB
                     ' Обновление подсказки
                     ReadOrSaveToolTip strPathDevDB, strPathDRP, strPackFileName, Index, True
-                    TimeScriptFinish = GetTickCount
-                    AllTimeScriptRun = CalculateTime(TimeScriptRun, TimeScriptFinish, True)
-                    ChangeStatusBarText strMessages(62) & strSpace & AllTimeScriptRun
-                    If mbDebugStandart Then DebugMode vbTab & "Create Index: All time for create Base for file: " & AllTimeScriptRun
+                    lngTimeScriptFinish = GetTickCount
+                    strTimeScriptTotal = CalculateTime(lngTimeScriptRun, lngTimeScriptFinish, True)
+                    ChangeStatusBarText strMessages(62) & strSpace & strTimeScriptTotal
+                    If mbDebugStandart Then DebugMode vbTab & "Create Index: All time for create Base for file: " & strTimeScriptTotal
                     
                     If Not mbGroupTask Then
                         ' Обновить список неизвестных дров и описание для кнопки
@@ -7612,9 +7651,9 @@ Private Sub acmdPackFiles_Click(Index As Integer)
                     With New CommonDialog
                         .InitDir = ArchTempPath
                         .DialogTitle = strMessages(131)
-                        .Flags = CdlBIFNewDialogStyle
+                        .flags = CdlBIFNewDialogStyle
         
-                        If .ShowFolder Then
+                        If .ShowFolderBrowser Then
                             ArchTempPath = .FileName
                         Else
                             '# if user cancel #
@@ -7736,14 +7775,19 @@ Private Sub acmdPackFiles_Click(Index As Integer)
             mbDevParserRun = False
 
             If mbGroupTask Then
-                ' Удаление временных файлов
-                ChangeStatusBarText strMessages(81), strMessages(130)
-                strFileName_woExt = GetFileName_woExt(strPackFileName)
-                ArchTempPath = strWorkTempBackSL & strFileName_woExt
-                
-                If PathExists(ArchTempPath) Then
-                    DelRecursiveFolder ArchTempPath
+            
+                ' Удаление временных файлов для каждого пакета, если выставлено в настройках
+                ' Если размер свободного места на диске мал, то удаляем тоже
+                If mbCleanTempForEachDP Or lngFreeSpaceSysDrive < 2000 Then
+                    ChangeStatusBarText strMessages(81), strMessages(130)
+                    strFileName_woExt = GetFileName_woExt(GetFileNameFromPath(strPackFileName))
+                    ArchTempPath = strWorkTempBackSL & strFileName_woExt
+    
+                    If PathExists(ArchTempPath) Then
+                        DelRecursiveFolder ArchTempPath
+                    End If
                 End If
+                
             Else
                 BlockControl True
             End If
@@ -7770,6 +7814,7 @@ Private Sub acmdPackFiles_KeyDown(Index As Integer, KeyCode As Integer, Shift As
     If KeyCode = vbKeySpace Then
         
         If chkPackFiles(Index).Value Then
+            'Abs(acmdPackFiles(Index).Value)
             chkPackFiles(Index).Value = 0
         Else
             chkPackFiles(Index).Value = 1
@@ -7837,7 +7882,7 @@ Private Sub chkPackFiles_Click(Index As Integer)
 
     Dim lngCheckCount As Long
 
-    chkPackFiles(Index).Value = chkPackFiles(Index).Value
+    'chkPackFiles(Index).Value = chkPackFiles(Index).Value
     lngCheckCount = FindCheckCount
     cmdRunTask.Enabled = lngCheckCount
 
@@ -7847,7 +7892,6 @@ Private Sub chkPackFiles_Click(Index As Integer)
         ChangeStatusBarText strMessages(105), , False
     End If
 
-    chkPackFiles(Index).Refresh
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -7857,11 +7901,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmbCheckButton_Click()
 
-    Dim strTextforCheck As String
-
-    strTextforCheck = cmbCheckButton.Text
-
-    If StrComp(strTextforCheck, strCmbChkBtnListElement2, vbTextCompare) = 0 Then
+    If StrComp(cmbCheckButton.Text, strCmbChkBtnListElement2, vbTextCompare) = 0 Then
         LoadIconImage2Object cmdCheck, "BTN_UNCHECKMARK", strPathImageMainWork
     Else
         LoadIconImage2Object cmdCheck, "BTN_CHECKMARK", strPathImageMainWork
@@ -7885,12 +7925,12 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdCheck_Click()
 
-    Dim i                 As Long
-    Dim strTextforCheck   As String
+    Dim I                 As Long
     Dim lngCntBtnTab      As Long
     Dim lngCntBtnPrevious As Long
     Dim lngCheckCount     As Long
     Dim lngSSTab1Tab      As Long
+    Dim strTextforCheck   As String
 
     If mbDebugStandart Then DebugMode "cmdCheck_Click-Start"
     CheckAllButton False
@@ -7925,16 +7965,16 @@ Private Sub cmdCheck_Click()
             '"Все на текущей вкладке"
         Case strCmbChkBtnListElement1
 
-            For i = lngCntBtnPrevious To lngCntBtnTab
+            For I = lngCntBtnPrevious To lngCntBtnTab
 
                 If lngCntBtnPrevious <> lngCntBtnTab Then
 
-                    With acmdPackFiles(i)
+                    With acmdPackFiles(I)
 
                         If Not (.PictureNormal Is Nothing) Then
                             If .Visible Then
                                 If .Left Then
-                                    chkPackFiles(i).Value = True
+                                    chkPackFiles(I).Value = True
                                 End If
                             End If
                         End If
@@ -7949,12 +7989,12 @@ Private Sub cmdCheck_Click()
         Case strCmbChkBtnListElement4
 
             With acmdPackFiles
-                For i = .LBound To .UBound
+                For I = .LBound To .UBound
     
-                    If Not (.Item(i).PictureNormal Is Nothing) Then
-                        If .Item(i).PictureNormal = imgNoDB.Picture Then
-                            If .Item(i).Visible Then
-                                chkPackFiles(i).Value = True
+                    If Not (.Item(I).PictureNormal Is Nothing) Then
+                        If .Item(I).PictureNormal = imgNoDB.Picture Then
+                            If .Item(I).Visible Then
+                                chkPackFiles(I).Value = True
                             End If
                         End If
                     End If
@@ -7965,15 +8005,15 @@ Private Sub cmdCheck_Click()
             '"Неустановленные"
         Case strCmbChkBtnListElement5
 
-            For i = lngCntBtnPrevious To lngCntBtnTab
+            For I = lngCntBtnPrevious To lngCntBtnTab
 
-                With acmdPackFiles(i)
+                With acmdPackFiles(I)
 
                     If .Left Then
                         If Not (.PictureNormal Is Nothing) Then
                             If .PictureNormal = imgOkAttention.Picture Then
                                 If .Visible Then
-                                    chkPackFiles(i).Value = True
+                                    chkPackFiles(I).Value = True
                                 End If
                             End If
                         End If
@@ -7986,31 +8026,31 @@ Private Sub cmdCheck_Click()
             '"Рекомендуемые"
         Case strCmbChkBtnListElement6
 
-            For i = lngCntBtnPrevious To lngCntBtnTab
+            For I = lngCntBtnPrevious To lngCntBtnTab
 
-                With acmdPackFiles(i)
+                With acmdPackFiles(I)
 
                     If Not (.PictureNormal Is Nothing) Then
                         If .Left Then
                             If .Visible Then
-                                chkPackFiles(i).Value = True
+                                chkPackFiles(I).Value = True
                             End If
 
                             If .PictureNormal = imgNo.Picture Then
-                                chkPackFiles(i).Value = False
+                                chkPackFiles(I).Value = False
                             End If
 
                             If .PictureNormal = imgNoDB.Picture Then
-                                chkPackFiles(i).Value = False
+                                chkPackFiles(I).Value = False
                             End If
 
                             If .PictureNormal = imgOK.Picture Then
-                                chkPackFiles(i).Value = False
+                                chkPackFiles(I).Value = False
                             End If
 
                             If mbCompareDrvVerByDate Then
                                 If .PictureNormal = imgOkOld.Picture Then
-                                    chkPackFiles(i).Value = False
+                                    chkPackFiles(I).Value = False
                                 End If
                             End If
                         End If
@@ -8062,7 +8102,6 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdViewAllDevice_Click()
 
-    'MsgBox frRezim.Font.Name
     If IsFormLoaded("frmListHwidAll") = False Then
         frmListHwidAll.Show vbModal, Me
     Else
@@ -8078,6 +8117,92 @@ Private Sub cmdViewAllDevice_Click()
     End If
 
     mbDeleteDriverByHwid = False
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlScrollControl1_ScrollVChanged
+'! Description (Описание)  :   [Изменение скролла - обновляем чекбоксы, для того чтобы убрать визуальный баг (черная рамка)]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ctlScrollControl1_ScrollVChanged(Index As Integer)
+    Dim I As Long
+    
+    LockWindowUpdate ctlScrollControl1(Index).hWnd
+    
+    For I = 0 To chkPackFiles.UBound
+        chkPackFiles(I).Refresh
+    Next
+
+    LockWindowUpdate 0&
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlScrollControlTab1_ScrollVChanged
+'! Description (Описание)  :   [Изменение скролла - обновляем чекбоксы, для того чтобы убрать визуальный баг (черная рамка)]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ctlScrollControlTab1_ScrollVChanged(Index As Integer)
+    Dim I As Long
+
+    LockWindowUpdate ctlScrollControlTab1(Index).hWnd
+    
+    For I = 0 To chkPackFiles.UBound
+        chkPackFiles(I).Refresh
+    Next
+
+    LockWindowUpdate 0&
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlScrollControlTab2_ScrollVChanged
+'! Description (Описание)  :   [Изменение скролла - обновляем чекбоксы, для того чтобы убрать визуальный баг (черная рамка)]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ctlScrollControlTab2_ScrollVChanged(Index As Integer)
+    Dim I As Long
+
+    LockWindowUpdate ctlScrollControlTab2(Index).hWnd
+    
+    For I = 0 To chkPackFiles.UBound
+        chkPackFiles(I).Refresh
+    Next
+
+    LockWindowUpdate 0&
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlScrollControlTab3_ScrollVChanged
+'! Description (Описание)  :   [Изменение скролла - обновляем чекбоксы, для того чтобы убрать визуальный баг (черная рамка)]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ctlScrollControlTab3_ScrollVChanged(Index As Integer)
+    Dim I As Long
+
+    LockWindowUpdate ctlScrollControlTab3(Index).hWnd
+    
+    For I = 0 To chkPackFiles.UBound
+        chkPackFiles(I).Refresh
+    Next
+
+    LockWindowUpdate 0&
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ctlScrollControlTab4_ScrollVChanged
+'! Description (Описание)  :   [Изменение скролла - обновляем чекбоксы, для того чтобы убрать визуальный баг (черная рамка)]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ctlScrollControlTab4_ScrollVChanged(Index As Integer)
+    Dim I As Long
+
+    LockWindowUpdate ctlScrollControlTab4(Index).hWnd
+    
+    For I = 0 To chkPackFiles.UBound
+        chkPackFiles(I).Refresh
+    Next
+
+    LockWindowUpdate 0&
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -8120,7 +8245,7 @@ Private Sub Form_Activate()
 
         ' сбор данных о компе
         If RunDevcon Then
-
+            
             With ctlProgressBar1
                 .Value = 150
                 .SetTaskBarProgressValue 150, 1000
@@ -8128,6 +8253,13 @@ Private Sub Form_Activate()
 
             ChangeFrmMainCaption 150
             DevParserLocalHwids2
+            
+            ' уточнение про "статус" компьютер-ноутбук
+            IsPCisNotebook
+            If mbDebugStandart Then DebugMode _
+                "isNotebook: " & mbIsNotebook & vbNewLine & _
+                "Notebook/Motherboard Model: " & strCompModel
+            
             'Get the start time
             lStart = GetTickCount
             Me.Enabled = False
@@ -8172,7 +8304,7 @@ Private Sub Form_Activate()
     
             If SSTab1.Tab = 0 Then
                 If Not SSTab1.TabEnabled(0) Then
-                    If acmdPackFiles.Count <= 1 Then
+                    If acmdPackFiles.count <= 1 Then
                         acmdPackFiles(0).Visible = False
                         chkPackFiles(0).Visible = False
                     End If
@@ -8347,7 +8479,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_Load()
 
-    Dim i  As Long
+    Dim I  As Long
     Dim ii As Long
     
     If mbDebugStandart Then DebugMode "MainForm Show"
@@ -8372,11 +8504,11 @@ Private Sub Form_Load()
     
     ' Инициализируем переменные для поиска совместимых HWID
     Set objHashOutput = New Scripting.Dictionary
-    objHashOutput.CompareMode = TextCompare
+    objHashOutput.CompareMode = BinaryCompare
     Set objHashOutput2 = New Scripting.Dictionary
-    objHashOutput2.CompareMode = TextCompare
+    objHashOutput2.CompareMode = BinaryCompare
     Set objHashOutput3 = New Scripting.Dictionary
-    objHashOutput3.CompareMode = TextCompare
+    objHashOutput3.CompareMode = BinaryCompare
     
     LoadIconImage
     ' Подчеркавание меню (аля 3D)
@@ -8394,7 +8526,7 @@ Private Sub Form_Load()
         .AddPanel strMessages(1), , False
         .PanelWidth(2) = (lngMainFormWidth \ Screen.TwipsPerPixelX) - .PanelWidth(1)
     End With
-
+    
     ' Запись файла настроек в ini
     PrintFileInDebugLog strSysIni
     ' Инициализация клипбоарда
@@ -8419,7 +8551,7 @@ Private Sub Form_Load()
     ' Начальные позиции некоторых элементов управления
     frTabPanel.Top = 3100
     frTabPanel.Left = 75
-    lblOSInfo.Left = 75
+    lblOsInfo.Left = 75
 
     With acmdPackFiles(0)
         .ButtonStyle = lngStatusBtnStyle
@@ -8465,8 +8597,8 @@ Private Sub Form_Load()
     If arrUtilsList(0, 1) <> "List_Empty" Then
         If mbDebugStandart Then DebugMode "CreateUtilsList: " & UBound(arrUtilsList)
 
-        For i = UBound(arrUtilsList) To 0 Step -1
-            CreateMenuIndex arrUtilsList(i, 0)
+        For I = UBound(arrUtilsList) To 0 Step -1
+            CreateMenuIndex arrUtilsList(I, 0)
         Next
 
     End If
@@ -8490,7 +8622,7 @@ Private Sub Form_Load()
         mnuLangStart.Checked = Not mbAutoLanguage
     End If
 
-    If mbDebugStandart Then DebugMode "OsInfo: " & lblOSInfo.Caption & vbNewLine & "PCModel: " & lblPCInfo.Caption
+    If mbDebugStandart Then DebugMode "OsInfo: " & lblOsInfo.Caption & vbNewLine & "PCModel: " & lblPCInfo.Caption
     
     ' Выставляем шрифт
     FontCharsetChange
@@ -8510,7 +8642,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
     imgUpdBD.BorderStyle = 0
@@ -8521,14 +8653,14 @@ Private Sub Form_Load()
     mbFirstStart = True
 
     If mbIsWin64 Then
-        If PathExists(PathCollect("Tools\SIV\SIV64X.exe")) Then
-            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
+        If FileExists(PathCollect("Tools\SIV\SIV64X.exe")) Then
+            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
         End If
 
     Else
 
-        If PathExists(PathCollect("Tools\SIV\SIV32X.exe")) Then
-            lblOSInfo.ToolTipText = "View system info using System Information Viewer"
+        If FileExists(PathCollect("Tools\SIV\SIV32X.exe")) Then
+            lblOsInfo.ToolTipText = "View system info using System Information Viewer"
         End If
     End If
 
@@ -8543,7 +8675,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 
-    Dim i As Long
+    Dim I As Long
     
     ' Проверяем закончена ли проверка обновления, если нет то прерываем выход из программы, иначе программа вылетит
     If mbCheckUpdNotEnd Then
@@ -8557,16 +8689,15 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 
         'Чистим если только не перезапуск программы
         If Not mbRestartProgram Then
-            'Me.Hide
             DelTemp
         End If
     End If
 
     ' Отключение меню для всех кнопок
-    For i = acmdPackFiles.LBound To acmdPackFiles.UBound
-        acmdPackFiles(i).UnsetPopupMenu
-        acmdPackFiles(i).UnsetPopupMenuRBT
-    Next i
+    For I = acmdPackFiles.LBound To acmdPackFiles.UBound
+        acmdPackFiles(I).UnsetPopupMenu
+        acmdPackFiles(I).UnsetPopupMenuRBT
+    Next I
     
     ' сохранение параметров при выходе
     If mbSaveSizeOnExit Then
@@ -8621,59 +8752,54 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub Form_Resize()
 
-    Dim OptWidth             As Long
-    Dim OptWidthDelta        As Long
-    Dim ImgWidth             As Long
-    Dim imgWidthDelta        As Long
-    Dim miDeltafrmMainWidth  As Long
-    Dim miDeltafrmMainHeight As Long
-    Dim cntFindUnHideTab     As Integer
+    Dim lngOptWidth           As Long
+    Dim lngOptWidthDelta      As Long
+    Dim lngImgWidth           As Long
+    Dim lngImgWidthDelta      As Long
+    Dim lngDeltafrmMainWidth  As Long
+    Dim lngDeltafrmMainHeight As Long
+    Dim cntFindUnHideTab      As Integer
 
     On Error Resume Next
 
     ' если форма не свернута, то изменяем размеры
     If Me.WindowState <> vbMinimized Then
-
-        ' если форма не максимизирована, то изменяем размеры формы
-        If OSCurrVersionStruct.VerFull >= "6.0" Then
-            miDeltafrmMainWidth = 120
-            miDeltafrmMainHeight = 120
-            '            miDeltafrmMainHeight = 405
-            '            If mbAeroEnabled Then
-            '                miDeltafrmMainWidth = 216
-            '                miDeltafrmMainHeight = 540
-            '            End If
+        
+        'Поля формы отличаются на разных ОС
+        If IsWinVistaOrLater Then
+            lngDeltafrmMainWidth = 170
+            lngDeltafrmMainHeight = 120
         Else
 
             If mbAppThemed Then
-                miDeltafrmMainWidth = 0
+                lngDeltafrmMainWidth = 0
             Else
-                miDeltafrmMainWidth = 0
+                lngDeltafrmMainWidth = 0
             End If
         End If
-
-        If Me.Width < lngMainFormWidthMin Then
-            Me.Width = lngMainFormWidthMin
-            Me.Enabled = False
-            Me.Enabled = True
-
-            Exit Sub
-
-        End If
-
-        If Me.Height < lngMainFormHeightMin Then
-            Me.Height = lngMainFormHeightMin
-            Me.Enabled = False
-            Me.Enabled = True
-
-            Exit Sub
-
-        End If
-
+        
         With Me
+            If .Width < lngMainFormWidthMin Then
+                .Width = lngMainFormWidthMin
+                .Enabled = False
+                .Enabled = True
+    
+                Exit Sub
+    
+            End If
+    
+            If .Height < lngMainFormHeightMin Then
+                .Height = lngMainFormHeightMin
+                .Enabled = False
+                .Enabled = True
+    
+                Exit Sub
+    
+            End If
+
             frMainPanel.Top = 0
             frMainPanel.Left = 0
-            frMainPanel.Height = (.Height - 2.1 * ctlUcStatusBar1.Height - miDeltafrmMainHeight)
+            frMainPanel.Height = (.Height - 2.1 * ctlUcStatusBar1.Height - lngDeltafrmMainHeight)
             frMainPanel.Width = (.Width)
         End With
 
@@ -8690,7 +8816,7 @@ Public Sub Form_Resize()
         pbProgressBar.Refresh
         ctlProgressBar1.Width = pbProgressBar.Width
         ctlProgressBar1.Refresh
-        frRunChecked.Left = frMainPanel.Width - frRunChecked.Width - 150 - miDeltafrmMainWidth
+        frRunChecked.Left = frMainPanel.Width - frRunChecked.Width - 150 - lngDeltafrmMainWidth
         frRezim.Width = frRunChecked.Left - frRezim.Left - 50
         frInfo.Left = frRezim.Left
         frInfo.Width = frRezim.Width + frRunChecked.Width + 50
@@ -8701,7 +8827,7 @@ Public Sub Form_Resize()
             .Width = frRunChecked.Left + frRunChecked.Width - 50
 
             SSTab1.Height = frTabPanel.Height - 20
-            SSTab1.Width = frTabPanel.Width - 20
+            SSTab1.Width = frTabPanel.Width - 30
 
             ' Изменение размеров FrameScroll и ширины вкладок sstab
             cntFindUnHideTab = FindUnHideTab
@@ -8714,28 +8840,28 @@ Public Sub Form_Resize()
         End With
 
         ' устанавливаем ширину кнопок выбора режима
-        OptWidth = frRezim.Width / 3 - 125
-        OptWidthDelta = OptWidth + 100
-        optRezim_Intellect.Width = OptWidth
+        lngOptWidth = frRezim.Width / 3 - 125
+        lngOptWidthDelta = lngOptWidth + 100
+        optRezim_Intellect.Width = lngOptWidth
         optRezim_Intellect.Left = 100
-        optRezim_Ust.Width = OptWidth
-        optRezim_Ust.Left = optRezim_Intellect.Left + OptWidthDelta
-        optRezim_Upd.Width = OptWidth
-        optRezim_Upd.Left = optRezim_Ust.Left + OptWidthDelta
+        optRezim_Ust.Width = lngOptWidth
+        optRezim_Ust.Left = optRezim_Intellect.Left + lngOptWidthDelta
+        optRezim_Upd.Width = lngOptWidth
+        optRezim_Upd.Left = optRezim_Ust.Left + lngOptWidthDelta
         ' устанавливаем ширину иконок и описаний статусов кнопок
-        ImgWidth = imgOK.Width
+        lngImgWidth = imgOK.Width
         frDescriptionIco.Width = frRezim.Width
-        imgWidthDelta = ((frDescriptionIco.Width - imgOK.Width * 9) / 9)
-        imgOK.Left = (frDescriptionIco.Width - imgOK.Width * 9 - imgWidthDelta * 8) / 2
-        imgOkAttention.Left = imgOK.Left + ImgWidth + imgWidthDelta
-        imgOkNew.Left = imgOkAttention.Left + ImgWidth + imgWidthDelta
-        imgOkOld.Left = imgOkNew.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionNew.Left = imgOkOld.Left + ImgWidth + imgWidthDelta
-        imgOkAttentionOLD.Left = imgOkAttentionNew.Left + ImgWidth + imgWidthDelta
-        imgNo.Left = imgOkAttentionOLD.Left + ImgWidth + imgWidthDelta
-        imgNoDB.Left = imgNo.Left + ImgWidth + imgWidthDelta
-        imgUpdBD.Left = imgNoDB.Left + ImgWidth + imgWidthDelta
-        lblOSInfo.Width = frInfo.Width - 200
+        lngImgWidthDelta = ((frDescriptionIco.Width - imgOK.Width * 9) / 9)
+        imgOK.Left = (frDescriptionIco.Width - imgOK.Width * 9 - lngImgWidthDelta * 8) / 2
+        imgOkAttention.Left = imgOK.Left + lngImgWidth + lngImgWidthDelta
+        imgOkNew.Left = imgOkAttention.Left + lngImgWidth + lngImgWidthDelta
+        imgOkOld.Left = imgOkNew.Left + lngImgWidth + lngImgWidthDelta
+        imgOkAttentionNew.Left = imgOkOld.Left + lngImgWidth + lngImgWidthDelta
+        imgOkAttentionOld.Left = imgOkAttentionNew.Left + lngImgWidth + lngImgWidthDelta
+        imgNo.Left = imgOkAttentionOld.Left + lngImgWidth + lngImgWidthDelta
+        imgNoDB.Left = imgNo.Left + lngImgWidth + lngImgWidthDelta
+        imgUpdBD.Left = imgNoDB.Left + lngImgWidth + lngImgWidthDelta
+        lblOsInfo.Width = frInfo.Width - 200
         lblPCInfo.Width = frInfo.Width - 200
         cmdViewAllDevice.Width = optRezim_Upd.Left + optRezim_Upd.Width - cmdViewAllDevice.Left
         ' Удаление иконки в трее если есть
@@ -8918,7 +9044,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextDeleteDRP_Click()
 
-    Dim i                 As Long
+    Dim I                 As Long
     Dim strPathDRP        As String
     Dim strPathDB         As String
     Dim strFullPathDRP    As String
@@ -8929,9 +9055,9 @@ Private Sub mnuContextDeleteDRP_Click()
     If mbIsDriveCDRoom Then
         MsgBox strMessages(16), vbInformation, strProductName
     Else
-        i = SSTab1.Tab
-        strPathDRP = arrOSList(i).drpFolderFull
-        strPathDB = arrOSList(i).devIDFolderFull
+        I = SSTab1.Tab
+        strPathDRP = arrOSList(I).drpFolderFull
+        strPathDB = arrOSList(I).devIDFolderFull
         strFullPathDRP = PathCombine(strPathDRP, acmdPackFiles(lngCurrentBtnIndex).Tag)
         strFullPathDB = PathCombine(strPathDB, GetFileNameFromPath(strCurSelButtonPath))
         strFullPathDBIni = Replace$(strFullPathDB, ".txt", ".ini", , , vbTextCompare)
@@ -8939,36 +9065,28 @@ Private Sub mnuContextDeleteDRP_Click()
 
         If MsgBox(strMessages(17) & " '" & acmdPackFiles(lngCurrentBtnIndex).Tag & "' ?", vbQuestion + vbYesNo, strProductName) = vbYes Then
             ' удаление пакета 7z
-            If PathExists(strFullPathDRP) Then
-                If Not PathIsAFolder(strFullPathDRP) Then
-                    If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDRP
-                    DeleteFiles strFullPathDRP
-                End If
+            If FileExists(strFullPathDRP) Then
+                If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDRP
+                DeleteFiles strFullPathDRP
                 
                 ' удаление файла txt
-                If PathExists(strFullPathDB) Then
-                    If Not PathIsAFolder(strFullPathDB) Then
-                        If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDB
-                        DeleteFiles strFullPathDB
-                        'Удаление секции о данном пакете из ini-файла
-                        IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strCurSelButtonPath)), PathCombine(strPathDB, "DevDBVersions.ini")
-                    End If
+                If FileExists(strFullPathDB) Then
+                    If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDB
+                    DeleteFiles strFullPathDB
+                    'Удаление секции о данном пакете из ini-файла
+                    IniDelAllKeyPrivate GetFileName_woExt(GetFileNameFromPath(strCurSelButtonPath)), PathCombine(strPathDB, "DevDBVersions.ini")
                 End If
                 
                 ' удаление файла hwid
-                If PathExists(strFullPathDBHwid) Then
-                    If Not PathIsAFolder(strFullPathDBHwid) Then
-                        If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBHwid
-                        DeleteFiles strFullPathDBHwid
-                    End If
+                If FileExists(strFullPathDBHwid) Then
+                    If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBHwid
+                    DeleteFiles strFullPathDBHwid
                 End If
                 
                 ' удаление файла ini
-                If PathExists(strFullPathDBIni) Then
-                    If Not PathIsAFolder(strFullPathDBIni) Then
-                        If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBIni
-                        DeleteFiles strFullPathDBIni
-                    End If
+                If FileExists(strFullPathDBIni) Then
+                    If mbDebugStandart Then DebugMode "Delete file: " & strFullPathDBIni
+                    DeleteFiles strFullPathDBIni
                 End If
                 
             End If
@@ -9086,7 +9204,7 @@ Private Sub mnuContextTestDRP_Click()
 
     strPackFileName = acmdPackFiles(lngCurrentBtnIndex).Tag
     strPathDRP = arrOSList(SSTab1.Tab).drpFolderFull
-    cmdString = strQuotes & strArh7zExePATH & strQuotes & " t " & strQuotes & strPathDRP & strPackFileName & strQuotes & " -r"
+    cmdString = strQuotes & strArh7zExePath & strQuotes & " t " & strQuotes & strPathDRP & strPackFileName & strQuotes & " -r"
     ChangeStatusBarText strMessages(109) & strSpace & strPackFileName
     BlockControl False
 
@@ -9131,7 +9249,19 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextTxt_Click()
-    RunUtilsShell strCurSelButtonPath, False
+    Dim strDirFileDBTemp        As String
+    Dim strCurSelButtonPathTemp As String
+    
+    ' Если индекс-файл - архив 7z
+    If FileIs7zip(strCurSelButtonPath) Then
+        strDirFileDBTemp = strWorkTempBackSL & "unpacked"
+        strCurSelButtonPathTemp = PathCombine(strDirFileDBTemp, GetFileNameFromPath(strCurSelButtonPath))
+        If FileExists(strCurSelButtonPathTemp) Then
+            RunUtilsShell strCurSelButtonPathTemp, False
+        End If
+    Else
+        RunUtilsShell strCurSelButtonPathTemp, False
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9159,13 +9289,30 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuContextXLS_Click()
 
-    Dim strCurSelButtonPathTemp As String
-
-    strCurSelButtonPathTemp = strWorkTempBackSL & GetFileNameFromPath(strCurSelButtonPath)
-    ' Копируем файл БД во временный каталог
-    CopyFileTo strCurSelButtonPath, strCurSelButtonPathTemp
-    ' Открываем в Excel
-    OpenTxtInExcel strCurSelButtonPathTemp
+    Dim strDirFileDBTemp            As String
+    Dim strCurSelButtonPathTemp     As String
+    Dim strCurSelButtonPathTempTo   As String
+    
+    ' Если индекс-файл - архив 7z
+    If FileIs7zip(strCurSelButtonPath) Then
+        strDirFileDBTemp = strWorkTempBackSL & "unpacked"
+        strCurSelButtonPathTemp = PathCombine(strDirFileDBTemp, GetFileNameFromPath(strCurSelButtonPath))
+        strCurSelButtonPathTempTo = strWorkTempBackSL & GetFileNameFromPath(strCurSelButtonPath)
+        
+        If FileExists(strCurSelButtonPathTemp) Then
+            ' Копируем файл БД во временный каталог
+            CopyFileTo strCurSelButtonPathTemp, strCurSelButtonPathTempTo
+            ' Открываем в Excel
+            OpenTxtInExcel strCurSelButtonPathTempTo
+        End If
+    Else
+        strCurSelButtonPathTemp = PathCombine(strWorkTempBackSL, GetFileNameFromPath(strCurSelButtonPath))
+        ' Копируем файл БД во временный каталог
+        CopyFileTo strCurSelButtonPath, strCurSelButtonPathTemp
+        ' Открываем в Excel
+        OpenTxtInExcel strCurSelButtonPathTemp
+    End If
+    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9270,7 +9417,7 @@ Private Sub mnuHelp_Click()
 
     strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\Help.html"
 
-    If PathExists(strFilePathTemp) = False Then
+    If FileExists(strFilePathTemp) = False Then
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Help.html"
     End If
 
@@ -9288,7 +9435,7 @@ Private Sub mnuHistory_Click()
 
     strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\history.txt"
 
-    If PathExists(strFilePathTemp) = False Then
+    If FileExists(strFilePathTemp) = False Then
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\history.txt"
     End If
 
@@ -9320,23 +9467,23 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuLang_Click(Index As Integer)
 
-    Dim i                      As Long
+    Dim I                      As Long
     Dim ii                     As Long
     Dim strPathLng             As String
     Dim strPCLangCurrentIDTemp As String
     Dim strPCLangCurrentID_x() As String
 
-    i = Index + 1
+    I = Index + 1
 
     For ii = mnuLang.LBound To mnuLang.UBound
         mnuLang(ii).Checked = ii = Index
     Next
 
-    strPathLng = arrLanguage(1, i)
+    strPathLng = arrLanguage(1, I)
     strPCLangCurrentPath = strPathLng
-    strPCLangCurrentIDTemp = arrLanguage(3, i)
-    strPCLangCurrentLangName = arrLanguage(2, i)
-    lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, i)))
+    strPCLangCurrentIDTemp = arrLanguage(3, I)
+    strPCLangCurrentLangName = arrLanguage(2, I)
+    lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(6, I)))
 
     If InStr(strPCLangCurrentIDTemp, strSemiColon) Then
         strPCLangCurrentID_x = Split(strPCLangCurrentIDTemp, strSemiColon)
@@ -9357,7 +9504,7 @@ Private Sub mnuLang_Click(Index As Integer)
     
     ChangeFrmMainCaption
 
-    ChangeStatusBarText strMessages(142) & strSpace & arrLanguage(2, i), , False
+    ChangeStatusBarText strMessages(142) & strSpace & arrLanguage(2, I), , False
 
     If mbNoSupportedOS Then
         SelectStartMode 3, False
@@ -9398,7 +9545,7 @@ Private Sub mnuLinks_Click()
 
     strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\" & strPCLangCurrentID & "\Links.html"
 
-    If PathExists(strFilePathTemp) = False Then
+    If FileExists(strFilePathTemp) = False Then
         strFilePathTemp = strAppPathBackSL & strToolsDocs_Path & "\0409\Links.html"
     End If
 
@@ -9452,10 +9599,12 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuReCollectHWID_Click()
+    BlockControl False
     ' Сначала повторно собираем данные
     ReCollectHWID
     ' А теперь Обновляем статус всех пакетов
     UpdateStatusButtonAll
+    BlockControl True
     SaveHWIDs2File
     ' Обновить список неизвестных дров и описание для кнопки
     LoadCmdViewAllDeviceCaption
@@ -9468,10 +9617,12 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuReCollectHWIDTab_Click()
+    BlockControl False
     ' Сначала повторно собираем данные
     ReCollectHWID
     ' А теперь Обновляем статус всех пакетов для текущей вкладки
     UpdateStatusButtonTAB
+    BlockControl True
     SaveHWIDs2File
     ' Обновить список неизвестных дров и описание для кнопки
     LoadCmdViewAllDeviceCaption
@@ -9561,12 +9712,12 @@ Private Sub mnuSaveInfoPC_Click()
     End With
 
     If LenB(strFilePathTo) Then
-        If PathExists(strResultHwidsExtTxtPath) Then
+        If FileExists(strResultHwidsExtTxtPath) Then
             CopyFileTo strResultHwidsExtTxtPath, strFilePathTo
         Else
 
             If SaveHwidsArray2File(strResultHwidsExtTxtPath, arrHwidsLocal) Then
-                If PathExists(strResultHwidsExtTxtPath) Then
+                If FileExists(strResultHwidsExtTxtPath) Then
                     CopyFileTo strResultHwidsExtTxtPath, strFilePathTo
                 Else
                     MsgBox strMessages(45) & vbNewLine & strFilePathTo, vbInformation, strProductName
@@ -9586,7 +9737,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub mnuService_Click()
-    mnuViewDPInstLog.Enabled = PathExists(strWinDir & "DPINST.LOG")
+    mnuViewDPInstLog.Enabled = FileExists(strWinDir & "DPINST.LOG")
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -9613,7 +9764,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuShowHwidsTxt_Click()
 
-    If PathExists(strHwidsTxtPathView) = False Then
+    If FileExists(strHwidsTxtPathView) = False Then
         RunDevconView
     End If
 
@@ -9658,15 +9809,15 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mnuUtils_Click(Index As Integer)
 
-    Dim i         As Long
+    Dim I         As Long
     Dim PathExe   As String
     Dim PathExe64 As String
     Dim Params    As String
     Dim cmdString As String
 
-    i = Index
-    PathExe = PathCollect(arrUtilsList(i, 1))
-    PathExe64 = PathCollect(arrUtilsList(i, 2))
+    I = Index
+    PathExe = PathCollect(arrUtilsList(I, 1))
+    PathExe64 = PathCollect(arrUtilsList(I, 2))
 
     If mbIsWin64 Then
         If LenB(PathExe64) Then
@@ -9674,7 +9825,7 @@ Private Sub mnuUtils_Click(Index As Integer)
         End If
     End If
 
-    Params = arrUtilsList(i, 3)
+    Params = arrUtilsList(I, 3)
 
     If LenB(Params) = 0 Then
         cmdString = strQuotes & PathExe & strQuotes
@@ -9708,15 +9859,6 @@ End Sub
 Private Sub mnuUtils_devmgmt_Click()
     RunUtilsShell "devmgmt.msc", False
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub mnuUtils_DoubleDriver_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-'Private Sub mnuUtils_DoubleDriver_Click()
-'    RunUtilsShell strDoubleDriver_Path
-'End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub mnuUtils_SIV_Click
@@ -9764,7 +9906,7 @@ Private Sub mnuViewDPInstLog_Click()
     strLogPath = strWinDir & "DPINST.LOG"
     strLogPathNew = strWorkTempBackSL & "DPINST.LOG.TXT"
 
-    If PathExists(strLogPath) Then
+    If FileExists(strLogPath) Then
         CopyFileTo strLogPath, strLogPathNew
         RunUtilsShell strLogPathNew, False
     Else
@@ -9780,18 +9922,18 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub optRezim_CaptionBold(lngCurrMode As Long)
     Select Case lngCurrMode
-    Case 1
-        optRezim_Intellect.Font.Bold = True
-        optRezim_Ust.Font.Bold = False
-        optRezim_Upd.Font.Bold = False
-    Case 2
-        optRezim_Intellect.Font.Bold = False
-        optRezim_Ust.Font.Bold = True
-        optRezim_Upd.Font.Bold = False
-    Case 3
-        optRezim_Intellect.Font.Bold = False
-        optRezim_Ust.Font.Bold = False
-        optRezim_Upd.Font.Bold = True
+        Case 1
+            optRezim_Intellect.Font.Bold = True
+            optRezim_Ust.Font.Bold = False
+            optRezim_Upd.Font.Bold = False
+        Case 2
+            optRezim_Intellect.Font.Bold = False
+            optRezim_Ust.Font.Bold = True
+            optRezim_Upd.Font.Bold = False
+        Case 3
+            optRezim_Intellect.Font.Bold = False
+            optRezim_Ust.Font.Bold = False
+            optRezim_Upd.Font.Bold = True
     End Select
 End Sub
 '!--------------------------------------------------------------------------------
@@ -9801,26 +9943,26 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub optRezim_Intellect_Click()
 
-    Dim ButtIndex                 As Long
+    Dim lngButtIndex              As Long
     Dim strSSTabCurrentOSListTemp As String
-    Dim i                         As Integer
+    Dim I                         As Integer
     Dim i_i                       As Integer
     Dim cntFindUnHideTab          As Integer
 
     If Not mbFirstStart Then
-        ButtIndex = acmdPackFiles.UBound
+        lngButtIndex = acmdPackFiles.UBound
 
-        For i = 0 To ButtIndex
+        For I = 0 To lngButtIndex
 
-            If ButtIndex Then
+            If lngButtIndex Then
 
-                With acmdPackFiles(i)
+                With acmdPackFiles(I)
 
                     If Not (.PictureNormal Is Nothing) Then
                         If .PictureNormal = imgNo.Picture Or .PictureNormal = imgNoDB.Picture Then
                             If .Enabled Then
                                 .Enabled = False
-                                chkPackFiles(i).Enabled = False
+                                chkPackFiles(I).Enabled = False
                             End If
 
                             .DropDownEnable = False
@@ -9861,19 +10003,19 @@ Private Sub optRezim_Intellect_Click()
     If mbTabBlock Then
         strSSTabCurrentOSListTemp = strSSTabCurrentOSList & strSpace
 
-        For i = 0 To SSTab1.Tabs - 1
+        For I = 0 To SSTab1.Tabs - 1
 
-            If InStr(strSSTabCurrentOSListTemp, i & strSpace) = 0 Then
-                SSTab1.TabEnabled(i) = False
+            If InStr(strSSTabCurrentOSListTemp, I & strSpace) = 0 Then
+                SSTab1.TabEnabled(I) = False
 
                 If mbTabHide Then
-                    SSTab1.TabVisible(i) = False
+                    SSTab1.TabVisible(I) = False
                 End If
 
             Else
 
-                If arrOSList(i).CntBtn = 0 Then
-                    SSTab1.TabEnabled(i) = False
+                If arrOSList(I).CntBtn = 0 Then
+                    SSTab1.TabEnabled(I) = False
                 End If
             End If
 
@@ -9903,11 +10045,9 @@ Private Sub optRezim_Intellect_Click()
     LoadListChecked
     ' Изменение размеров FrameScroll и ширины вкладок sstab
     cntFindUnHideTab = FindUnHideTab
-    'SSTab1.Visible = cntFindUnHideTab >= 0
     frTabPanel.Visible = cntFindUnHideTab >= 0
 
     If frTabPanel.Visible Then
-        'If SSTab1.Visible Then
         SetTabsWidth cntFindUnHideTab
         SetStartScrollFramePos cntFindUnHideTab
     End If
@@ -9946,21 +10086,21 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub optRezim_Upd_Click()
 
-    Dim i                As Integer
+    Dim I                As Integer
     Dim i_i              As Integer
     Dim cntFindUnHideTab As Integer
 
     If Not mbFirstStart Then
 
         With acmdPackFiles
-            For i = 0 To .UBound
+            For I = 0 To .UBound
     
-                If Not .Item(i).Enabled Then
-                    .Item(i).Enabled = True
-                    chkPackFiles(i).Enabled = True
+                If Not .Item(I).Enabled Then
+                    .Item(I).Enabled = True
+                    chkPackFiles(I).Enabled = True
                 End If
     
-                .Item(i).DropDownEnable = False
+                .Item(I).DropDownEnable = False
             Next
         End With
 
@@ -9970,21 +10110,21 @@ Private Sub optRezim_Upd_Click()
 
         With SSTab1
         
-            For i = 0 To .Tabs - 1
+            For I = 0 To .Tabs - 1
     
-                If Not arrOSList(i).DPFolderNotExist Then
-                    If arrOSList(i).CntBtn = 0 Then
-                        .TabEnabled(i) = False
+                If Not arrOSList(I).DPFolderNotExist Then
+                    If arrOSList(I).CntBtn = 0 Then
+                        .TabEnabled(I) = False
                     Else
     
-                        If Not .TabVisible(i) Then .TabVisible(i) = True
-                        If Not .TabEnabled(i) Then .TabEnabled(i) = True
+                        If Not .TabVisible(I) Then .TabVisible(I) = True
+                        If Not .TabEnabled(I) Then .TabEnabled(I) = True
                     End If
     
                 Else
     
                     If mbTabHide Then
-                        .TabVisible(i) = False
+                        .TabVisible(I) = False
                     End If
                 End If
     
@@ -9994,19 +10134,19 @@ Private Sub optRezim_Upd_Click()
     End If
 
     ' Если кнопка всего одна, то проверяем на какой она вкладке
-    If acmdPackFiles.Count = 1 Then
+    If acmdPackFiles.count = 1 Then
         If acmdPackFiles(0).Visible Then
 
             With SSTab1
 
-                For i = 0 To .Tabs - 1
+                For I = 0 To .Tabs - 1
 
-                    If .TabVisible(i) Then
-                        .Tab = i
+                    If .TabVisible(I) Then
+                        .Tab = I
 
                         If StrComp(acmdPackFiles(0).Container.Name, "ctlScrollControl1", vbTextCompare) = 0 Then
                             If acmdPackFiles(0).Container.Index <> .Tab Then
-                                .TabEnabled(i) = False
+                                .TabEnabled(I) = False
                             End If
                         End If
                     End If
@@ -10030,7 +10170,7 @@ Private Sub optRezim_Upd_Click()
     LoadListChecked
 
     ' Если переключились в режим обновления БД путем перехода с 4-ой вкладки, то не делаем ничего
-    If Not mbSet2UpdateFromTab4 Or acmdPackFiles.Count = 1 Then
+    If Not mbSet2UpdateFromTab4 Or acmdPackFiles.count = 1 Then
         lngFirstActiveTabIndex = SetFirstEnableTab
         SSTab1.Tab = lngFirstActiveTabIndex
     End If
@@ -10071,32 +10211,32 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub optRezim_Ust_Click()
 
-    Dim ButtIndex                 As Integer
-    Dim i                         As Integer
+    Dim lngButtIndex              As Integer
+    Dim I                         As Integer
     Dim i_i                       As Integer
     Dim strSSTabCurrentOSListTemp As String
     Dim cntFindUnHideTab          As Integer
 
     If Not mbFirstStart Then
-        ButtIndex = acmdPackFiles.UBound
+        lngButtIndex = acmdPackFiles.UBound
 
-        For i = 0 To ButtIndex
+        For I = 0 To lngButtIndex
 
-            If ButtIndex Then
+            If lngButtIndex Then
 
-                With acmdPackFiles(i)
+                With acmdPackFiles(I)
 
                     If .Enabled = imgNoDB.Picture Then
                         If .Enabled Then
                             .Enabled = False
-                            chkPackFiles(i).Enabled = False
+                            chkPackFiles(I).Enabled = False
                         End If
 
                     Else
 
                         If Not .Enabled Then
                             .Enabled = True
-                            chkPackFiles(i).Enabled = True
+                            chkPackFiles(I).Enabled = True
                         End If
                     End If
 
@@ -10112,19 +10252,19 @@ Private Sub optRezim_Ust_Click()
     If mbTabBlock Then
         strSSTabCurrentOSListTemp = strSSTabCurrentOSList & strSpace
 
-        For i = 0 To SSTab1.Tabs - 1
+        For I = 0 To SSTab1.Tabs - 1
 
-            If InStr(strSSTabCurrentOSListTemp, i & strSpace) = 0 Then
-                SSTab1.TabEnabled(i) = False
+            If InStr(strSSTabCurrentOSListTemp, I & strSpace) = 0 Then
+                SSTab1.TabEnabled(I) = False
 
                 If mbTabHide Then
-                    SSTab1.TabVisible(i) = False
+                    SSTab1.TabVisible(I) = False
                 End If
 
             Else
 
-                If arrOSList(i).CntBtn = 0 Then
-                    SSTab1.TabEnabled(i) = False
+                If arrOSList(I).CntBtn = 0 Then
+                    SSTab1.TabEnabled(I) = False
                 End If
             End If
 
@@ -10154,11 +10294,9 @@ Private Sub optRezim_Ust_Click()
     LoadListChecked
     ' Изменение размеров FrameScroll и ширины вкладок sstab
     cntFindUnHideTab = FindUnHideTab
-    'SSTab1.Visible = cntFindUnHideTab >= 0
     frTabPanel.Visible = cntFindUnHideTab >= 0
 
     If frTabPanel.Visible Then
-        'If SSTab1.Visible Then
         SetTabsWidth cntFindUnHideTab
         SetStartScrollFramePos cntFindUnHideTab
     End If
@@ -10256,30 +10394,38 @@ Private Sub SSTab2_Click(Index As Integer, PreviousTab As Integer)
 
 End Sub
 
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub CreateCommonIndex
+'! Description (Описание)  :   [Создание обобщенного индексного файла]
+'                              PreviousTab (Integer)
+'!--------------------------------------------------------------------------------
 Private Sub CreateCommonIndex()
     
-    Dim strCommonArr()          As String
-    Dim strCurrentArr()         As String
-    Dim lngNumLines             As Long
-    Dim i                       As Long
-    Dim strFileFullText         As String
-    Dim cSortHWID               As cBlizzard
-    Dim strPathFileNameDevDB    As String
-    Dim strRezultTxt            As String
-    Dim strRezultTxtTo          As String
-    Dim TimeScriptRun           As Long
-    Dim TimeScriptFinish        As Long
-    Dim TabCount                As Long
-    Dim ii                      As Long
-    Dim strPathDRP              As String
-    Dim strPathDevDB            As String
-    Dim strFileListTXT_x()      As FindListStruct
-    Dim strFileListDRP_x()      As FindListStruct
-    Dim strFileListDBExists     As String
-    Dim strDRPFilename          As String
-    Dim strFileNameDB           As String
-    Dim strFile_x()             As String
+    Dim strCommonArr()              As String
+    Dim strCurrentArr()             As String
+    Dim lngNumLines                 As Long
+    Dim I                           As Long
+    Dim strFileFullText             As String
+    Dim cSortHWID                   As cBlizzard
+    Dim strPathFileNameDevDB        As String
+    Dim strPathFileNameDevDBTemp    As String
+    Dim strPathFileNameDevDBTempTo  As String
+    Dim strRezultTxt                As String
+    Dim strRezultTxtTo              As String
+    Dim lngTimeScriptRun            As Long
+    Dim lngTimeScriptFinish         As Long
+    Dim TabCount                    As Long
+    Dim ii                          As Long
+    Dim strPathDRP                  As String
+    Dim strPathDevDB                As String
+    Dim strFileListTXT_x()          As FindListStruct
+    Dim strFileListDRP_x()          As FindListStruct
+    Dim strFileListDBExists         As String
+    Dim strDRPFilename              As String
+    Dim strFileNameDB               As String
+    Dim strFile_x()                 As String
+    Dim cmdString                   As String
+    Dim strDirFileDBTemp            As String
 
     ReDim strCommonArr(2000000)
     
@@ -10290,9 +10436,9 @@ Private Sub CreateCommonIndex()
     TabCount = SSTab1.Tabs
 
     ' В цикле обрабатываем все каталоги
-    For i = 0 To TabCount - 1
-        strPathDRP = arrOSList(i).drpFolderFull
-        strPathDevDB = arrOSList(i).devIDFolderFull
+    For I = 0 To TabCount - 1
+        strPathDRP = arrOSList(I).drpFolderFull
+        strPathDevDB = arrOSList(I).devIDFolderFull
         strFileListDBExists = vbNullString
 
         'Построение списка пакетов драйверов
@@ -10326,36 +10472,89 @@ Private Sub CreateCommonIndex()
         
     Next
         
+    ' Построение обобщенного индекса, читаем файлы подряд
     If LenB(strFileListDBExists) Then
         
         strFile_x = Split(strFileListDBExists, vbTab)
     
+        ' директория для распаковки файла БД, создаем при необходимости
+        strDirFileDBTemp = strWorkTempBackSL & "unpacked"
+        
+        If PathExists(strDirFileDBTemp) = False Then
+            CreateNewDirectory strDirFileDBTemp
+        End If
+                    
         ' В цикле обрабатываем файлы индексов
-        For i = 0 To UBound(strFile_x)
+        For I = 0 To UBound(strFile_x)
 
-            strPathFileNameDevDB = strFile_x(i)
+            strPathFileNameDevDBTemp = strFile_x(I)
             
-            If PathExists(strPathFileNameDevDB) Then
+            If FileExists(strPathFileNameDevDBTemp) Then
+            
+                ' Если индекс-файл - архив 7z
+                If FileIs7zip(strPathFileNameDevDBTemp) Then
+                    
+                    ' распакованый файл индекса
+                    strPathFileNameDevDBTempTo = PathCombine(strDirFileDBTemp, GetFileNameFromPath(strPathFileNameDevDBTemp))
+                    
+                    ' Если файла индекса нет, то распаковываем архив
+                    If Not FileExists(strPathFileNameDevDBTempTo) Then
+                        '7z x -y -o"PathOut" archivename.7z
+                        ' Запуск распаковки файла-индекса
+                        cmdString = strQuotes & strArh7zExePath & strQuotes & " x -y -o" & strQuotes & strDirFileDBTemp & strQuotes & strSpace & strQuotes & strPathFileNameDevDBTemp & strQuotes
+                        
+                        If RunAndWaitNew(cmdString, strWorkTemp, vbHide) = False Then
+                            MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                            strPathFileNameDevDB = vbNullString
+                        Else
+                        
+                            ' Архиватор отработал на все 100%? Если нет то сообщаем
+                            If lngExitProc <> 0 Then
+                                If lngExitProc = 2 Then
+                                    MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                                    strPathFileNameDevDB = vbNullString
+                                ElseIf lngExitProc = 7 Then
+                                    MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                                    strPathFileNameDevDB = vbNullString
+                                ElseIf lngExitProc = 255 Then
+                                    MsgBox strMessages(45) & str2vbNewLine & cmdString, vbInformation, strProductName
+                                    strPathFileNameDevDB = vbNullString
+                                End If
+                            Else
+                                ' Переназначаем индексный файл на временный файл после распаковки
+                                strPathFileNameDevDB = PathCombine(strDirFileDBTemp, GetFileNameFromPath(strPathFileNameDevDBTemp))
+                            End If
+                        End If
+                            
+                    Else
+                        strPathFileNameDevDB = strPathFileNameDevDBTempTo
+                    End If
+                Else
+                    strPathFileNameDevDB = strPathFileNameDevDBTemp
+                End If
+
                 
                 Erase strCurrentArr
                 
-                ' Считываем содержимое всего файла HWID в буфер
-                FileReadData strPathFileNameDevDB, strFileFullText
-                'Создаем массив
-                strCurrentArr = Split(strFileFullText, vbNewLine)
-                'Добавляем к массиву имя пакета драйверов
-                strFileFullText = Join(strCurrentArr, vbTab & GetFileNameFromPath(strPathFileNameDevDB) & vbNewLine)
-                Erase strCurrentArr
-                strCurrentArr = Split(strFileFullText, vbNewLine)
-                
-                'Собственно копирование массива из одного в другой
-                CopyStringArray strCommonArr(), strCurrentArr(), lngNumLines
-                DoEvents
-                'Кол-во записей в массиве
-                lngNumLines = lngNumLines + UBound(strCurrentArr) + 1
+                If LenB(strPathFileNameDevDB) Then
+                    ' Считываем содержимое всего файла HWID в буфер
+                    FileReadData strPathFileNameDevDB, strFileFullText
+                    'Создаем массив
+                    strCurrentArr = Split(strFileFullText, vbNewLine)
+                    'Добавляем к массиву имя пакета драйверов
+                    strFileFullText = Join(strCurrentArr, vbTab & GetFileNameFromPath(strPathFileNameDevDB) & vbNewLine)
+                    Erase strCurrentArr
+                    strCurrentArr = Split(strFileFullText, vbNewLine)
+                    
+                    'Собственно копирование массива из одного в другой
+                    CopyStringArray strCommonArr(), strCurrentArr(), lngNumLines
+                    DoEvents
+                    'Кол-во записей в массиве
+                    lngNumLines = lngNumLines + UBound(strCurrentArr) + 1
+                End If
                                        
             End If
-        Next i
+        Next I
     End If
             
     If lngNumLines Then
@@ -10365,7 +10564,7 @@ Private Sub CreateCommonIndex()
         ReDim Preserve strCommonArr(lngNumLines - 1)
 
         ' сортируем массив
-        TimeScriptRun = GetTickCount
+        lngTimeScriptRun = GetTickCount
     
         If lngSortMethodShell = 0 Then
             
@@ -10394,18 +10593,20 @@ Private Sub CreateCommonIndex()
             ShellSortAny VarPtr(strCommonArr(0)), lngNumLines, 4&, AddressOf CompareString
         End If
         
-        TimeScriptFinish = GetTickCount
-        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Sort Index: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        lngTimeScriptFinish = GetTickCount
+        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Sort Index: " & CalculateTime(lngTimeScriptRun, lngTimeScriptFinish, True)
         DoEvents
         
-        TimeScriptRun = GetTickCount
+        lngTimeScriptRun = GetTickCount
         '---------------------------------------------
         '---------------Выводим итог в файл-----
         ' Запись в файл индекса
-        FileWriteData strRezultTxt, Join(strCommonArr(), vbNewLine)
         
-        TimeScriptFinish = GetTickCount
-        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index Files: " & CalculateTime(TimeScriptRun, TimeScriptFinish, True)
+        'FileWriteData strRezultTxt, Join(strCommonArr(), vbNewLine)
+        FileWriteDataFromArray strRezultTxt, strCommonArr()
+        
+        lngTimeScriptFinish = GetTickCount
+        If mbDebugStandart Then DebugMode str2VbTab & "DevParserByRegExp-Time to Save Index Files: " & CalculateTime(lngTimeScriptRun, lngTimeScriptFinish, True)
         
         ' Удаление массива, т.е освобождение памяти
         Erase strCommonArr
@@ -10413,7 +10614,6 @@ Private Sub CreateCommonIndex()
     
         If FileExists(strRezultTxt) Then
             ChangeStatusBarText strMessages(158) & " " & strMessages(70) & ": CommonDBIndexFile.txt"
-            'RunUtilsShell strRezultTxt, False
             ' Запустить проводник и выбрать файл
             RunAndWaitNew "explorer.exe /select," & strRezultTxt, strWorkTemp, vbNormalFocus, 1000
         Else
@@ -10424,3 +10624,4 @@ Private Sub CreateCommonIndex()
     End If
     
 End Sub
+

@@ -18,13 +18,13 @@ Private Declare Function WritePrivateProfileString Lib "kernel32.dll" Alias "Wri
 '! Parameters  (Переменные):   strSection (String)
 '                              strfullpath (String)
 '!--------------------------------------------------------------------------------
-Public Function CheckIniSectionExists(ByVal strSection As String, ByVal strfullpath As String) As Boolean
+Public Function CheckIniSectionExists(ByVal strSection As String, ByVal strIniPath As String) As Boolean
 
     Dim strBuffer As String
     Dim nTemp     As Long
 
     strBuffer = FillNullChar(5120)
-    nTemp = GetPrivateProfileSection(strSection, strBuffer, Len(strBuffer), strfullpath)
+    nTemp = GetPrivateProfileSection(strSection, strBuffer, Len(strBuffer), strIniPath)
 
     CheckIniSectionExists = nTemp
 
@@ -48,9 +48,11 @@ Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal
 
     For i_i = 0 To UBound(strSectionList_x)
         strManufSection = strSectionList_x(i_i)
+        sTemp = vbNullString
     
         If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
         
+            Debug.Print sTemp
             If LenB(strTmp) Then
                 strTmp = strTmp & strComma & strManufSection
             Else
@@ -258,7 +260,7 @@ PROC_EXIT:
 PROC_ERR:
 
     If Not mbSilentRun Then
-        MsgBox "Error:  Err.Number: " & err.Number & " Err.Description: " & err.Description, vbExclamation + vbOKOnly, "GetValueString"
+        MsgBox "Error:  Err.Number: " & Err.Number & " Err.Description: " & Err.Description, vbExclamation + vbOKOnly, "GetValueString"
     End If
 
     Resume PROC_EXIT
@@ -341,7 +343,7 @@ End Sub
 '                              strfullpath (String)
 '                              mbKeys (Boolean = True) As String()
 '!--------------------------------------------------------------------------------
-Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strfullpath As String, Optional ByVal mbKeys As Boolean = True) As String()
+Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strFullPath As String, Optional ByVal mbKeys As Boolean = True) As String()
 
     Dim KeyAndVal() As String
     Dim Key_Val()   As String
@@ -352,7 +354,7 @@ Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strfullpath
 
     n = -1
     strBuffer = FillNullChar(5120)
-    GetPrivateProfileSection strSection, strBuffer, Len(strBuffer), strfullpath
+    GetPrivateProfileSection strSection, strBuffer, Len(strBuffer), strFullPath
     KeyAndVal = Split(strBuffer, vbNullChar)
 
     For intx = LBound(KeyAndVal) To UBound(KeyAndVal)
@@ -453,10 +455,10 @@ End Sub
 '                              strfullpath (String)
 '                              strDefault (String = vbNullString)
 '!--------------------------------------------------------------------------------
-Public Function ReadFromINI(ByVal strSection As String, ByVal strKey As String, ByVal strfullpath As String, Optional ByVal strDefault As String = vbNullString) As String
+Public Function ReadFromINI(ByVal strSection As String, ByVal strKey As String, ByVal strFullPath As String, Optional ByVal strDefault As String = vbNullString) As String
 
     Dim strBuffer As String
 
     strBuffer = FillNullChar(1024)
-    ReadFromINI = Left$(strBuffer, GetPrivateProfileString(strSection, ByVal LCase$(strKey), strDefault, strBuffer, Len(strBuffer), strfullpath))
+    ReadFromINI = Left$(strBuffer, GetPrivateProfileString(strSection, ByVal LCase$(strKey), strDefault, strBuffer, Len(strBuffer), strFullPath))
 End Function

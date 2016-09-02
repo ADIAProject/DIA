@@ -217,7 +217,7 @@ Private Sub LoadLicence()
             strPathLicence = PathCollect(strToolsDocs_Path & "\0409\licence.rtf")
     End Select
 
-    If PathExists(strPathLicence) Then
+    If FileExists(strPathLicence) Then
         LicenceRTF.LoadFile strPathLicence
         
         ' Проверка лицензии на неправомерное изменение
@@ -319,7 +319,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmLicence", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
         lngFormWidthMin = .Width
@@ -373,7 +373,7 @@ Private Sub Form_Resize()
     With Me
 
         If .WindowState <> vbMinimized Then
-            If OSCurrVersionStruct.VerFull >= "6.0" Then
+            If IsWinVistaOrLater Then
                 miDeltaFrm = 125
             Else
 

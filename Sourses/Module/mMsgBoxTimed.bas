@@ -129,7 +129,7 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function MsgBoxEx
-'! Description (Описание)  :   [type_description_here]
+'! Description (Описание)  :   [Timed MessageBox]
 '! Parameters  (Переменные):   sMsgText (String)
 '                              dwWait (Long)
 '                              Buttons (VbMsgBoxStyle = vbOKOnly)

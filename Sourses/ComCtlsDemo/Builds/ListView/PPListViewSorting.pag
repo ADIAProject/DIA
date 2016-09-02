@@ -1,13 +1,13 @@
 VERSION 5.00
 Begin VB.PropertyPage PPListViewSorting 
    Caption         =   "Sorting"
-   ClientHeight    =   6300
+   ClientHeight    =   7050
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   6450
    LockControls    =   -1  'True
    PaletteMode     =   0  'Halftone
-   ScaleHeight     =   6300
+   ScaleHeight     =   7050
    ScaleWidth      =   6450
    Begin VB.Frame FrameSorting 
       Caption         =   "Sorting"

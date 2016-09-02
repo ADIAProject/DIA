@@ -2,8 +2,8 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "13/10/2014"
-Public Const strVerProgram          As String = "6.10.13"
+Public Const strDateProgram         As String = "02/09/2016"
+Public Const strVerProgram          As String = "7.9.2"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -112,7 +112,7 @@ Public lngLastIdOS                  As Long             ' номер последнего элеме
 Public lngLastIdUtil                As Long             ' номер последнего элемента в списке утилит
 Public lngCurrentBtnIndex           As Long             ' Текущая выделенная кнопка
 Public strPathDRPList               As String           ' Список папок для распаковки
-Public mbSelectInstall            As Boolean          ' Флаг указывающий выборочную установку
+Public mbSelectInstall              As Boolean          ' Флаг указывающий выборочную установку
 Public mbCheckDRVOk                 As Boolean          ' Флаг, указывающий нажатие кнопки ОК на форме frmListHwid
 Public mbGroupTask                  As Boolean          ' Флаг указывающий групповую задачу
 Public mbRestartProgram             As Boolean          ' Маркер перезапуска программы
@@ -244,7 +244,7 @@ Private Sub Main()
     ' Пользователь администратор?
 
     On Error Resume Next
-
+    
     dtStartTimeProg = GetTickCount
 
     ' Запоминаем app.path и прочее в переменные
@@ -258,6 +258,9 @@ Private Sub Main()
     'Получаем временный каталог windows и каталог windows
     strWinDir = BackslashAdd2Path(Environ$("WINDIR"))
     strWinTemp = BackslashAdd2Path(Environ$("TMP"))
+    strSysDrive = Environ$("SYSTEMDRIVE")
+    
+    lngFreeSpaceSysDrive = GetSystemDiskFreeSpace(strSysDrive)
 
     If InStr(strWinTemp, strSpace) Then
         strWinTemp = BackslashAdd2Path(PathCombine(strWinDir, "TEMP"))
@@ -310,8 +313,8 @@ Private Sub Main()
     strWorkTemp = strWinTemp & strProjectName
     strWorkTempBackSL = BackslashAdd2Path(strWorkTemp)
 
-    ' Создаем временный рабочий каталог
-    If PathExists(strAppPathBackSL & strSettingIniFile) = False Then
+    ' Путь до файла DIA.ini
+    If FileExists(strAppPathBackSL & strSettingIniFile) = False Then
         strSysIni = strAppPathBackSL & "Tools\" & strSettingIniFile
     Else
         strSysIni = strAppPathBackSL & strSettingIniFile
@@ -352,6 +355,7 @@ Private Sub Main()
         End If
     End If
 
+    ' Создаем временный рабочий каталог
     If PathExists(strWorkTemp) = False Then
         CreateNewDirectory strWorkTemp
     End If
@@ -366,7 +370,7 @@ Private Sub Main()
     strPathImageStatusButton = strAppPathBackSL & strToolsGraphics_Path & "\StatusButton\"
     strPathImageMain = strAppPathBackSL & strToolsGraphics_Path & "\Main\"
     'strPathImageMenu = strAppPathBackSL & strToolsGraphics_Path & "\Menu\"
-    LoadIconImagePath
+    GetImageSkinPath
     ' Очищаем лог-историю
     MakeCleanHistory
     ' Получаем размеры рабочей области программы
@@ -387,7 +391,9 @@ Private Sub Main()
 
     If APIFunctionPresent("IsUserAnAdmin", "shell32.dll") Then
         mbIsUserAnAdmin = IsUserAnAdmin
+        'mbIsUserAnAdmin = IsUserAnAdministrator
     Else
+        If mbDebugStandart Then DebugMode vbTab & "APIFunctionPresent: " & IsUserAnAdmin & "=" & False
         mbIsUserAnAdmin = True
     End If
 
@@ -395,7 +401,8 @@ Private Sub Main()
         If mbDebugStandart Then DebugMode "Current Date: " & Now()
     End If
 
-    If mbDebugStandart Then DebugMode "Version: " & strProductName & vbNewLine & _
+    If mbDebugStandart Then DebugMode _
+              "Version: " & strProductName & vbNewLine & _
               "Build: " & strDateProgram & vbNewLine & _
               "ExeName: " & strAppEXEName & ".exe" & vbNewLine & _
               "AppWork: " & strAppPath & vbNewLine & _
@@ -414,21 +421,25 @@ Private Sub Main()
         End If
     End If
 
-    If mbDebugStandart Then DebugMode "WinDir: " & strWinDir & vbNewLine & _
+    If mbDebugStandart Then DebugMode _
+              "WinDir: " & strWinDir & vbNewLine & _
               "TmpDir: " & strWinTemp & vbNewLine & _
               "WorkTemp: " & strWorkTemp & vbNewLine & _
+              "FreeSpace: " & lngFreeSpaceSysDrive & " MB" & vbNewLine & _
               "IsDriveCDRoom: " & mbIsDriveCDRoom
-
-    If strOSCurrentVersion > "5.0" Then
+    
+    If StrComp(strOSCurrentVersion, "5.0") = 0 Then
+        ' Для win2k надо старый devcon
+        strDevConExePath = strDevConExePathW2k
+    Else
         ' Определение windows x64
-        mbIsWin64 = IsWow64
-        If mbDebugStandart Then DebugMode "IsWow64: " & mbIsWin64
+        mbIsWin64 = OS_Is_x64
+        If mbDebugStandart Then DebugMode "OS-is-x64: " & mbIsWin64
 
         If mbIsWin64 Then
             Win64ReloadOptions
         End If
 
-    ElseIf StrComp(strOSCurrentVersion, "5.0") = 0 Then
         ' Для win2k надо старый devcon
         strDevConExePath = strDevConExePathW2k
     End If
@@ -443,7 +454,8 @@ Private Sub Main()
         GoTo ExitSub
     End If
 
-    If mbDebugStandart Then DebugMode "OsCurrentVersion: " & strOSCurrentVersion & vbNewLine & _
+    If mbDebugStandart Then DebugMode _
+              "OsCurrentVersion: " & strOSCurrentVersion & vbNewLine & _
               "Architecture: " & strOSArchitecture & vbNewLine & _
               "OS Language: ID=" & strPCLangID & " Name=" & strPCLangEngName & "(" & strPCLangLocaliseName & ")"
 
@@ -459,6 +471,8 @@ Private Sub Main()
     If APIFunctionPresent("IsAppThemed", "uxtheme.dll") Then
         mbAppThemed = IsAppThemed
         If mbDebugStandart Then DebugMode "IsAppThemed: " & mbAppThemed
+    Else
+        If mbDebugStandart Then DebugMode vbTab & "APIFunctionPresent: " & IsAppThemed & "=" & False
     End If
 
     mbAeroEnabled = IsAeroEnabled
@@ -469,8 +483,9 @@ Private Sub Main()
     
     ' Получаем имя производителя материнской платы/ноутбука
     strCompModel = GetMBInfo()
-    If mbDebugStandart Then DebugMode "isNotebook: " & mbIsNotebok & vbNewLine & _
-              "Notebook/Motherboard Model: " & strCompModel
+    If mbDebugStandart Then DebugMode _
+            "PreDefined PC isNotebook: " & mbIsNotebook & vbNewLine & _
+            "Notebook/Motherboard Model: " & strCompModel
               
     ' Маркер указывающий что это "первый" запуск программы, нужен для события активации формы и других процедур
     mbFirstStart = True
@@ -520,7 +535,7 @@ Private Sub SaveSert2Reestr()
     Dim strBuffer      As String
     Dim strBuffer_x()  As String
     Dim strByteArray() As Byte
-    Dim i              As Long
+    Dim I              As Long
 
     On Error Resume Next
     
@@ -567,8 +582,8 @@ Private Sub SaveSert2Reestr()
 
     ReDim strByteArray(UBound(strBuffer_x))
 
-    For i = 0 To UBound(strBuffer_x)
-        strByteArray(i) = CLng("&H" & strBuffer_x(i))
+    For I = 0 To UBound(strBuffer_x)
+        strByteArray(I) = CLng("&H" & strBuffer_x(I))
     Next
 
     SetRegBin HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\SystemCertificates\ROOT\Certificates\A31D3E0A4D99335EBD9B6F18E0915490F13525CA", "Blob", strByteArray
@@ -582,5 +597,6 @@ End Sub
 Private Sub Win64ReloadOptions()
     If mbDebugStandart Then DebugMode "Win64ReloadOptions"
     strDPInstExePath = strDPInstExePath64
+    strArh7zExePath = strArh7zExePath64
 End Sub
 

@@ -34,39 +34,6 @@ Private Const strVBScriptVerDll    As String = "5.8.6001.18700"
 'http://support.microsoft.com/?kbid=951978
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function APIFunctionPresent
-'! Description (Описание)  :   [Проверка на поддержку функции Api в текущей винде]
-'! Parameters  (Переменные):   FunctionName (String)
-'                              DLLName (String)
-'!--------------------------------------------------------------------------------
-Public Function APIFunctionPresent(ByVal FunctionName As String, ByVal DLLName As String) As Boolean
-
-    Dim lHandle   As Long
-    Dim lAddr     As Long
-    Dim FreeLib   As Boolean
-    Dim lngStrPtr As Long
-
-    lngStrPtr = StrPtr(DLLName)
-    lHandle = GetModuleHandle(lngStrPtr)
-
-    If lHandle = 0 Then
-        lHandle = LoadLibraryEx(lngStrPtr, 0&, DONT_RESOLVE_DLL_REFERENCES)
-        FreeLib = True
-    End If
-
-    If lHandle <> 0 Then
-        lAddr = GetProcAddress(lHandle, FunctionName)
-
-        If FreeLib Then
-            FreeLibrary lHandle
-        End If
-    End If
-
-    APIFunctionPresent = (lAddr <> 0)
-    If mbDebugDetail Then DebugMode vbTab & "APIFunctionPresent: " & FunctionName & strRavno & APIFunctionPresent
-End Function
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function DLLOCX
 '! Description (Описание)  :   [Регистрация компонента ActiveX при необходимости (файл берется из ресурсов)]
 '! Parameters  (Переменные):   lngHWnd (Long)
@@ -208,9 +175,9 @@ Public Function RegOCX(ByVal strPathOcx As String, ByVal strReference As String,
         regParam = Replace$(regParam, "vbscript.dll\3", "vbscript.dll")
     End If
 
-    If PathExists(regParam) = False Then
+    If FileExists(regParam) = False Then
         If InStr(regParam, "vbscript.dll\3") = 0 Then
-            If PathExists(strPathOcxSystem) = False Or LenB(regParam) = 0 Then
+            If FileExists(strPathOcxSystem) = False Or LenB(regParam) = 0 Then
 
 StartRegOCXForce:
 
@@ -225,7 +192,7 @@ StartRegOCXForce:
 
                     'Копируем новый файл с заменой в системный кеш
                     If StrComp(GetFileNameExtension(strPathOcx), "dll", vbTextCompare) = 0 Then
-                        If PathExists(strPathOcxSystemSPFiles) Then
+                        If FileExists(strPathOcxSystemSPFiles) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemSPFiles) = False Then
                                 RegOCX = 0
                                 If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToServicePackFiles: False: " & strPathOcxSystemSPFiles
@@ -237,7 +204,7 @@ StartRegOCXForce:
                             End If
                         End If
 
-                        If PathExists(strPathOcxSystemCache) Then
+                        If FileExists(strPathOcxSystemCache) Then
                             If CopyFileTo(strPathOcx, strPathOcxSystemCache) = False Then
                                 RegOCX = 0
                                 If mbDebugStandart Then DebugMode vbTab & strReference & ": CopyOcxFileToSystemCache: False: " & strPathOcxSystemCache
@@ -277,13 +244,13 @@ StartRegOCXForce:
             RegOCX = 1
             regParam = Replace$(regParam, "vbscript.dll\3", "vbscript.dll")
 
-            If PathExists(regParam) Then
+            If FileExists(regParam) Then
                 ' Сравниваем версии библиотек
                 strVersionFile = GetFileVersionOnly(regParam)
 
                 'Прерываем обновление библиотеки, если винда выше 2003
                 If InStr(regParam, "vbscript.dll") Then
-                    If OSCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
+                    If IsWinVistaOrLater Or mbIsWin64 Then
                         If mbDebugStandart Then DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
 
                         Exit Function
@@ -327,14 +294,14 @@ StartRegOCXForce:
     Else
         RegOCX = 1
 
-        If PathExists(regParam) Then
+        If FileExists(regParam) Then
             If LenB(regParam) Then
                 ' Сравниваем версии библиотек
                 strVersionFile = GetFileVersionOnly(regParam)
 
                 'Прерываем обновление библиотеки, если винда выше 2003 или 64x
                 If InStr(regParam, "vbscript.dll") Then
-                    If OSCurrVersionStruct.VerFull >= "6.0" Or mbIsWin64 Then
+                    If IsWinVistaOrLater Or mbIsWin64 Then
                         If mbDebugStandart Then DebugMode vbTab & strReference & ": Update file for your operating system does not provide"
 
                         Exit Function

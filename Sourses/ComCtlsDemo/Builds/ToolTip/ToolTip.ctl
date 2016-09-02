@@ -317,9 +317,10 @@ End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
 Dim OldFontHandle As Long
+If NewFont Is Nothing Then Set NewFont = Ambient.Font
 Set PropFont = NewFont
 OldFontHandle = ToolTipFontHandle
-ToolTipFontHandle = CreateFontFromOLEFont(PropFont)
+ToolTipFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If ToolTipHandle <> 0 Then
     If PropUseSystemFont = False Then
         SendMessage ToolTipHandle, WM_SETFONT, ToolTipFontHandle, ByVal 1&
@@ -335,7 +336,7 @@ End Property
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
 OldFontHandle = ToolTipFontHandle
-ToolTipFontHandle = CreateFontFromOLEFont(PropFont)
+ToolTipFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If ToolTipHandle <> 0 Then
     If PropUseSystemFont = False Then
         SendMessage ToolTipHandle, WM_SETFONT, ToolTipFontHandle, ByVal 1&

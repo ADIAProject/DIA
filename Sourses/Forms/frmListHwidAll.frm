@@ -438,6 +438,7 @@ Begin VB.Form frmListHwidAll
          Italic          =   0   'False
          Strikethrough   =   0   'False
       EndProperty
+      VisualTheme     =   1
       View            =   3
       Arrange         =   1
       AllowColumnReorder=   -1  'True
@@ -552,12 +553,12 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub FindCheckCountList()
 
-    Dim i       As Integer
+    Dim I       As Integer
     Dim miCount As Integer
 
-    For i = 1 To lvDevices.ListItems.Count
+    For I = 1 To lvDevices.ListItems.count
 
-        If lvDevices.ListItems.Item(i).Checked Then
+        If lvDevices.ListItems.Item(I).Checked Then
             miCount = miCount + 1
         End If
 
@@ -638,7 +639,7 @@ Private Sub LoadFormCaption()
     Dim MeCaptionView As String
 
     MeCaptionView = LocaliseString(strPCLangCurrentPath, strFormName, strFormName, Me.Caption)
-    Me.CaptionW = MeCaptionView & " (" & lvDevices.ListItems.Count & strSpace & strMessages(124) & strSpace & lngDeviceCount & ")"
+    Me.CaptionW = MeCaptionView & " (" & lvDevices.ListItems.count & strSpace & strMessages(124) & strSpace & lngDeviceCount & ")"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -703,7 +704,7 @@ Private Sub LoadListbyMode()
             lvDevices.ListItems.Clear
         End If
         With lvDevices.ColumnHeaders
-            If .Count Then
+            If .count Then
                 .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
                 .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
                 .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
@@ -833,14 +834,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdCheckAll_Click()
 
-    Dim i As Integer
+    Dim I As Integer
 
     With lvDevices.ListItems
 
-        For i = 1 To .Count
+        For I = 1 To .count
 
-            If Not .Item(i).Checked Then
-                .Item(i).Checked = True
+            If Not .Item(I).Checked Then
+                .Item(I).Checked = True
             End If
 
         Next
@@ -915,14 +916,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdUnCheckAll_Click()
 
-    Dim i As Integer
+    Dim I As Integer
 
     With lvDevices.ListItems
 
-        For i = 1 To .Count
+        For I = 1 To .count
 
-            If .Item(i).Checked Then
-                .Item(i).Checked = False
+            If .Item(I).Checked Then
+                .Item(I).Checked = False
             End If
 
         Next
@@ -962,7 +963,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmListHwidAll", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
         lngFormWidthMin = .Width
@@ -1018,7 +1019,7 @@ Private Sub Form_Resize()
 
             Dim miDeltaFrm As Long
 
-            If OSCurrVersionStruct.VerFull >= "6.0" Then
+            If IsWinVistaOrLater Then
                 miDeltaFrm = 125
             Else
 
@@ -1100,7 +1101,7 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
     With lvDevices
         .ListItems.Clear
 
-        If .ColumnHeaders.Count = 0 Then
+        If .ColumnHeaders.count = 0 Then
             .ColumnHeaders.Add 1, , strTableHwidHeader1
             .ColumnHeaders.Add 2, , strTableHwidHeader7
             .ColumnHeaders.Add 3, , strTableHwidHeader6
@@ -1254,8 +1255,8 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
     Next
     
     With lvDevices.ColumnHeaders
-        If .Count Then
-            If lvDevices.ListItems.Count Then
+        If .count Then
+            If lvDevices.ListItems.count Then
                 .Item(1).AutoSize LvwColumnHeaderAutoSizeToItems
                 .Item(2).AutoSize LvwColumnHeaderAutoSizeToItems
                 If .Item(2).Width < lvDevices.ListItems.Item(1).Width Then
@@ -1289,7 +1290,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim i As Long
+    Dim I As Long
 
     With lvDevices
         .Sorted = False
@@ -1297,10 +1298,10 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
         If ComCtlsSupportLevel() >= 1 Then
 
-            For i = 1 To .ColumnHeaders.Count
+            For I = 1 To .ColumnHeaders.count
 
-                If i <> ColumnHeader.Index Then
-                    .ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
+                If I <> ColumnHeader.Index Then
+                    .ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
 
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -1315,7 +1316,7 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next i
+            Next I
 
             Select Case ColumnHeader.SortArrow
 
@@ -1329,10 +1330,10 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
             .SelectedColumn = ColumnHeader
         Else
 
-            For i = 1 To .ColumnHeaders.Count
+            For I = 1 To .ColumnHeaders.count
 
-                If i <> ColumnHeader.Index Then
-                    .ColumnHeaders(i).Icon = 0
+                If I <> ColumnHeader.Index Then
+                    .ColumnHeaders(I).Icon = 0
                 Else
 
                     If ColumnHeader.Icon = 0 Then
@@ -1347,7 +1348,7 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next i
+            Next I
 
             Select Case ColumnHeader.Icon
 

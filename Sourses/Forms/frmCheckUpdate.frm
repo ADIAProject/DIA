@@ -665,7 +665,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_Activate()
 
-    Dim i As Long
+    Dim I As Long
 
     If mbFirstStartUpdate Then
         lblWait.Visible = True
@@ -680,8 +680,8 @@ Private Sub Form_Activate()
         rtfDescription.Visible = True
         cmbVersions.Left = lblVersionList.Left + lblVersionList.Width + 50
 
-        For i = LBound(strUpdVersions) To UBound(strUpdVersions)
-            cmbVersions.AddItem strUpdVersions(i), i
+        For I = LBound(strUpdVersions) To UBound(strUpdVersions)
+            cmbVersions.AddItem strUpdVersions(I), I
         Next
 
         cmbVersions.ListIndex = 0
@@ -724,7 +724,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmUpdate", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With

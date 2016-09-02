@@ -12,8 +12,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowListView As ListView
+Private ShadowObjectPointer As Long
 Private PropColumnHeader As Collection
+
+Private Function ShadowListView() As ListView
+Set ShadowListView = PtrToObj(ShadowObjectPointer)
+End Function
 
 Private Sub Class_Initialize()
 Set PropColumnHeader = New Collection
@@ -30,16 +34,21 @@ Set NewEnum = PropColumnHeader.[_NewEnum]
 End Function
 
 Friend Sub FInit(ByVal Object As ListView)
-Set ShadowListView = Object
+ShadowObjectPointer = ObjPtr(Object)
 End Sub
 
-Public Function Add(Optional ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Text As String, Optional ByVal Width As Single, Optional ByVal Alignment As LvwColumnHeaderAlignmentConstants, Optional ByVal Icon As Long) As LvwColumnHeader
+Public Function Add(Optional ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Text As String, Optional ByVal Width As Single, Optional ByVal Alignment As LvwColumnHeaderAlignmentConstants, Optional ByVal Icon As Variant) As LvwColumnHeader
 Attribute Add.VB_Description = "Adds a column header to the column headers collection."
 If Index > (PropColumnHeader.Count + 1) Or Index < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
-If Icon < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
-ShadowListView.FColumnHeadersAdd Index, Text, Width, Alignment, Icon
+Dim IconIndex As Long
+If IsMissing(Icon) Then
+    Icon = Empty
+Else
+    Call ComCtlsImlListImageIndex(ShadowListView, ShadowListView.ColumnHeaderIcons, Icon, IconIndex)
+End If
+ShadowListView.FColumnHeadersAdd Index, Text, Width, Alignment, IconIndex
 Dim NewColumnHeader As New LvwColumnHeader
-NewColumnHeader.FInit ShadowListView, Key
+NewColumnHeader.FInit ShadowListView, Key, Icon, IconIndex
 If Key = vbNullString Then
     If Index > 0 And Index <= PropColumnHeader.Count Then
         PropColumnHeader.Add NewColumnHeader, , Index
@@ -68,6 +77,11 @@ Public Property Get Item(ByVal Index As Variant) As LvwColumnHeader
 Attribute Item.VB_Description = "Returns a column header given its index or key."
 Attribute Item.VB_UserMemId = 0
 Set Item = PropColumnHeader(Index)
+End Property
+
+Public Property Get ItemFromPos(ByVal Position As Long) As LvwColumnHeader
+Attribute ItemFromPos.VB_Description = "Returns a column header given its position."
+Set ItemFromPos = PropColumnHeader(ShadowListView.FColumnHeadersPositionToIndex(Position))
 End Property
 
 Public Property Get Count() As Long

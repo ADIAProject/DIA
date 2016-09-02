@@ -8,6 +8,7 @@ Public Const MAXDWORD               As Long = &HFFFFFFFF
 
 'Константы для CreateFile
 Public Const INVALID_HANDLE_VALUE   As Long = (-1)
+Public Const ERROR_CALL_NOT_IMPLEMENTED As Long = 120
 Public Const FILE_ATTRIBUTE_NORMAL  As Long = &H80
 Public Const GENERIC_WRITE          As Long = &H40000000
 Public Const GENERIC_READ           As Long = &H80000000
@@ -18,10 +19,30 @@ Public Const FILE_SHARE_DELETE      As Long = &H4
 Public Const CREATE_ALWAYS          As Long = 2
 Public Const FILE_FLAG_SEQUENTIAL_SCAN As Long = &H8000000
 
+'Константы для FindFileEx
+Public Const FIND_FIRST_EX_LARGE_FETCH   As Long = 2 'Win7??
+
+'Add to declaration section
+Public Enum FINDEX_INFO_LEVELS
+  FindExInfoStandard = 0&
+  FindExInfoBasic = 1&      'supported in W7 and newer
+  FindExInfoMaxInfoLevel = 2&
+End Enum
+
+Public Enum FINDEX_SEARCH_OPS
+    FindExSearchNameMatch = 0&
+    FindExSearchLimitToDirectories = 1&
+    FindExSearchLimitToDevices = 2&
+    FindExSearchMaxSearchOp = 3&
+End Enum
+
+
 'Строковые константы частоиспользуемых функций
 Public Const vbBackslash            As String = "\"
 Public Const vbBackslashDouble      As String = "\\"
 Public Const ALL_FILES              As String = "*.*"
+Public Const ALL_FOLDERS            As String = "*."
+Public Const ALL_FOLDERS_EX         As String = "*"
 
 Public Type SECURITY_ATTRIBUTES
     nLength                         As Long
@@ -47,21 +68,6 @@ Public Type WIN32_FIND_DATA
     cAlternate(14 * 2 - 1)          As Byte
 End Type
 
-Public Type FILE_PARAMS
-    bRecurse                        As Boolean
-    nFileCount                      As Long
-    nFileSize                       As Currency    '64 bit value
-    nSearched                       As Long
-    sFileNameExt                    As String
-    sFileRoot                       As String
-End Type
-
-Public Type FOLDER_PARAMS
-    bRecurse                        As Boolean
-    sFileNameExt                    As String
-    sFileRoot                       As String
-End Type
-
 Public Declare Function PathFileExists Lib "shlwapi.dll" Alias "PathFileExistsW" (ByVal pszPath As Long) As Boolean
 Public Declare Function CopyFile Lib "kernel32.dll" Alias "CopyFileA" (ByVal lpExistingFileName As String, ByVal lpNewFileName As String, ByVal bFailIfExists As Long) As Long
 Public Declare Function DeleteFile Lib "kernel32.dll" Alias "DeleteFileW" (ByVal lpFileName As Long) As Long
@@ -80,11 +86,12 @@ Public Declare Function StrFormatByteSize Lib "shlwapi.dll" Alias "StrFormatByte
 Public Declare Function StrFormatByteSizeW Lib "shlwapi.dll" (ByVal qdwLow As Long, ByVal qdwHigh As Long, pwszBuf As Any, ByVal cchBuf As Long) As Long
 Public Declare Function FindClose Lib "kernel32.dll" (ByVal hFindFile As Long) As Long
 Public Declare Function FindFirstFile Lib "kernel32.dll" Alias "FindFirstFileW" (ByVal lpFileName As Long, lpFindFileData As WIN32_FIND_DATA) As Long
+Public Declare Function FindFirstFileEx Lib "kernel32.dll" Alias "FindFirstFileExW" (ByVal lpFileName As Long, ByVal fInfoLevelId As Long, lpFindFileData As WIN32_FIND_DATA, ByVal fSearchOp As Long, ByVal lpSearchFilter As Long, ByVal dwAdditionalFlags As Long) As Long
 Public Declare Function FindNextFile Lib "kernel32.dll" Alias "FindNextFileW" (ByVal hFindFile As Long, lpFindFileData As WIN32_FIND_DATA) As Long
 Public Declare Function PathMatchSpec Lib "shlwapi.dll" Alias "PathMatchSpecW" (ByVal pszFileParam As Long, ByVal pszSpec As Long) As Long
 Public Declare Function GetTempFileName Lib "kernel32.dll" Alias "GetTempFileNameA" (ByVal lpszPath As String, ByVal lpPrefixString As String, ByVal wUnique As Long, ByVal lpTempFileName As String) As Long
 Public Declare Function PathIsUNC Lib "shlwapi.dll" Alias "PathIsUNCW" (ByVal pszPath As Long) As Boolean
-Public Declare Function SHFileOperation Lib "shell32.dll" Alias "SHFileOperationA" (lpFileOp As SHFILEOPSTRUCT) As Long
+Public Declare Function SHFileOperation Lib "Shell32.dll" Alias "SHFileOperationA" (lpFileOp As SHFILEOPSTRUCT) As Long
 Public Declare Function PathCombineW Lib "shlwapi.dll" (ByVal lpszDest As Long, ByVal lpszDir As Long, ByVal lpszFile As Long) As Boolean
 Public Declare Function PathIsRoot Lib "shlwapi.dll" Alias "PathIsRootA" (ByVal pszPath As String) As Long
 Public Declare Function GetDriveType Lib "kernel32.dll" Alias "GetDriveTypeA" (ByVal nDrive As String) As Long

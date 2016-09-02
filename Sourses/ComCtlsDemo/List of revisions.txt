@@ -1,422 +1,234 @@
 List of revisions:
 
-01-Jun-2015
-- Fixed a bug in the handling of the DisabledPicture property in the CommandButtonW control and VisualStyles.bas.
-
-31-May-2015
-- Included the ForeColor/Style/DownPicture/DisabledPicture/UseMaskColor/MaskColor/DrawMode property and OwnerDraw event in the CommandButtonW control.
-- Some other minor improvements.
-
-25-May-2015
-- Included the ForeColor and Bold property of a column header in the ListView control.
-- Included the ContextMenu event in the MonthView control.
-
-20-May-2015
-- Included the CharacterCasing property in the ComboBoxW control.
-
-07-May-2015
-- In the printer dialogs the resulting printer name is not truncated anymore to 30 characters in the CommonDialog class.
-
-30-Apr-2015
-- Fixed a bug that it was not possible to use the default file name in the show open dialog in the CommonDialog class.
-
-11-Feb-2015
-- Fixed a bug in the auto sizing in the LabelW control.
-- Included the ContextMenu event in the Slider control.
-- Removed the ToolTip control.
-
-19-Jan-2015
-- Some enhancements and modifications are done in the CommonDialog class:
-  - Removed the function 'ShowOpenWith' as it does not fit into the concept.
-    Because the open with dialog works as a execution and not like the others as a user input.
-  - Renamed the function 'ShowFolder' to 'ShowFolderBrowser'.
-  - Included the constants CdlCFApply, CdlBIFValidate and CdlBIFStatusText.
-  - Included the events InitDialog, FileValidate, ColorValidate, FontApply and FolderBrowserValidateFailed.
-  - Included the property 'HookEvents'. (indicates if the dialog box can raise events that requires a hook callback)
-  - The folder browser dialog (if CdlBIFBrowseIncludeFiles flag is set) will now also set the FileOffset property, if necessary.
-    The RootFolder is now a property and not a optional argument of the folder browser dialog function anymore.
-    The OK button is now disabled (CdlBIFReturnOnlyFSDirs flag must be set) if the user selects a "\\ServerName" item. (SHGetPathFromIDList API fails)
-  - The page min margins are now as properties and not as optional arguments of the page setup dialog function anymore.
-  - The Font object property is removed and replaced with the underlying properties.
-    The FontName property is for example now by default empty, as it is not dependent on a object anymore.
-    This enables a more appropriate use of the font dialog. This way is the same as in the original CommonDialog control from MS.
-  - The find and replace dialog uses now a WH_GETMESSAGE hook instead of a WH_KEYBOARD hook. (more reliable/compact; PostMessage API can now be used)
-- Some other minor improvements.
-
-29-Dec-2014
-- The behavior of the Text property in the ListBoxW and ComboBoxW control is now equal to the original controls from MS.
-- The embedded tool tips (in TabStrip, ToolBar etc.) supports now multiline also for comctl32.dll version 5.8x.
-
-27-Dec-2014
-- Included the HotMousePointer/HotMouseIcon property in the ListView control.
-- Included the IMEMode property in the ComboBoxW and ImageCombo control.
-- The SaveToolBar/RestoreToolBar methods are now unicode aware in the ToolBar control.
-- Fixed a bug in the Locked property in the ComboBoxW control.
-- Included the ColumnOrder run time property in the ListView control.
-
-20-Dec-2014
-- Fixed a bug that the tool tips did not display correctly when using comctl32.dll version 5.8x.
-  Reason is that multiline tool tips (TTM_SETMAXTIPWIDTH with value 0) are only supported in comctl32.dll version 6.0 or higher.
-- Certain property bags will not crash anymore when migrating from the MS controls.
-- Included the DTFormat property of a panel in the StatusBar control.
-- Enhanced the Style property (enum values) of a panel in the StatusBar control.
-- Included the OLEObjectsAddFromFile method in the RichTextBox control.
-
-22-Nov-2014
-- Included the GetTickPosition function and HideThumb property in the Slider control.
-- The ImageList control increments/decrements now the shell mod count.
-  This missing element could cause an application not to start, especially on Windows XP.
-- Some bugfixes and improvements.
-
-15-Nov-2014
-- Included the ThumbLeft/-Top/-Width/-Height and ChannelLeft/-Top/-Width/-Height property in the Slider control.
-
-14-Nov-2014
-- Fixed a bug in the UserControl_Resize handler and GetIdealSize method in the ToolBar control.
-
-12-Nov-2014
-- Included a WM_UNICHAR handler on all controls that process the WM_CHAR message.
-
-10-Nov-2014
-- Fix in the KeyChar param in the KeyPress events. The param is now a correct translated unicode character.
-  This fix was necessary as the internal VB's TranslateMessage is not 'full' unicode aware.
-
-02-Nov-2014
-- On WinXP (but only when IDE uses comctl32.dll version 6.0) there were on some property pages
-  black backgrounds on those CommandButton controls that were placed on a Frame control. (Known WinXP bug)
-  This issue is now solved by the trick to put a PictureBox between the Frame and CommandButton.
-
-31-Oct-2014
-- Fixed a bug in the CustomFormat property in the DTPicker control.
-  The CustomFormat takes now only in visible effect when the Format property is set to 'Custom'.
-
-26-Oct-2014
-- Fixed the issue that the property pages did not show the focus rectangles and accelerator keys.
-  Though this was only the case when the VB6 IDE uses comctl32.dll version 6.0 or higher.
-
-25-Oct-2014
-- Fixed a bug in the 'ActualWidth' of a panel in the StatusBar control. (effects WinXP only)
-- Renamed the BarColor property to 'ForeColor' in the ProgressBar control.
-- Discarded the UseBackColor property in the StatusBar control.
-- Included the ForeColor and Bold property of a panel in the StatusBar control.
-- Included the 'SbrPanelProperties' class in the StatusBar control. (for the ForeColor property)
-
-19-Oct-2014
-- Replaced the 'SpbAlignmentConstants' to 'CCLeftRightAlignmentConstants' in the SpinBox control.
-- Included the BackColor property in the MCIWnd control.
-- Included the 'CbrBandProperties' class in the CoolBar control.
-  Purpose of this class is to display the standard color property page at design time for a band.
-  This is the proper way instead of how it was done before.
-- Fixed a minor bug (content was not erased in the invalidation) in the Enabled property of a panel in the StatusBar control.
-
-18-Oct-2014
-- Some internal improvements and bugfixes.
-
-16-Oct-2014
-- Included the IMEMode property in the RichTextBox control.
-
-15-Oct-2014
-- Modified the OLEGuids type library to include the 'IObjectSafety' interface.
-  But this new interface is only implemented into all the controls in the OCX projects.
-  It isn't in the Std-EXE project as this would be completly unnecessary.
-
-12-Oct-2014
-- Included the OLEObjectsAddFromPicture method in the RichTextBox control.
-  With this bitmap pictures can be inserted into by code. (e.g. from a StdPicture or the .Image property of a PictureBox)
-
-10-Oct-2014
-- Some internal improvements and bugfixes.
-
-08-Oct-2014
-- Included the IMEMode property in the TextBoxW control.
-
-05-Oct-2014
-- Included the IconSpacingWidth/IconSpacingHeight run time property and ResetIconSpacing method in the ListView control.
-
-02-Oct-2014
-- Included the BeforeScroll/AfterScroll event in the ListView control.
-- Included the UseColumnChevron property and ColumnChevronPushed event in the ListView control.
-- Bugfix in the internal CheckHeaderControl function in the ListView control.
-
-30-Sep-2014
-- Included the StopUndoAction method in the RichTextBox control.
-- Renamed the ResetUndoFlag method to 'ResetUndoQueue' in the RichTextBox control.
-
-29-Sep-2014
-- Minor bugfix in the DoubleBuffer property in the ToolBar control.
-
-27-Sep-2014
-- Included the Hot run time property of a button in the ToolBar control.
-- Included the HotItem property in the ToolBar control.
-- Renamed the ButtonMouseEnter/ButtonMouseLeave events to 'ButtonHotChanged' in the ToolBar control.
-- Some other minor improvements.
-
-25-Sep-2014
-- Fixed a problem that the HighLighted property of a Button in the ToolBar control did not consider the design time state at run time.
-
-24-Aug-2014
-- Included the Today property in the MonthView control.
-
-23-Aug-2014
-- Included the DrawMode property and ItemDraw event in the TabStrip control.
-
-19-Aug-2014
-- Included the HotChanged event in the Pager control.
-- The RowCount property in the TabStrip control returns now explicitly as 'Long'.
-  Before there was no declaration, which means that the property returned as 'Variant'.
-
-19-Jul-2014
-- Included the GroupIcons property in the ListView control.
-- Included the Icon property of a Group in the ListView control.
-
-18-Jul-2014
-- Included the Hint property of a Group in the ListView control.
-
-16-Jul-2014
-- Included the Link property of a Group in the ListView control.
-- Included the GroupCollapsedChanged/GroupSelectedChanged/GroupLinkClick event in the ListView control.
-
-14-Jul-2014
-- Fixed again the CoolBar control, there were some critical mistakes done in the update from 13-Jul-2014.
-  Now everything should work, especially for the fixed sized bands.
-
-13-Jul-2014
-- Some bugfixes in the CoolBar control.
-- Included the HitTest function in the TabStrip control.
-- Some minor improvements.
-
-12-Jul-2014
-- Included the GetIdealSize method in the DTPicker control.
-- 'TvwNodeRelationshipNext' now as default in the optional Relationship argument in the Add method of 'TvwNodes' and Move method of 'TvwNode'.
-
-10-Jul-2014
-- Included the AllowUserInput property and ParseUserInput event in the DTPicker control.
-- The internal UpDown in the DTPicker control considers now the VisualStyles property.
-- The hidden ControlsEnum property in some controls returns now 'VBRUN.ParentControls' instead of 'Object'.
-
-09-Jul-2014
-- Inserting a invalid picture at design time in the ImageList control does not crash the IDE anymore.
-- Several improvements/bugfixes in the ComboBoxW and ImageCombo control.
-- Renamed the SelectedTab property to 'SelectedItem' in the TabStrip control.
-  Also it supports now a value of 'Nothing' to have no tab selected. ("Set TabStrip1.SelectedItem = Nothing")
-
-08-Jul-2014
-- Fixed a bug that the MaxTipWidth property did not work as expected in the ToolTip control.
-  Also expanded the description of the property to advice following:
-  - A value of -1 or 0 indicates that any width is allowed.
-  - When set to -1 the text will be always single lined.
-- The internal tool tips in all concerned controls supports now multiline text. (TTM_SETMAXTIPWIDTH explicitly set to 0)
-
-07-Jul-2014
-- The modification done when setting the DropDownHeight property (fixed custom height of the drop-down list) in the ComboBoxW control
-  can now be undone when setting again the MaxDropDownItems property. But the IntegralHeight property stays 'False'.
-
-06-Jul-2014
-- Included the ButtonDrag event in the ToolBar control.
-- Renamed the MeasureItem/DrawItem events to 'ItemMeasure' and 'ItemDraw' in the ComboBoxW and ListBoxW control.
-- Renamed the DroppedWidth property to 'DropDownWidth' in the ComboBoxW control.
-- Included the DropDownHeight run time property in the ComboBoxW control.
-  Thus setting a custom height for the drop-down list is now possible, but:
-  - Setting the DropDownHeight property resets the IntegralHeight property to false.
-  - Also the MaxDropDownItems property gets not meaningful anymore.
-
-05-Jul-2014
-- Included the DrawMode property in the ComboBoxW and ListBoxW control.
-- Included the MeasureItem/DrawItem events in the ComboBoxW and ListBoxW control.
-- Fixed a bug in the ComboBoxW control that the DropDownHeight does not gets updated when an item was removed or all was cleared.
-
-03-Jul-2014
-- Added a WM_SIZE handler (to synchronize the size to the UserControl) in the ComboBoxW control.
-  Thus, messages like CB_SETITEMHEIGHT with wParam -1 works now properly.
-- Included the FieldHeight property in the ComboBoxW control.
-- Included the DisableNoScroll property and some internal improvements in the ComboBoxW and ListBoxW control.
-
-29-Jun-2014
-- Included the CommandLink control.
-
-26-Jun-2014
-- The Pushed property now not read-only anymore in the CommandButtonW, CheckBoxW and OptionButtonW control.
-- Centralized the loading of the common control classes. It is necessary to replace all controls and the 'ComCtlsBase.bas'.
-
-25-Jun-2014
-- Included the ImageList/ImageListAlignment/ImageListMargin property in the CheckBoxW and OptionButtonW control.
-- Included the Pushed/Hot run time property in the CommandButtonW, CheckBoxW and OptionButtonW control.
-- Included the HotChanged event in the CommandButtonW, CheckBoxW and OptionButtonW control.
-
-24-Jun-2014
-- Improved the 'Clear' method on the class collection objects.
-- Any control names (ImageList, BuddyControl etc.) in the property bags are now stored as ANSI (Text) instead of Unicode (Byte array).
-  There is no benefit with Unicode in this case as the control names are anyway not Unicode aware. Also the .frx files will be reduced by this change.
-
-23-Jun-2014
-- Some minor improvements on certain property bags.
-
-22-Jun-2014
-- Included the ImageList/ImageListAlignment/ImageListMargin property in the CommandButtonW control.
-
-20-Jun-2014
-- Included the panel style constant 'Kana' in the StatusBar control.
-
-19-Jun-2014
-- Minor internal improvements in the ProgressBar control.
-- Improvement, WM_MOUSEACTIVATE is now not handled (on design mode) when a UserControl is embedded in another UserControl.
-  This is necessary for convenient dragging in design mode. (Same behavior as on the MS controls)
-
-18-Jun-2014
-- Included the SplitButtonGlyph property in the CommandButtonW control.
-
-17-Jun-2014
-- Included the ContainedControls property in the ToolBar control.
-- The ContainedControls property in the FrameW, CoolBar and ToolBar control returns now 'VBRUN.ContainedControls' instead of 'Object'.
-- The Container property is now also available when setting to a shadow object. ('Set' command)
-- Included the SplitButtonNoSplit property in the CommandButtonW control.
-
-15-Jun-2014
-- GDI leak bugfix in the Picture property in the CommandButtonW, CheckBoxW and OptionButtonW control.
-- Improved the bugfix in the drawing when the HideSelection property is False in the TreeView control.
-
-11-Jun-2014
-- Simplified and optimized the updating of the tool tip rects in the StatusBar control.
-- Improvement, no 'WithEvents' attachment needed anymore to the parent form (Intercepts Form_Load) in the MonthView control.
-
-10-Jun-2014
-- Included the GetIdealSize method in the CommandButtonW control.
-- Fixed a bug that the Appearance property is not considered at creation in the CommandButtonW control.
-
-09-Jun-2014
-- Centralized the font creation to reduce recurring codes. It is necessary to replace all controls and the 'Common.bas'.
-
-08-Jun-2014
-- Property Page is implemented to the ToolTip control.
-- Included the HitTest function and improved the NM_CLICK/NM_DBLCLK handler in the StatusBar control.
-
-07-Jun-2014
-- Property Page is implemented to the LinkLabel control.
-- Minor bugfix in the UserControl_Resize handler in the ComboBoxW control.
-
-04-Jun-2014
-- Internal improvements on some controls.
-- The ToolTip control does not need to subclass the parent form anymore.
-
-03-Jun-2014
-- Included the LinkGetTipText event and the ShowTips/VisualStyles property in the LinkLabel control.
-- The HitTest function and the Left/Top/Width/Height of a Link in the LinkLabel control
-  are now also working at initialization time. (For instance in the Form_Load event)
-- The internal ToolTip in the TabStrip control considers now the VisualStyles property.
-
-01-Jun-2014
-- Included the ShowOpenWith function in the CommonDialog class.
-
-31-May-2014
-- Included the LinkLabel control. (SysLink window)
-
-30-May-2014
-- Included the UseSystemFont property in the ToolTip control.
-- The internal ToolTip in the Slider, StatusBar and ToolBar control considers now the VisualStyles property.
-- Other minor improvements.
-
-29-May-2014
-- Fixed a bug in the ButtonMenus property page section in the ToolBar control that the 'Separator' property was not saved.
-
-27-May-2014
-- Some internal improvements, bugfixes and enhancements in the ToolTip control.
-
-20-May-2014
-- Fixed a bug in the Animation control that the X and Y values in the mouse events are not in twips.
-
-19-May-2014
-- Optimized the Click event on all concerned controls. (Does now only fire when there was a MouseDown before)
-- Replaced the ASM Design Mode subclass to normal subclass. (As I did not encounter any stability decline with normal subclass)
-  Also with this change there is no problem anymore in a potential OCX when it was compiled with "binary compatibility".
-- Improved the ToolBar control at design time. (WS_EX_TRANSPARENT added at design time)
-  As the BackColor property is anyhow ignored at design time this ensures that no "black" background is drawn.
-  This happened for instance when the IDE (VB6.EXE) uses the comctl32.dll version 6.0 or higher.
-
-18-May-2014
-- Fixed a bug in the LabelW control that the X and Y values in the mouse events are not in twips.
-
-15-May-2014
-- Bugfix in the MinDate/MaxDate property of the MonthView control. (does not cause crashes anymore)
-
-14-May-2014
-- Included the SplitButtonAlignment property in the CommandButtonW control.
-- Major bugfixes in the Slider, UpDown and SpinBox control.
-  It is recommended to update at least these controls.
-- Other minor improvements.
-
-11-May-2014
-- The Toolbar control is now a control container like the original ToolBar control from MS is also.
-- Some internal improvements in the Slider and ProgressBar control.
-- Renamed the 'TipEnabled' property of the Slider control to 'ShowTip'.
-- Optimized the 'StrToVar' and 'VarToStr' common function.
-- Other minor improvements.
-
-08-May-2014
-- Enhanced the FindItem function in the ComboBoxW, ListBoxW and ListView control.
-- Included the FindItem function in the ImageCombo control.
-
-07-May-2014
-- Included the UseBackColor and BackColor property in the StatusBar control.
-- Included the FindItem function in the ComboBoxW and ListBoxW control.
-
-05-May-2014
-- Improved the HitTestInsertMark function in the ToolBar control.
-- Included the VerticalAlignment property in the CommandButtonW, CheckBoxW and OptionButtonW control.
-
-04-May-2014
-- Included the InsertMark and InsertMarkColor property and the HitTestInsertMark function in the ToolBar control.
-- The DroppedDown property in the CommandButtonW control is now not showing anymore in the property browser.
-- Included the HighLighted property of a Button in the ToolBar control.
-- Fixed a bug in the HighLighted property of a Tab in the TabStrip control.
-
-02-May-2014
-- Included the HitTest function in the ToolBar control.
-
-27-Apr-2014
-- Included the DroppedDown property in the CommandButtonW control.
-
-14-Apr-2014
-- Bugfix in the drawing when the HideSelection property is False in the TreeView control.
-
-12-Apr-2014
-- Included the 'Groups' functionality in the ListView control. ('LvwGroup' and 'LvwGroups' classes)
-  In order to use this the new property 'GroupView' must be set to True.
-- Included the 'Visible' property of a ListItem in the ListView control.
-- Bugfix in the Left/Top property of a ListItem (and not read-only anymore) in the ListView control.
-
-09-Apr-2014
-- Minor improvements.
-
-07-Apr-2014
-- The Text property of a ColumnHeader in the ListView control is now the 'Default' property. (Same as original from MS)
-
-06-Apr-2014
-- Fixed a bug in the Indentation property of a ListItem in the ListView control.
-- Fixed a bug that the UserControl_Terminate event did not fire in the ListView control.
-  But the bug only appeared when the 'ColumnHeaders' property was used.
-
-01-Apr-2014
-- Bugfix in the ColumnWidth and SmallIcons property in the ListView control.
-
-22-Mar-2014
-- Fixed a critical bug in the Sorted property in the TreeView control. (it is recommended to replace all TreeView components)
-
-19-Mar-2014
-- Fixed the 'vertically stacked tabs' bug in the TabStrip control.
-
-16-Mar-2014
-- Bugfixes in the ToolBar control.
-
-12-Mar-2014
-- Fixed a GDI leak on all controls that have a Font property.
-
-10-Mar-2014
-- Minor bugfix in the TextBoxW control.
-- Some component modifications. (it is recommended to replace everything)
-
-06-Mar-2014
-- Fixed a bug (Applies to Win XP only) that the UserControl_Terminate event did not fire in the RichTextBox control.
-- Eliminated the exposed OLEGuids interfaces in the RichTextBox.
+30-Aug-2016
+- Minor internal improvement in the Appearance property in the FrameW, OptionButtonW, CheckBoxW, CommandButtonW and LabelW control.
+
+23-Aug-2016
+- Included the VisualTheme property in the TreeView and ListView control.
+  The SetExplorerTheme method has been removed.
+
+19-Aug-2016
+- Internal improvement in the TextBoxW control.
+
+15-Aug-2016
+- Fixed a bug that setting the Text property does not fire the Change event in the TextBoxW control.
+  That bug appeared only when the MultiLine property was set to True.
+  MSDN: EN_CHANGE is not sent when the ES_MULTILINE style is used and the text is sent through WM_SETTEXT.
+
+14-Aug-2016
+- Fixed a bug that setting the Text property does not fire the Change event in the ComboBoxW control.
+
+12-Aug-2016
+- Included the Orientation property in ToolBar control.
+  This property is read-only when the Align property is <> vbAlignNone.
+- The Align property is now also available when setting to a shadow object. ('Set' command)
+  Affected are only the alignable controls. (ToolBar, CoolBar, ProgressBar, StatusBar and Pager)
+
+08-Aug-2016
+- Included the VerticalAlignment property in the LabelW control.
+
+22-Jul-2016
+- Internal improvement in the ImageList control.
+
+21-Jul-2016
+- Bugfix in the ImageList control.
+
+18-Jul-2016
+- Some minor internal improvements.
+
+15-Jul-2016
+- Internal improvement when Redraw property is False in the TreeView, ListView, ComboBoxW and ListBoxW control.
+
+08-Jul-2016
+- It is now allowed to set a zero ImageWidth and/or ImageHeight property in the ImageList control.
+  When adding the first picture into the ImageList the zero ImageWidth and/or ImageHeight will then be set automatically.
+  This behavior is equal to the original MS control.
+
+07-Jul-2016
+- Image property in class collections are now as Variant.
+  This allows to set a index or key of an image in an associated image list control.
+  Affected are the CoolBar, ListView, ToolBar, ImageCombo, TabStrip and TreeView control.
+  It is necessary to replace all components.
+- Some other minor internal improvements.
+
+27-Jun-2016
+- Internal improvement for SyncProperty in the UpDown control.
+
+23-Jun-2016
+- Minor improvement in the ImageList property on all affected controls.
+
+20-Jun-2016
+- Included the Enabled property of a node in the TreeView control.
+  This indicates only if a node is drawn in grey. The application is responsible to limit the user interaction. (via the Before... events)
+
+11-Jun-2016
+- Some minor internal improvements.
+
+08-Jun-2016
+- Fixed a bug that LabelEdit was not working (anymore) in the ListView control.
+  This bug came into effect after the recent internal improvement.
+  Friend method 'FInit' of a ListItem was changed and forgot in LVN_ENDLABELEDIT to reflect this.
+
+04-Jun-2016
+- Included the Level property of a Node in the TreeView control.
+
+02-Jun-2016
+- Included the ItemFromPos property in 'CbrBands' in the CoolBar control.
+
+01-Jun-2016
+- Bugfix in the Key (String) handling for the ListSubItems method 'Add', 'Item' and 'Remove' in the ListView control.
+
+31-May-2016
+- Noticeable less memory consumption in Report View in the ListView control.
+  Also the Tag property in 'LvwListSubItem' is now as Variant.
+- Some other minor internal improvements.
+
+30-May-2016
+- Fixed a bug when adding a ListSubItem in-between in the ListView control.
+
+29-May-2016
+- Tag property in class collections are now as Variant. (except for 'LvwListSubItem', which remains as String)
+  At design-time only String variables can be set, like in the original MS control.
+  It is not allowed to store circular reference objects. (error will be raised)
+  Example: 'Set TreeView1.Nodes(1).Tag = TreeView1.Object' (Though TreeView1 without '.Object' is allowed)
+
+28-May-2016
+- Shadow objects in class collections are now also decoupled in run-time controls. (ImageCombo, LinkLabel, ListView and TreeView control)
+  This ensures that UserControl_Terminate will always be fired.
+  They were already decoupled in design-time controls. (TabStrip, StatusBar, ToolBar, CoolBar and ImageList control)
+
+26-May-2016
+- Included the ItemFromPos property in 'LvwColumnHeaders' in the ListView control. (via HDM_ORDERTOINDEX)
+
+25-May-2016
+- Included the NodeBeforeCheck event in the TreeView control.
+
+23-May-2016
+- Minor bugfixes in the TopItem property in the ListView control.
+
+22-May-2016
+- Improved the TopItem property in the ListView control.
+  It can be used now also when groups are enabled in 'report' view. (LVM_GETTOPINDEX fails in this case, thus a workaround was necessary)
+  Enhanced the code when in 'Icon', 'SmallIcon' and 'Tile' view.
+
+21-May-2016
+- Included the NodeBeforeSelect event in the TreeView control.
+- Removed the GetFirstVisible function in the TreeView, ListView and ImageCombo control.
+  It has been replaced by the TopItem property. It can be even 'Set' in the TreeView and ImageCombo control.
+- The NodeCheck event is now also fired when the checked state of a node was changed by code in the TreeView control.
+- The ItemCheck event is now also fired when the checked state of an item was changed by code in the ListBoxW control.
+- The ColumnCheck event is now also fired when the checked state of a column header was changed by code in the ListView control.
+
+19-May-2016
+- The DragIcon, DragMode and ToolTipText property are now also available when setting to a shadow object. ('Set' command)
+- The Drag and SetFocus method are now also available when setting to a shadow object. ('Set' command)
+
+17-May-2016
+- Included the class 'RtfOleCallback' in the RichTextBox control.
+  This decouples the IRichEditOleCallback interface and ensures UserControl_Terminate will always be fired.
+  When updating, please replace all components. (e.g. RichTextBoxBase.bas)
+
+16-May-2016
+- Improved the Expanded property of a Node in the TreeView control. It works now like in the original MS control.
+  It is now ensured that BeforeCollapse/BeforeExpand and Collapse/Expand events are always fired when state is being changed.
+  Also it is now possible to set the expanded state even when there are no child items associated.
+- To support large numbers the Children property of a Node returns now 'Long' instead of 'Integer' in the TreeView control.
+
+15-May-2016
+- It is now possible to pass a Node object in the Relative parameter in Nodes.Add and Node.Move in the TreeView control.
+- Removed the error message 'the size of the selected picture is not compatible' in the Images property page of the ImageList control.
+  So at design time it is now allowed to select different sized pictures. At run time it was already allowed.
+  The original MS control allows it also. So such error message was a unnecessary limitation.
+
+12-May-2016
+- Fixed a bug in the Move method of a Node and some other internal improvements in the TreeView control.
+  Bugs were in relation to the new ExpandedImage property of a Node.
+
+11-May-2016
+- Included the ExpandedImage property of a Node in the TreeView control.
+
+08-May-2016
+- The SelChange event is now also fired when value or selection was changed by code in the MonthView control.
+- Some internal improvements in the DTPicker and MonthView control.
+
+06-May-2016
+- Fixed a bug that the DateClicked parameter in the DateClick event was invalid in the MonthView control.
+- Included Error 35770 "An invalid date range was specified" in the MonthView control.
+
+05-May-2016
+- Fixed a bug that the Change event was not fired when the checkbox state changed in the DTPicker control.
+- Included Error 35787 "Can't set Value to Null when CheckBox property is False" in the DTPicker control.
+  This Error is also raised in the original MS control.
+
+04-May-2016
+- The Change event is now also fired when value was changed by code in the DTPicker control.
+  Though in the original MS control it is only raised when value was changed by user.
+  But that makes actually no sense and might be even a bug in the original MS control.
+
+15-Apr-2016
+- Minor adjustment to the BackColor in the StatusBar control so that the Pager control can recognize it.
+
+31-Mar-2016
+- Minor bugfix in the internal Numeric/Currency/Date sorting functions in the ListView control.
+
+09-Mar-2016
+- Improved the calculation that determines if DPIs are different. All controls are now really "DPI Aware".
+
+01-Mar-2016
+- Bugfixes and improvements for vertical ToolBar control. (Align property set to vbAlignLeft or vbAlignRight)
+  The Vertical ToolBar behaves now like the original MS control when the Wrappable property is set to False.
+  Also changing from horizontal to vertical and vice versa after initialization works now properly.
+
+29-Feb-2016
+- All controls are now "DPI Aware". (concerns exotic DPI or very large DPI, e.g. 113% and 200%)
+- ComboBoxW with Style 'CboStyleDropDownCombo' is now working on Windows 2000.
+  Message CB_GETCOMBOBOXINFO is not supported on Windows 2000, so little workaround was necessary to solve this.
+- Some other minor internal improvements.
+
+25-Feb-2016
+- Minor adjustment to the BackColor in the ToolBar control so that the Pager control can recognize it.
+
+24-Feb-2016
+- Fixed a bug that the Scroll event fired twice instead of once in the Slider control.
+
+19-Feb-2016
+- The BackColor property in the ToolBar control is now shown/visible at design-time.
+  But it remains ignored when the control paints via double-buffering. (also at run-time)
+
+30-Jan-2016
+- Included the ShowTrailingDates property in the MonthView control.
+- Included the CalendarShowTrailingDates property in the DTPicker control.
+- Forgot to rename the HotTrack property to 'HotTracking' in the property page of the SpinBox control.
+
+28-Jan-2016
+- Fixed a bug in the LVN_ITEMACTIVATE handler in the ListView control.
+  The Shift parameter in the ItemActivate event was not properly set.
+
+19-Jan-2016
+- Renamed the HotTrack property to 'HotTracking' in the SpinBox control.
+  So the wording is in line with the UpDown, TreeView, TabStrip, ListView and LinkLabel control.
+
+07-Jan-2016
+- Included the MaxText event in the TextBoxW and RichTextBox control.
+
+01-Jan-2016
+- Mouse events now again in correct order in the ImageCombo, TreeView and ListView control.
+  Some workaround was necessary to raise them 'After' (refer to update 21-Nov-2015) and keep correct order.
+  Issue was an internal modal message loop on these controls. (DragDetect)
+
+29-Dec-2015
+- UserControl_Resizer is now called in the CoolBar control when setting a child control.
+
+08-Dec-2015
+- WM_MOUSEWHEEL handlers are now "processed" (no forward to the chain anymore) in the DTPicker and MonthView Control.
+
+02-Dec-2015
+- Fixed a bug in the mouse events in the ListView and TreeView control. (relates to update on 21-Nov-2015)
+
+23-Nov-2015
+- Forgot to include ListBoxW and ComboBoxW in the ComCtlsIDEStopProtectionHandler.
+- InitReleaseVisualStyles function in VisualStyles.bas is now only called outside IDE.
+  This is more efficient then always call InitReleaseVisualStyles and do the IDE check on ReleaseVisualStyles.
 
 [...]
 

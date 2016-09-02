@@ -111,6 +111,11 @@ Attribute VB_Exposed = False
 '   - Added enabled property (it enables or disables all the controls in usercontrol)
 '   - Added TransBlt from Chameleon button to draw grayscale image when control is disabled
 '============================================================================================
+' Modified by Romeo91 (adia-project.net) Last Edit 2015-11-16
+'*********************************
+' added unicode support for Caption
+' delete tooltip event declaration (i used 3d-party control for this)
+
 Option Explicit
 
 'Mudar a borda para mudar tamanho
@@ -257,7 +262,7 @@ Private Type BITMAPINFO
 End Type
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
-Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "OLEPRO32.DLL" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function CopyRect Lib "user32.dll" (lpDestRect As RECT, lpSourceRect As RECT) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long
@@ -291,7 +296,7 @@ Private Declare Function SetLayeredWindowAttributes Lib "user32.dll" (ByVal hWnd
 
 Private Const WS_EX_LAYERED = &H80000
 Private Const LWA_ALPHA = &H2
-Private Const TransColor       As Long = &H8000000F
+Private Const transColor       As Long = &H8000000F
 Private Const GWL_STYLE        As Long = -16
 Private Const GWL_EXSTYLE      As Long = (-20)
 Private Const WS_CAPTION       As Long = &HC00000
@@ -356,7 +361,6 @@ Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef D
 Private Declare Function CreateFontIndirect Lib "gdi32.dll" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function MulDiv Lib "kernel32.dll" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private FrameFontHandle       As Long
-Private FrameLogFont          As LOGFONT
 Private WithEvents PropFont   As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 
@@ -790,16 +794,18 @@ End Property
 '! Parameters  (Переменные):   NewFont (StdFont)
 '!--------------------------------------------------------------------------------
 Public Property Set Font(ByVal NewFont As StdFont)
-
+    
     Dim OldFontHandle As Long
-
+    
+    If NewFont Is Nothing Then Set NewFont = Ambient.Font
+    
     Set PropFont = NewFont
-    Call OLEFontToLogFont(NewFont, FrameLogFont)
     OldFontHandle = FrameFontHandle
-    FrameFontHandle = CreateFontIndirect(FrameLogFont)
-
+    FrameFontHandle = CreateGDIFontFromOLEFont(PropFont)
+    
     If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
     If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    
     Me.Refresh
     UserControl.PropertyChanged "Font"
 End Property
@@ -1034,6 +1040,20 @@ Public Property Let RoundedCornerTxtBox(ByRef new_RoundedCornerTxtBox As Boolean
     m_RoundedCornerTxtBox = new_RoundedCornerTxtBox
     PropertyChanged "RoundedCornerTxtBox"
     PaintFrame
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   :   Property RunMode
+'! Description :   [Ambient.UserMode tells us whether the UC's container is in design mode or user mode/run-time.
+'                               Unfortunately, this isn't supported in all containers.]
+'                               http://www.vbforums.com/showthread.php?805711-VB6-UserControl-Ambient-UserMode-workaround&s=8dd326860cbc22bed07bd13f6959ca70
+'! Parameters  :
+'!--------------------------------------------------------------------------------
+Public Property Get RunMode() As Boolean
+    RunMode = True
+    On Error Resume Next
+    RunMode = Ambient.UserMode
+    RunMode = Extender.Parent.RunMode
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -1600,13 +1620,13 @@ Private Sub PaintFrame()
             End If
         End If
     End If
-
+    
     'Draw caption
     If LenB(m_Caption) Then
-        'Set text color
         m_caption_aux = TrimWord(m_Caption, R_Caption.Right - R_Caption.Left)
-        'Draw text
+        'Set text color
         UserControl.ForeColor = IIf(m_Enabled, m_TextColor, TranslateColor(TEXT_INACTIVE))
+        'Draw text
         lpDrawTextParams.cbSize = Len(lpDrawTextParams)
 
         If m_Style = Panel Then
@@ -1641,7 +1661,6 @@ Private Sub PaintFrame()
 
         If m_Enabled Then
             UserControl.PaintPicture m_Icon, iX, iY, m_IconSize, m_IconSize
-            'TransBlt UserControl.hDC,iX,iY, m_IconSize, m_IconSize, m_Icon, vbBlack, , , False, False
         Else
             TransBlt UserControl.hDC, iX, iY, m_IconSize, m_IconSize, m_Icon, vbBlack, , , True, False
         End If
@@ -1681,7 +1700,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Long)
 
-    Dim i            As Integer
+    Dim I            As Integer
     Dim x_left       As Integer
     Dim y_top        As Integer
     Dim SpaceBtwnShp As Integer
@@ -1702,10 +1721,10 @@ Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Lo
     x_left = (UserControl.ScaleWidth - NumShp * RectWidth - (NumShp - 1) * SpaceBtwnShp) / 2
     y_top = (m_Height - RectHeight) / 2
 
-    For i = 0 To NumShp - 1
-        SetRect R, x_left + i * SpaceBtwnShp + i * RectWidth + 1, y_top + 1, 1, 1
+    For I = 0 To NumShp - 1
+        SetRect R, x_left + I * SpaceBtwnShp + I * RectWidth + 1, y_top + 1, 1, 1
         APIRectangle UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, iColorA
-        SetRect R, x_left + i * SpaceBtwnShp + i * RectWidth, y_top, 1, 1
+        SetRect R, x_left + I * SpaceBtwnShp + I * RectWidth, y_top, 1, 1
         APIRectangle UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, iColorB
     Next
 
@@ -2143,13 +2162,13 @@ End Sub
 '                              isGreyscale (Boolean = False)
 '                              XPBlend (Boolean = False)
 '!--------------------------------------------------------------------------------
-Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal TransColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
+Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal transColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
                             MonoMask As Boolean = False, Optional ByVal isGreyscale As Boolean = False, Optional ByVal XPBlend As Boolean = False)
 
     Dim B        As Long
     Dim H        As Long
     Dim F        As Long
-    Dim i        As Long
+    Dim I        As Long
     Dim newW     As Long
     Dim TmpDC    As Long
     Dim TmpBmp   As Long
@@ -2183,7 +2202,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         Else
             tObj = SelectObject(SrcDC, CreateCompatibleBitmap(DstDC, DstW, DstH))
             'MaskColor
-            hBrush = CreateSolidBrush(TransColor)
+            hBrush = CreateSolidBrush(transColor)
             DrawIconEx SrcDC, 0, 0, SrcPic.Handle, DstW, DstH, 0, hBrush, &H1 Or &H2
             DeleteObject hBrush
         End If
@@ -2224,7 +2243,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         useMask = True
 
         If Not useMask Then
-            TransColor = -1
+            transColor = -1
         End If
 
         newW = DstW - 1
@@ -2233,37 +2252,37 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
             F = H * DstW
 
             For B = 0 To newW
-                i = F + B
+                I = F + B
 
-                If GetNearestColor(hDC, CLng(Data2(i).Red) + 256& * Data2(i).Green + 65536 * Data2(i).Blue) <> TransColor Then
+                If GetNearestColor(hDC, CLng(Data2(I).Red) + 256& * Data2(I).Green + 65536 * Data2(I).Blue) <> transColor Then
 
-                    With Data1(i)
+                    With Data1(I)
 
                         If BrushColor > -1 Then
                             If MonoMask Then
-                                If (CLng(Data2(i).Red) + Data2(i).Green + Data2(i).Blue) <= 384 Then
-                                    Data1(i) = BrushRGB
+                                If (CLng(Data2(I).Red) + Data2(I).Green + Data2(I).Blue) <= 384 Then
+                                    Data1(I) = BrushRGB
                                 End If
 
                             Else
-                                Data1(i) = BrushRGB
+                                Data1(I) = BrushRGB
                             End If
 
                         Else
 
                             If isGreyscale Then
-                                gCol = CLng(Data2(i).Red * 0.3) + Data2(i).Green * 0.59 + Data2(i).Blue * 0.11
+                                gCol = CLng(Data2(I).Red * 0.3) + Data2(I).Green * 0.59 + Data2(I).Blue * 0.11
                                 .Red = gCol
                                 .Green = gCol
                                 .Blue = gCol
                             Else
 
                                 If XPBlend Then
-                                    .Red = (CLng(.Red) + Data2(i).Red * 2) \ 3
-                                    .Green = (CLng(.Green) + Data2(i).Green * 2) \ 3
-                                    .Blue = (CLng(.Blue) + Data2(i).Blue * 2) \ 3
+                                    .Red = (CLng(.Red) + Data2(I).Red * 2) \ 3
+                                    .Green = (CLng(.Green) + Data2(I).Green * 2) \ 3
+                                    .Blue = (CLng(.Blue) + Data2(I).Blue * 2) \ 3
                                 Else
-                                    Data1(i) = Data2(i)
+                                    Data1(I) = Data2(I)
                                 End If
                             End If
                         End If
@@ -2779,15 +2798,14 @@ End Sub
 '! Parameters  (Переменные):   PropertyName (String)
 '!--------------------------------------------------------------------------------
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
-
     Dim OldFontHandle As Long
-
-    Call OLEFontToLogFont(PropFont, FrameLogFont)
+    
     OldFontHandle = FrameFontHandle
-    FrameFontHandle = CreateFontIndirect(FrameLogFont)
-
+    FrameFontHandle = CreateGDIFontFromOLEFont(PropFont)
+    
     If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
     If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    
     Me.Refresh
     UserControl.PropertyChanged "Font"
 End Sub
@@ -2844,6 +2862,7 @@ Private Sub UserControl_InitProperties()
     m_HeaderStyle = Gradient
     m_GradientHeaderStyle = VerticalGradient
     SetjcTextDrawParams
+    Set Me.Font = PropFont
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -2979,7 +2998,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     PaintFrame
 
     If m_AtivarResizeDoForm Then
-        If Ambient.UserMode Then
+        If RunMode Then
             Set frm = Parent
             SetWindowLong frm.hWnd, GWL_STYLE, GetWindowLong(frm.hWnd, GWL_STYLE) And Not (WS_CAPTION)
         End If
@@ -3017,6 +3036,11 @@ End Sub
 Private Sub UserControl_Terminate()
 
     On Error Resume Next
+
+    If FrameFontHandle <> 0 Then
+        DeleteObject FrameFontHandle
+        FrameFontHandle = 0
+    End If
 
     'Clean up Font (StdFont)
     Set PropFont = Nothing

@@ -445,13 +445,13 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_Load()
 
-    Dim i As Long
+    Dim I As Long
 
     SetupVisualStyles Me
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmLegendIco", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
@@ -461,7 +461,7 @@ Private Sub Form_Load()
     LoadIconImage2Object imgOK, "BTN_OK", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttention, "BTN_OK_ATTENTION", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkAttentionNew, "BTN_OK_ATTENTION_NEW", strPathImageStatusButtonWork
-    LoadIconImage2Object imgOkAttentionOLD, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
+    LoadIconImage2Object imgOkAttentionOld, "BTN_OK_ATTENTION_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkNew, "BTN_OK_NEW", strPathImageStatusButtonWork
     LoadIconImage2Object imgOkOld, "BTN_OK_OLD", strPathImageStatusButtonWork
     LoadIconImage2Object imgNo, "BTN_NO_DRV", strPathImageStatusButtonWork
@@ -470,7 +470,7 @@ Private Sub Form_Load()
     imgOkNew.BorderStyle = 0
     imgOkOld.BorderStyle = 0
     imgOkAttentionNew.BorderStyle = 0
-    imgOkAttentionOLD.BorderStyle = 0
+    imgOkAttentionOld.BorderStyle = 0
     imgNo.BorderStyle = 0
     imgNoDB.BorderStyle = 0
 
@@ -484,8 +484,8 @@ Private Sub Form_Load()
 
     LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
 
-    For i = 0 To 7
-        lblDescription(i).Caption = arrTTipStatusIcon(i)
+    For I = 0 To 7
+        lblDescription(I).Caption = arrTTipStatusIcon(I)
     Next
 
 End Sub

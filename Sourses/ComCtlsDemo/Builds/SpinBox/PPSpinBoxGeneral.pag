@@ -89,8 +89,8 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Top             =   1200
       Width           =   1800
    End
-   Begin VB.CheckBox CheckHotTrack 
-      Caption         =   "HotTrack"
+   Begin VB.CheckBox CheckHotTracking 
+      Caption         =   "HotTracking"
       Height          =   285
       Left            =   4200
       TabIndex        =   22
@@ -280,7 +280,7 @@ With PropertyPage.SelectedControls(0)
 .NumberStyle = ComboNumberStyle.ItemData(ComboNumberStyle.ListIndex)
 .TextAlignment = ComboTextAlignment.ItemData(ComboTextAlignment.ListIndex)
 .Wrap = CBool(CheckWrap.Value = vbChecked)
-.HotTrack = CBool(CheckHotTrack.Value = vbChecked)
+.HotTracking = CBool(CheckHotTracking.Value = vbChecked)
 .ThousandsSeparator = CBool(CheckThousandsSeparator.Value = vbChecked)
 .ArrowKeysChange = CBool(CheckArrowKeysChange.Value = vbChecked)
 .AllowOnlyNumbers = CBool(CheckAllowOnlyNumbers.Value = vbChecked)
@@ -331,7 +331,7 @@ For i = 0 To ComboTextAlignment.ListCount - 1
     End If
 Next i
 CheckWrap.Value = IIf(.Wrap = True, vbChecked, vbUnchecked)
-CheckHotTrack.Value = IIf(.HotTrack = True, vbChecked, vbUnchecked)
+CheckHotTracking.Value = IIf(.HotTracking = True, vbChecked, vbUnchecked)
 CheckThousandsSeparator.Value = IIf(.ThousandsSeparator = True, vbChecked, vbUnchecked)
 CheckArrowKeysChange.Value = IIf(.ArrowKeysChange = True, vbChecked, vbUnchecked)
 CheckAllowOnlyNumbers.Value = IIf(.AllowOnlyNumbers = True, vbChecked, vbUnchecked)
@@ -549,7 +549,7 @@ If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
 End Sub
 
-Private Sub CheckHotTrack_Click()
+Private Sub CheckHotTracking_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
 End Sub

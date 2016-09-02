@@ -104,6 +104,7 @@ Private Const GRADIENT_FILL_RECT_V As Long = &H1
 
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function GradientFill Lib "msimg32.dll" (ByVal hDC As Long, pVertex As TRIVERTEX, ByVal dwNumVertex As Long, pMesh As GRADIENT_RECT, ByVal dwNumMesh As Long, ByVal dwMode As Long) As Long
+Private Declare Function PlaySound Lib "winmm.dll" Alias "PlaySoundA" (ByVal lpszName As String, ByVal hModule As Long, ByVal dwFlags As Long) As Long
 
 Private Type TRIVERTEX
     X                                   As Long
@@ -118,6 +119,10 @@ Private Type GRADIENT_RECT
     UpperLeft                           As Long
     LowerRight                          As Long
 End Type
+
+Private Const SND_ASYNC    As Long = &H1        'play asynchronously
+Private Const SND_FILENAME As Long = &H20000    'sound is file name
+Private Const EM_GETSEL    As Long = &HB0
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawGradientBackground

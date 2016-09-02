@@ -152,9 +152,9 @@ End Sub
 
 Private Function IRichEditOleCallback_GetNewStorage(ByVal This As Object, ByRef ppStorage As OLEGuids.IStorage) As Long
 On Error GoTo CATCH_EXCEPTION
-Dim ShadowRichTextBox As RichTextBox
-Set ShadowRichTextBox = This
-ShadowRichTextBox.FIRichEditOleCallback_GetNewStorage IRichEditOleCallback_GetNewStorage, ppStorage
+Dim ShadowRtfOleCallback As RtfOleCallback
+Set ShadowRtfOleCallback = This
+ShadowRtfOleCallback.ShadowRichTextBox.FIRichEditOleCallback_GetNewStorage IRichEditOleCallback_GetNewStorage, ppStorage
 Exit Function
 CATCH_EXCEPTION:
 IRichEditOleCallback_GetNewStorage = E_NOTIMPL
@@ -174,9 +174,9 @@ End Function
 
 Private Function IRichEditOleCallback_DeleteObject(ByVal This As Object, ByVal LpOleObject As Long) As Long
 On Error GoTo CATCH_EXCEPTION
-Dim ShadowRichTextBox As RichTextBox
-Set ShadowRichTextBox = This
-ShadowRichTextBox.FIRichEditOleCallback_DeleteObject LpOleObject
+Dim ShadowRtfOleCallback As RtfOleCallback
+Set ShadowRtfOleCallback = This
+ShadowRtfOleCallback.ShadowRichTextBox.FIRichEditOleCallback_DeleteObject LpOleObject
 IRichEditOleCallback_DeleteObject = S_OK
 Exit Function
 CATCH_EXCEPTION:
@@ -197,9 +197,9 @@ End Function
 
 Private Function IRichEditOleCallback_GetDragDropEffect(ByVal This As Object, ByVal fDrag As Long, ByVal KeyState As Long, ByRef dwEffect As Long) As Long
 On Error GoTo CATCH_EXCEPTION
-Dim ShadowRichTextBox As RichTextBox
-Set ShadowRichTextBox = This
-ShadowRichTextBox.FIRichEditOleCallback_GetDragDropEffect CBool(fDrag <> 0), KeyState, dwEffect
+Dim ShadowRtfOleCallback As RtfOleCallback
+Set ShadowRtfOleCallback = This
+ShadowRtfOleCallback.ShadowRichTextBox.FIRichEditOleCallback_GetDragDropEffect CBool(fDrag <> 0), KeyState, dwEffect
 IRichEditOleCallback_GetDragDropEffect = S_OK
 Exit Function
 CATCH_EXCEPTION:
@@ -208,9 +208,9 @@ End Function
 
 Private Function IRichEditOleCallback_GetContextMenu(ByVal This As Object, ByVal SelType As Integer, ByVal LpOleObject As Long, ByVal lpCharRange As Long, ByRef hMenu As Long) As Long
 On Error GoTo CATCH_EXCEPTION
-Dim ShadowRichTextBox As RichTextBox
-Set ShadowRichTextBox = This
-ShadowRichTextBox.FIRichEditOleCallback_GetContextMenu SelType, LpOleObject, lpCharRange, hMenu
+Dim ShadowRtfOleCallback As RtfOleCallback
+Set ShadowRtfOleCallback = This
+ShadowRtfOleCallback.ShadowRichTextBox.FIRichEditOleCallback_GetContextMenu SelType, LpOleObject, lpCharRange, hMenu
 If hMenu = 0 Then
     IRichEditOleCallback_GetContextMenu = E_NOTIMPL
 Else

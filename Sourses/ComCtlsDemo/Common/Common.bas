@@ -113,6 +113,11 @@ MsgBox = MessageBoxIndirect(MSGBOXP)
 End Function
 
 ' (VB-Overwrite)
+Public Sub SendKeys(ByRef Text As String, Optional ByRef Wait As Boolean)
+CreateObject("WScript.Shell").SendKeys Text, Wait
+End Sub
+
+' (VB-Overwrite)
 Public Function GetAttr(ByVal PathName As String) As VbFileAttribute
 Const INVALID_FILE_ATTRIBUTES As Long = (-1)
 Const FILE_ATTRIBUTE_NORMAL As Long = &H80
@@ -239,24 +244,28 @@ Select Case MousePointer
 End Select
 End Function
 
-Public Function CreateFontFromOLEFont(ByVal Font As StdFont) As Long
+Public Function CreateGDIFontFromOLEFont(ByVal Font As StdFont) As Long
 Dim LF As LOGFONT, FontName As String
 With LF
 FontName = Left$(Font.Name, LF_FACESIZE)
 CopyMemory .LFFaceName(0), ByVal StrPtr(FontName), LenB(FontName)
 .LFHeight = -MulDiv(CLng(Font.Size), DPI_Y(), 72)
 If Font.Bold = True Then .LFWeight = FW_BOLD Else .LFWeight = FW_NORMAL
-.LFItalic = IIf(Font.Italic = True, 1, 0)
-.LFStrikeOut = IIf(Font.Strikethrough = True, 1, 0)
-.LFUnderline = IIf(Font.Underline = True, 1, 0)
+If Font.Italic = True Then .LFItalic = 1 Else .LFItalic = 0
+If Font.Strikethrough = True Then .LFStrikeOut = 1 Else .LFStrikeOut = 0
+If Font.Underline = True Then .LFUnderline = 1 Else .LFUnderline = 0
 .LFQuality = DEFAULT_QUALITY
 .LFCharset = CByte(Font.Charset And &HFF)
 End With
-CreateFontFromOLEFont = CreateFontIndirect(LF)
+CreateGDIFontFromOLEFont = CreateFontIndirect(LF)
 End Function
 
-Public Function CloneFont(ByVal Font As IFont) As StdFont
-Font.Clone CloneFont
+Public Function CloneOLEFont(ByVal Font As IFont) As StdFont
+Font.Clone CloneOLEFont
+End Function
+
+Public Function GDIFontFromOLEFont(ByVal Font As IFont) As Long
+GDIFontFromOLEFont = Font.hFont
 End Function
 
 Public Function GetShiftState() As ShiftConstants
@@ -418,6 +427,16 @@ If hDCScreen <> 0 Then
     DPI_Y = GetDeviceCaps(hDCScreen, LOGPIXELSY)
     ReleaseDC 0, hDCScreen
 End If
+End Function
+
+Public Function DPICorrectionFactor() As Single
+Static Done As Boolean, Value As Single
+If Done = False Then
+    Value = Screen.TwipsPerPixelX / ((96 / DPI_X()) * 15)
+    Done = True
+End If
+' Returns exactly 1 when no corrections are required.
+DPICorrectionFactor = Value
 End Function
 
 Public Function WinColor(ByVal Color As Long, Optional ByVal hPal As Long) As Long

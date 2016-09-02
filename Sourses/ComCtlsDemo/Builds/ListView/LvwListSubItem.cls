@@ -12,72 +12,102 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowListView As ListView
+Private ShadowObjectPointer As Long
+Private ShadowListItem As LvwListItem
 Private PropIndex As Long
-Private PropPtr As Long, PropSubPtr As Long
+Private PropPtr As Long
+Private PropSubItemIndex As Long
 
-Friend Sub FInit(ByVal Object As ListView, ByVal Index As Long, ByVal Ptr As Long, ByVal SubPtr As Long)
-Set ShadowListView = Object
+Private Function ShadowListView() As ListView
+Set ShadowListView = PtrToObj(ShadowObjectPointer)
+End Function
+
+Friend Sub FInit(ByVal ObjectPointer As Long, ByVal ListItem As LvwListItem, ByVal Index As Long, ByVal Ptr As Long, ByVal SubItemIndex As Long)
+ShadowObjectPointer = ObjectPointer
+Set ShadowListItem = ListItem
 PropIndex = Index
 PropPtr = Ptr
-PropSubPtr = SubPtr
+PropSubItemIndex = SubItemIndex
 End Sub
 
 Public Property Get Index() As Long
 Attribute Index.VB_Description = "Returns the index in the collection of the list sub item."
-Index = ShadowListView.FListSubItemSubIndex(PropSubPtr)
+Index = PropSubItemIndex
 End Property
 
 Public Property Get Key() As String
 Attribute Key.VB_Description = "Returns the key used in the collection."
-Key = ShadowListView.FListSubItemKey(PropSubPtr)
+Key = ShadowListItem.FListSubItemProp(PropSubItemIndex, 1)
 End Property
 
-Public Property Get Tag() As String
+Public Property Get Tag() As Variant
 Attribute Tag.VB_Description = "Stores any extra data needed for your program."
-Tag = ShadowListView.FListSubItemTag(PropSubPtr)
+If IsEmpty(ShadowListItem.FListSubItemProp(PropSubItemIndex, 2)) Then
+    Tag = vbNullString
+ElseIf IsObject(ShadowListItem.FListSubItemProp(PropSubItemIndex, 2)) Then
+    Set Tag = ShadowListItem.FListSubItemProp(PropSubItemIndex, 2)
+Else
+    Tag = ShadowListItem.FListSubItemProp(PropSubItemIndex, 2)
+End If
 End Property
 
-Public Property Let Tag(ByVal Value As String)
-ShadowListView.FListSubItemTag(PropSubPtr) = Value
+Public Property Let Tag(ByVal Value As Variant)
+ShadowListItem.FListSubItemProp(PropSubItemIndex, 2) = Value
+End Property
+
+Public Property Set Tag(ByVal Value As Variant)
+If Value Is ShadowListView Then
+    Err.Raise Number:=35700, Description:="Circular object referencing is not allowed"
+Else
+    Set ShadowListItem.FListSubItemProp(PropSubItemIndex, 2) = Value
+End If
 End Property
 
 Public Property Get Text() As String
 Attribute Text.VB_Description = "Returns/sets the text of the list sub item."
-Text = ShadowListView.FListSubItemText(PropSubPtr)
+Text = ShadowListItem.FListSubItemProp(PropSubItemIndex, 3)
 End Property
 
 Public Property Let Text(ByVal Value As String)
 With ShadowListView
 If .FListItemVerify(PropPtr, PropIndex) = True Then
-    .FListSubItemText(PropSubPtr) = Value
-    .FListItemText(PropIndex, .FListSubItemSubIndex(PropSubPtr)) = Value
+    ShadowListItem.FListSubItemProp(PropSubItemIndex, 3) = Value
+    .FListItemText(PropIndex, PropSubItemIndex) = Value
 End If
 End With
 End Property
 
-Public Property Get ReportIcon() As Long
-Attribute ReportIcon.VB_Description = "Returns/sets the index of an report icon in an associated image list control."
-ReportIcon = ShadowListView.FListSubItemReportIcon(PropSubPtr)
+Public Property Get ReportIcon() As Variant
+Attribute ReportIcon.VB_Description = "Returns/sets the index or key of an report icon in an associated image list control."
+ReportIcon = ShadowListItem.FListSubItemProp(PropSubItemIndex, 4)
 End Property
 
-Public Property Let ReportIcon(ByVal Value As Long)
-If Value < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
+Public Property Let ReportIcon(ByVal Value As Variant)
 With ShadowListView
-.FListSubItemReportIcon(PropSubPtr) = Value
-If .FListItemVerify(PropPtr, PropIndex) = True Then .FListItemRedraw PropIndex
+If .FListItemVerify(PropPtr, PropIndex) = True Then
+    Dim LngValue As Long
+    Call ComCtlsImlListImageIndex(ShadowListView, .SmallIcons, Value, LngValue)
+    ShadowListItem.FListSubItemProp(PropSubItemIndex, 4) = Value
+    ShadowListItem.FListSubItemProp(PropSubItemIndex, 5) = LngValue
+    .FListItemRedraw PropIndex
+End If
 End With
 End Property
 
+Public Property Get ReportIconIndex() As Long
+Attribute ReportIconIndex.VB_Description = "Returns the index of an report icon in an associated image list control."
+ReportIconIndex = ShadowListItem.FListSubItemProp(PropSubItemIndex, 5)
+End Function
+
 Public Property Get Bold() As Boolean
 Attribute Bold.VB_Description = "Returns/sets a value that determines whether the text is displayed with a bold font or not."
-Bold = ShadowListView.FListSubItemBold(PropSubPtr)
+Bold = ShadowListItem.FListSubItemProp(PropSubItemIndex, 6)
 End Property
 
 Public Property Let Bold(ByVal Value As Boolean)
 With ShadowListView
 If .FListItemVerify(PropPtr, PropIndex) = True Then
-    .FListSubItemBold(PropSubPtr) = Value
+    ShadowListItem.FListSubItemProp(PropSubItemIndex, 6) = Value
     .FListItemRedraw PropIndex
 End If
 End With
@@ -86,7 +116,7 @@ End Property
 Public Property Get ForeColor() As OLE_COLOR
 Attribute ForeColor.VB_Description = "Returns/sets the foreground color used to display text and graphics in an object."
 With ShadowListView
-ForeColor = .FListSubItemForeColor(PropSubPtr)
+ForeColor = ShadowListItem.FListSubItemProp(PropSubItemIndex, 7)
 If ForeColor = -1 Then ForeColor = .ForeColor
 End With
 End Property
@@ -94,7 +124,7 @@ End Property
 Public Property Let ForeColor(ByVal Value As OLE_COLOR)
 With ShadowListView
 If .FListItemVerify(PropPtr, PropIndex) = True Then
-    .FListSubItemForeColor(PropSubPtr) = Value
+    ShadowListItem.FListSubItemProp(PropSubItemIndex, 7) = Value
     .FListItemRedraw PropIndex
 End If
 End With

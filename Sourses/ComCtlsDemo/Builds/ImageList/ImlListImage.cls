@@ -12,13 +12,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowImageList As ImageList
+Private ShadowObjectPointer As Long
 Private PropIndex As Long, PropKey As String
-Private PropTag As String
+Private PropTag As Variant
 Private PropPicture As IPictureDisp
 
+Private Function ShadowImageList() As ImageList
+Set ShadowImageList = PtrToObj(ShadowObjectPointer)
+End Function
+
 Friend Sub FInit(ByVal Object As ImageList, ByVal Key As String, ByVal Picture As IPictureDisp)
-Set ShadowImageList = Object
+ShadowObjectPointer = ObjPtr(Object)
 PropKey = Key
 Set PropPicture = Picture
 End Sub
@@ -37,13 +41,27 @@ Attribute Key.VB_Description = "Returns the key used in the collection."
 Key = PropKey
 End Property
 
-Public Property Get Tag() As String
+Public Property Get Tag() As Variant
 Attribute Tag.VB_Description = "Stores any extra data needed for your program."
-Tag = PropTag
+If IsEmpty(PropTag) Then
+    Tag = vbNullString
+ElseIf IsObject(PropTag) Then
+    Set Tag = PropTag
+Else
+    Tag = PropTag
+End If
 End Property
 
-Public Property Let Tag(ByVal Value As String)
+Public Property Let Tag(ByVal Value As Variant)
 PropTag = Value
+End Property
+
+Public Property Set Tag(ByVal Value As Variant)
+If Value Is ShadowImageList Then
+    Err.Raise Number:=35700, Description:="Circular object referencing is not allowed"
+Else
+    Set PropTag = Value
+End If
 End Property
 
 Public Property Get Picture() As IPictureDisp

@@ -1,51 +1,42 @@
 Attribute VB_Name = "mApiOther"
 Option Explicit
 
-Public Enum TRACKMOUSEEVENT_FLAGS
-    TME_HOVER = &H1&
-    TME_LEAVE = &H2&
-    TME_QUERY = &H40000000
-    TME_CANCEL = &H80000000
-End Enum
+'*** Process ***
+Private Const DONT_RESOLVE_DLL_REFERENCES As Long = &H1
 
-Public Type TRACKMOUSEEVENT_STRUCT
-    cbSize                              As Long
-    dwFlags                             As TRACKMOUSEEVENT_FLAGS
-    hWndTrack                           As Long
-    dwHoverTime                         As Long
-End Type
+Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
+Private Declare Function LoadLibraryEx Lib "kernel32.dll" Alias "LoadLibraryExW" (ByVal lpLibFileName As Long, ByVal hFile As Long, ByVal dwFlags As Long) As Long
+Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
 
-Public Declare Function TrackMouseEvent Lib "user32.dll" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-Public Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-Public Declare Sub Sleep Lib "kernel32.dll" (ByVal dwMilliseconds As Long)
-Public Declare Function IsUserAnAdmin Lib "shell32.dll" () As Long
-Public Declare Function MessageBox Lib "user32.dll" Alias "MessageBoxA" (ByVal hWnd As Long, ByVal lpText As String, ByVal lpCaption As String, ByVal wType As Long) As Long
-Public Declare Function PlaySound Lib "winmm.dll" Alias "PlaySoundA" (ByVal lpszName As String, ByVal hModule As Long, ByVal dwFlags As Long) As Long
-'The GetInputState() API call will First check if there are any events and what-not that your application may have queued up waiting to be processed. Below is the declare for that function…
-Public Declare Function GetInputState Lib "user32" () As Long
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function APIFunctionPresent
+'! Description (Описание)  :   [Проверка на поддержку функции Api в текущей винде]
+'! Parameters  (Переменные):   FunctionName (String)
+'                              DLLName (String)
+'!--------------------------------------------------------------------------------
+Public Function APIFunctionPresent(ByVal FunctionName As String, ByVal DLLName As String) As Boolean
 
-Public Const SND_ASYNC    As Long = &H1    'play asynchronously
-Public Const SND_FILENAME As Long = &H20000    'sound is file name
-Public Const EM_GETSEL    As Long = &HB0
+    Dim lHandle   As Long
+    Dim lAddr     As Long
+    Dim FreeLib   As Boolean
+    Dim lngStrPtr As Long
 
-' Character sets
-Public Const ANSI_CHARSET = 0
-Public Const DEFAULT_CHARSET = 1
-Public Const SYMBOL_CHARSET = 2
-Public Const SHIFTJIS_CHARSET = 128
-Public Const HANGEUL_CHARSET = 129
-Public Const HANGUL_CHARSET = 129
-Public Const GB2312_CHARSET = 134
-Public Const CHINESEBIG5_CHARSET = 136
-Public Const OEM_CHARSET = 255
-Public Const JOHAB_CHARSET = 130
-Public Const HEBREW_CHARSET = 177
-Public Const ARABIC_CHARSET = 178
-Public Const GREEK_CHARSET = 161
-Public Const TURKISH_CHARSET = 162
-Public Const VIETNAMESE_CHARSET = 163
-Public Const THAI_CHARSET = 222
-Public Const EASTEUROPE_CHARSET = 238
-Public Const RUSSIAN_CHARSET = 204
-Public Const MAC_CHARSET = 77
-Public Const BALTIC_CHARSET = 186
+    lngStrPtr = StrPtr(DLLName)
+    lHandle = GetModuleHandle(lngStrPtr)
+
+    If lHandle = 0 Then
+        lHandle = LoadLibraryEx(lngStrPtr, 0&, DONT_RESOLVE_DLL_REFERENCES)
+        FreeLib = True
+    End If
+
+    If lHandle <> 0 Then
+        lAddr = GetProcAddress(lHandle, FunctionName)
+
+        If FreeLib Then
+            FreeLibrary lHandle
+        End If
+    End If
+
+    APIFunctionPresent = (lAddr <> 0)
+End Function

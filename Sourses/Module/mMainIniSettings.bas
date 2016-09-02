@@ -11,7 +11,9 @@ Public lngOSCount                        As Long        ' Количество ОС поддержи
 Public lngOSCountPerRow                  As Long        ' Количество ОС, отображаемое на одной строке
 Public lngUtilsCount                     As Long        ' Количество Утилит, прописанных в настройках
 Public strDevconCmdPath                  As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devcon_c.cmd
-Public strArh7zExePATH                   As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\Arc\7z.exe
+Public strArh7zExePath                   As String      ' Пути до исполняемых файлов и других рабочих файлов - Выбирается, в зависимости от разрядности, из параметров выше
+Public strArh7zExePath86                 As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\Arc\7za.exe
+Public strArh7zExePath64                 As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\Arc\7za64.exe
 Public strDevConExePath                  As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devcon.exe
 Public strDevConExePath64                As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devcon64.exe
 Public strDevConExePathW2k               As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devconw2k.exe
@@ -78,6 +80,8 @@ Public lngBtn2BtnTop                     As Long        ' Интервал между кнопкам
 Public lngStatusBtnStyle                 As Long        ' Стиль кнопки пакета драйверов
 Public lngStatusBtnStyleColor            As Long        ' Цвет оформления кнопки пакета драйверов
 Public lngStatusBtnBackColor             As Long        ' Цвет оформления кнопки пакета драйверов
+Public mbCleanTempForEachDP              As Boolean     ' Очистка каталога темп для каждого пакета драйверов при индексации
+Public lngFreeSpaceSysDrive              As Long        ' Свободное место на жестком диске
 
 'Public strImageMenuName                  As String
 'Public mbExMenu                           As Boolean ' Расширенное меню
@@ -105,10 +109,12 @@ Public Sub CreateIni()
 
     Dim cnt As Long
 
-    If PathExists(strSysIni) = False Then
+    If FileExists(strSysIni) = False Then
         If mbIsDriveCDRoom Then
             strSysIni = strWorkTempBackSL & strSettingIniFile
-            MsgBox "File " & strSettingIniFile & " is not Exist!" & vbNewLine & "This program works from CD\DVD, so we create temporary " & strSettingIniFile & "-file" & vbNewLine & strSysIni, vbInformation + vbApplicationModal, strProductName
+            MsgBox "File " & strSettingIniFile & " is not Exist!" & vbNewLine & _
+                   "This program works from CD\DVD, so we create temporary " & strSettingIniFile & "-file" & vbNewLine & _
+                   strSysIni, vbInformation + vbApplicationModal, strProductName
         End If
 
         'Секция Main
@@ -129,6 +135,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Main", "AutoLanguage", "1", strSysIni
         IniWriteStrPrivate "Main", "StartLanguageID", "0409", strSysIni
         IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", "1", strSysIni
+        IniWriteStrPrivate "Main", "CleanTempForEachDP", "1", strSysIni
 
         'Секция Debug
         IniWriteStrPrivate "Debug", "DebugEnable", "1", strSysIni
@@ -141,6 +148,7 @@ Public Sub CreateIni()
         
         'Секция Arc
         IniWriteStrPrivate "Arc", "PathExe", "Tools\Arc\7za.exe", strSysIni
+        IniWriteStrPrivate "Arc", "PathExe64", "Tools\Arc\7za64.exe", strSysIni
         
         'Секция Devcon
         IniWriteStrPrivate "Devcon", "PathExe", "Tools\Devcon\devcon.exe", strSysIni
@@ -192,8 +200,8 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS_1", "PathLanguages", "drivers\XP\DP_Graphics_Languages*.7z", strSysIni
         IniWriteStrPrivate "OS_1", "PathRuntimes", "drivers\XP\DP_Runtimes*.7z", strSysIni
         'Секция OS_2
-        IniWriteStrPrivate "OS_2", "Ver", "6.0;6.1;6.2;6.3", strSysIni
-        IniWriteStrPrivate "OS_2", "Name", "Vista/7/8/8.1/Server 2008", strSysIni
+        IniWriteStrPrivate "OS_2", "Ver", "6.0;6.1;6.2;6.3;6.4;10.0", strSysIni
+        IniWriteStrPrivate "OS_2", "Name", "Vista/7/8/8.1/10/Server", strSysIni
         IniWriteStrPrivate "OS_2", "drpFolder", "drivers\vista", strSysIni
         IniWriteStrPrivate "OS_2", "devIDFolder", "drivers\vista\dev_db", strSysIni
         IniWriteStrPrivate "OS_2", "is64bit", "0", strSysIni
@@ -202,8 +210,8 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS_2", "PathLanguages", vbNullString, strSysIni
         IniWriteStrPrivate "OS_2", "PathRuntimes", vbNullString, strSysIni
         'Секция OS_3
-        IniWriteStrPrivate "OS_3", "Ver", "6.0;6.1;6.2;6.3", strSysIni
-        IniWriteStrPrivate "OS_3", "Name", "Vista/7/8/8.1/Server 2008 x64", strSysIni
+        IniWriteStrPrivate "OS_3", "Ver", "6.0;6.1;6.2;6.3;6.4;10.0", strSysIni
+        IniWriteStrPrivate "OS_3", "Name", "Vista/7/8/8.1/10/Server x64", strSysIni
         IniWriteStrPrivate "OS_3", "drpFolder", "drivers\vista64", strSysIni
         IniWriteStrPrivate "OS_3", "devIDFolder", "drivers\vista64\dev_db", strSysIni
         IniWriteStrPrivate "OS_3", "is64bit", "1", strSysIni
@@ -212,8 +220,8 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS_3", "PathLanguages", vbNullString, strSysIni
         IniWriteStrPrivate "OS_3", "PathRuntimes", vbNullString, strSysIni
         'Секция OS_4
-        IniWriteStrPrivate "OS_4", "Ver", "5.0;5.1;5.2;6.0;6.1;6.2;6.3", strSysIni
-        IniWriteStrPrivate "OS_4", "Name", "Windows XP / 2000 / Server 2003 / Vista / Server 2008 / 7 / 8 / 8.1", strSysIni
+        IniWriteStrPrivate "OS_4", "Ver", "5.0;5.1;5.2;6.0;6.1;6.2;6.3;6.4;10.0", strSysIni
+        IniWriteStrPrivate "OS_4", "Name", "Windows XP / 2000 / Server / Vista / 7 / 8 / 8.1 / 10", strSysIni
         IniWriteStrPrivate "OS_4", "drpFolder", "drivers\All", strSysIni
         IniWriteStrPrivate "OS_4", "devIDFolder", "drivers\All\dev_db", strSysIni
         IniWriteStrPrivate "OS_4", "is64bit", "2", strSysIni
@@ -440,6 +448,8 @@ Public Function GetMainIniParam() As Boolean
     mbCreateRestorePoint = GetIniValueBoolean(strSysIni, "Main", "CreateRestorePoint", 1)
     mbLoadIniTmpAfterRestart = GetIniValueBoolean(strSysIni, "Main", "LoadIniTmpAfterRestart", 0)
     mbDisableDEP = GetIniValueBoolean(strSysIni, "Main", "DisableDEP", 1)
+    mbCleanTempForEachDP = GetIniValueBoolean(strSysIni, "Main", "CleanTempForEachDP", 1)
+    
     '[OS]
     mbDP_Is_aFolder = GetIniValueBoolean(strSysIni, "OS", "DP_Is_aFolder", 0)
     ' обработка вложенных каталогов (Секция ОС)
@@ -579,10 +589,10 @@ Public Function GetMainIniParam() As Boolean
     strDevconCmdPath = IniStringPrivate("DevCon", "CollectHwidsCmd", strSysIni)
     strDevconCmdPath = PathCollect(strDevconCmdPath)
 
-    If PathExists(strDevconCmdPath) = False Then
+    If FileExists(strDevconCmdPath) = False Then
         strDevconCmdPath = strAppPathBackSL & "Tools\Devcon\devcon_c.cmd"
 
-        If PathExists(strDevconCmdPath) = False Then
+        If FileExists(strDevconCmdPath) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevconCmdPath, vbInformation, strProductName
         End If
     End If
@@ -596,10 +606,10 @@ Public Function GetMainIniParam() As Boolean
 
     strDevConExePath = PathCollect(strDevConExePath)
 
-    If PathExists(strDevConExePath) = False Then
+    If FileExists(strDevConExePath) = False Then
         strDevConExePath = strAppPathBackSL & "Tools\Devcon\devcon.exe"
 
-        If PathExists(strDevConExePath) = False Then
+        If FileExists(strDevConExePath) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevConExePath, vbInformation, strProductName
         End If
     End If
@@ -613,10 +623,10 @@ Public Function GetMainIniParam() As Boolean
 
     strDevConExePath64 = PathCollect(strDevConExePath64)
 
-    If PathExists(strDevConExePath64) = False Then
+    If FileExists(strDevConExePath64) = False Then
         strDevConExePath64 = strAppPathBackSL & "Tools\Devcon\devcon64.exe"
 
-        If PathExists(strDevConExePath64) = False Then
+        If FileExists(strDevConExePath64) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevConExePath64, vbInformation, strProductName
         End If
     End If
@@ -630,10 +640,10 @@ Public Function GetMainIniParam() As Boolean
 
     strDevConExePathW2k = PathCollect(strDevConExePathW2k)
 
-    If PathExists(strDevConExePathW2k) = False Then
+    If FileExists(strDevConExePathW2k) = False Then
         strDevConExePathW2k = strAppPathBackSL & "Tools\Devcon\devconw2k.exe"
 
-        If PathExists(strDevConExePathW2k) = False Then
+        If FileExists(strDevConExePathW2k) = False Then
             MsgBox strMessages(7) & vbNewLine & strDevConExePathW2k, vbInformation, strProductName
         End If
     End If
@@ -648,10 +658,10 @@ Public Function GetMainIniParam() As Boolean
 
     strDPInstExePath86 = PathCollect(strDPInstExePath86)
 
-    If PathExists(strDPInstExePath86) = False Then
+    If FileExists(strDPInstExePath86) = False Then
         strDPInstExePath86 = strAppPathBackSL & "Tools\DPInst\DPInst.exe"
 
-        If PathExists(strDPInstExePath86) = False Then
+        If FileExists(strDPInstExePath86) = False Then
             MsgBox strMessages(7) & vbNewLine & strDPInstExePath86, vbInformation, strProductName
         End If
     End If
@@ -666,10 +676,10 @@ Public Function GetMainIniParam() As Boolean
 
     strDPInstExePath64 = PathCollect(strDPInstExePath64)
 
-    If PathExists(strDPInstExePath64) = False Then
+    If FileExists(strDPInstExePath64) = False Then
         strDPInstExePath64 = strAppPathBackSL & "Tools\DPInst\DPInst64.exe"
 
-        If PathExists(strDPInstExePath64) = False Then
+        If FileExists(strDPInstExePath64) = False Then
             MsgBox strMessages(7) & vbNewLine & strDPInstExePath64, vbInformation, strProductName
         End If
     End If
@@ -682,21 +692,42 @@ Public Function GetMainIniParam() As Boolean
     mbDpInstSuppressWizard = GetIniValueBoolean(strSysIni, "DPInst", "SuppressWizard", 0)
     mbDpInstQuietInstall = GetIniValueBoolean(strSysIni, "DPInst", "QuietInstall", 0)
     mbDpInstScanHardware = GetIniValueBoolean(strSysIni, "DPInst", "ScanHardware", 1)
+    
     '[Arc]
     ' 7za.exe
-    strArh7zExePATH = IniStringPrivate("Arc", "PathExe", strSysIni)
+    strArh7zExePath86 = IniStringPrivate("Arc", "PathExe", strSysIni)
 
-    If InStr(strArh7zExePATH, strColon) Then
+    If InStr(strArh7zExePath86, strColon) Then
         mbPatnAbs = True
     End If
 
-    strArh7zExePATH = PathCollect(strArh7zExePATH)
+    strArh7zExePath86 = PathCollect(strArh7zExePath86)
 
-    If PathExists(strArh7zExePATH) = False Then
-        strArh7zExePATH = strAppPathBackSL & "Tools\Arc\7za.exe"
+    If FileExists(strArh7zExePath86) = False Then
+        strArh7zExePath86 = strAppPathBackSL & "Tools\Arc\7za.exe"
 
-        If PathExists(strArh7zExePATH) = False Then
-            MsgBox strMessages(7) & vbNewLine & strArh7zExePATH, vbInformation, strProductName
+        If FileExists(strArh7zExePath86) = False Then
+            MsgBox strMessages(7) & vbNewLine & strArh7zExePath86, vbInformation, strProductName
+        End If
+    End If
+
+    strArh7zExePath = strArh7zExePath86
+    ' 7za.exe - x64
+    strArh7zExePath64 = IniStringPrivate("Arc", "PathExe64", strSysIni)
+
+    If InStr(strArh7zExePath64, strColon) Then
+        mbPatnAbs = True
+    End If
+    
+    strArh7zExePath64 = PathCollect(strArh7zExePath64)
+
+    If FileExists(strArh7zExePath64) = False Then
+        strArh7zExePath64 = strAppPathBackSL & "Tools\Arc\7za64.exe"
+
+        If FileExists(strArh7zExePath64) = False Then
+            MsgBox strMessages(7) & vbNewLine & strArh7zExePath64, vbInformation, strProductName
+            If mbDebugStandart Then DebugMode "7zExePath64: " & " Not exist. Get from x86 - " & strArh7zExePath86
+            strArh7zExePath64 = strArh7zExePath86
         End If
     End If
 

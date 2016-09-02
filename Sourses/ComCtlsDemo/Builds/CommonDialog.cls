@@ -15,9 +15,10 @@ Option Explicit
 #If False Then
 Private CdlCancel, CdlBufferTooSmall, CdlInvalidFileName, CdlSubclassFailure, CdlMaxLessThanMin, CdlNoFonts, CdlPrinterNotFound, CdlCreateICFailure, CdlDndmMismatch, CdlNoDefaultPrn, CdlNoDevices, CdlInitFailure, CdlGetDevModeFail, CdlLoadDrvFailure, CdlRetDefFailure, CdlParseFailure, CdlHelp, CdlBufferLengthZero
 Private CdlOFNReadOnly, CdlOFNOverwritePrompt, CdlOFNHideReadOnly, CdlOFNNoChangeDir, CdlOFNHelpButton, CdlOFNNoValidate, CdlOFNAllowMultiSelect, CdlOFNExtensionDifferent, CdlOFNPathMustExist, CdlOFNFileMustExist, CdlOFNCreatePrompt, CdlOFNShareAware, CdlOFNNoReadOnlyReturn, CdlOFNNoNetworkButton, CdlOFNExplorer, CdlOFNNoDereferenceLinks, CdlOFNDontAddToRecent, CdlOFNForcesShowHidden
+Private CdlOFNShareViResultWarn, CdlOFNShareViResultNoWarn, CdlOFNShareViResultFallThrough
 Private CdlCCRGBInit, CdlCCFullOpen, CdlCCPreventFullOpen, CdlCCHelpButton, CdlCCSolidColor, CdlCCAnyColor
 Private CdlCFScreenFonts, CdlCFPrinterFonts, CdlCFHelpButton, CdlCFEffects, CdlCFApply, CdlCFScriptsOnly, CdlCFNoVectorFonts, CdlCFLimitSize, CdlCFFixedPitchOnly, CdlCFForceFontExist, CdlCFScalableOnly, CdlCFTTOnly, CdlCFNoFaceSel, CdlCFNoStyleSel, CdlCFNoSizeSel, CdlCFSelectScript, CdlCFNoScriptSel, CdlCFNoVertFonts
-Private CdlPDAllPages, CdlPDSelection, CdlPDPageNums, CdlPDNoSelection, CdlPDNoPageNums, CdlPDCollate, CdlPDPrintToFile, CdlPDPrintSetup, CdlPDNoWarning, CdlPDReturnDC, CdlPDReturnIC, CdlPDReturnDefault, CdlPDHelpButton, CdlPDUseDevModeCopiesAndCollate, CdlPDDisablePrintToFile, CdlPDCurrentPage, CdlPDHidePrintToFile, CdlPDNoNetworkButton, CdlPDNoCurrentPage
+Private CdlPDAllPages, CdlPDSelection, CdlPDPageNums, CdlPDNoSelection, CdlPDNoPageNums, CdlPDCollate, CdlPDPrintToFile, CdlPDPrintSetup, CdlPDNoWarning, CdlPDReturnDC, CdlPDReturnIC, CdlPDReturnDefault, CdlPDHelpButton, CdlPDUseDevModeCopies, CdlPDUseDevModeCopiesAndCollate, CdlPDDisablePrintToFile, CdlPDCurrentPage, CdlPDHidePrintToFile, CdlPDNoNetworkButton, CdlPDNoCurrentPage
 Private CdlPDResultCancel, CdlPDResultPrint, CdlPDResultApply
 Private CdlHelpContext, CdlHelpQuit, CdlHelpIndex, CdlHelpContents, CdlHelpHelpOnHelp, CdlHelpSetIndex, CdlHelpSetContents, CdlHelpContextPopup, CdlHelpForceFile, CdlHelpKey, CdlHelpCommandHelp, CdlHelpPartialKey
 Private CdlPSDDefaultMinMargins, CdlPSDMinMargins, CdlPSDMargins, CdlPSDInThousandthsOfInches, CdlPSDInHundredthsOfMillimeters, CdlPSDDisableMargins, CdlPSDDisablePrinter, CdlPSDNoWarning, CdlPSDDisableOrientation, CdlPSDDisablePaper, CdlPSDReturnDefault, CdlPSDHelpButton, CdlPSDDisablePagePainting, CdlPSDNoNetworkButton
@@ -101,6 +102,14 @@ CdlOFNNoDereferenceLinks = OFN_NODEREFERENCELINKS
 CdlOFNDontAddToRecent = OFN_DONTADDTORECENT
 CdlOFNForcesShowHidden = OFN_FORCESHOWHIDDEN
 End Enum
+Private Const OFN_SHAREWARN As Long = &H0
+Private Const OFN_SHARENOWARN As Long = &H1
+Private Const OFN_SHAREFALLTHROUGH As Long = &H2
+Public Enum CdlOFNShareViResultConstants
+CdlOFNShareViResultWarn = OFN_SHAREWARN
+CdlOFNShareViResultNoWarn = OFN_SHARENOWARN
+CdlOFNShareViResultFallThrough = OFN_SHAREFALLTHROUGH
+End Enum
 Private Const CC_RGBINIT As Long = &H1
 Private Const CC_FULLOPEN As Long = &H2
 Private Const CC_PREVENTFULLOPEN As Long = &H4
@@ -171,6 +180,7 @@ Private Const PD_RETURNDEFAULT As Long = &H400
 Private Const PD_SHOWHELP As Long = &H800 ' PRINTDLG only
 Private Const PD_ENABLEPRINTHOOK As Long = &H1000 ' Internal use only
 Private Const PD_ENABLESETUPHOOK As Long = &H2000 ' Internal use only
+Private Const PD_USEDEVMODECOPIES As Long = &H40000
 Private Const PD_USEDEVMODECOPIESANDCOLLATE As Long = &H40000
 Private Const PD_DISABLEPRINTTOFILE As Long = &H80000
 Private Const PD_CURRENTPAGE As Long = &H400000 ' PRINTDLGEX only
@@ -191,6 +201,7 @@ CdlPDReturnDC = PD_RETURNDC
 CdlPDReturnIC = PD_RETURNIC
 CdlPDReturnDefault = PD_RETURNDEFAULT
 CdlPDHelpButton = PD_SHOWHELP
+CdlPDUseDevModeCopies = PD_USEDEVMODECOPIES
 CdlPDUseDevModeCopiesAndCollate = PD_USEDEVMODECOPIESANDCOLLATE
 CdlPDDisablePrintToFile = PD_DISABLEPRINTTOFILE
 CdlPDCurrentPage = PD_CURRENTPAGE
@@ -575,6 +586,8 @@ Public Event InitDialog(ByVal Action As Integer, ByVal hDlg As Long)
 Attribute InitDialog.VB_Description = "Occurs when a dialog box has finished initializing."
 Public Event Help(ByRef Handled As Boolean, ByVal Action As Integer, ByVal hDlg As Long)
 Attribute Help.VB_Description = "Occurs when the user clicks the help button in a dialog box."
+Public Event FileShareViolation(ByVal FileName As String, ByRef Result As CdlOFNShareViResultConstants, ByVal hDlg As Long)
+Attribute FileShareViolation.VB_Description = "Occurs when the user clicked the OK button and a network sharing violation occurs for the selected file in a open or save dialog box."
 Public Event FileValidate(ByVal FileName As String, ByVal FileTitle As String, ByVal FileOffset As Integer, ByRef Cancel As Boolean, ByVal hDlg As Long)
 Attribute FileValidate.VB_Description = "Occurs when the user clicked the OK button in a open or save dialog box."
 Public Event ColorValidate(ByRef RGBColor As Long, ByRef Cancel As Boolean, ByVal hDlg As Long)
@@ -624,6 +637,7 @@ Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Lon
 Private Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, ByVal dwBytes As Long) As Long
 Private Declare Function GlobalFree Lib "kernel32" (ByVal hMem As Long) As Long
 Private Const HELPMSGSTRING As String = "commdlg_help"
+Private Const SHAREVISTRING As String = "commdlg_ShareViolation"
 Private Const FILEOKSTRING As String = "commdlg_FileNameOK"
 Private Const COLOROKSTRING As String = "commdlg_ColorOK"
 Private Const SETRGBSTRING As String = "commdlg_SetRGBColor"
@@ -640,6 +654,7 @@ Private Const MAX_PATH As Long = 260
 Private Const S_OK As Long = &H0
 Implements ISubclass
 Private CommonDialogHelpMsg As Long
+Private CommonDialogShareViMsg As Long
 Private CommonDialogFileOKMsg As Long
 Private CommonDialogColorOKMsg As Long
 Private CommonDialogSetRGBMsg As Long
@@ -1074,7 +1089,7 @@ End Property
 
 Public Property Let RootFolder(ByVal Value As Variant)
 Select Case VarType(Value)
-    Case vbEmpty, vbLong, vbInteger, vbByte, vbString
+    Case vbEmpty, vbLong, vbInteger, vbByte, vbString, vbDouble, vbSingle
         PropRootFolder = Value
     Case Else
         Err.Raise 380
@@ -1189,12 +1204,14 @@ If RetVal <> 0 Then
     Else
         PropFlags = OFN.Flags And Not (OFN_ENABLEHOOK Or OFN_ENABLESIZING)
     End If
-    If Mid$(Buffer, OFN.nFileOffset, 1) = vbNullChar Then
-        PropFileName = Left$(Buffer, InStr(Buffer, vbNullChar & vbNullChar) - 1)
-        PropFileTitle = vbNullString
-    Else
-        PropFileName = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
-        PropFileTitle = Mid$(PropFileName, OFN.nFileOffset + 1)
+    If OFN.nFileOffset > 0 Then
+        If Mid$(Buffer, OFN.nFileOffset, 1) = vbNullChar Then
+            PropFileName = Left$(Buffer, InStr(Buffer & vbNullChar & vbNullChar, vbNullChar & vbNullChar) - 1)
+            PropFileTitle = vbNullString
+        Else
+            PropFileName = Left$(Buffer, InStr(Buffer & vbNullChar, vbNullChar) - 1)
+            PropFileTitle = Mid$(PropFileName, OFN.nFileOffset + 1)
+        End If
     End If
     PropFileOffset = OFN.nFileOffset
     ShowOpen = True
@@ -1274,12 +1291,14 @@ If RetVal <> 0 Then
     Else
         PropFlags = OFN.Flags And Not (OFN_ENABLEHOOK Or OFN_ENABLESIZING)
     End If
-    If Mid$(Buffer, OFN.nFileOffset, 1) = vbNullChar Then
-        PropFileName = Left$(Buffer, InStr(Buffer, vbNullChar & vbNullChar) - 1)
-        PropFileTitle = vbNullString
-    Else
-        PropFileName = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
-        PropFileTitle = Mid$(PropFileName, OFN.nFileOffset + 1)
+    If OFN.nFileOffset > 0 Then
+        If Mid$(Buffer, OFN.nFileOffset, 1) = vbNullChar Then
+            PropFileName = Left$(Buffer, InStr(Buffer & vbNullChar & vbNullChar, vbNullChar & vbNullChar) - 1)
+            PropFileTitle = vbNullString
+        Else
+            PropFileName = Left$(Buffer, InStr(Buffer & vbNullChar, vbNullChar) - 1)
+            PropFileTitle = Mid$(PropFileName, OFN.nFileOffset + 1)
+        End If
     End If
     PropFileOffset = OFN.nFileOffset
     ShowSave = True
@@ -1932,6 +1951,8 @@ Select Case VarType(PropRootFolder)
         Else
             .pIDLRoot = ILCreateFromPath_W2K(StrPtr(Left$(PropRootFolder, MAX_PATH)))
         End If
+    Case vbDouble, vbSingle
+        SHGetFolderLocation 0, CLng(PropRootFolder), 0, 0, .pIDLRoot
 End Select
 .lpszTitle = StrPtr(PropDialogTitle)
 .ulFlags = PropFlags
@@ -2135,7 +2156,7 @@ Dim hWndFocus As Long, Cancel As Boolean, Buffer As String, Length As Long
 CallbackProcDialog = 0
 Select Case dwRefData
     Case -1, -2, -1001, -1002
-        Dim OFN As OPENFILENAME, FileName As String
+        Dim OFN As OPENFILENAME, FileName As String, Result As CdlOFNShareViResultConstants
         If dwRefData > -1000 Then
             If wMsg = WM_NOTIFY Then
                 Dim NM As NMHDR, NMOFN As NMOFNOTIFY
@@ -2143,10 +2164,27 @@ Select Case dwRefData
                 Const H_MAX As Long = (&HFFFF + 1)
                 Const CDN_FIRST As Long = (H_MAX - 601)
                 Const CDN_INITDONE As Long = (CDN_FIRST - 0)
+                Const CDN_SHAREVIOLATION As Long = (CDN_FIRST - 3)
                 Const CDN_FILEOK As Long = (CDN_FIRST - 5)
                 Select Case NM.Code
                     Case CDN_INITDONE
                         RaiseEvent InitDialog(CUIntToInt(-dwRefData And &HFFFF&), hDlg)
+                    Case CDN_SHAREVIOLATION
+                        CopyMemory NMOFN, ByVal lParam, LenB(NMOFN)
+                        Buffer = String(PropMaxFileSize, vbNullChar)
+                        With NMOFN
+                        If .lpszFileShareVi <> 0 Then
+                            Length = lstrlen(.lpszFileShareVi)
+                            If Length > PropMaxFileSize Then Length = PropMaxFileSize
+                            CopyMemory ByVal StrPtr(Buffer), ByVal .lpszFileShareVi, Length * 2
+                        End If
+                        End With
+                        hWndFocus = GetFocus()
+                        FileName = Left$(Buffer, InStr(Buffer & vbNullChar, vbNullChar) - 1)
+                        RaiseEvent FileShareViolation(FileName, Result, hDlg)
+                        If GetFocus() <> hWndFocus And hWndFocus <> 0 Then SetFocusAPI hWndFocus
+                        CallbackProcDialog = Result
+                        SetWindowLong hDlg, DWL_MSGRESULT, Result
                     Case CDN_FILEOK
                         CopyMemory NMOFN, ByVal lParam, LenB(NMOFN)
                         If NMOFN.lpOFN <> 0 Then CopyMemory OFN, ByVal NMOFN.lpOFN, ByVal LenB(OFN)
@@ -2154,15 +2192,18 @@ Select Case dwRefData
                         Buffer = String(PropMaxFileSize, vbNullChar)
                         If .lpstrFile <> 0 Then
                             Length = lstrlen(.lpstrFile)
+                            If Length > PropMaxFileSize Then Length = PropMaxFileSize
                             CopyMemory ByVal StrPtr(Buffer), ByVal .lpstrFile, Length * 2
                         End If
                         hWndFocus = GetFocus()
-                        If Mid$(Buffer, .nFileOffset, 1) = vbNullChar Then
-                            FileName = Left$(Buffer, InStr(Buffer, vbNullChar & vbNullChar) - 1)
-                            RaiseEvent FileValidate(FileName, vbNullString, .nFileOffset, Cancel, hDlg)
-                        Else
-                            FileName = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
-                            RaiseEvent FileValidate(FileName, Mid$(FileName, .nFileOffset + 1), .nFileOffset, Cancel, hDlg)
+                        If .nFileOffset > 0 Then
+                            If Mid$(Buffer, .nFileOffset, 1) = vbNullChar Then
+                                FileName = Left$(Buffer, InStr(Buffer & vbNullChar & vbNullChar, vbNullChar & vbNullChar) - 1)
+                                RaiseEvent FileValidate(FileName, vbNullString, .nFileOffset, Cancel, hDlg)
+                            Else
+                                FileName = Left$(Buffer, InStr(Buffer & vbNullChar, vbNullChar) - 1)
+                                RaiseEvent FileValidate(FileName, Mid$(FileName, .nFileOffset + 1), .nFileOffset, Cancel, hDlg)
+                            End If
                         End If
                         If GetFocus() <> hWndFocus And hWndFocus <> 0 Then SetFocusAPI hWndFocus
                         End With
@@ -2174,23 +2215,39 @@ Select Case dwRefData
             End If
         Else
             If wMsg = WM_INITDIALOG Then
+                If CommonDialogShareViMsg = 0 Then CommonDialogShareViMsg = RegisterWindowMessage(StrPtr(SHAREVISTRING))
                 If CommonDialogFileOKMsg = 0 Then CommonDialogFileOKMsg = RegisterWindowMessage(StrPtr(FILEOKSTRING))
                 RaiseEvent InitDialog(CUIntToInt(-(dwRefData + 1000) And &HFFFF&), hDlg)
+            ElseIf wMsg = CommonDialogShareViMsg And CommonDialogShareViMsg <> 0 Then
+                Buffer = String(PropMaxFileSize, vbNullChar)
+                If lParam <> 0 Then
+                    Length = lstrlen(lParam)
+                    If Length > PropMaxFileSize Then Length = PropMaxFileSize
+                    CopyMemory ByVal StrPtr(Buffer), ByVal lParam, Length * 2
+                End If
+                hWndFocus = GetFocus()
+                FileName = Left$(Buffer, InStr(Buffer & vbNullChar, vbNullChar) - 1)
+                RaiseEvent FileShareViolation(FileName, Result, hDlg)
+                If GetFocus() <> hWndFocus And hWndFocus <> 0 Then SetFocusAPI hWndFocus
+                CallbackProcDialog = Result
             ElseIf wMsg = CommonDialogFileOKMsg And CommonDialogFileOKMsg <> 0 Then
                 CopyMemory OFN, ByVal lParam, LenB(OFN)
                 With OFN
                 Buffer = String(PropMaxFileSize, vbNullChar)
                 If .lpstrFile <> 0 Then
                     Length = lstrlen(.lpstrFile)
+                    If Length > PropMaxFileSize Then Length = PropMaxFileSize
                     CopyMemory ByVal StrPtr(Buffer), ByVal .lpstrFile, Length * 2
                 End If
                 hWndFocus = GetFocus()
-                If Mid$(Buffer, .nFileOffset, 1) = vbNullChar Then
-                    FileName = Left$(Buffer, InStr(Buffer, vbNullChar & vbNullChar) - 1)
-                    RaiseEvent FileValidate(FileName, vbNullString, .nFileOffset, Cancel, hDlg)
-                Else
-                    FileName = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
-                    RaiseEvent FileValidate(FileName, Mid$(FileName, .nFileOffset + 1), .nFileOffset, Cancel, hDlg)
+                If .nFileOffset > 0 Then
+                    If Mid$(Buffer, .nFileOffset, 1) = vbNullChar Then
+                        FileName = Left$(Buffer, InStr(Buffer & vbNullChar & vbNullChar, vbNullChar & vbNullChar) - 1)
+                        RaiseEvent FileValidate(FileName, vbNullString, .nFileOffset, Cancel, hDlg)
+                    Else
+                        FileName = Left$(Buffer, InStr(Buffer & vbNullChar, vbNullChar) - 1)
+                        RaiseEvent FileValidate(FileName, Mid$(FileName, .nFileOffset + 1), .nFileOffset, Cancel, hDlg)
+                    End If
                 End If
                 If GetFocus() <> hWndFocus And hWndFocus <> 0 Then SetFocusAPI hWndFocus
                 End With

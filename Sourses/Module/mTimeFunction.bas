@@ -6,6 +6,8 @@ Public dtEndTimeProg                     As Long
 Public dtAllTimeProg                     As String
 
 Public Declare Function GetTickCount Lib "kernel32.dll" () As Long
+Public Declare Function QueryPerformanceFrequency Lib "kernel32" (lpFrequency As Any) As Long
+Public Declare Function QueryPerformanceCounter Lib "kernel32" (lpPerformanceCount As Any) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CalculateTime

@@ -144,23 +144,31 @@ Private mComboSelectColor As Long
 Private mUseMouseWheel    As Boolean
 Private mAutoText         As String
 Private CloseMe           As Boolean
-
-Dim doNothing             As Boolean
-Dim fList()               As tpRecents
-Dim fPos                  As Integer
-
+Private doNothing         As Boolean
+Private fList()           As tpRecents
+Private fPos              As Integer
 Private bCancel           As Boolean
+Private Resultat          As Long
+Private Ident             As Long
+Private Donnee            As String
+Private TailleBuffer      As Long
+Private mXPStyle          As Boolean
 
-Dim Resultat              As Long
-Dim Ident                 As Long
-Dim Donnee                As String
-Dim TailleBuffer          As Long
-Dim Btn                   As RECT
-Dim uRct                  As RECT
+Private Type POINTAPI
+    X                     As Long
+    Y                     As Long
+End Type
 
+Private Type RECT
+    Left                  As Long
+    Top                   As Long
+    Right                 As Long
+    Bottom                As Long
+End Type
+
+Private Btn               As RECT
+Private uRct              As RECT
 Private MouseCoords       As POINTAPI
-
-Dim mXPStyle              As Boolean
 
 Private Declare Function PtInRect Lib "user32.dll" (ByRef lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function GetMessage Lib "user32.dll" Alias "GetMessageA" (lpMsg As TMSG, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long) As Long
@@ -170,9 +178,54 @@ Private Declare Function RegCreateKey Lib "advapi32.dll" Alias "RegCreateKeyA" (
 Private Declare Function RegQueryValueEx Lib "advapi32.dll" Alias "RegQueryValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal lpReserved As Long, lpType As Long, lpData As Any, lpcbData As Long) As Long
 Private Declare Function RegSetValueEx Lib "advapi32.dll" Alias "RegSetValueExA" (ByVal hkey As Long, ByVal lpValueName As String, ByVal Reserved As Long, ByVal dwType As Long, lpData As Any, ByVal cbData As Long) As Long
 Private Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function FillRect Lib "user32.dll" (ByVal hDC As Long, lpRect As RECT, ByVal hBrush As Long) As Long
+Private Declare Function SetRect Lib "user32.dll" (lpRect As RECT, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Private Declare Function FrameRect Lib "user32.dll" (ByVal hDC As Long, lpRect As RECT, ByVal hBrush As Long) As Long
+Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
+Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
+Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
+Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
+Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
+Private Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
+Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
+Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
+Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
+Private Declare Function GetWindowRect Lib "user32.dll" (ByVal hWnd As Long, lpRect As RECT) As Long
+Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function GetCursorPos Lib "user32.dll" (lpPoint As POINTAPI) As Long
+Private Declare Function WindowFromPoint Lib "user32.dll" (ByVal xPoint As Long, ByVal yPoint As Long) As Long
+Private Declare Function SetParent Lib "user32.dll" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
+Private Declare Function GetFocus Lib "user32.dll" () As Long
 
-Private Const HWND_TOP    As Long = 0
-Private Const WM_MOUSEWHEEL = 522
+Private Const HWND_TOP           As Long = 0
+Private Const WM_MOUSEWHEEL      As Long = &H20A
+Private Const GWL_EXSTYLE        As Long = (-20)
+Private Const WS_EX_TOOLWINDOW   As Long = &H80
+
+' --Formatting Text Consts
+Private Const DT_LEFT           As Long = &H0
+Private Const DT_CENTER         As Long = &H1
+Private Const DT_RIGHT          As Long = &H2
+Private Const DT_NOCLIP         As Long = &H100
+Private Const DT_WORDBREAK      As Long = &H10
+Private Const DT_CALCRECT       As Long = &H400
+Private Const DT_RTLREADING     As Long = &H20000
+Private Const DT_DRAWFLAG       As Long = DT_CENTER Or DT_WORDBREAK
+Private Const DT_TOP            As Long = &H0
+Private Const DT_BOTTOM         As Long = &H8
+Private Const DT_VCENTER        As Long = &H4
+Private Const DT_SINGLELINE     As Long = &H20
+Private Const DT_WORD_ELLIPSIS  As Long = &H40000
+
+Private Const SWP_REFRESH        As Long = (&H1 Or &H2 Or &H4 Or &H20)
+Private Const SWP_NOACTIVATE     As Long = &H10
+Private Const SWP_NOMOVE         As Long = &H2
+Private Const SWP_NOSIZE         As Long = &H1
+Private Const SWP_SHOWWINDOW     As Long = &H40
+Private Const SWP_NOOWNERZORDER  As Long = &H200
+Private Const SWP_NOZORDER       As Long = &H4
+Private Const SWP_FRAMECHANGED   As Long = &H20
 
 Public Enum CfBdrStyle
     sNone = 0
@@ -746,6 +799,20 @@ Public Property Let RecentMax(ByVal vNewValue As Integer)
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property RunMode
+'! Description (Описание)  :   [Ambient.UserMode tells us whether the UC's container is in design mode or user mode/run-time.
+'                               Unfortunately, this isn't supported in all containers.]
+'                               http://www.vbforums.com/showthread.php?805711-VB6-UserControl-Ambient-UserMode-workaround&s=8dd326860cbc22bed07bd13f6959ca70
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get RunMode() As Boolean
+    RunMode = True
+    On Error Resume Next
+    RunMode = Ambient.UserMode
+    RunMode = Extender.Parent.RunMode
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property SelectedFont
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -873,7 +940,7 @@ Public Property Let Sorted(ByVal vNewValue As Boolean)
 
     mSorted = vNewValue
 
-    If Ambient.UserMode = True Then
+    If RunMode Then
         FillList
 
         If mSorted = True Then SortList
@@ -1103,7 +1170,7 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
             UserControl.CurrentY = ((ScaleHeight - TextHeight("X")) / 2) - 1
             UserControl.CurrentX = 4
 
-            If Ambient.UserMode = True And mListCount Then
+            If RunMode = True And mListCount Then
                 UserControl.Print mListFont(mListPos)
             Else
                 UserControl.Print Ambient.DisplayName
@@ -1129,7 +1196,7 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
         UserControl.CurrentY = ((ScaleHeight - TextHeight("X")) / 2) - 1
         UserControl.CurrentX = 4
 
-        If Ambient.UserMode = True And mListCount Then
+        If RunMode = True And mListCount Then
             UserControl.Print mListFont(mListPos)
         Else
             UserControl.Print Ambient.DisplayName
@@ -1198,7 +1265,7 @@ Private Sub DrawControl(Optional eDraw As eBtnState = bUp, Optional DrawAll As B
         UserControl.CurrentY = ((ScaleHeight - TextHeight("X")) / 2) - 1
         UserControl.CurrentX = 4
 
-        If Ambient.UserMode = True And mListCount Then
+        If RunMode = True And mListCount Then
             UserControl.Print mListFont(mListPos)
         Else
             UserControl.Print Ambient.DisplayName
@@ -1371,7 +1438,6 @@ Private Sub DrawTxt(ObjhDC As Long, oText As String, TxtRect As RECT, mPosition 
     End If
 
     tFormat = tFormat + DT_NOCLIP
-    'DrawText ObjhDC, oText, Len(oText), TxtRect, tFormat
     DrawTextW ObjhDC, StrPtr(oText & vbNullChar), -1, TxtRect, tFormat
 End Sub
 
@@ -1493,7 +1559,7 @@ Public Sub LoadRecentFonts(MyHkey As HkeyLoc2, MyGroup As String, MySection As S
     ReDim mRecent(mRecentMax)
 
     For i = 0 To mRecentMax - 1
-        fN = ReadValue(MyHkey, MyGroup & vbBackslash & MySection & vbBackslash & myKey, "RecentFontName" & i + 1, "")
+        fN = ReadValue(MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & i + 1, "")
         fI = FontExist(fN)
 
         If fI > -1 Then
@@ -1632,7 +1698,7 @@ Public Sub SaveRecentFonts(MyHkey As HkeyLoc2, MyGroup As String, MySection As S
     Dim i As Integer
 
     For i = 0 To mRecentCount - 1
-        SetValue MyHkey, MyGroup & vbBackslash & MySection & vbBackslash & myKey, "RecentFontName" & i + 1, mRecent(i).fName
+        SetValue MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & i + 1, mRecent(i).fName
     Next
 
 End Sub
@@ -2523,7 +2589,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
     ReDim mRecent(mRecentMax)
 
-    If Ambient.UserMode = True Then
+    If RunMode = True Then
         FillList
 
         If mSorted = True Then SortList

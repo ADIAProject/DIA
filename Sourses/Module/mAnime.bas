@@ -45,6 +45,9 @@ Private Const HWND_NOTOPMOST = -2
 Private Const TOPMOST_FLAGS = SWP_NOMOVE Or SWP_NOSIZE
 Private Const SWP_FLAGS = SWP_NOACTIVATE Or SWP_NOMOVE Or SWP_NOSIZE
 
+'[Function]
+Private Declare Sub Sleep Lib "kernel32.dll" (ByVal dwMilliseconds As Long)
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function AnimateForm
 '! Description (Описание)  :   [Cooool flash style animations in Vb]

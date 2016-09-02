@@ -12,30 +12,52 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowListView As ListView
+Private Type ShadowListSubItemStruct
+Key As String
+Tag As Variant
+Text As String
+ReportIcon As Variant
+ReportIconIndex As Long
+Bold As Boolean
+ForeColor As OLE_COLOR
+End Type
+Private ShadowObjectPointer As Long
 Private PropIndex As Long
 Private PropPtr As Long, PropKey As String
-Private PropTag As String
+Private PropTag As Variant
 Private PropText As String
 Private PropBold As Boolean
 Private PropForeColor As OLE_COLOR
 Private PropToolTipText As String
-Private PropIcon As Long
-Private PropSmallIcon As Long
-Private PropListSubItems As LvwListSubItems
+Private PropIcon As Variant, PropIconIndex As Long
+Private PropSmallIcon As Variant, PropSmallIconIndex As Long
+Private PropShadowListSubItemsCount As Long
+Private PropShadowListSubItems() As ShadowListSubItemStruct
+Private PropShadowDefaultListSubItem As ShadowListSubItemStruct
+
+Private Function ShadowListView() As ListView
+Set ShadowListView = PtrToObj(ShadowObjectPointer)
+End Function
 
 Private Sub Class_Initialize()
 PropForeColor = -1
+PropShadowDefaultListSubItem.ForeColor = -1
 End Sub
 
-Friend Sub FInit(ByVal Object As ListView, ByVal Index As Long, ByVal Key As String, ByVal Ptr As Long, ByVal Text As String, ByVal Icon As Long, ByVal SmallIcon As Long)
-Set ShadowListView = Object
+Private Sub Class_Terminate()
+If PropShadowListSubItemsCount > 0 Then Erase PropShadowListSubItems()
+End Sub
+
+Friend Sub FInit(ByVal ObjectPointer As Long, ByVal Index As Long, ByVal Key As String, ByVal Ptr As Long, ByVal Text As String, ByVal Icon As Variant, ByVal IconIndex As Long, ByVal SmallIcon As Variant, ByVal SmallIconIndex As Long)
+ShadowObjectPointer = ObjectPointer
 PropIndex = Index
 PropKey = Key
 PropPtr = Ptr
 PropText = Text
 PropIcon = Icon
+PropIconIndex = IconIndex
 PropSmallIcon = SmallIcon
+PropSmallIconIndex = SmallIconIndex
 End Sub
 
 Public Property Get Index() As Long
@@ -48,13 +70,27 @@ Attribute Key.VB_Description = "Returns the key used in the collection."
 Key = PropKey
 End Property
 
-Public Property Get Tag() As String
+Public Property Get Tag() As Variant
 Attribute Tag.VB_Description = "Stores any extra data needed for your program."
-Tag = PropTag
+If IsEmpty(PropTag) Then
+    Tag = vbNullString
+ElseIf IsObject(PropTag) Then
+    Set Tag = PropTag
+Else
+    Tag = PropTag
+End If
 End Property
 
-Public Property Let Tag(ByVal Value As String)
+Public Property Let Tag(ByVal Value As Variant)
 PropTag = Value
+End Property
+
+Public Property Set Tag(ByVal Value As Variant)
+If Value Is ShadowListView Then
+    Err.Raise Number:=35700, Description:="Circular object referencing is not allowed"
+Else
+    Set PropTag = Value
+End If
 End Property
 
 Public Property Get Text() As String
@@ -68,27 +104,45 @@ PropText = Value
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView.FListItemText(PropIndex, 0) = Value
 End Property
 
-Public Property Get Icon() As Long
-Attribute Icon.VB_Description = "Returns/sets the index of an icon in an associated image list control."
-Icon = PropIcon
+Public Property Get Icon() As Variant
+Attribute Icon.VB_Description = "Returns/sets the index or key of an icon in an associated image list control."
+If IsEmpty(PropIcon) Then
+    Icon = 0
+Else
+    Icon = PropIcon
+End If
 End Property
 
-Public Property Let Icon(ByVal Value As Long)
-If Value < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
+Public Property Let Icon(ByVal Value As Variant)
+Call ComCtlsImlListImageIndex(ShadowListView, ShadowListView.Icons, Value, PropIconIndex)
 PropIcon = Value
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView.FListItemRedraw PropIndex
 End Property
 
-Public Property Get SmallIcon() As Long
-Attribute SmallIcon.VB_Description = "Returns/sets the index of an small icon in an associated image list control."
-SmallIcon = PropSmallIcon
+Public Property Get IconIndex() As Long
+Attribute IconIndex.VB_Description = "Returns the index of an icon in an associated image list control."
+IconIndex = PropIconIndex
+End Function
+
+Public Property Get SmallIcon() As Variant
+Attribute SmallIcon.VB_Description = "Returns/sets the index or key of an small icon in an associated image list control."
+If IsEmpty(PropSmallIcon) Then
+    SmallIcon = 0
+Else
+    SmallIcon = PropSmallIcon
+End If
 End Property
 
-Public Property Let SmallIcon(ByVal Value As Long)
-If Value < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
+Public Property Let SmallIcon(ByVal Value As Variant)
+Call ComCtlsImlListImageIndex(ShadowListView, ShadowListView.SmallIcons, Value, PropSmallIconIndex)
 PropSmallIcon = Value
 If ShadowListView.FListItemVerify(PropPtr, PropIndex) = True Then ShadowListView.FListItemRedraw PropIndex
 End Property
+
+Public Property Get SmallIconIndex() As Long
+Attribute SmallIconIndex.VB_Description = "Returns the index of an small icon in an associated image list control."
+SmallIconIndex = PropSmallIconIndex
+End Function
 
 Public Property Get Indentation() As Long
 Attribute Indentation.VB_Description = "Returns/sets the indentation of the list item in 'report' view in icon widths."
@@ -243,11 +297,8 @@ End Property
 
 Public Property Get ListSubItems() As LvwListSubItems
 Attribute ListSubItems.VB_Description = "Returns/sets a collection of list sub items belonging to the list item."
-If PropListSubItems Is Nothing Then
-    Set PropListSubItems = New LvwListSubItems
-    PropListSubItems.FInit ShadowListView, PropPtr, PropIndex
-End If
-Set ListSubItems = PropListSubItems
+Set ListSubItems = New LvwListSubItems
+ListSubItems.FInit ShadowObjectPointer, Me, PropPtr, PropIndex
 End Property
 
 Public Property Get SubItems(ByVal Index As Integer) As String
@@ -258,16 +309,128 @@ End Property
 
 Public Property Let SubItems(ByVal Index As Integer, ByVal Value As String)
 If Index < 1 Or Index > (ShadowListView.ColumnHeaders.Count - 1) Then Err.Raise 380
-If Index > Me.ListSubItems.Count Then
+With Me.ListSubItems
+If Index > .Count Then
     Dim i As Long
-    For i = (Me.ListSubItems.Count + 1) To Index Step 1
+    For i = (.Count + 1) To Index Step 1
         If i < Index Then
-            Me.ListSubItems.Add
+            .Add
         Else
-            Me.ListSubItems.Add , , Value
+            .Add , , Value
         End If
     Next i
 Else
-    Me.ListSubItems(Index).Text = Value
+    .Item(Index).Text = Value
 End If
+End With
+End Property
+
+Friend Sub FListSubItemsAdd(ByRef SubItemIndex As Long, ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Text As String, Optional ByVal ReportIconIndex As Long)
+PropShadowListSubItemsCount = PropShadowListSubItemsCount + 1
+If Index = 0 Then
+    SubItemIndex = PropShadowListSubItemsCount
+Else
+    SubItemIndex = Index
+End If
+ReDim Preserve PropShadowListSubItems(1 To PropShadowListSubItemsCount) As ShadowListSubItemStruct
+If SubItemIndex < PropShadowListSubItemsCount Then
+    Dim i As Long
+    For i = PropShadowListSubItemsCount To SubItemIndex + 1 Step -1
+        LSet PropShadowListSubItems(i) = PropShadowListSubItems(i - 1)
+    Next i
+    LSet PropShadowListSubItems(i) = PropShadowDefaultListSubItem
+End If
+With PropShadowListSubItems(SubItemIndex)
+.Key = Key
+.Text = Text
+.ReportIconIndex = ReportIconIndex
+End With
+End Sub
+
+Friend Function FListSubItemsItem(ByVal Index As Variant) As Long
+Select Case VarType(Index)
+    Case vbLong, vbInteger, vbByte
+        FListSubItemsItem = Index
+    Case vbString
+        Dim i As Long
+        For i = 1 To PropShadowListSubItemsCount
+            If Not PropShadowListSubItems(i).Key = vbNullString Then
+                If StrComp(PropShadowListSubItems(i).Key, Index, vbTextCompare) = 0 Then
+                    FListSubItemsItem = i
+                    Exit For
+                End If
+            End If
+        Next i
+    Case vbDouble, vbSingle
+        FListSubItemsItem = CLng(Index)
+    Case Else
+        Err.Raise 13
+End Select
+End Function
+
+Friend Function FListSubItemsCount() As Long
+FListSubItemsCount = PropShadowListSubItemsCount
+End Function
+
+Friend Sub FListSubItemsRemove(ByVal SubItemIndex As Long)
+Dim i As Long
+For i = SubItemIndex To PropShadowListSubItemsCount - 1
+    LSet PropShadowListSubItems(i) = PropShadowListSubItems(i + 1)
+Next i
+PropShadowListSubItemsCount = PropShadowListSubItemsCount - 1
+If PropShadowListSubItemsCount > 0 Then
+    ReDim Preserve PropShadowListSubItems(1 To PropShadowListSubItemsCount) As ShadowListSubItemStruct
+Else
+    Erase PropShadowListSubItems()
+End If
+End Sub
+
+Friend Property Get FListSubItemProp(ByVal SubItemIndex As Long, ByVal Entry As Long) As Variant
+Select Case Entry
+    Case 1
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).Key
+    Case 2
+        If IsObject(PropShadowListSubItems(SubItemIndex).Tag) Then
+            Set FListSubItemProp = PropShadowListSubItems(SubItemIndex).Tag
+        Else
+            FListSubItemProp = PropShadowListSubItems(SubItemIndex).Tag
+        End If
+    Case 3
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).Text
+    Case 4
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).ReportIcon
+    Case 5
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).ReportIconIndex
+    Case 6
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).Bold
+    Case 7
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).ForeColor
+End Select
+End Property
+
+Friend Property Let FListSubItemProp(ByVal SubItemIndex As Long, ByVal Entry As Long, ByVal Value As Variant)
+Select Case Entry
+    Case 1
+        PropShadowListSubItems(SubItemIndex).Key = Value
+    Case 2
+        PropShadowListSubItems(SubItemIndex).Tag = Value
+    Case 3
+        PropShadowListSubItems(SubItemIndex).Text = Value
+    Case 4
+        PropShadowListSubItems(SubItemIndex).ReportIcon = Value
+    Case 5
+        PropShadowListSubItems(SubItemIndex).ReportIconIndex = Value
+        If Value > 0 Then ShadowListView.FListSubItemCheckReportIconMode
+    Case 6
+        PropShadowListSubItems(SubItemIndex).Bold = Value
+    Case 7
+        PropShadowListSubItems(SubItemIndex).ForeColor = Value
+End Select
+End Property
+
+Friend Property Set FListSubItemProp(ByVal SubItemIndex As Long, ByVal Entry As Long, ByVal Value As Variant)
+Select Case Entry
+    Case 2
+        Set PropShadowListSubItems(SubItemIndex).Tag = Value
+End Select
 End Property

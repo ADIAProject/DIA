@@ -295,7 +295,7 @@ Private m_bValue             As Boolean    'Value (Checked/Unchekhed)
 Private m_bShowFocus         As Boolean    'Bool to show focus
 Private m_bParentActive      As Boolean    'Parent form Active or not
 Private m_lParenthWnd        As Long    'Is parent active?
-Private m_WindowsNT          As Long    'OS Supports Unicode?
+Private m_WindowsNT          As Boolean    'OS Supports Unicode?
 Private m_bEnabled           As Boolean    'Enabled/Disabled
 Private m_Caption            As String    'String to draw caption
 Private m_CaptionAlign       As enumCaptionAlign
@@ -439,7 +439,7 @@ Private Const BDR_SUNKEN95         As Long = &HA
 Private Const BDR_RAISED95         As Long = &H5
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
-Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "OLEPRO32.DLL" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function CopyRect Lib "user32.dll" (lpDestRect As RECT, lpSourceRect As RECT) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long
@@ -468,8 +468,8 @@ Private Declare Function CreateRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal 
 Private Declare Function IsAppThemed Lib "uxtheme" () As Long
 Private Declare Function GetSysColor Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
-Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
-Private Declare Function GetThemeBackgroundRegion Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pRegion As Long) As Long
+Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pClipRect As RECT) As Long
+Private Declare Function GetThemeBackgroundRegion Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pRegion As Long) As Long
 Private Declare Function WindowFromPoint Lib "user32.dll" (ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryW" (ByVal lpLibFileName As Long) As Long
 Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
@@ -1419,6 +1419,20 @@ Public Property Let RightToLeft(ByVal Value As Boolean)
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   :   Property RunMode
+'! Description :   [Ambient.UserMode tells us whether the UC's container is in design mode or user mode/run-time.
+'                               Unfortunately, this isn't supported in all containers.]
+'                               http://www.vbforums.com/showthread.php?805711-VB6-UserControl-Ambient-UserMode-workaround&s=8dd326860cbc22bed07bd13f6959ca70
+'! Parameters  :
+'!--------------------------------------------------------------------------------
+Public Property Get RunMode() As Boolean
+    RunMode = True
+    On Error Resume Next
+    RunMode = Ambient.UserMode
+    RunMode = Extender.Parent.RunMode
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property ShowFocusRect
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -1499,6 +1513,11 @@ Public Property Let Value(ByVal New_Value As Boolean)
 
         RedrawButton
         PropertyChanged "Value"
+        If Not m_CheckExist Then
+            If New_Value = True Then
+                RaiseEvent Click
+            End If
+        End If
     Else
         m_Buttonstate = eStateNormal
         RedrawButton
@@ -1861,7 +1880,7 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
     Dim i       As Long
     Dim iEnd    As Long
     Dim iOffset As Long
-    Dim j       As Long
+    Dim J       As Long
     Dim jEnd    As Long
     Dim iGrad   As Long
 
@@ -1927,7 +1946,7 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
 
             Case [gdHorizontal]
 
-                For j = 0 To jEnd
+                For J = 0 To jEnd
                     For i = iOffset To iEnd + iOffset
                         lBits(i) = lGrad(i - iOffset)
                     Next
@@ -1937,9 +1956,9 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
 
             Case [gdVertical]
 
-                For j = jEnd To 0 Step -1
+                For J = jEnd To 0 Step -1
                     For i = iOffset To iEnd + iOffset
-                        lBits(i) = lGrad(j)
+                        lBits(i) = lGrad(J)
                     Next
 
                     iOffset = iOffset + Scan
@@ -1948,27 +1967,27 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             Case [gdDownwardDiagonal]
                 iOffset = jEnd * Scan
 
-                For j = 1 To jEnd + 1
+                For J = 1 To jEnd + 1
                     For i = iOffset To iEnd + iOffset
                         lBits(i) = lGrad(iGrad)
                         iGrad = iGrad + 1
                     Next
 
                     iOffset = iOffset - Scan
-                    iGrad = j
+                    iGrad = J
                 Next
 
             Case [gdUpwardDiagonal]
                 iOffset = 0
 
-                For j = 1 To jEnd + 1
+                For J = 1 To jEnd + 1
                     For i = iOffset To iEnd + iOffset
                         lBits(i) = lGrad(iGrad)
                         iGrad = iGrad + 1
                     Next
 
                     iOffset = iOffset + Scan
-                    iGrad = j
+                    iGrad = J
                 Next
 
         End Select
@@ -2146,7 +2165,7 @@ End Sub
 Private Sub DrawPicwithCaption()
 
     Dim lpRect     As RECT
-    Dim pRect      As RECT
+    Dim pRECT      As RECT
     Dim lShadowClr As Long
     Dim dtTextDrawParams As Long
 
@@ -2383,9 +2402,9 @@ Private Sub DrawPicwithCaption()
         If m_Buttonstate = eStateOver Then
             lShadowClr = TranslateColor(&HC0C0C0)
             DrawPicture m_PicRect, lShadowClr
-            CopyRect pRect, m_PicRect
-            OffsetRect pRect, -2, -2
-            DrawPicture pRect
+            CopyRect pRECT, m_PicRect
+            OffsetRect pRECT, -2, -2
+            DrawPicture pRECT
         Else
             DrawPicture m_PicRect
         End If
@@ -2736,14 +2755,14 @@ End Sub
 '                              Align (enumMenuAlign)
 '                              Flags (enumMenuAlign)
 '!--------------------------------------------------------------------------------
-Public Sub SetPopupMenu(ByVal Menu As Object, Optional Align As enumMenuAlign, Optional Flags = 0)
+Public Sub SetPopupMenu(ByVal Menu As Object, Optional Align As enumMenuAlign, Optional flags = 0)
 Attribute SetPopupMenu.VB_Description = "Sets a dropdown menu to the button."
 
     If Not (Menu Is Nothing) Then
         If (TypeOf Menu Is VB.Menu) Then
             Set mnuDropDown = Menu
             MenuAlign = Align
-            MenuFlags = Flags
+            MenuFlags = flags
             m_bPopupEnabled = True
         End If
     End If
@@ -3076,7 +3095,7 @@ End Sub
 '                              MonoMask (Boolean = False)
 '                              isGreyscale (Boolean = False)
 '!--------------------------------------------------------------------------------
-Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal TransColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
+Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal transColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
                             MonoMask As Boolean = False, Optional ByVal isGreyscale As Boolean = False)
 
     Dim B           As Long
@@ -3150,7 +3169,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
             tObj = SelectObject(SrcDC, SrcPic)
         Else
             tObj = SelectObject(SrcDC, CreateCompatibleBitmap(DstDC, DstW, DstH))
-            hBrush = CreateSolidBrush(TransColor)
+            hBrush = CreateSolidBrush(transColor)
             DrawIconEx SrcDC, 0, 0, SrcPic.Handle, DstW, DstH, 0, hBrush, DI_NORMAL
             DeleteObject hBrush
         End If
@@ -3190,7 +3209,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
         ' --No Maskcolor to use
         If Not m_bUseMaskColor Then
-            TransColor = -1
+            transColor = -1
         End If
 
         newW = DstW - 1
@@ -3209,7 +3228,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
                 a2 = 255 - a1
 
-                If GetNearestColor(hDC, CLng(DataSrc(i).Red) + 256& * DataSrc(i).Green + 65536 * DataSrc(i).Blue) <> TransColor Then
+                If GetNearestColor(hDC, CLng(DataSrc(i).Red) + 256& * DataSrc(i).Green + 65536 * DataSrc(i).Blue) <> transColor Then
 
                     With DataDest(i)
 
@@ -3958,7 +3977,7 @@ Private Sub DrawButton_Standard(ByVal vState As enumButtonStates)
 
         On Error Resume Next
 
-        If m_bShowFocus And Ambient.UserMode Then
+        If m_bShowFocus And RunMode Then
             If m_ButtonStyle = e3DHover Or m_ButtonStyle = eStandard Then
                 SetRect FocusRect, 4, 4, lw - 4, lh - 4
             Else
@@ -4574,11 +4593,13 @@ Private Sub UserControl_AccessKeyPress(KeyAscii As Integer)
             m_bValue = True
             RedrawButton
         End If
-
-        DoEvents
+        
         'To remove focus from other button and Do events before click event
-        RaiseEvent Click
+        DoEvents
+        
         'Now Raiseevent
+        RaiseEvent Click
+
     End If
 
 End Sub
@@ -5147,7 +5168,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 
     On Error GoTo H
 
-    If g_UserModeFix Then
+    If RunMode Then
     
         'If we're not in design mode
         TrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
@@ -5204,8 +5225,8 @@ Private Sub UserControl_Resize()
 
     ' --On resize, create button region again
     CreateRegion
-    RedrawButton
     'then redraw
+    RedrawButton
 End Sub
 
 '!--------------------------------------------------------------------------------

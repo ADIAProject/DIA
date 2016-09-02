@@ -2,10 +2,10 @@ VERSION 5.00
 Begin VB.Form frmAbout 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "О программе..."
-   ClientHeight    =   7110
+   ClientHeight    =   7305
    ClientLeft      =   45
    ClientTop       =   540
-   ClientWidth     =   9630
+   ClientWidth     =   9645
    BeginProperty Font 
       Name            =   "Tahoma"
       Size            =   8.25
@@ -20,8 +20,8 @@ Begin VB.Form frmAbout
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   7110
-   ScaleWidth      =   9630
+   ScaleHeight     =   7305
+   ScaleWidth      =   9645
    StartUpPosition =   1  'CenterOwner
    Begin prjDIADBS.ctlJCbutton cmdHomePage 
       Height          =   650
@@ -644,7 +644,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "FRMABOUT", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With

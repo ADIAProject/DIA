@@ -35,7 +35,7 @@ Option Explicit
     
         'Для строки
         '.Hash UStr2BStr(strText)
-        If PathExists(strPathFile) Then
+        If FileExists(strPathFile) Then
     
             With objStream
                 .Type = adTypeBinary
@@ -43,7 +43,7 @@ Option Explicit
                 .LoadFromFile (strPathFile)
     
                 Do Until .EOS
-                    objHashedData.Hash .Read
+                    objHashedData.hash .Read
                 Loop
     
                 .Close

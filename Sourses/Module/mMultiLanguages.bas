@@ -35,16 +35,36 @@ Public strStartLanguageID             As String
 Public strMessages(158)               As String
 
 ' Api - переменные для работы с языками
-Public Const LOCALE_ILANGUAGE         As Long = &H1     'language id
-Public Const LOCALE_SLANGUAGE         As Long = &H2     'localized name of language
-Public Const LOCALE_SENGLANGUAGE      As Long = &H1001  'English name of language
+Private Const LOCALE_ILANGUAGE         As Long = &H1     'language id
+Private Const LOCALE_SLANGUAGE         As Long = &H2     'localized name of language
+Private Const LOCALE_SENGLANGUAGE      As Long = &H1001  'English name of language
+' Character sets
+Private Const ANSI_CHARSET = 0
+Private Const DEFAULT_CHARSET = 1
+Private Const SYMBOL_CHARSET = 2
+Private Const SHIFTJIS_CHARSET = 128
+Private Const HANGEUL_CHARSET = 129
+Private Const HANGUL_CHARSET = 129
+Private Const GB2312_CHARSET = 134
+Private Const CHINESEBIG5_CHARSET = 136
+Private Const OEM_CHARSET = 255
+Private Const JOHAB_CHARSET = 130
+Private Const HEBREW_CHARSET = 177
+Private Const ARABIC_CHARSET = 178
+Private Const GREEK_CHARSET = 161
+Private Const TURKISH_CHARSET = 162
+Private Const VIETNAMESE_CHARSET = 163
+Private Const THAI_CHARSET = 222
+Private Const EASTEUROPE_CHARSET = 238
+Private Const RUSSIAN_CHARSET = 204
+Private Const MAC_CHARSET = 77
+Private Const BALTIC_CHARSET = 186
 
 'Private Const LOCALE_SABBREVLANGNAME  As Long = &H3     'abbreviated language name
 'Private Const LOCALE_SNATIVELANGNAME  As Long = &H4     'native name of language
 'Private Const LOCALE_IDEFAULTLANGUAGE As Long = &H9     'default language id
 
-Public Declare Function GetSystemDefaultLCID Lib "kernel32.dll" () As Long
-
+Private Declare Function GetSystemDefaultLCID Lib "kernel32.dll" () As Long
 Private Declare Function GetLocaleInfo Lib "kernel32.dll" Alias "GetLocaleInfoA" (ByVal Locale As Long, ByVal LCType As Long, ByVal lpLCData As String, ByVal cchData As Long) As Long
 
 '!--------------------------------------------------------------------------------

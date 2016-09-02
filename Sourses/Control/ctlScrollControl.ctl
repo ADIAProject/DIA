@@ -27,10 +27,11 @@ Attribute VB_Exposed = False
 '---------------------------------------------------------
 
 '*********************************
-' Modified by Romeo91 (adia-project.net) Last Edit 2014-03-31
+' Modified by Romeo91 (adia-project.net) Last Edit 2015-11-15
 '*********************************
 ' Change subsclasser to class cSelfSubHookCallback
 ' Added ScrollPositionH property(Get/Let)
+' Added ScrollVChanged Event
 
 Option Explicit
 
@@ -45,10 +46,10 @@ Private Declare Function ClientToScreen Lib "user32.dll" (ByVal hWnd As Long, By
 Private Declare Function SetCursor Lib "user32.dll" (ByVal hCursor As Long) As Long
 Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function GetWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
-Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
+Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal Cx As Long, ByVal Cy As Long, ByVal wFlags As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
-Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
+Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pClipRect As RECT) As Long
 Private Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function GetParent Lib "user32.dll" (ByVal hWnd As Long) As Long
 
@@ -120,11 +121,7 @@ Private Const WM_DESTROY        As Long = &H2
 '*************************************************************
 '   TRACK MOUSE
 '*************************************************************
-Public Event MouseEnter()
-Public Event MouseLeave()
-
-Private Const WM_MOUSELEAVE     As Long = &H2A3
-Private Const WM_MOUSEMOVE      As Long = &H200
+Public Event ScrollVChanged()
 
 Private Enum TRACKMOUSEEVENT_FLAGS
     TME_HOVER = &H1&
@@ -247,11 +244,25 @@ Public Property Get hWnd()
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property RunMode
+'! Description (Описание)  :   [Ambient.UserMode tells us whether the UC's container is in design mode or user mode/run-time.
+'                               Unfortunately, this isn't supported in all containers.]
+'                               http://www.vbforums.com/showthread.php?805711-VB6-UserControl-Ambient-UserMode-workaround&s=8dd326860cbc22bed07bd13f6959ca70
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get RunMode() As Boolean
+    RunMode = True
+    On Error Resume Next
+    RunMode = Ambient.UserMode
+    RunMode = Extender.Parent.RunMode
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property ScrollPositionH
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Property Get ScrollPositionH() As Boolean
+Public Property Get ScrollPositionH() As Long
     ScrollPositionH = m_ScrollPositionH
 End Property
 
@@ -260,14 +271,16 @@ End Property
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   NewValue (Boolean)
 '!--------------------------------------------------------------------------------
-Public Property Let ScrollPositionH(ByVal NewValue As Boolean)
-    m_ScrollPositionH = NewValue
-    SI.nPos = NewValue
-    SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
-    If NewValue = 0 Then
-        ScrollVerticalWindow 0
+Public Property Let ScrollPositionH(ByVal NewValue As Long)
+    If NewValue <> m_ScrollPositionH Then
+        m_ScrollPositionH = NewValue
+        SI.nPos = NewValue
+        SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
+        If NewValue = 0 Then
+            ScrollVerticalWindow 0
+        End If
+        PropertyChanged "ScrollPositionH"
     End If
-    PropertyChanged "ScrollPositionH"
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -361,14 +374,14 @@ End Sub
 '! Parameters  (Переменные):   hWnd (Long)
 '                              SrcRect (RECT)
 '!--------------------------------------------------------------------------------
-Private Function GetChildRectOfMe(hWnd As Long, ByRef SrcRect As RECT)
+Private Function GetChildRectOfMe(hWnd As Long, ByRef srcRect As RECT)
 
     Dim PT As POINTAPI
 
     ClientToScreen UserControl.hWnd, PT
-    Call GetWindowRect(hWnd, SrcRect)
+    Call GetWindowRect(hWnd, srcRect)
 
-    With SrcRect
+    With srcRect
         .Left = .Left - PT.X - OldPosH
         .Top = .Top - PT.Y - OldPosV
         .Right = .Right - PT.X - OldPosH
@@ -418,8 +431,10 @@ End Sub
 '! Parameters  (Переменные):   NewPos (Long)
 '!--------------------------------------------------------------------------------
 Private Sub ScrollHorizontalWindow(ByVal NewPos As Long)
-    ScrollWindowByNum UserControl.hWnd, NewPos - OldPosH, 0&, 0&, 0&
-    OldPosH = NewPos
+    If NewPos <> OldPosH Then
+        ScrollWindowByNum UserControl.hWnd, NewPos - OldPosH, 0&, 0&, 0&
+        OldPosH = NewPos
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -428,35 +443,13 @@ End Sub
 '! Parameters  (Переменные):   NewPos (Long)
 '!--------------------------------------------------------------------------------
 Private Sub ScrollVerticalWindow(ByVal NewPos As Long)
-    ScrollWindowByNum UserControl.hWnd, 0&, NewPos - OldPosV, 0&, 0&
-    OldPosV = NewPos
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub TrackMouseLeave
-'! Description (Описание)  :   [Track the mouse leaving the indicated window]
-'! Parameters  (Переменные):   lng_hWnd (Long)
-'!--------------------------------------------------------------------------------
-Private Sub TrackMouseLeave(ByVal lng_hWnd As Long)
-
-    Dim TME As TRACKMOUSEEVENT_STRUCT
-
-    If bTrack Then
-
-        With TME
-            .cbSize = LenB(TME)
-            .dwFlags = TME_LEAVE
-            .hWndTrack = lng_hWnd
-            .dwHoverTime = 1
-        End With
-
-        If bTrackUser32 Then
-            TrackMouseEvent TME
-        Else
-            TrackMouseEventComCtl TME
+    If NewPos <> OldPosV Then
+        ScrollWindowByNum UserControl.hWnd, 0&, NewPos - OldPosV, 0&, 0&
+        OldPosV = NewPos
+        If m_VScrollVisible Then
+            RaiseEvent ScrollVChanged
         End If
     End If
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -598,7 +591,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     On Error GoTo H
 
     'If we're not in design mode
-    If g_UserModeFix Then
+    If RunMode Then
         
         bTrack = True
         bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")
@@ -821,10 +814,9 @@ Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRe
                 If hTheme Then
                     ExcludeClipRect DC, mBorderSize, mBorderSize, Rec.Right - mBorderSize, Rec.Bottom - mBorderSize
 
-                    If DrawThemeBackground(hTheme, DC, 0, 0, Rec, Rec) = 0 Then
-                    End If
-
+                    Call DrawThemeBackground(hTheme, DC, 0, 0, Rec, Rec)
                     Call CloseThemeData(hTheme)
+                    
                 End If
 
                 ReleaseDC hWnd, DC
@@ -860,7 +852,6 @@ Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRe
                     End If
 
                     SetScrollInfo UserControl.hWnd, SB_VERT, SI, True
-                    '----------
                     GetScrollInfo UserControl.hWnd, SB_HORZ, SI
 
                     If Rec.Right > SI.nPos + SI.nPage Then

@@ -244,13 +244,13 @@ Public Sub SaveSnapReport(Optional ByVal strDirPathTo As String = vbNullString)
     strFileReport = PathCombine(strDirPathToExpand, GetFileName4Snap & ".txt")
     
     ' Если снимок есть, копируем файл снимка по назначению
-    If PathExists(strResultHwidsExtTxtPath) Then
+    If FileExists(strResultHwidsExtTxtPath) Then
         CopyFileTo strResultHwidsExtTxtPath, strFileReport
     Else
 
         ' Создание временного файла снимка системы
         If SaveHwidsArray2File(strResultHwidsExtTxtPath, arrHwidsLocal) Then
-            If PathExists(strResultHwidsExtTxtPath) Then
+            If FileExists(strResultHwidsExtTxtPath) Then
                 CopyFileTo strResultHwidsExtTxtPath, strFileReport
             Else
                 If mbDebugStandart Then DebugMode strMessages(45) & vbNewLine & strFileReport

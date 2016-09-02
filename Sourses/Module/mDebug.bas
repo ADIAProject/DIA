@@ -14,25 +14,24 @@ Public mbCleanHistory          As Boolean   'Очистка истории отладочного режима
 Public mbDebugTime2File        As Boolean   'Записывать время события в лог-файл
 Public mbDebugLog2AppPath      As Boolean   'Каталог Logs находится в папке с программой
 Public lngDetailMode           As Long      'Режим детализации лог-файла
+Public strDebugLogPathTemp     As String    'Директория создания лог-файла (путь может быть относительный и с environment-переменными)
+Public strDebugLogNameTemp     As String    'Имя лог-файла (поддерживаются переменные)
 ' Параметры рассчитываемые в ходе работы программы
 Public strDebugLogFullPath     As String
 Public strDebugLogPath         As String
 Public strDebugLogName         As String
-Public strDebugLogPathTemp     As String
-Public strDebugLogNameTemp     As String
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DebugMode
 '! Description (Описание)  :   [Функция отладочных сообщений]
 '! Parameters  (Переменные):   Msg (String)
-'                              lngDetailModeTemp (Long = 1)
 '!--------------------------------------------------------------------------------
-Public Sub DebugMode(ByVal Msg As String)
+Public Sub DebugMode(ByVal strMsg As String)
     
     Dim mbFileExist As Boolean
-    Dim fNum As Integer
+    Dim fNum        As Integer
     
-    mbFileExist = PathExists(strDebugLogFullPath)
+    mbFileExist = FileExists(strDebugLogFullPath)
     
     fNum = FreeFile
     Open strDebugLogFullPath For Binary Access Write As fNum
@@ -40,16 +39,16 @@ Public Sub DebugMode(ByVal Msg As String)
     If Not mbDebugTime2File Then
         ' создается ли новый файл или открывается для дозаписи
         If mbFileExist Then
-            Put #fNum, LOF(fNum), Msg & vbNewLine
+            Put #fNum, LOF(fNum), strMsg & vbNewLine
         Else
-            Put #fNum, , Msg & vbNewLine
+            Put #fNum, , strMsg & vbNewLine
         End If
     Else
         ' создается ли новый файл или открывается для дозаписи
         If mbFileExist Then
-            Put #fNum, LOF(fNum), (vbNewLine & CStr(Now()) & vbTab) & Msg
+            Put #fNum, LOF(fNum), (vbNewLine & CStr(Now()) & vbTab) & strMsg
         Else
-            Put #fNum, , (vbNewLine & CStr(Now()) & vbTab) & Msg
+            Put #fNum, , (vbNewLine & CStr(Now()) & vbTab) & strMsg
         End If
 
     End If
@@ -96,7 +95,7 @@ End Function
 Public Sub MakeCleanHistory()
 
     If mbCleanHistory Then
-        If PathExists(strDebugLogFullPath) Then
+        If FileExists(strDebugLogFullPath) Then
             If Not LogNotOnCDRoom Then
                 DeleteFiles (strDebugLogFullPath)
             End If
@@ -113,17 +112,15 @@ End Sub
 Public Sub PrintFileInDebugLog(ByVal strFilePath As String)
     Dim strTxtFileAll As String
     
-    If PathExists(strFilePath) Then
-        If Not PathIsAFolder(strFilePath) Then
-            If GetFileSizeByPath(strFilePath) Then
-                        
-                If mbDebugStandart Then
-                    FileReadData strFilePath, strTxtFileAll
-                    DebugMode vbTab & "Content of file: " & strFilePath & vbNewLine & "*********************BEGIN FILE**************************" & vbNewLine & strTxtFileAll & vbNewLine & "**********************END FILE***************************"
-                End If
-            Else
-                If mbDebugStandart Then DebugMode vbTab & "Content of file: " & strFilePath & " Error - 0 bytes"
+    If FileExists(strFilePath) Then
+        If GetFileSizeByPath(strFilePath) Then
+                    
+            If mbDebugStandart Then
+                FileReadData strFilePath, strTxtFileAll
+                DebugMode vbTab & "Content of file: " & strFilePath & vbNewLine & "*********************BEGIN FILE**************************" & vbNewLine & strTxtFileAll & vbNewLine & "**********************END FILE***************************"
             End If
+        Else
+            If mbDebugStandart Then DebugMode vbTab & "Content of file: " & strFilePath & " Error - 0 bytes"
         End If
     End If
 

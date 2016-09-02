@@ -182,8 +182,8 @@ FreezeChanged = True
 With PropertyPage.SelectedControls(0)
 Height = .ImageHeight
 Width = .ImageWidth
-TextImageHeight.Text = Height
-TextImageWidth.Text = Width
+TextImageHeight.Text = CStr(Height)
+TextImageWidth.Text = CStr(Width)
 If Height = 16 And Width = 16 Then
     OptionSize16.Value = True
 ElseIf Height = 32 And Width = 32 Then
@@ -296,7 +296,7 @@ Else
     LngValue = CLng(TextImageHeight.Text)
     Cancel = CBool(Err.Number <> 0)
     On Error GoTo 0
-    If LngValue <= 0 Then Cancel = True
+    If LngValue < 0 Then Cancel = True
     If Cancel = False Then
         TextImageHeight.Text = LngValue
     Else
@@ -342,7 +342,7 @@ Else
     LngValue = CLng(TextImageWidth.Text)
     Cancel = CBool(Err.Number <> 0)
     On Error GoTo 0
-    If LngValue <= 0 Then Cancel = True
+    If LngValue < 0 Then Cancel = True
     If Cancel = False Then
         TextImageWidth.Text = LngValue
     Else

@@ -25,6 +25,7 @@ Private Const strUrl_TestFile      As String = "test.txt"                   ' Фа
 Private Const strUrl_TestWWW       As String = "http://ya.ru/"              ' Сайт для проверки наличия соединения интернет
 
 Private Declare Function InternetGetConnectedStateEx Lib "wininet.dll" (ByRef lpdwFlags As Long, ByVal lpszConnectionName As String, ByVal dwNameLen As Integer, ByVal dwReserved As Long) As Long
+Private Declare Sub Sleep Lib "kernel32.dll" (ByVal dwMilliseconds As Long)
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CheckConnection2Server
@@ -80,12 +81,12 @@ Function CheckConnection2Server(ByVal URL As String) As String
     Exit Function
 
 ErrCode:
-    errNum = err.Number
-    Debug.Print err.Number & strSpace & err.Description & strSpace & err.LastDllError
+    errNum = Err.Number
+    Debug.Print Err.Number & strSpace & Err.Description & strSpace & Err.LastDllError
 
     If errNum <> 0 Then
-        If mbDebugStandart Then DebugMode str5VbTab & "CheckConnection2Server: " & " Error: №" & err.LastDllError & " - " & ApiErrorText(err.LastDllError) & vbNewLine & _
-                  str5VbTab & "CheckConnection2Server: Err.Number: " & err.Number & " Err.Description: " & err.Description
+        If mbDebugStandart Then DebugMode str5VbTab & "CheckConnection2Server: " & " Error: №" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError) & vbNewLine & _
+                  str5VbTab & "CheckConnection2Server: Err.Number: " & Err.Number & " Err.Description: " & Err.Description
     End If
 
 End Function

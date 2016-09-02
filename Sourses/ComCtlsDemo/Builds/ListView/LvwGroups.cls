@@ -12,12 +12,16 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowListView As ListView
+Private ShadowObjectPointer As Long
 Private PropGroup As Collection
 Private PropSorted As Boolean
 Private PropSortOrder As LvwSortOrderConstants
 Private PropSortType As LvwSortTypeConstants
 Implements ISubclass
+
+Private Function ShadowListView() As ListView
+Set ShadowListView = PtrToObj(ShadowObjectPointer)
+End Function
 
 Private Sub Class_Initialize()
 Set PropGroup = New Collection
@@ -34,7 +38,7 @@ Set NewEnum = PropGroup.[_NewEnum]
 End Function
 
 Friend Sub FInit(ByVal Object As ListView)
-Set ShadowListView = Object
+ShadowObjectPointer = ObjPtr(Object)
 End Sub
 
 Public Function Add(Optional ByVal Index As Long, Optional ByVal Key As String, Optional ByVal Header As String, Optional ByVal HeaderAlignment As LvwGroupHeaderAlignmentConstants, Optional ByVal Footer As String, Optional ByVal FooterAlignment As LvwGroupFooterAlignmentConstants) As LvwGroup

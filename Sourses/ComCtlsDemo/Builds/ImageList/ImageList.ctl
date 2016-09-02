@@ -109,7 +109,7 @@ Private Const BDR_RAISEDINNER As Long = 4
 Private Const CLR_NONE As Long = -1
 Private Const CLR_DEFAULT As Long = -16777216
 Private ImageListHandle As Long
-Private ImageListInitListImagesCount As Long, ImageListWritePropState As Long
+Private ImageListInitListImagesCount As Long
 Private PropListImages As ImlListImages
 Private PropImageWidth As Long
 Private PropImageHeight As Long
@@ -124,8 +124,8 @@ Call ComCtlsLoadShellMod
 End Sub
 
 Private Sub UserControl_InitProperties()
-PropImageWidth = 16
-PropImageHeight = 16
+PropImageWidth = 0
+PropImageHeight = 0
 PropColorDepth = ImlColorDepth24Bit
 PropUseBackColor = False
 PropBackColor = vbWindowBackground
@@ -136,8 +136,8 @@ End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
 With PropBag
-PropImageWidth = .ReadProperty("ImageWidth", 16)
-PropImageHeight = .ReadProperty("ImageHeight", 16)
+PropImageWidth = .ReadProperty("ImageWidth", 0)
+PropImageHeight = .ReadProperty("ImageHeight", 0)
 PropColorDepth = .ReadProperty("ColorDepth", ImlColorDepth24Bit)
 PropUseBackColor = .ReadProperty("UseBackColor", False)
 PropBackColor = .ReadProperty("BackColor", vbWindowBackground)
@@ -162,8 +162,8 @@ End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
 With PropBag
-.WriteProperty "ImageWidth", PropImageWidth, 16
-.WriteProperty "ImageHeight", PropImageHeight, 16
+.WriteProperty "ImageWidth", PropImageWidth, 0
+.WriteProperty "ImageHeight", PropImageHeight, 0
 .WriteProperty "ColorDepth", PropColorDepth, ImlColorDepth24Bit
 .WriteProperty "UseBackColor", PropUseBackColor, False
 .WriteProperty "BackColor", PropBackColor, vbWindowBackground
@@ -184,7 +184,6 @@ If Count > 0 Then
 End If
 PropBag.WriteProperty "InitListImages", .Contents, 0
 End With
-If ImageListWritePropState = 0 Then ImageListWritePropState = &H1 Else If (ImageListWritePropState And &H10) = 0 Then Set PropListImages = Nothing
 End Sub
 
 Private Sub UserControl_Paint()
@@ -207,18 +206,6 @@ ImagePictures.Top = 3
 .Size .ScaleX(38, vbPixels, vbTwips), .ScaleY(38, vbPixels, vbTwips)
 InProc = False
 End With
-End Sub
-
-Private Sub UserControl_Show()
-If Ambient.UserMode = False Then If (ImageListWritePropState And &H10) = 0 Then ImageListWritePropState = ImageListWritePropState Or &H10
-End Sub
-
-Private Sub UserControl_Hide()
-If Not PropListImages Is Nothing Then
-    On Error Resume Next
-    If UserControl.Parent Is Nothing Then Set PropListImages = Nothing
-    On Error GoTo 0
-End If
 End Sub
 
 Private Sub UserControl_Terminate()
@@ -266,7 +253,7 @@ If Me.ListImages.Count > 0 Then
         End If
     End If
 Else
-    If Value > 0 Then
+    If Value >= 0 Then
         PropImageWidth = Value
     Else
         If Ambient.UserMode = False Then
@@ -277,10 +264,8 @@ Else
         End If
     End If
 End If
-If ImageListHandle <> 0 Then
-    Call DestroyImageList
-    Call CreateImageList
-End If
+If ImageListHandle <> 0 Then Call DestroyImageList
+If ImageListHandle = 0 Then Call CreateImageList
 UserControl.PropertyChanged "ImageWidth"
 End Property
 
@@ -300,7 +285,7 @@ If Me.ListImages.Count > 0 Then
         End If
     End If
 Else
-    If Value > 0 Then
+    If Value >= 0 Then
         PropImageHeight = Value
     Else
         If Ambient.UserMode = False Then
@@ -311,10 +296,8 @@ Else
         End If
     End If
 End If
-If ImageListHandle <> 0 Then
-    Call DestroyImageList
-    Call CreateImageList
-End If
+If ImageListHandle <> 0 Then Call DestroyImageList
+If ImageListHandle = 0 Then Call CreateImageList
 UserControl.PropertyChanged "ImageHeight"
 End Property
 
@@ -418,12 +401,15 @@ If Index = 0 Then
 Else
     ImageListIndex = Index
 End If
-If ImageListHandle <> 0 Then
-    If Picture Is Nothing Then
-        Err.Raise Number:=35607, Description:="Required argument is missing"
-    ElseIf Picture.Handle = 0 Then
-        Err.Raise Number:=35607, Description:="Required argument is missing"
-    Else
+If Picture Is Nothing Then
+    Err.Raise Number:=35607, Description:="Required argument is missing"
+ElseIf Picture.Handle = 0 Then
+    Err.Raise Number:=35607, Description:="Required argument is missing"
+Else
+    If PropImageWidth = 0 Then PropImageWidth = UserControl.ScaleX(Picture.Width, vbHimetric, vbPixels)
+    If PropImageHeight = 0 Then PropImageHeight = UserControl.ScaleY(Picture.Height, vbHimetric, vbPixels)
+    If ImageListHandle = 0 Then Call CreateImageList
+    If ImageListHandle <> 0 Then
         Dim OrigCount As Long, NewCount As Long
         OrigCount = ImageList_GetImageCount(ImageListHandle)
         If Picture.Type = vbPicTypeBitmap Then

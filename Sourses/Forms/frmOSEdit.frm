@@ -512,10 +512,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-    Dim i As Long
+    Dim I As Long
 
     If mbAddInList Then
-        i = lngLastIdOS + 1
+        I = lngLastIdOS + 1
 
         With frmOptions.lvOS.ListItems.Add(, , txtOSVer)
             .SubItems(1) = txtOSName
@@ -547,38 +547,38 @@ Private Sub SaveOptions()
     Else
 
         With frmOptions.lvOS
-            i = .SelectedItem.Index
-            .ListItems.Item(i).Text = txtOSVer
-            .ListItems.Item(i).SubItems(1) = txtOSName
-            .ListItems.Item(i).SubItems(2) = ucPathDRP.Path
-            .ListItems.Item(i).SubItems(3) = ucPathDB.Path
+            I = .SelectedItem.Index
+            .ListItems.Item(I).Text = txtOSVer
+            .ListItems.Item(I).SubItems(1) = txtOSName
+            .ListItems.Item(I).SubItems(2) = ucPathDRP.Path
+            .ListItems.Item(I).SubItems(3) = ucPathDB.Path
 
             If chk64bit.Value Then
                 If chkNotCheckBitOS.Value Then
-                    .ListItems.Item(i).SubItems(4) = "3"
+                    .ListItems.Item(I).SubItems(4) = "3"
                 Else
-                    .ListItems.Item(i).SubItems(4) = "1"
+                    .ListItems.Item(I).SubItems(4) = "1"
                 End If
 
             Else
 
                 If chkNotCheckBitOS.Value Then
-                    .ListItems.Item(i).SubItems(4) = "2"
+                    .ListItems.Item(I).SubItems(4) = "2"
                 Else
-                    .ListItems.Item(i).SubItems(4) = "0"
+                    .ListItems.Item(I).SubItems(4) = "0"
                 End If
             End If
 
-            .ListItems.Item(i).SubItems(5) = ucPhysXPath.Path
-            .ListItems.Item(i).SubItems(6) = ucLangPath.Path
-            .ListItems.Item(i).SubItems(7) = ucRuntimesPath.Path
-            .ListItems.Item(i).SubItems(8) = txtExcludeFileName
+            .ListItems.Item(I).SubItems(5) = ucPhysXPath.Path
+            .ListItems.Item(I).SubItems(6) = ucLangPath.Path
+            .ListItems.Item(I).SubItems(7) = ucRuntimesPath.Path
+            .ListItems.Item(I).SubItems(8) = txtExcludeFileName
         End With
 
         'FRMOPTIONS
     End If
 
-    lngLastIdOS = frmOptions.lvOS.ListItems.Count
+    lngLastIdOS = frmOptions.lvOS.ListItems.count
     frmOptions.lvOS.Refresh
     mbAddInList = False
 End Sub
@@ -649,7 +649,7 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmOSEdit", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With

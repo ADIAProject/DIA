@@ -91,18 +91,13 @@ End Enum
 #End If
 
 Private Const SHGFP_TYPE_CURRENT As Long = &H0    'current value for user, verify it exists
-
-'Private Const SHGFP_TYPE_DEFAULT    As Long = &H1
 Private Const MAX_LENGTH         As Long = 260
 Private Const S_OK               As Long = 0
 
-'Private Const S_FALSE               As Long = 1
 Private Declare Function SHGetFolderPath Lib "shfolder.dll" Alias "SHGetFolderPathA" (ByVal hWndOwner As Long, ByVal nFolder As Long, ByVal hToken As Long, ByVal dwReserved As Long, ByVal lpszPath As String) As Long
 Private Declare Function GetPrinterDriverDirectory Lib "winspool.drv" Alias "GetPrinterDriverDirectoryA" (ByVal pName As String, ByVal pEnvironment As String, ByVal Level As Long, ByVal pDriverDirectory As String, ByVal cbBuff As Long, pcbNeeded As Long) As Long
-
-Public Declare Function GetPrintProcessorDirectory Lib "winspool.drv" Alias "GetPrintProcessorDirectoryA" (ByVal pName As String, ByVal pEnvironment As String, ByVal Level As Long, ByVal pPrintProcessorInfo As String, ByVal cdBuf As Long, pcbNeeded As Long) As Long
-Declare Function GetColorDirectory Lib "mscms" Alias "GetColorDirectoryA" (ByVal pcstr As String, ByVal pstr As String, ByRef pdword As Long) As Long
-
+Private Declare Function GetPrintProcessorDirectory Lib "winspool.drv" Alias "GetPrintProcessorDirectoryA" (ByVal pName As String, ByVal pEnvironment As String, ByVal Level As Long, ByVal pPrintProcessorInfo As String, ByVal cdBuf As Long, pcbNeeded As Long) As Long
+Private Declare Function GetColorDirectory Lib "mscms" Alias "GetColorDirectoryA" (ByVal pcstr As String, ByVal pstr As String, ByRef pdword As Long) As Long
 Private Declare Function GetWindowsDirectory Lib "kernel32.dll" Alias "GetWindowsDirectoryA" (ByVal lpBuffer As String, ByVal nSize As Long) As Long
 Private Declare Function GetSystemDirectory Lib "kernel32.dll" Alias "GetSystemDirectoryA" (ByVal lpBuffer As String, ByVal nSize As Long) As Long
 

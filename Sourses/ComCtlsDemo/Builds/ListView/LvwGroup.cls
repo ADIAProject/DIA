@@ -12,12 +12,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Private ShadowListView As ListView
+Private ShadowObjectPointer As Long
 Private PropIndex As Long, PropKey As String, PropID As Long
-Private PropTag As String
+Private PropTag As Variant
+Private PropIcon As Variant, PropIconIndex As Long
+
+Private Function ShadowListView() As ListView
+Set ShadowListView = PtrToObj(ShadowObjectPointer)
+End Function
 
 Friend Sub FInit(ByVal Object As ListView, ByVal Key As String)
-Set ShadowListView = Object
+ShadowObjectPointer = ObjPtr(Object)
 PropKey = Key
 End Sub
 
@@ -35,13 +40,27 @@ Attribute Key.VB_Description = "Returns the key used in the collection."
 Key = PropKey
 End Property
 
-Public Property Get Tag() As String
+Public Property Get Tag() As Variant
 Attribute Tag.VB_Description = "Stores any extra data needed for your program."
-Tag = PropTag
+If IsEmpty(PropTag) Then
+    Tag = vbNullString
+ElseIf IsObject(PropTag) Then
+    Set Tag = PropTag
+Else
+    Tag = PropTag
+End If
 End Property
 
-Public Property Let Tag(ByVal Value As String)
+Public Property Let Tag(ByVal Value As Variant)
 PropTag = Value
+End Property
+
+Public Property Set Tag(ByVal Value As Variant)
+If Value Is ShadowListView Then
+    Err.Raise Number:=35700, Description:="Circular object referencing is not allowed"
+Else
+    Set PropTag = Value
+End If
 End Property
 
 Public Property Get ID() As Long
@@ -108,6 +127,15 @@ Public Property Let Link(ByVal Value As String)
 ShadowListView.FGroupLink(PropID) = Value
 End Property
 
+Public Property Get SubsetLink() As String
+Attribute SubsetLink.VB_Description = "Returns/sets the subset link text for the group. Requires comctl32.dll version 6.1 or higher."
+SubsetLink = ShadowListView.FGroupSubsetLink(PropID)
+End Property
+
+Public Property Let SubsetLink(ByVal Value As String)
+ShadowListView.FGroupSubsetLink(PropID) = Value
+End Property
+
 Public Property Get Collapsible() As Boolean
 Attribute Collapsible.VB_Description = "Returns/sets a value that determines whether the group can be collapsed or not. Requires comctl32.dll version 6.1 or higher."
 Collapsible = ShadowListView.FGroupCollapsible(PropID)
@@ -144,18 +172,46 @@ Public Property Let Selected(ByVal Value As Boolean)
 ShadowListView.FGroupSelected(PropID) = Value
 End Property
 
-Public Property Get Icon() As Long
-Attribute Icon.VB_Description = "Returns/sets the index of an icon in an associated image list control. Requires comctl32.dll version 6.1 or higher."
-Icon = ShadowListView.FGroupIcon(PropIndex)
+Public Property Get Subseted() As Boolean
+Attribute Subseted.VB_Description = "Returns/sets a value that determines whether the group displays only a portion of its items or not. Requires comctl32.dll version 6.1 or higher."
+Subseted = ShadowListView.FGroupSubseted(PropID)
 End Property
 
-Public Property Let Icon(ByVal Value As Long)
-If Value < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
-ShadowListView.FGroupIcon(PropIndex) = Value
+Public Property Let Subseted(ByVal Value As Boolean)
+ShadowListView.FGroupSubseted(PropID) = Value
 End Property
+
+Public Property Get SubsetLinkSelected() As Boolean
+Attribute SubsetLinkSelected.VB_Description = "Returns/sets a value that determines whether the subset link of the group is selected or not. Requires comctl32.dll version 6.1 or higher."
+SubsetLinkSelected = ShadowListView.FGroupSubsetLinkSelected(PropID)
+End Property
+
+Public Property Let SubsetLinkSelected(ByVal Value As Boolean)
+ShadowListView.FGroupSubsetLinkSelected(PropID) = Value
+End Property
+
+Public Property Get Icon() As Variant
+Attribute Icon.VB_Description = "Returns/sets the index or key of an icon in an associated image list control. Requires comctl32.dll version 6.1 or higher."
+If IsEmpty(PropIcon) Then
+    Icon = 0
+Else
+    Icon = PropIcon
+End If
+End Property
+
+Public Property Let Icon(ByVal Value As Variant)
+Call ComCtlsImlListImageIndex(ShadowListView, ShadowListView.GroupIcons, Value, PropIconIndex)
+PropIcon = Value
+ShadowListView.FGroupIcon(PropIndex) = PropIconIndex
+End Property
+
+Public Property Get IconIndex() As Long
+Attribute IconIndex.VB_Description = "Returns the index of an icon in an associated image list control."
+IconIndex = PropIconIndex
+End Function
 
 Public Property Get Position() As Long
-Attribute Position.VB_Description = "Returns the current position of the group."
+Attribute Position.VB_Description = "Returns the current position of the group. Requires comctl32.dll version 6.1 or higher."
 Position = ShadowListView.FGroupPosition(PropID)
 End Property
 

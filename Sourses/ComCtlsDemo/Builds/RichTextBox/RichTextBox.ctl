@@ -234,6 +234,8 @@ Attribute DblClick.VB_Description = "Occurs when you press and release a mouse b
 Attribute DblClick.VB_UserMemId = -601
 Public Event Change()
 Attribute Change.VB_Description = "Occurs when the contents of a control have changed."
+Public Event MaxText()
+Attribute MaxText.VB_Description = "Occurs when the current text insertion has exceeded the maximum number of characters that can be entered in a control."
 Public Event SelChange(ByVal SelType As Integer, ByVal SelStart As Long, ByVal SelEnd As Long)
 Attribute SelChange.VB_Description = "Occurs when the current selection of text in a control has changed or the insertion point has moved."
 Public Event LinkEvent(ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal LinkStart As Long, ByVal LinkEnd As Long)
@@ -290,7 +292,6 @@ Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNu
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
-Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
@@ -299,10 +300,8 @@ Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef l
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 Private Declare Function GetCursor Lib "user32" () As Long
-Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function GetScrollPos Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long) As Long
-Private Declare Function WindowFromPoint Lib "user32" (ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpszProgID As Long, ByRef pCLSID As Any) As Long
@@ -517,6 +516,7 @@ Private Const ENM_OBJECTPOSITIONS As Long = &H2000000
 Private Const ENM_LINK As Long = &H4000000
 Private Const EN_UPDATE As Long = &H400
 Private Const EN_CHANGE As Long = &H300
+Private Const EN_MAXTEXT As Long = &H501
 Private Const EN_HSCROLL As Long = &H601
 Private Const EN_VSCROLL As Long = &H602
 Private Const EN_REQUESTRESIZE As Long = &H701
@@ -706,7 +706,6 @@ Implements ISubclass
 Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IOleControlVB
 Implements OLEGuids.IPerPropertyBrowsingVB
-Implements OLEGuids.IRichEditOleCallback
 Private RichTextBoxHandle As Long
 Private RichTextBoxFontHandle As Long
 Private RichTextBoxIMCHandle As Long
@@ -714,6 +713,8 @@ Private RichTextBoxCharCodeCache As Long
 Private RichTextBoxIsClick As Boolean
 Private RichTextBoxDataObjectValue As Variant
 Private RichTextBoxDataObjectFormat As Variant
+Private RichTextBoxOleCallback As RtfOleCallback
+Private RichTextBoxIsOleCallback As Boolean
 Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
@@ -796,43 +797,15 @@ If DispID = DispIDMousePointer Then
 End If
 End Sub
 
-Private Sub IRichEditOleCallback_GetNewStorage(ByRef ppStorage As OLEGuids.IStorage)
-End Sub
-
-Private Sub IRichEditOleCallback_GetInPlaceContext(ByRef ppFrame As OLEGuids.IOleInPlaceFrame, ByRef ppDoc As OLEGuids.IOleInPlaceUIWindow, ByRef pFrameInfo As OLEGuids.OLEINPLACEFRAMEINFO)
-End Sub
-
-Private Sub IRichEditOleCallback_ShowContainerUI(ByVal fShow As Long)
-End Sub
-
-Private Sub IRichEditOleCallback_QueryInsertObject(ByRef pCLSID As OLEGuids.OLECLSID, ByVal pStorage As OLEGuids.IStorage, ByVal CharPos As Long)
-End Sub
-
-Private Sub IRichEditOleCallback_DeleteObject(ByVal LpOleObject As Long)
-End Sub
-
-Private Sub IRichEditOleCallback_QueryAcceptData(ByVal pDataObject As OLEGuids.IDataObject, ByRef CF As Integer, ByVal RECO As Long, ByVal fReally As Long, ByVal hMetaPict As Long)
-End Sub
-
-Private Sub IRichEditOleCallback_ContextSensitiveHelp(ByVal fEnterMode As Long)
-End Sub
-
-Private Sub IRichEditOleCallback_GetClipboardData(ByVal lpCharRange As Long, ByVal RECO As Long, ByRef ppDataObject As OLEGuids.IDataObject)
-End Sub
-
-Private Sub IRichEditOleCallback_GetDragDropEffect(ByVal fDrag As Long, ByVal KeyState As Long, ByRef dwEffect As Long)
-End Sub
-
-Private Sub IRichEditOleCallback_GetContextMenu(ByVal SelType As Integer, ByVal LpOleObject As Long, ByVal lpCharRange As Long, ByRef hMenu As Long)
-End Sub
-
 Private Sub UserControl_Initialize()
 Call ComCtlsLoadShellMod
 Call RtfLoadRichedMod
 Call SetVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call SetVTableSubclass(Me, VTableInterfaceControl)
 Call SetVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
-Call SetVTableSubclassIRichEditOleCallback(Me)
+Set RichTextBoxOleCallback = New RtfOleCallback
+RichTextBoxOleCallback.FInit Me
+Call SetVTableSubclassIRichEditOleCallback(RichTextBoxOleCallback)
 DispIDMousePointer = GetDispID(Me, "MousePointer")
 End Sub
 
@@ -986,26 +959,24 @@ End If
 End Sub
 
 Private Sub UserControl_Resize()
-If RichTextBoxHandle = 0 Then Exit Sub
+Static InProc As Boolean
+If InProc = True Then Exit Sub
+InProc = True
 With UserControl
-MoveWindow RichTextBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
-End With
-End Sub
-
-Private Sub UserControl_Hide()
-On Error Resume Next
-If UserControl.Parent Is Nothing Then
-    If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal 0&
-    Call DestroyRichTextBox
+If DPICorrectionFactor() <> 1 Then
+    .Extender.Move .Extender.Left + .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top + .ScaleY(1, vbPixels, vbContainerPosition)
+    .Extender.Move .Extender.Left - .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top - .ScaleY(1, vbPixels, vbContainerPosition)
 End If
-On Error GoTo 0
+If RichTextBoxHandle <> 0 Then MoveWindow RichTextBoxHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
+End With
+InProc = False
 End Sub
 
 Private Sub UserControl_Terminate()
 Call RemoveVTableSubclass(Me, VTableInterfaceInPlaceActiveObject)
 Call RemoveVTableSubclass(Me, VTableInterfaceControl)
 Call RemoveVTableSubclass(Me, VTableInterfacePerPropertyBrowsing)
-Call RemoveVTableSubclassIRichEditOleCallback(Me)
+Call RemoveVTableSubclassIRichEditOleCallback(RichTextBoxOleCallback)
 Call DestroyRichTextBox
 Call ComCtlsReleaseShellMod
 Call RtfReleaseRichedMod
@@ -1039,6 +1010,10 @@ End Property
 Public Property Get Container() As Object
 Attribute Container.VB_Description = "Returns the container of an object."
 Set Container = Extender.Container
+End Property
+
+Public Property Set Container(ByVal Value As Object)
+Set Extender.Container = Value
 End Property
 
 Public Property Get Left() As Single
@@ -1086,6 +1061,52 @@ Public Property Let Visible(ByVal Value As Boolean)
 Extender.Visible = Value
 End Property
 
+Public Property Get ToolTipText() As String
+Attribute ToolTipText.VB_Description = "Returns/sets the text displayed when the mouse is paused over the control."
+ToolTipText = Extender.ToolTipText
+End Property
+
+Public Property Let ToolTipText(ByVal Value As String)
+Extender.ToolTipText = Value
+End Property
+
+Public Property Get DragIcon() As IPictureDisp
+Attribute DragIcon.VB_Description = "Returns/sets the icon to be displayed as the pointer in a drag-and-drop operation."
+Set DragIcon = Extender.DragIcon
+End Property
+
+Public Property Let DragIcon(ByVal Value As IPictureDisp)
+Extender.DragIcon = Value
+End Property
+
+Public Property Set DragIcon(ByVal Value As IPictureDisp)
+Set Extender.DragIcon = Value
+End Property
+
+Public Property Get DragMode() As Integer
+Attribute DragMode.VB_Description = "Returns/sets a value that determines whether manual or automatic drag mode is used."
+DragMode = Extender.DragMode
+End Property
+
+Public Property Let DragMode(ByVal Value As Integer)
+Extender.DragMode = Value
+End Property
+
+Public Sub Drag(Optional ByRef Action As Variant)
+Attribute Drag.VB_Description = "Begins, ends, or cancels a drag operation of any object except Line, Menu, Shape, and Timer."
+If IsMissing(Action) Then Extender.Drag Else Extender.Drag Action
+End Sub
+
+Public Sub SetFocus()
+Attribute SetFocus.VB_Description = "Moves the focus to the specified object."
+Extender.SetFocus
+End Sub
+
+Public Sub ZOrder(Optional ByRef Position As Variant)
+Attribute ZOrder.VB_Description = "Places a specified object at the front or back of the z-order within its graphical level."
+If IsMissing(Position) Then Extender.ZOrder Else Extender.ZOrder Position
+End Sub
+
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_Description = "Returns a handle to a control."
 Attribute hWnd.VB_UserMemId = -515
@@ -1108,10 +1129,11 @@ Set Me.Font = NewFont
 End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
+If NewFont Is Nothing Then Set NewFont = Ambient.Font
 Dim OldFontHandle As Long
 Set PropFont = NewFont
 OldFontHandle = RichTextBoxFontHandle
-RichTextBoxFontHandle = CreateFontFromOLEFont(PropFont)
+RichTextBoxFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, WM_SETFONT, RichTextBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
@@ -1120,7 +1142,7 @@ End Property
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
 OldFontHandle = RichTextBoxFontHandle
-RichTextBoxFontHandle = CreateFontFromOLEFont(PropFont)
+RichTextBoxFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, WM_SETFONT, RichTextBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
@@ -1152,10 +1174,7 @@ End Property
 
 Public Property Let Enabled(ByVal Value As Boolean)
 UserControl.Enabled = Value
-If RichTextBoxHandle <> 0 Then
-    EnableWindow RichTextBoxHandle, IIf(Value = True, 1, 0)
-    Me.Refresh
-End If
+If RichTextBoxHandle <> 0 Then EnableWindow RichTextBoxHandle, IIf(Value = True, 1, 0)
 UserControl.PropertyChanged "Enabled"
 End Property
 
@@ -1233,8 +1252,7 @@ If RichTextBoxHandle <> 0 Then
     End If
     SetWindowLong RichTextBoxHandle, GWL_STYLE, dwStyle
     SetWindowLong RichTextBoxHandle, GWL_EXSTYLE, dwExStyle
-    Const SWP_FRAMECHANGED As Long = &H20, SWP_NOMOVE As Long = &H2, SWP_NOOWNERZORDER As Long = &H200, SWP_NOSIZE As Long = &H1, SWP_NOZORDER As Long = &H4
-    SetWindowPos RichTextBoxHandle, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_FRAMECHANGED
+    Call ComCtlsFrameChanged(RichTextBoxHandle)
 End If
 UserControl.PropertyChanged "Border"
 End Property
@@ -1432,7 +1450,7 @@ Else
     PropDisableNoScroll = Value
     If RichTextBoxHandle <> 0 Then Call ReCreateRichTextBox
 End If
-UserControl.PropertyChanged "MultiLine"
+UserControl.PropertyChanged "DisableNoScroll"
 End Property
 
 Public Property Get AutoURLDetect() As Boolean
@@ -1666,8 +1684,12 @@ If RichTextBoxHandle <> 0 Then
     SendMessage RichTextBoxHandle, EM_SETTYPOGRAPHYOPTIONS, TO_ADVANCEDTYPOGRAPHY, ByVal TO_ADVANCEDTYPOGRAPHY
     If PropTextMode = RtfTextModePlainText Then SendMessage RichTextBoxHandle, EM_SETTEXTMODE, TM_PLAINTEXT, ByVal 0&
     Dim This As OLEGuids.IRichEditOleCallback
-    Set This = Me
-    If Not This Is Nothing Then SendMessage RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal ObjPtr(This)
+    Set This = RichTextBoxOleCallback
+    If Not This Is Nothing Then
+        RichTextBoxIsOleCallback = CBool(SendMessage(RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal ObjPtr(This)) <> 0)
+    Else
+        RichTextBoxIsOleCallback = False
+    End If
 End If
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
@@ -1727,6 +1749,7 @@ If RichTextBoxHandle = 0 Then Exit Sub
 Call ComCtlsRemoveSubclass(RichTextBoxHandle)
 Call ComCtlsRemoveSubclass(UserControl.hWnd)
 Call ComCtlsDestroyIMC(RichTextBoxHandle, RichTextBoxIMCHandle)
+If RichTextBoxIsOleCallback = True Then RichTextBoxIsOleCallback = Not CBool(SendMessage(RichTextBoxHandle, EM_SETOLECALLBACK, 0, ByVal 0&) <> 0)
 ShowWindow RichTextBoxHandle, SW_HIDE
 SetParent RichTextBoxHandle, 0
 DestroyWindow RichTextBoxHandle
@@ -3316,58 +3339,19 @@ Select Case wMsg
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function
-    Case WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK
-        RaiseEvent DblClick
-    Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
-        Dim X As Single
-        Dim Y As Single
-        X = UserControl.ScaleX(Get_X_lParam(lParam), vbPixels, vbTwips)
-        Y = UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips)
-        Select Case wMsg
-            Case WM_LBUTTONDOWN
-                RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
-                RichTextBoxIsClick = True
-            Case WM_MBUTTONDOWN
-                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
-                RichTextBoxIsClick = True
-            Case WM_RBUTTONDOWN
-                RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
-                RichTextBoxIsClick = True
-            Case WM_MOUSEMOVE
-                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
-            Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
-                Select Case wMsg
-                    Case WM_LBUTTONUP
-                        RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
-                    Case WM_MBUTTONUP
-                        RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
-                    Case WM_RBUTTONUP
-                        RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
-                End Select
-                If RichTextBoxIsClick = True Then
-                    RichTextBoxIsClick = False
-                    Dim P1 As POINTAPI
-                    GetCursorPos P1
-                    If WindowFromPoint(P1.X, P1.Y) = hWnd Then RaiseEvent Click
-                End If
-        End Select
     Case WM_VSCROLL, WM_HSCROLL
         ' The notification codes EN_HSCROLL and EN_VSCROLL are not sent when clicking the scroll bar thumb itself.
         If LoWord(wParam) = SB_THUMBTRACK Then RaiseEvent Scroll
     Case WM_CONTEXTMENU
         If wParam = RichTextBoxHandle Then
-            Dim P2 As POINTAPI, Handled As Boolean
-            P2.X = Get_X_lParam(lParam)
-            P2.Y = Get_Y_lParam(lParam)
-            If P2.X > 0 And P2.Y > 0 Then
-                ScreenToClient RichTextBoxHandle, P2
-                RaiseEvent ContextMenu(Handled, UserControl.ScaleX(P2.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P2.Y, vbPixels, vbContainerPosition))
-            ElseIf P2.X = -1 And P2.Y = -1 Then
-                ' According to MSDN:
-                ' If the context menu is generated from the keyboard - for example
-                ' if the user types SHIFT + F10 — then the X and Y coordinates
-                ' are -1 and the application should display the context menu at the
-                ' location of the current selection rather than at (XPos, YPos).
+            Dim P As POINTAPI, Handled As Boolean
+            P.X = Get_X_lParam(lParam)
+            P.Y = Get_Y_lParam(lParam)
+            If P.X > 0 And P.Y > 0 Then
+                ScreenToClient RichTextBoxHandle, P
+                RaiseEvent ContextMenu(Handled, UserControl.ScaleX(P.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition))
+            ElseIf P.X = -1 And P.Y = -1 Then
+                ' If the user types SHIFT + F10 then the X and Y coordinates are -1.
                 RaiseEvent ContextMenu(Handled, -1, -1)
             End If
             If Handled = True Then Exit Function
@@ -3449,6 +3433,41 @@ Select Case wMsg
 
 End Select
 WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+Select Case wMsg
+    Case WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK
+        RaiseEvent DblClick
+    Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
+        Dim X As Single
+        Dim Y As Single
+        X = UserControl.ScaleX(Get_X_lParam(lParam), vbPixels, vbTwips)
+        Y = UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips)
+        Select Case wMsg
+            Case WM_LBUTTONDOWN
+                RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                RichTextBoxIsClick = True
+            Case WM_MBUTTONDOWN
+                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RichTextBoxIsClick = True
+            Case WM_RBUTTONDOWN
+                RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                RichTextBoxIsClick = True
+            Case WM_MOUSEMOVE
+                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
+            Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
+                Select Case wMsg
+                    Case WM_LBUTTONUP
+                        RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                    Case WM_MBUTTONUP
+                        RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                    Case WM_RBUTTONUP
+                        RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                End Select
+                If RichTextBoxIsClick = True Then
+                    RichTextBoxIsClick = False
+                    If (X >= 0 And X <= UserControl.Width) And (Y >= 0 And Y <= UserControl.Height) Then RaiseEvent Click
+                End If
+        End Select
+End Select
 End Function
 
 Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
@@ -3459,6 +3478,8 @@ Select Case wMsg
                 UserControl.PropertyChanged "Text"
                 UserControl.PropertyChanged "TextRTF"
                 RaiseEvent Change
+            Case EN_MAXTEXT
+                RaiseEvent MaxText
             Case EN_HSCROLL, EN_VSCROLL
                 ' This notification code is also sent when a keyboard event causes a change in the view area.
                 RaiseEvent Scroll

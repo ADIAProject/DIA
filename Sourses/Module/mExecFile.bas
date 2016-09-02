@@ -134,7 +134,7 @@ Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag 
     If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-RunString: " & ComLine
     If mbDebugDetail Then DebugMode str2VbTab & "RunAndWaitNew-StartDir: " & DefaultDir
     
-    If OSCurrVersionStruct.VerFull >= "5.1" Then
+    If IsWinXPOrLater Then
         DoEvents
         lngExitProc = 0
     

@@ -53,7 +53,7 @@ CCIMEModeAlpha = 8
 CCIMEModeHangulFull = 9
 CCIMEModeHangul = 10
 End Enum
-Private Type TagInitCommonControlsEx
+Private Type TINITCOMMONCONTROLSEX
 dwSize As Long
 dwICC As Long
 End Type
@@ -92,7 +92,7 @@ Time As Long
 PT As POINTAPI
 End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TagInitCommonControlsEx) As Long
+Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TINITCOMMONCONTROLSEX) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function PeekMessage Lib "user32" Alias "PeekMessageW" (ByRef lpMsg As TMSG, ByVal hWnd As Long, ByVal wMsgFilterMin As Long, ByVal wMsgFilterMax As Long, ByVal wRemoveMsg As Long) As Long
 Private Declare Function SetWindowsHookEx Lib "user32" Alias "SetWindowsHookExW" (ByVal IDHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
@@ -224,7 +224,7 @@ End If
 End Sub
 
 Public Sub ComCtlsInitCC(ByVal ICC As Long)
-Dim ICCEX As TagInitCommonControlsEx
+Dim ICCEX As TINITCOMMONCONTROLSEX
 With ICCEX
 .dwSize = LenB(ICCEX)
 .dwICC = ICC
@@ -265,19 +265,13 @@ If (dwStyle And WS_DLGFRAME) = WS_DLGFRAME Then dwStyle = dwStyle And Not WS_DLG
 If (dwExStyle And WS_EX_STATICEDGE) = WS_EX_STATICEDGE Then dwExStyle = dwExStyle And Not WS_EX_STATICEDGE
 If (dwExStyle And WS_EX_CLIENTEDGE) = WS_EX_CLIENTEDGE Then dwExStyle = dwExStyle And Not WS_EX_CLIENTEDGE
 If (dwExStyle And WS_EX_WINDOWEDGE) = WS_EX_WINDOWEDGE Then dwExStyle = dwExStyle And Not WS_EX_WINDOWEDGE
-Select Case Value
-    Case CCBorderStyleSingle
-        dwStyle = dwStyle Or WS_BORDER
-    Case CCBorderStyleThin
-        dwExStyle = dwExStyle Or WS_EX_STATICEDGE
-    Case CCBorderStyleSunken
-        dwExStyle = dwExStyle Or WS_EX_CLIENTEDGE
-    Case CCBorderStyleRaised
-        dwExStyle = dwExStyle Or WS_EX_WINDOWEDGE
-        dwStyle = dwStyle Or WS_DLGFRAME
-End Select
+Call ComCtlsInitBorderStyle(dwStyle, dwExStyle, Value)
 SetWindowLong hWnd, GWL_STYLE, dwStyle
 SetWindowLong hWnd, GWL_EXSTYLE, dwExStyle
+Call ComCtlsFrameChanged(hWnd)
+End Sub
+
+Public Sub ComCtlsFrameChanged(ByVal hWnd As Long)
 Const SWP_FRAMECHANGED As Long = &H20, SWP_NOMOVE As Long = &H2, SWP_NOOWNERZORDER As Long = &H200, SWP_NOSIZE As Long = &H1, SWP_NOZORDER As Long = &H4
 SetWindowPos hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_FRAMECHANGED
 End Sub
@@ -407,6 +401,30 @@ StringsOut(14) = "14 - Arrow and Question": CookiesOut(14) = 14
 StringsOut(15) = "15 - Size All": CookiesOut(15) = 15
 StringsOut(16) = "16 - Arrow and CD": CookiesOut(16) = 16
 StringsOut(17) = "99 - Custom": CookiesOut(17) = 99
+End Sub
+
+Public Sub ComCtlsIPPBSetPredefinedStringsImageList(ByRef StringsOut() As String, ByRef CookiesOut() As Long, ByRef ControlsEnum As VBRUN.ParentControls, ByRef ImageListArray() As String)
+Dim ControlEnum As Object, PropUBound As Long
+PropUBound = UBound(StringsOut())
+ReDim Preserve StringsOut(PropUBound + 1) As String
+ReDim Preserve CookiesOut(PropUBound + 1) As Long
+StringsOut(PropUBound) = "(None)"
+CookiesOut(PropUBound) = PropUBound
+For Each ControlEnum In ControlsEnum
+    If TypeName(ControlEnum) = "ImageList" Then
+        PropUBound = UBound(StringsOut())
+        ReDim Preserve StringsOut(PropUBound + 1) As String
+        ReDim Preserve CookiesOut(PropUBound + 1) As Long
+        StringsOut(PropUBound) = ProperControlName(ControlEnum)
+        CookiesOut(PropUBound) = PropUBound
+    End If
+Next ControlEnum
+PropUBound = UBound(StringsOut())
+ReDim ImageListArray(0 To PropUBound) As String
+Dim i As Long
+For i = 0 To PropUBound
+    ImageListArray(i) = StringsOut(i)
+Next i
 End Sub
 
 Public Sub ComCtlsPPInitComboMousePointer(ByVal ComboBox As Object)
@@ -600,6 +618,43 @@ Else
     ComCtlsSubclassProc = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End If
 End Function
+
+Public Sub ComCtlsImlListImageIndex(ByVal Control As Object, ByVal ImageList As Variant, ByVal KeyOrIndex As Variant, ByRef ImageIndex As Long)
+Dim LngValue As Long
+Select Case VarType(KeyOrIndex)
+    Case vbLong, vbInteger, vbByte
+        LngValue = KeyOrIndex
+    Case vbString
+        Dim ImageListControl As Object
+        If IsObject(ImageList) Then
+            Set ImageListControl = ImageList
+        ElseIf VarType(ImageList) = vbString Then
+            Dim ControlEnum As Object, CompareName As String
+            For Each ControlEnum In Control.ControlsEnum
+                If TypeName(ControlEnum) = "ImageList" Then
+                    CompareName = ProperControlName(ControlEnum)
+                    If CompareName = ImageList And Not CompareName = vbNullString Then
+                        Set ImageListControl = ControlEnum
+                        Exit For
+                    End If
+                End If
+            Next ControlEnum
+        End If
+        If Not ImageListControl Is Nothing Then
+            On Error Resume Next
+            LngValue = ImageListControl.ListImages(KeyOrIndex).Index
+            On Error GoTo 0
+        End If
+        If LngValue = 0 Then Err.Raise Number:=35601, Description:="Element not found"
+    Case vbDouble, vbSingle
+        LngValue = CLng(KeyOrIndex)
+    Case vbEmpty
+    Case Else
+        Err.Raise 13
+End Select
+If LngValue < 0 Then Err.Raise Number:=35600, Description:="Index out of bounds"
+ImageIndex = LngValue
+End Sub
 
 Public Function ComCtlsLvwSortingFunctionBinary(ByVal lParam1 As Long, ByVal lParam2 As Long, ByVal This As ISubclass) As Long
 ComCtlsLvwSortingFunctionBinary = This.Message(0, 0, lParam1, lParam2, 10)
@@ -925,15 +980,11 @@ Dim AppForm As Form, CurrControl As Control
 For Each AppForm In Forms
     For Each CurrControl In AppForm.Controls
         Select Case TypeName(CurrControl)
-            Case "Animation", "DTPicker", "MonthView", "Slider", "TabStrip", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel", "CommandLink"
+            Case "Animation", "DTPicker", "MonthView", "Slider", "StatusBar", "TabStrip", "ListBoxW", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "ComboBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel", "CommandLink"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
             Case "ProgressBar", "FrameW", "ToolTip"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
-            Case "StatusBar"
-                Call ComCtlsRemoveSubclass(CurrControl.hWnd)
-                Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
-                Call ComCtlsRemoveSubclass(AppForm.hWnd, ProperControlName(CurrControl))
             Case "ImageCombo"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndCombo)

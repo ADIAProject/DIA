@@ -509,6 +509,17 @@ Option Explicit
 '   Private API Declarations
 Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameW" (ByVal pOpenfilename As Long) As Long
 Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameW" (ByVal pOpenfilename As Long) As Long
+Private Declare Function SetWindowLongA Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hwndLock As Long) As Long
+Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
+Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
+Private Declare Function GetCurrentThemeName Lib "uxtheme.dll" (ByVal pszThemeFileName As Long, ByVal dwMaxNameChars As Long, ByVal pszColorBuff As Long, ByVal cchMaxColorChars As Long, ByVal pszSizeBuff As Long, ByVal cchMaxSizeChars As Long) As Long
+Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
+Private Declare Function GetCursorPos Lib "user32.dll" (lpPoint As POINTAPI) As Long
+Private Declare Function ScreenToClient Lib "user32.dll" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
+Private Declare Function PathAddBackslash Lib "shlwapi.dll" Alias "PathAddBackslashA" (ByVal Path As String) As Long
+Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function SetFocusAPI Lib "user32.dll" Alias "SetFocus" (ByVal hWnd As Long) As Long
 
 'Private Const BFFM_SETSELECTIONA        As Long = (WM_USER + 102)
 Private Const FILE_ATTRIBUTE_DIR = &H10
@@ -537,6 +548,8 @@ End Enum
 '   Flat Button API Constants
 '   The button style BS_FLAT used to change a button to a Flat one
 Private Const BS_FLAT = &H8000&
+Private Const GWL_STYLE        As Long = -16
+Private Const WS_CHILD           As Long = &H40000000
 
 '   GWL_Style is the attribute we will use for changing the style of the button
 '   To set the button as a child window and not as a self dependent window
@@ -579,6 +592,8 @@ Public Enum ucDialogConstant
     [ucSave] = &H2
 End Enum
 
+Private Const str2vbNullChar     As String = vbNullChar & vbNullChar
+
 Private Const MAX_PATH As Long = 4096    '260
 
 Private Type OPENFILENAME
@@ -612,6 +627,18 @@ Private Type SelectedFile
     sFiles()                            As String
     sLastDirectory                      As String
     bCanceled                           As Boolean
+End Type
+
+Private Type RECT
+    Left                                As Long
+    Top                                 As Long
+    Right                               As Long
+    Bottom                              As Long
+End Type
+
+Private Type POINTAPI
+    X                                   As Long
+    Y                                   As Long
 End Type
 
 '   Private Dialog Structure Definitions
@@ -795,7 +822,7 @@ Public Property Let DefaultExt(ByVal NewValue As String)
 
     If LenB(NewValue) Then
         If AscW(NewValue) <> vbDot Then
-            NewValue = strDot & NewValue
+            NewValue = "." & NewValue
         End If
     End If
     
@@ -1138,6 +1165,20 @@ Public Property Let QualifyPaths(ByVal lNewQualifyPaths As Boolean)
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   :   Property RunMode
+'! Description :   [Ambient.UserMode tells us whether the UC's container is in design mode or user mode/run-time.
+'                               Unfortunately, this isn't supported in all containers.]
+'                               http://www.vbforums.com/showthread.php?805711-VB6-UserControl-Ambient-UserMode-workaround&s=8dd326860cbc22bed07bd13f6959ca70
+'! Parameters  :
+'!--------------------------------------------------------------------------------
+Public Property Get RunMode() As Boolean
+    RunMode = True
+    On Error Resume Next
+    RunMode = Ambient.UserMode
+    RunMode = Extender.Parent.RunMode
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property Theme
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -1298,12 +1339,12 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sFileName (Variant)
 '!--------------------------------------------------------------------------------
-Public Function ExtractFilename(ByVal sFileName) As String
+Private Function ExtractFilename(ByVal sFileName) As String
 
     '   Extract the Path from the full filename...
     Dim lStrCnt As Long
 
-    lStrCnt = InStrRev(sFileName, vbBackslash)
+    lStrCnt = InStrRev(sFileName, "\")
 
     If lStrCnt Then
         ExtractFilename = Mid$(sFileName, lStrCnt + 1)
@@ -1316,43 +1357,15 @@ End Function
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   sFileName (Variant)
 '!--------------------------------------------------------------------------------
-Public Function ExtractPath(ByVal sFileName) As String
+Private Function ExtractPath(ByVal sFileName) As String
 
     '   Extract the Path from the full filename...
     Dim lStrCnt As Long
 
-    lStrCnt = InStrRev(sFileName, vbBackslash)
+    lStrCnt = InStrRev(sFileName, "\")
 
     If lStrCnt Then
         ExtractPath = Left$(sFileName, lStrCnt - 1)
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FileExists
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   sFileName (String)
-'!--------------------------------------------------------------------------------
-Public Function FileExists(ByVal sFileName As String) As Boolean
-
-    Dim lpFindFileData As WIN32_FIND_DATA
-    Dim hFindFirst     As Long
-    Dim lngFilePathPtr As Long
-
-    If PathIsValidUNC(sFileName) = False Then
-        lngFilePathPtr = StrPtr("\\?\" & sFileName)
-    Else
-        '\\?\UNC\
-        lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFileName, Len(sFileName) - 2))
-    End If
-    hFindFirst = FindFirstFile(lngFilePathPtr, lpFindFileData)
-
-    If hFindFirst <> INVALID_HANDLE_VALUE Then
-        If (lpFindFileData.dwFileAttributes <> FILE_ATTRIBUTE_DIR) Then
-            FileExists = True
-        End If
-        FindClose hFindFirst
     End If
 
 End Function
@@ -1821,10 +1834,10 @@ Private Function QualifyPath(ByVal sPath As String) As String
     If m_QualifyPaths Then
         If Not FileExists(sPath) Then
             '   Look for the PathSep
-            lStrCnt = InStrRev(sPath, vbBackslash)
-            lStr2Cnt = InStrRev(sPath, strColon)
+            lStrCnt = InStrRev(sPath, "\")
+            lStr2Cnt = InStrRev(sPath, ":")
 
-            If ((lStrCnt <> Len(sPath)) Or Right$(sPath, 1) <> vbBackslash) And lStrCnt > 1 And lStr2Cnt > 2 Then
+            If ((lStrCnt <> Len(sPath)) Or Right$(sPath, 1) <> "\") And lStrCnt > 1 And lStr2Cnt > 2 Then
                 '   None, so add it...
                 QualifyPath = BackslashAdd2Path(sPath)
             Else
@@ -1841,6 +1854,18 @@ Private Function QualifyPath(ByVal sPath As String) As String
     End If
 
 End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function BackslashAdd2Path
+'! Description (Описание)  :   [Добавление слэша на конце]
+'! Parameters  (Переменные):   strPath (String)
+'!--------------------------------------------------------------------------------
+Private Function BackslashAdd2Path(ByVal strPath As String) As String
+    strPath = strPath & str2vbNullChar
+    PathAddBackslash strPath
+    BackslashAdd2Path = TrimNull(strPath)
+End Function
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Refresh
@@ -1975,15 +2000,15 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
     With FileDialog
         .nStructSize = Len(FileDialog)
         .hWndOwner = UserControl.Parent.hWnd
-        .sFileTitle = FillNullChar(2048)
+        .sFileTitle = String$(2048, vbNullChar)
         .nTitleSize = Len(FileDialog.sFileTitle)
-        .sFile = FileDialog.sFile & FillNullChar(2048)
+        .sFile = FileDialog.sFile & String$(2048, vbNullChar)
         .nFileSize = Len(FileDialog.sFile)
 
         If LenB(sInitPath) Then
             .sInitDir = sInitPath
         Else
-            .sInitDir = strAppPath
+            .sInitDir = GetAppPath
         End If
 
         If m_FileFlags <> 0 Then
@@ -1996,10 +2021,10 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
             .Flags = .Flags Or AllowMultiselect
         End If
         
-        .sDlgTitle = m_DialogMsg(ucOpen) & FillNullChar(2048)
+        .sDlgTitle = m_DialogMsg(ucOpen) & String$(2048, vbNullChar)
 
         '   Init the File Names
-        .sFile = vbNullString & FillNullChar(2048)
+        .sFile = vbNullString & String$(2048, vbNullChar)
         '   Process the Filter string to replace the
         '   pipes and fix the len to correct dims
         sFilter = ProcessFilter(sFilter)
@@ -2114,9 +2139,9 @@ Private Function ShowSave(ByVal sFilter As String) As SelectedFile
     With FileDialog
         .nStructSize = Len(FileDialog)
         .hWndOwner = UserControl.Parent.hWnd
-        .sFileTitle = FillNullChar(2048)
+        .sFileTitle = String$(2048, vbNullChar)
         .nTitleSize = Len(FileDialog.sFileTitle)
-        .sFile = FillNullChar(2048)
+        .sFile = String$(2048, vbNullChar)
         .nFileSize = Len(FileDialog.sFile)
 
         If m_FileFlags <> 0 Then
@@ -2269,27 +2294,27 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
         'now that we know how much to trim, we need to
         'determine the path type: local, network, or URL
-        If InStr(sInput$, vbBackslash) Then
+        If InStr(sInput$, "\") Then
 
             'LOCAL
             'add trailing slash if there is none
-            If Right$(sInput$, 1) <> vbBackslash Then
+            If Right$(sInput$, 1) <> "\" Then
                 bAddedTrailSlash = True
-                sInput$ = sInput$ & vbBackslash
+                sInput$ = sInput$ & "\"
             End If
 
             'throw path into an array
-            aBuffer() = Split(sInput$, vbBackslash)
+            aBuffer() = Split(sInput$, "\")
 
             If UBound(aBuffer()) > LBound(aBuffer()) Then
                 iArrayCount% = UBound(aBuffer()) - 1
                 'the last element is blank
-                sBeginning$ = aBuffer(0) & vbBackslash & aBuffer(1) & vbBackslash
-                sEnd$ = vbBackslash & aBuffer(iArrayCount%)
+                sBeginning$ = aBuffer(0) & "\" & aBuffer(1) & "\"
+                sEnd$ = "\" & aBuffer(iArrayCount%)
 
                 If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                     'if the total outputed string is too big then stop
-                    sBeginning$ = aBuffer(0) & vbBackslash
+                    sBeginning$ = aBuffer(0) & "\"
 
                     If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                         TrimPathByLen$ = sReplaceString$ & sEnd$
@@ -2301,7 +2326,7 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
                     For iIndex% = iArrayCount% - 1 To 1 Step -1
                         'go throug the remaing elements to get the best fit
-                        sEnd$ = vbBackslash & aBuffer(iIndex%) & sEnd$
+                        sEnd$ = "\" & aBuffer(iIndex%) & sEnd$
 
                         If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                             'if the total outputed string is too big then stop
@@ -2323,32 +2348,32 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
             Exit Function
 
-        ElseIf InStr(sInput$, "/") Then
+        ElseIf InStr(sInput$, "\") Then
 
-            If InStr(sInput$, strColon) Then
+            If InStr(sInput$, ":") Then
 
                 'URL
                 'start by triming off the extra params
-                If InStr(sInput$, strVopros) Then sInput$ = Left$(sInput$, InStr(sInput$, strVopros) - 1)
+                If InStr(sInput$, "?") Then sInput$ = Left$(sInput$, InStr(sInput$, "?") - 1)
 
                 'add trailing slash if there is none
-                If Right$(sInput$, 1) <> "/" Then
+                If Right$(sInput$, 1) <> "\" Then
                     bAddedTrailSlash = True
-                    sInput$ = sInput$ & "/"
+                    sInput$ = sInput$ & "\"
                 End If
 
                 'throw path into an array
-                aBuffer() = Split(sInput$, "/")
+                aBuffer() = Split(sInput$, "\")
 
                 If UBound(aBuffer()) > LBound(aBuffer()) Then
                     iArrayCount% = UBound(aBuffer()) - 1
                     'the last element is blank
-                    sBeginning$ = aBuffer(0) & "/" & aBuffer(1) & "/"
-                    sEnd$ = "/" & aBuffer(iArrayCount%)
+                    sBeginning$ = aBuffer(0) & "\" & aBuffer(1) & "\"
+                    sEnd$ = "\" & aBuffer(iArrayCount%)
 
                     If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                         'if the total outputed string is too big then stop
-                        sBeginning$ = aBuffer(0) & "/"
+                        sBeginning$ = aBuffer(0) & "\"
 
                         If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                             TrimPathByLen$ = sReplaceString$ & sEnd$
@@ -2360,7 +2385,7 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
                         For iIndex% = iArrayCount% - 1 To 1 Step -1
                             'go throug the remaing elements to get the best fit
-                            sEnd$ = "/" & aBuffer(iIndex%) & sEnd$
+                            sEnd$ = "\" & aBuffer(iIndex%) & sEnd$
 
                             If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                                 'if the total outputed string is too big then stop
@@ -2384,23 +2409,23 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
                 ' NETWORK
                 'add trailing slash if there is none
-                If Right$(sInput$, 1) <> "/" Then
+                If Right$(sInput$, 1) <> "\" Then
                     bAddedTrailSlash = True
-                    sInput$ = sInput$ & "/"
+                    sInput$ = sInput$ & "\"
                 End If
 
                 'throw path into an array
-                aBuffer() = Split(sInput$, "/")
+                aBuffer() = Split(sInput$, "\")
 
                 If UBound(aBuffer()) > LBound(aBuffer()) Then
                     iArrayCount% = UBound(aBuffer()) - 1
                     'the last element is blank
-                    sBeginning$ = aBuffer(0) & "/" & aBuffer(1) & "/"
-                    sEnd$ = "/" & aBuffer(iArrayCount%)
+                    sBeginning$ = aBuffer(0) & "\" & aBuffer(1) & "\"
+                    sEnd$ = "\" & aBuffer(iArrayCount%)
 
                     If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                         'if the total outputed string is too big then stop
-                        sBeginning$ = aBuffer(0) & "/"
+                        sBeginning$ = aBuffer(0) & "\"
 
                         If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                             TrimPathByLen$ = sReplaceString$ & sEnd$
@@ -2412,7 +2437,7 @@ Public Function TrimPathByLen(ByVal sInput As String, ByVal iTextWidth As Intege
 
                         For iIndex% = iArrayCount% - 1 To 1 Step -1
                             'go throug the remaing elements to get the best fit
-                            sEnd$ = "/" & aBuffer(iIndex%) & sEnd$
+                            sEnd$ = "\" & aBuffer(iIndex%) & sEnd$
 
                             If (UserControl.TextWidth(sBeginning$) + UserControl.TextWidth(sReplaceString$) + UserControl.TextWidth(sEnd$)) > iTextWidth% Then
                                 'if the total outputed string is too big then stop
@@ -2588,7 +2613,7 @@ Private Sub cmdPick_Click()
                     .Flags = CdlBIFNewDialogStyle
                     .DialogTitle = m_DialogMsg(ucFolder)
                                         
-                    If .ShowFolder = True Then
+                    If .ShowFolderBrowser = True Then
                         sFolder = .FileName
                     End If
                     
@@ -2614,6 +2639,7 @@ Private Sub cmdPick_Click()
 
                 '   Same basic routine, with different calls to start
                 If m_DialogType = [ucOpen] Then
+                    'psFile = ShowOpen(m_Filters, txtResult.Text)
                     psFile = ShowOpen(m_Filters, PathCollect(txtResult.Text))
                 Else
                     psFile = ShowSave(m_Filters)
@@ -2714,7 +2740,7 @@ Retry:
                                 sExt = InputBox("The File Extension is Missing!" & vbCrLf & "Please Enter a Valid Extension Below...", "ucPickBox", , (.Parent.ScaleWidth \ 2) + .Parent.Left - 2700, (.Parent.ScaleHeight \ 2) + .Parent.Top - 800)
 
                                 If LenB(sExt) = 0 Then
-                                    If MsgBox("     The File Extension is Invalid!" & vbCrLf & vbCrLf & "File will be saved with " & strQuotes & ".txt" & strQuotes & " extension.", vbExclamation + vbOKCancel, "ucPickBox") = vbOK Then
+                                    If MsgBox("     The File Extension is Invalid!" & vbCrLf & vbCrLf & "File will be saved with .txt extension.", vbExclamation + vbOKCancel, "ucPickBox") = vbOK Then
                                         '   Just use the default text file type
                                         sExt = ".txt"
                                     Else
@@ -2724,8 +2750,8 @@ Retry:
                                 End If
 
                                 '   Fix missing "." in the extension
-                                If (InStr(sExt, strDot) = 0) Or (Len(sExt) = 3) Then
-                                    psFile.sFiles(1) = psFile.sFiles(1) & strDot & sExt
+                                If (InStr(sExt, ".") = 0) Or (Len(sExt) = 3) Then
+                                    psFile.sFiles(1) = psFile.sFiles(1) & "." & sExt
                                 Else
                                     psFile.sFiles(1) = psFile.sFiles(1) & sExt
                                 End If
@@ -3228,7 +3254,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     On Error GoTo H
 
     'If we're not in design mode
-    If g_UserModeFix Then
+    If RunMode Then
         
         bTrack = True
         bTrackUser32 = APIFunctionPresent("TrackMouseEvent", "user32.dll")

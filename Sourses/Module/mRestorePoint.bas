@@ -11,8 +11,11 @@ Private Const BEGIN_SYSTEM_CHANGE   As Integer = 100
 '!--------------------------------------------------------------------------------
 Public Function CheckRestorePoint() As Boolean
 
-    If OSCurrVersionStruct.VerFull <> "5.0" And OSCurrVersionStruct.VerFull <> "5.2" Or (OSCurrVersionStruct.VerFull <> "6.2" And OSCurrVersionStruct.ClientOrServer) Or (OSCurrVersionStruct.VerFull <> "6.3" And OSCurrVersionStruct.ClientOrServer) _
-                                Then
+    If OSCurrVersionStruct.VerFull <> "5.0" And OSCurrVersionStruct.VerFull <> "5.2" Or _
+      (OSCurrVersionStruct.VerFull <> "6.2" And OSCurrVersionStruct.ClientOrServer) Or _
+      (OSCurrVersionStruct.VerFull <> "6.3" And OSCurrVersionStruct.ClientOrServer) Or _
+      (OSCurrVersionStruct.VerFull <> "6.4" And OSCurrVersionStruct.ClientOrServer) Or _
+      (OSCurrVersionStruct.VerFull <> "10.0" And OSCurrVersionStruct.ClientOrServer) Then
         regParam = GetKeyValue(HKEY_LOCAL_MACHINE, "Software\Microsoft\Windows NT\CurrentVersion\SystemRestore", "DisableSR")
 
         'HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SystemRestore\\DisableSR

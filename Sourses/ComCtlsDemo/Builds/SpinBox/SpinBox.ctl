@@ -199,9 +199,7 @@ Private Const UDM_SETBASE As Long = (WM_USER + 109)
 Private Const UDM_GETBASE As Long = (WM_USER + 110)
 Private Const CCM_FIRST As Long = &H2000
 Private Const CCM_SETUNICODEFORMAT As Long = (CCM_FIRST + 5)
-Private Const CCM_GETUNICODEFORMAT As Long = (CCM_FIRST + 6)
 Private Const UDM_SETUNICODEFORMAT As Long = CCM_SETUNICODEFORMAT
-Private Const UDM_GETUNICODEFORMAT As Long = CCM_GETUNICODEFORMAT
 Implements ISubclass
 Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IPerPropertyBrowsingVB
@@ -216,7 +214,7 @@ Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
 Private PropMin As Long, PropMax As Long
 Private PropValue As Long, PropIncrement As Long
 Private PropWrap As Boolean
-Private PropHotTrack As Boolean
+Private PropHotTracking As Boolean
 Private PropOrientation As SpbOrientationConstants
 Private PropAlignment As CCLeftRightAlignmentConstants
 Private PropThousandsSeparator As Boolean
@@ -291,7 +289,7 @@ PropMax = 100
 PropValue = 0
 PropIncrement = 1
 PropWrap = False
-PropHotTrack = True
+PropHotTracking = True
 PropOrientation = SpbOrientationVertical
 PropAlignment = CCLeftRightAlignmentRight
 PropThousandsSeparator = True
@@ -319,7 +317,7 @@ PropMax = .ReadProperty("Max", 100)
 PropValue = .ReadProperty("Value", 0)
 PropIncrement = .ReadProperty("Increment", 1)
 PropWrap = .ReadProperty("Wrap", False)
-PropHotTrack = .ReadProperty("HotTrack", True)
+PropHotTracking = .ReadProperty("HotTracking", True)
 PropOrientation = .ReadProperty("Orientation", SpbOrientationVertical)
 PropAlignment = .ReadProperty("Alignment", CCLeftRightAlignmentRight)
 PropThousandsSeparator = .ReadProperty("ThousandsSeparator", True)
@@ -348,7 +346,7 @@ With PropBag
 .WriteProperty "Value", PropValue, 0
 .WriteProperty "Increment", PropIncrement, 1
 .WriteProperty "Wrap", PropWrap, False
-.WriteProperty "HotTrack", PropHotTrack, True
+.WriteProperty "HotTracking", PropHotTracking, True
 .WriteProperty "Orientation", PropOrientation, SpbOrientationVertical
 .WriteProperty "Alignment", PropAlignment, CCLeftRightAlignmentRight
 .WriteProperty "ThousandsSeparator", PropThousandsSeparator, True
@@ -391,11 +389,18 @@ UserControl.OLEDrag
 End Sub
 
 Private Sub UserControl_Resize()
-If SpinBoxUpDownHandle = 0 Or SpinBoxEditHandle = 0 Then Exit Sub
+Static InProc As Boolean
+If InProc = True Then Exit Sub
+InProc = True
 With UserControl
-MoveWindow SpinBoxEditHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
+If DPICorrectionFactor() <> 1 Then
+    .Extender.Move .Extender.Left + .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top + .ScaleY(1, vbPixels, vbContainerPosition)
+    .Extender.Move .Extender.Left - .ScaleX(1, vbPixels, vbContainerPosition), .Extender.Top - .ScaleY(1, vbPixels, vbContainerPosition)
+End If
+If SpinBoxEditHandle <> 0 Then MoveWindow SpinBoxEditHandle, 0, 0, .ScaleWidth, .ScaleHeight, 1
 End With
-SendMessage SpinBoxUpDownHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
+If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETBUDDY, SpinBoxEditHandle, ByVal 0&
+InProc = False
 End Sub
 
 Private Sub UserControl_Terminate()
@@ -427,6 +432,10 @@ End Property
 Public Property Get Container() As Object
 Attribute Container.VB_Description = "Returns the container of an object."
 Set Container = Extender.Container
+End Property
+
+Public Property Set Container(ByVal Value As Object)
+Set Extender.Container = Value
 End Property
 
 Public Property Get Left() As Single
@@ -474,6 +483,52 @@ Public Property Let Visible(ByVal Value As Boolean)
 Extender.Visible = Value
 End Property
 
+Public Property Get ToolTipText() As String
+Attribute ToolTipText.VB_Description = "Returns/sets the text displayed when the mouse is paused over the control."
+ToolTipText = Extender.ToolTipText
+End Property
+
+Public Property Let ToolTipText(ByVal Value As String)
+Extender.ToolTipText = Value
+End Property
+
+Public Property Get DragIcon() As IPictureDisp
+Attribute DragIcon.VB_Description = "Returns/sets the icon to be displayed as the pointer in a drag-and-drop operation."
+Set DragIcon = Extender.DragIcon
+End Property
+
+Public Property Let DragIcon(ByVal Value As IPictureDisp)
+Extender.DragIcon = Value
+End Property
+
+Public Property Set DragIcon(ByVal Value As IPictureDisp)
+Set Extender.DragIcon = Value
+End Property
+
+Public Property Get DragMode() As Integer
+Attribute DragMode.VB_Description = "Returns/sets a value that determines whether manual or automatic drag mode is used."
+DragMode = Extender.DragMode
+End Property
+
+Public Property Let DragMode(ByVal Value As Integer)
+Extender.DragMode = Value
+End Property
+
+Public Sub Drag(Optional ByRef Action As Variant)
+Attribute Drag.VB_Description = "Begins, ends, or cancels a drag operation of any object except Line, Menu, Shape, and Timer."
+If IsMissing(Action) Then Extender.Drag Else Extender.Drag Action
+End Sub
+
+Public Sub SetFocus()
+Attribute SetFocus.VB_Description = "Moves the focus to the specified object."
+Extender.SetFocus
+End Sub
+
+Public Sub ZOrder(Optional ByRef Position As Variant)
+Attribute ZOrder.VB_Description = "Places a specified object at the front or back of the z-order within its graphical level."
+If IsMissing(Position) Then Extender.ZOrder Else Extender.ZOrder Position
+End Sub
+
 Public Property Get hWnd() As Long
 Attribute hWnd.VB_Description = "Returns a handle to a control."
 Attribute hWnd.VB_UserMemId = -515
@@ -501,10 +556,11 @@ Set Me.Font = NewFont
 End Property
 
 Public Property Set Font(ByVal NewFont As StdFont)
+If NewFont Is Nothing Then Set NewFont = Ambient.Font
 Dim OldFontHandle As Long
 Set PropFont = NewFont
 OldFontHandle = SpinBoxFontHandle
-SpinBoxFontHandle = CreateFontFromOLEFont(PropFont)
+SpinBoxFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If SpinBoxEditHandle <> 0 Then SendMessage SpinBoxEditHandle, WM_SETFONT, SpinBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
@@ -513,7 +569,7 @@ End Property
 Private Sub PropFont_FontChanged(ByVal PropertyName As String)
 Dim OldFontHandle As Long
 OldFontHandle = SpinBoxFontHandle
-SpinBoxFontHandle = CreateFontFromOLEFont(PropFont)
+SpinBoxFontHandle = CreateGDIFontFromOLEFont(PropFont)
 If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, WM_SETFONT, SpinBoxFontHandle, ByVal 1&
 If OldFontHandle <> 0 Then DeleteObject OldFontHandle
 UserControl.PropertyChanged "Font"
@@ -574,7 +630,6 @@ UserControl.Enabled = Value
 If SpinBoxUpDownHandle <> 0 Then
     EnableWindow SpinBoxUpDownHandle, IIf(Value = True, 1, 0)
     If SpinBoxEditHandle <> 0 Then EnableWindow SpinBoxEditHandle, IIf(Value = True, 1, 0)
-    Me.Refresh
 End If
 UserControl.PropertyChanged "Enabled"
 End Property
@@ -749,15 +804,15 @@ If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "Wrap"
 End Property
 
-Public Property Get HotTrack() As Boolean
-Attribute HotTrack.VB_Description = "Returns/sets a value that determines whether or not the control highlights the up arrow and down arrow as the pointer passes over them. This flag is ignored on Windows XP (or above) when the desktop theme overrides it."
-HotTrack = PropHotTrack
+Public Property Get HotTracking() As Boolean
+Attribute HotTracking.VB_Description = "Returns/sets a value that determines whether or not the control highlights the up arrow and down arrow as the pointer passes over them. This flag is ignored on Windows XP (or above) when the desktop theme overrides it."
+HotTracking = PropHotTracking
 End Property
 
-Public Property Let HotTrack(ByVal Value As Boolean)
-PropHotTrack = Value
+Public Property Let HotTracking(ByVal Value As Boolean)
+PropHotTracking = Value
 If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
-UserControl.PropertyChanged "HotTrack"
+UserControl.PropertyChanged "HotTracking"
 End Property
 
 Public Property Get Orientation() As SpbOrientationConstants
@@ -920,7 +975,7 @@ If SpinBoxUpDownHandle <> 0 Or SpinBoxEditHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwStyleEdit As Long, dwExStyleEdit As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or UDS_SETBUDDYINT
 If PropWrap = True Then dwStyle = dwStyle Or UDS_WRAP
-If PropHotTrack = True Then dwStyle = dwStyle Or UDS_HOTTRACK
+If PropHotTracking = True Then dwStyle = dwStyle Or UDS_HOTTRACK
 If PropOrientation = SpbOrientationHorizontal Then dwStyle = dwStyle Or UDS_HORZ
 Select Case PropAlignment
     Case CCLeftRightAlignmentLeft
@@ -1169,6 +1224,15 @@ Select Case wMsg
     Case WM_SETFOCUS
         SetFocusAPI UserControl.hWnd
         Exit Function
+    Case UM_CHECKVALUECHANGED
+        If wParam <> PropValue Then
+            PropValue = wParam
+            RaiseEvent Change
+        End If
+        Exit Function
+End Select
+WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+Select Case wMsg
     Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
         Dim X As Single
         Dim Y As Single
@@ -1190,14 +1254,7 @@ Select Case wMsg
             Case WM_RBUTTONUP
                 RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
         End Select
-    Case UM_CHECKVALUECHANGED
-        If wParam <> PropValue Then
-            PropValue = wParam
-            RaiseEvent Change
-        End If
-        Exit Function
 End Select
-WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
 Private Function WindowProcEdit(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
@@ -1274,6 +1331,23 @@ Select Case wMsg
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function
+    Case WM_CONTEXTMENU
+        If wParam = SpinBoxEditHandle Then
+            Dim P As POINTAPI, Handled As Boolean
+            P.X = Get_X_lParam(lParam)
+            P.Y = Get_Y_lParam(lParam)
+            If P.X > 0 And P.Y > 0 Then
+                ScreenToClient SpinBoxEditHandle, P
+                RaiseEvent ContextMenu(Handled, UserControl.ScaleX(P.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition))
+            ElseIf P.X = -1 And P.Y = -1 Then
+                ' If the user types SHIFT + F10 then the X and Y coordinates are -1.
+                RaiseEvent ContextMenu(Handled, -1, -1)
+            End If
+            If Handled = True Then Exit Function
+        End If
+End Select
+WindowProcEdit = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+Select Case wMsg
     Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
         Dim X As Single
         Dim Y As Single
@@ -1295,26 +1369,7 @@ Select Case wMsg
             Case WM_RBUTTONUP
                 RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
         End Select
-    Case WM_CONTEXTMENU
-        If wParam = SpinBoxEditHandle Then
-            Dim P As POINTAPI, Handled As Boolean
-            P.X = Get_X_lParam(lParam)
-            P.Y = Get_Y_lParam(lParam)
-            If P.X > 0 And P.Y > 0 Then
-                ScreenToClient SpinBoxEditHandle, P
-                RaiseEvent ContextMenu(Handled, UserControl.ScaleX(P.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition))
-            ElseIf P.X = -1 And P.Y = -1 Then
-                ' According to MSDN:
-                ' If the context menu is generated from the keyboard - for example
-                ' if the user types SHIFT + F10 — then the X and Y coordinates
-                ' are -1 and the application should display the context menu at the
-                ' location of the current selection rather than at (XPos, YPos).
-                RaiseEvent ContextMenu(Handled, -1, -1)
-            End If
-            If Handled = True Then Exit Function
-        End If
 End Select
-WindowProcEdit = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 End Function
 
 Private Function WindowProcUserControl(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
@@ -1339,12 +1394,12 @@ Select Case wMsg
             End If
         End If
     Case WM_COMMAND
-        Static BlockChange As Boolean
+        Static ChangeFrozen As Boolean
         Const EN_UPDATE As Long = &H400, EN_CHANGE As Long = &H300
         Select Case HiWord(wParam)
             Case EN_UPDATE
                 If PropAllowOnlyNumbers = True Then
-                    If ComCtlsSupportLevel() <= 1 And BlockChange = False Then
+                    If ComCtlsSupportLevel() <= 1 And ChangeFrozen = False Then
                         Dim Text As String
                         Text = String(SendMessage(lParam, WM_GETTEXTLENGTH, 0, ByVal 0&), vbNullChar)
                         SendMessage lParam, WM_GETTEXT, Len(Text) + 1, ByVal StrPtr(Text)
@@ -1356,7 +1411,7 @@ Select Case wMsg
                                 Text = CStr(CLng(Text))
                             End If
                             If Err.Number <> 0 Then
-                                BlockChange = True
+                                ChangeFrozen = True
                                 SendMessage lParam, WM_SETTEXT, 0, ByVal 0&
                                 SendMessage lParam, WM_CHAR, 0, ByVal 0&
                                 Exit Function
@@ -1366,11 +1421,11 @@ Select Case wMsg
                     End If
                 End If
             Case EN_CHANGE
-                If BlockChange = False Then
+                If ChangeFrozen = False Then
                     RaiseEvent TextChange
                     If SpinBoxUpDownHandle <> 0 Then PostMessage SpinBoxUpDownHandle, UM_CHECKVALUECHANGED, SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&), ByVal 0&
                 Else
-                    BlockChange = False
+                    ChangeFrozen = False
                     Exit Function
                 End If
         End Select

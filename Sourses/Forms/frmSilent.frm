@@ -271,12 +271,11 @@ Private Sub Form_Load()
 
     With Me
         strFormName = .Name
-        SetIcon .hWnd, "frmSilent", False
+        SetIcon .hWnd, strFormName, False
         .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
         .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
     End With
 
-    'Me
     LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
     LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
 
