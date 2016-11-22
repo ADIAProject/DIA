@@ -87,7 +87,7 @@ Public Property Get Item(ByVal Index As Variant) As LvwListItem
 Attribute Item.VB_Description = "Returns a list item given its index or key."
 Attribute Item.VB_UserMemId = 0
 Select Case VarType(Index)
-    Case vbLong, vbInteger, vbByte
+    Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
         Set Item = PtrToObj(ShadowListView.FListItemPtr(Index))
     Case vbString
         Set Item = PropListItem(Index)
@@ -110,7 +110,7 @@ End Sub
 Public Sub Remove(ByVal Index As Variant)
 Attribute Remove.VB_Description = "Removes a list item from the collection."
 Select Case VarType(Index)
-    Case vbLong, vbInteger, vbByte
+    Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
         Dim Ptr As Long, Item As Variant, i As Long
         Ptr = ShadowListView.FListItemPtr(Index)
         ShadowListView.FListItemsRemove Index

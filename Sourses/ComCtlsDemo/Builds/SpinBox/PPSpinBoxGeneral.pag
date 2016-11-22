@@ -13,7 +13,7 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "HideSelection"
       Height          =   285
       Left            =   4200
-      TabIndex        =   26
+      TabIndex        =   24
       Top             =   2280
       Width           =   1800
    End
@@ -21,27 +21,19 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Height          =   315
       Left            =   1800
       Style           =   2  'Dropdown List
-      TabIndex        =   18
-      Top             =   3000
+      TabIndex        =   16
+      Top             =   2640
       Width           =   2235
    End
    Begin VB.ComboBox ComboTextAlignment 
       Height          =   315
       Left            =   1800
       Style           =   2  'Dropdown List
-      TabIndex        =   20
-      Top             =   3360
+      TabIndex        =   18
+      Top             =   3000
       Width           =   2235
    End
    Begin VB.ComboBox ComboAlignment 
-      Height          =   315
-      Left            =   1800
-      Style           =   2  'Dropdown List
-      TabIndex        =   16
-      Top             =   2640
-      Width           =   2235
-   End
-   Begin VB.ComboBox ComboOrientation 
       Height          =   315
       Left            =   1800
       Style           =   2  'Dropdown List
@@ -61,7 +53,7 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "AllowOnlyNumbers"
       Height          =   285
       Left            =   4200
-      TabIndex        =   25
+      TabIndex        =   23
       Top             =   1920
       Width           =   1800
    End
@@ -69,7 +61,7 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "ArrowKeysChange"
       Height          =   285
       Left            =   4200
-      TabIndex        =   24
+      TabIndex        =   22
       Top             =   1560
       Width           =   1800
    End
@@ -85,7 +77,7 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "ThousandsSeparator"
       Height          =   285
       Left            =   4200
-      TabIndex        =   23
+      TabIndex        =   21
       Top             =   1200
       Width           =   1800
    End
@@ -93,7 +85,7 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "HotTracking"
       Height          =   285
       Left            =   4200
-      TabIndex        =   22
+      TabIndex        =   20
       Top             =   840
       Width           =   1800
    End
@@ -129,7 +121,7 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "Wrap"
       Height          =   285
       Left            =   4200
-      TabIndex        =   21
+      TabIndex        =   19
       Top             =   480
       Width           =   1800
    End
@@ -153,28 +145,20 @@ Begin VB.PropertyPage PPSpinBoxGeneral
       Caption         =   "NumberStyle:"
       Height          =   240
       Left            =   120
-      TabIndex        =   17
-      Top             =   3000
+      TabIndex        =   15
+      Top             =   2640
       Width           =   1620
    End
    Begin VB.Label LabelTextAlignment 
       Caption         =   "TextAlignment:"
       Height          =   240
       Left            =   120
-      TabIndex        =   19
-      Top             =   3360
+      TabIndex        =   17
+      Top             =   3000
       Width           =   1620
    End
    Begin VB.Label LabelAlignment 
       Caption         =   "Alignment:"
-      Height          =   240
-      Left            =   120
-      TabIndex        =   15
-      Top             =   2640
-      Width           =   1620
-   End
-   Begin VB.Label LabelOrientation 
-      Caption         =   "Orientation:"
       Height          =   240
       Left            =   120
       TabIndex        =   13
@@ -233,12 +217,6 @@ Private FreezeChanged As Boolean
 Private Sub PropertyPage_Initialize()
 Call ComCtlsShowAllUIStates(PropertyPage.hWnd)
 Call ComCtlsPPInitComboMousePointer(ComboMousePointer)
-With ComboOrientation
-.AddItem SpbOrientationVertical & " - Vertical"
-.ItemData(.NewIndex) = SpbOrientationVertical
-.AddItem SpbOrientationHorizontal & " - Horizontal"
-.ItemData(.NewIndex) = SpbOrientationHorizontal
-End With
 With ComboAlignment
 .AddItem CCLeftRightAlignmentLeft & " - Left"
 .ItemData(.NewIndex) = CCLeftRightAlignmentLeft
@@ -275,7 +253,6 @@ With PropertyPage.SelectedControls(0)
 .Value = CLng(TextValue.Text)
 .Increment = CLng(TextIncrement.Text)
 .MousePointer = ComboMousePointer.ItemData(ComboMousePointer.ListIndex)
-.Orientation = ComboOrientation.ItemData(ComboOrientation.ListIndex)
 .Alignment = ComboAlignment.ItemData(ComboAlignment.ListIndex)
 .NumberStyle = ComboNumberStyle.ItemData(ComboNumberStyle.ListIndex)
 .TextAlignment = ComboTextAlignment.ItemData(ComboTextAlignment.ListIndex)
@@ -303,12 +280,6 @@ TextIncrement.Text = CStr(.Increment)
 For i = 0 To ComboMousePointer.ListCount - 1
     If ComboMousePointer.ItemData(i) = .MousePointer Then
         ComboMousePointer.ListIndex = i
-        Exit For
-    End If
-Next i
-For i = 0 To ComboOrientation.ListCount - 1
-    If ComboOrientation.ItemData(i) = .Orientation Then
-        ComboOrientation.ListIndex = i
         Exit For
     End If
 Next i
@@ -520,11 +491,6 @@ End If
 End Sub
 
 Private Sub ComboMousePointer_Click()
-If FreezeChanged = True Then Exit Sub
-PropertyPage.Changed = True
-End Sub
-
-Private Sub ComboOrientation_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
 End Sub

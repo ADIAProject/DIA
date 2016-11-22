@@ -20,6 +20,7 @@ ReportIcon As Variant
 ReportIconIndex As Long
 Bold As Boolean
 ForeColor As OLE_COLOR
+ToolTipText As String
 End Type
 Private ShadowObjectPointer As Long
 Private PropIndex As Long
@@ -405,6 +406,8 @@ Select Case Entry
         FListSubItemProp = PropShadowListSubItems(SubItemIndex).Bold
     Case 7
         FListSubItemProp = PropShadowListSubItems(SubItemIndex).ForeColor
+    Case 8
+        FListSubItemProp = PropShadowListSubItems(SubItemIndex).ToolTipText
 End Select
 End Property
 
@@ -425,6 +428,8 @@ Select Case Entry
         PropShadowListSubItems(SubItemIndex).Bold = Value
     Case 7
         PropShadowListSubItems(SubItemIndex).ForeColor = Value
+    Case 8
+        PropShadowListSubItems(SubItemIndex).ToolTipText = Value
 End Select
 End Property
 

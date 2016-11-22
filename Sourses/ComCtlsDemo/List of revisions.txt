@@ -1,5 +1,78 @@
 List of revisions:
 
+20-Nov-2016
+- Fixed a bug in the hidden 'IDEStop' method in the RichtTextBox control.
+  I forgot there to change to the new class 'RtfOleCallback', which was implemented on 17-May-2016.
+
+18-Nov-2016
+- Included the Transparent property in the ToolBar control.
+- Minor internal improvements for right-to-left support.
+
+16-Nov-2016
+- The LineColor property in the TreeView control is now also a design-time property and not anymore run-time only. (Default value is vbGrayText)
+
+14-Nov-2016
+- WM_SETREDRAW was replaced with the LockWindowUpdate API in all internal ReCreate methods.
+
+13-Nov-2016
+- Bugfix in the internal ModifyButton method in the ToolBar control.
+- The '&' was displayed as a normal character in a Band's caption in the CoolBar control.
+  Now it will underline the character to make it as an accelerator key.
+  The solution was to send a CCM_SETVERSION with the wParam value set to 5 to the control.
+  This was only an issue when not using the comctl32.dll version 6.0 or higher.
+- Minor internal improvement in the TabStrip control.
+
+12-Nov-2016
+- Included the PressedImageList property in the ToolBar control.
+- Included the ImageHeight/ImageWidth run-time property in the ToolBar control.
+
+08-Nov-2016
+- Internal improvement in the ImageList property in the ToolBar control.
+
+07-Nov-2016
+- Bugfix in the ImageList/DisabledImageList/HotImageList property in the ToolBar control.
+  It was possible to outwit the "ImageList Image sizes must be the same" error.
+
+06-Nov-2016
+- Bugfix in the NoImage property of a Button in the ToolBar control.
+  It was not possible to set the NoImage property of a Button to True when no ImageList was set.
+
+02-Nov-2016
+- The FilterIndex property will be set on return (chosen filter) of the ShowOpen/ShowSave function in the CommonDialog class.
+
+28-Oct-2016
+- Bugfix in the Selected property of a Node in the TreeView control.
+- Improved the CreateDragImage function of a Node in the TreeView control.
+
+25-Oct-2016
+- Renamed the internal functions from CLongToULong/CULongToLong to CLngToULng/CULngToLng.
+
+18-Oct-2016
+- Fixed a bug that the items were not drawn grayed in a disabled Checkbox Style ListBoxW control.
+  Reason was a missing check for ODS_DISABLED in the WM_DRAWITEM handler.
+
+12-Oct-2016
+- Fixed a bug when no DefaultExt property is set for the ShowSave function in the CommonDialog class.
+
+05-Oct-2016
+- Minor internal improvement in the CommonDialog class.
+
+01-Oct-2016
+- Included the ToolTipText property of a ListSubItem in the ListView control.
+- The ShowLabelTips property (LVS_EX_LABELTIP) is now working as expected in the ListView control. (MS bug)
+
+28-Sep-2016
+- Fixed a critical bug in the 'Bands' property page in the CoolBar control that was caused by update on 07-Jul-2016.
+- Included the RightToLeft and RightToLeftMode property on supported controls.
+- Included the RightToLeftLayout property on some controls. (where mirror placement is applicable)
+- Included the RightToLeftMirror property in the ImageList control.
+  If enabled, an list image is drawn mirrored on a right-to-left device context (WS_EX_LAYOUTRTL) to preserve directional-sensitivity.
+- Some internal improvements to ensure right-to-left support. (e.g. use of MapWindowPoints instead of the ScreenToClient)
+- Bugfix in the TextBoxW control that the horizontal scrollbar could disappear on certain conditions.
+- Removed the Orientation property in the SpinBox control.
+- The internal tooltip in the ListView control respects now changes in the VisualStyles property.
+- Renamed the CalendarRightAligned property to 'CalendarAlignment' in the DTPicker control.
+
 30-Aug-2016
 - Minor internal improvement in the Appearance property in the FrameW, OptionButtonW, CheckBoxW, CommandButtonW and LabelW control.
 
@@ -215,20 +288,6 @@ List of revisions:
 - Mouse events now again in correct order in the ImageCombo, TreeView and ListView control.
   Some workaround was necessary to raise them 'After' (refer to update 21-Nov-2015) and keep correct order.
   Issue was an internal modal message loop on these controls. (DragDetect)
-
-29-Dec-2015
-- UserControl_Resizer is now called in the CoolBar control when setting a child control.
-
-08-Dec-2015
-- WM_MOUSEWHEEL handlers are now "processed" (no forward to the chain anymore) in the DTPicker and MonthView Control.
-
-02-Dec-2015
-- Fixed a bug in the mouse events in the ListView and TreeView control. (relates to update on 21-Nov-2015)
-
-23-Nov-2015
-- Forgot to include ListBoxW and ComboBoxW in the ComCtlsIDEStopProtectionHandler.
-- InitReleaseVisualStyles function in VisualStyles.bas is now only called outside IDE.
-  This is more efficient then always call InitReleaseVisualStyles and do the IDE check on ReleaseVisualStyles.
 
 [...]
 

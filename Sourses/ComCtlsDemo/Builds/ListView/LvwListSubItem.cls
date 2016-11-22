@@ -129,3 +129,12 @@ If .FListItemVerify(PropPtr, PropIndex) = True Then
 End If
 End With
 End Property
+
+Public Property Get ToolTipText() As String
+Attribute ToolTipText.VB_Description = "Returns/sets the tool tip text of the list sub item. Requires that the show info tips property is set to true."
+ToolTipText = ShadowListItem.FListSubItemProp(PropSubItemIndex, 8)
+End Property
+
+Public Property Let ToolTipText(ByVal Value As String)
+ShadowListItem.FListSubItemProp(PropSubItemIndex, 8) = Value
+End Property

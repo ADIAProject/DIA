@@ -18,20 +18,28 @@ Begin VB.PropertyPage PPImageListGeneral
    PaletteMode     =   0  'Halftone
    ScaleHeight     =   4650
    ScaleWidth      =   5790
+   Begin VB.CheckBox CheckRightToLeftMirror 
+      Caption         =   "RightToLeftMirror"
+      Height          =   285
+      Left            =   120
+      TabIndex        =   10
+      Top             =   2160
+      Width           =   1620
+   End
    Begin VB.CheckBox CheckUseMaskColor 
       Caption         =   "UseMaskColor"
       Height          =   285
       Left            =   120
-      TabIndex        =   11
-      Top             =   2520
+      TabIndex        =   12
+      Top             =   2880
       Width           =   1620
    End
    Begin VB.CheckBox CheckUseBackColor 
       Caption         =   "UseBackColor"
       Height          =   285
       Left            =   120
-      TabIndex        =   10
-      Top             =   2160
+      TabIndex        =   11
+      Top             =   2520
       Width           =   1620
    End
    Begin VB.OptionButton OptionSizeCustom 
@@ -162,12 +170,17 @@ If .ListImages.Count > 0 Then
             Exit For
         End If
     Next i
+    If CBool(CheckRightToLeftMirror.Value = vbChecked) <> .RightToLeftMirror Then
+        MsgBox "Right-to-left mirror is read-only if image list contains images", vbExclamation + vbOKOnly
+    End If
+    CheckRightToLeftMirror.Value = IIf(.RightToLeftMirror, vbChecked, vbUnchecked)
     .UseBackColor = CBool(CheckUseBackColor.Value = vbChecked)
     .UseMaskColor = CBool(CheckUseMaskColor.Value = vbChecked)
 Else
     .ImageHeight = Height
     .ImageWidth = Width
     .ColorDepth = ComboColorDepth.ItemData(ComboColorDepth.ListIndex)
+    .RightToLeftMirror = CBool(CheckRightToLeftMirror.Value = vbChecked)
     .UseBackColor = CBool(CheckUseBackColor.Value = vbChecked)
     .UseMaskColor = CBool(CheckUseMaskColor.Value = vbChecked)
 End If
@@ -214,6 +227,7 @@ For i = 0 To ComboColorDepth.ListCount - 1
         Exit For
     End If
 Next i
+CheckRightToLeftMirror.Value = IIf(.RightToLeftMirror, vbChecked, vbUnchecked)
 CheckUseBackColor.Value = IIf(.UseBackColor = True, vbChecked, vbUnchecked)
 CheckUseMaskColor.Value = IIf(.UseMaskColor = True, vbChecked, vbUnchecked)
 End With
@@ -367,6 +381,11 @@ Call ComCtlsPPKeyPressOnlyNumeric(KeyAscii)
 End Sub
 
 Private Sub ComboColorDepth_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckRightToLeftMirror_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
 End Sub

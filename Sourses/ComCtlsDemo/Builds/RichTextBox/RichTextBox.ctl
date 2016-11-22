@@ -284,7 +284,6 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Desti
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function SetParent Lib "user32" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
 Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
@@ -294,15 +293,13 @@ Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmd
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
-Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
-Private Declare Function GetCursor Lib "user32" () As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function GetScrollPos Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpszProgID As Long, ByRef pCLSID As Any) As Long
 Private Declare Function StgCreateDocFile Lib "ole32" Alias "StgCreateDocfile" (ByVal pwcsName As Long, ByVal grfMode As Long, ByVal Reserved As Long, ByRef ppStgOpen As OLEGuids.IStorage) As Long
@@ -359,12 +356,7 @@ Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As
 
 #End If
 
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
-Private Const RDW_NOCHILDREN As Long = &H40
-Private Const RDW_FRAME As Long = &H400
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80, RDW_NOCHILDREN As Long = &H40, RDW_FRAME As Long = &H400
 Private Const GWL_STYLE As Long = (-16)
 Private Const GWL_EXSTYLE As Long = (-20)
 Private Const CF_UNICODETEXT As Long = 13
@@ -372,7 +364,7 @@ Private Const CP_UNICODE As Long = 1200
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
 Private Const WS_EX_CLIENTEDGE As Long = &H200
-Private Const WS_EX_RTLREADING As Long = &H2000
+Private Const WS_EX_RTLREADING As Long = &H2000, WS_EX_RIGHT As Long = &H1000, WS_EX_LEFTSCROLLBAR As Long = &H4000
 Private Const WS_HSCROLL As Long = &H100000
 Private Const WS_VSCROLL As Long = &H200000
 Private Const SB_LINELEFT As Long = 0, SB_LINERIGHT As Long = 1
@@ -407,9 +399,7 @@ Private Const WM_HSCROLL As Long = &H114
 Private Const WM_VSCROLL As Long = &H115
 Private Const WM_CONTEXTMENU As Long = &H7B
 Private Const WM_NOTIFY As Long = &H4E
-Private Const WM_SHOWWINDOW As Long = &H18
 Private Const WM_SETFONT As Long = &H30
-Private Const WM_SETREDRAW As Long = &HB
 Private Const WM_SETCURSOR As Long = &H20, HTCLIENT As Long = 1
 Private Const WM_GETTEXTLENGTH As Long = &HE
 Private Const WM_GETTEXT As Long = &HD
@@ -627,20 +617,12 @@ Private Const PFA_CENTER As Long = 3
 Private Const PFA_JUSTIFY As Long = 4
 Private Const PFN_BULLET As Long = 1
 Private Const TO_ADVANCEDTYPOGRAPHY As Long = 1
-Private Const AURL_ENABLEEAURLS As Long = 8
 Private Const TM_PLAINTEXT As Long = 1
 Private Const TM_RICHTEXT As Long = 2
 Private Const TM_SINGLELEVELUNDO As Long = 4
 Private Const TM_MULTILEVELUNDO As Long = 8
 Private Const TM_SINGLECODEPAGE As Long = 16
 Private Const TM_MULTICODEPAGE As Long = 32
-Private Const IMF_AUTOKEYBOARD As Long = &H1
-Private Const IMF_AUTOFONT As Long = &H2
-Private Const IMF_IMECANCELCOMPLETE As Long = &H4
-Private Const IMF_IMEALWAYSSENDNOTIFY As Long = &H8
-Private Const IMF_AUTOFONTSIZEADJUST As Long = &H10
-Private Const IMF_UIFONTS As Long = &H20
-Private Const IMF_DUALFONT As Long = &H80
 Private Const ECO_AUTOWORDSELECTION As Long = 1
 Private Const ECO_AUTOVSCROLL As Long = ES_AUTOVSCROLL
 Private Const ECO_AUTOHSCROLL As Long = ES_AUTOHSCROLL
@@ -721,6 +703,8 @@ Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropOLEDragDrop As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropBorder As Boolean
 Private PropBackColor As OLE_COLOR
 Private PropLocked As Boolean
@@ -814,6 +798,9 @@ Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropOLEDragDrop = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropBorder = True
 PropBackColor = vbWindowBackground
 PropLocked = False
@@ -844,6 +831,9 @@ Me.Enabled = .ReadProperty("Enabled", True)
 PropOLEDragDrop = .ReadProperty("OLEDragDrop", True)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropBorder = .ReadProperty("Border", True)
 PropBackColor = .ReadProperty("BackColor", vbWindowBackground)
 PropLocked = .ReadProperty("Locked", False)
@@ -879,6 +869,8 @@ With PropBag
 .WriteProperty "OLEDragDrop", PropOLEDragDrop, True
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Border", PropBorder, True
 .WriteProperty "BackColor", PropBackColor, vbWindowBackground
 .WriteProperty "Locked", PropLocked, False
@@ -984,7 +976,7 @@ End Sub
 
 Public Sub IDEStop()
 Attribute IDEStop.VB_MemberFlags = "40"
-Call RemoveVTableSubclassIRichEditOleCallback(Me)
+Call RemoveVTableSubclassIRichEditOleCallback(RichTextBoxOleCallback)
 Call DestroyRichTextBox
 End Sub
 
@@ -1231,6 +1223,39 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+If RichTextBoxHandle <> 0 Then
+    If Me.TextMode = RtfTextModeRichText Then SendMessage RichTextBoxHandle, WM_SETTEXT, 0, ByVal 0&
+    Call ReCreateRichTextBox
+End If
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
+End Property
+
 Public Property Get Border() As Boolean
 Attribute Border.VB_Description = "Returns/sets a value that determines whether or not the control displays a border."
 Attribute Border.VB_UserMemId = -504
@@ -1301,16 +1326,7 @@ End Property
 
 Public Property Let HideSelection(ByVal Value As Boolean)
 PropHideSelection = Value
-If RichTextBoxHandle <> 0 Then
-    Dim Flags As Long
-    Flags = SendMessage(RichTextBoxHandle, EM_GETOPTIONS, 0, ByVal 0&)
-    If PropHideSelection = True Then
-        If (Flags And ECO_NOHIDESEL) = ECO_NOHIDESEL Then Flags = Flags And Not ECO_NOHIDESEL
-    Else
-        If Not (Flags And ECO_NOHIDESEL) = ECO_NOHIDESEL Then Flags = Flags Or ECO_NOHIDESEL
-    End If
-    SendMessage RichTextBoxHandle, EM_SETOPTIONS, ECOOP_SET, ByVal Flags
-End If
+If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_HIDESELECTION, IIf(PropHideSelection = True, 1, 0), ByVal 0&
 UserControl.PropertyChanged "HideSelection"
 End Property
 
@@ -1650,6 +1666,7 @@ If RichTextBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE
 If PropOLEDragDrop = False Then dwStyle = dwStyle Or ES_NOOLEDRAGDROP
+If PropRightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING Or WS_EX_RIGHT Or WS_EX_LEFTSCROLLBAR
 If PropBorder = True Then
     dwStyle = dwStyle Or ES_SUNKEN
     dwExStyle = dwExStyle Or WS_EX_CLIENTEDGE
@@ -1674,7 +1691,6 @@ Else
 End If
 If PropDisableNoScroll = True Then dwStyle = dwStyle Or ES_DISABLENOSCROLL
 If PropSelectionBar = True Then dwStyle = dwStyle Or ES_SELECTIONBAR
-If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 Dim ClassName As String
 ClassName = RtfGetClassName()
 RichTextBoxHandle = CreateWindowEx(dwExStyle, StrPtr(ClassName), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
@@ -1712,9 +1728,8 @@ Private Sub ReCreateRichTextBox()
 Dim Buffer As String, Flags As Long
 If Me.TextMode = RtfTextModeRichText Then Flags = SF_RTF Else Flags = SF_TEXT Or SF_UNICODE
 If Ambient.UserMode = True Then
-    Dim Visible As Boolean
-    Visible = Extender.Visible
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Dim Locked As Boolean
+    Locked = CBool(LockWindowUpdate(UserControl.hWnd) <> 0)
     Dim RECR As RECHARRANGE, P As POINTAPI
     If RichTextBoxHandle <> 0 Then
         SendMessage RichTextBoxHandle, EM_EXGETSEL, 0, ByVal VarPtr(RECR)
@@ -1729,7 +1744,7 @@ If Ambient.UserMode = True Then
         SendMessage RichTextBoxHandle, EM_EXSETSEL, 0, ByVal VarPtr(RECR)
         SendMessage RichTextBoxHandle, EM_SETSCROLLPOS, 0, ByVal VarPtr(P)
     End If
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    If Locked = True Then LockWindowUpdate 0
     Me.Refresh
 Else
     StreamStringOut Buffer, Flags
@@ -1850,39 +1865,21 @@ Public Property Let Modified(ByVal Value As Boolean)
 If RichTextBoxHandle <> 0 Then SendMessage RichTextBoxHandle, EM_SETMODIFY, IIf(Value = True, 1, 0), ByVal 0&
 End Property
 
-Public Function Find(ByVal Text As String, Optional ByVal Min As Variant, Optional ByVal Max As Variant, Optional ByVal Options As RtfFindOptionConstants) As Long
+Public Function Find(ByVal Text As String, Optional ByVal Min As Long, Optional ByVal Max As Long = -1, Optional ByVal Options As RtfFindOptionConstants) As Long
 Attribute Find.VB_Description = "Finds text within a rich text box control."
 If RichTextBoxHandle <> 0 Then
     Dim REFTEX As REFINDTEXTEX, dwOptions As Long
     With REFTEX
     With .CharRange
-    If IsMissing(Min) = True Then
-        .Min = 0
+    If Min >= 0 Then
+        .Min = Min
     Else
-        Select Case VarType(Min)
-            Case vbLong, vbInteger, vbByte
-                If Min >= 0 Then
-                    .Min = Min
-                Else
-                    Err.Raise 380
-                End If
-            Case Else
-                Err.Raise 13
-        End Select
+        Err.Raise 380
     End If
-    If IsMissing(Max) = True Then
-        .Max = -1
+    If Max >= -1 Then
+        .Max = Max
     Else
-        Select Case VarType(Max)
-            Case vbLong, vbInteger, vbByte
-                If Max >= -1 Then
-                    .Max = Max
-                Else
-                    Err.Raise 380
-                End If
-            Case Else
-                Err.Raise 13
-        End Select
+        Err.Raise 380
     End If
     End With
     .lpstrText = StrPtr(Text)

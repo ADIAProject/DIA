@@ -143,12 +143,14 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Desti
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Private Declare Function SetParent Lib "user32" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
 Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
@@ -171,18 +173,14 @@ Private Declare Function ReleaseCapture Lib "user32" () As Long
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
-Private Declare Function PtInRect Lib "user32" (ByRef lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
 Private Const HWND_DESKTOP As Long = &H0
 Private Const GWL_STYLE As Long = (-16)
 Private Const CF_UNICODETEXT As Long = 13
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
-Private Const WS_EX_RTLREADING As Long = &H2000
+Private Const WS_EX_RTLREADING As Long = &H2000, WS_EX_RIGHT As Long = &H1000, WS_EX_LEFTSCROLLBAR As Long = &H4000
 Private Const SW_HIDE As Long = &H0
 Private Const WS_HSCROLL As Long = &H100000
 Private Const WS_VSCROLL As Long = &H200000
@@ -304,6 +302,9 @@ Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropOLEDragMode As VBRUN.OLEDragConstants
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftLayout As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropRedraw As Boolean
 Private PropStyle As CboStyleConstants
 Private PropLocked As Boolean
@@ -390,7 +391,12 @@ Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropOLEDragMode = vbOLEDragManual
+Me.OLEDropMode = vbOLEDropNone
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftLayout = False
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropRedraw = True
 PropStyle = CboStyleDropDownCombo
 PropLocked = False
@@ -428,6 +434,10 @@ Me.Enabled = .ReadProperty("Enabled", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftLayout = .ReadProperty("RightToLeftLayout", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropRedraw = .ReadProperty("Redraw", True)
 PropStyle = .ReadProperty("Style", CboStyleDropDownCombo)
 PropLocked = .ReadProperty("Locked", False)
@@ -466,6 +476,9 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftLayout", PropRightToLeftLayout, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Redraw", PropRedraw, True
 .WriteProperty "Style", PropStyle, CboStyleDropDownCombo
 .WriteProperty "Locked", PropLocked, False
@@ -933,6 +946,49 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If PropRightToLeft = True Then dwMask = WS_EX_RTLREADING Or WS_EX_RIGHT Or WS_EX_LEFTSCROLLBAR
+If ComboBoxHandle <> 0 Then Call ComCtlsSetRightToLeft(ComboBoxHandle, dwMask)
+If ComboBoxEditHandle <> 0 Then Call ComCtlsSetRightToLeft(ComboBoxEditHandle, dwMask)
+If PropRightToLeft = False And ComboBoxEditHandle <> 0 Then
+    Const ES_RIGHT As Long = &H2
+    Dim dwStyle As Long
+    dwStyle = GetWindowLong(ComboBoxEditHandle, GWL_STYLE)
+    If (dwStyle And ES_RIGHT) = ES_RIGHT Then dwStyle = dwStyle And Not ES_RIGHT
+    SetWindowLong ComboBoxEditHandle, GWL_STYLE, dwStyle
+End If
+Dim ListHandle As Long
+ListHandle = Me.hWndList
+If ListHandle <> 0 Then Call ComCtlsSetRightToLeft(ListHandle, dwMask)
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
+End Property
+
 Public Property Get Redraw() As Boolean
 Attribute Redraw.VB_Description = "Returns/sets a value that determines whether or not the combo box redraws when changing the items. You can speed up the creation of large lists by disabling this property before adding the items."
 Redraw = PropRedraw
@@ -1276,6 +1332,12 @@ If ComboBoxHandle <> 0 Then
                 Else
                     Err.Raise 5
                 End If
+            Case vbDouble, vbSingle
+                If CLng(Index) >= 0 Then
+                    IndexLong = CLng(Index)
+                Else
+                    Err.Raise 5
+                End If
             Case vbString
                 IndexLong = CLng(Index)
                 If IndexLong < 0 Then Err.Raise 5
@@ -1402,6 +1464,7 @@ Private Sub CreateComboBox()
 If ComboBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or CBS_AUTOHSCROLL Or WS_VSCROLL Or WS_HSCROLL
+If PropRightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING Or WS_EX_RIGHT Or WS_EX_LEFTSCROLLBAR
 Select Case PropStyle
     Case CboStyleDropDownCombo
         dwStyle = dwStyle Or CBS_DROPDOWN
@@ -1427,7 +1490,6 @@ Select Case PropDrawMode
         dwStyle = dwStyle Or CBS_OWNERDRAWVARIABLE Or CBS_HASSTRINGS
         If Not (dwStyle And CBS_NOINTEGRALHEIGHT) = CBS_NOINTEGRALHEIGHT Then dwStyle = dwStyle Or CBS_NOINTEGRALHEIGHT
 End Select
-If Ambient.RightToLeft = True Then dwExStyle = WS_EX_RTLREADING
 ComboBoxHandle = CreateWindowEx(dwExStyle, StrPtr("ComboBox"), StrPtr("Combo Box"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If ComboBoxHandle <> 0 Then
     If PropStyle = CboStyleDropDownCombo Then
@@ -1485,10 +1547,9 @@ End Sub
 
 Private Sub ReCreateComboBox()
 If Ambient.UserMode = True Then
-    Dim Visible As Boolean
-    Visible = Extender.Visible
+    Dim Locked As Boolean
     With Me
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Locked = CBool(LockWindowUpdate(UserControl.hWnd) <> 0)
     Dim ListArr() As String, ItemDataArr() As Long
     Dim ItemHeight As Long, ListIndex As Long, TopIndex As Long, Text As String, SelStart As Long, SelEnd As Long, DroppedWidth As Long, FieldHeight As Long, NewIndex As Long
     Dim Count As Long, i As Long, FieldHeightCustomized As Boolean
@@ -1549,7 +1610,7 @@ If Ambient.UserMode = True Then
         If FieldHeightCustomized = True Then SendMessage ComboBoxHandle, CB_SETITEMHEIGHT, -1, ByVal FieldHeight
     End If
     ComboBoxNewIndex = NewIndex
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    If Locked = True Then LockWindowUpdate 0
     .Refresh
     If PropRedraw = False Then .Redraw = PropRedraw
     End With

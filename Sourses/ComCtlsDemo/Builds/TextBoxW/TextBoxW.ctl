@@ -185,6 +185,7 @@ Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmd
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
@@ -205,15 +206,12 @@ Private Declare Function DestroyCaret Lib "user32" () As Long
 Private Declare Function DragDetect Lib "user32" (ByVal hWnd As Long, ByVal PX As Integer, ByVal PY As Integer) As Long
 Private Declare Function ReleaseCapture Lib "user32" () As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
 Private Const GWL_STYLE As Long = (-16)
 Private Const CF_UNICODETEXT As Long = 13
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
-Private Const WS_EX_RTLREADING As Long = &H2000
+Private Const WS_EX_RTLREADING As Long = &H2000, WS_EX_LEFTSCROLLBAR As Long = &H4000
 Private Const WS_HSCROLL As Long = &H100000
 Private Const WS_VSCROLL As Long = &H200000
 Private Const SB_LINELEFT As Long = 0, SB_LINERIGHT As Long = 1
@@ -245,7 +243,6 @@ Private Const WM_HSCROLL As Long = &H114
 Private Const WM_VSCROLL As Long = &H115
 Private Const WM_CONTEXTMENU As Long = &H7B
 Private Const WM_SETFONT As Long = &H30
-Private Const WM_SETREDRAW As Long = &HB
 Private Const WM_SETCURSOR As Long = &H20, HTCLIENT As Long = 1
 Private Const WM_GETTEXTLENGTH As Long = &HE
 Private Const WM_GETTEXT As Long = &HD
@@ -353,6 +350,8 @@ Private PropOLEDragMode As VBRUN.OLEDragConstants
 Private PropOLEDragDropScroll As Boolean
 Private PropOLEDropMode As VBRUN.OLEDropConstants
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropBorderStyle As CCBorderStyleConstants
 Private PropText As String
 Private PropAlignment As VBRUN.AlignmentConstants
@@ -444,9 +443,12 @@ PropOLEDragMode = vbOLEDragManual
 PropOLEDragDropScroll = True
 PropOLEDropMode = vbOLEDropNone
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropBorderStyle = CCBorderStyleSunken
 PropText = Ambient.DisplayName
-PropAlignment = vbLeftJustify
+If PropRightToLeft = False Then PropAlignment = vbLeftJustify Else PropAlignment = vbRightJustify
 PropAllowOnlyNumbers = False
 PropLocked = False
 PropHideSelection = True
@@ -476,6 +478,9 @@ PropOLEDragDropScroll = .ReadProperty("OLEDragDropScroll", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropBorderStyle = .ReadProperty("BorderStyle", CCBorderStyleSunken)
 PropText = VarToStr(.ReadProperty("Text", vbNullString))
 PropAlignment = .ReadProperty("Alignment", vbLeftJustify)
@@ -509,6 +514,8 @@ With PropBag
 .WriteProperty "OLEDropMode", PropOLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "BorderStyle", PropBorderStyle, CCBorderStyleSunken
 .WriteProperty "Text", StrToVar(PropText), vbNullString
 .WriteProperty "Alignment", PropAlignment, vbLeftJustify
@@ -975,6 +982,38 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If PropRightToLeft = True Then dwMask = WS_EX_RTLREADING Or WS_EX_LEFTSCROLLBAR
+If TextBoxHandle <> 0 Then Call ComCtlsSetRightToLeft(TextBoxHandle, dwMask)
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
+End Property
+
 Public Property Get BorderStyle() As CCBorderStyleConstants
 Attribute BorderStyle.VB_Description = "Returns/sets the border style."
 Attribute BorderStyle.VB_UserMemId = -504
@@ -1350,16 +1389,10 @@ Private Sub CreateTextBox()
 If TextBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE
+If PropRightToLeft = True Then dwExStyle = WS_EX_RTLREADING Or WS_EX_LEFTSCROLLBAR
 Call ComCtlsInitBorderStyle(dwStyle, dwExStyle, PropBorderStyle)
 If PropAllowOnlyNumbers = True Then dwStyle = dwStyle Or ES_NUMBER
-Select Case PropAlignment
-    Case vbLeftJustify
-        dwStyle = dwStyle Or ES_LEFT
-    Case vbCenter
-        dwStyle = dwStyle Or ES_CENTER
-    Case vbRightJustify
-        dwStyle = dwStyle Or ES_RIGHT
-End Select
+If PropRightToLeft = False Then dwStyle = dwStyle Or ES_LEFT Else dwStyle = dwStyle Or ES_RIGHT
 If PropLocked = True Then dwStyle = dwStyle Or ES_READONLY
 If PropHideSelection = False Then dwStyle = dwStyle Or ES_NOHIDESEL
 If PropUseSystemPasswordChar = True Then dwStyle = dwStyle Or ES_PASSWORD
@@ -1384,7 +1417,6 @@ Select Case PropCharacterCasing
     Case TxtCharacterCasingLower
         dwStyle = dwStyle Or ES_LOWERCASE
 End Select
-If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 If PropNetAddressValidator = True And ComCtlsSupportLevel() >= 2 Then
     If InitNetworkAddressControl() <> 0 Then TextBoxHandle = CreateWindowEx(dwExStyle, StrPtr("msctls_netaddress"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 End If
@@ -1397,6 +1429,7 @@ Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = UserControl.Enabled
 Me.Text = PropText
+Me.Alignment = PropAlignment
 If Not PropCueBanner = vbNullString Then Me.CueBanner = PropCueBanner
 If PropNetAddressValidator = True Then Me.NetAddressType = PropNetAddressType
 If Ambient.UserMode = True Then
@@ -1408,9 +1441,8 @@ End Sub
 
 Private Sub ReCreateTextBox()
 If Ambient.UserMode = True Then
-    Dim Visible As Boolean
-    Visible = Extender.Visible
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Dim Locked As Boolean
+    Locked = CBool(LockWindowUpdate(UserControl.hWnd) <> 0)
     Dim SelStart As Long, SelEnd As Long
     Dim ScrollPosHorz As Integer, ScrollPosVert As Integer
     If TextBoxHandle <> 0 Then
@@ -1436,7 +1468,7 @@ If Ambient.UserMode = True Then
         If ScrollPosHorz > 0 Then SendMessage TextBoxHandle, WM_HSCROLL, MakeDWord(SB_THUMBPOSITION, ScrollPosHorz), ByVal 0&
         If ScrollPosVert > 0 Then SendMessage TextBoxHandle, WM_VSCROLL, MakeDWord(SB_THUMBPOSITION, ScrollPosVert), ByVal 0&
     End If
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    If Locked = True Then LockWindowUpdate 0
     Me.Refresh
 Else
     Call DestroyTextBox

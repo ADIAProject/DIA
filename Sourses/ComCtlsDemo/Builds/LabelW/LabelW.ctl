@@ -121,6 +121,8 @@ Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropAlignment As VBRUN.AlignmentConstants
 Private PropBorderStyle As CCBorderStyleConstants
 Private PropBackStyle As CCBackStyleConstants
@@ -161,7 +163,10 @@ Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 Set UserControl.Font = PropFont
 PropMousePointer = 0: Set PropMouseIcon = Nothing
-PropAlignment = vbLeftJustify
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
+If PropRightToLeft = False Then PropAlignment = vbLeftJustify Else PropAlignment = vbRightJustify
 PropBorderStyle = CCBorderStyleNone
 PropCaption = Ambient.DisplayName
 PropUseMnemonic = True
@@ -183,6 +188,9 @@ Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
 Me.MousePointer = PropMousePointer
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropAlignment = .ReadProperty("Alignment", vbLeftJustify)
 PropBorderStyle = .ReadProperty("BorderStyle", CCBorderStyleNone)
 Me.BackStyle = .ReadProperty("BackStyle", CCBackStyleOpaque)
@@ -210,6 +218,8 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Alignment", PropAlignment, vbLeftJustify
 .WriteProperty "BorderStyle", PropBorderStyle, CCBorderStyleNone
 .WriteProperty "BackStyle", Me.BackStyle, CCBackStyleOpaque
@@ -255,7 +265,7 @@ Select Case PropAlignment
     Case vbRightJustify
         Format = Format Or DT_RIGHT
 End Select
-If Ambient.RightToLeft = True Then Format = Format Or DT_RTLREADING
+If PropRightToLeft = True Then Format = Format Or DT_RTLREADING
 If PropUseMnemonic = False Then Format = Format Or DT_NOPREFIX
 If PropWordWrap = True Then Format = Format Or DT_WORDBREAK
 If PropAutoSize = True And LabelAutoSizeFlag = True Then
@@ -673,6 +683,36 @@ Else
 End If
 Me.MousePointer = PropMousePointer
 UserControl.PropertyChanged "MouseIcon"
+End Property
+
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Me.Refresh
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
 End Property
 
 Public Property Get Alignment() As VBRUN.AlignmentConstants

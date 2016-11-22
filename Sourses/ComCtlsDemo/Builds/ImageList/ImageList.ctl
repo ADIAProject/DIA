@@ -96,6 +96,7 @@ Private Const ILD_IMAGE As Long = &H20
 Private Const ILD_ROP As Long = &H40
 Private Const ILD_OVERLAYMASK As Long = 3840
 Private Const ILC_MASK As Long = &H1
+Private Const ILC_MIRROR As Long = &H2000
 Private Const ILCF_MOVE As Long = &H0
 Private Const ILCF_SWAP As Long = &H1
 Private Const BITSPIXEL As Long = 12
@@ -114,6 +115,7 @@ Private PropListImages As ImlListImages
 Private PropImageWidth As Long
 Private PropImageHeight As Long
 Private PropColorDepth As ImlColorDepthConstants
+Private PropRightToLeftMirror As Boolean
 Private PropUseMaskColor As Boolean
 Private PropMaskColor As OLE_COLOR
 Private PropUseBackColor As Boolean
@@ -127,6 +129,7 @@ Private Sub UserControl_InitProperties()
 PropImageWidth = 0
 PropImageHeight = 0
 PropColorDepth = ImlColorDepth24Bit
+PropRightToLeftMirror = False
 PropUseBackColor = False
 PropBackColor = vbWindowBackground
 PropUseMaskColor = True
@@ -139,6 +142,7 @@ With PropBag
 PropImageWidth = .ReadProperty("ImageWidth", 0)
 PropImageHeight = .ReadProperty("ImageHeight", 0)
 PropColorDepth = .ReadProperty("ColorDepth", ImlColorDepth24Bit)
+PropRightToLeftMirror = .ReadProperty("RightToLeftMirror", False)
 PropUseBackColor = .ReadProperty("UseBackColor", False)
 PropBackColor = .ReadProperty("BackColor", vbWindowBackground)
 PropUseMaskColor = .ReadProperty("UseMaskColor", True)
@@ -165,6 +169,7 @@ With PropBag
 .WriteProperty "ImageWidth", PropImageWidth, 0
 .WriteProperty "ImageHeight", PropImageHeight, 0
 .WriteProperty "ColorDepth", PropColorDepth, ImlColorDepth24Bit
+.WriteProperty "RightToLeftMirror", PropRightToLeftMirror, False
 .WriteProperty "UseBackColor", PropUseBackColor, False
 .WriteProperty "BackColor", PropBackColor, vbWindowBackground
 .WriteProperty "UseMaskColor", PropUseMaskColor, True
@@ -244,13 +249,11 @@ End Property
 
 Public Property Let ImageWidth(ByVal Value As Long)
 If Me.ListImages.Count > 0 Then
-    If Value <> PropImageWidth Then
-        If Ambient.UserMode = False Then
-            MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
-            Exit Property
-        Else
-            Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
-        End If
+    If Ambient.UserMode = False Then
+        MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
     End If
 Else
     If Value >= 0 Then
@@ -276,13 +279,11 @@ End Property
 
 Public Property Let ImageHeight(ByVal Value As Long)
 If Me.ListImages.Count > 0 Then
-    If Value <> PropImageHeight Then
-        If Ambient.UserMode = False Then
-            MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
-            Exit Property
-        Else
-            Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
-        End If
+    If Ambient.UserMode = False Then
+        MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
     End If
 Else
     If Value >= 0 Then
@@ -308,13 +309,11 @@ End Property
 
 Public Property Let ColorDepth(ByVal Value As ImlColorDepthConstants)
 If Me.ListImages.Count > 0 Then
-    If Value <> PropColorDepth Then
-        If Ambient.UserMode = False Then
-            MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
-            Exit Property
-        Else
-            Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
-        End If
+    If Ambient.UserMode = False Then
+        MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
     End If
 Else
     Select Case Value
@@ -329,6 +328,29 @@ If ImageListHandle <> 0 Then
     Call CreateImageList
 End If
 UserControl.PropertyChanged "ColorDepth"
+End Property
+
+Public Property Get RightToLeftMirror() As Boolean
+Attribute RightToLeftMirror.VB_Description = "Returns/sets a value indicating if an list image is drawn mirrored on a right-to-left device context to preserve directional-sensitivity. Requires comctl32.dll version 6.0 or higher."
+RightToLeftMirror = PropRightToLeftMirror
+End Property
+
+Public Property Let RightToLeftMirror(ByVal Value As Boolean)
+If Me.ListImages.Count > 0 Then
+    If Ambient.UserMode = False Then
+        MsgBox "Property is read-only if image list contains images", vbCritical + vbOKOnly
+        Exit Property
+    Else
+        Err.Raise Number:=35611, Description:="Property is read-only if image list contains images"
+    End If
+Else
+    PropRightToLeftMirror = Value
+End If
+If ImageListHandle <> 0 Then
+    Call DestroyImageList
+    Call CreateImageList
+End If
+UserControl.PropertyChanged "RightToLeftMirror"
 End Property
 
 Public Property Get UseBackColor() As Boolean
@@ -474,7 +496,11 @@ End Function
 
 Private Sub CreateImageList()
 If ImageListHandle <> 0 Then Exit Sub
-ImageListHandle = ImageList_Create(PropImageWidth, PropImageHeight, ILC_MASK Or PropColorDepth, 4, 4)
+If PropRightToLeftMirror = True And ComCtlsSupportLevel() >= 1 Then
+    ImageListHandle = ImageList_Create(PropImageWidth, PropImageHeight, ILC_MASK Or ILC_MIRROR Or PropColorDepth, 4, 4)
+Else
+    ImageListHandle = ImageList_Create(PropImageWidth, PropImageHeight, ILC_MASK Or PropColorDepth, 4, 4)
+End If
 Me.BackColor = PropBackColor
 End Sub
 

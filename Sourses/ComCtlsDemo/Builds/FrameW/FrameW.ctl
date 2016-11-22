@@ -79,15 +79,13 @@ Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, 
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function CreatePatternBrush Lib "gdi32" (ByVal hBitmap As Long) As Long
-Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
-Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
+Private Declare Function MapWindowPoints Lib "user32" (ByVal hWndFrom As Long, ByVal hWndTo As Long, ByRef lppt As Any, ByVal cPoints As Long) As Long
 Private Declare Function SetViewportOrgEx Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
+Private Const HWND_DESKTOP As Long = &H0
 Private Const GWL_STYLE As Long = (-16)
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
@@ -118,6 +116,8 @@ Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropBorder As Boolean
 Private PropCaption As String
 Private PropAlignment As VBRUN.AlignmentConstants
@@ -155,9 +155,12 @@ Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropBorder = True
 PropCaption = Ambient.DisplayName
-PropAlignment = vbLeftJustify
+If PropRightToLeft = False Then PropAlignment = vbLeftJustify Else PropAlignment = vbRightJustify
 PropTransparent = False
 Call CreateFrame
 End Sub
@@ -178,6 +181,9 @@ Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
 Me.MousePointer = PropMousePointer
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropBorder = .ReadProperty("Border", True)
 PropCaption = VarToStr(.ReadProperty("Caption", vbNullString))
 PropAlignment = .ReadProperty("Alignment", vbLeftJustify)
@@ -197,6 +203,8 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Border", PropBorder, True
 .WriteProperty "Caption", StrToVar(PropCaption), vbNullString
 .WriteProperty "Alignment", PropAlignment, vbLeftJustify
@@ -583,6 +591,45 @@ Me.MousePointer = PropMousePointer
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If PropRightToLeft = True Then dwMask = WS_EX_RTLREADING
+If FrameGroupBoxHandle <> 0 Then
+    Call ComCtlsSetRightToLeft(FrameGroupBoxHandle, dwMask)
+    If PropRightToLeft = False Then
+        If PropAlignment = vbRightJustify Then Me.Alignment = vbLeftJustify
+    Else
+        If PropAlignment = vbLeftJustify Then Me.Alignment = vbRightJustify
+    End If
+End If
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
+End Property
+
 Public Property Get Border() As Boolean
 Attribute Border.VB_Description = "Returns/sets a value that determines whether or not the control's border and caption are drawn."
 Border = PropBorder
@@ -659,7 +706,9 @@ Private Sub CreateFrame()
 If FrameGroupBoxHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or WS_CLIPSIBLINGS Or BS_TEXT Or BS_GROUPBOX
+dwExStyle = WS_EX_TRANSPARENT
 If Me.Appearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
+If PropRightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 Select Case PropAlignment
     Case vbLeftJustify
         dwStyle = dwStyle Or BS_LEFT
@@ -668,8 +717,6 @@ Select Case PropAlignment
     Case vbRightJustify
         dwStyle = dwStyle Or BS_RIGHT
 End Select
-dwExStyle = WS_EX_TRANSPARENT
-If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 FrameGroupBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
@@ -733,9 +780,11 @@ Select Case wMsg
                     hBmp = CreateCompatibleBitmap(wParam, .ScaleWidth, .ScaleHeight)
                     If hBmp <> 0 Then
                         hBmpOld = SelectObject(hDCBmp, hBmp)
-                        Dim P As POINTAPI
-                        ClientToScreen hWnd, P
-                        ScreenToClient .ContainerHwnd, P
+                        Dim WndRect As RECT, P As POINTAPI
+                        GetWindowRect .hWnd, WndRect
+                        MapWindowPoints HWND_DESKTOP, .ContainerHwnd, WndRect, 2
+                        P.X = WndRect.Left
+                        P.Y = WndRect.Top
                         SetViewportOrgEx hDCBmp, -P.X, -P.Y, P
                         SendMessage .ContainerHwnd, WM_PAINT, hDCBmp, ByVal 0&
                         SetViewportOrgEx hDCBmp, P.X, P.Y, P

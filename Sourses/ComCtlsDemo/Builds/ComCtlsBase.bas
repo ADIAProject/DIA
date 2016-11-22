@@ -11,6 +11,7 @@ Private CCBackStyleTransparent, CCBackStyleOpaque
 Private CCLeftRightAlignmentLeft, CCLeftRightAlignmentRight
 Private CCVerticalAlignmentTop, CCVerticalAlignmentCenter, CCVerticalAlignmentBottom
 Private CCIMEModeNoControl, CCIMEModeOn, CCIMEModeOff, CCIMEModeDisable, CCIMEModeHiragana, CCIMEModeKatakana, CCIMEModeKatakanaHalf, CCIMEModeAlphaFull, CCIMEModeAlpha, CCIMEModeHangulFull, CCIMEModeHangul
+Private CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
 #End If
 Public Enum OLEDropModeConstants
 OLEDropModeNone = vbOLEDropNone
@@ -53,6 +54,13 @@ CCIMEModeAlpha = 8
 CCIMEModeHangulFull = 9
 CCIMEModeHangul = 10
 End Enum
+Public Enum CCRightToLeftModeConstants
+CCRightToLeftModeNoControl = 0
+CCRightToLeftModeVBAME = 1
+CCRightToLeftModeSystemLocale = 2
+CCRightToLeftModeUserLocale = 3
+CCRightToLeftModeOSLanguage = 4
+End Enum
 Private Type TINITCOMMONCONTROLSEX
 dwSize As Long
 dwICC As Long
@@ -76,6 +84,12 @@ Private Type POINTAPI
 X As Long
 Y As Long
 End Type
+Private Type RECT
+Left As Long
+Top As Long
+Right As Long
+Bottom As Long
+End Type
 Private Type CWPRETSTRUCT
 lResult As Long
 lParam As Long
@@ -90,6 +104,21 @@ wParam As Long
 lParam As Long
 Time As Long
 PT As POINTAPI
+End Type
+Private Type TLOCALESIGNATURE
+lsUsb(0 To 15) As Byte
+lsCsbDefault(0 To 1) As Long
+lsCsbSupported(0 To 1) As Long
+End Type
+Private Type TOOLINFO
+cbSize As Long
+uFlags As Long
+hWnd As Long
+uId As Long
+RC As RECT
+hInst As Long
+lpszText As Long
+lParam As Long
 End Type
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function InitCommonControlsEx Lib "comctl32" (ByRef ICCEX As TINITCOMMONCONTROLSEX) As Long
@@ -111,6 +140,11 @@ Private Declare Function ImmSetOpenStatus Lib "imm32" (ByVal hIMC As Long, ByVal
 Private Declare Function ImmAssociateContext Lib "imm32" (ByVal hWnd As Long, ByVal hIMC As Long) As Long
 Private Declare Function ImmGetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByRef lpfdwConversion As Long, ByRef lpfdwSentence As Long) As Long
 Private Declare Function ImmSetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByVal lpfdwConversion As Long, ByVal lpfdwSentence As Long) As Long
+Private Declare Function InvalidateRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As Any, ByVal bErase As Long) As Long
+Private Declare Function GetSystemDefaultLangID Lib "kernel32" () As Integer
+Private Declare Function GetUserDefaultLangID Lib "kernel32" () As Integer
+Private Declare Function GetUserDefaultUILanguage Lib "kernel32" () As Integer
+Private Declare Function GetLocaleInfo Lib "kernel32" Alias "GetLocaleInfoW" (ByVal LCID As Long, ByVal LCType As Long, ByVal lpLCData As Long, ByVal cchData As Long) As Long
 Private Declare Function IsDialogMessage Lib "user32" Alias "IsDialogMessageW" (ByVal hDlg As Long, ByRef lpMsg As TMSG) As Long
 Private Declare Function DllGetVersion Lib "comctl32" (ByRef pdvi As DLLVERSIONINFO) As Long
 Private Declare Function GetVersionEx Lib "kernel32" Alias "GetVersionExW" (ByRef lpVersionInfo As OSVERSIONINFO) As Long
@@ -142,6 +176,7 @@ Private Const WM_DESTROY As Long = &H2
 Private Const WM_NCDESTROY As Long = &H82
 Private Const WM_UAHDESTROYWINDOW As Long = &H90
 Private Const WM_INITDIALOG As Long = &H110
+Private Const WM_USER As Long = &H400
 Private ShellModHandle As Long, ShellModCount As Long
 Private CdlPDEXHookHandle As Long, CdlPDEXHookCustData As Long
 Private CdlFRHookHandle As Long
@@ -354,6 +389,85 @@ Else
         ImmSetConversionStatus hIMC, dwConversion, dwSentence
         ImmReleaseContext hWnd, hIMC
     End If
+End If
+End Sub
+
+Public Sub ComCtlsCheckRightToLeft(ByRef Value As Boolean, ByVal UserControlValue As Boolean, ByVal ModeValue As CCRightToLeftModeConstants)
+If Value = False Then Exit Sub
+Select Case ModeValue
+    Case CCRightToLeftModeNoControl
+    Case CCRightToLeftModeVBAME
+        Value = UserControlValue
+    Case CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        Const LOCALE_FONTSIGNATURE As Long = &H58, SORT_DEFAULT As Long = &H0
+        Dim LangID As Integer, LCID As Long, LocaleSig As TLOCALESIGNATURE
+        Select Case ModeValue
+            Case CCRightToLeftModeSystemLocale
+                LangID = GetSystemDefaultLangID()
+            Case CCRightToLeftModeUserLocale
+                LangID = GetUserDefaultLangID()
+            Case CCRightToLeftModeOSLanguage
+                LangID = GetUserDefaultUILanguage()
+        End Select
+        LCID = (SORT_DEFAULT * &H10000) Or LangID
+        If GetLocaleInfo(LCID, LOCALE_FONTSIGNATURE, VarPtr(LocaleSig), (LenB(LocaleSig) / 2)) <> 0 Then
+            ' Unicode subset bitfield 0 to 127. Bit 123 = Layout progress, horizontal from right to left
+            Value = CBool((LocaleSig.lsUsb(15) And (2 ^ (4 - 1))) <> 0)
+        End If
+End Select
+End Sub
+
+Public Sub ComCtlsSetRightToLeft(ByVal hWnd As Long, ByVal dwMask As Long)
+Const WS_EX_LAYOUTRTL As Long = &H400000, WS_EX_RTLREADING As Long = &H2000, WS_EX_RIGHT As Long = &H1000, WS_EX_LEFTSCROLLBAR As Long = &H4000
+' WS_EX_LAYOUTRTL will take care of both layout and reading order with the single flag and mirrors the window.
+Dim dwExStyle As Long
+dwExStyle = GetWindowLong(hWnd, GWL_EXSTYLE)
+If (dwExStyle And WS_EX_LAYOUTRTL) = WS_EX_LAYOUTRTL Then dwExStyle = dwExStyle And Not WS_EX_LAYOUTRTL
+If (dwExStyle And WS_EX_RTLREADING) = WS_EX_RTLREADING Then dwExStyle = dwExStyle And Not WS_EX_RTLREADING
+If (dwExStyle And WS_EX_RIGHT) = WS_EX_RIGHT Then dwExStyle = dwExStyle And Not WS_EX_RIGHT
+If (dwExStyle And WS_EX_LEFTSCROLLBAR) = WS_EX_LEFTSCROLLBAR Then dwExStyle = dwExStyle And Not WS_EX_LEFTSCROLLBAR
+If (dwMask And WS_EX_LAYOUTRTL) = WS_EX_LAYOUTRTL Then dwExStyle = dwExStyle Or WS_EX_LAYOUTRTL
+If (dwMask And WS_EX_RTLREADING) = WS_EX_RTLREADING Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
+If (dwMask And WS_EX_RIGHT) = WS_EX_RIGHT Then dwExStyle = dwExStyle Or WS_EX_RIGHT
+If (dwMask And WS_EX_LEFTSCROLLBAR) = WS_EX_LEFTSCROLLBAR Then dwExStyle = dwExStyle Or WS_EX_LEFTSCROLLBAR
+Const WS_POPUP As Long = &H80000000
+If (GetWindowLong(hWnd, GWL_STYLE) And WS_POPUP) = 0 Then
+    SetWindowLong hWnd, GWL_EXSTYLE, dwExStyle
+    InvalidateRect hWnd, ByVal 0&, 1
+    Call ComCtlsFrameChanged(hWnd)
+Else
+    ' ToolTip control supports only the WS_EX_LAYOUTRTL flag.
+    ' Set TTF_RTLREADING flag when dwMask contains WS_EX_RTLREADING, though WS_EX_RTLREADING will not be actually set.
+    If (dwExStyle And WS_EX_RTLREADING) = WS_EX_RTLREADING Then dwExStyle = dwExStyle And Not WS_EX_RTLREADING
+    If (dwExStyle And WS_EX_RIGHT) = WS_EX_RIGHT Then dwExStyle = dwExStyle And Not WS_EX_RIGHT
+    If (dwExStyle And WS_EX_LEFTSCROLLBAR) = WS_EX_LEFTSCROLLBAR Then dwExStyle = dwExStyle And Not WS_EX_LEFTSCROLLBAR
+    SetWindowLong hWnd, GWL_EXSTYLE, dwExStyle
+    Const TTM_SETTOOLINFOA As Long = (WM_USER + 9)
+    Const TTM_SETTOOLINFOW As Long = (WM_USER + 54)
+    Const TTM_SETTOOLINFO As Long = TTM_SETTOOLINFOW
+    Const TTM_GETTOOLCOUNT As Long = (WM_USER + 13)
+    Const TTM_ENUMTOOLSA As Long = (WM_USER + 14)
+    Const TTM_ENUMTOOLSW As Long = (WM_USER + 58)
+    Const TTM_ENUMTOOLS As Long = TTM_ENUMTOOLSW
+    Const TTM_UPDATE As Long = (WM_USER + 29)
+    Const TTF_RTLREADING As Long = &H4
+    Dim i As Long, TI As TOOLINFO, Buffer As String
+    With TI
+    .cbSize = LenB(TI)
+    Buffer = String(80, vbNullChar)
+    .lpszText = StrPtr(Buffer)
+    For i = 1 To SendMessage(hWnd, TTM_GETTOOLCOUNT, 0, ByVal 0&)
+        If SendMessage(hWnd, TTM_ENUMTOOLS, i - 1, ByVal VarPtr(TI)) <> 0 Then
+            If (dwMask And WS_EX_LAYOUTRTL) = WS_EX_LAYOUTRTL Or (dwMask And WS_EX_RTLREADING) = 0 Then
+                If (.uFlags And TTF_RTLREADING) = TTF_RTLREADING Then .uFlags = .uFlags And Not TTF_RTLREADING
+            Else
+                If (.uFlags And TTF_RTLREADING) = 0 Then .uFlags = .uFlags Or TTF_RTLREADING
+            End If
+            SendMessage hWnd, TTM_SETTOOLINFO, 0, ByVal VarPtr(TI)
+            SendMessage hWnd, TTM_UPDATE, 0, ByVal 0&
+        End If
+    Next i
+    End With
 End If
 End Sub
 
@@ -1023,7 +1137,7 @@ If PEHdr.Magic = IMAGE_NT_SIGNATURE Then
     lpIAT = PEHdr.DataDirectory(15).VirtualAddress + hMod
     IATLen = PEHdr.DataDirectory(15).Size
     IATPos = lpIAT
-    Do Until CLongToULong(IATPos) >= CLongToULong(UnsignedAdd(lpIAT, IATLen))
+    Do Until CLngToULng(IATPos) >= CLngToULng(UnsignedAdd(lpIAT, IATLen))
         If DeRef(IATPos) = OldLibFncAddr Then
             VirtualProtect IATPos, 4, PAGE_EXECUTE_READWRITE, 0
             CopyMemory ByVal IATPos, NewAddr, 4

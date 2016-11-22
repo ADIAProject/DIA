@@ -20,13 +20,8 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 #If False Then
-Private SpbOrientationVertical, SpbOrientationHorizontal
 Private SpbNumberStyleDecimal, SpbNumberStyleHexadecimal
 #End If
-Public Enum SpbOrientationConstants
-SpbOrientationVertical = 0
-SpbOrientationHorizontal = 1
-End Enum
 Public Enum SpbNumberStyleConstants
 SpbNumberStyleDecimal = 0
 SpbNumberStyleHexadecimal = 1
@@ -115,6 +110,7 @@ Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmd
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
@@ -122,10 +118,7 @@ Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
 Private Const ICC_UPDOWN_CLASS As Long = &H10
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
 Private Const GWL_STYLE As Long = (-16)
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
@@ -154,7 +147,6 @@ Private Const WM_CONTEXTMENU As Long = &H7B
 Private Const WM_NOTIFY As Long = &H4E
 Private Const WM_SHOWWINDOW As Long = &H18
 Private Const WM_SETFONT As Long = &H30
-Private Const WM_SETREDRAW As Long = &HB
 Private Const WM_SETCURSOR As Long = &H20, HTCLIENT As Long = 1
 Private Const WM_GETTEXTLENGTH As Long = &HE
 Private Const WM_GETTEXT As Long = &HD
@@ -178,7 +170,6 @@ Private Const UDS_ALIGNRIGHT As Long = &H4
 Private Const UDS_ALIGNLEFT As Long = &H8
 Private Const UDS_AUTOBUDDY As Long = &H10
 Private Const UDS_ARROWKEYS As Long = &H20
-Private Const UDS_HORZ As Long = &H40
 Private Const UDS_NOTHOUSANDS As Long = &H80
 Private Const UDS_HOTTRACK As Long = &H100
 Private Const WM_USER As Long = &H400
@@ -211,11 +202,12 @@ Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropMin As Long, PropMax As Long
 Private PropValue As Long, PropIncrement As Long
 Private PropWrap As Boolean
 Private PropHotTracking As Boolean
-Private PropOrientation As SpbOrientationConstants
 Private PropAlignment As CCLeftRightAlignmentConstants
 Private PropThousandsSeparator As Boolean
 Private PropNumberStyle As SpbNumberStyleConstants
@@ -284,19 +276,21 @@ Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropMin = 0
 PropMax = 100
 PropValue = 0
 PropIncrement = 1
 PropWrap = False
 PropHotTracking = True
-PropOrientation = SpbOrientationVertical
-PropAlignment = CCLeftRightAlignmentRight
+If PropRightToLeft = False Then PropAlignment = CCLeftRightAlignmentRight Else PropAlignment = CCLeftRightAlignmentLeft
 PropThousandsSeparator = True
 PropNumberStyle = SpbNumberStyleDecimal
 PropArrowKeysChange = True
 PropAllowOnlyNumbers = False
-PropTextAlignment = vbLeftJustify
+If PropRightToLeft = False Then PropTextAlignment = vbLeftJustify Else PropTextAlignment = vbRightJustify
 PropLocked = False
 PropHideSelection = True
 Call CreateSpinBox
@@ -312,13 +306,15 @@ Me.Enabled = .ReadProperty("Enabled", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropMin = .ReadProperty("Min", 0)
 PropMax = .ReadProperty("Max", 100)
 PropValue = .ReadProperty("Value", 0)
 PropIncrement = .ReadProperty("Increment", 1)
 PropWrap = .ReadProperty("Wrap", False)
 PropHotTracking = .ReadProperty("HotTracking", True)
-PropOrientation = .ReadProperty("Orientation", SpbOrientationVertical)
 PropAlignment = .ReadProperty("Alignment", CCLeftRightAlignmentRight)
 PropThousandsSeparator = .ReadProperty("ThousandsSeparator", True)
 PropNumberStyle = .ReadProperty("NumberStyle", SpbNumberStyleDecimal)
@@ -341,13 +337,14 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Min", PropMin, 0
 .WriteProperty "Max", PropMax, 100
 .WriteProperty "Value", PropValue, 0
 .WriteProperty "Increment", PropIncrement, 1
 .WriteProperty "Wrap", PropWrap, False
 .WriteProperty "HotTracking", PropHotTracking, True
-.WriteProperty "Orientation", PropOrientation, SpbOrientationVertical
 .WriteProperty "Alignment", PropAlignment, CCLeftRightAlignmentRight
 .WriteProperty "ThousandsSeparator", PropThousandsSeparator, True
 .WriteProperty "NumberStyle", PropNumberStyle, SpbNumberStyleDecimal
@@ -691,6 +688,47 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If PropRightToLeft = True Then dwMask = WS_EX_RTLREADING
+If SpinBoxEditHandle <> 0 Then
+    Call ComCtlsSetRightToLeft(SpinBoxEditHandle, dwMask)
+    If PropRightToLeft = False Then
+        If PropAlignment = CCLeftRightAlignmentLeft Then Me.Alignment = CCLeftRightAlignmentRight
+        If PropTextAlignment = vbRightJustify Then Me.TextAlignment = vbLeftJustify
+    Else
+        If PropAlignment = CCLeftRightAlignmentRight Then Me.Alignment = CCLeftRightAlignmentLeft
+        If PropTextAlignment = vbLeftJustify Then Me.TextAlignment = vbRightJustify
+    End If
+End If
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
+End Property
+
 Public Property Get Min() As Long
 Attribute Min.VB_Description = "Returns/sets the minimum value."
 If SpinBoxUpDownHandle <> 0 Then
@@ -813,22 +851,6 @@ Public Property Let HotTracking(ByVal Value As Boolean)
 PropHotTracking = Value
 If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
 UserControl.PropertyChanged "HotTracking"
-End Property
-
-Public Property Get Orientation() As SpbOrientationConstants
-Attribute Orientation.VB_Description = "Returns/sets the orientation."
-Orientation = PropOrientation
-End Property
-
-Public Property Let Orientation(ByVal Value As SpbOrientationConstants)
-Select Case Value
-    Case SpbOrientationVertical, SpbOrientationHorizontal
-        PropOrientation = Value
-    Case Else
-        Err.Raise 380
-End Select
-If SpinBoxUpDownHandle <> 0 Then Call ReCreateSpinBox
-UserControl.PropertyChanged "Orientation"
 End Property
 
 Public Property Get Alignment() As CCLeftRightAlignmentConstants
@@ -974,9 +996,11 @@ Private Sub CreateSpinBox()
 If SpinBoxUpDownHandle <> 0 Or SpinBoxEditHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwStyleEdit As Long, dwExStyleEdit As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or UDS_SETBUDDYINT
+dwStyleEdit = WS_CHILD Or WS_VISIBLE
+dwExStyleEdit = WS_EX_CLIENTEDGE
+If PropRightToLeft = True Then dwExStyleEdit = dwExStyleEdit Or WS_EX_RTLREADING
 If PropWrap = True Then dwStyle = dwStyle Or UDS_WRAP
 If PropHotTracking = True Then dwStyle = dwStyle Or UDS_HOTTRACK
-If PropOrientation = SpbOrientationHorizontal Then dwStyle = dwStyle Or UDS_HORZ
 Select Case PropAlignment
     Case CCLeftRightAlignmentLeft
         dwStyle = dwStyle Or UDS_ALIGNLEFT
@@ -985,7 +1009,6 @@ Select Case PropAlignment
 End Select
 If PropThousandsSeparator = False Then dwStyle = dwStyle Or UDS_NOTHOUSANDS
 If PropArrowKeysChange = True Then dwStyle = dwStyle Or UDS_ARROWKEYS
-dwStyleEdit = WS_CHILD Or WS_VISIBLE
 If PropAllowOnlyNumbers = True Then dwStyleEdit = dwStyleEdit Or ES_NUMBER
 Select Case PropTextAlignment
     Case vbLeftJustify
@@ -997,8 +1020,6 @@ Select Case PropTextAlignment
 End Select
 If PropLocked = True Then dwStyleEdit = dwStyleEdit Or ES_READONLY
 If PropHideSelection = False Then dwStyleEdit = dwStyleEdit Or ES_NOHIDESEL
-dwExStyleEdit = WS_EX_CLIENTEDGE
-If Ambient.RightToLeft = True Then dwExStyleEdit = dwExStyleEdit Or WS_EX_RTLREADING
 SpinBoxEditHandle = CreateWindowEx(dwExStyleEdit, StrPtr("Edit"), 0, dwStyleEdit, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If SpinBoxEditHandle <> 0 Then
     SpinBoxUpDownHandle = CreateWindowEx(0, StrPtr("msctls_updown32"), StrPtr("Up Down"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
@@ -1023,10 +1044,9 @@ End Sub
 
 Private Sub ReCreateSpinBox()
 If Ambient.UserMode = True Then
-    Dim Visible As Boolean
-    Visible = Extender.Visible
+    Dim Locked As Boolean
     With Me
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Locked = CBool(LockWindowUpdate(UserControl.hWnd) <> 0)
     Dim Text As String, SelStart As Long, SelEnd As Long
     Text = .Text
     If SpinBoxEditHandle <> 0 Then SendMessage SpinBoxEditHandle, EM_GETSEL, VarPtr(SelStart), ByVal VarPtr(SelEnd)
@@ -1035,7 +1055,7 @@ If Ambient.UserMode = True Then
     Call UserControl_Resize
     .Text = Text
     If SpinBoxEditHandle <> 0 Then SendMessage SpinBoxEditHandle, EM_SETSEL, SelStart, ByVal SelEnd
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    If Locked = True Then LockWindowUpdate 0
     .Refresh
     End With
 Else

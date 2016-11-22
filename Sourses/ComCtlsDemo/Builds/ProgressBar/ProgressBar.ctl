@@ -115,6 +115,7 @@ Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Private Declare Function SetParent Lib "user32" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
@@ -122,12 +123,10 @@ Private Const ICC_PROGRESS_CLASS As Long = &H20
 Private Const CLSID_ITaskBarList As String = "{56FDF344-FD6D-11D0-958A-006097C9A090}"
 Private Const IID_ITaskBarList3 As String = "{EA1AFB91-9E28-4B86-90E9-9E9F8A5EEFAF}"
 Private Const CLSCTX_INPROC_SERVER As Long = 1, S_OK As Long = 0
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
+Private Const WS_EX_LAYOUTRTL As Long = &H400000
 Private Const SW_HIDE As Long = &H0
 Private Const GA_ROOT As Long = 2
 Private Const WM_LBUTTONDOWN As Long = &H201
@@ -137,7 +136,6 @@ Private Const WM_MBUTTONUP As Long = &H208
 Private Const WM_RBUTTONDOWN As Long = &H204
 Private Const WM_RBUTTONUP As Long = &H205
 Private Const WM_MOUSEMOVE As Long = &H200
-Private Const WM_SETREDRAW As Long = &HB
 Private Const WM_SETCURSOR As Long = &H20, HTCLIENT As Long = 1
 Private Const CCM_FIRST As Long = &H2000
 Private Const CCM_SETBKCOLOR As Long = (CCM_FIRST + 1)
@@ -168,6 +166,9 @@ Private ProgressBarIsClick As Boolean
 Private DispIDMousePointer As Long
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftLayout As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropRange As PBRANGE
 Private PropValue As Long
 Private PropStep As Integer, PropStepAutoReset As Boolean
@@ -211,6 +212,10 @@ End Sub
 Private Sub UserControl_InitProperties()
 PropVisualStyles = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftLayout = False
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropRange.Min = 0
 PropRange.Max = 100
 PropValue = 0
@@ -235,6 +240,10 @@ Me.Enabled = .ReadProperty("Enabled", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftLayout = .ReadProperty("RightToLeftLayout", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropRange.Min = .ReadProperty("Min", 0)
 PropRange.Max = .ReadProperty("Max", 100)
 PropValue = .ReadProperty("Value", 0)
@@ -260,6 +269,9 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftLayout", PropRightToLeftLayout, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Min", PropRange.Min, 0
 .WriteProperty "Max", PropRange.Max, 100
 .WriteProperty "Value", PropValue, 0
@@ -566,6 +578,50 @@ End If
 UserControl.PropertyChanged "MouseIcon"
 End Property
 
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If PropRightToLeft = True And PropRightToLeftLayout = True Then dwMask = WS_EX_LAYOUTRTL
+If Ambient.UserMode = True Then Call ComCtlsSetRightToLeft(UserControl.hWnd, dwMask)
+If ProgressBarHandle <> 0 Then Call ComCtlsSetRightToLeft(ProgressBarHandle, dwMask)
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftLayout() As Boolean
+Attribute RightToLeftLayout.VB_Description = "Returns/sets a value indicating if right-to-left mirror placement is turned on."
+RightToLeftLayout = PropRightToLeftLayout
+End Property
+
+Public Property Let RightToLeftLayout(ByVal Value As Boolean)
+PropRightToLeftLayout = Value
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftLayout"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
+End Property
+
 Public Property Get Min() As Long
 Attribute Min.VB_Description = "Returns/sets the minimum position."
 If ProgressBarHandle <> 0 Then
@@ -808,15 +864,16 @@ End Property
 
 Private Sub CreateProgressBar()
 If ProgressBarHandle <> 0 Then Exit Sub
-Dim dwStyle As Long
+Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE
+If PropRightToLeft = True And PropRightToLeftLayout = True Then dwExStyle = dwExStyle Or WS_EX_LAYOUTRTL
 If PropOrientation = PrbOrientationVertical Then dwStyle = dwStyle Or PBS_VERTICAL
 If PropScrolling = PrbScrollingSmooth Then dwStyle = dwStyle Or PBS_SMOOTH
 If ComCtlsSupportLevel() >= 1 Then
     If PropMarquee = True Then dwStyle = dwStyle Or PBS_MARQUEE
     If PropSmoothReverse = True Then dwStyle = dwStyle Or PBS_SMOOTHREVERSE
 End If
-ProgressBarHandle = CreateWindowEx(0, StrPtr("msctls_progress32"), StrPtr("Progress Bar"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
+ProgressBarHandle = CreateWindowEx(dwExStyle, StrPtr("msctls_progress32"), StrPtr("Progress Bar"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETRANGE32, PropRange.Min, ByVal PropRange.Max
 Me.VisualStyles = PropVisualStyles
 Me.Value = PropValue
@@ -832,13 +889,12 @@ End Sub
 
 Private Sub ReCreateProgressBar()
 If Ambient.UserMode = True Then
-    Dim Visible As Boolean
-    Visible = Extender.Visible
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Dim Locked As Boolean
+    Locked = CBool(LockWindowUpdate(UserControl.hWnd) <> 0)
     Call DestroyProgressBar
     Call CreateProgressBar
     Call UserControl_Resize
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    If Locked = True Then LockWindowUpdate 0
     Me.Refresh
 Else
     Call DestroyProgressBar

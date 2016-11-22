@@ -341,6 +341,13 @@ hdr As NMHDR
 iItem As Long
 RC As RECT
 End Type
+Private Type NMTTDISPINFO
+hdr As NMHDR
+lpszText As Long
+szText(0 To ((80 * 2) - 1)) As Byte
+hInst As Long
+uFlags As Long
+End Type
 Private Type HDITEM
 Mask As Long
 CXY As Long
@@ -474,12 +481,10 @@ Private Declare Function ImageList_GetIconSize Lib "comctl32" (ByVal hImageList 
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
-Private Declare Function GetClassName Lib "user32" Alias "GetClassNameW" (ByVal hWnd As Long, ByVal lpClassName As Long, ByVal nMaxCount As Long) As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function SetParent Lib "user32" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
-Private Declare Function GetParent Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Private Declare Function GetFocus Lib "user32" () As Long
@@ -489,27 +494,23 @@ Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Lon
 Private Declare Function SetTextColor Lib "gdi32" (ByVal hDC As Long, ByVal crColor As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function GetCursorPos Lib "user32" (ByRef lpPoint As POINTAPI) As Long
+Private Declare Function GetMessagePos Lib "user32" () As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function GetClientRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
 Private Declare Function MapWindowPoints Lib "user32" (ByVal hWndFrom As Long, ByVal hWndTo As Long, ByRef lppt As Any, ByVal cPoints As Long) As Long
-Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
 Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
 Private Declare Function UpdateWindow Lib "user32" (ByVal hWnd As Long) As Long
 Private Const ICC_LISTVIEW_CLASSES As Long = &H1
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
 Private Const GWL_STYLE As Long = (-16)
-Private Const GWL_EXSTYLE As Long = (-20)
 Private Const CF_UNICODETEXT As Long = 13
 Private Const MAXINT_4 As Long = 2147483647
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
-Private Const WS_EX_RTLREADING As Long = &H2000
+Private Const WS_EX_LAYOUTRTL As Long = &H400000, WS_EX_RTLREADING As Long = &H2000
 Private Const WS_HSCROLL As Long = &H100000
 Private Const WS_VSCROLL As Long = &H200000
 Private Const WM_VSCROLL As Long = &H115
@@ -517,7 +518,6 @@ Private Const WM_HSCROLL As Long = &H114
 Private Const SB_LINELEFT As Long = 0, SB_LINERIGHT As Long = 1
 Private Const SB_LINEUP As Long = 0, SB_LINEDOWN As Long = 1
 Private Const WM_MOUSEACTIVATE As Long = &H21, MA_NOACTIVATE As Long = &H3, MA_NOACTIVATEANDEAT As Long = &H4, HTBORDER As Long = 18
-Private Const WM_MOUSEWHEEL As Long = &H20A
 Private Const SW_HIDE As Long = &H0
 Private Const SW_SHOW As Long = &H5
 Private Const WM_NOTIFY As Long = &H4E
@@ -767,7 +767,6 @@ Private Const LVKF_SHIFT As Long = &H4
 Private Const LVBKIF_SOURCE_NONE As Long = &H0
 Private Const LVBKIF_SOURCE_HBITMAP As Long = &H1
 Private Const LVBKIF_SOURCE_URL As Long = &H2
-Private Const LVBKIF_SOURCE_MASK As Long = &H3
 Private Const LVBKIF_STYLE_NORMAL As Long = &H0
 Private Const LVBKIF_STYLE_TILE As Long = &H10
 Private Const LVBKIF_TYPE_WATERMARK As Long = &H10000000
@@ -806,13 +805,14 @@ Private Const HDM_CLEARFILTER As Long = (HDM_FIRST + 24)
 Private Const HDM_GETFOCUSEDITEM As Long = (HDM_FIRST + 27)
 Private Const HDSIL_NORMAL As Long = 0
 Private Const HDSIL_STATE As Long = 0
+Private Const HDI_FORMAT As Long = &H4
 Private Const HDI_FILTER As Long = &H100
 Private Const HDFT_ISSTRING As Long = &H0
 Private Const HDFT_ISNUMBER As Long = &H1
 Private Const HDFT_HASNOVALUE As Long = &H8000&
+Private Const HDF_RTLREADING As Long = &H4
 Private Const HDF_SORTDOWN As Long = &H200
 Private Const HDF_SORTUP As Long = &H400
-Private Const HDF_BITMAP_ON_RIGHT As Long = &H1000
 Private Const HDF_FIXEDWIDTH As Long = &H100
 Private Const HDF_SPLITBUTTON As Long = &H1000000
 Private Const HDF_CHECKBOX As Long = &H40
@@ -839,6 +839,12 @@ Private Const HDN_BEGINFILTEREDIT As Long = (HDN_FIRST - 14)
 Private Const HDN_ENDFILTEREDIT As Long = (HDN_FIRST - 15)
 Private Const HDN_ITEMSTATEICONCLICK As Long = (HDN_FIRST - 16)
 Private Const HDN_DROPDOWN As Long = (HDN_FIRST - 18)
+Private Const TTF_RTLREADING As Long = &H4
+Private Const TTN_FIRST As Long = (-520)
+Private Const TTN_GETDISPINFOA As Long = (TTN_FIRST - 0)
+Private Const TTN_GETDISPINFOW As Long = (TTN_FIRST - 10)
+Private Const TTN_GETDISPINFO As Long = TTN_GETDISPINFOW
+Private Const TTN_SHOW As Long = (TTN_FIRST - 1)
 Private Const LVCF_FMT As Long = &H1
 Private Const LVCF_WIDTH As Long = &H2
 Private Const LVCF_TEXT As Long = &H4
@@ -919,21 +925,16 @@ Private Const LVS_NOLABELWRAP As Long = &H80
 Private Const LVS_AUTOARRANGE As Long = &H100
 Private Const LVS_EDITLABELS As Long = &H200
 Private Const LVS_OWNERDATA As Long = &H1000
-Private Const LVS_NOSCROLL As Long = &H2000
-Private Const LVS_TYPESTYLEMASK As Long = &HFC00
 Private Const LVS_ALIGNTOP As Long = &H0
 Private Const LVS_ALIGNLEFT As Long = &H800
-Private Const LVS_ALIGNMASK As Long = &HC00
 Private Const LVS_OWNERDRAWFIXED As Long = &H400
 Private Const LVS_NOCOLUMNHEADER As Long = &H4000
 Private Const LVS_NOSORTHEADER As Long = &H8000&
 Private Const LVS_EX_GRIDLINES As Long = &H1
 Private Const LVS_EX_HEADERDRAGDROP As Long = &H10
-Private Const LVS_EX_FLATSB As Long = &H100
 Private Const LVS_EX_DOUBLEBUFFER As Long = &H10000
 Private Const LVS_EX_SUBITEMIMAGES As Long = &H2
 Private Const LVS_EX_FULLROWSELECT As Long = &H20
-Private Const LVS_EX_REGIONAL As Long = &H200
 Private Const LVS_EX_CHECKBOXES As Long = &H4
 Private Const LVS_EX_ONECLICKACTIVATE As Long = &H40
 Private Const LVS_EX_INFOTIP As Long = &H400
@@ -953,7 +954,7 @@ Private Const LV_VIEW_TILE As Long = &H4
 Implements ISubclass
 Implements OLEGuids.IOleInPlaceActiveObjectVB
 Implements OLEGuids.IPerPropertyBrowsingVB
-Private ListViewHandle As Long, ListViewHeaderHandle As Long
+Private ListViewHandle As Long, ListViewHeaderHandle As Long, ListViewToolTipHandle As Long
 Private ListViewFontHandle As Long, ListViewBoldFontHandle As Long, ListViewUnderlineFontHandle As Long, ListViewBoldUnderlineFontHandle As Long
 Private ListViewCharCodeCache As Long
 Private ListViewFocusIndex As Long
@@ -983,6 +984,9 @@ Private PropOLEDragMode As VBRUN.OLEDragConstants
 Private PropOLEDragDropScroll As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
 Private PropHotMousePointer As Integer, PropHotMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftLayout As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropIconsName As String, PropIconsControl As Object, PropIconsInit As Boolean
 Private PropSmallIconsName As String, PropSmallIconsControl As Object, PropSmallIconsInit As Boolean
 Private PropColumnHeaderIconsName As String, PropColumnHeaderIconsControl As Object, PropColumnHeaderIconsInit As Boolean
@@ -1151,6 +1155,10 @@ PropOLEDragDropScroll = True
 Me.OLEDropMode = vbOLEDropNone
 PropMousePointer = 0: Set PropMouseIcon = Nothing
 PropHotMousePointer = 0: Set PropHotMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftLayout = False
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropIconsName = "(None)": Set PropIconsControl = Nothing
 PropSmallIconsName = "(None)": Set PropSmallIconsControl = Nothing
 PropColumnHeaderIconsName = "(None)": Set PropColumnHeaderIconsControl = Nothing
@@ -1219,6 +1227,10 @@ PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
 PropHotMousePointer = .ReadProperty("HotMousePointer", 0)
 Set PropHotMouseIcon = .ReadProperty("HotMouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftLayout = .ReadProperty("RightToLeftLayout", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropIconsName = .ReadProperty("Icons", "(None)")
 PropSmallIconsName = .ReadProperty("SmallIcons", "(None)")
 PropColumnHeaderIconsName = .ReadProperty("ColumnHeaderIcons", "(None)")
@@ -1289,6 +1301,9 @@ With PropBag
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
 .WriteProperty "HotMousePointer", PropHotMousePointer, 0
 .WriteProperty "HotMouseIcon", PropHotMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftLayout", PropRightToLeftLayout, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "Icons", PropIconsName, "(None)"
 .WriteProperty "SmallIcons", PropSmallIconsName, "(None)"
 .WriteProperty "ColumnHeaderIcons", PropColumnHeaderIconsName, "(None)"
@@ -1716,6 +1731,7 @@ If ListViewHandle <> 0 And EnabledVisualStyles() = True Then
         RemoveVisualStyles ListViewHandle
     End If
     Call SetVisualStylesHeader
+    Call SetVisualStylesToolTip
     SendMessage ListViewHandle, LVM_UPDATE, 0, ByVal 0&
     Me.Refresh
     If ComCtlsSupportLevel() >= 2 Then
@@ -1895,6 +1911,71 @@ If ListViewHandle <> 0 Then
     End If
 End If
 UserControl.PropertyChanged "HotMouseIcon"
+End Property
+
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If Ambient.UserMode = True Then
+    If PropRightToLeft = True And PropRightToLeftLayout = True Then dwMask = WS_EX_LAYOUTRTL
+    Call ComCtlsSetRightToLeft(UserControl.hWnd, dwMask)
+    dwMask = 0
+End If
+If PropRightToLeft = True Then
+    If PropRightToLeftLayout = True Then dwMask = WS_EX_LAYOUTRTL Else dwMask = WS_EX_RTLREADING
+End If
+If ListViewHandle <> 0 Then Call ComCtlsSetRightToLeft(ListViewHandle, dwMask)
+If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
+If ListViewHeaderHandle <> 0 Then
+    If PropRightToLeft = True And PropRightToLeftLayout = True Then dwMask = WS_EX_LAYOUTRTL Else dwMask = 0
+    Call ComCtlsSetRightToLeft(ListViewHeaderHandle, dwMask)
+    If Me.ColumnHeaders.Count > 0 Then
+        Dim i As Long
+        For i = 1 To Me.ColumnHeaders.Count
+            Call SetColumnRTLReading(i, CBool(PropRightToLeft = True And PropRightToLeftLayout = False))
+        Next i
+    End If
+End If
+If ListViewToolTipHandle <> 0 Then
+    If PropRightToLeft = True And PropRightToLeftLayout = True Then dwMask = WS_EX_LAYOUTRTL Else dwMask = 0
+    Call ComCtlsSetRightToLeft(ListViewToolTipHandle, dwMask)
+End If
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftLayout() As Boolean
+Attribute RightToLeftLayout.VB_Description = "Returns/sets a value indicating if right-to-left mirror placement is turned on."
+RightToLeftLayout = PropRightToLeftLayout
+End Property
+
+Public Property Let RightToLeftLayout(ByVal Value As Boolean)
+PropRightToLeftLayout = Value
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftLayout"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
 End Property
 
 Public Property Get Icons() As Variant
@@ -3503,6 +3584,12 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 1 Then
                                     Arr(Count) = ArgList(i)
                                     Count = Count + 1
                                 End If
+                            Case vbDouble, vbSingle
+                                If CLng(ArgList(i)) > 0 Then
+                                    ReDim Preserve Arr(0 To Count) As Long
+                                    Arr(Count) = CLng(ArgList(i))
+                                    Count = Count + 1
+                                End If
                         End Select
                     Next i
                     If Count > 0 Then
@@ -3652,6 +3739,7 @@ If ListViewHandle <> 0 Then
         If Alignment <> LvwColumnHeaderAlignmentLeft Then Me.FColumnHeaderAlignment(1) = Alignment
     End If
     Call SetColumnsSubItemIndex(1)
+    If PropRightToLeft = True And PropRightToLeftLayout = False Then Call SetColumnRTLReading(ColumnHeaderIndex, True)
     Call RebuildListItems
     If PropRedraw = True Then SendMessage ListViewHandle, WM_SETREDRAW, 1, ByVal 0&
 End If
@@ -3889,7 +3977,7 @@ If ListViewHandle <> 0 Then
     With LVC
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-    FColumnHeaderIconOnRight = CBool((.fmt And HDF_BITMAP_ON_RIGHT) = HDF_BITMAP_ON_RIGHT)
+    FColumnHeaderIconOnRight = CBool((.fmt And LVCFMT_BITMAP_ON_RIGHT) = LVCFMT_BITMAP_ON_RIGHT)
     End With
 End If
 End Property
@@ -3901,9 +3989,9 @@ If ListViewHandle <> 0 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        If Not (.fmt And HDF_BITMAP_ON_RIGHT) = HDF_BITMAP_ON_RIGHT Then .fmt = .fmt Or HDF_BITMAP_ON_RIGHT
+        If Not (.fmt And LVCFMT_BITMAP_ON_RIGHT) = LVCFMT_BITMAP_ON_RIGHT Then .fmt = .fmt Or LVCFMT_BITMAP_ON_RIGHT
     Else
-        If (.fmt And HDF_BITMAP_ON_RIGHT) = HDF_BITMAP_ON_RIGHT Then .fmt = .fmt And Not HDF_BITMAP_ON_RIGHT
+        If (.fmt And LVCFMT_BITMAP_ON_RIGHT) = LVCFMT_BITMAP_ON_RIGHT Then .fmt = .fmt And Not LVCFMT_BITMAP_ON_RIGHT
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -4136,6 +4224,9 @@ If ListViewHandle <> 0 Then
                 Select Case VarType(Value)
                     Case vbLong, vbInteger, vbByte
                         LngValue = Value
+                        .pvFilter = VarPtr(LngValue)
+                    Case vbDouble, vbSingle
+                        LngValue = CLng(Value)
                         .pvFilter = VarPtr(LngValue)
                     Case vbNull, vbEmpty
                         .FilterType = .FilterType Or HDFT_HASNOVALUE
@@ -4847,6 +4938,13 @@ Private Sub CreateListView()
 If ListViewHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or LVS_SHAREIMAGELISTS
+If PropRightToLeft = True Then
+    If PropRightToLeftLayout = True Then
+        dwExStyle = dwExStyle Or WS_EX_LAYOUTRTL
+    Else
+        dwExStyle = dwExStyle Or WS_EX_RTLREADING
+    End If
+End If
 Call ComCtlsInitBorderStyle(dwStyle, dwExStyle, PropBorderStyle)
 If Ambient.UserMode = True Then
     If ComCtlsSupportLevel() = 0 And PropView = LvwViewTile Then PropView = LvwViewIcon
@@ -4878,8 +4976,8 @@ If PropLabelEdit <> LvwLabelEditDisabled Then dwStyle = dwStyle Or LVS_EDITLABEL
 If PropLabelWrap = False Then dwStyle = dwStyle Or LVS_NOLABELWRAP
 If PropHideSelection = False Then dwStyle = dwStyle Or LVS_SHOWSELALWAYS
 If PropHideColumnHeaders = True Then dwStyle = dwStyle Or LVS_NOCOLUMNHEADER
-If Ambient.RightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 ListViewHandle = CreateWindowEx(dwExStyle, StrPtr("SysListView32"), StrPtr("List View"), dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
+If ListViewHandle <> 0 Then ListViewToolTipHandle = SendMessage(ListViewHandle, LVM_GETTOOLTIPS, 0, ByVal 0&)
 If PropView = LvwViewReport Then
     ListViewHeaderHandle = Me.hWndHeader
     If ListViewHeaderHandle <> 0 Then Call ComCtlsSetSubclass(ListViewHeaderHandle, Me, 4)
@@ -5574,6 +5672,12 @@ If ListViewHandle <> 0 Then
                                     Arr(Count) = ArgList(i)
                                     Count = Count + 1
                                 End If
+                            Case vbDouble, vbSingle
+                                If CLng(ArgList(i)) >= 0 Then
+                                    ReDim Preserve Arr(0 To Count) As Long
+                                    Arr(Count) = CLng(ArgList(i))
+                                    Count = Count + 1
+                                End If
                         End Select
                     Next i
                     If Count > 0 Then
@@ -5692,6 +5796,12 @@ If ListViewHandle <> 0 Then
                                     Arr(Count) = ArgList(i)
                                     Count = Count + 1
                                 End If
+                            Case vbDouble, vbSingle
+                                If CLng(ArgList(i)) >= 0 Then
+                                    ReDim Preserve Arr(0 To Count) As Long
+                                    Arr(Count) = CLng(ArgList(i))
+                                    Count = Count + 1
+                                End If
                         End Select
                     Next i
                     If Count > 0 Then
@@ -5745,6 +5855,18 @@ If ListViewHandle <> 0 Then
 End If
 End Sub
 
+Private Sub SetVisualStylesToolTip()
+If ListViewHandle <> 0 Then
+    If ListViewToolTipHandle <> 0 And EnabledVisualStyles() = True Then
+        If PropVisualStyles = True Then
+            ActivateVisualStyles ListViewToolTipHandle
+        Else
+            RemoveVisualStyles ListViewToolTipHandle
+        End If
+    End If
+End If
+End Sub
+
 Private Sub SetColumnsSubItemIndex(Optional ByVal CountOffset As Long)
 If ListViewHandle = 0 Then Exit Sub
 If (Me.ColumnHeaders.Count + CountOffset) > 0 Then
@@ -5756,6 +5878,24 @@ If (Me.ColumnHeaders.Count + CountOffset) > 0 Then
         SendMessage ListViewHandle, LVM_SETCOLUMN, i - 1, ByVal VarPtr(LVC)
     Next i
 End If
+End Sub
+
+Private Sub SetColumnRTLReading(ByVal ColumnHeaderIndex As Long, ByVal Value As Boolean)
+If ListViewHeaderHandle = 0 Then ListViewHeaderHandle = Me.hWndHeader
+If ListViewHeaderHandle = 0 Then Exit Sub
+Dim HDI As HDITEM
+With HDI
+.Mask = HDI_FORMAT
+SendMessage ListViewHeaderHandle, HDM_GETITEM, ColumnHeaderIndex - 1, ByVal VarPtr(HDI)
+If Not Value = CBool((.fmt And HDF_RTLREADING) = HDF_RTLREADING) Then
+    If Value = True Then
+        If Not (.fmt And HDF_RTLREADING) = HDF_RTLREADING Then .fmt = .fmt Or HDF_RTLREADING
+    Else
+        If (.fmt And HDF_RTLREADING) = HDF_RTLREADING Then .fmt = .fmt And Not HDF_RTLREADING
+    End If
+    SendMessage ListViewHeaderHandle, HDM_SETITEM, ColumnHeaderIndex - 1, ByVal VarPtr(HDI)
+End If
+End With
 End Sub
 
 Private Sub RebuildListItems()
@@ -6205,6 +6345,70 @@ Select Case wMsg
                             Exit Function
                     End Select
             End Select
+        ElseIf NM.hWndFrom = ListViewToolTipHandle And ListViewToolTipHandle <> 0 Then
+            Static ShowSubInfoTip As Boolean
+            Select Case NM.Code
+                Case TTN_GETDISPINFO
+                    Dim NMTTDI As NMTTDISPINFO
+                    CopyMemory NMTTDI, ByVal lParam, LenB(NMTTDI)
+                    If PropRightToLeft = True And PropRightToLeftLayout = False Then
+                        If (NMTTDI.uFlags And TTF_RTLREADING) = 0 Then NMTTDI.uFlags = NMTTDI.uFlags Or TTF_RTLREADING
+                        CopyMemory ByVal lParam, NMTTDI, LenB(NMTTDI)
+                    End If
+                    ShowSubInfoTip = False
+                    If PropView = LvwViewReport Then
+                        Dim LVHTI As LVHITTESTINFO, Pos As Long
+                        With LVHTI
+                        Pos = GetMessagePos()
+                        .PT.X = Get_X_lParam(Pos)
+                        .PT.Y = Get_Y_lParam(Pos)
+                        ScreenToClient hWnd, .PT
+                        If SendMessage(hWnd, LVM_SUBITEMHITTEST, 0, ByVal VarPtr(LVHTI)) > -1 Then
+                            If (.Flags And LVHT_ONITEM) <> 0 And .iSubItem > 0 Then
+                                Dim Text As String, Length As Long
+                                If (SendMessage(hWnd, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, ByVal 0&) And LVS_EX_LABELTIP) = LVS_EX_LABELTIP Then
+                                    WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
+                                    CopyMemory NMTTDI, ByVal lParam, LenB(NMTTDI)
+                                    With NMTTDI
+                                    If .lpszText <> 0 Then Length = lstrlen(.lpszText)
+                                    If Length > 0 Then
+                                        Text = String(Length, vbNullChar)
+                                        CopyMemory ByVal StrPtr(Text), ByVal .lpszText, Length * 2
+                                    Else
+                                        Text = Left$(.szText(), InStr(.szText(), vbNullChar) - 1)
+                                    End If
+                                    End With
+                                End If
+                                If Text = vbNullString Then
+                                    Text = Me.ListItems(.iItem + 1).ListSubItems(.iSubItem).ToolTipText
+                                    If Not Text = vbNullString Then
+                                        With NMTTDI
+                                        If Len(Text) <= 80 Then
+                                            Text = Left$(Text & vbNullChar, 80)
+                                            CopyMemory .szText(0), ByVal StrPtr(Text), LenB(Text)
+                                        Else
+                                            Erase .szText()
+                                        End If
+                                        .lpszText = StrPtr(Text) ' Apparently the string address must be always set.
+                                        .hInst = 0
+                                        End With
+                                        CopyMemory ByVal lParam, NMTTDI, LenB(NMTTDI)
+                                        ShowSubInfoTip = True
+                                    End If
+                                End If
+                                Exit Function
+                            End If
+                        End If
+                        End With
+                    End If
+                Case TTN_SHOW
+                    If (PropView <> LvwViewIcon And (SendMessage(hWnd, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, ByVal 0&) And LVS_EX_LABELTIP) = 0) _
+                    Or ShowSubInfoTip = True Then
+                        ' To display the ToolTip in its default location, return zero.
+                        WindowProcControl = 0
+                        Exit Function
+                    End If
+            End Select
         End If
     Case UM_BUTTONDOWN
         ' The control enters a modal message loop on WM_LBUTTONDOWN and WM_RBUTTONDOWN. (DragDetect)
@@ -6534,15 +6738,19 @@ Select Case wMsg
                     CopyMemory NMLVGIT, ByVal lParam, LenB(NMLVGIT)
                     With NMLVGIT
                     If .iItem > -1 And .pszText <> 0 Then
-                        If .dwFlags = LVGIT_UNFOLDED Then
+                        If .iSubItem = 0 Then
                             Dim ToolTipText As String
-                            ToolTipText = Me.ListItems(.iItem + 1).ToolTipText
-                            If Not ToolTipText = vbNullString Then
-                                ToolTipText = Left$(ToolTipText, .cchTextMax - 1) & vbNullChar
-                                CopyMemory ByVal .pszText, ByVal StrPtr(ToolTipText), LenB(ToolTipText)
-                            Else
-                                CopyMemory ByVal .pszText, 0&, 4
+                            If .dwFlags = LVGIT_UNFOLDED Or (PropView <> LvwViewIcon And (SendMessage(ListViewHandle, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, ByVal 0&) And LVS_EX_LABELTIP) = 0) Then
+                                ToolTipText = Me.ListItems(.iItem + 1).ToolTipText
+                                If Not ToolTipText = vbNullString Then
+                                    ToolTipText = Left$(ToolTipText, .cchTextMax - 1) & vbNullChar
+                                    CopyMemory ByVal .pszText, ByVal StrPtr(ToolTipText), LenB(ToolTipText)
+                                Else
+                                    CopyMemory ByVal .pszText, 0&, 4
+                                End If
                             End If
+                        Else
+                            ' Not supported.
                         End If
                     End If
                     End With

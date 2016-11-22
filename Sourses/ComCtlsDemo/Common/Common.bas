@@ -389,23 +389,23 @@ Else
 End If
 End Function
 
-Public Function CULongToLong(ByVal Value As Double) As Long
+Public Function CULngToLng(ByVal Value As Double) As Long
 Const OFFSET_4 As Double = 4294967296#
 Const MAXINT_4 As Long = 2147483647
 If Value < 0 Or Value >= OFFSET_4 Then Err.Raise 6
 If Value <= MAXINT_4 Then
-    CULongToLong = Value
+    CULngToLng = Value
 Else
-    CULongToLong = Value - OFFSET_4
+    CULngToLng = Value - OFFSET_4
 End If
 End Function
 
-Public Function CLongToULong(ByVal Value As Long) As Double
+Public Function CLngToULng(ByVal Value As Long) As Double
 Const OFFSET_4 As Double = 4294967296#
 If Value < 0 Then
-    CLongToULong = Value + OFFSET_4
+    CLngToULng = Value + OFFSET_4
 Else
-    CLongToULong = Value
+    CLngToULng = Value
 End If
 End Function
 

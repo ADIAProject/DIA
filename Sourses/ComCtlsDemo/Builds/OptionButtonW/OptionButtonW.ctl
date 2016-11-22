@@ -133,6 +133,7 @@ Private Declare Function SetFocusAPI Lib "user32" Alias "SetFocus" (ByVal hWnd A
 Private Declare Function GetFocus Lib "user32" () As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
@@ -142,8 +143,8 @@ Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, 
 Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function CreatePatternBrush Lib "gdi32" (ByVal hBitmap As Long) As Long
-Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
-Private Declare Function ClientToScreen Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As RECT) As Long
+Private Declare Function MapWindowPoints Lib "user32" (ByVal hWndFrom As Long, ByVal hWndTo As Long, ByRef lppt As Any, ByVal cPoints As Long) As Long
 Private Declare Function SetViewportOrgEx Lib "gdi32" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByRef lpPoint As POINTAPI) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
@@ -157,10 +158,8 @@ Private Declare Function DrawFocusRect Lib "user32" (ByVal hDC As Long, ByRef lp
 Private Declare Function DrawFrameControl Lib "user32" (ByVal hDC As Long, ByRef lpRect As RECT, ByVal nCtlType As Long, ByVal nFlags As Long) As Long
 Private Declare Function DrawText Lib "user32" Alias "DrawTextW" (ByVal hDC As Long, ByVal lpchText As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal uFormat As Long) As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
-Private Const RDW_UPDATENOW As Long = &H100
-Private Const RDW_INVALIDATE As Long = &H1
-Private Const RDW_ERASE As Long = &H4
-Private Const RDW_ALLCHILDREN As Long = &H80
+Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
+Private Const HWND_DESKTOP As Long = &H0
 Private Const GWL_STYLE As Long = (-16)
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
@@ -188,7 +187,6 @@ Private Const WM_DESTROY As Long = &H2
 Private Const WM_NCDESTROY As Long = &H82
 Private Const WM_STYLECHANGED As Long = &H7D
 Private Const WM_SETFONT As Long = &H30
-Private Const WM_SETREDRAW As Long = &HB
 Private Const WM_SETCURSOR As Long = &H20, HTCLIENT As Long = 1
 Private Const WM_CTLCOLORSTATIC As Long = &H138
 Private Const WM_CTLCOLORBTN As Long = &H135
@@ -260,6 +258,8 @@ Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
 Private PropVisualStyles As Boolean
 Private PropMousePointer As Integer, PropMouseIcon As IPictureDisp
+Private PropRightToLeft As Boolean
+Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropImageListName As String, PropImageListControl As Object, PropImageListInit As Boolean
 Private PropImageListAlignment As OptImageListAlignmentConstants
 Private PropImageListMargin As Long
@@ -349,13 +349,16 @@ Private Sub UserControl_InitProperties()
 Set PropFont = Ambient.Font
 PropVisualStyles = True
 PropMousePointer = 0: Set PropMouseIcon = Nothing
+PropRightToLeft = Ambient.RightToLeft
+PropRightToLeftMode = CCRightToLeftModeVBAME
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropImageListName = "(None)": Set PropImageListControl = Nothing
-PropImageListAlignment = OptImageListAlignmentLeft
+If PropRightToLeft = False Then PropImageListAlignment = OptImageListAlignmentLeft Else PropImageListAlignment = OptImageListAlignmentRight
 PropImageListMargin = 0
 PropValue = False
 PropCaption = Ambient.DisplayName
-PropAlignment = CCLeftRightAlignmentLeft
-PropTextAlignment = vbLeftJustify
+If PropRightToLeft = False Then PropAlignment = CCLeftRightAlignmentLeft Else PropAlignment = CCLeftRightAlignmentRight
+If PropRightToLeft = False Then PropTextAlignment = vbLeftJustify Else PropTextAlignment = vbRightJustify
 PropPushLike = False
 Set PropPicture = Nothing
 PropWordWrap = True
@@ -381,6 +384,9 @@ Me.Enabled = .ReadProperty("Enabled", True)
 Me.OLEDropMode = .ReadProperty("OLEDropMode", vbOLEDropNone)
 PropMousePointer = .ReadProperty("MousePointer", 0)
 Set PropMouseIcon = .ReadProperty("MouseIcon", Nothing)
+PropRightToLeft = .ReadProperty("RightToLeft", False)
+PropRightToLeftMode = .ReadProperty("RightToLeftMode", CCRightToLeftModeVBAME)
+If PropRightToLeft = True Then Me.RightToLeft = True
 PropImageListName = .ReadProperty("ImageList", "(None)")
 PropImageListAlignment = .ReadProperty("ImageListAlignment", OptImageListAlignmentLeft)
 PropImageListMargin = .ReadProperty("ImageListMargin", 0)
@@ -415,6 +421,8 @@ With PropBag
 .WriteProperty "OLEDropMode", Me.OLEDropMode, vbOLEDropNone
 .WriteProperty "MousePointer", PropMousePointer, 0
 .WriteProperty "MouseIcon", PropMouseIcon, Nothing
+.WriteProperty "RightToLeft", PropRightToLeft, False
+.WriteProperty "RightToLeftMode", PropRightToLeftMode, CCRightToLeftModeVBAME
 .WriteProperty "ImageList", PropImageListName, "(None)"
 .WriteProperty "ImageListAlignment", PropImageListAlignment, OptImageListAlignmentLeft
 .WriteProperty "ImageListMargin", PropImageListMargin, 0
@@ -793,6 +801,47 @@ Else
     End If
 End If
 UserControl.PropertyChanged "MouseIcon"
+End Property
+
+Public Property Get RightToLeft() As Boolean
+Attribute RightToLeft.VB_Description = "Determines text display direction and control visual appearance on a bidirectional system."
+Attribute RightToLeft.VB_UserMemId = -611
+RightToLeft = PropRightToLeft
+End Property
+
+Public Property Let RightToLeft(ByVal Value As Boolean)
+PropRightToLeft = Value
+UserControl.RightToLeft = PropRightToLeft
+Call ComCtlsCheckRightToLeft(PropRightToLeft, UserControl.RightToLeft, PropRightToLeftMode)
+Dim dwMask As Long
+If PropRightToLeft = True Then dwMask = WS_EX_RTLREADING
+If OptionButtonHandle <> 0 Then
+    Call ComCtlsSetRightToLeft(OptionButtonHandle, dwMask)
+    If PropRightToLeft = False Then
+        If PropImageListAlignment = OptImageListAlignmentRight Then Me.ImageListAlignment = OptImageListAlignmentLeft
+        If PropTextAlignment = vbRightJustify Then Me.TextAlignment = vbLeftJustify
+    Else
+        If PropImageListAlignment = OptImageListAlignmentLeft Then Me.ImageListAlignment = OptImageListAlignmentRight
+        If PropTextAlignment = vbLeftJustify Then Me.TextAlignment = vbRightJustify
+    End If
+End If
+UserControl.PropertyChanged "RightToLeft"
+End Property
+
+Public Property Get RightToLeftMode() As CCRightToLeftModeConstants
+Attribute RightToLeftMode.VB_Description = "Returns/sets the right-to-left mode."
+RightToLeftMode = PropRightToLeftMode
+End Property
+
+Public Property Let RightToLeftMode(ByVal Value As CCRightToLeftModeConstants)
+Select Case Value
+    Case CCRightToLeftModeNoControl, CCRightToLeftModeVBAME, CCRightToLeftModeSystemLocale, CCRightToLeftModeUserLocale, CCRightToLeftModeOSLanguage
+        PropRightToLeftMode = Value
+    Case Else
+        Err.Raise 380
+End Select
+Me.RightToLeft = PropRightToLeft
+UserControl.PropertyChanged "RightToLeftMode"
 End Property
 
 Public Property Get ImageList() As Variant
@@ -1274,6 +1323,7 @@ If OptionButtonHandle <> 0 Then Exit Sub
 Dim dwStyle As Long, dwExStyle As Long
 dwStyle = WS_CHILD Or WS_VISIBLE Or BS_RADIOBUTTON Or BS_TEXT Or BS_NOTIFY
 If Me.Appearance = CCAppearanceFlat Then dwStyle = dwStyle Or BS_FLAT
+If PropRightToLeft = True Then dwExStyle = dwExStyle Or WS_EX_RTLREADING
 If PropAlignment = CCLeftRightAlignmentRight Then dwStyle = dwStyle Or BS_RIGHTBUTTON
 Select Case PropTextAlignment
     Case vbLeftJustify
@@ -1301,7 +1351,6 @@ If (dwStyle And BS_OWNERDRAW) = BS_OWNERDRAW Then
     ' The BS_OWNERDRAW style cannot be combined with any other button style.
     dwStyle = WS_CHILD Or WS_VISIBLE Or BS_OWNERDRAW
 End If
-If Ambient.RightToLeft = True Then dwExStyle = WS_EX_RTLREADING
 OptionButtonHandle = CreateWindowEx(dwExStyle, StrPtr("Button"), 0, dwStyle, 0, 0, UserControl.ScaleWidth, UserControl.ScaleHeight, UserControl.hWnd, 0, App.hInstance, ByVal 0&)
 If OptionButtonHandle <> 0 Then Call ComCtlsShowAllUIStates(OptionButtonHandle)
 Set Me.Font = PropFont
@@ -1323,14 +1372,13 @@ End Sub
 
 Private Sub ReCreateOptionButton()
 If Ambient.UserMode = True Then
-    Dim Visible As Boolean
-    Visible = Extender.Visible
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 0, ByVal 0&
+    Dim Locked As Boolean
+    Locked = CBool(LockWindowUpdate(UserControl.hWnd) <> 0)
     Call DestroyOptionButton
     Call CreateOptionButton
     Call UserControl_Resize
     If Not PropImageListControl Is Nothing Then Set Me.ImageList = PropImageListControl
-    If Visible = True Then SendMessage UserControl.hWnd, WM_SETREDRAW, 1, ByVal 0&
+    If Locked = True Then LockWindowUpdate 0
     Me.Refresh
 Else
     Call DestroyOptionButton
@@ -1621,9 +1669,11 @@ Select Case wMsg
                     hBmp = CreateCompatibleBitmap(wParam, .ScaleWidth, .ScaleHeight)
                     If hBmp <> 0 Then
                         hBmpOld = SelectObject(hDCBmp, hBmp)
-                        Dim P As POINTAPI
-                        ClientToScreen hWnd, P
-                        ScreenToClient .ContainerHwnd, P
+                        Dim WndRect As RECT, P As POINTAPI
+                        GetWindowRect .hWnd, WndRect
+                        MapWindowPoints HWND_DESKTOP, .ContainerHwnd, WndRect, 2
+                        P.X = WndRect.Left
+                        P.Y = WndRect.Top
                         SetViewportOrgEx hDCBmp, -P.X, -P.Y, P
                         SendMessage .ContainerHwnd, WM_PAINT, hDCBmp, ByVal 0&
                         SetViewportOrgEx hDCBmp, P.X, P.Y, P
@@ -1681,7 +1731,11 @@ Select Case wMsg
                     FillRect DIS.hDC, DIS.RCItem, Brush
                     DeleteObject Brush
                 End If
-                If (DIS.ItemState And ODS_DISABLED) = ODS_DISABLED Then SetTextColor DIS.hDC, WinColor(vbGrayText)
+                If (DIS.ItemState And ODS_DISABLED) = ODS_DISABLED Then
+                    SetTextColor DIS.hDC, WinColor(vbGrayText)
+                Else
+                    SetTextColor DIS.hDC, WinColor(Me.ForeColor)
+                End If
                 Call OffsetRect(DIS.RCItem, 1, 1, -1, -1)
                 If (DIS.ItemState And ODS_FOCUS) = ODS_FOCUS Then
                     If Not (DIS.ItemState And ODS_NOFOCUSRECT) = ODS_NOFOCUSRECT Then DrawFocusRect DIS.hDC, DIS.RCItem

@@ -1149,7 +1149,7 @@ End Property
 
 Public Function ShowOpen() As Boolean
 Attribute ShowOpen.VB_Description = "Displays the open dialog box."
-Dim Buffer As String, Filter As String, Length As Long
+Dim Buffer As String, Filter As String
 Buffer = String(PropMaxFileSize, vbNullChar)
 Dim OFN As OPENFILENAME
 With OFN
@@ -1163,14 +1163,7 @@ End If
 Filter = ProperFilter(PropFilter)
 .lpstrFilter = StrPtr(Filter)
 .nFilterIndex = PropFilterIndex
-If Not PropFileName = vbNullString Then
-    If Len(PropFileName) > (PropMaxFileSize + 1) Then
-        Length = PropMaxFileSize * 2
-    Else
-        Length = LenB(PropFileName)
-    End If
-    CopyMemory ByVal StrPtr(Buffer), ByVal StrPtr(PropFileName), Length
-End If
+If Not PropFileName = vbNullString Then Mid$(Buffer, 1, Len(PropFileName)) = PropFileName
 .lpstrFile = StrPtr(Buffer)
 .nMaxFile = Len(Buffer)
 .lpstrInitialDir = StrPtr(PropInitDir)
@@ -1213,6 +1206,7 @@ If RetVal <> 0 Then
             PropFileTitle = Mid$(PropFileName, OFN.nFileOffset + 1)
         End If
     End If
+    PropFilterIndex = OFN.nFilterIndex
     PropFileOffset = OFN.nFileOffset
     ShowOpen = True
 Else
@@ -1235,7 +1229,7 @@ End Function
 
 Public Function ShowSave() As Boolean
 Attribute ShowSave.VB_Description = "Displays the save dialog box."
-Dim Buffer As String, Filter As String, Length As Long
+Dim Buffer As String, Filter As String, DefaultExt As String
 Buffer = String(PropMaxFileSize, vbNullChar)
 Dim OFN As OPENFILENAME
 With OFN
@@ -1249,14 +1243,7 @@ End If
 Filter = ProperFilter(PropFilter)
 .lpstrFilter = StrPtr(Filter)
 .nFilterIndex = PropFilterIndex
-If Not PropFileName = vbNullString Then
-    If Len(PropFileName) > (PropMaxFileSize + 1) Then
-        Length = PropMaxFileSize * 2
-    Else
-        Length = LenB(PropFileName)
-    End If
-    CopyMemory ByVal StrPtr(Buffer), ByVal StrPtr(PropFileName), Length
-End If
+If Not PropFileName = vbNullString Then Mid$(Buffer, 1, Len(PropFileName)) = PropFileName
 .lpstrFile = StrPtr(Buffer)
 .nMaxFile = Len(Buffer)
 .lpstrInitialDir = StrPtr(PropInitDir)
@@ -1274,7 +1261,8 @@ Else
     Set This = Me
     .lCustData = ObjPtr(This)
 End If
-.lpstrDefExt = StrPtr(PropDefaultExt)
+If PropDefaultExt = vbNullString Then DefaultExt = vbNullChar Else DefaultExt = PropDefaultExt
+.lpstrDefExt = StrPtr(DefaultExt)
 End With
 Dim RetVal As Long
 If (PropFlags And CdlOFNHelpButton) = CdlOFNHelpButton Then
@@ -1300,6 +1288,7 @@ If RetVal <> 0 Then
             PropFileTitle = Mid$(PropFileName, OFN.nFileOffset + 1)
         End If
     End If
+    PropFilterIndex = OFN.nFilterIndex
     PropFileOffset = OFN.nFileOffset
     ShowSave = True
 Else
