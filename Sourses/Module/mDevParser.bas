@@ -74,18 +74,7 @@ Public Function DeleteDriverbyHwid(ByVal strHwid As String) As Boolean
     Dim cmdString     As String
     Dim strDevConTemp As String
 
-    If mbIsWin64 Then
-        strDevConTemp = strDevConExePath64
-    Else
-
-        If StrComp(strOSCurrentVersion, "5.0") = 0 Then
-            strDevConTemp = strDevConExePathW2k
-        Else
-            strDevConTemp = strDevConExePath
-        End If
-    End If
-
-    cmdString = strQuotes & strDevconCmdPath & strQuotes & strSpace & strQuotes & strDevConTemp & strQuotes & strSpace & strQuotes & strHwidsTxtPath & strQuotes & " 4 " & strQuotes & strHwid & strQuotes
+    cmdString = strQuotes & strDevConExePath & strQuotes & strSpace & strQuotes & strDevConTemp & strQuotes & strSpace & strQuotes & strHwidsTxtPath & strQuotes & " 4 " & strQuotes & strHwid & strQuotes
 
     If RunAndWaitNew(cmdString, strWorkTemp, vbNormalFocus) = False Then
         MsgBox strMessages(33) & str2vbNewLine & cmdString, vbInformation, strProductName
@@ -104,7 +93,7 @@ End Function
 Public Sub DevParserLocalHwids2()
 
     Dim strContent    As String
-    Dim i             As Long
+    Dim I             As Long
     Dim strCnt        As Long
     Dim miStatus      As Long
     Dim strID         As String
@@ -140,12 +129,12 @@ Public Sub DevParserLocalHwids2()
         ' максимальное кол-во элементов в массиве
         ReDim arrHwidsLocal(miMaxCountArr)
 
-        strCnt = MatchesDevcon.Count
+        strCnt = MatchesDevcon.count
         RecCountArr = 0
 
         'For i = 0 To MatchesDevcon.Count - 1
-        For i = 0 To strCnt - 1
-            Set objMatch = MatchesDevcon.Item(i)
+        For I = 0 To strCnt - 1
+            Set objMatch = MatchesDevcon.Item(I)
 
             ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
             If RecCountArr = miMaxCountArr Then

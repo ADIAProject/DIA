@@ -815,6 +815,17 @@ Private Function ParseHwid(ByVal strValuer As String) As String
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub chkParseHwid_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkParseHwid_Click()
+    If LenB(txtFindText) Then
+        txtFindText.Text = ParseHwid(txtFindText.Text)
+    End If
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub cmdBackUpDrivers_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):

@@ -138,7 +138,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Opti
         'получаем date1
         Set objMatches = objRegExp.Execute(Date1)
 
-        If objMatches.count Then
+        If objMatches.Count Then
             Set objMatch = objMatches.Item(0)
             With objMatch
                 m1 = .SubMatches(0)
@@ -150,7 +150,7 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Opti
         'получаем date2
         Set objMatches = objRegExp.Execute(Date2)
 
-        If objMatches.count Then
+        If objMatches.Count Then
             Set objMatch = objMatches.Item(0)
             With objMatch
                 M2 = .SubMatches(0)
@@ -191,7 +191,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
     Dim strDevVerLocal_xx   As String
     Dim strVersionBD_x()    As String
     Dim strVersionLocal_x() As String
-    Dim I                   As Integer
+    Dim i                   As Integer
     Dim lngResult           As eVerCompareResult
 
     lngResult = crUnknownVer
@@ -234,23 +234,23 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 
                 If UBound(strVersionBD_x) > UBound(strVersionLocal_x) Then
 
-                    For I = 0 To UBound(strVersionLocal_x)
+                    For i = 0 To UBound(strVersionLocal_x)
 
-                        If IsNumeric(strVersionBD_x(I)) Then
-                            If IsNumeric(strVersionLocal_x(I)) Then
-                                If CLng(strVersionBD_x(I)) < CLng(strVersionLocal_x(I)) Then
+                        If IsNumeric(strVersionBD_x(i)) Then
+                            If IsNumeric(strVersionLocal_x(i)) Then
+                                If CLng(strVersionBD_x(i)) < CLng(strVersionLocal_x(i)) Then
                                     lngResult = crLessVer
 
                                     Exit For
 
-                                ElseIf CLng(strVersionBD_x(I)) > CLng(strVersionLocal_x(I)) Then
+                                ElseIf CLng(strVersionBD_x(i)) > CLng(strVersionLocal_x(i)) Then
                                     lngResult = crGreaterVer
 
                                     Exit For
 
                                 Else
 
-                                    If I = UBound(strVersionBD_x) Then
+                                    If i = UBound(strVersionBD_x) Then
                                         lngResult = crEqualVer
                                     End If
                                 End If
@@ -264,23 +264,23 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
 
                 Else
 
-                    For I = 0 To UBound(strVersionBD_x)
+                    For i = 0 To UBound(strVersionBD_x)
 
-                        If IsNumeric(strVersionBD_x(I)) Then
-                            If IsNumeric(strVersionLocal_x(I)) Then
-                                If CLng(strVersionBD_x(I)) < CLng(strVersionLocal_x(I)) Then
+                        If IsNumeric(strVersionBD_x(i)) Then
+                            If IsNumeric(strVersionLocal_x(i)) Then
+                                If CLng(strVersionBD_x(i)) < CLng(strVersionLocal_x(i)) Then
                                     lngResult = crLessVer
 
                                     Exit For
 
-                                ElseIf CLng(strVersionBD_x(I)) > CLng(strVersionLocal_x(I)) Then
+                                ElseIf CLng(strVersionBD_x(i)) > CLng(strVersionLocal_x(i)) Then
                                     lngResult = crGreaterVer
 
                                     Exit For
 
                                 Else
 
-                                    If I = UBound(strVersionBD_x) Then
+                                    If i = UBound(strVersionBD_x) Then
                                         lngResult = crEqualVer
                                     End If
                                 End If
@@ -341,7 +341,7 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
 
             With objMatches
 
-                If .count Then
+                If .Count Then
                     Set objMatch = .Item(0)
                     MM = Format$(objMatch.SubMatches(0), "00")
                     DD = Format$(objMatch.SubMatches(1), "00")
@@ -439,19 +439,19 @@ End Sub
 '! Parameters  (Переменные):   sStr (String)
 '!--------------------------------------------------------------------------------
 Public Sub RemoveUni(ByRef sStr As String)
-    Dim I           As Long
+    Dim i           As Long
     Dim Map()       As Byte
     Dim mbChanged   As Boolean
  
     If LenB(sStr) Then
         Map = sStr
-        For I = 1 To UBound(Map) Step 2
+        For i = 1 To UBound(Map) Step 2
             'Is Unicode
-            If Map(I) Then
+            If Map(i) Then
                  'Clear upper byte
-                Map(I) = 0
+                Map(i) = 0
                  'Replace low byte
-                Map(I - 1) = bVopros
+                Map(i - 1) = bVopros
                 ' str is changed
                 If Not mbChanged Then
                     mbChanged = True
@@ -624,3 +624,5 @@ Public Function FillNullChar(ByVal lLen As Long) As String
     FillNullChar = MemAPIs.AllocStr(vbNullString, lLen)
     MemAPIs.ZeroMemByV StrPtr(FillNullChar), lLen + lLen
 End Function
+
+

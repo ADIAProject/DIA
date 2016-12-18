@@ -360,12 +360,12 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Function FindCheckCountList() As Long
 
-    Dim I       As Integer
+    Dim i       As Integer
     Dim miCount As Integer
 
-    For I = 1 To lvFolders.ListItems.count
+    For i = 1 To lvFolders.ListItems.count
 
-        If lvFolders.ListItems.Item(I).Checked Then
+        If lvFolders.ListItems.Item(i).Checked Then
             miCount = miCount + 1
         End If
 
@@ -411,7 +411,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
-    Dim I As Integer
+    Dim i As Integer
 
     miCurrentListCount = 0
 
@@ -432,8 +432,8 @@ Public Sub FormLoadAction()
     If mbSelectInstall Then
         If mbGroupTask Then
 
-            For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, I)), False, CollectModeString)
+            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, i)), False, CollectModeString)
             Next
 
         Else
@@ -490,7 +490,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function GetPathList() As String
 
-    Dim I               As Integer
+    Dim i               As Integer
     Dim ii              As Integer
     Dim strDevPathList  As String
     Dim strDevPathShort As String
@@ -501,13 +501,13 @@ Private Function GetPathList() As String
     ' ≈сли данного пути нет в списке, то добавл€ем
     With lvFolders.ListItems
 
-        For I = 1 To .count
+        For i = 1 To .count
 
-            If .Item(I).Checked Then
-                strDevPathShort = GetPathNameFromPath(.Item(I).SubItems(1))
+            If .Item(i).Checked Then
+                strDevPathShort = GetPathNameFromPath(.Item(i).SubItems(1))
 
                 If mbGroupTask Then
-                    strDevDPName = .Item(I).SubItems(8)
+                    strDevDPName = .Item(i).SubItems(8)
 
                     For ii = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
                         strDevPathList = arrCheckDP(1, ii)
@@ -756,7 +756,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub LoadListbyMode()
 
-    Dim I As Long
+    Dim i As Long
 
     If Not (lvFolders Is Nothing) Then
         lvFolders.ListItems.Clear
@@ -767,8 +767,8 @@ Private Sub LoadListbyMode()
     If mbSelectInstall Then
         If mbGroupTask Then
 
-            For I = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, I)), False, CollectModeString)
+            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, i)), False, CollectModeString)
             Next
 
         Else
@@ -863,14 +863,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdCheckAll_Click()
 
-    Dim I As Integer
+    Dim i As Integer
 
     With lvFolders.ListItems
 
-        For I = 1 To .count
+        For i = 1 To .count
 
-            If Not .Item(I).Checked Then
-                .Item(I).Checked = True
+            If Not .Item(i).Checked Then
+                .Item(i).Checked = True
             End If
 
         Next
@@ -922,14 +922,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdUnCheckAll_Click()
 
-    Dim I As Integer
+    Dim i As Integer
 
     With lvFolders.ListItems
 
-        For I = 1 To .count
+        For i = 1 To .count
 
-            If .Item(I).Checked Then
-                .Item(I).Checked = False
+            If .Item(i).Checked Then
+                .Item(i).Checked = False
             End If
 
         Next
@@ -1090,17 +1090,17 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim I As Long
+    Dim i As Long
 
     lvFolders.Sorted = False
     lvFolders.SortKey = ColumnHeader.Index - 1
 
     If ComCtlsSupportLevel() >= 1 Then
 
-        For I = 1 To lvFolders.ColumnHeaders.count
+        For i = 1 To lvFolders.ColumnHeaders.count
 
-            If I <> ColumnHeader.Index Then
-                lvFolders.ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
+            If i <> ColumnHeader.Index Then
+                lvFolders.ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
             Else
 
                 If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -1115,7 +1115,7 @@ Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                 End If
             End If
 
-        Next I
+        Next i
 
         Select Case ColumnHeader.SortArrow
 
@@ -1129,10 +1129,10 @@ Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
         lvFolders.SelectedColumn = ColumnHeader
     Else
 
-        For I = 1 To lvFolders.ColumnHeaders.count
+        For i = 1 To lvFolders.ColumnHeaders.count
 
-            If I <> ColumnHeader.Index Then
-                lvFolders.ColumnHeaders(I).Icon = 0
+            If i <> ColumnHeader.Index Then
+                lvFolders.ColumnHeaders(i).Icon = 0
             Else
 
                 If ColumnHeader.Icon = 0 Then
@@ -1147,7 +1147,7 @@ Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                 End If
             End If
 
-        Next I
+        Next i
 
         Select Case ColumnHeader.Icon
 
@@ -1173,7 +1173,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Boolean)
 
-    Dim I As Integer
+    Dim i As Integer
 
     If mbSelectInstall Then
 
@@ -1181,20 +1181,20 @@ Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Bool
 
             If Item.Checked Then
 
-                For I = 1 To .count
+                For i = 1 To .count
 
-                    If StrComp(.Item(I).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
-                        .Item(I).Checked = True
+                    If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
+                        .Item(i).Checked = True
                     End If
 
                 Next
 
             Else
 
-                For I = 1 To .count
+                For i = 1 To .count
 
-                    If StrComp(.Item(I).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
-                        .Item(I).Checked = False
+                    If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
+                        .Item(i).Checked = False
                     End If
 
                 Next

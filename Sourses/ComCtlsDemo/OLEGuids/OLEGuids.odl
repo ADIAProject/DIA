@@ -1,6 +1,6 @@
 #define CALLCONV __stdcall
 [
-	uuid(5B1EACE0-EDEB-11E1-AFF1-0800200C9A66),
+	uuid(5A2B9220-BF07-11E6-9598-0800200C9A66),
 	helpstring("OLE Guid and interface definitions"),
 	lcid(0x0),
 	version(1.0)
@@ -193,7 +193,7 @@ library OLEGuids
 		typedef IDispatch *LPDISPATCH;
 		HRESULT GetTypeInfoCount([out] LONG *pctInfo);
     		HRESULT GetTypeInfo([in] LONG itinfo, [in] LONG lcid, [out] LONG *pptinfo);
-    		HRESULT GetIDsOfNames([in] REFIID riid, [in] LPSTR *rgszNames, [in] LONG cNames, [in] LONG lcid, [in, out] LONG *rgDispID);
+    		HRESULT GetIDsOfNames([in] REFIID riid, [in] LPWSTR *rgszNames, [in] LONG cNames, [in] LONG lcid, [in, out] LONG *rgDispID);
     		HRESULT Invoke([in] LONG DispIDMember, [in] REFIID riid, [in] LONG lcid, [in] SHORT wFlags, [in] DISPPARAMS *pdispparams, [in, out] VARIANT *pvarResult, [out] EXCEPINFO *pexcepinfo, [out] LONG *puArgErr);
 	};
 	[
@@ -211,7 +211,7 @@ library OLEGuids
 		uuid(00020404-0000-0000-C000-000000000046),
 		odl
 	]
-	interface IEnumeration : IDispatch
+	interface IEnumVARIANTUnrestricted : IDispatch
 	{
 		HRESULT Next([in] LONG cElt, [in, out] VARIANT *rgVar, [in] LONG pcEltFetched);
 		HRESULT Skip([in] LONG cElt);
@@ -288,25 +288,6 @@ library OLEGuids
 		[id(0x00000003)]
 		HRESULT GetPredefinedValue([in, out] boolean *Handled, [in] LONG DispID, [in] LONG Cookie, [in, out] VARIANT *Value);
     	};
-    	[
-      		uuid(C9CA79AE-EA55-4E33-945A-866675C4661F),
-		odl,
-      		version(1.0),
-      		dual,
-      		nonextensible,
-      		oleautomation
-    	]
-    	interface IEnumerationVB : IDispatch
-	{
-       		[id(0x00000001)]
-        	HRESULT GetNextItem([in, out] LONG *Index, [in, out] LONG *Control, [in, out] LONG *Data, [in, out] VARIANT *VNextItem, [in, out] boolean *NoMoreItems);
-       		[id(0x00000002)]
-		HRESULT Reset([in, out] LONG *Index, [in, out] LONG *Control, [in, out] LONG *Data);
-       		[id(0x00000003)]
-        	HRESULT Skip([in, out] LONG *Index, [in, out] LONG *Control, [in, out] LONG *Data, [in] LONG SkipCount, [in, out] boolean *SkippedAll);
-       		[id(0x00000004)]
-        	HRESULT Cleanup([in, out] LONG *Index, [in, out] LONG *Control, [in, out] LONG *Data);
-	};
 	[
 		uuid(00020D00-0000-0000-C000-000000000046),
 		odl

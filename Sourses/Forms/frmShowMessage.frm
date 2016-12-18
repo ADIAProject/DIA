@@ -43,8 +43,8 @@ Begin VB.Form frmShowMessage
       ScrollBars      =   3
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
-      Height          =   650
-      Left            =   7020
+      Height          =   645
+      Left            =   4980
       TabIndex        =   2
       Top             =   4080
       Width           =   1815
@@ -70,8 +70,8 @@ Begin VB.Form frmShowMessage
    End
    Begin prjDIADBS.ctlJCbutton cmdExit 
       Default         =   -1  'True
-      Height          =   650
-      Left            =   5100
+      Height          =   645
+      Left            =   6960
       TabIndex        =   1
       Top             =   4080
       Width           =   1815
@@ -89,6 +89,33 @@ Begin VB.Form frmShowMessage
       ButtonStyle     =   8
       BackColor       =   12244692
       Caption         =   "Отмена"
+      CaptionEffects  =   0
+      PictureAlign    =   0
+      PicturePushOnHover=   -1  'True
+      PictureShadow   =   -1  'True
+      ColorScheme     =   3
+   End
+   Begin prjDIADBS.ctlJCbutton cmdOK2 
+      Height          =   645
+      Left            =   3000
+      TabIndex        =   3
+      Top             =   4080
+      Visible         =   0   'False
+      Width           =   1815
+      _ExtentX        =   3201
+      _ExtentY        =   1138
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Tahoma"
+         Size            =   9
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ButtonStyle     =   8
+      BackColor       =   12244692
+      Caption         =   "ОК-All"
       CaptionEffects  =   0
       PictureAlign    =   0
       PicturePushOnHover=   -1  'True
@@ -166,6 +193,16 @@ Private Sub cmdOK_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK2_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK2_Click()
+    lngShowMessageResult = vbRetry
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Form_KeyDown
 '! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
 '! Parameters  (Переменные):   KeyCode (Integer)
@@ -205,6 +242,7 @@ Private Sub Form_Load()
     End If
 
     LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdOK2, "BTN_SAVE", strPathImageMainWork
     LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
 End Sub
 
@@ -259,6 +297,12 @@ Private Sub Form_Resize()
             txtMessageText.Width = .Width - miDeltaFrm - 200
             cmdOK.Left = cmdExit.Left - cmdOK.Width - 110
             cmdOK.Top = cmdExit.Top
+                
+            If cmdOK2.Visible Then
+                cmdOK2.Left = cmdOK.Left - cmdOK2.Width - 110
+                cmdOK2.Top = cmdExit.Top
+            End If
+            
         End If
 
     End With

@@ -2037,7 +2037,7 @@ If RichTextBoxHandle <> 0 Then
     .cbSize = LenB(REPF2)
     .dwMask = PFM_ALIGNMENT
     Select Case VarType(Value)
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             Select Case Value
                 Case RtfSelAlignmentLeft
                     .Alignment = PFA_LEFT
@@ -2086,7 +2086,7 @@ If RichTextBoxHandle <> 0 Then
             If Value = True Then .dwEffects = CFE_BOLD Else .dwEffects = 0
         Case vbNull
             .dwEffects = CFE_BOLD
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             If CBool(Value) = True Then .dwEffects = CFE_BOLD Else .dwEffects = 0
         Case Else
             Err.Raise 13
@@ -2124,7 +2124,7 @@ If RichTextBoxHandle <> 0 Then
             If Value = True Then .dwEffects = CFE_ITALIC Else .dwEffects = 0
         Case vbNull
             .dwEffects = CFE_ITALIC
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             If CBool(Value) = True Then .dwEffects = CFE_ITALIC Else .dwEffects = 0
         Case Else
             Err.Raise 13
@@ -2162,7 +2162,7 @@ If RichTextBoxHandle <> 0 Then
             If Value = True Then .dwEffects = CFE_STRIKEOUT Else .dwEffects = 0
         Case vbNull
             .dwEffects = CFE_STRIKEOUT
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             If CBool(Value) = True Then .dwEffects = CFE_STRIKEOUT Else .dwEffects = 0
         Case Else
             Err.Raise 13
@@ -2200,7 +2200,7 @@ If RichTextBoxHandle <> 0 Then
             If Value = True Then .dwEffects = CFE_UNDERLINE Else .dwEffects = 0
         Case vbNull
             .dwEffects = CFE_UNDERLINE
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbSingle, vbDouble
             If CBool(Value) = True Then .dwEffects = CFE_UNDERLINE Else .dwEffects = 0
         Case Else
             Err.Raise 13
@@ -2236,7 +2236,7 @@ If RichTextBoxHandle <> 0 Then
     Select Case VarType(Value)
         Case vbBoolean
             If Value = True Then .Numbering = PFN_BULLET Else .Numbering = 0
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             If CBool(Value) = True Then .Numbering = PFN_BULLET Else .Numbering = 0
         Case Else
             Err.Raise 13
@@ -2307,6 +2307,8 @@ If RichTextBoxHandle <> 0 Then
     Select Case VarType(Value)
         Case vbLong, vbInteger, vbByte
             .TextColor = WinColor(Value)
+        Case vbDouble, vbSingle
+            .TextColor = WinColor(CLng(Value))
         Case Else
             Err.Raise 13
     End Select
@@ -2341,6 +2343,8 @@ If RichTextBoxHandle <> 0 Then
     Select Case VarType(Value)
         Case vbLong, vbInteger, vbByte
             .BackColor = WinColor(Value)
+        Case vbDouble, vbSingle
+            .BackColor = WinColor(CLng(Value))
         Case Else
             Err.Raise 13
     End Select
@@ -2452,6 +2456,8 @@ If RichTextBoxHandle <> 0 Then
     Select Case VarType(Value)
         Case vbLong, vbInteger, vbByte
             .Charset = CByte(Value And &HFF)
+        Case vbDouble, vbSingle
+            .Charset = CByte(CLng(Value) And &HFF)
         Case Else
             Err.Raise 13
     End Select
@@ -2488,7 +2494,7 @@ If RichTextBoxHandle <> 0 Then
             If Value = True Then .dwEffects = CFE_PROTECTED Else .dwEffects = 0
         Case vbNull
             .dwEffects = CFE_PROTECTED
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             If CBool(Value) = True Then .dwEffects = CFE_PROTECTED Else .dwEffects = 0
         Case Else
             Err.Raise 13
@@ -2628,7 +2634,7 @@ If RichTextBoxHandle <> 0 Then
             If Value = False Then .dwEffects = CFE_HIDDEN Else .dwEffects = 0
         Case vbNull
             .dwEffects = 0
-        Case vbLong, vbInteger, vbByte
+        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
             If CBool(Value) = False Then .dwEffects = CFE_HIDDEN Else .dwEffects = 0
         Case Else
             Err.Raise 13
@@ -2665,6 +2671,12 @@ If RichTextBoxHandle <> 0 Then
         Case vbLong, vbInteger, vbByte
             If Value >= 0 And Value <= MAX_TAB_STOPS Then
                 .TabCount = Value
+            Else
+                Err.Raise 380
+            End If
+        Case vbDouble, vbSingle
+            If CLng(Value) >= 0 And CLng(Value) <= MAX_TAB_STOPS Then
+                .TabCount = CLng(Value)
             Else
                 Err.Raise 380
             End If
@@ -3035,10 +3047,16 @@ If Not Picture Is Nothing Then
                     RichTextBoxDataObjectFormat = Empty
                 Else
                     Select Case VarType(Format)
-                        Case vbLong, vbInteger, vbByte
+                        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
                             Select Case Format
-                                Case vbCFBitmap, vbCFDIB, vbCFMetafile, vbCFEMetafile
-                                    RichTextBoxDataObjectFormat = Format
+                                Case vbCFBitmap
+                                    RichTextBoxDataObjectFormat = vbCFBitmap
+                                Case vbCFDIB
+                                    RichTextBoxDataObjectFormat = vbCFDIB
+                                Case vbCFMetafile
+                                    RichTextBoxDataObjectFormat = vbCFMetafile
+                                Case vbCFEMetafile
+                                    RichTextBoxDataObjectFormat = vbCFEMetafile
                                 Case Else
                                     Err.Raise Number:=461, Description:="Specified format doesn't match format of data"
                             End Select

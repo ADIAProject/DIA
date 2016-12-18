@@ -143,7 +143,8 @@ Public Function GetMB_Manufacturer() As String
     Set objRegExp = New RegExp
 
     With objRegExp
-        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
+'        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
+	.Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(CO., LTD.)|(ELECTRONICS)|(Technology)/ig"
         .IgnoreCase = True
         .Global = True
         'Заменяем найденные значения " "
@@ -212,7 +213,7 @@ Public Function GetMB_Model() As String
 
 End Function
 
-' уточнение про "статус" компьютер-ноутбук
+' уточнение про "статус" компьютер-ноутбук по корпусу или батарее
 Public Sub IsPCisNotebook()
     If mbIsNotebook Then
         

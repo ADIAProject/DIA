@@ -15,7 +15,7 @@ Option Explicit
 Public Event GetNextItem(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long, ByRef VNextItem As Variant, ByRef NoMoreItems As Boolean)
 Public Event Reset(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long)
 Public Event Skip(ByRef Index As Long, ByRef Control As Long, ByRef Data As Long, ByVal SkipCount As Long, ByRef SkippedAll As Boolean)
-Implements OLEGuids.IEnumeration
+Implements OLEGuids.IEnumVARIANTUnrestricted
 Private PropControl As Long, PropIndex As Long, PropData As Long
 
 Private Sub Class_Initialize()
@@ -26,16 +26,16 @@ Private Sub Class_Terminate()
 Call RemoveVTableSubclass(Me, VTableInterfaceEnumeration)
 End Sub
 
-Private Sub IEnumeration_Next(ByVal cElt As Long, ByRef rgVar As Variant, ByVal pcEltFetched As Long)
+Private Sub IEnumVARIANTUnrestricted_Next(ByVal cElt As Long, ByRef rgVar As Variant, ByVal pcEltFetched As Long)
 End Sub
 
-Private Sub IEnumeration_Skip(ByVal cElt As Long)
+Private Sub IEnumVARIANTUnrestricted_Skip(ByVal cElt As Long)
 End Sub
 
-Private Sub IEnumeration_Reset()
+Private Sub IEnumVARIANTUnrestricted_Reset()
 End Sub
 
-Private Sub IEnumeration_Clone(ByRef ppEnum As IEnumVARIANT)
+Private Sub IEnumVARIANTUnrestricted_Clone(ByRef ppEnum As IEnumVARIANT)
 End Sub
 
 Public Function GetEnum(ByVal Control As Long, Optional ByVal Data As Long, Optional ByVal Index As Long = -1) As IEnumVARIANT

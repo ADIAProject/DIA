@@ -52,7 +52,6 @@ Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal
     
         If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
         
-            Debug.Print sTemp
             If LenB(strTmp) Then
                 strTmp = strTmp & strComma & strManufSection
             Else
@@ -410,35 +409,37 @@ End Function
 Public Sub NormIniFile(ByVal sFileName As String)
 
     Dim nf          As Long
-    Dim ub          As Long
+    Dim UB          As Long
     Dim sBuffer     As String
     Dim slArray()   As String
     Dim sOutArray() As String
 
-    nf = FreeFile
-
-    If Not FileLen(sFileName) = 0& Then
+    If GetFileSizeByPath(sFileName) Then
+        nf = FreeFile
+        
         Open sFileName For Binary Access Read Lock Write As nf
         sBuffer = String$(LOF(nf), 0&)
         Get nf, 1, sBuffer
         Close nf
+        
         slArray = Split(sBuffer, vbNewLine)
-        ub = &HFFFF
+        UB = &HFFFF
 
         For nf = 0 To UBound(slArray)
 
             If Len(slArray(nf)) Then
-                ub = ub + IIf(Left$(slArray(nf), vbNull) = Chr$(&H5B), 2, vbNull)
+                UB = UB + IIf(Left$(slArray(nf), vbNull) = Chr$(&H5B), 2, vbNull)
 
-                ReDim Preserve sOutArray(ub)
+                ReDim Preserve sOutArray(UB)
 
-                sOutArray(ub) = slArray(nf)
+                sOutArray(UB) = slArray(nf)
             End If
 
         Next
 
         sBuffer = Join(sOutArray, vbNewLine)
         DeleteFiles sFileName
+        
         nf = FreeFile
         Open sFileName For Binary Access Write Lock Read As nf
         Put nf, 1, sBuffer
@@ -461,4 +462,5 @@ Public Function ReadFromINI(ByVal strSection As String, ByVal strKey As String, 
 
     strBuffer = FillNullChar(1024)
     ReadFromINI = Left$(strBuffer, GetPrivateProfileString(strSection, ByVal LCase$(strKey), strDefault, strBuffer, Len(strBuffer), strFullPath))
+    
 End Function

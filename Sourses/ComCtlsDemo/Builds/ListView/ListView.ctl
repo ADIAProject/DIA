@@ -361,6 +361,11 @@ iOrder As Long
 FilterType As Long
 pvFilter As Long
 End Type
+Private Type HDHITTESTINFO
+PT As POINTAPI
+Flags As Long
+iItem As Long
+End Type
 Private Type HDLAYOUT
 lpRC As Long
 lpWPOS As Long
@@ -403,10 +408,14 @@ Public Event AfterLabelEdit(ByRef Cancel As Boolean, ByRef NewString As String)
 Attribute AfterLabelEdit.VB_Description = "Occurs after a user edits the label of the currently selected list item."
 Public Event ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnClick.VB_Description = "Occurs when a column header in a list view is clicked."
-Public Event ColumnBeforeSize(ByVal ColumnHeader As LvwColumnHeader, ByRef Cancel As Boolean)
-Attribute ColumnBeforeSize.VB_Description = "Occurs when the user has begun dragging a divider one one column header."
-Public Event ColumnAfterSize(ByVal ColumnHeader As LvwColumnHeader)
-Attribute ColumnAfterSize.VB_Description = "Occurs when the user has finished dragging a divider on one column header."
+Public Event ColumnDblClick(ByVal ColumnHeader As LvwColumnHeader)
+Attribute ColumnDblClick.VB_Description = "Occurs when a column header in a list view is double-clicked."
+Public Event ColumnBeforeResize(ByVal ColumnHeader As LvwColumnHeader, ByRef Cancel As Boolean)
+Attribute ColumnBeforeResize.VB_Description = "Occurs when the user has begun dragging a divider on one column header."
+Public Event ColumnAfterResize(ByVal ColumnHeader As LvwColumnHeader, ByRef NewWidth As Single)
+Attribute ColumnAfterResize.VB_Description = "Occurs when the user has finished dragging a divider on one column header."
+Public Event ColumnDividerDblClick(ByVal ColumnHeader As LvwColumnHeader, ByRef Cancel As Boolean)
+Attribute ColumnDividerDblClick.VB_Description = "Occurs when the user double-clicked the divider on one column header."
 Public Event ColumnBeforeDrag(ByVal ColumnHeader As LvwColumnHeader)
 Attribute ColumnBeforeDrag.VB_Description = "Occurs when a drag operation has begun on one column header."
 Public Event ColumnAfterDrag(ByVal ColumnHeader As LvwColumnHeader, ByVal NewPosition As Long, ByRef Cancel As Boolean)
@@ -796,6 +805,7 @@ Private Const HDM_SETITEMA As Long = (HDM_FIRST + 4)
 Private Const HDM_SETITEMW As Long = (HDM_FIRST + 12)
 Private Const HDM_SETITEM As Long = HDM_SETITEMW
 Private Const HDM_LAYOUT As Long = (HDM_FIRST + 5)
+Private Const HDM_HITTEST As Long = (HDM_FIRST + 6)
 Private Const HDM_SETIMAGELIST As Long = (HDM_FIRST + 8)
 Private Const HDM_GETIMAGELIST As Long = (HDM_FIRST + 9)
 Private Const HDM_ORDERTOINDEX As Long = (HDM_FIRST + 15)
@@ -805,7 +815,11 @@ Private Const HDM_CLEARFILTER As Long = (HDM_FIRST + 24)
 Private Const HDM_GETFOCUSEDITEM As Long = (HDM_FIRST + 27)
 Private Const HDSIL_NORMAL As Long = 0
 Private Const HDSIL_STATE As Long = 0
+Private Const HHT_ONDIVIDER As Long = &H4
+Private Const HHT_ONDIVOPEN As Long = &H8
+Private Const HDI_WIDTH As Long = &H1
 Private Const HDI_FORMAT As Long = &H4
+Private Const HDI_ORDER As Long = &H80
 Private Const HDI_FILTER As Long = &H100
 Private Const HDFT_ISSTRING As Long = &H0
 Private Const HDFT_ISNUMBER As Long = &H1
@@ -825,6 +839,12 @@ Private Const HDS_FILTERBAR As Long = &H100
 Private Const HDS_NOSIZING As Long = &H800
 Private Const HDS_OVERFLOW As Long = &H1000
 Private Const HDN_FIRST As Long = (-300)
+Private Const HDN_ITEMDBLCLICKA As Long = (HDN_FIRST - 3)
+Private Const HDN_ITEMDBLCLICKW As Long = (HDN_FIRST - 23)
+Private Const HDN_ITEMDBLCLICK As Long = HDN_ITEMDBLCLICKW
+Private Const HDN_DIVIDERDBLCLICKA As Long = (HDN_FIRST - 5)
+Private Const HDN_DIVIDERDBLCLICKW As Long = (HDN_FIRST - 25)
+Private Const HDN_DIVIDERDBLCLICK As Long = HDN_DIVIDERDBLCLICKW
 Private Const HDN_BEGINTRACKA As Long = (HDN_FIRST - 6)
 Private Const HDN_BEGINTRACKW As Long = (HDN_FIRST - 26)
 Private Const HDN_BEGINTRACK As Long = HDN_BEGINTRACKW
@@ -1059,7 +1079,7 @@ If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
                 End If
                 Handled = True
             End If
-        Case vbKeyTab, vbKeyReturn, vbKeyEscape
+        Case vbKeyTab
             If IsInputKey = True Then
                 If ListViewHandle <> 0 Then
                     SendMessage ListViewHandle, wMsg, wParam, ByVal lParam
@@ -2969,7 +2989,7 @@ UserControl.PropertyChanged "TrackSizeColumnHeaders"
 End Property
 
 Public Property Get ResizableColumnHeaders() As Boolean
-Attribute ResizableColumnHeaders.VB_Description = "Returns/sets a value that determines whether or not the user can drag the divider on the column header to resize them. Requires comctl32.dll version 6.1 or higher."
+Attribute ResizableColumnHeaders.VB_Description = "Returns/sets a value that determines whether or not the user can drag the divider on the column headers in 'report' view to resize them."
 If Ambient.UserMode = True And ComCtlsSupportLevel() <= 1 Then
     ResizableColumnHeaders = True
 Else
@@ -6264,32 +6284,66 @@ Select Case wMsg
         CopyMemory NM, ByVal lParam, LenB(NM)
         If NM.hWndFrom = ListViewHeaderHandle And ListViewHeaderHandle <> 0 Then
             Dim Cancel As Boolean
-            Dim NMHDR As NMHEADER
+            Dim NMHDR As NMHEADER, HDI As HDITEM
             Select Case NM.Code
+                Case HDN_ITEMDBLCLICK
+                    CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
+                    If NMHDR.iItem > -1 Then RaiseEvent ColumnDblClick(Me.ColumnHeaders(NMHDR.iItem + 1))
+                Case HDN_DIVIDERDBLCLICK
+                    CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
+                    If NMHDR.iItem > -1 Then
+                        If PropResizableColumnHeaders = True Then
+                            RaiseEvent ColumnDividerDblClick(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
+                            If Cancel = True Then Exit Function
+                        Else
+                            Exit Function
+                        End If
+                    End If
                 Case HDN_BEGINTRACK
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
                     If NMHDR.iItem > -1 Then
-                        RaiseEvent ColumnBeforeSize(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
-                        If Cancel = True Then
+                        If PropResizableColumnHeaders = True Then
+                            RaiseEvent ColumnBeforeResize(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
+                            If Cancel = True Then
+                                WindowProcControl = 1
+                                Exit Function
+                            End If
+                        Else
                             WindowProcControl = 1
                             Exit Function
                         End If
                     End If
                 Case HDN_ENDTRACK
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
-                    If NMHDR.iItem > -1 Then RaiseEvent ColumnAfterSize(Me.ColumnHeaders(NMHDR.iItem + 1))
+                    If NMHDR.iItem > -1 Then
+                        If NMHDR.lPtrHDItem <> 0 Then
+                            CopyMemory HDI.Mask, ByVal NMHDR.lPtrHDItem, 4
+                            If (HDI.Mask And HDI_WIDTH) = HDI_WIDTH Then
+                                Dim NewWidth As Single, CX As Long
+                                CopyMemory HDI.CXY, ByVal UnsignedAdd(NMHDR.lPtrHDItem, 4), 4
+                                NewWidth = UserControl.ScaleX(HDI.CXY, vbPixels, vbContainerSize)
+                                RaiseEvent ColumnAfterResize(Me.ColumnHeaders(NMHDR.iItem + 1), NewWidth)
+                                If NewWidth > 0 Then CX = UserControl.ScaleX(NewWidth, vbContainerSize, vbPixels)
+                                If HDI.CXY <> CX Then CopyMemory ByVal UnsignedAdd(NMHDR.lPtrHDItem, 4), CX, 4
+                            End If
+                        End If
+                    End If
                 Case HDN_BEGINDRAG
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
                     If NMHDR.iItem > -1 Then RaiseEvent ColumnBeforeDrag(Me.ColumnHeaders(NMHDR.iItem + 1))
                 Case HDN_ENDDRAG
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
                     If NMHDR.iItem > -1 Then
-                        Dim HDI As HDITEM
-                        CopyMemory HDI, ByVal NMHDR.lPtrHDItem, LenB(HDI)
-                        RaiseEvent ColumnAfterDrag(Me.ColumnHeaders(NMHDR.iItem + 1), HDI.iOrder + 1, Cancel)
-                        If Cancel = True Then
-                            WindowProcControl = 1
-                            Exit Function
+                        If NMHDR.lPtrHDItem <> 0 Then
+                            CopyMemory HDI.Mask, ByVal NMHDR.lPtrHDItem, 4
+                            If (HDI.Mask And HDI_ORDER) = HDI_ORDER Then
+                                CopyMemory HDI.iOrder, ByVal UnsignedAdd(NMHDR.lPtrHDItem, 32), 4
+                                RaiseEvent ColumnAfterDrag(Me.ColumnHeaders(NMHDR.iItem + 1), HDI.iOrder + 1, Cancel)
+                                If Cancel = True Then
+                                    WindowProcControl = 1
+                                    Exit Function
+                                End If
+                            End If
                         End If
                     End If
                 Case HDN_DROPDOWN
@@ -6487,6 +6541,24 @@ End Function
 
 Private Function WindowProcHeader(ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Select Case wMsg
+    Case WM_SETCURSOR
+        If LoWord(lParam) = HTCLIENT Then
+            If PropResizableColumnHeaders = False Then
+                Dim HDHTI As HDHITTESTINFO, Pos As Long
+                With HDHTI
+                Pos = GetMessagePos()
+                .PT.X = Get_X_lParam(Pos)
+                .PT.Y = Get_Y_lParam(Pos)
+                ScreenToClient hWnd, .PT
+                If SendMessage(hWnd, HDM_HITTEST, 0, ByVal VarPtr(HDHTI)) > -1 Then
+                    If (.Flags And HHT_ONDIVIDER) <> 0 Or (.Flags And HHT_ONDIVOPEN) <> 0 Then
+                        SetCursor LoadCursor(0, MousePointerID(vbArrow))
+                        Exit Function
+                    End If
+                End If
+                End With
+            End If
+        End If
     Case WM_COMMAND
         Const EN_SETFOCUS As Long = &H100, EN_KILLFOCUS = &H200
         Select Case HiWord(wParam)

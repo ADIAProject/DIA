@@ -7,17 +7,17 @@ Public Const MAX_PATH_B             As Long = 4000 * 2 - 1
 Public Const MAXDWORD               As Long = &HFFFFFFFF
 
 'Константы для CreateFile
-Public Const INVALID_HANDLE_VALUE   As Long = (-1)
+Public Const INVALID_HANDLE_VALUE       As Long = (-1)
 Public Const ERROR_CALL_NOT_IMPLEMENTED As Long = 120
-Public Const FILE_ATTRIBUTE_NORMAL  As Long = &H80
-Public Const GENERIC_WRITE          As Long = &H40000000
-Public Const GENERIC_READ           As Long = &H80000000
-Public Const OPEN_EXISTING          As Long = 3
-Public Const FILE_SHARE_READ        As Long = &H1
-Public Const FILE_SHARE_WRITE       As Long = &H2
-Public Const FILE_SHARE_DELETE      As Long = &H4
-Public Const CREATE_ALWAYS          As Long = 2
-Public Const FILE_FLAG_SEQUENTIAL_SCAN As Long = &H8000000
+Public Const FILE_ATTRIBUTE_NORMAL      As Long = &H80
+Public Const FILE_FLAG_SEQUENTIAL_SCAN  As Long = &H8000000
+Public Const GENERIC_WRITE              As Long = &H40000000
+Public Const GENERIC_READ               As Long = &H80000000
+Public Const OPEN_EXISTING              As Long = 3
+Public Const CREATE_ALWAYS              As Long = 2
+Public Const FILE_SHARE_READ            As Long = &H1
+Public Const FILE_SHARE_WRITE           As Long = &H2
+Public Const FILE_SHARE_DELETE          As Long = &H4
 
 'Константы для FindFileEx
 Public Const FIND_FIRST_EX_LARGE_FETCH   As Long = 2 'Win7??

@@ -332,19 +332,22 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
 
     Dim arrFileStrings()  As String
     Dim ColumnByStrings() As String
-    Dim I                 As Long
+    Dim i                 As Long
     Dim strContentFile    As String
 
-    FileReadData strFilePath, strContentFile
-    arrFileStrings = Split(strContentFile, vbNewLine)
+    'FileReadData strFilePath, strContentFile
+    'arrFileStrings = Split(strContentFile, vbNewLine)
+    With New Lickety
+        arrFileStrings = .SplitFile(strFilePath, Unicode:=False, LineDelim:=vbNewLine)
+    End With
 
     'Переопределяем основной массив с данными об устройствах компьютера
     ReDim arrHwidsLocal(UBound(arrFileStrings))
 
-    For I = 0 To UBound(arrFileStrings)
-        ColumnByStrings = Split(arrFileStrings(I), vbTab)
+    For i = 0 To UBound(arrFileStrings)
+        ColumnByStrings = Split(arrFileStrings(i), vbTab)
 
-        With arrHwidsLocal(I)
+        With arrHwidsLocal(i)
             .HWID = ColumnByStrings(0)
             .DevName = ColumnByStrings(1)
             .Status = ColumnByStrings(2)
@@ -362,7 +365,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
             .DRVScore = 0
         End With
 
-    Next I
+    Next i
 
 End Sub
 
@@ -373,7 +376,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadDefaultParam()
 
-    Dim I            As Long
+    Dim i            As Long
     Dim strVerClient As String
 
     ' Выставляем текущую версию ОС, анализом из списка
@@ -383,16 +386,16 @@ Private Sub LoadDefaultParam()
         strVerClient = "*" & OSCurrVersionStruct.VerFull & "*"
     End If
 
-    For I = 0 To cmbOS.ListCount - 1
+    For i = 0 To cmbOS.ListCount - 1
 
-        If MatchSpec(cmbOS.List(I), strVerClient) Then
-            cmbOS.ListIndex = I
+        If MatchSpec(cmbOS.List(i), strVerClient) Then
+            cmbOS.ListIndex = i
 
             Exit For
 
         End If
 
-    Next I
+    Next i
 
     ' Выставляем текущую разрядность ОС
     chk64bit.Value = CBool(mbIsWin64)
@@ -557,17 +560,17 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
     
     Dim strParse_x()    As String
     Dim strTemp         As String
-    Dim I               As Long
+    Dim i               As Long
     Dim ii              As Long
     Dim mbIsServer      As Boolean
     
     strParse_x = Split(GetFileNameFromPath(strFilePath), "_")
         
     If UBound(strParse_x) >= 3 Then
-        For I = 1 To UBound(strParse_x)
+        For i = 1 To UBound(strParse_x)
             '"hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%"
             
-            Select Case I
+            Select Case i
                 '%PCMODEL%-Notebook
                 Case 1
                     strTemp = strParse_x(1)
@@ -611,7 +614,7 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
                         chk64bit.Value = 0
                     End If
             End Select
-        Next I
+        Next i
         ParseFileName = True
     End If
 End Function

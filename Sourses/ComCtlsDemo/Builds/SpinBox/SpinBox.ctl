@@ -1112,12 +1112,12 @@ If SpinBoxUpDownHandle <> 0 Then
                         Dim AccelArr() As UDACCEL, Count As Long, i As Long
                         For i = LBound(Delays) To UBound(Delays)
                             Select Case VarType(Delays(i))
-                                Case vbLong, vbInteger, vbByte
+                                Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
                                     ReDim Preserve AccelArr(0 To Count) As UDACCEL
-                                    AccelArr(Count).nSec = Delays(i)
+                                    AccelArr(Count).nSec = CLng(Delays(i))
                                     Select Case VarType(Increments(i))
-                                        Case vbLong, vbInteger, vbByte
-                                            AccelArr(Count).nInc = Increments(i)
+                                        Case vbLong, vbInteger, vbByte, vbDouble, vbSingle
+                                            AccelArr(Count).nInc = CLng(Increments(i))
                                     End Select
                                     Count = Count + 1
                             End Select

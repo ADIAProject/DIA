@@ -47,11 +47,11 @@ Begin VB.Form frmOptions
       HeaderStyle     =   1
       Begin prjDIADBS.ctlUcPickBox ucDevCon86Path 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   29
          Top             =   450
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          UseAutoForeColor=   0   'False
          DefaultExt      =   ""
@@ -64,11 +64,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucDevCon64Path 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   31
          Top             =   840
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -80,11 +80,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucDevCon86Pathw2k 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   33
          Top             =   1250
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -96,11 +96,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucDPInst86Path 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   35
          Top             =   1650
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -112,11 +112,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucDPInst64Path 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   37
          Top             =   2050
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -128,11 +128,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucArch86Path 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   39
          Top             =   2450
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -144,11 +144,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucCmdDevconPath 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   41
          Top             =   3250
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -185,11 +185,11 @@ Begin VB.Form frmOptions
       End
       Begin prjDIADBS.ctlUcPickBox ucArch64Path 
          Height          =   315
-         Left            =   2520
+         Left            =   2720
          TabIndex        =   151
          Top             =   2850
-         Width           =   6000
-         _ExtentX        =   10583
+         Width           =   5800
+         _ExtentX        =   10239
          _ExtentY        =   556
          DefaultExt      =   ""
          DialogType      =   1
@@ -204,8 +204,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   152
          Top             =   2910
-         Width           =   2355
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -218,7 +218,7 @@ Begin VB.Form frmOptions
          EndProperty
          Alignment       =   1
          BackStyle       =   0
-         Caption         =   "7za (64-bit)"
+         Caption         =   "7za.exe (64-bit)"
          WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDevCon64 
@@ -226,8 +226,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   32
          Top             =   875
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -240,7 +240,7 @@ Begin VB.Form frmOptions
          EndProperty
          Alignment       =   1
          BackStyle       =   0
-         Caption         =   "DevCon.exe (64-bit)"
+         Caption         =   "DevCon.exe (Vista+, 64-bit)"
          WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDevCon86w2k 
@@ -248,8 +248,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   34
          Top             =   1275
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -262,7 +262,7 @@ Begin VB.Form frmOptions
          EndProperty
          Alignment       =   1
          BackStyle       =   0
-         Caption         =   "DevCon.exe (for Windows 2k)"
+         Caption         =   "DevCon.exe (for Win2k/2k3/xp)"
          WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblCmdDevconPath 
@@ -270,8 +270,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   42
          Top             =   3275
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -292,8 +292,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   40
          Top             =   2475
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -306,7 +306,7 @@ Begin VB.Form frmOptions
          EndProperty
          Alignment       =   1
          BackStyle       =   0
-         Caption         =   "7za (32-bit)"
+         Caption         =   "7za.exe (32-bit)"
          WordWrap        =   0   'False
       End
       Begin prjDIADBS.LabelW lblDPInst64 
@@ -314,8 +314,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   38
          Top             =   2075
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -336,8 +336,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   36
          Top             =   1675
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -358,8 +358,8 @@ Begin VB.Form frmOptions
          Left            =   100
          TabIndex        =   30
          Top             =   475
-         Width           =   2350
-         _ExtentX        =   4154
+         Width           =   2550
+         _ExtentX        =   4498
          _ExtentY        =   556
          BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
             Name            =   "Tahoma"
@@ -372,7 +372,7 @@ Begin VB.Form frmOptions
          EndProperty
          Alignment       =   1
          BackStyle       =   0
-         Caption         =   "DevCon.exe (32-bit)"
+         Caption         =   "DevCon.exe (Vista+, 32-bit)"
          WordWrap        =   0   'False
       End
    End
@@ -556,7 +556,7 @@ Begin VB.Form frmOptions
       End
    End
    Begin prjDIADBS.ctlJCFrames frMain 
-      Height          =   5300
+      Height          =   5295
       Left            =   3105
       Top             =   25
       Width           =   8655
@@ -966,7 +966,7 @@ Begin VB.Form frmOptions
       InitListImages  =   "frmOptions.frx":090A
    End
    Begin prjDIADBS.ctlJCFrames frOptions 
-      Height          =   5300
+      Height          =   5295
       Left            =   50
       Top             =   25
       Width           =   3000
@@ -3887,7 +3887,7 @@ Private Sub ReadOptions()
     'Пути к программам
     If mbPatnAbs Then
         'Секция Devcon
-        ucDevCon86Path.Path = strDevConExePath
+        ucDevCon86Path.Path = strDevConExePath86
         ucDevCon64Path.Path = strDevConExePath64
         ucDevCon86Pathw2k.Path = strDevConExePathW2k
         ucCmdDevconPath.Path = strDevconCmdPath
@@ -3899,7 +3899,7 @@ Private Sub ReadOptions()
         ucArch64Path.Path = strArh7zExePath64
     Else
         'Секция Devcon
-        ucDevCon86Path.Path = Replace$(strDevConExePath, strAppPathBackSL, vbNullString, , , vbTextCompare)
+        ucDevCon86Path.Path = Replace$(strDevConExePath86, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucDevCon64Path.Path = Replace$(strDevConExePath64, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucDevCon86Pathw2k.Path = Replace$(strDevConExePathW2k, strAppPathBackSL, vbNullString, , , vbTextCompare)
         ucCmdDevconPath.Path = Replace$(strDevconCmdPath, strAppPathBackSL, vbNullString, , , vbTextCompare)

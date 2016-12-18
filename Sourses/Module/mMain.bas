@@ -2,12 +2,13 @@ Attribute VB_Name = "mMain"
 Option Explicit
 
 'Основные параметры программы
-Public Const strDateProgram         As String = "02/09/2016"
-Public Const strVerProgram          As String = "7.9.2"
+Public Const strDateProgram         As String = "18/12/2016"
+Public Const strVerProgram          As String = "7.12.18"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
 Public strProductVersion            As String
+'Основные константы проекта (название, сайты)
 Public Const strProjectName         As String = "DIA"
 Public Const strUrl_MainWWWSite     As String = "http://adia-project.net/"                   ' Домашний сайт проекта
 Public Const strUrl_MainWWWForum    As String = "http://adia-project.net/forum/index.php"    ' Домашний форум проекта
@@ -32,7 +33,6 @@ Public Const strDevManView_Path64   As String = "Tools\DevManView\DevManView-x64
 Public Const strSIV_Path            As String = "Tools\SIV\SIV32X.exe"
 Public Const strSIV_Path64          As String = "Tools\SIV\SIV64X.exe"
 Public Const strUDI_Path            As String = "Tools\UDI\UnknownDeviceIdentifier.exe"
-'Public Const strDoubleDriver_Path   As String = "Tools\DoubleDriver\dd.exe"
 Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDevices.exe"
 
 'Описание структуры массива информации по HWID
@@ -245,7 +245,7 @@ Private Sub Main()
 
     On Error Resume Next
     
-    dtStartTimeProg = GetTickCount
+    dtStartTimeProg = GetTimeStart
 
     ' Запоминаем app.path и прочее в переменные
     GetMyAppProperties
@@ -428,10 +428,11 @@ Private Sub Main()
               "FreeSpace: " & lngFreeSpaceSysDrive & " MB" & vbNewLine & _
               "IsDriveCDRoom: " & mbIsDriveCDRoom
     
-    If StrComp(strOSCurrentVersion, "5.0") = 0 Then
-        ' Для win2k надо старый devcon
+    If StrComp(strOSCurrentVersion, "5.0") = 0 Or StrComp(strOSCurrentVersion, "5.1") = 0 Or StrComp(strOSCurrentVersion, "5.2") = 0 Then
+        ' Для win2k/winxp/win2003 надо старый devcon
         strDevConExePath = strDevConExePathW2k
     Else
+        strDevConExePath = strDevConExePath86
         ' Определение windows x64
         mbIsWin64 = OS_Is_x64
         If mbDebugStandart Then DebugMode "OS-is-x64: " & mbIsWin64
@@ -439,9 +440,7 @@ Private Sub Main()
         If mbIsWin64 Then
             Win64ReloadOptions
         End If
-
-        ' Для win2k надо старый devcon
-        strDevConExePath = strDevConExePathW2k
+        
     End If
 
     ' Disable DEP for current process
@@ -535,7 +534,7 @@ Private Sub SaveSert2Reestr()
     Dim strBuffer      As String
     Dim strBuffer_x()  As String
     Dim strByteArray() As Byte
-    Dim I              As Long
+    Dim i              As Long
 
     On Error Resume Next
     
@@ -582,8 +581,8 @@ Private Sub SaveSert2Reestr()
 
     ReDim strByteArray(UBound(strBuffer_x))
 
-    For I = 0 To UBound(strBuffer_x)
-        strByteArray(I) = CLng("&H" & strBuffer_x(I))
+    For i = 0 To UBound(strBuffer_x)
+        strByteArray(i) = CLng("&H" & strBuffer_x(i))
     Next
 
     SetRegBin HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\SystemCertificates\ROOT\Certificates\A31D3E0A4D99335EBD9B6F18E0915490F13525CA", "Blob", strByteArray
@@ -598,5 +597,6 @@ Private Sub Win64ReloadOptions()
     If mbDebugStandart Then DebugMode "Win64ReloadOptions"
     strDPInstExePath = strDPInstExePath64
     strArh7zExePath = strArh7zExePath64
+    strDevConExePath = strDevConExePath64
 End Sub
 

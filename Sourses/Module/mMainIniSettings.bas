@@ -14,7 +14,8 @@ Public strDevconCmdPath                  As String      ' Пути до исполняемых фа
 Public strArh7zExePath                   As String      ' Пути до исполняемых файлов и других рабочих файлов - Выбирается, в зависимости от разрядности, из параметров выше
 Public strArh7zExePath86                 As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\Arc\7za.exe
 Public strArh7zExePath64                 As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\Arc\7za64.exe
-Public strDevConExePath                  As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devcon.exe
+Public strDevConExePath                  As String      ' Пути до исполняемых файлов и других рабочих файлов - Выбирается, в зависимости от разрядности, из параметров выше
+Public strDevConExePath86                As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devcon.exe
 Public strDevConExePath64                As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devcon64.exe
 Public strDevConExePathW2k               As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DevCon\devconw2k.exe
 Public strDPInstExePath64                As String      ' Пути до исполняемых файлов и других рабочих файлов - .\Tools\DPInst\DPInst64.exe
@@ -598,19 +599,19 @@ Public Function GetMainIniParam() As Boolean
     End If
 
     ' DEVCON_EXE
-    strDevConExePath = IniStringPrivate("DevCon", "PathExe", strSysIni)
+    strDevConExePath86 = IniStringPrivate("DevCon", "PathExe", strSysIni)
 
-    If InStr(strDevConExePath, strColon) Then
+    If InStr(strDevConExePath86, strColon) Then
         mbPatnAbs = True
     End If
 
-    strDevConExePath = PathCollect(strDevConExePath)
+    strDevConExePath86 = PathCollect(strDevConExePath86)
 
-    If FileExists(strDevConExePath) = False Then
-        strDevConExePath = strAppPathBackSL & "Tools\Devcon\devcon.exe"
+    If FileExists(strDevConExePath86) = False Then
+        strDevConExePath86 = strAppPathBackSL & "Tools\Devcon\devcon.exe"
 
-        If FileExists(strDevConExePath) = False Then
-            MsgBox strMessages(7) & vbNewLine & strDevConExePath, vbInformation, strProductName
+        If FileExists(strDevConExePath86) = False Then
+            MsgBox strMessages(7) & vbNewLine & strDevConExePath86, vbInformation, strProductName
         End If
     End If
 

@@ -111,6 +111,8 @@ Private Declare Function CoCreateInstance Lib "ole32" (ByRef rclsid As Any, ByVa
 Private Declare Function GetAncestor Lib "user32" (ByVal hWnd As Long, ByVal gaFlags As Long) As Long
 Private Declare Function CreateWindowEx Lib "user32" Alias "CreateWindowExW" (ByVal dwExStyle As Long, ByVal lpClassName As Long, ByVal lpWindowName As Long, ByVal dwStyle As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hWndParent As Long, ByVal hMenu As Long, ByVal hInstance As Long, ByRef lpParam As Any) As Long
 Private Declare Function DestroyWindow Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function SendMessage Lib "user32" Alias "SendMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
@@ -124,8 +126,10 @@ Private Const CLSID_ITaskBarList As String = "{56FDF344-FD6D-11D0-958A-006097C9A
 Private Const IID_ITaskBarList3 As String = "{EA1AFB91-9E28-4B86-90E9-9E9F8A5EEFAF}"
 Private Const CLSCTX_INPROC_SERVER As Long = 1, S_OK As Long = 0
 Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
+Private Const GWL_EXSTYLE As Long = (-20)
 Private Const WS_VISIBLE As Long = &H10000000
 Private Const WS_CHILD As Long = &H40000000
+Private Const WS_EX_STATICEDGE As Long = &H20000
 Private Const WS_EX_LAYOUTRTL As Long = &H400000
 Private Const SW_HIDE As Long = &H0
 Private Const GA_ROOT As Long = 2
@@ -500,10 +504,19 @@ End Property
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
 If ProgressBarHandle <> 0 And EnabledVisualStyles() = True Then
+    Dim dwExStyle As Long, dwExStyleOld As Long
+    dwExStyle = GetWindowLong(hWnd, GWL_EXSTYLE)
+    dwExStyleOld = dwExStyle
     If PropVisualStyles = True Then
         ActivateVisualStyles ProgressBarHandle
+        If (dwExStyle And WS_EX_STATICEDGE) = WS_EX_STATICEDGE Then dwExStyle = dwExStyle And Not WS_EX_STATICEDGE
     Else
         RemoveVisualStyles ProgressBarHandle
+        If Not (dwExStyle And WS_EX_STATICEDGE) = WS_EX_STATICEDGE Then dwExStyle = dwExStyle Or WS_EX_STATICEDGE
+    End If
+    If dwExStyle <> dwExStyleOld Then
+        SetWindowLong ProgressBarHandle, GWL_EXSTYLE, dwExStyle
+        Call ComCtlsFrameChanged(ProgressBarHandle)
     End If
     Me.Refresh
 End If

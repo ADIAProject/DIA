@@ -1,5 +1,57 @@
 List of revisions:
 
+17-Dec-2016
+- Included the ColumnDblClick event in the ListView control.
+
+16-Dec-2016
+- Included the NewWidth parameter in the ColumnAfterResize event in the ListView control.
+- Included the ColumnDividerDblClick event in the ListView control.
+
+15-Dec-2016
+- Renamed the ColumnBeforeSize/ColumnAfterSize events to ColumnBeforeResize/ColumnAfterResize in the ListView control.
+- The ResizableColumnHeaders property requires not anymore the comctls32.dll version 6.1 or higher in the ListView control.
+  So that property could even be used when not manifested. (comctl32.dll version 5.8x)
+
+10-Dec-2016
+- Modified OLEGuids.tlb as following: (compiled with a new uuid)
+  - Renamed interface IEnumeration to IEnumVARIANTUnrestricted. (like as IUnknownUnrestricted)
+  - Removed interface IEnumerationVB. (obselete)
+  - Correction in IDispatch.GetIDsOfNames. (rgszNames param now declared as LPWSTR)
+  It is necessary to replace all components and it is recommended to unregister the old OLEGuids.tlb.
+
+07-Dec-2016
+- Some minor internal improvements.
+
+06-Dec-2016
+- Bugfix that the Click event was not fired in two cases in the ListBoxW control:
+  - User has de-selected an item in a multiple-selection list box
+  - User has clicked again on a selected item in a single-selection list box
+  Reason was that the LBN_SELCANCEL notification code was missing in the event handling.
+- Included the SetSelRange method in the ListBoxW control.
+
+05-Dec-2016
+- Included the HideClippedButtons property in the ToolBar control.
+
+01-Dec-2016
+- Bugfix in the VisualStyles property in the ProgressBar control.
+  There was no border when using the comctl32.dll version 6.0 or higher and VisualStyles property set to False.
+
+29-Nov-2016
+- Bugfix in the CalendarDayState property in the DTPicker control.
+
+27-Nov-2016
+- Included the HotTracking property in the ToolBar control.
+- Removed the Selected property of a Button in the ToolBar control.
+  Instead the text and image will now be drawn selected when the HighLighted property is set to true, like in the TabStrip control and other.
+
+25-Nov-2016
+- Included the Selected and ForeColor property of a Button in the ToolBar control.
+  The Selected property only determines if a button image is drawn selected. (via ILD_SELECTED)
+  Also included new class 'TbrButtonProperties', which is necessary for the ForeColor property.
+
+22-Nov-2016
+- Minor internal improvements in the MonthView and DTPicker control.
+
 20-Nov-2016
 - Fixed a bug in the hidden 'IDEStop' method in the RichtTextBox control.
   I forgot there to change to the new class 'RtfOleCallback', which was implemented on 17-May-2016.

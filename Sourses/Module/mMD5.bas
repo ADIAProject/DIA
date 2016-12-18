@@ -34,7 +34,7 @@ Public Function GetMD5(sFile As String) As String
     Dim lFileSize        As Long
     Dim lBytesRead       As Long
     Dim uMD5(lMD5Length) As Byte
-    Dim i                As Long
+    Dim I                As Long
     Dim hCrypt           As Long
     Dim hHash            As Long
     Dim sMD5             As String
@@ -48,7 +48,7 @@ Public Function GetMD5(sFile As String) As String
         lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(sFile, Len(sFile) - 2))
     End If
     'Get a handle to the file
-    hFile = CreateFile(lngFilePathPtr, GENERIC_READ, FILE_SHARE_READ, ByVal 0&, OPEN_EXISTING, ByVal 0&, ByVal 0&)
+    hFile = CreateFile(lngFilePathPtr, GENERIC_READ, FILE_SHARE_READ, ByVal 0&, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, ByVal 0&)
 
     'Check if file opened successfully
     If hFile Then
@@ -76,8 +76,8 @@ Public Function GetMD5(sFile As String) As String
                             If CryptGetHashParam(hHash, HP_HASHVAL, uMD5(0), lMD5Length, 0) <> 0 Then
 
                                 'Build the MD5 string
-                                For i = 0 To lMD5Length - 1
-                                    sMD5 = sMD5 & (Right$("0" & Hex$(uMD5(i)), 2))
+                                For I = 0 To lMD5Length - 1
+                                    sMD5 = sMD5 & (Right$("0" & Hex$(uMD5(I)), 2))
                                 Next
 
                             End If

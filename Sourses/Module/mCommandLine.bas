@@ -11,9 +11,9 @@ Public mbSilentDLL                       As Boolean
 Public strSilentSelectMode               As String
 
 'Api-Declare for Unicode Support for CommandLine. Writen by  Krool - http://www.vbforums.com/showthread.php?748607-Command%28%29-Unicode-aware
-Private Declare Function GetCommandLine Lib "kernel32" Alias "GetCommandLineW" () As Long
-Private Declare Function PathGetArgs Lib "shlwapi" Alias "PathGetArgsW" (ByVal lpszPath As Long) As Long
-Private Declare Function SysReAllocString Lib "oleaut32" (ByVal pbString As Long, ByVal pszStrPtr As Long) As Long
+'Private Declare Function GetCommandLine Lib "kernel32" Alias "GetCommandLineW" () As Long
+'Private Declare Function PathGetArgs Lib "shlwapi" Alias "PathGetArgsW" (ByVal lpszPath As Long) As Long
+'Private Declare Function SysReAllocString Lib "oleaut32" (ByVal pbString As Long, ByVal pszStrPtr As Long) As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CmdLineParsing
@@ -23,7 +23,7 @@ Private Declare Function SysReAllocString Lib "oleaut32" (ByVal pbString As Long
 Public Function CmdLineParsing() As Boolean
 
     Dim argRetCMD    As Collection
-    Dim i            As Integer
+    Dim I            As Integer
     Dim intArgCount  As Integer
     Dim strArg       As String
     Dim strArg_x()   As String
@@ -34,11 +34,11 @@ Public Function CmdLineParsing() As Boolean
     With New cCMDArguments
         .CommandLine = "CMDLineParams " & Command
         Set argRetCMD = .Arguments
-        intArgCount = argRetCMD.Count
+        intArgCount = argRetCMD.count
     End With
 
-    For i = 2 To intArgCount
-        strArg = argRetCMD(i)
+    For I = 2 To intArgCount
+        strArg = argRetCMD(I)
         iArgRavno = InStr(strArg, strRavno)
         iArgDvoetoch = InStr(strArg, strColon)
 
@@ -47,8 +47,8 @@ Public Function CmdLineParsing() As Boolean
             strArg = strArg_x(0)
             strArgParam = strArg_x(1)
         ElseIf iArgDvoetoch Then
-            strArg = Left$(argRetCMD(i), iArgDvoetoch - 1)
-            strArgParam = Right$(argRetCMD(i), Len(argRetCMD(i)) - iArgDvoetoch)
+            strArg = Left$(argRetCMD(I), iArgDvoetoch - 1)
+            strArgParam = Right$(argRetCMD(I), Len(argRetCMD(I)) - iArgDvoetoch)
         End If
 
         mbRunWithParam = True
@@ -146,24 +146,24 @@ Public Function CmdLineParsing() As Boolean
 
         End Select
 
-    Next i
+    Next I
 
 End Function
 
-' (VB-Overwrite)
+' (VB-Overwrite) - присутствует в файле common.bas
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CmdLineParsing
 '! Description (Описание)  :   [Функция получения строки запуска программы, заменяет встроенную функцию VBA.Command$()]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function Command() As String
-    If InIDE() = False Then
-        SysReAllocString VarPtr(Command), PathGetArgs(GetCommandLine())
-        Command = LTrim$(Command)
-    Else
-        Command = VBA.Command$()
-    End If
-End Function
+'Public Function Command() As String
+'    If InIDE() = False Then
+'        SysReAllocString VarPtr(Command), PathGetArgs(GetCommandLine())
+'        Command = LTrim$(Command)
+'    Else
+'        Command = VBA.Command$()
+'    End If
+'End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShowHelpMsg

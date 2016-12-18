@@ -1,13 +1,14 @@
 Attribute VB_Name = "mTimeFunction"
 Option Explicit
 
-Public dtStartTimeProg                   As Long
-Public dtEndTimeProg                     As Long
-Public dtAllTimeProg                     As String
+Public dtStartTimeProg As Currency
+Public mCurFreq        As Currency
 
 Public Declare Function GetTickCount Lib "kernel32.dll" () As Long
-Public Declare Function QueryPerformanceFrequency Lib "kernel32" (lpFrequency As Any) As Long
-Public Declare Function QueryPerformanceCounter Lib "kernel32" (lpPerformanceCount As Any) As Long
+
+Private Declare Function PerfCount Lib "kernel32" Alias "QueryPerformanceCounter" (lpPerformanceCount As Currency) As Long
+Private Declare Function PerfFreq Lib "kernel32" Alias "QueryPerformanceFrequency" (lpFrequency As Currency) As Long
+
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CalculateTime
@@ -16,9 +17,8 @@ Public Declare Function QueryPerformanceCounter Lib "kernel32" (lpPerformanceCou
 '                              lngEndTime (Long)
 '                              mbmSec (Boolean = False)
 '!--------------------------------------------------------------------------------
-Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Long, Optional ByVal mbmSec As Boolean = False) As String
+Public Function CalculateTime(ByVal curWorkTime As Currency, Optional ByVal mbmSec As Boolean = False) As String
 
-    Dim lngWorkTimeTemp         As Double
     Dim lngWorkTimeSecound      As Long
     Dim lngWorkTimeMinutes      As Long
     Dim lngWorkTimeHours        As Long
@@ -28,14 +28,12 @@ Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Lo
     Dim strWorkTimeHours        As String
     Dim strWorkTimeMilliSecound As String
 
-    If lngEndTime > lngStartTime Then
-        ' Переводим значение в секунды
-        lngWorkTimeTemp = (lngEndTime - lngStartTime) / 1000
-        ' Высчитываем значения
-        lngWorkTimeHours = (lngWorkTimeTemp \ 3600)
-        lngWorkTimeMinutes = (lngWorkTimeTemp \ 60) Mod 60
-        lngWorkTimeSecound = lngWorkTimeTemp Mod 60
-        lngWorkTimeMilliSecound = (lngWorkTimeTemp - Fix(lngWorkTimeTemp)) * 1000
+    If curWorkTime > 0 Then
+        ' Высчитываем временные значения
+        lngWorkTimeHours = (curWorkTime \ 3600)
+        lngWorkTimeMinutes = (curWorkTime \ 60) Mod 60
+        lngWorkTimeSecound = curWorkTime Mod 60
+        lngWorkTimeMilliSecound = (curWorkTime - Fix(curWorkTime)) * 1000
 
         ' Добавляем лидирующие нули при необходимости
         strWorkTimeHours = Format$(lngWorkTimeHours, "00")
@@ -43,9 +41,9 @@ Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Lo
         strWorkTimeSecound = Format$(lngWorkTimeSecound, "00")
         strWorkTimeMilliSecound = Format$(lngWorkTimeMilliSecound, "000")
     
-        ' Если результат нужен с милиСекундами
+        ' Если результат нужен с милисекундами
         If mbmSec Then
-            ' Итоговое время
+            ' Итоговое время с миллисекундами
             If lngWorkTimeHours = 0 Then
                 CalculateTime = strWorkTimeMinutes & strColon & strWorkTimeSecound & strDot & strWorkTimeMilliSecound & " (mm:ss.ms)"
             Else
@@ -61,7 +59,7 @@ Public Function CalculateTime(ByVal lngStartTime As Long, ByVal lngEndTime As Lo
         End If
     Else
         ' Итоговое время
-        CalculateTime = "00:00:00.000 (hh:mm:ss.ms)"
+        CalculateTime = "00:00.000 (mm:ss.ms)"
     End If
 
 End Function
@@ -88,14 +86,19 @@ End Function
 ' ' DWORD value. Therefore, the time will wrap around to zero
 ' ' if the system is run continuously for 49.7 days.
 '
-'Private mcurFrequency As Currency ' High performance Frequency
-'
-'Public Function GetTimeStart() As Long
-'    If mcurFrequency > 0 Then
-'        QueryPerformanceCounter curEnd ' Hi-performance timer available
-'    Else
-'        curEnd = CDbl(GetTickCount) ' No hi-performance timer
-'    End If
-'
-'    GetTimeStart = curEnd
-'End Function
+Public Function GetTimeStart() As Currency
+    If mCurFreq = 0 Then PerfFreq mCurFreq
+    If (mCurFreq) Then PerfCount GetTimeStart
+End Function
+
+Public Function GetTimeStop(ByVal curStart As Currency) As Currency
+    If (mCurFreq) Then
+        Dim curStop As Currency
+        PerfCount curStop
+        GetTimeStop = (curStop - curStart) / mCurFreq ' cpu tick accurate
+        curStop = 0
+    Else
+        GetTimeStop = CDbl(GetTickCount) ' No hi-performance timer
+    End If
+End Function
+

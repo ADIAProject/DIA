@@ -331,15 +331,15 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub DelTemp()
 
-    Dim lngTimeScriptRun       As Long
-    Dim lngTimeScriptFinish    As Long
+    Dim lngTimeScriptRun    As Currency
+    Dim lngTimeScriptFinish As Currency
     Dim ret                 As Long
     Dim lngFilePathPtr      As Long
 
     On Error Resume Next
 
     If mbDebugDetail Then DebugMode "DelTemp-Start"
-    lngTimeScriptRun = GetTickCount
+    lngTimeScriptRun = GetTimeStart
 
     If PathExists(strWorkTemp) Then
         DelRecursiveFolder strWorkTemp
@@ -361,8 +361,8 @@ Public Sub DelTemp()
         
     End If
 
-    lngTimeScriptFinish = GetTickCount
-    If mbDebugStandart Then DebugMode "DelTemp-End: Time to Delete: " & CalculateTime(lngTimeScriptRun, lngTimeScriptFinish, True)
+    lngTimeScriptFinish = GetTimeStop(lngTimeScriptRun)
+    If mbDebugStandart Then DebugMode "DelTemp-End: Time to Delete: " & CalculateTime(lngTimeScriptFinish, True)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -481,7 +481,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As String
 
-    Dim R            As String
+    Dim r            As String
     Dim str_OSVer    As String
     Dim str_OSBit    As String
     Dim str_DATE     As String
@@ -504,14 +504,14 @@ Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As Stri
         str_PCMODEL = SafeDir(Replace$(strCompModel, "_", strDash))
         
         ' Замена макросов значениями
-        R = strFileName
-        R = Replace$(R, "%PCNAME%", strCompModel, , , vbTextCompare)
-        R = Replace$(R, "%PCMODEL%", str_PCMODEL, , , vbTextCompare)
-        R = Replace$(R, "%OSVer%", str_OSVer, , , vbTextCompare)
-        R = Replace$(R, "%OSBit%", str_OSBit, , , vbTextCompare)
-        R = Replace$(R, "%DATE%", str_DATE, , , vbTextCompare)
-        R = Trim$(R)
-        ExpandFileNameByEnvironment = R
+        r = strFileName
+        r = Replace$(r, "%PCNAME%", strCompModel, , , vbTextCompare)
+        r = Replace$(r, "%PCMODEL%", str_PCMODEL, , , vbTextCompare)
+        r = Replace$(r, "%OSVer%", str_OSVer, , , vbTextCompare)
+        r = Replace$(r, "%OSBit%", str_OSBit, , , vbTextCompare)
+        r = Replace$(r, "%DATE%", str_DATE, , , vbTextCompare)
+        r = Trim$(r)
+        ExpandFileNameByEnvironment = r
     Else
         ExpandFileNameByEnvironment = strFileName
     End If
@@ -602,15 +602,15 @@ End Sub
 Public Sub FileWriteDataFromArray(ByVal sFileName As String, ByRef sStringOut() As String)
 
     Dim fNum As Integer
-    Dim i As Long
+    Dim I As Long
     
     fNum = FreeFile
 
     Open sFileName For Binary Access Write Lock Write As fNum
     
-    For i = LBound(sStringOut) To UBound(sStringOut)
-        Put #fNum, , sStringOut(i) & vbNewLine
-    Next i
+    For I = LBound(sStringOut) To UBound(sStringOut)
+        Put #fNum, , sStringOut(I) & vbNewLine
+    Next I
     
     Close #fNum
 
@@ -838,7 +838,7 @@ Public Function GetFileSizeByPath(ByVal strPath As String) As Long
         lngFilePathPtr = StrPtr("\\?\UNC\" & Right$(strPath, Len(strPath) - 2))
     End If
     
-    lHandle = CreateFile(lngFilePathPtr, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0)
+    lHandle = CreateFile(lngFilePathPtr, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0)
 
     If lHandle <> INVALID_HANDLE_VALUE Then
         GetFileSizeByPath = GetFileSize(lHandle, 0&)
@@ -1029,7 +1029,7 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
     Dim strFileContent As String
     Dim Key            As String
     Dim Value          As String
-    Dim i              As Long
+    Dim I              As Long
     Dim Strings        As String
     Dim valval         As String
     Dim varname        As String
@@ -1082,8 +1082,8 @@ Public Function ParserInf4Strings(ByVal strInfFilePath As String, ByVal strSearc
         Strings = objMatch.SubMatches(0) & objMatch.SubMatches(1)
         Set MatchesStrDefs = RegExpStrDefs.Execute(Strings)
 
-        For i = 0 To MatchesStrDefs.count - 1
-            Set objMatch1 = MatchesStrDefs.Item(i)
+        For I = 0 To MatchesStrDefs.count - 1
+            Set objMatch1 = MatchesStrDefs.Item(I)
             Key = objMatch1.SubMatches(0)
             Value = objMatch1.SubMatches(1)
 
