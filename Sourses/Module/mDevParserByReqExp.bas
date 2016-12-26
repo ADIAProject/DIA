@@ -19,7 +19,7 @@ Private RegExpReplace       As RegExp
 Private objHashOutput       As Scripting.Dictionary
 Private objStringHash       As Scripting.Dictionary
 Private objHWIDOutput       As Scripting.Dictionary
-'Быстрые метод сортировки
+'Быстрые методы сортировки строковых массивов
 Private cSortHWID           As cAsmShell
 Private cSortHWID2          As cBlizzard
 
@@ -65,10 +65,10 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strInfPathTabQuoted       As String
     Dim strWorkDir                As String
     Dim strWorkDirInfList_x()     As FindListStruct
-    Dim i                         As Long
     Dim ii                        As Long
-    Dim j                         As Long
-    Dim k                         As Long
+    Dim iii                       As Long
+    Dim jj                        As Long
+    Dim k1                        As Long
     Dim k2                        As Long
     Dim infNum                    As Long
     Dim infCount                  As Long
@@ -144,7 +144,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     End If
     
     'Имя папки с распакованными драйверами
-    strPackFileName_woExt = GetFileName_woExt(GetFileNameFromPath(strPackFileName))
+    strPackFileName_woExt = GetFileNameOnly_woExt(strPackFileName)
     'Рабочий каталог - Каталог для распаковки inf файлов
     strWorkDir = BackslashAdd2Path(strWorkTempBackSL & strPackFileName_woExt)
     
@@ -334,7 +334,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     ' Запускаем цикл обработки inf-файлов
     For infNum = 0 To UBound(strWorkDirInfList_x)
         
-            If strWorkDirInfList_x(infNum).Size Then
+        If strWorkDirInfList_x(infNum).Size Then
             
             ' полный путь к файлу inf
             strInfFullName = strWorkDirInfList_x(infNum).FullPath
@@ -377,17 +377,16 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             ' Удаляем строки с ; или # в начале и пустые строки
             sFileContent = RegExpReplace.Replace(sFileContent, vbNewLine)
             
-            
             ' Find [strings] section
             Set objMatchesStrSect = RegExpStrSect.Execute(sFileContent)
     
             If objMatchesStrSect.count Then
-                Set objMatchStrSect = objMatchesStrSect.Item(0)
+                Set objMatchStrSect = objMatchesStrSect.item(0)
                 
                 Set objMatchesStrDefs = RegExpStrDefs.Execute(objMatchStrSect.SubMatches(0) & objMatchStrSect.SubMatches(1))
     
-                For i = 0 To objMatchesStrDefs.count - 1
-                    Set objMatchStrDefs = objMatchesStrDefs.Item(i)
+                For ii = 0 To objMatchesStrDefs.count - 1
+                    Set objMatchStrDefs = objMatchesStrDefs.item(ii)
                     strKey = Trim$(LCase$(objMatchStrDefs.SubMatches(0)))
                     strValue = Trim$(objMatchStrDefs.SubMatches(1))
     
@@ -406,13 +405,13 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             ' Find [version] section
             Set objMatchesVerSect = RegExpVerSect.Execute(sFileContent)
             If objMatchesVerSect.count Then
-                sVerSectContent = LCase$(objMatchesVerSect.Item(0))
+                sVerSectContent = LCase$(objMatchesVerSect.item(0))
             
                 ' Find DriverVer parametr
                 Set objMatchesVerParam = RegExpVerParam.Execute(sVerSectContent)
         
                 If objMatchesVerParam.count Then
-                    Set objMatchVer = objMatchesVerParam.Item(0)
+                    Set objMatchVer = objMatchesVerParam.item(0)
                     strVerTemp = objMatchVer.SubMatches(0)
                     
                     If InStr(strVerTemp, strPercent) Then
@@ -426,7 +425,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         
                         If InStr(strDrvDate, strPercent) Then
                             strVarName = Left$(strDrvDate, InStrRev(strDrvDate, strPercent))
-                            strValueHash = objStringHash.Item(strVarName)
+                            strValueHash = objStringHash.item(strVarName)
             
                             If LenB(strValueHash) Then
                                 strDrvDate = Replace$(strDrvDate, strVarName, strValueHash)
@@ -437,7 +436,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             
                         If InStr(strDrvVersion, strPercent) Then
                             strVarName = Left$(strDrvVersion, InStrRev(strDrvVersion, strPercent))
-                            strValueHash = objStringHash.Item(strVarName)
+                            strValueHash = objStringHash.item(strVarName)
             
                             If LenB(strValueHash) Then
                                 strDrvVersion = Replace$(strDrvVersion, strVarName, strValueHash)
@@ -495,12 +494,12 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                 Set objMatchesCatParam = RegExpCatParam.Execute(sVerSectContent)
         
                 If objMatchesCatParam.count Then
-                    Set objMatchCat = objMatchesCatParam.Item(0)
+                    Set objMatchCat = objMatchesCatParam.item(0)
                     strDrvCatFileName = objMatchCat.SubMatches(0)
                     
                     If InStr(strDrvCatFileName, strPercent) Then
                         strVarName = Left$(strDrvCatFileName, InStrRev(strDrvCatFileName, strPercent))
-                        strValueHash = objStringHash.Item(strVarName)
+                        strValueHash = objStringHash.item(strVarName)
         
                         If LenB(strValueHash) Then
                             strDrvCatFileName = Replace$(strDrvCatFileName, strVarName, strValueHash)
@@ -512,7 +511,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         
                     ' Если ли файл *.cat в списке файлов архива?
                     If InStr(strDrvCatFileName, ".cat") Then
-                        If InStr(1, strArchCatFileListContent, LCase$(strInfPath) & strDrvCatFileName) Then
+                        If InStr(strArchCatFileListContent, LCase$(strInfPath) & strDrvCatFileName) Then
                             lngCatFileExists = 1
                         Else
                             lngCatFileExists = 0
@@ -539,29 +538,29 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             Set objMatchesManSect = RegExpManSect.Execute(sFileContent)
     
             If objMatchesManSect.count Then
-                Set objMatchManSect = objMatchesManSect.Item(0)
+                Set objMatchManSect = objMatchesManSect.item(0)
                 strManSectList = vbNullString
                 Set objMatchesManDef = RegExpManDef.Execute(objMatchManSect.SubMatches(0) & objMatchManSect.SubMatches(1))
     
                 If objMatchesManDef.count Then
                 
-                    For i = 0 To objMatchesManDef.count - 1
-                        Set objMatchManDef = objMatchesManDef.Item(i)
+                    For ii = 0 To objMatchesManDef.count - 1
+                        Set objMatchManDef = objMatchesManDef.item(ii)
                         strSeekString = objMatchManDef.SubMatches(0)
                         Set objMatchesManID = RegManID.Execute(strSeekString)
                         strManSectBaseName = vbNullString
     
-                        For j = 0 To objMatchesManID.count - 1
-                            Set objMatchManID = objMatchesManID.Item(j)
+                        For jj = 0 To objMatchesManID.count - 1
+                            Set objMatchManID = objMatchesManID.item(jj)
                             strManSectSubString = RTrim$(objMatchManID.SubMatches(0))
     
-                            If i <> 0 Then
+                            If ii <> 0 Then
                                 strManSectList = strManSectList & "|"
-                            ElseIf j <> 0 Then
+                            ElseIf jj <> 0 Then
                                 strManSectList = strManSectList & "|"
                             End If
     
-                            If j = 0 Then
+                            If jj = 0 Then
                                 strManSectBaseName = strManSectSubString
                                 strManSectList = strManSectList & strManSectBaseName
                             Else
@@ -607,8 +606,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     
                         ' Если совпадения найдены
                         If objMatchesDevSect.count Then
-                            For k = 0 To objMatchesDevSect.count - 1
-                                Set objMatchDevSect = objMatchesDevSect.Item(k)
+                            For k1 = 0 To objMatchesDevSect.count - 1
+                                Set objMatchDevSect = objMatchesDevSect.item(k1)
                                 
                                 ' Find device definitions
                                 Set objMatchesDevDef = RegExpDevDef.Execute(objMatchDevSect.SubMatches(0) & objMatchDevSect.SubMatches(1))
@@ -616,8 +615,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 ' Если секция не пустая, то
                                 If objMatchesDevDef.count Then
                                     ' Handle definition
-                                    For i = 0 To objMatchesDevDef.count - 1
-                                        Set objMatchDevDef = objMatchesDevDef.Item(i)
+                                    For ii = 0 To objMatchesDevDef.count - 1
+                                        Set objMatchDevDef = objMatchesDevDef.item(ii)
                                         strDevIDs = objMatchDevDef.SubMatches(1)
                                         If InStr(strDevIDs, vbCr) Then
                                             strDevIDs = Replace$(strDevIDs, vbCr, vbNullString)
@@ -628,9 +627,9 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                         If InStr(strDevIDs, strComma) Then
                     
                                             strDevIDs_x = Split(strDevIDs, strComma)
-                                            For j = 0 To UBound(strDevIDs_x)
+                                            For jj = 0 To UBound(strDevIDs_x)
     
-                                                strValueID = strDevIDs_x(j)
+                                                strValueID = strDevIDs_x(jj)
                                                 
                                                 If InStr(strValueID, strSpace) Then
                                                     strValueID = Trim$(strValueID)
@@ -651,19 +650,19 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                             strVarName = Mid$(strValueID, lngPos + 1, lngPosRev - lngPos - 1)
                         
                                                             If InStr(strVarName, strPercent) = 0 Then
-                                                                strValueHash = objStringHash.Item(strVarName)
+                                                                strValueHash = objStringHash.item(strVarName)
                                                             Else
                                                                 strVarname_x = Split(strVarName, strPercent)
                         
-                                                                For ii = 0 To UBound(strVarname_x)
+                                                                For iii = 0 To UBound(strVarname_x)
                                                                     
                                                                     If LenB(strValueHash) Then
-                                                                        strValueHash = strValueHash & strSpace & objStringHash.Item(strVarname_x(ii))
+                                                                        strValueHash = strValueHash & strSpace & objStringHash.item(strVarname_x(iii))
                                                                     Else
-                                                                        strValueHash = objStringHash.Item(strVarname_x(ii))
+                                                                        strValueHash = objStringHash.item(strVarname_x(iii))
                                                                     End If
                                                                 
-                                                                Next ii
+                                                                Next iii
                                                                 strValueHash = Trim$(strValueHash)
                                                                 strValueHash = Replace$(strValueHash, str2Space, "&")
                                                                 strValueHash = Replace$(strValueHash, strSpace, "&")
@@ -680,7 +679,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                         
                                                         Else
                                                             strVarName = Replace$(strValueID, strPercent, vbNullString)
-                                                            strValueHash = objStringHash.Item(strVarName)
+                                                            strValueHash = objStringHash.item(strVarName)
                                                             If LenB(strValueHash) Then
                                                                 strValueID = strValueHash
                                                             Else
@@ -720,26 +719,26 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 
                                                                     If InStr(strVarName, strPercent) = 0 Then
                                                                         If objStringHash.Exists(strVarName) Then
-                                                                            strValueHash = objStringHash.Item(strVarName)
+                                                                            strValueHash = objStringHash.item(strVarName)
                                                                         Else
                                                                             strValueHash = vbNullString
                                                                         End If
                                                                     Else
                                                                         strVarname_x = Split(strVarName, strPercent)
                                 
-                                                                        For ii = 0 To UBound(strVarname_x)
+                                                                        For iii = 0 To UBound(strVarname_x)
                                                                             
                                                                             If LenB(strValueHash) Then
-                                                                                strVarname_x(ii) = Trim$(strVarname_x(ii))
-                                                                                If LenB(strVarname_x(ii)) Then
-                                                                                    strValueHash = strValueHash & strSpace & objStringHash.Item(strVarname_x(ii))
+                                                                                strVarname_x(iii) = Trim$(strVarname_x(iii))
+                                                                                If LenB(strVarname_x(iii)) Then
+                                                                                    strValueHash = strValueHash & strSpace & objStringHash.item(strVarname_x(iii))
                                                                                 End If
                                                                             Else
-                                                                                strVarname_x(ii) = Trim$(strVarname_x(ii))
-                                                                                strValueHash = objStringHash.Item(strVarname_x(ii))
+                                                                                strVarname_x(iii) = Trim$(strVarname_x(iii))
+                                                                                strValueHash = objStringHash.item(strVarname_x(iii))
                                                                             End If
                     
-                                                                        Next ii
+                                                                        Next iii
                                                                                                                                     
                                                                     End If
                                                                                                                                                                                                             
@@ -753,7 +752,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                 
                                                                 Else
                                                                     strVarName = Replace$(strDevName, strPercent, vbNullString)
-                                                                    strValueHash = objStringHash.Item(LCase$(strVarName))
+                                                                    strValueHash = objStringHash.item(LCase$(strVarName))
                                                                     If LenB(strValueHash) Then
                                                                         strDevName = strValueHash
                                                                     Else
@@ -812,21 +811,21 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                         strVarName = Mid$(strValueID, lngPos + 1, lngPosRev - lngPos - 1)
                     
                                                         If InStr(strVarName, strPercent) = 0 Then
-                                                            strValueHash = objStringHash.Item(LCase$(strVarName))
+                                                            strValueHash = objStringHash.item(LCase$(strVarName))
                                                         Else
                                                             strVarname_x = Split(LCase$(strVarName), strPercent)
                     
-                                                            For ii = 0 To UBound(strVarname_x)
+                                                            For iii = 0 To UBound(strVarname_x)
                                                                 
-                                                                If LenB(strVarname_x(ii)) > 2 Then
+                                                                If LenB(strVarname_x(iii)) > 2 Then
                                                                     If LenB(strValueHash) Then
-                                                                        strValueHash = strValueHash & strSpace & objStringHash.Item(strVarname_x(ii))
+                                                                        strValueHash = strValueHash & strSpace & objStringHash.item(strVarname_x(iii))
                                                                     Else
-                                                                        strValueHash = objStringHash.Item(strVarname_x(ii))
+                                                                        strValueHash = objStringHash.item(strVarname_x(iii))
                                                                     End If
                                                                 End If
 
-                                                            Next ii
+                                                            Next iii
                                                             strValueHash = Trim$(strValueHash)
                                                             strValueHash = Replace$(strValueHash, str2Space, "&")
                                                             strValueHash = Replace$(strValueHash, strSpace, "&")
@@ -843,7 +842,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                     
                                                     Else
                                                         strVarName = Replace$(strValueID, strPercent, vbNullString)
-                                                        strValueHash = objStringHash.Item(LCase$(strVarName))
+                                                        strValueHash = objStringHash.item(LCase$(strVarName))
                                                         If LenB(strValueHash) Then
                                                             strValueID = strValueHash
                                                         Else
@@ -884,26 +883,26 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                             
                                                                 If InStr(strVarName, strPercent) = 0 Then
                                                                     If objStringHash.Exists(strVarName) Then
-                                                                        strValueHash = objStringHash.Item(strVarName)
+                                                                        strValueHash = objStringHash.item(strVarName)
                                                                     Else
                                                                         strValueHash = vbNullString
                                                                     End If
                                                                 Else
                                                                     strVarname_x = Split(strVarName, strPercent)
                             
-                                                                    For ii = 0 To UBound(strVarname_x)
+                                                                    For iii = 0 To UBound(strVarname_x)
                                                                         
                                                                         If LenB(strValueHash) Then
-                                                                            strVarname_x(ii) = Trim$(strVarname_x(ii))
-                                                                            If LenB(strVarname_x(ii)) Then
-                                                                                strValueHash = strValueHash & strSpace & objStringHash.Item(strVarname_x(ii))
+                                                                            strVarname_x(iii) = Trim$(strVarname_x(iii))
+                                                                            If LenB(strVarname_x(iii)) Then
+                                                                                strValueHash = strValueHash & strSpace & objStringHash.item(strVarname_x(iii))
                                                                             End If
                                                                         Else
-                                                                            strVarname_x(ii) = Trim$(strVarname_x(ii))
-                                                                            strValueHash = objStringHash.Item(strVarname_x(ii))
+                                                                            strVarname_x(iii) = Trim$(strVarname_x(iii))
+                                                                            strValueHash = objStringHash.item(strVarname_x(iii))
                                                                         End If
                 
-                                                                    Next ii
+                                                                    Next iii
                                                                                                                                 
                                                                 End If
                                                                 
@@ -920,7 +919,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                                                 If InStr(strVarName, "$") Then
                                                                     strVarName = Replace$(strVarName, "$", vbNullString)
                                                                 End If
-                                                                strValueHash = objStringHash.Item(LCase$(strVarName))
+                                                                strValueHash = objStringHash.item(LCase$(strVarName))
                                                                 
                                                                 If LenB(strValueHash) Then
                                                                     strDevName = strValueHash
@@ -958,14 +957,14 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
                                         End If
                                     
                                     ' dev_defs'
-                                    Next i
+                                    Next ii
                                 
                                 Else
                                     ' Если секция непустая, то установка из данного файла запрещена на данной системе
                                     If mbDebugDetail Then DebugMode str2VbTab & "DevParserByRegExp: Section [" & strManSection & "] is Empty -> this OS not Supported by inf: " & strInfPathRelative
                                 End If
                             
-                            Next k
+                            Next k1
                         ' dev_sub_sects
                         
                         Else
@@ -988,7 +987,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strWorkDirInfList_x(infNum).FullPath
         End If
 
-    Next
+    Next infNum
 
     ChangeStatusBarText strMessages(121) & strSpace & strPackFileName
     

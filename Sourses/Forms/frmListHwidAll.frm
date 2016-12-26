@@ -553,12 +553,12 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub FindCheckCountList()
 
-    Dim I       As Integer
+    Dim ii      As Integer
     Dim miCount As Integer
 
-    For I = 1 To lvDevices.ListItems.count
+    For ii = 1 To lvDevices.ListItems.count
 
-        If lvDevices.ListItems.Item(I).Checked Then
+        If lvDevices.ListItems.item(ii).Checked Then
             miCount = miCount + 1
         End If
 
@@ -705,14 +705,14 @@ Private Sub LoadListbyMode()
         End If
         With lvDevices.ColumnHeaders
             If .count Then
-                .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
             End If
         End With
     End If
@@ -845,14 +845,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdCheckAll_Click()
 
-    Dim I As Integer
+    Dim ii As Integer
 
     With lvDevices.ListItems
 
-        For I = 1 To .count
+        For ii = 1 To .count
 
-            If Not .Item(I).Checked Then
-                .Item(I).Checked = True
+            If Not .item(ii).Checked Then
+                .item(ii).Checked = True
             End If
 
         Next
@@ -927,14 +927,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdUnCheckAll_Click()
 
-    Dim I As Integer
+    Dim ii As Integer
 
     With lvDevices.ListItems
 
-        For I = 1 To .count
+        For ii = 1 To .count
 
-            If .Item(I).Checked Then
-                .Item(I).Checked = False
+            If .item(ii).Checked Then
+                .item(ii).Checked = False
             End If
 
         Next
@@ -1092,8 +1092,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadList_Device
 '! Description (Описание)  :   [Построение полного спиcка устройств]
-'! Parameters  (Переменные):   mbViewed (Boolean = True)
-'                              lngMode (Long = 0)
+'! Parameters  (Переменные):   lngMode (Long = 0)
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
 
@@ -1105,7 +1104,7 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
     Dim strCompatID       As String
     Dim strStrDescription As String
     Dim strOrigHwid       As String
-    Dim ii                As Integer
+    Dim iii               As Integer
     Dim strInDPacks       As String
     Dim lngNumRow         As Long
 
@@ -1125,14 +1124,14 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
 
     End With
 
-    For ii = 0 To UBound(arrHwidsLocal)
-        strDevHwid = arrHwidsLocal(ii).HWID
-        strDevName = arrHwidsLocal(ii).DevName
-        strDevStatus = arrHwidsLocal(ii).Status
-        strDevDriverLocal = arrHwidsLocal(ii).VerLocal
-        strProvider = arrHwidsLocal(ii).Provider
-        strCompatID = arrHwidsLocal(ii).HWIDCompat
-        strStrDescription = arrHwidsLocal(ii).Description
+    For iii = 0 To UBound(arrHwidsLocal)
+        strDevHwid = arrHwidsLocal(iii).HWID
+        strDevName = arrHwidsLocal(iii).DevName
+        strDevStatus = arrHwidsLocal(iii).Status
+        strDevDriverLocal = arrHwidsLocal(iii).VerLocal
+        strProvider = arrHwidsLocal(iii).Provider
+        strCompatID = arrHwidsLocal(iii).HWIDCompat
+        strStrDescription = arrHwidsLocal(iii).Description
 
         If StrComp(strDevName, strStrDescription, vbTextCompare) <> 0 Then
             If LenB(strStrDescription) Then
@@ -1142,8 +1141,8 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
             End If
         End If
 
-        strInDPacks = arrHwidsLocal(ii).DPsList
-        strOrigHwid = arrHwidsLocal(ii).HWIDOrig
+        strInDPacks = arrHwidsLocal(iii).DPsList
+        strOrigHwid = arrHwidsLocal(iii).HWIDOrig
 
         Select Case lngMode
 
@@ -1268,26 +1267,26 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
     With lvDevices.ColumnHeaders
         If .count Then
             If lvDevices.ListItems.count Then
-                .Item(1).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(2).AutoSize LvwColumnHeaderAutoSizeToItems
-                If .Item(2).Width < lvDevices.ListItems.Item(1).Width Then
-                    .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(1).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(2).AutoSize LvwColumnHeaderAutoSizeToItems
+                If .item(2).Width < lvDevices.ListItems.item(1).Width Then
+                    .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
                 End If
-                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(4).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(5).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(6).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(7).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(4).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(5).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(6).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(7).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
             Else
-                .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
             End If
         End If
     End With
@@ -1301,7 +1300,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvDevices
         .Sorted = False
@@ -1309,10 +1308,10 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
         If ComCtlsSupportLevel() >= 1 Then
 
-            For I = 1 To .ColumnHeaders.count
+            For ii = 1 To .ColumnHeaders.count
 
-                If I <> ColumnHeader.Index Then
-                    .ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
+                If ii <> ColumnHeader.Index Then
+                    .ColumnHeaders(ii).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
 
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -1327,7 +1326,7 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next I
+            Next ii
 
             Select Case ColumnHeader.SortArrow
 
@@ -1341,10 +1340,10 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
             .SelectedColumn = ColumnHeader
         Else
 
-            For I = 1 To .ColumnHeaders.count
+            For ii = 1 To .ColumnHeaders.count
 
-                If I <> ColumnHeader.Index Then
-                    .ColumnHeaders(I).Icon = 0
+                If ii <> ColumnHeader.Index Then
+                    .ColumnHeaders(ii).Icon = 0
                 Else
 
                     If ColumnHeader.Icon = 0 Then
@@ -1359,7 +1358,7 @@ Private Sub lvDevices_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next I
+            Next ii
 
             Select Case ColumnHeader.Icon
 
@@ -1385,8 +1384,8 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub lvDevices_ItemClick(ByVal Item As LvwListItem, ByVal Button As Integer)
-    txtFindText.Text = ParseHwid(Item.Text)
+Private Sub lvDevices_ItemClick(ByVal item As LvwListItem, ByVal Button As Integer)
+    txtFindText.Text = ParseHwid(item.Text)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1395,13 +1394,13 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub lvDevices_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
+Private Sub lvDevices_ItemDblClick(ByVal item As LvwListItem, ByVal Button As Integer)
 
     Dim strOrigHwid As String
 
     If Button = vbLeftButton Then
-        txtFindText.Text = ParseHwid(Item.Text)
-        strOrigHwid = Item.SubItems(6)
+        txtFindText.Text = ParseHwid(item.Text)
+        strOrigHwid = item.SubItems(6)
         OpenDeviceProp strOrigHwid
     End If
 

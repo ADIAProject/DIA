@@ -332,7 +332,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
 
     Dim arrFileStrings()  As String
     Dim ColumnByStrings() As String
-    Dim i                 As Long
+    Dim ii                As Long
     Dim strContentFile    As String
 
     'FileReadData strFilePath, strContentFile
@@ -344,10 +344,10 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
     'Переопределяем основной массив с данными об устройствах компьютера
     ReDim arrHwidsLocal(UBound(arrFileStrings))
 
-    For i = 0 To UBound(arrFileStrings)
-        ColumnByStrings = Split(arrFileStrings(i), vbTab)
+    For ii = 0 To UBound(arrFileStrings)
+        ColumnByStrings = Split(arrFileStrings(ii), vbTab)
 
-        With arrHwidsLocal(i)
+        With arrHwidsLocal(ii)
             .HWID = ColumnByStrings(0)
             .DevName = ColumnByStrings(1)
             .Status = ColumnByStrings(2)
@@ -365,7 +365,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
             .DRVScore = 0
         End With
 
-    Next i
+    Next ii
 
 End Sub
 
@@ -376,7 +376,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadDefaultParam()
 
-    Dim i            As Long
+    Dim ii           As Long
     Dim strVerClient As String
 
     ' Выставляем текущую версию ОС, анализом из списка
@@ -386,16 +386,16 @@ Private Sub LoadDefaultParam()
         strVerClient = "*" & OSCurrVersionStruct.VerFull & "*"
     End If
 
-    For i = 0 To cmbOS.ListCount - 1
+    For ii = 0 To cmbOS.ListCount - 1
 
-        If MatchSpec(cmbOS.List(i), strVerClient) Then
-            cmbOS.ListIndex = i
+        If MatchSpec(cmbOS.List(ii), strVerClient) Then
+            cmbOS.ListIndex = ii
 
             Exit For
 
         End If
 
-    Next i
+    Next ii
 
     ' Выставляем текущую разрядность ОС
     chk64bit.Value = CBool(mbIsWin64)
@@ -560,17 +560,17 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
     
     Dim strParse_x()    As String
     Dim strTemp         As String
-    Dim i               As Long
     Dim ii              As Long
+    Dim iii             As Long
     Dim mbIsServer      As Boolean
     
     strParse_x = Split(GetFileNameFromPath(strFilePath), "_")
         
     If UBound(strParse_x) >= 3 Then
-        For i = 1 To UBound(strParse_x)
+        For ii = 1 To UBound(strParse_x)
             '"hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%"
             
-            Select Case i
+            Select Case ii
                 '%PCMODEL%-Notebook
                 Case 1
                     strTemp = strParse_x(1)
@@ -589,21 +589,21 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
                         strTemp = Replace$(strTemp, "-server", vbNullString, , , vbTextCompare)
                         mbIsServer = True
                     End If
-                    For ii = 0 To cmbOS.ListCount - 1
+                    For iii = 0 To cmbOS.ListCount - 1
 
-                        If InStr(cmbOS.List(ii), strTemp) Then
+                        If InStr(cmbOS.List(iii), strTemp) Then
                             If mbIsServer Then
-                                If InStr(1, cmbOS.List(ii), "server", vbTextCompare) = 0 Then
+                                If InStr(1, cmbOS.List(iii), "server", vbTextCompare) = 0 Then
                                     Exit For
                                 End If
                             End If
                             
-                            cmbOS.ListIndex = ii
+                            cmbOS.ListIndex = iii
                             Exit For
                 
                         End If
                 
-                    Next ii
+                    Next iii
                 
                 '%OSBIT%
                 Case 3
@@ -614,7 +614,7 @@ Private Function ParseFileName(ByVal strFilePath As String) As Boolean
                         chk64bit.Value = 0
                     End If
             End Select
-        Next i
+        Next ii
         ParseFileName = True
     End If
 End Function

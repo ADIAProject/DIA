@@ -50,16 +50,16 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function CompareDevDBVersion(strDevDBFullFileName As String) As Boolean
 
-    Dim LngValue          As Long
+    Dim lngValue          As Long
     Dim strFilePath_woExt As String
 
-    strFilePath_woExt = GetFileName_woExt(strDevDBFullFileName)
-    LngValue = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
+    strFilePath_woExt = GetFileNameOnly_woExt(strDevDBFullFileName)
+    lngValue = IniLongPrivate(strFilePath_woExt, "Version", BackslashAdd2Path(strFilePath_woExt) & "DevDBVersions.ini")
 
-    If LngValue = 9999 Then
+    If lngValue = 9999 Then
         CompareDevDBVersion = False
     Else
-        CompareDevDBVersion = Not (LngValue <> lngDevDBVersion)
+        CompareDevDBVersion = Not (lngValue <> lngDevDBVersion)
     End If
 
 End Function
@@ -134,7 +134,7 @@ Public Sub DevParserLocalHwids2()
 
         'For i = 0 To MatchesDevcon.Count - 1
         For I = 0 To strCnt - 1
-            Set objMatch = MatchesDevcon.Item(I)
+            Set objMatch = MatchesDevcon.item(I)
 
             ' ≈сли записей в массиве становитс€ больше чем объ€влено, то увеличиваем размерность массива
             If RecCountArr = miMaxCountArr Then

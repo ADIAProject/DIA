@@ -1,12 +1,18 @@
 Attribute VB_Name = "mLoadImage"
 Option Explicit
 
-Public strPathImageStatusButton     As String
-Public strPathImageMain             As String
-'Public strPathImageMenu             As String
+#Const mbIDE_DBSProject = False
 
-Public strPathImageStatusButtonWork As String
+' Not add to project (if not DBS) - option for compile
+#If Not mbIDE_DBSProject Then
+    Public strPathImageStatusButton     As String
+    Public strPathImageStatusButtonWork As String
+#End If
+
+Public strPathImageMain             As String
 Public strPathImageMainWork         As String
+
+'Public strPathImageMenu             As String
 'Public strPathImageMenuWork         As String
 
 Private Const lngIMG_SIZE           As Long = &H20
@@ -156,10 +162,8 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub GetImageSkinPath()
-    strPathImageMainWork = strPathImageMain & strImageMainName
-    strPathImageStatusButtonWork = strPathImageStatusButton & strImageStatusButtonName
-    'strPathImageMenuWork = strPathImageMenu & strImageMenuName
     
+    strPathImageMainWork = strPathImageMain & strImageMainName
     If PathExists(strPathImageMainWork) = False Then
         If Not mbSilentRun Then
             MsgBox strMessages(15), vbCritical, strProductName
@@ -168,18 +172,22 @@ Public Sub GetImageSkinPath()
         strPathImageMainWork = strPathImageMain & "Standart"
     End If
 
-    If PathExists(strPathImageStatusButtonWork) = False Then
-        If Not mbSilentRun Then
-            MsgBox strMessages(15), vbCritical, strProductName
+    #If Not mbIDE_DBSProject Then
+        strPathImageStatusButtonWork = strPathImageStatusButton & strImageStatusButtonName
+        If PathExists(strPathImageStatusButtonWork) = False Then
+            If Not mbSilentRun Then
+                MsgBox strMessages(15), vbCritical, strProductName
+            End If
+    
+            strPathImageStatusButtonWork = strPathImageStatusButton & "Standart"
         End If
+    #End If
 
-        strPathImageStatusButtonWork = strPathImageStatusButton & "Standart"
-    End If
-
+    'strPathImageMenuWork = strPathImageMenu & strImageMenuName
     'If PathExists(strPathImageMenuWork) = False Then
-    'If Not mbSilentRun Then
-    'MsgBox strMessages(15), vbCritical, strProductName
-    'End If
-    'strPathImageMenuWork = strPathImageMenu & "Standart"
+        'If Not mbSilentRun Then
+            'MsgBox strMessages(15), vbCritical, strProductName
+        'End If
+        'strPathImageMenuWork = strPathImageMenu & "Standart"
     'End If
 End Sub

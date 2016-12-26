@@ -353,7 +353,6 @@ If CheckBoxHandle <> 0 Then
             Case vbGrayed
                 Me.Value = vbUnchecked
         End Select
-        RaiseEvent Click
         Handled = True
     End If
 End If
@@ -1067,6 +1066,8 @@ Select Case NewValue
     Case Else
         Err.Raise 380
 End Select
+Dim Changed As Boolean
+Changed = CBool(Me.Value <> PropValue)
 If CheckBoxHandle <> 0 Then
     If Not (GetWindowLong(CheckBoxHandle, GWL_STYLE) And BS_OWNERDRAW) = BS_OWNERDRAW Then
         SendMessage CheckBoxHandle, BM_SETCHECK, PropValue, ByVal 0&
@@ -1075,6 +1076,7 @@ If CheckBoxHandle <> 0 Then
     End If
 End If
 UserControl.PropertyChanged "Value"
+If Changed = True Then RaiseEvent Click
 End Property
 
 Public Property Get Caption() As String
@@ -1701,21 +1703,21 @@ Select Case wMsg
         Y = UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips)
         Select Case wMsg
             Case WM_LBUTTONDOWN
-                RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MBUTTONDOWN
-                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_RBUTTONDOWN
-                RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MOUSEMOVE
-                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
+                RaiseEvent MouseMove(GetMouseStateFromParam(wParam), GetShiftStateFromParam(wParam), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
                 Select Case wMsg
                     Case WM_LBUTTONUP
-                        RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
                     Case WM_MBUTTONUP
-                        RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
                     Case WM_RBUTTONUP
-                        RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
                 End Select
         End Select
 End Select
@@ -1733,7 +1735,6 @@ Select Case wMsg
                         Case vbChecked, vbGrayed
                             Me.Value = vbUnchecked
                     End Select
-                    RaiseEvent Click
             End Select
         End If
     Case WM_NOTIFY

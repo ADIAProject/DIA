@@ -294,10 +294,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SaveOptions()
 
-    Dim I As Long
+    Dim ii As Long
 
     If mbAddInList Then
-        I = lngLastIdUtil + 1
+        ii = lngLastIdUtil + 1
 
         With frmOptions.lvUtils.ListItems.Add(, , txtUtilName)
             .SubItems(1) = ucPathUtil.Path
@@ -309,16 +309,16 @@ Private Sub SaveOptions()
     Else
 
         With frmOptions.lvUtils
-            I = .SelectedItem.Index
-            .ListItems.Item(I).Text = txtUtilName
-            .ListItems.Item(I).SubItems(1) = ucPathUtil.Path
-            .ListItems.Item(I).SubItems(2) = ucPathUtil64.Path
+            ii = .SelectedItem.Index
+            .ListItems.item(ii).Text = txtUtilName
+            .ListItems.item(ii).SubItems(1) = ucPathUtil.Path
+            .ListItems.item(ii).SubItems(2) = ucPathUtil64.Path
 
             'frmOptions
             If txtParamUtil.Text <> "Дополнительные параметры запуска" Then
-                .ListItems.Item(I).SubItems(3) = txtParamUtil
+                .ListItems.item(ii).SubItems(3) = txtParamUtil
             Else
-                .ListItems.Item(I).SubItems(3) = vbNullString
+                .ListItems.item(ii).SubItems(3) = vbNullString
             End If
 
         End With

@@ -40,14 +40,14 @@ Public Function GetIniEmptySectionFromList(ByVal strSectionList As String, ByVal
 
     Dim strTmp             As String
     Dim strSectionList_x() As String
-    Dim i_i                As Long
+    Dim ii                 As Long
     Dim strManufSection    As String
     Dim sTemp              As String * 2048
 
     strSectionList_x = Split(strSectionList, "|")
 
-    For i_i = 0 To UBound(strSectionList_x)
-        strManufSection = strSectionList_x(i_i)
+    For ii = 0 To UBound(strSectionList_x)
+        strManufSection = strSectionList_x(ii)
         sTemp = vbNullString
     
         If GetPrivateProfileSection(strManufSection, sTemp, 2048, strIniPath) = 0 Then
@@ -79,15 +79,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueBoolean(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Boolean
 
-    Dim LngValue As Long
+    Dim lngValue As Long
 
-    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If LngValue = 9999 Then
-        LngValue = lngValueDefault
+    If lngValue = 9999 Then
+        lngValue = lngValueDefault
     End If
 
-    GetIniValueBoolean = CBool(LngValue)
+    GetIniValueBoolean = CBool(lngValue)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -100,15 +100,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Long
 
-    Dim LngValue As Long
+    Dim lngValue As Long
 
-    LngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If LngValue = 9999 Then
-        LngValue = lngValueDefault
+    If lngValue = 9999 Then
+        lngValue = lngValueDefault
     End If
 
-    GetIniValueLong = LngValue
+    GetIniValueLong = lngValue
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -409,7 +409,7 @@ End Function
 Public Sub NormIniFile(ByVal sFileName As String)
 
     Dim nf          As Long
-    Dim UB          As Long
+    Dim ub          As Long
     Dim sBuffer     As String
     Dim slArray()   As String
     Dim sOutArray() As String
@@ -423,16 +423,16 @@ Public Sub NormIniFile(ByVal sFileName As String)
         Close nf
         
         slArray = Split(sBuffer, vbNewLine)
-        UB = &HFFFF
+        ub = &HFFFF
 
         For nf = 0 To UBound(slArray)
 
             If Len(slArray(nf)) Then
-                UB = UB + IIf(Left$(slArray(nf), vbNull) = Chr$(&H5B), 2, vbNull)
+                ub = ub + IIf(Left$(slArray(nf), vbNull) = Chr$(&H5B), 2, vbNull)
 
-                ReDim Preserve sOutArray(UB)
+                ReDim Preserve sOutArray(ub)
 
-                sOutArray(UB) = slArray(nf)
+                sOutArray(ub) = slArray(nf)
             End If
 
         Next

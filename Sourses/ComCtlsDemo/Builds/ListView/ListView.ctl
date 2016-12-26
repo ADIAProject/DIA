@@ -2990,11 +2990,7 @@ End Property
 
 Public Property Get ResizableColumnHeaders() As Boolean
 Attribute ResizableColumnHeaders.VB_Description = "Returns/sets a value that determines whether or not the user can drag the divider on the column headers in 'report' view to resize them."
-If Ambient.UserMode = True And ComCtlsSupportLevel() <= 1 Then
-    ResizableColumnHeaders = True
-Else
-    ResizableColumnHeaders = PropResizableColumnHeaders
-End If
+ResizableColumnHeaders = PropResizableColumnHeaders
 End Property
 
 Public Property Let ResizableColumnHeaders(ByVal Value As Boolean)
@@ -4018,20 +4014,23 @@ If ListViewHandle <> 0 Then
 End If
 End Property
 
-Friend Property Get FColumnHeaderResizable(ByVal Index As Long) As Boolean
-If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
-    Dim LVC As LVCOLUMN
-    With LVC
-    .Mask = LVCF_FMT
-    SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-    FColumnHeaderResizable = Not CBool((.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH)
-    End With
-Else
-    FColumnHeaderResizable = True
+Friend Property Get FColumnHeaderResizable(ByVal Index As Long, ByRef Resizable As Boolean) As Boolean
+If ListViewHandle <> 0 Then
+    If ComCtlsSupportLevel() >= 2 Then
+        Dim LVC As LVCOLUMN
+        With LVC
+        .Mask = LVCF_FMT
+        SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
+        FColumnHeaderResizable = Not CBool((.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH)
+        End With
+    Else
+        FColumnHeaderResizable = Resizable
+    End If
 End If
 End Property
 
-Friend Property Let FColumnHeaderResizable(ByVal Index As Long, ByVal Value As Boolean)
+Friend Property Let FColumnHeaderResizable(ByVal Index As Long, ByRef Resizable As Boolean, ByVal Value As Boolean)
+Resizable = Value
 If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     Dim LVC As LVCOLUMN
     With LVC
@@ -6292,23 +6291,38 @@ Select Case wMsg
                 Case HDN_DIVIDERDBLCLICK
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
                     If NMHDR.iItem > -1 Then
-                        If PropResizableColumnHeaders = True Then
+                        If ComCtlsSupportLevel() >= 2 Then
                             RaiseEvent ColumnDividerDblClick(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
-                            If Cancel = True Then Exit Function
                         Else
-                            Exit Function
+                            If PropResizableColumnHeaders = True Then
+                                If Me.ColumnHeaders(NMHDR.iItem + 1).Resizable = True Then
+                                    RaiseEvent ColumnDividerDblClick(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
+                                Else
+                                    Cancel = True
+                                End If
+                            Else
+                                Cancel = True
+                            End If
                         End If
+                        If Cancel = True Then Exit Function
                     End If
                 Case HDN_BEGINTRACK
                     CopyMemory NMHDR, ByVal lParam, LenB(NMHDR)
                     If NMHDR.iItem > -1 Then
-                        If PropResizableColumnHeaders = True Then
+                        If ComCtlsSupportLevel() >= 2 Then
                             RaiseEvent ColumnBeforeResize(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
-                            If Cancel = True Then
-                                WindowProcControl = 1
-                                Exit Function
-                            End If
                         Else
+                            If PropResizableColumnHeaders = True Then
+                                If Me.ColumnHeaders(NMHDR.iItem + 1).Resizable = True Then
+                                    RaiseEvent ColumnBeforeResize(Me.ColumnHeaders(NMHDR.iItem + 1), Cancel)
+                                Else
+                                    Cancel = True
+                                End If
+                            Else
+                                Cancel = True
+                            End If
+                        End If
+                        If Cancel = True Then
                             WindowProcControl = 1
                             Exit Function
                         End If
@@ -6483,21 +6497,21 @@ Select Case wMsg
             Case WM_LBUTTONDOWN
                 ' See UM_BUTTONDOWN
             Case WM_MBUTTONDOWN
-                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
                 ListViewButtonDown = 0
                 ListViewIsClick = True
             Case WM_RBUTTONDOWN
                 ' See UM_BUTTONDOWN
             Case WM_MOUSEMOVE
-                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
+                RaiseEvent MouseMove(GetMouseStateFromParam(wParam), GetShiftStateFromParam(wParam), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
                 Select Case wMsg
                     Case WM_LBUTTONUP
-                        RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
                     Case WM_MBUTTONUP
-                        RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
                     Case WM_RBUTTONUP
-                        RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
                 End Select
                 If ListViewIsClick = True Then
                     ListViewIsClick = False
@@ -6543,7 +6557,7 @@ Private Function WindowProcHeader(ByVal hWnd As Long, ByVal wMsg As Long, ByVal 
 Select Case wMsg
     Case WM_SETCURSOR
         If LoWord(lParam) = HTCLIENT Then
-            If PropResizableColumnHeaders = False Then
+            If ComCtlsSupportLevel() <= 1 Then
                 Dim HDHTI As HDHITTESTINFO, Pos As Long
                 With HDHTI
                 Pos = GetMessagePos()
@@ -6552,8 +6566,13 @@ Select Case wMsg
                 ScreenToClient hWnd, .PT
                 If SendMessage(hWnd, HDM_HITTEST, 0, ByVal VarPtr(HDHTI)) > -1 Then
                     If (.Flags And HHT_ONDIVIDER) <> 0 Or (.Flags And HHT_ONDIVOPEN) <> 0 Then
-                        SetCursor LoadCursor(0, MousePointerID(vbArrow))
-                        Exit Function
+                        If PropResizableColumnHeaders = False Then
+                            SetCursor LoadCursor(0, MousePointerID(vbArrow))
+                            Exit Function
+                        ElseIf Me.ColumnHeaders(.iItem + 1).Resizable = False Then
+                            SetCursor LoadCursor(0, MousePointerID(vbArrow))
+                            Exit Function
+                        End If
                     End If
                 End If
                 End With

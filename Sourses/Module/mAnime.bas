@@ -61,11 +61,11 @@ Public Function AnimateForm(hwndObject As Object, ByVal aEvent As AnimeEventEnum
 
     On Error GoTo Handle
 
-    Dim X1      As Long, Y1                  As Long
-    Dim hRgn    As Long, tmpRgn            As Long
-    Dim XValue  As Long, YValue          As Long
-    Dim XIncr   As Double, YIncr          As Double
-    Dim wHeight As Long, wWidth         As Long
+    Dim X1      As Long, Y1         As Long
+    Dim hRgn    As Long, tmpRgn     As Long
+    Dim XValue  As Long, YValue     As Long
+    Dim XIncr   As Double, YIncr    As Double
+    Dim wHeight As Long, wWidth     As Long
 
     wWidth = hwndObject.Width / Screen.TwipsPerPixelX
     wHeight = hwndObject.Height / Screen.TwipsPerPixelY

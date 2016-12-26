@@ -79,9 +79,9 @@ Attribute Item.VB_UserMemId = 0
 Set Item = PropColumnHeader(Index)
 End Property
 
-Public Property Get ItemFromPos(ByVal Position As Long) As LvwColumnHeader
-Attribute ItemFromPos.VB_Description = "Returns a column header given its position."
-Set ItemFromPos = PropColumnHeader(ShadowListView.FColumnHeadersPositionToIndex(Position))
+Public Property Get ItemFromPosition(ByVal Position As Long) As LvwColumnHeader
+Attribute ItemFromPosition.VB_Description = "Returns a column header given its position."
+Set ItemFromPosition = PropColumnHeader(ShadowListView.FColumnHeadersPositionToIndex(Position))
 End Property
 
 Public Property Get Count() As Long

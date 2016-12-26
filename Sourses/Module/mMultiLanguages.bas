@@ -181,7 +181,7 @@ End Function
 Public Function LoadLanguageList() As Boolean
 
     Dim strFileList_x() As FindListStruct
-    Dim ii              As Integer
+    Dim iii             As Integer
     Dim strTemp         As String
     Dim strLangFilePath As String
     Dim lngUbound       As Long
@@ -194,30 +194,30 @@ Public Function LoadLanguageList() As Boolean
     
             ReDim arrLanguage(5, lngUbound)
         
-            For ii = 0 To lngUbound
+            For iii = 0 To lngUbound
                 
                 ' Путь до языкового файла
-                strLangFilePath = strFileList_x(ii).FullPath
-                arrLanguage(0, ii) = strLangFilePath
+                strLangFilePath = strFileList_x(iii).FullPath
+                arrLanguage(0, iii) = strLangFilePath
                 ' Имя языка
-                arrLanguage(1, ii) = GetIniValueString(strLangFilePath, "Lang", "Name", vbNullString)
+                arrLanguage(1, iii) = GetIniValueString(strLangFilePath, "Lang", "Name", vbNullString)
                 ' Имя переводчика
-                arrLanguage(3, ii) = GetIniValueString(strLangFilePath, "Lang", "TranslatorName", vbNullString)
+                arrLanguage(3, iii) = GetIniValueString(strLangFilePath, "Lang", "TranslatorName", vbNullString)
                 ' Адрес переводчика
-                arrLanguage(4, ii) = GetIniValueString(strLangFilePath, "Lang", "TranslatorURL", vbNullString)
+                arrLanguage(4, iii) = GetIniValueString(strLangFilePath, "Lang", "TranslatorURL", vbNullString)
                 ' Charset языка
-                arrLanguage(5, ii) = GetIniValueLong(strLangFilePath, "Lang", "Charset", 1)
+                arrLanguage(5, iii) = GetIniValueLong(strLangFilePath, "Lang", "Charset", 1)
                 ' ID языка
                 strTemp = GetIniValueString(strLangFilePath, "Lang", "ID", vbNullString)
         
                 If LenB(strTemp) Then
-                    arrLanguage(2, ii) = strTemp
+                    arrLanguage(2, iii) = strTemp
         
                     If mbAutoLanguage Then
                         If InStr(1, strTemp, strPCLangID, vbTextCompare) Then
-                            strPCLangCurrentPath = arrLanguage(0, ii)
-                            strPCLangCurrentLangName = arrLanguage(1, ii)
-                            lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(5, ii)))
+                            strPCLangCurrentPath = arrLanguage(0, iii)
+                            strPCLangCurrentLangName = arrLanguage(1, iii)
+                            lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(5, iii)))
                             strPCLangCurrentID = strPCLangID
                         End If
         
@@ -225,9 +225,9 @@ Public Function LoadLanguageList() As Boolean
         
                         If LenB(strStartLanguageID) Then
                             If InStr(1, strTemp, strStartLanguageID, vbTextCompare) Then
-                                strPCLangCurrentPath = arrLanguage(0, ii)
-                                strPCLangCurrentLangName = arrLanguage(1, ii)
-                                lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(5, ii)))
+                                strPCLangCurrentPath = arrLanguage(0, iii)
+                                strPCLangCurrentLangName = arrLanguage(1, iii)
+                                lngFont_Charset = GetCharsetFromLng(CLng(arrLanguage(5, iii)))
                                 strPCLangCurrentID = strStartLanguageID
                             End If
                         End If

@@ -992,7 +992,7 @@ Begin VB.Form frmOptions
          Height          =   645
          Left            =   75
          TabIndex        =   1
-         Top             =   3735
+         Top             =   3720
          Width           =   2850
          _ExtentX        =   5027
          _ExtentY        =   1138
@@ -3591,15 +3591,15 @@ End Sub
 Private Sub LoadSkinListCombo(cmbName As Object, strImagePath As String)
 
     Dim strListFolderTemp() As FindListStruct
-    Dim I                   As Integer
+    Dim ii                  As Integer
 
     strListFolderTemp = SearchFoldersInRoot(strImagePath, "*")
 
     With cmbName
         .Clear
 
-        For I = 0 To UBound(strListFolderTemp)
-            .AddItem strListFolderTemp(I).Name, I
+        For ii = 0 To UBound(strListFolderTemp)
+            .AddItem strListFolderTemp(ii).Name, ii
         Next
 
     End With
@@ -3976,7 +3976,7 @@ Private Sub SaveOptions()
             Exit Sub
 
         End If
-
+        
     ElseIf mbIsDriveCDRoom And mbLoadIniTmpAfterRestart Then
         strSysIniTemp = strWinTemp & "Settings_DIA_TMP.ini"
         SaveSetting App.ProductName, "Settings", "LOAD_INI_TMP", True
@@ -4022,6 +4022,8 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "Main", "CreateRestorePoint", chkCreateRP.Value, strSysIniTemp
     IniWriteStrPrivate "Main", "IconMainSkin", cmbImageMain.Text, strSysIniTemp
     IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", Abs(mbLoadIniTmpAfterRestart), strSysIniTemp
+    IniWriteStrPrivate "Main", "CleanTempForEachDP", Abs(mbCleanTempForEachDP), strSysIniTemp
+    
 
     ' Секция Debug
     IniWriteStrPrivate "Debug", "DebugEnable", chkDebug.Value, strSysIniTemp
@@ -4224,20 +4226,20 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TransferOSData()
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvOS
-        I = .SelectedItem.Index
+        ii = .SelectedItem.Index
 
-        If I >= 0 Then
+        If ii >= 0 Then
 
-            frmOSEdit.txtOSVer.Text = .ListItems.Item(I).Text
-            frmOSEdit.txtOSName.Text = .ListItems.Item(I).SubItems(1)
-            frmOSEdit.ucPathDRP.Path = .ListItems.Item(I).SubItems(2)
-            frmOSEdit.ucPathDB.Path = .ListItems.Item(I).SubItems(3)
-            frmOSEdit.chk64bit.Value = CBool(.ListItems.Item(I).SubItems(4))
+            frmOSEdit.txtOSVer.Text = .ListItems.item(ii).Text
+            frmOSEdit.txtOSName.Text = .ListItems.item(ii).SubItems(1)
+            frmOSEdit.ucPathDRP.Path = .ListItems.item(ii).SubItems(2)
+            frmOSEdit.ucPathDB.Path = .ListItems.item(ii).SubItems(3)
+            frmOSEdit.chk64bit.Value = CBool(.ListItems.item(ii).SubItems(4))
     
-            Select Case .ListItems.Item(I).SubItems(4)
+            Select Case .ListItems.item(ii).SubItems(4)
     
                 Case 0
                     frmOSEdit.chk64bit.Value = False
@@ -4260,10 +4262,10 @@ Private Sub TransferOSData()
                     frmOSEdit.chkNotCheckBitOS.Value = False
             End Select
     
-            frmOSEdit.ucPhysXPath.Path = .ListItems.Item(I).SubItems(5)
-            frmOSEdit.ucLangPath.Path = .ListItems.Item(I).SubItems(6)
-            frmOSEdit.ucRuntimesPath.Path = .ListItems.Item(I).SubItems(7)
-            frmOSEdit.txtExcludeFileName.Text = .ListItems.Item(I).SubItems(8)
+            frmOSEdit.ucPhysXPath.Path = .ListItems.item(ii).SubItems(5)
+            frmOSEdit.ucLangPath.Path = .ListItems.item(ii).SubItems(6)
+            frmOSEdit.ucRuntimesPath.Path = .ListItems.item(ii).SubItems(7)
+            frmOSEdit.txtExcludeFileName.Text = .ListItems.item(ii).SubItems(8)
             
             frmOSEdit.Show vbModal, Me
         End If
@@ -4279,16 +4281,16 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TransferUtilsData()
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvUtils
-        I = .SelectedItem.Index
+        ii = .SelectedItem.Index
 
-        If I >= 0 Then
-            frmUtilsEdit.txtUtilName.Text = .ListItems.Item(I).Text
-            frmUtilsEdit.ucPathUtil.Path = .ListItems.Item(I).SubItems(1)
-            frmUtilsEdit.ucPathUtil64.Path = .ListItems.Item(I).SubItems(2)
-            frmUtilsEdit.txtParamUtil.Text = .ListItems.Item(I).SubItems(3)
+        If ii >= 0 Then
+            frmUtilsEdit.txtUtilName.Text = .ListItems.item(ii).Text
+            frmUtilsEdit.ucPathUtil.Path = .ListItems.item(ii).SubItems(1)
+            frmUtilsEdit.ucPathUtil64.Path = .ListItems.item(ii).SubItems(2)
+            frmUtilsEdit.txtParamUtil.Text = .ListItems.item(ii).SubItems(3)
             
             frmUtilsEdit.Show vbModal, Me
         End If
@@ -5108,15 +5110,15 @@ Private Sub LoadList_lvOptions()
                 .Add 8, , strItemOptions6, , 8
                 .Add 9, , strItemOptions10, , 9
             Else
-                .Item(1).Text = strItemOptions1
-                .Item(2).Text = strItemOptions8
-                .Item(3).Text = strItemOptions2
-                .Item(4).Text = strItemOptions3
-                .Item(5).Text = strItemOptions4
-                .Item(6).Text = strItemOptions5
-                .Item(7).Text = strItemOptions9
-                .Item(8).Text = strItemOptions6
-                .Item(9).Text = strItemOptions10
+                .item(1).Text = strItemOptions1
+                .item(2).Text = strItemOptions8
+                .item(3).Text = strItemOptions2
+                .item(4).Text = strItemOptions3
+                .item(5).Text = strItemOptions4
+                .item(6).Text = strItemOptions5
+                .item(7).Text = strItemOptions9
+                .item(8).Text = strItemOptions6
+                .item(9).Text = strItemOptions10
             End If
         End With
     
@@ -5132,7 +5134,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_lvOS()
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvOS
         .ListItems.Clear
@@ -5149,17 +5151,17 @@ Private Sub LoadList_lvOS()
             .ColumnHeaders.Add 9, , strTableOSHeader9, 120 * Screen.TwipsPerPixelX
         End If
 
-        For I = 0 To lngOSCount - 1
+        For ii = 0 To lngOSCount - 1
 
-            With .ListItems.Add(, , arrOSList(I).Ver)
-                .SubItems(1) = arrOSList(I).Name
-                .SubItems(2) = arrOSList(I).drpFolder
-                .SubItems(3) = arrOSList(I).devIDFolder
-                .SubItems(4) = arrOSList(I).is64bit
-                .SubItems(5) = arrOSList(I).PathPhysX
-                .SubItems(6) = arrOSList(I).PathLanguages
-                .SubItems(7) = arrOSList(I).PathRuntimes
-                .SubItems(8) = arrOSList(I).ExcludeFileName
+            With .ListItems.Add(, , arrOSList(ii).Ver)
+                .SubItems(1) = arrOSList(ii).Name
+                .SubItems(2) = arrOSList(ii).drpFolder
+                .SubItems(3) = arrOSList(ii).devIDFolder
+                .SubItems(4) = arrOSList(ii).is64bit
+                .SubItems(5) = arrOSList(ii).PathPhysX
+                .SubItems(6) = arrOSList(ii).PathLanguages
+                .SubItems(7) = arrOSList(ii).PathRuntimes
+                .SubItems(8) = arrOSList(ii).ExcludeFileName
             End With
 
         Next
@@ -5176,7 +5178,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub LoadList_lvUtils()
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvUtils
         .ListItems.Clear
@@ -5188,12 +5190,12 @@ Private Sub LoadList_lvUtils()
             .ColumnHeaders.Add 4, , strTableUtilHeader3, 120 * Screen.TwipsPerPixelX
         End If
 
-        For I = 0 To lngUtilsCount - 1
+        For ii = 0 To lngUtilsCount - 1
 
-            With .ListItems.Add(, , arrUtilsList(I, 0))
-                .SubItems(1) = arrUtilsList(I, 1)
-                .SubItems(2) = arrUtilsList(I, 2)
-                .SubItems(3) = arrUtilsList(I, 3)
+            With .ListItems.Add(, , arrUtilsList(ii, 0))
+                .SubItems(1) = arrUtilsList(ii, 1)
+                .SubItems(2) = arrUtilsList(ii, 2)
+                .SubItems(3) = arrUtilsList(ii, 3)
             End With
 
         Next
@@ -5204,14 +5206,14 @@ Private Sub LoadList_lvUtils()
 End Sub
 
 ''!--------------------------------------------------------------------------------
-''! Procedure   (Функция)   :   Sub lvOptions_ItemChanged
+''! Procedure   (Функция)   :   Sub lvOptions_ItemSelect
 ''! Description (Описание)  :   [При выборе опции происходит отображение соответсвующего окна]
-''! Parameters  (Переменные):   iIndex (Long)
+''! Parameters  (Переменные):   item (LvwListItem), Selected (Boolean)
 ''!--------------------------------------------------------------------------------
-Private Sub lvOptions_ItemSelect(ByVal Item As LvwListItem, ByVal Selected As Boolean)
+Private Sub lvOptions_ItemSelect(ByVal item As LvwListItem, ByVal Selected As Boolean)
 
     If Selected Then
-        Select Case Item.Index
+        Select Case item.Index
     
             Case 1
             'ItemOptions1=Основные настройки
@@ -5262,7 +5264,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvOS
         .Sorted = False
@@ -5270,10 +5272,10 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
         If ComCtlsSupportLevel() >= 1 Then
 
-            For I = 1 To .ColumnHeaders.count
+            For ii = 1 To .ColumnHeaders.count
 
-                If I <> ColumnHeader.Index Then
-                    .ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
+                If ii <> ColumnHeader.Index Then
+                    .ColumnHeaders(ii).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
 
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -5288,7 +5290,7 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next I
+            Next ii
 
             Select Case ColumnHeader.SortArrow
 
@@ -5302,10 +5304,10 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
             .SelectedColumn = ColumnHeader
         Else
 
-            For I = 1 To .ColumnHeaders.count
+            For ii = 1 To .ColumnHeaders.count
 
-                If I <> ColumnHeader.Index Then
-                    .ColumnHeaders(I).Icon = 0
+                If ii <> ColumnHeader.Index Then
+                    .ColumnHeaders(ii).Icon = 0
                 Else
 
                     If ColumnHeader.Icon = 0 Then
@@ -5320,7 +5322,7 @@ Private Sub lvOS_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next I
+            Next ii
 
             Select Case ColumnHeader.Icon
 
@@ -5346,7 +5348,7 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub lvOS_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
+Private Sub lvOS_ItemDblClick(ByVal item As LvwListItem, ByVal Button As Integer)
     TransferOSData
 End Sub
 
@@ -5357,7 +5359,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim I As Long
+    Dim ii As Long
 
     With lvUtils
         .Sorted = False
@@ -5365,10 +5367,10 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
         If ComCtlsSupportLevel() >= 1 Then
 
-            For I = 1 To .ColumnHeaders.count
+            For ii = 1 To .ColumnHeaders.count
 
-                If I <> ColumnHeader.Index Then
-                    .ColumnHeaders(I).SortArrow = LvwColumnHeaderSortArrowNone
+                If ii <> ColumnHeader.Index Then
+                    .ColumnHeaders(ii).SortArrow = LvwColumnHeaderSortArrowNone
                 Else
 
                     If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -5383,7 +5385,7 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next I
+            Next ii
 
             Select Case ColumnHeader.SortArrow
 
@@ -5397,10 +5399,10 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
             .SelectedColumn = ColumnHeader
         Else
 
-            For I = 1 To .ColumnHeaders.count
+            For ii = 1 To .ColumnHeaders.count
 
-                If I <> ColumnHeader.Index Then
-                    .ColumnHeaders(I).Icon = 0
+                If ii <> ColumnHeader.Index Then
+                    .ColumnHeaders(ii).Icon = 0
                 Else
 
                     If ColumnHeader.Icon = 0 Then
@@ -5415,7 +5417,7 @@ Private Sub lvUtils_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                     End If
                 End If
 
-            Next I
+            Next ii
 
             Select Case ColumnHeader.Icon
 
@@ -5441,7 +5443,7 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Button (Integer)
 '!--------------------------------------------------------------------------------
-Private Sub lvUtils_ItemDblClick(ByVal Item As LvwListItem, ByVal Button As Integer)
+Private Sub lvUtils_ItemDblClick(ByVal item As LvwListItem, ByVal Button As Integer)
     TransferUtilsData
 End Sub
 

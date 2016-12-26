@@ -15,7 +15,7 @@ Public Const DT_BOTTOM     As Long = &H8
 Public Const DT_VCENTER    As Long = &H4
 Public Const DT_SINGLELINE As Long = &H20
 Public Const DT_WORD_ELLIPSIS = &H40000
-Public Const TransColor      As Long = &H8000000F
+Public Const transColor    As Long = &H8000000F
 
 '   DrawEdge Message Constants
 Public Const BDR_RAISEDOUTER As Long = &H1
@@ -45,101 +45,101 @@ Public Const IDC_HAND     As Long = 32649
 Public Const DI_NORMAL    As Long = &H3
 
 Public Type Size
-    CX                                  As Long
-    CY                                  As Long
+    Cx                    As Long
+    Cy                    As Long
 End Type
 
 Public Type RECT
-    Left                                As Long
-    Top                                 As Long
-    Right                               As Long
-    Bottom                              As Long
+    Left                  As Long
+    Top                   As Long
+    Right                 As Long
+    Bottom                As Long
 End Type
 
 Public Type POINTAPI
-    X                                   As Long
-    Y                                   As Long
+    X                     As Long
+    Y                     As Long
 End Type
 
 Public Type RGB
-    Red                                 As Byte
-    Green                               As Byte
-    Blue                                As Byte
+    Red                   As Byte
+    Green                 As Byte
+    Blue                  As Byte
 End Type
 
 Public Type RGBQUAD
-    Blue                                As Byte
-    Green                               As Byte
-    Red                                 As Byte
-    Alpha                               As Byte
+    Blue                  As Byte
+    Green                 As Byte
+    Red                   As Byte
+    Alpha                 As Byte
 End Type
 
 Public Type ICONINFO
-    fIcon                               As Long
-    XHotspot                            As Long
-    YHotspot                            As Long
-    hBMMask                             As Long
-    hBMColor                            As Long
+    fIcon                 As Long
+    XHotspot              As Long
+    YHotspot              As Long
+    hBMMask               As Long
+    hBMColor              As Long
 End Type
 
 '  for gradient painting and bitmap tiling
 Public Type BITMAPINFOHEADER
-    biSize                              As Long
-    biWidth                             As Long
-    biHeight                            As Long
-    biPlanes                            As Integer
-    biBitCount                          As Integer
-    biCompression                       As Long
-    biSizeImage                         As Long
-    biXPelsPerMeter                     As Long
-    biYPelsPerMeter                     As Long
-    biClrUsed                           As Long
-    biClrImportant                      As Long
+    biSize                    As Long
+    biWidth                   As Long
+    biHeight                  As Long
+    biPlanes                  As Integer
+    biBitCount                As Integer
+    biCompression             As Long
+    biSizeImage               As Long
+    biXPelsPerMeter           As Long
+    biYPelsPerMeter           As Long
+    biClrUsed                 As Long
+    biClrImportant            As Long
 End Type
 
 'flicker free drawing
 Public Type BITMAP
-    BMType                              As Long
-    BMWidth                             As Long
-    BMHeight                            As Long
-    BMWidthBytes                        As Long
-    BMPlanes                            As Integer
-    BMBitsPixel                         As Integer
-    BMBits                              As Long
+    BMType                    As Long
+    BMWidth                   As Long
+    BMHeight                  As Long
+    BMWidthBytes              As Long
+    BMPlanes                  As Integer
+    BMBitsPixel               As Integer
+    BMBits                    As Long
 End Type
 
 Public Type BITMAPINFO
-    bmiHeader                           As BITMAPINFOHEADER
-    bmiColors                           As RGB
+    bmiHeader                 As BITMAPINFOHEADER
+    bmiColors                 As RGB
 End Type
 
 ''ooltip Window Types
 Public Type TOOLINFO
-    lSize                               As Long
-    lFlags                              As Long
-    lhWnd                               As Long
-    lID                                 As Long
-    lpRect                              As RECT
-    hInstance                           As Long
-    lpStr                               As String
-    lParam                              As Long
+    lSize                     As Long
+    lFlags                    As Long
+    lhWnd                     As Long
+    lID                       As Long
+    lpRect                    As RECT
+    hInstance                 As Long
+    lpStr                     As String
+    lParam                    As Long
 End Type
 
 'Tooltip Window Types [for UNICODE support]
 Public Type TOOLINFOW
-    lSize                               As Long
-    lFlags                              As Long
-    lhWnd                               As Long
-    lID                                 As Long
-    lpRect                              As RECT
-    hInstance                           As Long
-    lpStrW                              As Long
-    lParam                              As Long
+    lSize                     As Long
+    lFlags                    As Long
+    lhWnd                     As Long
+    lID                       As Long
+    lpRect                    As RECT
+    hInstance                 As Long
+    lpStrW                    As Long
+    lParam                    As Long
 End Type
 
 Public Type BITMAPINFO8
-    bmiHeader                           As BITMAPINFOHEADER
-    bmiColors(255)                      As RGBQUAD
+    bmiHeader                 As BITMAPINFOHEADER
+    bmiColors(255)            As RGBQUAD
 End Type
 
 Public Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
@@ -186,12 +186,12 @@ Public Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As 
 Public Declare Function CreateCompatibleBitmap Lib "gdi32.dll" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
 Public Declare Function CreateBitmap Lib "gdi32.dll" (ByVal nWidth As Long, ByVal nHeight As Long, ByVal nPlanes As Long, ByVal nBitCount As Long, lpBits As Any) As Long
 Public Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
-Public Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Public Declare Function OleTranslateColor Lib "OLEPRO32.DLL" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Public Declare Function GetDeviceCaps Lib "gdi32.dll" (ByVal hDC As Long, ByVal nIndex As Long) As Long
 Public Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Public Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
-Public Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
-Public Declare Function GetThemeBackgroundRegion Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pRegion As Long) As Long
+Public Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pClipRect As RECT) As Long
+Public Declare Function GetThemeBackgroundRegion Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pRegion As Long) As Long
 Public Declare Function GetCurrentThemeName Lib "uxtheme.dll" (ByVal pszThemeFileName As Long, ByVal dwMaxNameChars As Long, ByVal pszColorBuff As Long, ByVal cchMaxColorChars As Long, ByVal pszSizeBuff As Long, ByVal cchMaxSizeChars As Long) As Long
 Public Declare Function StretchBlt Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal nSrcWidth As Long, ByVal nSrcHeight As Long, ByVal dwRop As Long) As Long
 Public Declare Function SetLayout Lib "gdi32.dll" (ByVal hDC As Long, ByVal dwLayout As Long) As Long

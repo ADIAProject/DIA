@@ -115,8 +115,8 @@ Private Declare Function DrawIconEx Lib "user32" (ByVal hDC As Long, ByVal XLeft
 Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As Long
 Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
-Private Declare Function GetIconInfo Lib "user32" (ByVal hIcon As Long, ByRef piconinfo As ICONINFO) As Long
-Private Declare Function CreateIconIndirect Lib "user32" (ByRef piconinfo As ICONINFO) As Long
+Private Declare Function GetIconInfo Lib "user32" (ByVal hIcon As Long, ByRef pIconInfo As ICONINFO) As Long
+Private Declare Function CreateIconIndirect Lib "user32" (ByRef pIconInfo As ICONINFO) As Long
 Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function GlobalAlloc Lib "kernel32" (ByVal uFlags As Long, ByVal dwBytes As Long) As Long
@@ -259,11 +259,11 @@ End Function
 Public Function GetEXEName() As String
 If InIDE() = False Then
     Const MAX_PATH As Long = 260
-    Dim buffer As String
-    buffer = String(MAX_PATH, vbNullChar)
-    buffer = Left$(buffer, GetModuleFileName(0, StrPtr(buffer), MAX_PATH + 1))
-    buffer = Right$(buffer, Len(buffer) - InStrRev(buffer, "\"))
-    GetEXEName = Left$(buffer, InStrRev(buffer, ".") - 1)
+    Dim Buffer As String
+    Buffer = String(MAX_PATH, vbNullChar)
+    Buffer = Left$(Buffer, GetModuleFileName(0, StrPtr(Buffer), MAX_PATH + 1))
+    Buffer = Right$(Buffer, Len(Buffer) - InStrRev(Buffer, "\"))
+    GetEXEName = Left$(Buffer, InStrRev(Buffer, ".") - 1)
 Else
     GetEXEName = App.EXEName
 End If
@@ -272,10 +272,10 @@ End Function
 Public Function GetAppPath() As String
 If InIDE() = False Then
     Const MAX_PATH As Long = 260
-    Dim buffer As String
-    buffer = String(MAX_PATH, vbNullChar)
-    buffer = Left$(buffer, GetModuleFileName(0, StrPtr(buffer), MAX_PATH + 1))
-    GetAppPath = Left$(buffer, InStrRev(buffer, "\"))
+    Dim Buffer As String
+    Buffer = String(MAX_PATH, vbNullChar)
+    Buffer = Left$(Buffer, GetModuleFileName(0, StrPtr(Buffer), MAX_PATH + 1))
+    GetAppPath = Left$(Buffer, InStrRev(Buffer, "\"))
 Else
     GetAppPath = App.Path & IIf(Right$(App.Path, 1) = "\", "", "\")
 End If
@@ -392,42 +392,42 @@ GetDecimalChar = Mid$(CStr(1.1), 2, 1)
 End Function
 
 Public Function IsFormLoaded(ByVal FormName As String) As Boolean
-Dim I As Integer
-For I = 0 To Forms.count - 1
-    If StrComp(Forms(I).Name, FormName, vbTextCompare) = 0 Then
+Dim i As Integer
+For i = 0 To Forms.Count - 1
+    If StrComp(Forms(i).Name, FormName, vbTextCompare) = 0 Then
         IsFormLoaded = True
         Exit For
     End If
-Next I
+Next i
 End Function
 
 Public Function GetWindowTitle(ByVal hWnd As Long) As String
-Dim buffer As String
-buffer = String(GetWindowTextLength(hWnd) + 1, vbNullChar)
-GetWindowText hWnd, StrPtr(buffer), Len(buffer)
-GetWindowTitle = Left$(buffer, Len(buffer) - 1)
+Dim Buffer As String
+Buffer = String(GetWindowTextLength(hWnd) + 1, vbNullChar)
+GetWindowText hWnd, StrPtr(Buffer), Len(Buffer)
+GetWindowTitle = Left$(Buffer, Len(Buffer) - 1)
 End Function
 
 Public Function GetWindowClassName(ByVal hWnd As Long) As String
-Dim buffer As String, RetVal As Long
-buffer = String(256, vbNullChar)
-RetVal = GetClassName(hWnd, StrPtr(buffer), Len(buffer))
-If RetVal <> 0 Then GetWindowClassName = Left$(buffer, RetVal)
+Dim Buffer As String, RetVal As Long
+Buffer = String(256, vbNullChar)
+RetVal = GetClassName(hWnd, StrPtr(Buffer), Len(Buffer))
+If RetVal <> 0 Then GetWindowClassName = Left$(Buffer, RetVal)
 End Function
 
 Public Function GetTitleBarHeight(ByVal Form As VB.Form) As Single
 Const SM_CYCAPTION As Long = 4, SM_CYMENU As Long = 15
 Const SM_CYSIZEFRAME As Long = 33, SM_CYFIXEDFRAME As Long = 8
-Dim Cy As Long
-Cy = GetSystemMetrics(SM_CYCAPTION)
-If GetMenu(Form.hWnd) <> 0 Then Cy = Cy + GetSystemMetrics(SM_CYMENU)
+Dim CY As Long
+CY = GetSystemMetrics(SM_CYCAPTION)
+If GetMenu(Form.hWnd) <> 0 Then CY = CY + GetSystemMetrics(SM_CYMENU)
 Select Case Form.BorderStyle
     Case vbSizable, vbSizableToolWindow
-        Cy = Cy + (GetSystemMetrics(SM_CYSIZEFRAME) * 2)
+        CY = CY + (GetSystemMetrics(SM_CYSIZEFRAME) * 2)
     Case vbFixedSingle, vbFixedDialog, vbFixedToolWindow
-        Cy = Cy + (GetSystemMetrics(SM_CYFIXEDFRAME) * 2)
+        CY = CY + (GetSystemMetrics(SM_CYFIXEDFRAME) * 2)
 End Select
-If Cy > 0 Then GetTitleBarHeight = Form.ScaleY(Cy, vbPixels, Form.ScaleMode)
+If CY > 0 Then GetTitleBarHeight = Form.ScaleY(CY, vbPixels, Form.ScaleMode)
 End Function
 
 Public Sub SetWindowRedraw(ByVal hWnd As Long, ByVal Enabled As Boolean)
@@ -441,22 +441,37 @@ End Sub
 
 Public Function GetWinPath() As String
 Const MAX_PATH As Long = 260
-Dim buffer As String
-buffer = String(MAX_PATH, vbNullChar)
-If GetWindowsDirectory(StrPtr(buffer), MAX_PATH) <> 0 Then
-    GetWinPath = Left$(buffer, InStr(buffer, vbNullChar) - 1)
+Dim Buffer As String
+Buffer = String(MAX_PATH, vbNullChar)
+If GetWindowsDirectory(StrPtr(Buffer), MAX_PATH) <> 0 Then
+    GetWinPath = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
     GetWinPath = GetWinPath & IIf(Right$(GetWinPath, 1) = "\", "", "\")
 End If
 End Function
 
 Public Function GetSysPath() As String
 Const MAX_PATH As Long = 260
-Dim buffer As String
-buffer = String(MAX_PATH, vbNullChar)
-If GetSystemDirectory(StrPtr(buffer), MAX_PATH) <> 0 Then
-    GetSysPath = Left$(buffer, InStr(buffer, vbNullChar) - 1)
+Dim Buffer As String
+Buffer = String(MAX_PATH, vbNullChar)
+If GetSystemDirectory(StrPtr(Buffer), MAX_PATH) <> 0 Then
+    GetSysPath = Left$(Buffer, InStr(Buffer, vbNullChar) - 1)
     GetSysPath = GetSysPath & IIf(Right$(GetSysPath, 1) = "\", "", "\")
 End If
+End Function
+
+Public Function GetShiftStateFromParam(ByVal wParam As Long) As ShiftConstants
+Const MK_SHIFT As Long = &H4, MK_CONTROL As Long = &H8
+If (wParam And MK_SHIFT) = MK_SHIFT Then GetShiftStateFromParam = vbShiftMask
+If (wParam And MK_CONTROL) = MK_CONTROL Then GetShiftStateFromParam = GetShiftStateFromParam Or vbCtrlMask
+' Detect if ALT key was pressed. This must not be GetAsyncKeyState.
+If GetKeyState(vbKeyMenu) < 0 Then GetShiftStateFromParam = GetShiftStateFromParam Or vbAltMask
+End Function
+
+Public Function GetMouseStateFromParam(ByVal wParam As Long) As MouseButtonConstants
+Const MK_LBUTTON As Long = &H1, MK_RBUTTON As Long = &H2, MK_MBUTTON As Long = &H10
+If (wParam And MK_LBUTTON) = MK_LBUTTON Then GetMouseStateFromParam = vbLeftButton
+If (wParam And MK_RBUTTON) = MK_RBUTTON Then GetMouseStateFromParam = GetMouseStateFromParam Or vbRightButton
+If (wParam And MK_MBUTTON) = MK_MBUTTON Then GetMouseStateFromParam = GetMouseStateFromParam Or vbMiddleButton
 End Function
 
 Public Function GetShiftState() As ShiftConstants
@@ -479,8 +494,8 @@ Public Function KeyPressed(ByVal KeyCode As KeyCodeConstants) As Boolean
 KeyPressed = CBool((GetAsyncKeyState(KeyCode) And &H8000&) = &H8000&)
 End Function
 
-Public Function InIDE(Optional ByRef b As Boolean = True) As Boolean
-If b = True Then Debug.Assert Not InIDE(InIDE) Else b = True
+Public Function InIDE(Optional ByRef B As Boolean = True) As Boolean
+If B = True Then Debug.Assert Not InIDE(InIDE) Else B = True
 End Function
 
 Public Function PtrToObj(ByVal ObjectPointer As Long) As Object
@@ -540,9 +555,9 @@ Public Function StrToVar(ByVal Text As String) As Variant
 If Text = vbNullString Then
     StrToVar = Empty
 Else
-    Dim b() As Byte
-    b() = Text
-    StrToVar = b()
+    Dim B() As Byte
+    B() = Text
+    StrToVar = B()
 End If
 End Function
 
@@ -550,9 +565,9 @@ Public Function VarToStr(ByVal Bytes As Variant) As String
 If IsEmpty(Bytes) Then
     VarToStr = vbNullString
 Else
-    Dim b() As Byte
-    b() = Bytes
-    VarToStr = b()
+    Dim B() As Byte
+    B() = Bytes
+    VarToStr = B()
 End If
 End Function
 
@@ -636,7 +651,7 @@ End Function
 
 Public Function PictureFromByteStream(ByRef ByteStream As Variant) As IPictureDisp
 Dim IID As CLSID, Stream As IUnknown, NewPicture As IPicture
-Dim b() As Byte, ByteCount As Long
+Dim B() As Byte, ByteCount As Long
 Dim hMem As Long, lpMem As Long
 With IID
 .Data1 = &H7BF80980
@@ -650,13 +665,13 @@ With IID
 .Data4(7) = &HAB
 End With
 If VarType(ByteStream) = (vbArray + vbByte) Then
-    b() = ByteStream
-    ByteCount = (UBound(b()) - LBound(b())) + 1
+    B() = ByteStream
+    ByteCount = (UBound(B()) - LBound(B())) + 1
     hMem = GlobalAlloc(&H2, ByteCount)
     If hMem <> 0 Then
         lpMem = GlobalLock(hMem)
         If lpMem <> 0 Then
-            CopyMemory ByVal lpMem, b(LBound(b())), ByteCount
+            CopyMemory ByVal lpMem, B(LBound(B())), ByteCount
             GlobalUnlock hMem
             If CreateStreamOnHGlobal(hMem, 1, Stream) = 0 Then
                 If OleLoadPicture(Stream, ByteCount, 0, IID, NewPicture) = 0 Then Set PictureFromByteStream = NewPicture

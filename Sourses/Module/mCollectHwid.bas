@@ -26,8 +26,8 @@ Public Sub CollectHwidFromReestr()
     Dim strCompatID       As String
     Dim strMatchesID      As String
     Dim strStrDescription As String
-    Dim i                 As Long
     Dim ii                As Long
+    Dim iii               As Long
     Dim strIUSB30_4th_x() As String
     Dim regNameEnum       As String
     Dim regDriverClass    As String
@@ -40,8 +40,8 @@ Public Sub CollectHwidFromReestr()
 
     strIUSB30_4th_x = Split(strIUSB30_4th, "|")
     ' максимальное кол-во элементов в массиве
-    For i = 0 To UBound(arrHwidsLocal)
-        strID = arrHwidsLocal(i).HWIDOrig
+    For ii = 0 To UBound(arrHwidsLocal)
+        strID = arrHwidsLocal(ii).HWIDOrig
         ' Получаем данные об устройстве
         regNameEnum = "SYSTEM\CurrentControlSet\Enum\" & strID & vbBackslash
         ' список ID оборудования
@@ -71,12 +71,12 @@ Public Sub CollectHwidFromReestr()
                     mbIntel2thGeneration = True
                 Else
                     
-                    For ii = LBound(strIUSB30_4th_x) To UBound(strIUSB30_4th_x)
-                        If InStr(strCompatID, strIUSB30_4th_x(ii)) Then
+                    For iii = LBound(strIUSB30_4th_x) To UBound(strIUSB30_4th_x)
+                        If InStr(strCompatID, strIUSB30_4th_x(iii)) Then
                             mbIntel4thGeneration = True
                             Exit For
                         End If
-                    Next ii
+                    Next iii
                 End If
             End If
         End If
@@ -131,39 +131,39 @@ Public Sub CollectHwidFromReestr()
         End If
 
         If LenB(strVersionDRV) Then
-            arrHwidsLocal(i).VerLocal = Trim$(strVersionDRV)
+            arrHwidsLocal(ii).VerLocal = Trim$(strVersionDRV)
         Else
-            arrHwidsLocal(i).VerLocal = strUnknownLCase
+            arrHwidsLocal(ii).VerLocal = strUnknownLCase
         End If
 
         If LenB(strProviderName) Then
-            arrHwidsLocal(i).Provider = Trim$(strProviderName)
+            arrHwidsLocal(ii).Provider = Trim$(strProviderName)
         Else
-            arrHwidsLocal(i).Provider = strUnknownLCase
+            arrHwidsLocal(ii).Provider = strUnknownLCase
         End If
 
         If LenB(strCompatID) Then
-            arrHwidsLocal(i).HWIDCompat = Trim$(strCompatID)
+            arrHwidsLocal(ii).HWIDCompat = Trim$(strCompatID)
         Else
-            arrHwidsLocal(i).HWIDCompat = strUnknownUCase
+            arrHwidsLocal(ii).HWIDCompat = strUnknownUCase
         End If
 
         If LenB(strStrDescription) Then
-            arrHwidsLocal(i).Description = Trim$(strStrDescription)
+            arrHwidsLocal(ii).Description = Trim$(strStrDescription)
         Else
-            arrHwidsLocal(i).Description = strUnknownLCase
+            arrHwidsLocal(ii).Description = strUnknownLCase
         End If
 
         If LenB(strInfName) Then
-            arrHwidsLocal(i).HWIDMatches = UCase$(Trim$(strMatchesID))
+            arrHwidsLocal(ii).HWIDMatches = UCase$(Trim$(strMatchesID))
         Else
-            arrHwidsLocal(i).HWIDMatches = strUnknownUCase
+            arrHwidsLocal(ii).HWIDMatches = strUnknownUCase
         End If
 
         If LenB(strInfName) Then
-            arrHwidsLocal(i).InfName = Trim$(strInfName)
+            arrHwidsLocal(ii).InfName = Trim$(strInfName)
         Else
-            arrHwidsLocal(i).InfName = strUnknownLCase
+            arrHwidsLocal(ii).InfName = strUnknownLCase
         End If
 
     Next
@@ -183,7 +183,7 @@ Public Sub CollectHwidFromReestr()
     '12 - strInfName
     '13 - Есть драйвера или нет
     '14 - Список пакетов где обнуружены драйвера
-    If mbDebugStandart Then DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & i & vbNewLine & _
+    If mbDebugStandart Then DebugMode vbTab & "CollectHwidFromReestr: Found Devices: " & ii & vbNewLine & _
               vbTab & "CollectHwidFromReestr-End"
 End Sub
 

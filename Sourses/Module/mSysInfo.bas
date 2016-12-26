@@ -3,6 +3,7 @@ Option Explicit
 ' Получения подробной информации о версии операционной системы,
 ' а также модели компьтера/ноутбука/материнской платы
 
+#Const mbIDE_DBSProject = False
 ' Программные переменные
 Public strOSArchitecture        As String        ' Архитетуктура ОС
 Public strOSCurrentVersion      As String
@@ -144,7 +145,7 @@ Public Function GetMB_Manufacturer() As String
 
     With objRegExp
 '        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
-	.Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(CO., LTD.)|(ELECTRONICS)|(Technology)/ig"
+        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(CO., LTD.)|(ELECTRONICS)|(Technology)/ig"
         .IgnoreCase = True
         .Global = True
         'Заменяем найденные значения " "
@@ -215,6 +216,7 @@ End Function
 
 ' уточнение про "статус" компьютер-ноутбук по корпусу или батарее
 Public Sub IsPCisNotebook()
+    
     If mbIsNotebook Then
         
         Dim colItems           As Object
@@ -234,38 +236,43 @@ Public Sub IsPCisNotebook()
                 Select Case objChassisType
                     Case 3
                         mbIsNotebook = False
-                        Exit Sub
+                        GoTo ExitSub
                     Case 10
                         mbIsNotebook = True
-                        Exit Sub
+                        GoTo ExitSub
                 End Select
             Next
         Next
 
+        ' Not add to project (if not DBS) - option for compile
+        #If Not mbIDE_DBSProject Then
+            'Если не определили по типу корпусу, то определяем по батарее
+            Dim BatteryStatus As SYSTEM_POWER_STATUS
+            Dim iii           As Long
+            Dim mbBatDev      As Boolean
+            
+            For iii = 0 To UBound(arrHwidsLocal)
+                If InStr(arrHwidsLocal(iii).HWID, "ACPI0003") Then
+                    mbBatDev = True
+                    Exit For
+                End If
+            Next iii
+            
+            'Get status system battery
+            GetSystemPowerStatus BatteryStatus
+            
+            'Not (No system battery) or (battery device is exist)
+            If BatteryStatus.BatteryFlag < 128 Or mbBatDev = True Then
+                mbIsNotebook = True
+            Else
+                mbIsNotebook = False
+            End If
+        #End If
+
+ExitSub:
         Set colItems = Nothing
         Set objItem = Nothing
-    
-        'Если не определили по типу корпусу, то определяем по батарее
-        Dim BatteryStatus As SYSTEM_POWER_STATUS
-        Dim ii            As Long
-        Dim mbBatDev      As Boolean
         
-        For ii = 0 To UBound(arrHwidsLocal)
-            If InStr(arrHwidsLocal(ii).HWID, "ACPI0003") Then
-                mbBatDev = True
-                Exit For
-            End If
-        Next ii
-        
-        'Get status system battery
-        GetSystemPowerStatus BatteryStatus
-        
-        'Not (No system battery) or (battery device is exist)
-        If BatteryStatus.BatteryFlag < 128 Or mbBatDev = True Then
-            mbIsNotebook = True
-        Else
-            mbIsNotebook = False
-        End If
     End If
 End Sub
 '!--------------------------------------------------------------------------------

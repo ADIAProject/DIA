@@ -3255,18 +3255,10 @@ RaiseEvent OLEDeleteObject(LpOleObject)
 End Sub
 
 Friend Sub FIRichEditOleCallback_GetDragDropEffect(ByVal Drag As Boolean, ByVal KeyState As Long, ByRef dwEffect As Long)
-Const MK_LBUTTON As Long = &H1, MK_RBUTTON As Long = &H2, MK_MBUTTON As Long = &H10
-Const MK_SHIFT As Long = &H4, MK_CONTROL As Long = &H8
-Dim Button As Integer, Shift As Integer
-If (KeyState And MK_LBUTTON) = MK_LBUTTON Then Button = vbLeftButton
-If (KeyState And MK_RBUTTON) = MK_RBUTTON Then Button = Button Or vbRightButton
-If (KeyState And MK_MBUTTON) = MK_MBUTTON Then Button = Button Or vbMiddleButton
-If (KeyState And MK_SHIFT) = MK_SHIFT Then Shift = vbShiftMask
-If (KeyState And MK_CONTROL) = MK_CONTROL Then Shift = Shift Or vbCtrlMask
 If Drag = True Then
-    RaiseEvent OLEGetDragEffect(Button, Shift, dwEffect) ' AllowedEffects
+    RaiseEvent OLEGetDragEffect(GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState), dwEffect) ' AllowedEffects
 Else
-    RaiseEvent OLEGetDropEffect(Button, Shift, dwEffect) ' Effect
+    RaiseEvent OLEGetDropEffect(GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState), dwEffect)  ' Effect
 End If
 End Sub
 
@@ -3458,24 +3450,24 @@ Select Case wMsg
         Y = UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips)
         Select Case wMsg
             Case WM_LBUTTONDOWN
-                RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
                 RichTextBoxIsClick = True
             Case WM_MBUTTONDOWN
-                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
                 RichTextBoxIsClick = True
             Case WM_RBUTTONDOWN
-                RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
                 RichTextBoxIsClick = True
             Case WM_MOUSEMOVE
-                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
+                RaiseEvent MouseMove(GetMouseStateFromParam(wParam), GetShiftStateFromParam(wParam), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
                 Select Case wMsg
                     Case WM_LBUTTONUP
-                        RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
                     Case WM_MBUTTONUP
-                        RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
                     Case WM_RBUTTONUP
-                        RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                        RaiseEvent MouseUp(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
                 End Select
                 If RichTextBoxIsClick = True Then
                     RichTextBoxIsClick = False

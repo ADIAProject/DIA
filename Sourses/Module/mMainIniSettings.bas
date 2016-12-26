@@ -66,7 +66,6 @@ Public lngPauseAfterSearch               As Long        ' Паузка после поиска но
 Public mbCalcDriverScore                 As Boolean     ' Использовать при анализе драйверов балл найденного драйвера, на основании различных условий
 Public mbCompatiblesHWID                 As Boolean     ' Использовать для поиска подходящих драйверов секцию CompatiblesHWID, берется из реестра
 Public mbSearchCompatibleDriverOtherOS   As Boolean     ' Искать подходящие драйвера на всех вкладках, а не только на подобранной
-Public mbSortDBTxtFileByHWID             As Boolean     ' Сортировать индексный txt-файл по HWID
 Public lngSortMethodShell                As Long        ' Параметр указывающий применять метод сортировки массива
 Public lngCompatiblesHWIDCount           As Long        ' Глубина поиска совместимых HWID
 Public mbMatchHWIDbyDPName               As Boolean     ' Анализ имени файла для определния совместимости драйвера
@@ -81,8 +80,9 @@ Public lngBtn2BtnTop                     As Long        ' Интервал между кнопкам
 Public lngStatusBtnStyle                 As Long        ' Стиль кнопки пакета драйверов
 Public lngStatusBtnStyleColor            As Long        ' Цвет оформления кнопки пакета драйверов
 Public lngStatusBtnBackColor             As Long        ' Цвет оформления кнопки пакета драйверов
-Public mbCleanTempForEachDP              As Boolean     ' Очистка каталога темп для каждого пакета драйверов при индексации
 Public lngFreeSpaceSysDrive              As Long        ' Свободное место на жестком диске
+Public mbCleanTempForEachDP              As Boolean     ' Очистка каталога темп для каждого пакета драйверов при индексации
+Public mbSortDBTxtFileByHWID             As Boolean     ' Сортировать индексный txt-файл по HWID
 
 'Public strImageMenuName                  As String
 'Public mbExMenu                           As Boolean ' Расширенное меню
@@ -128,13 +128,13 @@ Public Sub CreateIni()
         IniWriteStrPrivate "Main", "AlternativeTemp", "0", strSysIni
         IniWriteStrPrivate "Main", "AlternativeTempPath", "%Temp%", strSysIni
         IniWriteStrPrivate "Main", "SilentDLL", "0", strSysIni
-        IniWriteStrPrivate "Main", "SearchOnStart", "0", strSysIni
-        IniWriteStrPrivate "Main", "PauseAfterSearch", "1", strSysIni
-        IniWriteStrPrivate "Main", "CreateRestorePoint", "1", strSysIni
         IniWriteStrPrivate "Main", "IconMainSkin", "Standart", strSysIni
         IniWriteStrPrivate "Main", "LoadIniTmpAfterRestart", "0", strSysIni
         IniWriteStrPrivate "Main", "AutoLanguage", "1", strSysIni
         IniWriteStrPrivate "Main", "StartLanguageID", "0409", strSysIni
+        IniWriteStrPrivate "Main", "SearchOnStart", "0", strSysIni
+        IniWriteStrPrivate "Main", "PauseAfterSearch", "1", strSysIni
+        IniWriteStrPrivate "Main", "CreateRestorePoint", "1", strSysIni
         IniWriteStrPrivate "Main", "AutoInfoAfterDelDRV", "1", strSysIni
         IniWriteStrPrivate "Main", "CleanTempForEachDP", "1", strSysIni
 
@@ -325,8 +325,8 @@ End Sub
 Public Function GetMainIniParam() As Boolean
 
     Dim i                           As Long
-    Dim mbAllFolderDRVNotExistCount As Integer
     Dim cntOsInIni                  As Integer
+    Dim mbAllFolderDRVNotExistCount As Integer
     Dim cntUtilsInIni               As Integer
     Dim NotebookFilterCount         As Long
     Dim numFilter                   As Long
@@ -444,11 +444,11 @@ Public Function GetMainIniParam() As Boolean
         End If
     End If
 
+    mbLoadIniTmpAfterRestart = GetIniValueBoolean(strSysIni, "Main", "LoadIniTmpAfterRestart", 0)
+    mbDisableDEP = GetIniValueBoolean(strSysIni, "Main", "DisableDEP", 1)
     mbSearchOnStart = GetIniValueBoolean(strSysIni, "Main", "SearchOnStart", 0)
     lngPauseAfterSearch = GetIniValueLong(strSysIni, "Main", "PauseAfterSearch", 1)
     mbCreateRestorePoint = GetIniValueBoolean(strSysIni, "Main", "CreateRestorePoint", 1)
-    mbLoadIniTmpAfterRestart = GetIniValueBoolean(strSysIni, "Main", "LoadIniTmpAfterRestart", 0)
-    mbDisableDEP = GetIniValueBoolean(strSysIni, "Main", "DisableDEP", 1)
     mbCleanTempForEachDP = GetIniValueBoolean(strSysIni, "Main", "CleanTempForEachDP", 1)
     
     '[OS]
@@ -850,10 +850,13 @@ Public Function GetMainIniParam() As Boolean
     mbSilentDLL = GetIniValueBoolean(strSysIni, "Main", "SilentDll", 0)
     ' Показывать напоминание об обновлении (всплывающее окно)
     mbUpdateToolTip = GetIniValueBoolean(strSysIni, "Main", "UpdateToolTip", 1)
-    ' Автообновление информации после удаления драйвера
-    mbAutoInfoAfterDelDRV = GetIniValueBoolean(strSysIni, "Main", "AutoInfoAfterDelDRV", 1)
+
     ' Стартовый режим
     miStartMode = GetIniValueLong(strSysIni, "Main", "StartMode", 1)
+    ' Автообновление информации после удаления драйвера
+    mbAutoInfoAfterDelDRV = GetIniValueBoolean(strSysIni, "Main", "AutoInfoAfterDelDRV", 1)
+
+
     '[NotebookVendor]
     NotebookFilterCount = IniLongPrivate("NotebookVendor", "FilterCount", strSysIni)
 

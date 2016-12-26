@@ -1,5 +1,19 @@
 List of revisions:
 
+26-Dec-2016
+- Internal improvement in the mouse events.
+  It is necessary to replace the Common.bas module. (new function GetShiftStateFromParam and GetMouseStateFromParam)
+
+23-Dec-2016
+- Bugfix that the Click event was not fired when changing the Value property by code in the CheckBoxW and OptionButtonW control.
+- Some other minor internal improvements.
+
+21-Dec-2016
+- The Resizable property of a ColumnHeader requires not anymore the comctls32.dll version 6.1 or higher in the ListView control.
+  So that property could even be used when not manifested. (comctl32.dll version 5.8x)
+- Bugfix in the ResizableColumnHeaders property in the ListView control.
+- Renamed the ItemFromPos property to ItemFromPosition in 'CbrBands' and 'LvwColumnHeaders'.
+
 17-Dec-2016
 - Included the ColumnDblClick event in the ListView control.
 

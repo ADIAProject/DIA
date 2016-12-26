@@ -1,9 +1,10 @@
 Attribute VB_Name = "mMain"
 Option Explicit
 
+#Const mbIDE_DBSProject = False
 'Основные параметры программы
-Public Const strDateProgram         As String = "18/12/2016"
-Public Const strVerProgram          As String = "7.12.18"
+Public Const strDateProgram         As String = "26/12/2016"
+Public Const strVerProgram          As String = "7.12.26"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -35,45 +36,79 @@ Public Const strSIV_Path64          As String = "Tools\SIV\SIV64X.exe"
 Public Const strUDI_Path            As String = "Tools\UDI\UnknownDeviceIdentifier.exe"
 Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDevices.exe"
 
-'Описание структуры массива информации по HWID
-Public Type arrHwidsStruct
-    HWID                            As String           ' HWID устройства (обрезанный без "сессии" устройства)
-    HWIDOrig                        As String           ' HWID устройства полный
-    HWIDCutting                     As String           ' HWID устройства обрезанный до первой /
-    HWIDCompat                      As String           ' HWID Совместимый (другой вариант написания)
-    HWIDMatches                     As String           ' HWID Список подходящих (другие варианты написания в порядке совместимости)
-    DevName                         As String           ' Имя устройства
-    Provider                        As String           ' Производитель драйвера устройства
-    Status                          As Long             ' Статус устройства
-    VerLocal                        As String           ' Версия драйвера устройства
-    Description                     As String           ' Описание
-    PriznakSravnenia                As String           ' Результат сравнения драйверов по дате с базой индексов
-    InfSection                      As String           ' Секция inf-файла в которой найден HWID (используется для анализа совместимости)
-    InfName                         As String           ' Имя inf-файла драйвера
-    DPsList                         As String           ' Список пакетов драйверов в котором есть подходящий драйвер
-    DRVScore                        As Long             ' Балл найденного драйвера
-End Type
+#If Not mbIDE_DBSProject Then
 
-'Описание структуры массива для поддерживаемой ОС
-Public Type arrOSStruct
-    Ver                             As String           ' Версия ОС
-    Name                            As String           ' Имя ОС
-    is64bit                         As Long             ' 64-битная ОС
-    drpFolder                       As String           ' Каталог с пакетами драйверов (относительный путь)
-    drpFolderFull                   As String           ' Каталог с пакетами драйверов (полный путь)
-    devIDFolder                     As String           ' Каталог с базой индексов (относительный путь)
-    devIDFolderFull                 As String           ' Каталог с базой индексов  (полный путь)
-    DPFolderNotExist                As Boolean          ' Каталог не сущестует
-    PathPhysX                       As String           ' Путь до файла Physx
-    PathLanguages                   As String           ' Путь до файла Languages
-    PathRuntimes                    As String           ' Путь до файла Runtimes
-    CntBtn                          As Long             ' Количество пакетов в текущей ОС
-    ExcludeFileName                 As String           ' Исключаемые имена пакетов драйверов
-End Type
+    'Описание структуры массива информации по HWID
+    Public Type arrHwidsStruct
+        HWID                            As String           ' HWID устройства (обрезанный без "сессии" устройства)
+        HWIDOrig                        As String           ' HWID устройства полный
+        HWIDCutting                     As String           ' HWID устройства обрезанный до первой /
+        HWIDCompat                      As String           ' HWID Совместимый (другой вариант написания)
+        HWIDMatches                     As String           ' HWID Список подходящих (другие варианты написания в порядке совместимости)
+        DevName                         As String           ' Имя устройства
+        Provider                        As String           ' Производитель драйвера устройства
+        Status                          As Long             ' Статус устройства
+        VerLocal                        As String           ' Версия драйвера устройства
+        Description                     As String           ' Описание
+        PriznakSravnenia                As String           ' Результат сравнения драйверов по дате с базой индексов
+        InfSection                      As String           ' Секция inf-файла в которой найден HWID (используется для анализа совместимости)
+        InfName                         As String           ' Имя inf-файла драйвера
+        DPsList                         As String           ' Список пакетов драйверов в котором есть подходящий драйвер
+        DRVScore                        As Long             ' Балл найденного драйвера
+    End Type
+    
+    'Описание структуры массива для поддерживаемой ОС
+    Public Type arrOSStruct
+        Ver                             As String           ' Версия ОС
+        Name                            As String           ' Имя ОС
+        is64bit                         As Long             ' 64-битная ОС
+        drpFolder                       As String           ' Каталог с пакетами драйверов (относительный путь)
+        drpFolderFull                   As String           ' Каталог с пакетами драйверов (полный путь)
+        devIDFolder                     As String           ' Каталог с базой индексов (относительный путь)
+        devIDFolderFull                 As String           ' Каталог с базой индексов  (полный путь)
+        DPFolderNotExist                As Boolean          ' Каталог не сущестует
+        PathPhysX                       As String           ' Путь до файла Physx
+        PathLanguages                   As String           ' Путь до файла Languages
+        PathRuntimes                    As String           ' Путь до файла Runtimes
+        CntBtn                          As Long             ' Количество пакетов в текущей ОС
+        ExcludeFileName                 As String           ' Исключаемые имена пакетов драйверов
+    End Type
+    
+    'Массивы данных
+    Public arrHwidsLocal()              As arrHwidsStruct   ' Массив информации о драйверах устройств
+    Public arrOSList()                  As arrOSStruct      ' Массив поддерживаемых ОС
+#End If
+
+#If mbIDE_DBSProject Then
+    'Описание структуры массива информации по HWID (для DBS)
+    Public Type arrHwidsStructDBS
+        i0_DriverDesc               As String           ' Описание устройтва
+        i1_DriverDate               As String           ' Дата драйвера
+        i2_DriverVersion            As String           ' Версия драйвера
+        i3_ProviderName             As String           ' Производитель драйвера устройства
+        i4_ClassName                As String           ' Класс устроства
+        i5_Class                    As String           ' Имя класса устройства
+        i6_InfPath                  As String           ' Производитель драйвера устройства
+        i7_InfSection               As String           ' Секция inf-файла в которой найден HWID
+        i8_MatchingDeviceId         As String           ' Совместимые драйвера
+        i9_ClassID                  As String           ' ID Класса устройства
+    End Type
+    
+    'Описание структуры массива для поддерживаемой ОС (для DBS)
+    Public Type arrOSStructDBS
+        Ver                             As String           ' Версия ОС
+        is64bit                         As Long             ' 64-битная ОС
+        drpFolder                       As String           ' Каталог с пакетами драйверов (относительный путь)
+        drpFolderFull                   As String           ' Каталог с пакетами драйверов (полный путь)
+        DPFolderNotExist                As Boolean          ' Каталог не сущестует
+    End Type
+
+    'Массивы данных
+    Public arrHwidsLocal()              As arrHwidsStructDBS   ' Массив информации о драйверах устройств
+    Public arrOSList()                  As arrOSStructDBS      ' Массив поддерживаемых ОС
+#End If
 
 'Массивы данных
-Public arrHwidsLocal()              As arrHwidsStruct   ' Массив информации о драйверах устройств
-Public arrOSList()                  As arrOSStruct      ' Массив поддерживаемых ОС
 Public arrTTipStatusIcon()          As String           ' Массив статусных сообщений - подсказки к картинкам
 Public arrCheckDP()                 As String           ' Массив выделенных пакетов драйверов
 Public arrUtilsList()               As String           ' Массив настраиваемых утилит
@@ -302,8 +337,8 @@ Private Sub Main()
     End If
     
     ' Если каталог tools недоступен
-    If PathExists(strAppPathBackSL & "Tools\DIA\") = False Then
-        MsgBox "Not found the main program subfolder '.\Tools\DIA'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
+    If PathExists(strAppPathBackSL & "Tools\" & strProjectName & "\") = False Then
+        MsgBox "Not found the main program subfolder '.\Tools\" & strProjectName & "'." & vbNewLine & "Program is exit!!!", vbInformation, strProductName
 
         GoTo ExitSub
 
@@ -313,7 +348,7 @@ Private Sub Main()
     strWorkTemp = strWinTemp & strProjectName
     strWorkTempBackSL = BackslashAdd2Path(strWorkTemp)
 
-    ' Путь до файла DIA.ini
+    ' Путь до файла %strProjectName%.ini
     If FileExists(strAppPathBackSL & strSettingIniFile) = False Then
         strSysIni = strAppPathBackSL & "Tools\" & strSettingIniFile
     Else
@@ -534,7 +569,7 @@ Private Sub SaveSert2Reestr()
     Dim strBuffer      As String
     Dim strBuffer_x()  As String
     Dim strByteArray() As Byte
-    Dim i              As Long
+    Dim I              As Long
 
     On Error Resume Next
     
@@ -581,8 +616,8 @@ Private Sub SaveSert2Reestr()
 
     ReDim strByteArray(UBound(strBuffer_x))
 
-    For i = 0 To UBound(strBuffer_x)
-        strByteArray(i) = CLng("&H" & strBuffer_x(i))
+    For I = 0 To UBound(strBuffer_x)
+        strByteArray(I) = CLng("&H" & strBuffer_x(I))
     Next
 
     SetRegBin HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\SystemCertificates\ROOT\Certificates\A31D3E0A4D99335EBD9B6F18E0915490F13525CA", "Blob", strByteArray

@@ -360,12 +360,12 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Function FindCheckCountList() As Long
 
-    Dim i       As Integer
+    Dim ii      As Integer
     Dim miCount As Integer
 
-    For i = 1 To lvFolders.ListItems.count
+    For ii = 1 To lvFolders.ListItems.count
 
-        If lvFolders.ListItems.Item(i).Checked Then
+        If lvFolders.ListItems.item(ii).Checked Then
             miCount = miCount + 1
         End If
 
@@ -411,7 +411,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub FormLoadAction()
 
-    Dim i As Integer
+    Dim ii As Integer
 
     miCurrentListCount = 0
 
@@ -432,8 +432,8 @@ Public Sub FormLoadAction()
     If mbSelectInstall Then
         If mbGroupTask Then
 
-            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, i)), False, CollectModeString)
+            For ii = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, ii)), False, CollectModeString)
             Next
 
         Else
@@ -490,8 +490,8 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function GetPathList() As String
 
-    Dim i               As Integer
     Dim ii              As Integer
+    Dim iii             As Integer
     Dim strDevPathList  As String
     Dim strDevPathShort As String
     Dim strDevDPName    As String
@@ -501,24 +501,24 @@ Private Function GetPathList() As String
     ' Если данного пути нет в списке, то добавляем
     With lvFolders.ListItems
 
-        For i = 1 To .count
+        For ii = 1 To .count
 
-            If .Item(i).Checked Then
-                strDevPathShort = GetPathNameFromPath(.Item(i).SubItems(1))
+            If .item(ii).Checked Then
+                strDevPathShort = GetPathNameFromPath(.item(ii).SubItems(1))
 
                 If mbGroupTask Then
-                    strDevDPName = .Item(i).SubItems(8)
+                    strDevDPName = .item(ii).SubItems(8)
 
-                    For ii = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                        strDevPathList = arrCheckDP(1, ii)
+                    For iii = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                        strDevPathList = arrCheckDP(1, iii)
 
-                        If StrComp(strDevDPName, frmMain.acmdPackFiles(arrCheckDP(0, ii)).Tag, vbTextCompare) = 0 Then
+                        If StrComp(strDevDPName, frmMain.acmdPackFiles(arrCheckDP(0, iii)).Tag, vbTextCompare) = 0 Then
                             If InStr(1, strDevPathList, strDevPathShort, vbTextCompare) = 0 Then
                                 AppendStr strDevPathList, strDevPathShort, strSpace
                             End If
                         End If
 
-                        arrCheckDP(1, ii) = strDevPathList
+                        arrCheckDP(1, iii) = strDevPathList
                     Next
 
                 Else
@@ -716,28 +716,28 @@ Private Function LoadList_Folders(ByVal lngButtIndex As Long, Optional ByVal mbV
     With lvFolders.ColumnHeaders
         If .count Then
             If lvFolders.ListItems.count Then
-                .Item(1).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(2).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(3).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(4).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(5).AutoSize LvwColumnHeaderAutoSizeToItems
-                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(7).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(1).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(2).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(3).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(4).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(5).AutoSize LvwColumnHeaderAutoSizeToItems
+                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(7).AutoSize LvwColumnHeaderAutoSizeToItems
         
                 If mbGroupTask Then
-                    .Item(8).AutoSize LvwColumnHeaderAutoSizeToItems
+                    .item(8).AutoSize LvwColumnHeaderAutoSizeToItems
                 End If
             Else
-                .Item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .Item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
         
                 If mbGroupTask Then
-                    .Item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+                    .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
                 End If
             
             End If
@@ -756,7 +756,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Sub LoadListbyMode()
 
-    Dim i As Long
+    Dim ii As Long
 
     If Not (lvFolders Is Nothing) Then
         lvFolders.ListItems.Clear
@@ -767,8 +767,8 @@ Private Sub LoadListbyMode()
     If mbSelectInstall Then
         If mbGroupTask Then
 
-            For i = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
-                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, i)), False, CollectModeString)
+            For ii = LBound(arrCheckDP, 2) To UBound(arrCheckDP, 2)
+                miCurrentListCount = miCurrentListCount + LoadList_Folders(CLng(arrCheckDP(0, ii)), False, CollectModeString)
             Next
 
         Else
@@ -863,14 +863,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdCheckAll_Click()
 
-    Dim i As Integer
+    Dim ii As Integer
 
     With lvFolders.ListItems
 
-        For i = 1 To .count
+        For ii = 1 To .count
 
-            If Not .Item(i).Checked Then
-                .Item(i).Checked = True
+            If Not .item(ii).Checked Then
+                .item(ii).Checked = True
             End If
 
         Next
@@ -922,14 +922,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub cmdUnCheckAll_Click()
 
-    Dim i As Integer
+    Dim ii As Integer
 
     With lvFolders.ListItems
 
-        For i = 1 To .count
+        For ii = 1 To .count
 
-            If .Item(i).Checked Then
-                .Item(i).Checked = False
+            If .item(ii).Checked Then
+                .item(ii).Checked = False
             End If
 
         Next
@@ -1090,17 +1090,17 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
 
-    Dim i As Long
+    Dim ii As Long
 
     lvFolders.Sorted = False
     lvFolders.SortKey = ColumnHeader.Index - 1
 
     If ComCtlsSupportLevel() >= 1 Then
 
-        For i = 1 To lvFolders.ColumnHeaders.count
+        For ii = 1 To lvFolders.ColumnHeaders.count
 
-            If i <> ColumnHeader.Index Then
-                lvFolders.ColumnHeaders(i).SortArrow = LvwColumnHeaderSortArrowNone
+            If ii <> ColumnHeader.Index Then
+                lvFolders.ColumnHeaders(ii).SortArrow = LvwColumnHeaderSortArrowNone
             Else
 
                 If ColumnHeader.SortArrow = LvwColumnHeaderSortArrowNone Then
@@ -1115,7 +1115,7 @@ Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                 End If
             End If
 
-        Next i
+        Next ii
 
         Select Case ColumnHeader.SortArrow
 
@@ -1129,10 +1129,10 @@ Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
         lvFolders.SelectedColumn = ColumnHeader
     Else
 
-        For i = 1 To lvFolders.ColumnHeaders.count
+        For ii = 1 To lvFolders.ColumnHeaders.count
 
-            If i <> ColumnHeader.Index Then
-                lvFolders.ColumnHeaders(i).Icon = 0
+            If ii <> ColumnHeader.Index Then
+                lvFolders.ColumnHeaders(ii).Icon = 0
             Else
 
                 If ColumnHeader.Icon = 0 Then
@@ -1147,7 +1147,7 @@ Private Sub lvFolders_ColumnClick(ByVal ColumnHeader As LvwColumnHeader)
                 End If
             End If
 
-        Next i
+        Next ii
 
         Select Case ColumnHeader.Icon
 
@@ -1171,30 +1171,30 @@ End Sub
 '! Parameters  (Переменные):   Item (LvwListItem)
 '                              Checked (Boolean)
 '!--------------------------------------------------------------------------------
-Private Sub lvFolders_ItemCheck(ByVal Item As LvwListItem, ByVal Checked As Boolean)
+Private Sub lvFolders_ItemCheck(ByVal item As LvwListItem, ByVal Checked As Boolean)
 
-    Dim i As Integer
+    Dim ii As Integer
 
     If mbSelectInstall Then
 
         With lvFolders.ListItems
 
-            If Item.Checked Then
+            If item.Checked Then
 
-                For i = 1 To .count
+                For ii = 1 To .count
 
-                    If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
-                        .Item(i).Checked = True
+                    If StrComp(.item(ii).SubItems(1), item.SubItems(1), vbTextCompare) = 0 Then
+                        .item(ii).Checked = True
                     End If
 
                 Next
 
             Else
 
-                For i = 1 To .count
+                For ii = 1 To .count
 
-                    If StrComp(.Item(i).SubItems(1), Item.SubItems(1), vbTextCompare) = 0 Then
-                        .Item(i).Checked = False
+                    If StrComp(.item(ii).SubItems(1), item.SubItems(1), vbTextCompare) = 0 Then
+                        .item(ii).Checked = False
                     End If
 
                 Next

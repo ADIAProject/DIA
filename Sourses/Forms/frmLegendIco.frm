@@ -445,7 +445,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Form_Load()
 
-    Dim i As Long
+    Dim ii As Long
 
     SetupVisualStyles Me
 
@@ -484,8 +484,8 @@ Private Sub Form_Load()
 
     LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
 
-    For i = 0 To 7
-        lblDescription(i).Caption = arrTTipStatusIcon(i)
+    For ii = 0 To 7
+        lblDescription(ii).Caption = arrTTipStatusIcon(ii)
     Next
 
 End Sub

@@ -93,7 +93,7 @@ Begin VB.Form frmDonate
       BackColor       =   12244692
       Caption         =   "Donate via SMSCoin"
       CaptionEffects  =   0
-      PictureNormal   =   "frmDonate.frx":0168
+      PictureNormal   =   "frmDonate.frx":017E
       PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16645372
@@ -121,7 +121,7 @@ Begin VB.Form frmDonate
       Caption         =   "Donate via"
       CaptionEffects  =   0
       CaptionAlign    =   2
-      PictureNormal   =   "frmDonate.frx":1E42
+      PictureNormal   =   "frmDonate.frx":1E58
       PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16777215
@@ -149,7 +149,7 @@ Begin VB.Form frmDonate
       Caption         =   "Donate via"
       CaptionEffects  =   0
       CaptionAlign    =   2
-      PictureNormal   =   "frmDonate.frx":3F3C
+      PictureNormal   =   "frmDonate.frx":3F52
       PictureAlign    =   2
       PicturePushOnHover=   -1  'True
       MaskColor       =   16185078

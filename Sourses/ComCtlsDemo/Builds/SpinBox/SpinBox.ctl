@@ -802,11 +802,9 @@ Select Case NewValue
 End Select
 Dim Changed As Boolean
 Changed = CBool(Me.Value <> PropValue)
-If SpinBoxUpDownHandle <> 0 Then
-    SendMessage SpinBoxUpDownHandle, UDM_SETPOS32, 0, ByVal PropValue
-    If Changed = True Then RaiseEvent Change
-End If
+If SpinBoxUpDownHandle <> 0 Then SendMessage SpinBoxUpDownHandle, UDM_SETPOS32, 0, ByVal PropValue
 UserControl.PropertyChanged "Value"
+If Changed = True Then RaiseEvent Change
 End Property
 
 Public Property Get Increment() As Long
@@ -1260,19 +1258,19 @@ Select Case wMsg
         Y = UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips)
         Select Case wMsg
             Case WM_LBUTTONDOWN
-                RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MBUTTONDOWN
-                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_RBUTTONDOWN
-                RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MOUSEMOVE
-                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
+                RaiseEvent MouseMove(GetMouseStateFromParam(wParam), GetShiftStateFromParam(wParam), X, Y)
             Case WM_LBUTTONUP
-                RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                RaiseEvent MouseUp(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MBUTTONUP
-                RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseUp(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_RBUTTONUP
-                RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                RaiseEvent MouseUp(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
         End Select
 End Select
 End Function
@@ -1375,19 +1373,19 @@ Select Case wMsg
         Y = UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips)
         Select Case wMsg
             Case WM_LBUTTONDOWN
-                RaiseEvent MouseDown(vbLeftButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MBUTTONDOWN
-                RaiseEvent MouseDown(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_RBUTTONDOWN
-                RaiseEvent MouseDown(vbRightButton, GetShiftState(), X, Y)
+                RaiseEvent MouseDown(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MOUSEMOVE
-                RaiseEvent MouseMove(GetMouseState(), GetShiftState(), X, Y)
+                RaiseEvent MouseMove(GetMouseStateFromParam(wParam), GetShiftStateFromParam(wParam), X, Y)
             Case WM_LBUTTONUP
-                RaiseEvent MouseUp(vbLeftButton, GetShiftState(), X, Y)
+                RaiseEvent MouseUp(vbLeftButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_MBUTTONUP
-                RaiseEvent MouseUp(vbMiddleButton, GetShiftState(), X, Y)
+                RaiseEvent MouseUp(vbMiddleButton, GetShiftStateFromParam(wParam), X, Y)
             Case WM_RBUTTONUP
-                RaiseEvent MouseUp(vbRightButton, GetShiftState(), X, Y)
+                RaiseEvent MouseUp(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
         End Select
 End Select
 End Function

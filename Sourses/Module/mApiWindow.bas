@@ -97,18 +97,18 @@ Public Const TOOLTIPS_CLASSA     As String = "tooltips_class32"
 Public Const WM_GETMINMAXINFO    As Long = &H24
 
 Public Type MINMAXINFO
-    ptReserved                          As POINTAPI
-    ptMaxSize                           As POINTAPI
-    ptMaxPosition                       As POINTAPI
-    ptMinTrackSize                      As POINTAPI
-    ptMaxTrackSize                      As POINTAPI
+    ptReserved                   As POINTAPI
+    ptMaxSize                    As POINTAPI
+    ptMaxPosition                As POINTAPI
+    ptMinTrackSize               As POINTAPI
+    ptMaxTrackSize               As POINTAPI
 End Type
 
 Public Type Resize
-    xMin                                As Single
-    yMin                                As Single
-    xMax                                As Single
-    yMax                                As Single
+    xMin                         As Single
+    yMin                         As Single
+    xMax                         As Single
+    yMax                         As Single
 End Type
 
 Public Declare Sub CopyMemoryToMinMaxInfo Lib "kernel32.dll" Alias "RtlMoveMemory" (hpvDest As MINMAXINFO, ByVal hpvSource As Long, ByVal cbCopy As Long)
@@ -117,7 +117,7 @@ Public Declare Function DefWindowProc Lib "user32.dll" Alias "DefWindowProcW" (B
 Public Declare Function EnableWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Public Declare Function GetWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal wCmd As Long) As Long
 Public Declare Function RedrawWindow Lib "user32.dll" (ByVal hWnd As Long, lprcUpdate As RECT, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
-Public Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
+Public Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal Cx As Long, ByVal Cy As Long, ByVal wFlags As Long) As Long
 Public Declare Function DestroyWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
 Public Declare Function MoveWindow Lib "user32.dll" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Public Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, lParam As Any) As Long
@@ -128,7 +128,7 @@ Public Declare Function SetWindowLong Lib "user32.dll" Alias "SetWindowLongW" (B
 Public Declare Function SetWindowLongA Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Public Declare Function PostMessage Lib "user32" Alias "PostMessageW" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByRef lParam As Any) As Long
 Public Declare Function PostMessageLong Lib "user32.dll" Alias "PostMessageA" (ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Public Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hwndLock As Long) As Long
+Public Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hWndLock As Long) As Long
 Public Declare Function SetFocusAPI Lib "user32.dll" Alias "SetFocus" (ByVal hWnd As Long) As Long
 Public Declare Function GetFocus Lib "user32.dll" () As Long
 Public Declare Function UpdateWindow Lib "user32.dll" (ByVal hWnd As Long) As Long

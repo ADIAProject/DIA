@@ -16,6 +16,7 @@ Private ShadowObjectPointer As Long
 Private PropIndex As Long, PropKey As String
 Private PropTag As Variant
 Private PropIcon As Variant, PropIconIndex As Long
+Private PropResizable As Boolean
 Private PropBold As Boolean
 Private PropForeColor As OLE_COLOR
 
@@ -24,6 +25,7 @@ Set ShadowListView = PtrToObj(ShadowObjectPointer)
 End Function
 
 Private Sub Class_Initialize()
+PropResizable = True
 PropForeColor = vbButtonText
 End Sub
 
@@ -147,12 +149,12 @@ ShadowListView.FColumnHeaderIconOnRight(PropIndex) = Value
 End Property
 
 Public Property Get Resizable() As Boolean
-Attribute Resizable.VB_Description = "Returns/sets a value that determines whether or not the column header can be modified by a user action to resize it. Requires comctl32.dll version 6.1 or higher."
-Resizable = ShadowListView.FColumnHeaderResizable(PropIndex)
+Attribute Resizable.VB_Description = "Returns/sets a value that determines whether or not the column header can be modified by a user action to resize it."
+Resizable = ShadowListView.FColumnHeaderResizable(PropIndex, PropResizable)
 End Property
 
 Public Property Let Resizable(ByVal Value As Boolean)
-ShadowListView.FColumnHeaderResizable(PropIndex) = Value
+ShadowListView.FColumnHeaderResizable(PropIndex, PropResizable) = Value
 End Property
 
 Public Property Get SplitButton() As Boolean

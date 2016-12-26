@@ -136,3 +136,24 @@ Public Sub SetTTFontProperties(ctlObject As Object)
 
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub SetBtnFontProperties
+'! Description (Описание)  :   [Установка свойств шрифта для Объекта (кнопка)]
+'! Parameters  (Переменные):   ctlObject (Object)
+'!--------------------------------------------------------------------------------
+Public Sub SetBtnFontProperties(ctlObject As Object)
+
+    With ctlObject
+        .ForeColor = lngFontBtn_Color
+        With .Font
+            .Name = strFontBtn_Name
+            .Size = miFontBtn_Size
+            .Underline = mbFontBtn_Underline
+            .Strikethrough = mbFontBtn_Strikethru
+            .Bold = mbFontBtn_Bold
+            .Italic = mbFontBtn_Italic
+            .Charset = lngFont_Charset
+        End With
+    End With
+
+End Sub

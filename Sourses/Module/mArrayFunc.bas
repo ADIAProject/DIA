@@ -1,6 +1,8 @@
 Attribute VB_Name = "mArrayFunc"
 Option Explicit
 
+' Not add to project (if not DBS) - option for compile
+#Const mbIDE_DBSProject = False
 '*********************************
 'Api declare for sorting array function ShellSortAny
 ' return value for function CompareValues
@@ -9,6 +11,7 @@ Public Enum eCompareResult
     crEqual = 0&
     crGreater = 1&
 End Enum
+
 'VB lacks any support for procedure calling using an address, but the good ol - CallWindowProc will do just fine!
 Private Declare Function CompareValues Lib "user32.dll" Alias "CallWindowProcW" (ByVal CompareFunc As Long, ByVal First As Long, ByVal Second As Long, ByVal unused1 As Long, ByVal unused2 As Long) As eCompareResult
 'General purpose CopyMemory, but optimized for our purposes using byval longs - since we are working with pointers
@@ -146,7 +149,7 @@ Public Function SaveAnyStringArray2File(ByVal strPathFile As String, MyArray() A
     Dim strResultAll  As String
     Dim strLine       As String
     Dim i             As Long
-    Dim ii            As Long
+    Dim iii           As Long
 
     If mbDebugStandart Then DebugMode vbTab & "SaveAnyStringArray2File-Start"
     hiIndex = UBound(MyArray, 2)
@@ -155,8 +158,8 @@ Public Function SaveAnyStringArray2File(ByVal strPathFile As String, MyArray() A
     For i = 0 To hiIndex
         strLine = vbNullString
 
-        For ii = 0 To loIndex
-            AppendStr strLine, MyArray(ii, i), strDelimiter
+        For iii = 0 To loIndex
+            AppendStr strLine, MyArray(iii, i), strDelimiter
         Next
 
         AppendStr strResultAll, strLine, vbNewLine
@@ -174,6 +177,7 @@ Public Function SaveAnyStringArray2File(ByVal strPathFile As String, MyArray() A
     If mbDebugStandart Then DebugMode vbTab & "SaveAnyStringArray2File-End"
 End Function
 
+#If Not mbIDE_DBSProject Then
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function SaveHwidsArray2File
 '! Description (Описание)  :   [My Function for Save Any String Array Any Dimension to File]
@@ -223,6 +227,7 @@ Public Function SaveHwidsArray2File(ByVal strPathFile As String, MyArray() As ar
     End If
 
 End Function
+#End If
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ShellSortAny
