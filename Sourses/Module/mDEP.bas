@@ -16,7 +16,7 @@ Public Sub SetDEPDisable()
 
     If APIFunctionPresent("SetProcessDEPPolicy", "kernel32.dll") Then
         mbCallback = SetProcessDEPPolicy(0)
-        If mbDebugStandart Then DebugMode "Disable DEP: Result: " & mbCallback & " - Err ¹" & err.LastDllError & " - " & ApiErrorText(err.LastDllError)
+        If mbDebugStandart Then DebugMode "Disable DEP: Result: " & mbCallback & " - Err ¹" & Err.LastDllError & " - " & ApiErrorText(Err.LastDllError)
     Else
         If mbDebugStandart Then DebugMode "Disable DEP: ApiFunction not Supported"
     End If

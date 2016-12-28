@@ -71,7 +71,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub QuickSortMDArray(pArray As Variant, pbytDimension As Byte, plngColumn As Long, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
 
-    Dim i            As Long
+    Dim ii            As Long
     Dim lngFirst     As Long
     Dim lngLast      As Long
     Dim vFirst       As Variant
@@ -114,8 +114,8 @@ Public Sub QuickSortMDArray(pArray As Variant, pbytDimension As Byte, plngColumn
 
         If lngFirst <= lngLast Then
 
-            For i = LBound(pArray, bytCol) To UBound(pArray, bytCol)
-                lDim(bytCol) = i
+            For ii = LBound(pArray, bytCol) To UBound(pArray, bytCol)
+                lDim(bytCol) = ii
                 lDim(bytRow) = lngFirst
                 vFirst = pArray(lDim(1), lDim(2))
                 lDim(bytRow) = lngLast
@@ -148,18 +148,18 @@ Public Function SaveAnyStringArray2File(ByVal strPathFile As String, MyArray() A
     Dim loIndex       As Long
     Dim strResultAll  As String
     Dim strLine       As String
-    Dim i             As Long
+    Dim ii            As Long
     Dim iii           As Long
 
     If mbDebugStandart Then DebugMode vbTab & "SaveAnyStringArray2File-Start"
     hiIndex = UBound(MyArray, 2)
     loIndex = UBound(MyArray, 1)
 
-    For i = 0 To hiIndex
+    For ii = 0 To hiIndex
         strLine = vbNullString
 
         For iii = 0 To loIndex
-            AppendStr strLine, MyArray(iii, i), strDelimiter
+            AppendStr strLine, MyArray(iii, ii), strDelimiter
         Next
 
         AppendStr strResultAll, strLine, vbNewLine
@@ -178,55 +178,55 @@ Public Function SaveAnyStringArray2File(ByVal strPathFile As String, MyArray() A
 End Function
 
 #If Not mbIDE_DBSProject Then
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function SaveHwidsArray2File
-'! Description (Описание)  :   [My Function for Save Any String Array Any Dimension to File]
-'! Parameters  (Переменные):   StrPathFile (String)
-'                              MyArray() (arrHwidsStruct)
-'!--------------------------------------------------------------------------------
-Public Function SaveHwidsArray2File(ByVal strPathFile As String, MyArray() As arrHwidsStruct) As Boolean
-
-    Dim strResultAll  As String
-    Dim strLine       As String
-    Dim i             As Long
-
-    If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & strPathFile
-
-    For i = 0 To UBound(MyArray)
-        strLine = vbNullString
-
-        With arrHwidsLocal(i)
-            AppendStr strLine, .HWID, vbTab
-            AppendStr strLine, .DevName, vbTab
-            AppendStr strLine, .Status, vbTab
-            AppendStr strLine, .VerLocal, vbTab
-            AppendStr strLine, .HWIDOrig, vbTab
-            AppendStr strLine, .Provider, vbTab
-            AppendStr strLine, .HWIDCompat, vbTab
-            AppendStr strLine, .Description, vbTab
-            AppendStr strLine, .PriznakSravnenia, vbTab
-            AppendStr strLine, .InfSection, vbTab
-            AppendStr strLine, .HWIDCutting, vbTab
-            AppendStr strLine, .HWIDMatches, vbTab
-            AppendStr strLine, .InfName, vbTab
-            AppendStr strLine, .DPsList, vbTab
-            AppendStr strLine, .DRVScore, vbTab
-        End With
-
-        AppendStr strResultAll, strLine, vbNewLine
-    Next
-
-    If LenB(strResultAll) Then
-        '---------------Выводим итог в файл-----
-        FileWriteData strPathFile, strResultAll
-        If mbDebugStandart Then DebugMode "SaveHwidsArray2File-ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
-                                    "**************************************************************************"
-        SaveHwidsArray2File = True
-    Else
-        If mbDebugDetail Then DebugMode "SaveHwidsArray2File-False: NO DATA"
-    End If
-
-End Function
+    '!--------------------------------------------------------------------------------
+    '! Procedure   (Функция)   :   Function SaveHwidsArray2File
+    '! Description (Описание)  :   [My Function for Save Any String Array Any Dimension to File]
+    '! Parameters  (Переменные):   StrPathFile (String)
+    '                              MyArray() (arrHwidsStruct)
+    '!--------------------------------------------------------------------------------
+    Public Function SaveHwidsArray2File(ByVal strPathFile As String, MyArray() As arrHwidsStruct) As Boolean
+    
+        Dim strResultAll  As String
+        Dim strLine       As String
+        Dim ii             As Long
+    
+        If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & strPathFile
+    
+        For ii = 0 To UBound(MyArray)
+            strLine = vbNullString
+    
+            With arrHwidsLocal(ii)
+                AppendStr strLine, .HWID, vbTab
+                AppendStr strLine, .DevName, vbTab
+                AppendStr strLine, .Status, vbTab
+                AppendStr strLine, .VerLocal, vbTab
+                AppendStr strLine, .HWIDOrig, vbTab
+                AppendStr strLine, .Provider, vbTab
+                AppendStr strLine, .HWIDCompat, vbTab
+                AppendStr strLine, .Description, vbTab
+                AppendStr strLine, .PriznakSravnenia, vbTab
+                AppendStr strLine, .InfSection, vbTab
+                AppendStr strLine, .HWIDCutting, vbTab
+                AppendStr strLine, .HWIDMatches, vbTab
+                AppendStr strLine, .InfName, vbTab
+                AppendStr strLine, .DPsList, vbTab
+                AppendStr strLine, .DRVScore, vbTab
+            End With
+    
+            AppendStr strResultAll, strLine, vbNewLine
+        Next
+    
+        If LenB(strResultAll) Then
+            '---------------Выводим итог в файл-----
+            FileWriteData strPathFile, strResultAll
+            If mbDebugStandart Then DebugMode "SaveHwidsArray2File-ListLocalHwid:" & vbNewLine & "**************************************************************************" & vbNewLine & strResultAll & vbNewLine & _
+                                        "**************************************************************************"
+            SaveHwidsArray2File = True
+        Else
+            If mbDebugDetail Then DebugMode "SaveHwidsArray2File-False: NO DATA"
+        End If
+    
+    End Function
 #End If
 
 '!--------------------------------------------------------------------------------
@@ -351,7 +351,9 @@ Public Function BinarySearchLong(lngArray() As Long, ByVal lngHash As Long) As L
 End Function
 
 Public Sub CopyStringArray(ByRef Dest() As String, Src() As String, Optional StartIndex As Long = -1)
-   Dim tmpArr() As String, VarSize&, NewUbound&
+   Dim tmpArr()  As String
+   Dim VarSize   As Long
+   Dim NewUbound As Long
   
    ' Создаем полную копию копируемого массива
    tmpArr = Src

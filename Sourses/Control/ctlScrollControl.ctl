@@ -54,57 +54,57 @@ Private Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal h
 Private Declare Function GetParent Lib "user32.dll" (ByVal hWnd As Long) As Long
 
 Private Type RECT
-    Left                                As Long
-    Top                                 As Long
-    Right                               As Long
-    Bottom                              As Long
+    Left                        As Long
+    Top                         As Long
+    Right                       As Long
+    Bottom                      As Long
 End Type
 
 Private Type POINTAPI
-    X                                   As Long
-    Y                                   As Long
+    X                           As Long
+    Y                           As Long
 End Type
 
 Private Type SCROLLINFO
-    cbSize                              As Long
-    fMask                               As Long
-    nMin                                As Long
-    nMax                                As Long
-    nPage                               As Long
-    nPos                                As Long
-    nTrackPos                           As Long
+    cbSize                      As Long
+    fMask                       As Long
+    nMin                        As Long
+    nMax                        As Long
+    nPage                       As Long
+    nPos                        As Long
+    nTrackPos                   As Long
 End Type
 
-Private Const GW_CHILD               As Long = 5
-Private Const GW_HWNDNEXT            As Long = 2
-Private Const SB_HORZ                As Long = 0
-Private Const SB_VERT                As Long = 1
-Private Const SB_LINEDOWN            As Long = 1
-Private Const SB_LINEUP              As Long = 0
-Private Const SB_PAGEDOWN            As Long = 3
-Private Const SB_PAGEUP              As Long = 2
-Private Const SB_THUMBTRACK          As Long = 5
-Private Const SB_ENDSCROLL           As Long = 8
-Private Const SB_LEFT                As Long = 6
-Private Const SB_RIGHT               As Long = 7
-Private Const SIF_ALL                As Long = &H17
-Private Const SM_CYBORDER            As Long = 6
+Private Const GW_CHILD          As Long = 5
+Private Const GW_HWNDNEXT       As Long = 2
+Private Const SB_HORZ           As Long = 0
+Private Const SB_VERT           As Long = 1
+Private Const SB_LINEDOWN       As Long = 1
+Private Const SB_LINEUP         As Long = 0
+Private Const SB_PAGEDOWN       As Long = 3
+Private Const SB_PAGEUP         As Long = 2
+Private Const SB_THUMBTRACK     As Long = 5
+Private Const SB_ENDSCROLL      As Long = 8
+Private Const SB_LEFT           As Long = 6
+Private Const SB_RIGHT          As Long = 7
+Private Const SIF_ALL           As Long = &H17
+Private Const SM_CYBORDER       As Long = 6
 
 Public Enum EnuBorderStyle
     vbBSNone
     vbFixedSingle
 End Enum
 
-Private SI                  As SCROLLINFO
-Private mBorderSize         As Long
-Private OldPosH             As Long
-Private OldPosV             As Long
-Private m_hFocus            As Long
-Private m_AutoScrollToFocus As Boolean
-Private m_UseHandsCursor    As Boolean
-Private m_HScrollVisible    As Boolean
-Private m_VScrollVisible    As Boolean
-Private m_ScrollPositionH   As Long
+Private SI                      As SCROLLINFO
+Private mBorderSize             As Long
+Private OldPosH                 As Long
+Private OldPosV                 As Long
+Private m_hFocus                As Long
+Private m_AutoScrollToFocus     As Boolean
+Private m_UseHandsCursor        As Boolean
+Private m_HScrollVisible        As Boolean
+Private m_VScrollVisible        As Boolean
+Private m_ScrollPositionH       As Long
 
 '*************************************************************
 '   Windows Messages
@@ -142,7 +142,7 @@ Private bTrackUser32 As Boolean
 Private bInCtrl      As Boolean
 
 Private Declare Function TrackMouseEvent Lib "user32.dll" (ByRef lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 
 '*************************************************************
 '   Subsclass

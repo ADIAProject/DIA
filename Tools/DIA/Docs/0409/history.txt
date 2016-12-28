@@ -8,6 +8,35 @@ The Indications:
 	"*" - Make-up change
 	"!" - An Important notes on working the program
 
+Version 7.12.28 PreFinal (28.12.2016)
+	+ Added support for the latest markers from SamLab
+	+ Added support for indexing infdrp-files instead inf-files of in their presence, the default is disabled (section [OS] option ParseHwidByInfDrpFile, default = 0)
+	+ Index files are now compressed 7z (with the extension of the index files have not changed - TXT)
+	- Fixed a critical error in the definition of the bit systems on Windows 10
+	- Fixed bugs in the GUI on Windows 10
+	- Fixed bugs in the selection of drivers on Windows 10
+	* Improved definition of the status of the computer/laptop
+	* Updated markers determining laptops for the correct substitution touchpad drivers
+	* 7za updated to version 16.04
+	- Fixed 7za call for new versions
+	+ Added the ability to customize the path for 64-bit 7za
+	* Added the ability to delete files at the end of the program and not for each packet (Section [Main] option CleanTempForEachDP, default = 1)
+	* Added check for free space on the system partition with packages indexing
+	- Fixed an error when creating a common index file
+	* Speed ??up the creation of a common index file
+	- Minor fixes / optimization in the code parser inf-files and sorting of the output data file
+	* Changed the timing function
+	- Fixed call built-in utilities from menu
+	* Updated devcon program. Divided call devcon for Vista systems, and previously +
+	* Changed mode removing outdated driver packages - added the ability to remove all bags without query.
+	* Updated built-in tools (DevManView, Unknown Device Identifier, System Information Viewer)
+	* Improved stability of the program
+	* Fixed many small bugs
+
+Version 6.10.03 PreFinal (03.10.2014)
+	- Fixed an error in determining the version of the Windows 10
+	- Fixed rare crash when the program package indexed
+
 Version 6.9.30 PreFinal (30.09.2014)
 	+ Added support for markers for Windows 9
 	* Expanded definition USB3

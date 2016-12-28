@@ -519,6 +519,8 @@ Private lngFormHeightMin As Long
 Private lngDeviceCount   As Long
 Private strFormName      As String
 
+Private mbFirstStartForm As Boolean
+
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -989,8 +991,10 @@ Private Sub Form_Load()
     LoadIconImage2Object cmdReNewHW, "BTN_RENEWHW", strPathImageMainWork
     LoadIconImage2Object cmdBackUpDrivers, "BTN_BACKUP", strPathImageMainWork
     ' все остальные процедуры
+    mbFirstStartForm = True
     FormLoadDefaultParam
     FormLoadAction
+    mbFirstStartForm = False
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1104,11 +1108,12 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
     Dim strCompatID       As String
     Dim strStrDescription As String
     Dim strOrigHwid       As String
-    Dim iii               As Integer
+    Dim ii                As Integer
     Dim strInDPacks       As String
     Dim lngNumRow         As Long
 
     With lvDevices
+        .Visible = False
         .ListItems.Clear
 
         If .ColumnHeaders.count = 0 Then
@@ -1124,14 +1129,14 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
 
     End With
 
-    For iii = 0 To UBound(arrHwidsLocal)
-        strDevHwid = arrHwidsLocal(iii).HWID
-        strDevName = arrHwidsLocal(iii).DevName
-        strDevStatus = arrHwidsLocal(iii).Status
-        strDevDriverLocal = arrHwidsLocal(iii).VerLocal
-        strProvider = arrHwidsLocal(iii).Provider
-        strCompatID = arrHwidsLocal(iii).HWIDCompat
-        strStrDescription = arrHwidsLocal(iii).Description
+    For ii = 0 To UBound(arrHwidsLocal)
+        strDevHwid = arrHwidsLocal(ii).HWID
+        strDevName = arrHwidsLocal(ii).DevName
+        strDevStatus = arrHwidsLocal(ii).Status
+        strDevDriverLocal = arrHwidsLocal(ii).VerLocal
+        strProvider = arrHwidsLocal(ii).Provider
+        strCompatID = arrHwidsLocal(ii).HWIDCompat
+        strStrDescription = arrHwidsLocal(ii).Description
 
         If StrComp(strDevName, strStrDescription, vbTextCompare) <> 0 Then
             If LenB(strStrDescription) Then
@@ -1141,8 +1146,8 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
             End If
         End If
 
-        strInDPacks = arrHwidsLocal(iii).DPsList
-        strOrigHwid = arrHwidsLocal(iii).HWIDOrig
+        strInDPacks = arrHwidsLocal(ii).DPsList
+        strOrigHwid = arrHwidsLocal(ii).HWIDOrig
 
         Select Case lngMode
 
@@ -1290,6 +1295,7 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
             End If
         End If
     End With
+    lvDevices.Visible = True
 
 End Sub
 
@@ -1462,7 +1468,9 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub optGrp1_Click()
-    LoadListbyMode
+    If Not mbFirstStartForm Then
+        LoadListbyMode
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1471,7 +1479,9 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub optGrp2_Click()
-    LoadListbyMode
+    If Not mbFirstStartForm Then
+        LoadListbyMode
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1480,7 +1490,9 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub optGrp3_Click()
-    LoadListbyMode
+    If Not mbFirstStartForm Then
+        LoadListbyMode
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1489,7 +1501,9 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub optGrp4_Click()
-    LoadListbyMode
+    If Not mbFirstStartForm Then
+        LoadListbyMode
+    End If
 End Sub
 
 '!--------------------------------------------------------------------------------

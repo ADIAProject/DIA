@@ -89,8 +89,8 @@ Option Explicit
 
 ' Or uncomment the following declares:
 
-'Private Declare Sub CopyMemByV Lib "kernel32" Alias "RtlMoveMemory" (ByVal lpDest As Long, ByVal lpSrc As Long, ByVal lByteLen As Long)
-'Private Declare Sub CopyMemByR Lib "kernel32" Alias "RtlMoveMemory" (pDest As Any, pSrc As Any, ByVal lByteLen As Long)
+'Private Declare Sub CopyMemByV Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal lpDest As Long, ByVal lpSrc As Long, ByVal lByteLen As Long)
+'Private Declare Sub CopyMemByR Lib "kernel32.dll" Alias "RtlMoveMemory" (pDest As Any, pSrc As Any, ByVal lByteLen As Long)
 '
 '' SAFEARRAY Header, used in place of the real one to trick VB into letting us access string data in-place
 'Private Type SAFEARRAY1D
@@ -312,11 +312,11 @@ End Sub
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Sub TwisterStringSort(sA() As String, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal eOptimalA As eOptimal = RefreshUnsorted)
     Dim walk As Long
-    Dim Find As Long
+    Dim find As Long
     Dim midd As Long
     Dim base As Long
     Dim ceil As Long
-    Dim Item As String
+    Dim item As String
     Dim cast As Long
     Dim mezz As Long
     Dim run As Long
@@ -331,7 +331,7 @@ Sub TwisterStringSort(sA() As String, ByVal lbA As Long, ByVal ubA As Long, Opti
     If walk < 2& Then Exit Sub                                    ' If nothing to do then exit
     eComp = SortOrder                                             ' Initialize compare variable
     optimal = InitializeBuffers(walk, eOptimalA)                  ' Initialize working buffers
-    lpStr = VarPtr(Item)                                          ' Cache pointer to the string variable
+    lpStr = VarPtr(item)                                          ' Cache pointer to the string variable
     lp = Sum(VarPtr(sA(lbA)), -(lbA * 4&))                        ' Cache pointer to the array
     lpB = VarPtr(TwisterBuf(0&))                                  ' Cache pointer to the buffer
     walk = lbA                                                    ' Initialize our walker variables
@@ -339,39 +339,39 @@ Sub TwisterStringSort(sA() As String, ByVal lbA As Long, ByVal ubA As Long, Opti
     Do Until walk = mezz ' ----==============================---- ' Do the twist while there's more items
         walk = walk + 1&                                          ' Walk up the array and use binary search to insert each item down into the sorted lower array
         CopyMemByV lpStr, Sum(lp, walk * 4&), 4&                  ' Grab current value into item
-        Find = walk                                               ' Default to current position
+        find = walk                                               ' Default to current position
         ceil = walk - 1&                                          ' Set ceiling to current position - 1
         base = lbA                                                ' Set base to lower bound
-        Do While StrComp(sA(ceil), Item, mMethod) = eComp   '  .  ' While current item must move down
+        Do While StrComp(sA(ceil), item, mMethod) = eComp   '  .  ' While current item must move down
             midd = (base + ceil) \ 2&                             ' Find mid point
-            Do Until StrComp(sA(midd), Item, mMethod) = eComp     ' Step back up if equal or below
+            Do Until StrComp(sA(midd), item, mMethod) = eComp     ' Step back up if equal or below
                 base = midd + 1&                                  ' Bring up the base
                 midd = (base + ceil) \ 2&                         ' Find mid point
                 If midd = ceil Then Exit Do                       ' If we're up to ceiling
             Loop                                                  ' Out of loop > target pos
-            Find = midd                                           ' Set provisional to new ceiling
-            If Find = base Then Exit Do                           ' If we're down to base
+            find = midd                                           ' Set provisional to new ceiling
+            If find = base Then Exit Do                           ' If we're down to base
             ceil = midd - 1&                                      ' Bring down the ceiling
         Loop '-Twister v4 命d-     .      . ...  .             .  ' Out of stable binary search loops
-        If Find < walk Then                                       ' If current item needs to move down
-            CopyMemByV lpStr, Sum(lp, Find * 4&), 4&
+        If find < walk Then                                       ' If current item needs to move down
+            CopyMemByV lpStr, Sum(lp, find * 4&), 4&
             run = walk + 1&
             Do Until run > mezz Or run - walk > optimal           ' Runner do loop
-                If Not (StrComp(Item, sA(run), mMethod) = eComp) Then Exit Do
+                If Not (StrComp(item, sA(run), mMethod) = eComp) Then Exit Do
                 run = run + 1&
             Loop
             cast = run - walk
             CopyMemByV lpB, Sum(lp, walk * 4&), cast * 4&         ' Grab current value(s)
-            CopyMemByV Sum(lp, (Find + cast) * 4&), Sum(lp, Find * 4&), (walk - Find) * 4& ' Move up items
-            CopyMemByV Sum(lp, Find * 4&), lpB, cast * 4&         ' Re-assign current value(s) into found pos
+            CopyMemByV Sum(lp, (find + cast) * 4&), Sum(lp, find * 4&), (walk - find) * 4& ' Move up items
+            CopyMemByV Sum(lp, find * 4&), lpB, cast * 4&         ' Re-assign current value(s) into found pos
             If cast > 1& Then
                 If Not run > mezz Then
                     idx = idx + 1&
                     StackLB(idx) = run - 1&                       ' Will increment back
                     StackUB(idx) = mezz
                 End If
-                walk = Find
-                mezz = Find + cast - 1&
+                walk = find
+                mezz = find + cast - 1&
             End If
         End If
         If walk = mezz Then
@@ -487,8 +487,8 @@ End Sub
 '
 ' 中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中中
 Sub TwisterStringSortIndexed(sA() As String, idxA() As Long, ByVal lbA As Long, ByVal ubA As Long, Optional ByVal eOptimalA As eOptimal = RefreshUnsorted)
-    Dim walk As Long, Find As Long, midd As Long
-    Dim base As Long, ceil As Long, Item As String
+    Dim walk As Long, find As Long, midd As Long
+    Dim base As Long, ceil As Long, item As String
     Dim cast As Long, mezz As Long, run As Long
     Dim lpStr As Long, lpS As Long, lpB As Long
     Dim idx As Long, optimal As Long
@@ -498,7 +498,7 @@ Sub TwisterStringSortIndexed(sA() As String, idxA() As Long, ByVal lbA As Long, 
     eComp = SortOrder                            ' Initialize compare variable
     ValidateIndexArray idxA, lbA, ubA            ' Validate the index array
     optimal = InitializeBuffers(walk, eOptimalA) ' Initialize working buffers
-    lpStr = VarPtr(Item)                                              ' Cache pointer to the string variable
+    lpStr = VarPtr(item)                                              ' Cache pointer to the string variable
     lpS = Sum(VarPtr(sA(lbA)), -(lbA * 4&))                           ' Cache pointer to the array
     lpI = Sum(VarPtr(idxA(lbA)), -(lbA * 4&))                         ' Cache pointer to the index array
     lpB = VarPtr(TwisterBuf(0&))                                      ' Cache pointer to the buffer
@@ -506,38 +506,38 @@ Sub TwisterStringSortIndexed(sA() As String, idxA() As Long, ByVal lbA As Long, 
     Do Until walk = mezz ' ----==================================---- ' Do the twist while there's more items
         walk = walk + 1&                                              ' Walk up the array and use binary search to insert each item down into the sorted lower array
         CopyMemByV lpStr, Sum(lpS, idxA(walk) * 4&), 4&               ' Grab current value into item
-        Find = walk                                                   ' Default to current position
+        find = walk                                                   ' Default to current position
         ceil = walk - 1&                                              ' Set ceiling to current position - 1
         base = lbA                                                    ' Set base to lower bound
-        Do While StrComp(sA(idxA(ceil)), Item, mMethod) = eComp '  .  ' While current item must move down
+        Do While StrComp(sA(idxA(ceil)), item, mMethod) = eComp '  .  ' While current item must move down
             midd = (base + ceil) \ 2&                                 ' Find mid point
-            Do Until StrComp(sA(idxA(midd)), Item, mMethod) = eComp   ' Step back up if equal or below
+            Do Until StrComp(sA(idxA(midd)), item, mMethod) = eComp   ' Step back up if equal or below
                 base = midd + 1&                                      ' Bring up the base
                 midd = (base + ceil) \ 2&                             ' Find mid point
                 If midd = ceil Then Exit Do                           ' If we're up to ceiling
             Loop                                                      ' Out of loop > target pos
-            Find = midd                                               ' Set provisional to new ceiling
-            If Find = base Then Exit Do                               ' If we're down to base
+            find = midd                                               ' Set provisional to new ceiling
+            If find = base Then Exit Do                               ' If we're down to base
             ceil = midd - 1&                                          ' Bring down the ceiling
         Loop '-Twister v4i 命d-    .       . ...   .               .  ' Out of stable binary search loops
-        If (Find < walk) Then                                         ' If current item needs to move down
-            CopyMemByV lpStr, Sum(lpS, idxA(Find) * 4&), 4&
+        If (find < walk) Then                                         ' If current item needs to move down
+            CopyMemByV lpStr, Sum(lpS, idxA(find) * 4&), 4&
             run = walk + 1&
             Do Until run > mezz Or run - walk > optimal               ' Runner do loop
-                If Not (StrComp(Item, sA(idxA(run)), mMethod) = eComp) Then Exit Do
+                If Not (StrComp(item, sA(idxA(run)), mMethod) = eComp) Then Exit Do
                 run = run + 1&
             Loop: cast = (run - walk)
             CopyMemByV lpB, Sum(lpI, walk * 4&), cast * 4&            ' Grab current value(s)
-            CopyMemByV Sum(lpI, (Find + cast) * 4&), Sum(lpI, Find * 4&), (walk - Find) * 4& ' Move up items
-            CopyMemByV Sum(lpI, Find * 4&), lpB, cast * 4&            ' Re-assign current value(s) into found pos
+            CopyMemByV Sum(lpI, (find + cast) * 4&), Sum(lpI, find * 4&), (walk - find) * 4& ' Move up items
+            CopyMemByV Sum(lpI, find * 4&), lpB, cast * 4&            ' Re-assign current value(s) into found pos
             If cast > 1& Then
                 If Not run > mezz Then
                     idx = idx + 1&
                     StackLB(idx) = run - 1&  ' Will increment back
                     StackUB(idx) = mezz
                 End If
-                walk = Find
-                mezz = Find + cast - 1&
+                walk = find
+                mezz = find + cast - 1&
         End If: End If
         If walk = mezz Then
             If idx Then

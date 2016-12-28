@@ -269,11 +269,11 @@ Public Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Sing
 Attribute MouseUp.VB_Description = "Occurs when the user releases the mouse button while an object has the focus."
 Attribute MouseUp.VB_UserMemId = -607
 Public Event OLECompleteDrag()
-Attribute OLECompleteDrag.VB_Description = "Occurs at the OLE drag/drop source control after a drag/drop has been completed or canceled.\n"
-Public Event OLEGetDragEffect(ByVal Button As Integer, ByVal Shift As Integer, AllowedEffects As Long)
-Attribute OLEGetDragEffect.VB_Description = "This is a request to specify the allowed effects to use in a OLE drag operation."
-Public Event OLEGetDropEffect(ByVal Button As Integer, ByVal Shift As Integer, Effect As Long)
-Attribute OLEGetDropEffect.VB_Description = "This is a request to specify the effect to use in a OLE drop operation."
+Attribute OLECompleteDrag.VB_Description = "Occurs at the OLE drag/drop source control after a drag/drop has been completed or canceled."
+Public Event OLEGetDropEffect(Effect As Long, Button As Integer, Shift As Integer)
+Attribute OLEGetDropEffect.VB_Description = "Occurs during an OLE drag/drop operation to specify the effect of which indicates what the result of the drop operation would be."
+Public Event OLEStartDrag(AllowedEffects As Long)
+Attribute OLEStartDrag.VB_Description = "Occurs when an OLE drag/drop operation is initiated."
 Public Event OLEGetContextMenu(ByVal SelType As Integer, ByVal LpOleObject As Long, ByVal SelStart As Long, ByVal SelEnd As Long, ByRef hMenu As Long)
 Attribute OLEGetContextMenu.VB_Description = "This is a request to provide a popup menu to use on a right-click. The rich text box control destroys the popup menu when it is finished."
 Public Event OLEContextMenuClick(ByVal ID As Long)
@@ -3256,9 +3256,9 @@ End Sub
 
 Friend Sub FIRichEditOleCallback_GetDragDropEffect(ByVal Drag As Boolean, ByVal KeyState As Long, ByRef dwEffect As Long)
 If Drag = True Then
-    RaiseEvent OLEGetDragEffect(GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState), dwEffect) ' AllowedEffects
+    RaiseEvent OLEStartDrag(dwEffect) ' AllowedEffects
 Else
-    RaiseEvent OLEGetDropEffect(GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState), dwEffect)  ' Effect
+    RaiseEvent OLEGetDropEffect(dwEffect, GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState))  ' Effect
 End If
 End Sub
 
@@ -3316,10 +3316,10 @@ Select Case wMsg
         Dim KeyCode As Integer
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
-            RaiseEvent KeyDown(KeyCode, GetShiftState())
+            RaiseEvent KeyDown(KeyCode, GetShiftStateFromMsg())
             RichTextBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
-            RaiseEvent KeyUp(KeyCode, GetShiftState())
+            RaiseEvent KeyUp(KeyCode, GetShiftStateFromMsg())
         End If
         wParam = KeyCode
     Case WM_CHAR

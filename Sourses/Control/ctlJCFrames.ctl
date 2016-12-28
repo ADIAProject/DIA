@@ -262,7 +262,7 @@ Private Type BITMAPINFO
 End Type
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
-Private Declare Function OleTranslateColor Lib "OLEPRO32.DLL" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "olepro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function CopyRect Lib "user32.dll" (lpDestRect As RECT, lpSourceRect As RECT) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long
@@ -1265,7 +1265,7 @@ End Function
 '                              R (RECT)
 '                              blnTransparent (Boolean = False)
 '!--------------------------------------------------------------------------------
-Private Sub DrawAPIRoundRect(ByVal blnRounded As Boolean, ByVal LngRoundValue As Long, ByVal MyFillColor As Long, ByVal MyBorderColor As Long, R As RECT, Optional ByVal blnTransparent As Boolean = False)
+Private Sub DrawAPIRoundRect(ByVal blnRounded As Boolean, ByVal LngRoundValue As Long, ByVal MyFillColor As Long, ByVal MyBorderColor As Long, r As RECT, Optional ByVal blnTransparent As Boolean = False)
 
     Dim m_roundedRadius As Long
 
@@ -1276,7 +1276,7 @@ Private Sub DrawAPIRoundRect(ByVal blnRounded As Boolean, ByVal LngRoundValue As
     End With
 
     m_roundedRadius = IIf(blnRounded = False, 0&, LngRoundValue)
-    RoundRect UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, m_roundedRadius, m_roundedRadius
+    RoundRect UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius
     UserControl.FillStyle = 0
 End Sub
 
@@ -1314,18 +1314,18 @@ End Sub
 '                              blnVertical (Boolean = True)
 '                              LightCenter (Double = 2.01)
 '!--------------------------------------------------------------------------------
-Private Sub DrawGradCilinder(lhdcEx As Long, lStartColor As Long, lEndColor As Long, R As RECT, Optional ByVal blnVertical As Boolean = True, Optional ByVal LightCenter As Double = 2.01)
+Private Sub DrawGradCilinder(lhdcEx As Long, lStartColor As Long, lEndColor As Long, r As RECT, Optional ByVal blnVertical As Boolean = True, Optional ByVal LightCenter As Double = 2.01)
 
     If LightCenter <= 1# Then
         LightCenter = 1.01
     End If
 
     If blnVertical Then
-        DrawGradientEx lhdcEx, lStartColor, lEndColor, R.Left, R.Top, R.Right + R.Left, R.Bottom / LightCenter, True
-        DrawGradientEx lhdcEx, lEndColor, lStartColor, R.Left, R.Top + R.Bottom / LightCenter - 1, R.Right + R.Left, (LightCenter - 1) * R.Bottom / LightCenter + 1, True
+        DrawGradientEx lhdcEx, lStartColor, lEndColor, r.Left, r.Top, r.Right + r.Left, r.Bottom / LightCenter, True
+        DrawGradientEx lhdcEx, lEndColor, lStartColor, r.Left, r.Top + r.Bottom / LightCenter - 1, r.Right + r.Left, (LightCenter - 1) * r.Bottom / LightCenter + 1, True
     Else
-        DrawGradientEx lhdcEx, lStartColor, lEndColor, R.Left, R.Top, R.Right / LightCenter, R.Bottom + R.Top, False
-        DrawGradientEx lhdcEx, lEndColor, lStartColor, R.Left + R.Right / LightCenter - 1, R.Top, (LightCenter - 1) * R.Right / LightCenter + 1, R.Bottom + R.Top, False
+        DrawGradientEx lhdcEx, lStartColor, lEndColor, r.Left, r.Top, r.Right / LightCenter, r.Bottom + r.Top, False
+        DrawGradientEx lhdcEx, lEndColor, lStartColor, r.Left + r.Right / LightCenter - 1, r.Top, (LightCenter - 1) * r.Right / LightCenter + 1, r.Bottom + r.Top, False
     End If
 
 End Sub
@@ -1398,25 +1398,25 @@ End Sub
 '                              lBorderColor (Long = vbBlack)
 '                              LightCenter (Double = 2.01)
 '!--------------------------------------------------------------------------------
-Private Sub DrawGradientInRectangle(lhdcEx As Long, lStartColor As Long, lEndColor As Long, R As RECT, GradientType As jcGradConst, Optional ByVal blnDrawBorder As Boolean = False, Optional lBorderColor As Long = vbBlack, Optional LightCenter As Double = 2.01)
+Private Sub DrawGradientInRectangle(lhdcEx As Long, lStartColor As Long, lEndColor As Long, r As RECT, GradientType As jcGradConst, Optional ByVal blnDrawBorder As Boolean = False, Optional lBorderColor As Long = vbBlack, Optional LightCenter As Double = 2.01)
 
     Select Case GradientType
 
         Case VerticalGradient
-            DrawGradientEx lhdcEx, lEndColor, lStartColor, R.Left, R.Top, R.Right + R.Left, R.Bottom, True
+            DrawGradientEx lhdcEx, lEndColor, lStartColor, r.Left, r.Top, r.Right + r.Left, r.Bottom, True
 
         Case HorizontalGradient
-            DrawGradientEx lhdcEx, lEndColor, lStartColor, R.Left, R.Top, R.Right, R.Bottom + R.Top, False
+            DrawGradientEx lhdcEx, lEndColor, lStartColor, r.Left, r.Top, r.Right, r.Bottom + r.Top, False
 
         Case VCilinderGradient
-            DrawGradCilinder lhdcEx, lStartColor, lEndColor, R, True, LightCenter
+            DrawGradCilinder lhdcEx, lStartColor, lEndColor, r, True, LightCenter
 
         Case HCilinderGradient
-            DrawGradCilinder lhdcEx, lStartColor, lEndColor, R, False, LightCenter
+            DrawGradCilinder lhdcEx, lStartColor, lEndColor, r, False, LightCenter
     End Select
 
     If blnDrawBorder Then
-        APIRectangle lhdcEx, R.Left, R.Top, R.Right, R.Bottom, lBorderColor
+        APIRectangle lhdcEx, r.Left, r.Top, r.Right, r.Bottom, lBorderColor
     End If
 
 End Sub
@@ -1445,13 +1445,13 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub FrameEnabled(ByVal blnValor As Boolean)
 
-    Dim C As Control
+    Dim c As Control
 
     On Error Resume Next
 
-    For Each C In UserControl.ContainedControls
+    For Each c In UserControl.ContainedControls
 
-        C.Enabled = blnValor
+        c.Enabled = blnValor
     Next
 
     On Error GoTo 0
@@ -1707,7 +1707,7 @@ Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Lo
     Dim NumShp       As Integer
     Dim RectHeight   As Long
     Dim RectWidth    As Long
-    Dim R            As RECT
+    Dim r            As RECT
 
     'space between shapes
     SpaceBtwnShp = 2
@@ -1722,10 +1722,10 @@ Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Lo
     y_top = (m_Height - RectHeight) / 2
 
     For I = 0 To NumShp - 1
-        SetRect R, x_left + I * SpaceBtwnShp + I * RectWidth + 1, y_top + 1, 1, 1
-        APIRectangle UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, iColorA
-        SetRect R, x_left + I * SpaceBtwnShp + I * RectWidth, y_top, 1, 1
-        APIRectangle UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, iColorB
+        SetRect r, x_left + I * SpaceBtwnShp + I * RectWidth + 1, y_top + 1, 1, 1
+        APIRectangle UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, iColorA
+        SetRect r, x_left + I * SpaceBtwnShp + I * RectWidth, y_top, 1, 1
+        APIRectangle UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, iColorB
     Next
 
 End Sub
@@ -2165,7 +2165,7 @@ End Sub
 Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal transColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
                             MonoMask As Boolean = False, Optional ByVal isGreyscale As Boolean = False, Optional ByVal XPBlend As Boolean = False)
 
-    Dim B        As Long
+    Dim b        As Long
     Dim H        As Long
     Dim F        As Long
     Dim I        As Long
@@ -2251,8 +2251,8 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         For H = 0 To DstH - 1
             F = H * DstW
 
-            For B = 0 To newW
-                I = F + B
+            For b = 0 To newW
+                I = F + b
 
                 If GetNearestColor(hDC, CLng(Data2(I).Red) + 256& * Data2(I).Green + 65536 * Data2(I).Blue) <> transColor Then
 
@@ -2393,7 +2393,7 @@ Private Sub Draw_InnerWedge(R_Caption As RECT)
 
     Dim txtWidth        As Integer
     Dim txtHeight       As Integer
-    Dim R               As RECT
+    Dim r               As RECT
     Dim m_roundedRadius As Long
     Dim hFRgn           As Long
     Dim poly()          As POINTAPI
@@ -2411,31 +2411,31 @@ Private Sub Draw_InnerWedge(R_Caption As RECT)
 
     txtHeight = m_TextHeight + 5
     NumCoords = 4
-    SetRect R, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
 
-    If (txtWidth + R.Left + txtHeight / 2) >= R.Right - m_Indentation Then
-        txtWidth = R.Right - txtHeight / 2 - R.Left - m_Indentation - 1
+    If (txtWidth + r.Left + txtHeight / 2) >= r.Right - m_Indentation Then
+        txtWidth = r.Right - txtHeight / 2 - r.Left - m_Indentation - 1
     End If
 
     'Assign values to points.
-    poly(1).X = R.Left
-    poly(1).Y = R.Top
-    poly(2).X = R.Left
-    poly(2).Y = R.Top + txtHeight
-    poly(3).X = R.Left + txtWidth
-    poly(3).Y = R.Top + txtHeight
-    poly(4).X = R.Left + txtWidth + txtHeight / 2
-    poly(4).Y = R.Top
+    poly(1).X = r.Left
+    poly(1).Y = r.Top
+    poly(2).X = r.Left
+    poly(2).Y = r.Top + txtHeight
+    poly(3).X = r.Left + txtWidth
+    poly(3).Y = r.Top + txtHeight
+    poly(4).X = r.Left + txtWidth + txtHeight / 2
+    poly(4).Y = r.Top
     'Creates first region to fill with color.
     hRgn = CreatePolygonRgn(poly(1), NumCoords, ALTERNATE)
     'Creates second region to fill with color.
-    hFRgn = CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, m_roundedRadius, m_roundedRadius)
+    hFRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius)
     'Combine our two regions
     CombineRgn hRgn, hRgn, hFRgn, RGN_AND
     'delete second region
     DeleteObject hFRgn
     'fill frame
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FillColor, R
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FillColor, r
     'If the creation of the region was successful then color.
     hBrush = CreateSolidBrush(m_TextBoxColor)
 
@@ -2446,7 +2446,7 @@ Private Sub Draw_InnerWedge(R_Caption As RECT)
     'draw frame borders
     APILineEx UserControl.hDC, poly(2).X, poly(2).Y, poly(3).X, poly(3).Y, m_FrameColor
     APILineEx UserControl.hDC, poly(3).X, poly(3).Y, poly(4).X, poly(4).Y, m_FrameColor
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, R, True
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r, True
     'delete created region
     DeleteObject hRgn
     DeleteObject hBrush
@@ -2465,29 +2465,29 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Draw_jcGradient(R_Caption As RECT, iY As Integer)
 
-    Dim R As RECT
+    Dim r As RECT
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
-    SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), R
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), r
     'Draw header
-    SetRect R, 0, 0, UserControl.ScaleWidth - 2, m_Height
-    DrawGradientInRectangle UserControl.hDC, jcColorTo, jcColorFrom, R, VCilinderGradient, True, jcColorBorderPic
+    SetRect r, 0, 0, UserControl.ScaleWidth - 2, m_Height
+    DrawGradientInRectangle UserControl.hDC, jcColorTo, jcColorFrom, r, VCilinderGradient, True, jcColorBorderPic
 
     If m_HeaderStyle = Gradient Then
-        SetRect R, 0, m_Height, UserControl.ScaleWidth - 2, m_TextBoxHeight
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, R, m_GradientHeaderStyle, True, jcColorBorderPic
+        SetRect r, 0, m_Height, UserControl.ScaleWidth - 2, m_TextBoxHeight
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, jcColorBorderPic
     Else
-        SetRect R, 0, m_Height, UserControl.ScaleWidth - 1, m_TextBoxHeight + m_Height + 2
-        DrawAPIRoundRect False, 0&, m_FillColor, m_FrameColor, R
+        SetRect r, 0, m_Height, UserControl.ScaleWidth - 1, m_TextBoxHeight + m_Height + 2
+        DrawAPIRoundRect False, 0&, m_FillColor, m_FrameColor, r
     End If
 
     With UserControl
-        SetRect R, 0, m_Height + m_TextBoxHeight, .ScaleWidth - 2, m_Height
-        DrawGradientInRectangle .hDC, jcColorTo, jcColorFrom, R, VCilinderGradient, True, jcColorBorderPic
-        SetRect R, 1, m_Height * 2 + m_TextBoxHeight, .ScaleWidth - 3, .ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - .ScaleHeight * 0.2
-        DrawGradientInRectangle .hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), R, VerticalGradient, False, m_TextBoxColor
+        SetRect r, 0, m_Height + m_TextBoxHeight, .ScaleWidth - 2, m_Height
+        DrawGradientInRectangle .hDC, jcColorTo, jcColorFrom, r, VCilinderGradient, True, jcColorBorderPic
+        SetRect r, 1, m_Height * 2 + m_TextBoxHeight, .ScaleWidth - 3, .ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - .ScaleHeight * 0.2
+        DrawGradientInRectangle .hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), r, VerticalGradient, False, m_TextBoxColor
         'set caption rect
         SetRect R_Caption, m_Space, m_Height + 1, .ScaleWidth - 2 - m_Space, m_TextBoxHeight + 2
         'set icon Y coordinate
@@ -2504,28 +2504,28 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Draw_Messenger(R_Caption As RECT, iY As Integer)
 
-    Dim R As RECT
+    Dim r As RECT
 
     jcTextBoxCenter = 0
     'Draw border rectangle
-    SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), R
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), r
     'Draw header
-    SetRect R, 0, 0, UserControl.ScaleWidth - 2, m_Height * 2
-    DrawGradientInRectangle UserControl.hDC, jcColorFrom, vbWhite, R, VerticalGradient, True, jcColorBorderPic, 2.01
+    SetRect r, 0, 0, UserControl.ScaleWidth - 2, m_Height * 2
+    DrawGradientInRectangle UserControl.hDC, jcColorFrom, vbWhite, r, VerticalGradient, True, jcColorBorderPic, 2.01
     PaintShpInBar vbWhite, BlendColors(vbBlack, jcColorFrom), m_Height * 2
 
     If m_HeaderStyle = Gradient Or m_Enabled = False Then
-        SetRect R, 0&, m_Height * 2, UserControl.ScaleWidth - 2, m_TextBoxHeight + 1
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, R, m_GradientHeaderStyle, True, jcColorBorderPic
+        SetRect r, 0&, m_Height * 2, UserControl.ScaleWidth - 2, m_TextBoxHeight + 1
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, jcColorBorderPic
     Else
-        SetRect R, 0, m_Height * 2 + m_TextBoxHeight + 1, UserControl.ScaleWidth - 2, m_Height * 2 + m_TextBoxHeight + 1
-        APILineEx UserControl.hDC, R.Left, R.Top, R.Right, R.Bottom, jcColorBorderPic
+        SetRect r, 0, m_Height * 2 + m_TextBoxHeight + 1, UserControl.ScaleWidth - 2, m_Height * 2 + m_TextBoxHeight + 1
+        APILineEx UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, jcColorBorderPic
         'vbBlack
     End If
 
-    SetRect R, 1, 1 + m_Height * 2 + m_TextBoxHeight, UserControl.ScaleWidth - 3, UserControl.ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - UserControl.ScaleHeight * 0.2
-    DrawGradientInRectangle UserControl.hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), R, VerticalGradient, False, m_TextBoxColor
+    SetRect r, 1, 1 + m_Height * 2 + m_TextBoxHeight, UserControl.ScaleWidth - 3, UserControl.ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - UserControl.ScaleHeight * 0.2
+    DrawGradientInRectangle UserControl.hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), r, VerticalGradient, False, m_TextBoxColor
     'set caption rect
     SetRect R_Caption, m_Space, m_Height * 2 + 2, UserControl.ScaleWidth - 1 - m_Space, m_TextBoxHeight + 6
     'set icon coordinates
@@ -2541,7 +2541,7 @@ Private Sub Draw_OuterWedge(R_Caption As RECT)
 
     Dim txtWidth        As Integer
     Dim txtHeight       As Integer
-    Dim R               As RECT
+    Dim r               As RECT
     Dim r1              As RECT
     Dim m_roundedRadius As Long
     Dim poly()          As POINTAPI
@@ -2559,21 +2559,21 @@ Private Sub Draw_OuterWedge(R_Caption As RECT)
 
     txtHeight = m_TextHeight + 5
     NumCoords = 4
-    SetRect R, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
 
-    If (txtWidth + R.Left + txtHeight / 2) >= R.Right - m_Indentation Then
-        txtWidth = R.Right - txtHeight / 2 - R.Left - m_Indentation - 1
+    If (txtWidth + r.Left + txtHeight / 2) >= r.Right - m_Indentation Then
+        txtWidth = r.Right - txtHeight / 2 - r.Left - m_Indentation - 1
     End If
 
     'Assign values to points.
-    poly(1).X = R.Left + 6
-    poly(1).Y = R.Top
-    poly(2).X = R.Left + 6
-    poly(2).Y = R.Top + txtHeight
-    poly(3).X = R.Left + txtWidth + txtHeight / 2
-    poly(3).Y = R.Top + txtHeight
-    poly(4).X = R.Left + txtWidth
-    poly(4).Y = R.Top
+    poly(1).X = r.Left + 6
+    poly(1).Y = r.Top
+    poly(2).X = r.Left + 6
+    poly(2).Y = r.Top + txtHeight
+    poly(3).X = r.Left + txtWidth + txtHeight / 2
+    poly(3).Y = r.Top + txtHeight
+    poly(4).X = r.Left + txtWidth
+    poly(4).Y = r.Top
     'Creates first region to fill with color.
     hRgn = CreatePolygonRgn(poly(1), NumCoords, ALTERNATE)
     'If the creation of the region was successful then color.
@@ -2596,10 +2596,10 @@ Private Sub Draw_OuterWedge(R_Caption As RECT)
         .ForeColor = m_FrameColor
         APILineEx .hDC, poly(1).X, poly(1).Y, poly(4).X, poly(4).Y, .ForeColor
         APILineEx .hDC, poly(4).X, poly(4).Y, poly(3).X, poly(3).Y, .ForeColor
-        RoundRect .hDC, R.Left, R.Top + txtHeight, R.Right, R.Bottom, m_roundedRadius, m_roundedRadius
-        RoundRect .hDC, R.Left, R.Top + txtHeight, R.Left + 10, R.Top + txtHeight + 10, 0, 0
+        RoundRect .hDC, r.Left, r.Top + txtHeight, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius
+        RoundRect .hDC, r.Left, r.Top + txtHeight, r.Left + 10, r.Top + txtHeight + 10, 0, 0
         .ForeColor = m_FillColor
-        RoundRect .hDC, R.Left + 1, R.Top + txtHeight + 1, R.Left + 10, R.Top + txtHeight + 10, 0, 0
+        RoundRect .hDC, r.Left + 1, r.Top + txtHeight + 1, r.Left + 10, r.Top + txtHeight + 10, 0, 0
     End With
     
     'delete created region
@@ -2617,7 +2617,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Draw_Panel(R_Caption As RECT, iY As Integer)
 
-    Dim R               As RECT
+    Dim r               As RECT
     Dim m_roundedRadius As Long
     Dim hFRgn           As Long
     Dim hRgn            As Long
@@ -2633,16 +2633,16 @@ Private Sub Draw_Panel(R_Caption As RECT, iY As Integer)
     End If
 
     m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 9&)
-    SetRect R, 0&, 0&, UserControl.ScaleWidth, UserControl.ScaleHeight
+    SetRect r, 0&, 0&, UserControl.ScaleWidth, UserControl.ScaleHeight
 
     If m_HeaderStyle = Gradient Then
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, R, m_GradientHeaderStyle, False, UserControl.ForeColor, 2.03
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, False, UserControl.ForeColor, 2.03
     End If
 
     'Creates first region to fill with color.
-    hRgn = CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, 0&, 0&)
+    hRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, 0&, 0&)
     'Creates second region to fill with color.
-    hFRgn = CreateRoundRectRgn(R.Left, R.Top, R.Right, R.Bottom, m_roundedRadius, m_roundedRadius)
+    hFRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius)
     'Combine our two regions
     CombineRgn hRgn, hRgn, hFRgn, RGN_AND
     'delete second region
@@ -2651,7 +2651,7 @@ Private Sub Draw_Panel(R_Caption As RECT, iY As Integer)
     UserControl.FillStyle = IIf(m_HeaderStyle = Gradient, 1, 0)
 
     If UserControl.ForeColor <> UserControl.BackColor Or m_HeaderStyle = TxtBoxColor Then
-        RoundRect UserControl.hDC, R.Left, R.Top, R.Right - 1, R.Bottom - 1, m_roundedRadius, m_roundedRadius
+        RoundRect UserControl.hDC, r.Left, r.Top, r.Right - 1, r.Bottom - 1, m_roundedRadius, m_roundedRadius
         UserControl.FillStyle = 0
         DrawCorners UserControl.ForeColor
     End If
@@ -2671,34 +2671,34 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Draw_TextBox(R_Caption As RECT, iX As Integer, iY As Integer)
 
-    Dim R As RECT
+    Dim r As RECT
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
-    SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, R
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
 
     'Draw textbox border rectangle
     If m_HeaderStyle = Gradient Then
         If m_TxtBoxShadow = Shadow Then
-            SetRect R, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
-            OffsetRect R, 2, 2
-            DrawAPIRoundRect False, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), R
+            SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
+            OffsetRect r, 2, 2
+            DrawAPIRoundRect False, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), r
         End If
 
-        SetRect R, m_Indentation, 0, UserControl.ScaleWidth - 2 - 2 * m_Indentation, m_TextBoxHeight - 1
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, R, m_GradientHeaderStyle, True, m_FrameColor
+        SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 2 - 2 * m_Indentation, m_TextBoxHeight - 1
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, m_FrameColor
         ', 3.08
     Else
-        SetRect R, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
+        SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
 
         If m_TxtBoxShadow = Shadow Then
-            OffsetRect R, 2, 2
-            DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), R
-            OffsetRect R, -2, -2
+            OffsetRect r, 2, 2
+            DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), r
+            OffsetRect r, -2, -2
         End If
 
-        DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, m_TextBoxColor, m_FrameColor, R
+        DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, m_TextBoxColor, m_FrameColor, r
     End If
 
     'set caption rect
@@ -2716,21 +2716,21 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub Draw_Windows(R_Caption As RECT, iY As Integer)
 
-    Dim R As RECT
+    Dim r As RECT
 
     jcTextBoxCenter = m_TextBoxHeight / 2
     'Draw border rectangle
-    SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, R
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
 
     'Draw text box borders
     If m_HeaderStyle = Gradient Then
-        SetRect R, 0&, 0&, UserControl.ScaleWidth - 2, m_TextBoxHeight - 1
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, R, m_GradientHeaderStyle, True, m_FrameColor
+        SetRect r, 0&, 0&, UserControl.ScaleWidth - 2, m_TextBoxHeight - 1
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, m_FrameColor
         ', 3.08
     Else
-        SetRect R, 0&, 0&, UserControl.ScaleWidth - 1, m_TextBoxHeight
-        DrawAPIRoundRect m_RoundedCornerTxtBox, 10&, m_TextBoxColor, m_FrameColor, R
+        SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, m_TextBoxHeight
+        DrawAPIRoundRect m_RoundedCornerTxtBox, 10&, m_TextBoxColor, m_FrameColor, r
     End If
 
     'set caption rect
@@ -2748,11 +2748,11 @@ End Sub
 Private Sub Draw_XPDefault(R_Caption As RECT)
 
     Dim p_left As Long
-    Dim R      As RECT
+    Dim r      As RECT
 
     'Draw border rectangle
-    SetRect R, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, R
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
 
     If LenB(m_Caption) Then
         If m_Alignment = vbLeftJustify Then

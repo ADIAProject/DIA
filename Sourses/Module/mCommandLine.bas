@@ -2,6 +2,7 @@ Attribute VB_Name = "mCommandLine"
 Option Explicit
 
 #Const mbIDE_DBSProject = False
+
 ' Запуск с коммандной строкой
 Public mbRunWithParam                    As Boolean
 

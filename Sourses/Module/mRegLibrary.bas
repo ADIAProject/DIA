@@ -27,6 +27,11 @@ Private Const strVBScriptVerDll    As String = "5.8.6001.18700"
     Private Const strCAPICOMVerDll     As String = "2.1.0.2"
 #End If
 
+Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryW" (ByVal lpLibFileName As Long) As Long
+Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Function CallWindowProc Lib "user32.dll" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function FreeLibrary Lib "kernel32.dll" (ByVal hLibModule As Long) As Long
+
 'Windows Script 5.7
 'XP - http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=47809025-d896-482e-a0d6-524e7e844d81
 '2003 - http://www.microsoft.com/downloads/details.aspx?familyid=F00CB8C0-32E9-411D-A896-F2CD5EF21EB4&displaylang=en
@@ -37,34 +42,34 @@ Private Const strVBScriptVerDll    As String = "5.8.6001.18700"
 '! Procedure   (Функция)   :   Function DLLOCX
 '! Description (Описание)  :   [Регистрация компонента ActiveX при необходимости (файл берется из ресурсов)]
 '! Parameters  (Переменные):   lngHWnd (Long)
-'                              Path (String)
+'                              strPath (String)
 '                              mbRegister (Boolean)
 '!--------------------------------------------------------------------------------
-Private Function DLLOCX(ByVal lngHWnd As Long, ByVal Path As String, ByVal mbRegister As Boolean) As Boolean
+Private Function DLLOCX(ByVal lngHWnd As Long, ByVal strPath As String, ByVal mbRegister As Boolean) As Boolean
 
-    Dim lb As Long
-    Dim PA As Long
+    Dim lngLB As Long
+    Dim lngPA As Long
 
     On Error Resume Next
 
-    lb = LoadLibrary(StrPtr(Path))
+    lngLB = LoadLibrary(StrPtr(strPath))
 
-    If Not lb = 0 Then
+    If Not lngLB = 0 Then
         If mbRegister Then
-            PA = GetProcAddress(lb, "DllRegisterServer")
+            lngPA = GetProcAddress(lngLB, "DllRegisterServer")
         Else
-            PA = GetProcAddress(lb, "DllUnregisterServer")
+            lngPA = GetProcAddress(lngLB, "DllUnregisterServer")
         End If
 
-        If PA = 0 Then
+        If lngPA = 0 Then
             GoTo FreeLib
         End If
 
-        CallWindowProc PA, lngHWnd, ByVal 0&, ByVal 0&, ByVal 0&
+        CallWindowProc lngPA, lngHWnd, ByVal 0&, ByVal 0&, ByVal 0&
         DLLOCX = True
 
 FreeLib:
-        FreeLibrary lb
+        FreeLibrary lngLB
 
         On Error GoTo FreeLib
 

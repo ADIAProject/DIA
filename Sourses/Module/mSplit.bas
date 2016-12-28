@@ -11,7 +11,7 @@ Private m_AP        As Long
 Private m_H(0 To 6) As Long
 Private m_HP        As Long
 
-Private R() As Long
+Private r() As Long
 Private RP  As Long
     
 Private Declare Sub GetMem4 Lib "msvbvm60.dll" (ByVal Ptr As Long, Value As Long)
@@ -125,10 +125,10 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function z_Split(Expression As String, Optional Delimiter As String = strSpace, Optional ByVal Limit As Long = -1, Optional ByVal Compare As SplitCompareMethod) As Long
 
-    Dim P()    As Long
-    Dim C      As Long
-    Dim i      As Long
-    Dim j      As Long
+    Dim p()    As Long
+    Dim c      As Long
+    Dim I      As Long
+    Dim J      As Long
     Dim K      As Long
     Dim LD     As Long
     Dim LD2    As Long
@@ -156,7 +156,7 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
 
                 ' pointer to R array
                 If RP = 0 Then
-                    RP = ArrPtr(R)
+                    RP = ArrPtr(r)
                 End If
 
                 ' generic safe array hack
@@ -180,18 +180,18 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                     If Compare = [SplitBinaryCompare] Then
 
                         Do
-                            i = InStrB(i + 1, Expression, Delimiter)
-                        Loop Until (i And 1) = 1 Or (i = 0)
+                            I = InStrB(I + 1, Expression, Delimiter)
+                        Loop Until (I And 1) = 1 Or (I = 0)
 
                     Else
-                        i = InStr(Expression, Delimiter)
+                        I = InStr(Expression, Delimiter)
                     End If
                 End If
 
                 ' did we find an item?
-                If i Then
+                If I Then
 
-                    ReDim P(3)
+                    ReDim p(3)
 
                     ' space for knowing the positions
                     PL = (Limit \ 96)
@@ -200,91 +200,91 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                         PL = 8191
                     End If
 
-                    If PL > UBound(P) Then
+                    If PL > UBound(p) Then
 
-                        ReDim Preserve P(0 To PL)
+                        ReDim Preserve p(0 To PL)
 
                     End If
 
                     ' InStrB?
                     If Compare = [SplitBinaryCompare] Then
 
-                        For C = 0 To Limit
+                        For c = 0 To Limit
 
                             ' make sure will always have enough items
-                            If C >= PL Then
-                                PL = PL + C
+                            If c >= PL Then
+                                PL = PL + c
 
-                                ReDim Preserve P(PL)
+                                ReDim Preserve p(PL)
 
                             End If
 
                             ' exit if nothing found
-                            If i = 0 Then
+                            If I = 0 Then
 
                                 Exit For
 
                             End If
 
                             ' remember position
-                            P(C) = i - 1
+                            p(c) = I - 1
                             ' find next
-                            i = i + LD - 1
+                            I = I + LD - 1
 
                             Do
-                                i = InStrB(i + 1, Expression, Delimiter)
-                            Loop Until (i And 1) = 1 Or (i = 0)
+                                I = InStrB(I + 1, Expression, Delimiter)
+                            Loop Until (I And 1) = 1 Or (I = 0)
 
-                        Next C
+                        Next c
 
                     Else
                         ' InStr'NOT COMPARE...
                         LD2 = LD \ 2
 
-                        For C = 0 To Limit
+                        For c = 0 To Limit
 
                             ' make sure will always have enough items
-                            If C >= PL Then
-                                PL = PL + C
+                            If c >= PL Then
+                                PL = PL + c
 
-                                ReDim Preserve P(PL)
+                                ReDim Preserve p(PL)
 
                             End If
 
                             ' exit if nothing found
-                            If i = 0 Then
+                            If I = 0 Then
 
                                 Exit For
 
                             End If
 
                             ' remember position
-                            P(C) = (i - 1) * 2
+                            p(c) = (I - 1) * 2
                             ' find next
-                            i = InStr(i + LD2, Expression, Delimiter)
-                        Next C
+                            I = InStr(I + LD2, Expression, Delimiter)
+                        Next c
 
                     End If
 
-                    P(C) = LE
+                    p(c) = LE
                     ' make space for the new items
-                    z_Split = InitStringArray(, , (C + 1) * 0.0001)
+                    z_Split = InitStringArray(, , (c + 1) * 0.0001)
                     ' set pointer
                     m_H(4) = RP
                     m_A(0) = z_Split
                     ' keep it simple, stupid!
-                    i = 0
+                    I = 0
 
-                    For C = 0 To C
-                        K = P(C)
-                        j = K - i
+                    For c = 0 To c
+                        K = p(c)
+                        J = K - I
 
-                        If j Then
-                            R(C) = SysAllocStringByteLen(PS + i, j)
+                        If J Then
+                            r(c) = SysAllocStringByteLen(PS + I, J)
                         End If
 
-                        i = K + LD
-                    Next C
+                        I = K + LD
+                    Next c
 
                 Else
                     'I = FALSE/0
@@ -293,7 +293,7 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                     ' set pointer
                     m_H(4) = RP
                     m_A(0) = z_Split
-                    R(0) = SysAllocStringByteLen(PS, LE)
+                    r(0) = SysAllocStringByteLen(PS, LE)
                 End If
 
                 ' clean up z_Split reference

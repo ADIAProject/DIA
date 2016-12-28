@@ -20,8 +20,8 @@ Private lngResultFileListCount   As Long
 Private lngResultFolderListCount As Long
 
 Private Type FILE_PARAMS
-    sFileRoot                    As String
-    sFileNameExt                 As String
+    sRootDir                     As String
+    sSearchMask                  As String
     bRecurse                     As Boolean
     bDelete                      As Boolean
     nFileCount                   As Long
@@ -31,8 +31,8 @@ Private Type FILE_PARAMS
 End Type
 
 Private Type FOLDER_PARAMS
-    sFileRoot                    As String
-    sFileNameExt                 As String
+    sRootDir                     As String
+    sSearchMask                  As String
     bRecurse                     As Boolean
     bDelete                      As Boolean
     nSearchedMax                 As Long
@@ -45,8 +45,9 @@ Public Type FindListStruct
     RelativePath                 As String
     NameLCase                    As String
     NameWoExt                    As String
+    Extension                    As String
     Size                         As Long
-    'SizeInString    As String
+    'SizeInString                As String
 End Type
 
 '!--------------------------------------------------------------------------------
@@ -191,12 +192,12 @@ Public Function GetFolderSizeApiString(ByVal sSource As String, ByVal bRecursion
     Dim fp As FILE_PARAMS
 
     With fp
-        .sFileRoot = BackslashAdd2Path(sSource)
-        .sFileNameExt = ALL_FILES
+        .sRootDir = BackslashAdd2Path(sSource)
+        .sSearchMask = ALL_FILES
         .bRecurse = bRecursion
     End With
 
-    GetDirectorySize fp.sFileRoot, fp
+    GetDirectorySize fp.sRootDir, fp
     GetFolderSizeApiString = GetFormatByteSize(CSng(fp.nFileSize))
 End Function
 
@@ -367,14 +368,14 @@ End Function
 Public Function SearchFilesInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, ByVal mbSearchRecursion As Boolean, ByVal mbOnlyFirstFile As Boolean, Optional ByVal mbDelete As Boolean = False) As FindListStruct()
 
     With tFileParams
-        .sFileRoot = BackslashAdd2Path(strRootDir)
-        .sFileNameExt = strSearchMask
+        .sRootDir = BackslashAdd2Path(strRootDir)
+        .sSearchMask = strSearchMask
         .bRecurse = mbSearchRecursion
         .bDelete = mbDelete
         .nSearchedMax = 100
     End With
 
-    SearchForFiles tFileParams.sFileRoot, True
+    SearchForFiles tFileParams.sRootDir, True
 
     If Not mbDelete Then
         If mbOnlyFirstFile Then
@@ -396,14 +397,14 @@ End Function
 Public Function SearchFoldersInRoot(ByVal strRootDir As String, ByVal strSearchMask As String, Optional ByVal mbSearchRecursion As Boolean = False, Optional ByVal mbDelete As Boolean = False) As FindListStruct()
 
     With tFolderParams
-        .sFileRoot = BackslashAdd2Path(strRootDir)
-        .sFileNameExt = strSearchMask
+        .sRootDir = BackslashAdd2Path(strRootDir)
+        .sSearchMask = strSearchMask
         .bRecurse = mbSearchRecursion
         .bDelete = mbDelete
         .nSearchedMax = 100
     End With
 
-    SearchForFolders tFolderParams.sFileRoot, True
+    SearchForFolders tFolderParams.sRootDir, True
     
     If Not mbDelete Then
         SearchFoldersInRoot = sResultFolderList
@@ -464,10 +465,10 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, Op
             Else
 
                 'must be a file..
-                If tFileParams.sFileNameExt = ALL_FILES And tFileParams.bDelete Then
+                If tFileParams.sSearchMask = ALL_FILES And tFileParams.bDelete Then
                     DeleteFiles sRoot & strFileName
                 Else
-                    If MatchSpec(strFileName, tFileParams.sFileNameExt) Then
+                    If MatchSpec(strFileName, tFileParams.sSearchMask) Then
                         ' Если есть флаг удаления, то запускаем его, иначе добавляем значение в массив
                         If tFileParams.bDelete Then
                             DeleteFiles sRoot & strFileName
@@ -501,6 +502,8 @@ Private Sub SearchForFiles(ByVal sRoot As String, ByVal mbInitial As Boolean, Op
                             ' Имя файла smallcase
                             sResultFileList(lngResultFileListCount).NameLCase = LCase$(strFileName)
                             sResultFileList(lngResultFileListCount).NameWoExt = GetFileName_woExt(strFileName)
+                            sResultFileList(lngResultFileListCount).Extension = GetFileNameExtension(sResultFileList(lngResultFileListCount).NameLCase)
+            
                             lngResultFileListCount = lngResultFileListCount + 1
                         End If
                     End If
@@ -571,7 +574,7 @@ Private Sub SearchForFolders(ByVal sRoot As String, ByVal mbInitial As Boolean, 
                 strFindData = TrimNull(wfd.cFileName)
                 If AscW(strFindData) <> vbDot Then
                                                 
-                    If MatchSpec(strFindData, tFolderParams.sFileNameExt) Then
+                    If MatchSpec(strFindData, tFolderParams.sSearchMask) Then
 
                         ' Если есть флаг удаления, то запускаем его, иначе добавляем значение в массив
                         If tFolderParams.bDelete Then

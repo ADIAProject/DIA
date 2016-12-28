@@ -506,7 +506,7 @@ Public Function ExpandFileNameByEnvironment(ByVal strFileName As String) As Stri
         
         ' Замена макросов значениями
         r = strFileName
-        r = Replace$(r, "%PCNAME%", strCompModel, , , vbTextCompare)
+        r = Replace$(r, "%PCNAME%", strCompName, , , vbTextCompare)
         r = Replace$(r, "%PCMODEL%", str_PCMODEL, , , vbTextCompare)
         r = Replace$(r, "%OSVer%", str_OSVer, , , vbTextCompare)
         r = Replace$(r, "%OSBit%", str_OSBit, , , vbTextCompare)
@@ -798,14 +798,14 @@ Public Function GetFileNameOnly_woExt(ByVal strFilePath As String) As String
     
         intLastSeparator = InStrRev(strFileNameTemp, vbBackslash)
 
-        If intLastSeparator >= 0 Then
+        If intLastSeparator Then
             strFileNameTemp = Right$(strFileNameTemp, Len(strFileNameTemp) - intLastSeparator)
         End If
         
         intLastSeparator = InStrRev(strFileNameTemp, strDot)
     
         If intLastSeparator Then
-            strFileNameTemp = Right$(strFileNameTemp, Len(strFileNameTemp) - intLastSeparator)
+            strFileNameTemp = Left$(strFileNameTemp, intLastSeparator - 1)
         End If
 
     End If
@@ -1289,8 +1289,6 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function PathExists(ByVal strPath As String) As Boolean
     PathExists = PathFileExists(StrPtr(strPath & vbNullChar))
-    'PathExists = PathIsDirectory(StrPtr(strPath & vbNullChar))
-    'PathExists = FolderExists(strPath)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -1722,7 +1720,8 @@ Public Function FileIs7zip(ByVal strPathFileName As String) As Boolean
         Dim B1(0 To 3) As Byte
         hFile = CreateFile(StrPtr("\\?\" & IIf(Left$(strPathFileName, 2) = "\\", "UNC\" & Mid$(strPathFileName, 3), strPathFileName)), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0)
         If hFile <> INVALID_HANDLE_VALUE Then
-            Length = GetFileSize(hFile, 0) ' File size >= 2^31 not supported.
+            ' File size >= 2^31 not supported.
+            Length = GetFileSize(hFile, 0)
             If Length > 4 Then
                 ReadFile hFile, VarPtr(B1(0)), 4, 0, 0
             End If

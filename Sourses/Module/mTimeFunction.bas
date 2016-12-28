@@ -95,10 +95,12 @@ Public Function GetTimeStop(ByVal curStart As Currency) As Currency
     If (mCurFreq) Then
         Dim curStop As Currency
         PerfCount curStop
-        GetTimeStop = (curStop - curStart) / mCurFreq ' cpu tick accurate
+        ' cpu tick accurate
+        GetTimeStop = (curStop - curStart) / mCurFreq
         curStop = 0
     Else
-        GetTimeStop = CDbl(GetTickCount) ' No hi-performance timer
+        ' No hi-performance timer
+        GetTimeStop = CDbl(GetTickCount)
     End If
 End Function
 

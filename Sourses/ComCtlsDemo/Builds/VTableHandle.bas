@@ -225,7 +225,7 @@ If VarPtr(Msg) = 0 Then
 End If
 Set ShadowIOleInPlaceActiveObjectVB = This
 IOleIPAO_TranslateAccelerator = S_OK
-ShadowIOleInPlaceActiveObjectVB.TranslateAccelerator Handled, IOleIPAO_TranslateAccelerator, Msg.Message, Msg.wParam, Msg.lParam, GetShiftState()
+ShadowIOleInPlaceActiveObjectVB.TranslateAccelerator Handled, IOleIPAO_TranslateAccelerator, Msg.Message, Msg.wParam, Msg.lParam, GetShiftStateFromMsg()
 If Handled = False Then IOleIPAO_TranslateAccelerator = Original_IOleIPAO_TranslateAccelerator(This, Msg)
 Exit Function
 CATCH_EXCEPTION:
@@ -303,7 +303,7 @@ If VarPtr(Msg) = 0 Then
     Exit Function
 End If
 Set ShadowIOleControlVB = This
-ShadowIOleControlVB.OnMnemonic Handled, Msg.Message, Msg.wParam, Msg.lParam, GetShiftState()
+ShadowIOleControlVB.OnMnemonic Handled, Msg.Message, Msg.wParam, Msg.lParam, GetShiftStateFromMsg()
 If Handled = False Then
     IOleControl_OnMnemonic = Original_IOleControl_OnMnemonic(This, Msg)
 Else

@@ -510,7 +510,7 @@ Option Explicit
 Private Declare Function GetOpenFileName Lib "comdlg32.dll" Alias "GetOpenFileNameW" (ByVal pOpenfilename As Long) As Long
 Private Declare Function GetSaveFileName Lib "comdlg32.dll" Alias "GetSaveFileNameW" (ByVal pOpenfilename As Long) As Long
 Private Declare Function SetWindowLongA Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hwndLock As Long) As Long
+Private Declare Function LockWindowUpdate Lib "user32.dll" (ByVal hWndLock As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
 Private Declare Function GetCurrentThemeName Lib "uxtheme.dll" (ByVal pszThemeFileName As Long, ByVal dwMaxNameChars As Long, ByVal pszColorBuff As Long, ByVal cchMaxColorChars As Long, ByVal pszSizeBuff As Long, ByVal cchMaxSizeChars As Long) As Long
@@ -518,7 +518,7 @@ Private Declare Function SendMessage Lib "user32.dll" Alias "SendMessageA" (ByVa
 Private Declare Function GetCursorPos Lib "user32.dll" (lpPoint As POINTAPI) As Long
 Private Declare Function ScreenToClient Lib "user32.dll" (ByVal hWnd As Long, lpPoint As POINTAPI) As Long
 Private Declare Function PathAddBackslash Lib "shlwapi.dll" Alias "PathAddBackslashA" (ByVal Path As String) As Long
-Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "olepro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function SetFocusAPI Lib "user32.dll" Alias "SetFocus" (ByVal hWnd As Long) As Long
 
 'Private Const BFFM_SETSELECTIONA        As Long = (WM_USER + 102)
@@ -610,7 +610,7 @@ Private Type OPENFILENAME
     nTitleSize                          As Long
     sInitDir                            As String
     sDlgTitle                           As String
-    Flags                               As Long
+    flags                               As Long
     nFileOffset                         As Integer
     nFileExt                            As Integer
     sDefFileExt                         As String
@@ -659,7 +659,7 @@ Private m_Filters          As String
 Private m_Font             As StdFont
 Private m_FontColor        As OLE_COLOR
 Private m_Forecolor        As OLE_COLOR
-Private m_hWnd             As Long
+Private m_Hwnd             As Long
 Private m_MultiSelect      As Boolean
 Private m_Path             As String
 Private m_Pnt              As POINTAPI
@@ -733,7 +733,7 @@ Private bTrackUser32 As Boolean
 Private bInCtrl      As Boolean
 
 Private Declare Function TrackMouseEvent Lib "user32.dll" (ByRef lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 
 '*************************************************************
 '   Subsclass
@@ -1384,7 +1384,7 @@ Private Function GetCursorPosition() As POINTAPI
     '   Get Our Position
     Call GetCursorPos(PT)
     '   Convert coordinates
-    Call ScreenToClient(m_hWnd, PT)
+    Call ScreenToClient(m_Hwnd, PT)
 
     '   Correct for Offeset of the Borders
     If m_Appearance = [3D] Then
@@ -1768,7 +1768,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Function ProcessFilter(sFilter As String) As String
 
-    Dim i As Long
+    Dim I As Long
 
     '   This routine replaces the Pipe (|) character for filter
     '   strings and pads the size to the required legnth.
@@ -1787,10 +1787,10 @@ Private Function ProcessFilter(sFilter As String) As String
     End If
 
     '   Now Replace the Pipes in the Filter String
-    For i = 1 To Len(sFilter)
+    For I = 1 To Len(sFilter)
 
-        If (Mid$(sFilter, i, 1) = "|") Then
-            Mid$(sFilter, i, 1) = vbNullChar
+        If (Mid$(sFilter, I, 1) = "|") Then
+            Mid$(sFilter, I, 1) = vbNullChar
         End If
 
     Next
@@ -1984,7 +1984,7 @@ End Sub
 Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFile
 
     Dim lRet                As Long
-    Dim Count               As Integer
+    Dim count               As Integer
     Dim LastCharacter       As Integer
     Dim NewCharacter        As Integer
     Dim tempFiles()         As String
@@ -2012,13 +2012,13 @@ Private Function ShowOpen(sFilter As String, sInitPath As String) As SelectedFil
         End If
 
         If m_FileFlags <> 0 Then
-            .Flags = m_FileFlags
+            .flags = m_FileFlags
         Else
-            .Flags = ShowOpen_Default
+            .flags = ShowOpen_Default
         End If
 
         If m_MultiSelect Then
-            .Flags = .Flags Or AllowMultiselect
+            .flags = .flags Or AllowMultiselect
         End If
         
         .sDlgTitle = m_DialogMsg(ucOpen) & String$(2048, vbNullChar)
@@ -2062,23 +2062,23 @@ GoAgain:
             '
             '   Extract all of the files selected and pass them back in an array.
             LastCharacter = 0
-            Count = 0
+            count = 0
 
             While ShowOpen.nFilesSelected = 0
 
                 NewCharacter = InStr(LastCharacter + 1, FileDialog.sFile, vbNullChar)
 
-                If Count Then
-                    tempFiles(Count) = Mid$(FileDialog.sFile, LastCharacter + 1, NewCharacter - LastCharacter - 1)
+                If count Then
+                    tempFiles(count) = Mid$(FileDialog.sFile, LastCharacter + 1, NewCharacter - LastCharacter - 1)
                 Else
                     ShowOpen.sLastDirectory = Mid$(FileDialog.sFile, LastCharacter + 1, NewCharacter - LastCharacter - 1)
                 End If
 
-                Count = Count + 1
+                count = count + 1
 
                 If InStr(NewCharacter + 1, FileDialog.sFile, vbNullChar) = InStr(NewCharacter + 1, FileDialog.sFile, str2vbNullChar) Then
-                    tempFiles(Count) = Mid$(FileDialog.sFile, NewCharacter + 1, InStr(NewCharacter + 1, FileDialog.sFile, str2vbNullChar) - NewCharacter - 1)
-                    ShowOpen.nFilesSelected = Count
+                    tempFiles(count) = Mid$(FileDialog.sFile, NewCharacter + 1, InStr(NewCharacter + 1, FileDialog.sFile, str2vbNullChar) - NewCharacter - 1)
+                    ShowOpen.nFilesSelected = count
                 End If
 
                 LastCharacter = NewCharacter
@@ -2087,15 +2087,15 @@ GoAgain:
 
             ReDim ShowOpen.sFiles(1 To ShowOpen.nFilesSelected)
 
-            For Count = 1 To ShowOpen.nFilesSelected
+            For count = 1 To ShowOpen.nFilesSelected
 
-                If (Right$(tempFiles(Count), 4) <> m_DefaultExt) Then
+                If (Right$(tempFiles(count), 4) <> m_DefaultExt) Then
                     If (Len(m_DefaultExt) > 1) Then
-                        tempFiles(Count) = tempFiles(Count) & m_DefaultExt
+                        tempFiles(count) = tempFiles(count) & m_DefaultExt
                     End If
                 End If
 
-                ShowOpen.sFiles(Count) = tempFiles(Count)
+                ShowOpen.sFiles(count) = tempFiles(count)
             Next
 
         Else
@@ -2145,9 +2145,9 @@ Private Function ShowSave(ByVal sFilter As String) As SelectedFile
         .nFileSize = Len(FileDialog.sFile)
 
         If m_FileFlags <> 0 Then
-            .Flags = m_FileFlags
+            .flags = m_FileFlags
         Else
-            .Flags = ShowSave_Default
+            .flags = ShowSave_Default
         End If
 
         '   Process the Filter string to replace the
@@ -2589,7 +2589,7 @@ End Sub
 Private Sub cmdPick_Click()
 
     Dim psFile    As SelectedFile
-    Dim i         As Long
+    Dim I         As Long
     Dim sExt      As String
     Dim sFolder   As String
     Dim AutoTheme As String
@@ -2610,7 +2610,7 @@ Private Sub cmdPick_Click()
                 'ShowFolder_Default
                 With New CommonDialog
                     .InitDir = PathCollect(txtResult.Text)
-                    .Flags = CdlBIFNewDialogStyle
+                    .flags = CdlBIFNewDialogStyle
                     .DialogTitle = m_DialogMsg(ucFolder)
                                         
                     If .ShowFolderBrowser = True Then
@@ -2691,9 +2691,9 @@ Private Sub cmdPick_Click()
                                     .cmbMultiSel.Clear
 
                                     '   Store the Filenames
-                                    For i = 1 To m_FileCount
-                                        .cmbMultiSel.AddItem TrimPathByLen(QualifyPath(m_Path) & psFile.sFiles(i), .txtResult.Width - 40)
-                                        m_Filename(i) = m_Path & psFile.sFiles(i)
+                                    For I = 1 To m_FileCount
+                                        .cmbMultiSel.AddItem TrimPathByLen(QualifyPath(m_Path) & psFile.sFiles(I), .txtResult.Width - 40)
+                                        m_Filename(I) = m_Path & psFile.sFiles(I)
                                     Next
 
                                 End If
@@ -3058,7 +3058,7 @@ End Sub
 Private Sub txtResult_LostFocus()
 
     Dim TmpName As String
-    Dim i       As Long
+    Dim I       As Long
 
     On Error Resume Next
 
@@ -3192,7 +3192,7 @@ End Sub
 Private Sub UserControl_Initialize()
     m_bIsWinXpOrLater = IsWinXPOrLater
     '   Get Our Handle
-    m_hWnd = UserControl.hWnd
+    m_Hwnd = UserControl.hWnd
     '   Rest the Control to its defaults...
     Call Reset
     

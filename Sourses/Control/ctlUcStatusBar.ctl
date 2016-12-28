@@ -151,18 +151,18 @@ Private Type BITMAPINFO8
 End Type
 
 '   DrawEdge Message Constants
-Private Const BDR_SUNKENOUTER As Long = &H2
-Private Const BDR_SUNKENINNER As Long = &H8
+Private Const BDR_SUNKENOUTER   As Long = &H2
+Private Const BDR_SUNKENINNER   As Long = &H8
+Private Const BF_LEFT           As Long = &H1
+Private Const BF_TOP            As Long = &H2
+Private Const BF_RIGHT          As Long = &H4
+Private Const BF_BOTTOM         As Long = &H8
+Private Const BF_RECT           As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
 Private Const EDGE_SUNKEN = (BDR_SUNKENOUTER Or BDR_SUNKENINNER)
-Private Const BF_LEFT   As Long = &H1
-Private Const BF_TOP    As Long = &H2
-Private Const BF_RIGHT  As Long = &H4
-Private Const BF_BOTTOM As Long = &H8
-Private Const BF_RECT   As Long = (BF_LEFT Or BF_TOP Or BF_RIGHT Or BF_BOTTOM)
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
 Private Declare Sub CopyMemoryLong Lib "kernel32.dll" Alias "RtlMoveMemory" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
-Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "olepro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
@@ -321,22 +321,22 @@ End Enum
 
 '   Private StatusBar Item Type
 Private Type PanelItem
-    Alignment                           As Long
-    AutoSize                            As Boolean
-    BoundObject                         As Object
-    BoundParent                         As Long
-    BoundSize                           As usbSizeEnum
-    Editable                            As Boolean
-    ForeColor                           As OLE_COLOR
-    Font                                As StdFont
-    Icon                                As StdPicture
-    IconState                           As usbStateEnum
-    ItemRect                            As RECT
-    MaskColor                           As OLE_COLOR
-    Text                                As String
-    ToolTipText                         As String
-    UseMaskColor                        As Boolean
-    Width                               As Long
+    Alignment                   As Long
+    AutoSize                    As Boolean
+    BoundObject                 As Object
+    BoundParent                 As Long
+    BoundSize                   As usbSizeEnum
+    Editable                    As Boolean
+    ForeColor                   As OLE_COLOR
+    Font                        As StdFont
+    Icon                        As StdPicture
+    IconState                   As usbStateEnum
+    ItemRect                    As RECT
+    MaskColor                   As OLE_COLOR
+    Text                        As String
+    ToolTipText                 As String
+    UseMaskColor                As Boolean
+    Width                       As Long
 End Type
 
 Private m_ActivePanel     As Long             'Current Active Panel
@@ -407,7 +407,7 @@ Private bTrackUser32 As Boolean
 Private bInCtrl      As Boolean
 
 Private Declare Function TrackMouseEvent Lib "user32.dll" (ByRef lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 
 '*************************************************************
 '   Subsclass
@@ -1213,7 +1213,7 @@ Public Property Let Sizable(ByVal NewValue As Boolean)
     m_Sizable = NewValue
 
     If m_Sizable Then
-        If IsWinXPorLater Then
+        If IsWinXPOrLater Then
             m_GripShape = usbSquare
         Else
             m_GripShape = usbBars
@@ -1519,7 +1519,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function GetPanelIndex() As Long
 
-    Dim i      As Long
+    Dim I      As Long
     Dim tPt    As POINTAPI
     Dim lpRect As RECT
 
@@ -1533,28 +1533,28 @@ Private Function GetPanelIndex() As Long
         Call ScreenToClient(UserControl.hWnd, tPt)
 
         '   Loop Over the RECTs a see if it is in
-        For i = 1 To m_PanelCount
-            lpRect = m_PanelItems(i).ItemRect
+        For I = 1 To m_PanelCount
+            lpRect = m_PanelItems(I).ItemRect
 
-            If Not m_PanelItems(i).Icon Is Nothing Then
-                If m_PanelItems(i).Alignment = DT_SB_LEFT Then
+            If Not m_PanelItems(I).Icon Is Nothing Then
+                If m_PanelItems(I).Alignment = DT_SB_LEFT Then
                     OffsetRect lpRect, -16, 0
-                ElseIf m_PanelItems(i).Alignment = DT_SB_CENTER Then
+                ElseIf m_PanelItems(I).Alignment = DT_SB_CENTER Then
                     OffsetRect lpRect, -8, 0
-                ElseIf m_PanelItems(i).Alignment = DT_SB_RIGHT Then
+                ElseIf m_PanelItems(I).Alignment = DT_SB_RIGHT Then
                     InflateRect lpRect, 2, 0
                 End If
             End If
 
-            If i > 1 Then
-                If (m_PanelItems(i - 1).ItemRect.Right + 10) < lpRect.Left Then
+            If I > 1 Then
+                If (m_PanelItems(I - 1).ItemRect.Right + 10) < lpRect.Left Then
                     OffsetRect lpRect, -8, 0
                     InflateRect lpRect, 6, 0
                 End If
             End If
 
             If PtInRect(lpRect, tPt.X, tPt.Y) Then
-                GetPanelIndex = i
+                GetPanelIndex = I
 
                 Exit For
 
@@ -1698,7 +1698,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub PaintGradients()
 
-    Dim i       As Long
+    Dim I       As Long
     Dim Y1      As Long
     Dim BtnFace As Long
     Dim lColor  As Long
@@ -1720,9 +1720,9 @@ Private Sub PaintGradients()
             Clear
 
             '   Draw the Smooth Gradient across the whole control
-            For i = 0 To ScaleHeight
-                Y1 = i
-                APILine 0, Y1, .ScaleWidth, Y1, AlphaBlend(&HFFFFFF, BtnFace, (i / ScaleHeight) * 48)
+            For I = 0 To ScaleHeight
+                Y1 = I
+                APILine 0, Y1, .ScaleWidth, Y1, AlphaBlend(&HFFFFFF, BtnFace, (I / ScaleHeight) * 48)
             Next
 
             '   Draw The Top Lines
@@ -1749,9 +1749,9 @@ Private Sub PaintGradients()
             APILine 0, 3, .ScaleWidth, 3, ShiftColor(BtnFace, -&H9)
 
             '   Draw the Bottom Gradient
-            For i = 0 To 5
-                Y1 = .ScaleHeight - 5 + i
-                APILine 0, Y1, .ScaleWidth, Y1, ShiftColor(BtnFace, -&H1 * ((((i / 3) * 100) * .ScaleHeight) / 100))
+            For I = 0 To 5
+                Y1 = .ScaleHeight - 5 + I
+                APILine 0, Y1, .ScaleWidth, Y1, ShiftColor(BtnFace, -&H1 * ((((I / 3) * 100) * .ScaleHeight) / 100))
             Next
 
         End If
@@ -1882,7 +1882,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub PaintPanels()
 
-    Dim i           As Long
+    Dim I           As Long
     Dim lX          As Long
     Dim lForeColor  As Long
     Dim lIconOffset As Long
@@ -1901,9 +1901,9 @@ Private Sub PaintPanels()
         lGripSize = 18
     End If
 
-    For i = 1 To PanelCount
+    For I = 1 To PanelCount
 
-        With m_PanelItems(i)
+        With m_PanelItems(I)
             '   Set the Individual ForeColor & Font
             UserControl.ForeColor = .ForeColor
             Set UserControl.Font = .Font
@@ -1989,7 +1989,7 @@ Private Sub PaintPanels()
                 If Not .Icon Is Nothing Then
 
                     '   Adjust the Initial Items RECT to line up correctly
-                    If i = 1 Then
+                    If I = 1 Then
                         OffsetRect .ItemRect, -2, 0
                     End If
 
@@ -2078,8 +2078,8 @@ Private Sub PaintPanels()
 
                         '   Keep the Width, but set the Left, Top and Height
                         With .BoundObject
-                            .Left = m_PanelItems(i).ItemRect.Left * Screen.TwipsPerPixelX
-                            .Top = m_PanelItems(i).ItemRect.Top * Screen.TwipsPerPixelY
+                            .Left = m_PanelItems(I).ItemRect.Left * Screen.TwipsPerPixelX
+                            .Top = m_PanelItems(I).ItemRect.Top * Screen.TwipsPerPixelY
                             .Height = 16 * Screen.TwipsPerPixelY
                             '   Under development....;-)
                             '   Should be hidden if too small to fit the control..
@@ -2097,26 +2097,26 @@ Private Sub PaintPanels()
 
                             '   Resize all properties to make it fit
                             If m_iTheme <> usbClassic Then
-                                .Left = (m_PanelItems(i).ItemRect.Left) * Screen.TwipsPerPixelX
-                                .Width = ((m_PanelItems(i).ItemRect.Right - m_PanelItems(i).ItemRect.Left)) * Screen.TwipsPerPixelX
+                                .Left = (m_PanelItems(I).ItemRect.Left) * Screen.TwipsPerPixelX
+                                .Width = ((m_PanelItems(I).ItemRect.Right - m_PanelItems(I).ItemRect.Left)) * Screen.TwipsPerPixelX
 
                                 '   See if we were avel to resize the controls width, if not
                                 '   then the control might have a minimum width (i.e. ComboBox)
                                 '   so we can simply use this as an indicator to hide the control...
-                                If (.Width <> (((m_PanelItems(i).ItemRect.Right - m_PanelItems(i).ItemRect.Left)) * Screen.TwipsPerPixelX)) Then
+                                If (.Width <> (((m_PanelItems(I).ItemRect.Right - m_PanelItems(I).ItemRect.Left)) * Screen.TwipsPerPixelX)) Then
                                     bMinWidth = True
                                 Else
                                     bMinWidth = False
                                 End If
 
                             Else
-                                .Left = (m_PanelItems(i).ItemRect.Left - 4) * Screen.TwipsPerPixelX
-                                .Width = ((m_PanelItems(i).ItemRect.Right - m_PanelItems(i).ItemRect.Left) + 9) * Screen.TwipsPerPixelX
+                                .Left = (m_PanelItems(I).ItemRect.Left - 4) * Screen.TwipsPerPixelX
+                                .Width = ((m_PanelItems(I).ItemRect.Right - m_PanelItems(I).ItemRect.Left) + 9) * Screen.TwipsPerPixelX
 
                                 '   See if we were avel to resize the controls width, if not
                                 '   then the control might have a minimum width (i.e. ComboBox)
                                 '   so we can simply use this as an indicator to hide the control...
-                                If (.Width <> (((m_PanelItems(i).ItemRect.Right - m_PanelItems(i).ItemRect.Left) + 9) * Screen.TwipsPerPixelX)) Then
+                                If (.Width <> (((m_PanelItems(I).ItemRect.Right - m_PanelItems(I).ItemRect.Left) + 9) * Screen.TwipsPerPixelX)) Then
                                     bMinWidth = True
                                 Else
                                     bMinWidth = False
@@ -2325,7 +2325,7 @@ Private Function ShiftColor(ByVal Color As Long, ByVal Value As Long) As Long
 
     Dim lR As Long
     Dim lg As Long
-    Dim lb As Long
+    Dim LB As Long
 
     '   Handle Any Errors
     On Error GoTo Func_ErrHandler
@@ -2333,21 +2333,21 @@ Private Function ShiftColor(ByVal Color As Long, ByVal Value As Long) As Long
     Color = TranslateColor(Color)
     lR = (Color And &HFF) + Value
     lg = ((Color \ &H100) Mod &H100) + Value
-    lb = ((Color \ &H10000) Mod &H100)
-    lb = lb + ((lb * Value) \ &HC0)
+    LB = ((Color \ &H10000) Mod &H100)
+    LB = LB + ((LB * Value) \ &HC0)
 
     If Value Then
         If lR > 255 Then lR = 255
         If lg > 255 Then lg = 255
-        If lb > 255 Then lb = 255
+        If LB > 255 Then LB = 255
     ElseIf Value < 0 Then
 
         If lR < 0 Then lR = 0
         If lg < 0 Then lg = 0
-        If lb < 0 Then lb = 0
+        If LB < 0 Then LB = 0
     End If
 
-    ShiftColor = lR + 256& * lg + 65536 * lb
+    ShiftColor = lR + 256& * lg + 65536 * LB
 Func_ErrHandlerExit:
 
     Exit Function
@@ -2400,7 +2400,7 @@ End Sub
 '                              TransColor (Long)
 '                              Disabled (Boolean)
 '!--------------------------------------------------------------------------------
-Public Sub TransBltEx(ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcImg As StdPicture, ByVal XSrc As Long, ByVal YSrc As Long, ByVal TransColor As Long, ByVal Disabled As Boolean)
+Public Sub TransBltEx(ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcImg As StdPicture, ByVal XSrc As Long, ByVal YSrc As Long, ByVal transColor As Long, ByVal Disabled As Boolean)
 
     '
     '   32-Bit Transparent BitBlt Function
@@ -2453,7 +2453,7 @@ Public Sub TransBltEx(ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, B
         '   MaskColor so pass the handled to the brush
         hTmp = CreateCompatibleBitmap(hDestDC, nWidth, nHeight)
         tObj = SelectObject(hSrcDC, hTmp)
-        hBrush = CreateSolidBrush(TransColor)
+        hBrush = CreateSolidBrush(transColor)
         'MaskColor)
         DrawIconEx hSrcDC, 0, 0, hSrcImg.Handle, nWidth, nHeight, 0, hBrush, &H1 Or &H2
         '   Clean up the brush
@@ -2466,7 +2466,7 @@ Public Sub TransBltEx(ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, B
         ' Some NT machines support this *super* simple method!
         ' Save original settings, Blt, restore settings.
         OrigMode = SetBkMode(hDestDC, NEWTRANSPARENT)
-        OrigColor = SetBkColor(hDestDC, TransColor)
+        OrigColor = SetBkColor(hDestDC, transColor)
 
         '   Check to see if this is a GreyScale Image, if so then GrayBlt it
         '   to the DC it is located on...
@@ -2532,9 +2532,9 @@ Public Sub TransBltEx(ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, B
         hInvPrevBmp = SelectObject(invDC, hInvBmp)
         hDestPrevBmp = SelectObject(resultDC, hResultBmp)
         ' Create mask: set background color of source to transparent color.
-        OrigColor = SetBkColor(hSrcDC, TransColor)
+        OrigColor = SetBkColor(hSrcDC, transColor)
         Call BitBlt(maskDC, 0, 0, nWidth, nHeight, hSrcDC, XSrc, YSrc, vbSrcCopy)
-        TransColor = SetBkColor(hSrcDC, OrigColor)
+        transColor = SetBkColor(hSrcDC, OrigColor)
         ' Create inverse of mask to AND w/ source & combine w/ background.
         Call BitBlt(invDC, 0, 0, nWidth, nHeight, maskDC, 0, 0, vbNotSrcCopy)
         ' Copy background bitmap to result.
@@ -2783,7 +2783,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Initialize()
-    m_bIsWinXpOrLater = IsWinXPorLater
+    m_bIsWinXpOrLater = IsWinXPOrLater
     
     Set m_cSubclass = New cSelfSubHookCallback
 End Sub
@@ -3151,14 +3151,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Terminate()
 
-    Dim i As Long
+    Dim I As Long
 
     On Error Resume Next
 
     '   Set the Parents of the Object Back....
-    For i = 1 To m_PanelCount
+    For I = 1 To m_PanelCount
 
-        With m_PanelItems(i)
+        With m_PanelItems(I)
 
             If Not .BoundObject Is Nothing Then
                 SetParent .BoundObject.hWnd, .BoundParent

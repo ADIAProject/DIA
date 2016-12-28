@@ -54,7 +54,8 @@ Private Sub LoadImageFromFile2PictureBox(objName As PictureBox, PicturePath As S
 
     If FileExists(PicturePath) Then
         Set objName.Picture = Nothing
-        objName.Picture = StdPictureEx.LoadPicture(PicturePath) ', lpsCustom, , lngIMG_SIZE, lngIMG_SIZE)
+        objName.Picture = StdPictureEx.LoadPicture(PicturePath)
+        ', lpsCustom, , lngIMG_SIZE, lngIMG_SIZE)
     Else
 
         If Not mbSilentRun Then

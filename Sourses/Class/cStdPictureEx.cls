@@ -157,25 +157,25 @@ Private Declare Function LoadLibrary Lib "kernel32.dll" Alias "LoadLibraryA" (By
 Private Declare Function GetModuleHandle Lib "kernel32.dll" Alias "GetModuleHandleA" (ByVal lpModuleName As String) As Long
 Private Declare Function VirtualAlloc Lib "kernel32.dll" (ByVal lpAddress As Any, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
 '///// GDI+ functions
-Private Declare Function GdiplusStartup Lib "GdiPlus.dll" (Token As Long, inputbuf As Any, Optional ByVal outputbuf As Long = 0) As Long
-Private Declare Sub GdiplusShutdown Lib "GdiPlus.dll" (ByVal Token As Long)
-Private Declare Function GdipGetImageType Lib "GdiPlus.dll" (ByVal Image As Long, pType As Long) As Long
-Private Declare Function GdipDisposeImage Lib "GdiPlus.dll" (ByVal Image As Long) As Long
-Private Declare Function GdipLoadImageFromStream Lib "GdiPlus.dll" (ByVal Stream As Long, Image As Long) As Long
-Private Declare Function GdipBitmapLockBits Lib "GdiPlus.dll" (ByVal mBitmap As Long, ByRef mRect As RECTI, ByVal mFlags As Long, ByVal mPixelFormat As Long, ByRef mLockedBitmapData As BitmapData) As Long
-Private Declare Function GdipBitmapUnlockBits Lib "GdiPlus.dll" (ByVal mBitmap As Long, ByRef mLockedBitmapData As BitmapData) As Long
-Private Declare Function GdipCreateBitmapFromScan0 Lib "GdiPlus.dll" (ByVal Width As Long, ByVal Height As Long, ByVal stride As Long, ByVal PixelFormat As Long, scan0 As Any, BITMAP As Long) As Long
-Private Declare Function GdipGetImageBounds Lib "GdiPlus.dll" (ByVal nImage As Long, srcRect As RECTF, srcUnit As Long) As Long
-Private Declare Function GdipGetImagePixelFormat Lib "GdiPlus.dll" (ByVal hImage As Long, PixelFormat As Long) As Long
-Private Declare Function GdipImageSelectActiveFrame Lib "GdiPlus.dll" (ByVal Image As Long, ByRef dimensionID As Any, ByVal FrameIndex As Long) As Long
-Private Declare Function GdipImageGetFrameCount Lib "GdiPlus.dll" (ByVal Image As Long, ByRef dimensionID As Any, ByRef count As Long) As Long
-Private Declare Function GdipImageGetFrameDimensionsCount Lib "GdiPlus.dll" (ByVal pImage As Long, ByRef count As Long) As Long
-Private Declare Function GdipGetImageRawFormat Lib "GdiPlus.dll" (ByVal hImage As Long, ByVal GUID As Long) As Long
-Private Declare Function GdipImageGetFrameDimensionsList Lib "GdiPlus.dll" (ByVal pImage As Long, ByRef dimensionIDs As Any, ByVal count As Long) As Long
-Private Declare Function GdipEmfToWmfBits Lib "GdiPlus.dll" (ByVal hEMF As Long, ByVal cbData16 As Long, ByVal pData16 As Long, ByVal iMapMode As Long, ByVal eFlags As Long) As Long
-Private Declare Function GdipGetHemfFromMetafile Lib "GdiPlus.dll" (ByVal metafile As Long, ByRef hEMF As Long) As Long
-Private Declare Function GdipGetPropertyItemSize Lib "GdiPlus.dll" (ByVal pImage As Long, ByVal propId As Long, ByRef pSize As Long) As Long
-Private Declare Function GdipGetPropertyItem Lib "GdiPlus.dll" (ByVal pImage As Long, ByVal propId As Long, ByVal propSize As Long, ByRef buffer As Any) As Long
+Private Declare Function GdiplusStartup Lib "gdiplus.dll" (Token As Long, inputbuf As Any, Optional ByVal outputbuf As Long = 0) As Long
+Private Declare Sub GdiplusShutdown Lib "gdiplus.dll" (ByVal Token As Long)
+Private Declare Function GdipGetImageType Lib "gdiplus.dll" (ByVal Image As Long, pType As Long) As Long
+Private Declare Function GdipDisposeImage Lib "gdiplus.dll" (ByVal Image As Long) As Long
+Private Declare Function GdipLoadImageFromStream Lib "gdiplus.dll" (ByVal Stream As Long, Image As Long) As Long
+Private Declare Function GdipBitmapLockBits Lib "gdiplus.dll" (ByVal mBitmap As Long, ByRef mRect As RECTI, ByVal mFlags As Long, ByVal mPixelFormat As Long, ByRef mLockedBitmapData As BitmapData) As Long
+Private Declare Function GdipBitmapUnlockBits Lib "gdiplus.dll" (ByVal mBitmap As Long, ByRef mLockedBitmapData As BitmapData) As Long
+Private Declare Function GdipCreateBitmapFromScan0 Lib "gdiplus.dll" (ByVal Width As Long, ByVal Height As Long, ByVal stride As Long, ByVal PixelFormat As Long, scan0 As Any, BITMAP As Long) As Long
+Private Declare Function GdipGetImageBounds Lib "gdiplus.dll" (ByVal nImage As Long, srcRect As RECTF, srcUnit As Long) As Long
+Private Declare Function GdipGetImagePixelFormat Lib "gdiplus.dll" (ByVal hImage As Long, PixelFormat As Long) As Long
+Private Declare Function GdipImageSelectActiveFrame Lib "gdiplus.dll" (ByVal Image As Long, ByRef dimensionID As Any, ByVal FrameIndex As Long) As Long
+Private Declare Function GdipImageGetFrameCount Lib "gdiplus.dll" (ByVal Image As Long, ByRef dimensionID As Any, ByRef count As Long) As Long
+Private Declare Function GdipImageGetFrameDimensionsCount Lib "gdiplus.dll" (ByVal pImage As Long, ByRef count As Long) As Long
+Private Declare Function GdipGetImageRawFormat Lib "gdiplus.dll" (ByVal hImage As Long, ByVal GUID As Long) As Long
+Private Declare Function GdipImageGetFrameDimensionsList Lib "gdiplus.dll" (ByVal pImage As Long, ByRef dimensionIDs As Any, ByVal count As Long) As Long
+Private Declare Function GdipEmfToWmfBits Lib "gdiplus.dll" (ByVal hEMF As Long, ByVal cbData16 As Long, ByVal pData16 As Long, ByVal iMapMode As Long, ByVal eFlags As Long) As Long
+Private Declare Function GdipGetHemfFromMetafile Lib "gdiplus.dll" (ByVal metafile As Long, ByRef hEMF As Long) As Long
+Private Declare Function GdipGetPropertyItemSize Lib "gdiplus.dll" (ByVal pImage As Long, ByVal propId As Long, ByRef pSize As Long) As Long
+Private Declare Function GdipGetPropertyItem Lib "gdiplus.dll" (ByVal pImage As Long, ByVal propId As Long, ByVal propSize As Long, ByRef buffer As Any) As Long
 Private Const ImageLockModeUserInputBuf     As Long = &H4&
 Private Const ImageLockModeRead             As Long = &H1&
 Private Const PixelFormat32bppPremultiplied As Long = &HE200B
@@ -183,18 +183,18 @@ Private Const PixelFormat32bppAlpha         As Long = &H26200A
 Private Const PixelFormat32bpp              As Long = &H262000
 Private Const PixelFormat24bpp              As Long = &H21808
 '///// Misc functions
-Private Declare Function OleLoadPicture Lib "OLEPRO32.DLL" (pStream As Any, ByVal lSize As Long, ByVal fRunmode As Long, riid As Any, ppvObj As Any) As Long
-Private Declare Function OleCreatePictureIndirect Lib "OLEPRO32.DLL" (lpPictDesc As Any, riid As Any, ByVal fPictureOwnsHandle As Long, iPic As IPicture) As Long
+Private Declare Function OleLoadPicture Lib "olepro32.dll" (pStream As Any, ByVal lSize As Long, ByVal fRunmode As Long, riid As Any, ppvObj As Any) As Long
+Private Declare Function OleCreatePictureIndirect Lib "olepro32.dll" (lpPictDesc As Any, riid As Any, ByVal fPictureOwnsHandle As Long, iPic As IPicture) As Long
 Private Declare Function CreateStreamOnHGlobal Lib "ole32.dll" (ByVal hGlobal As Long, ByVal fDeleteOnRelease As Long, ppstm As Any) As Long
 Private Declare Function StringFromGUID2 Lib "ole32.dll" (ByVal rguid As Long, ByVal lpsz As Long, ByVal cchMax As Long) As Long
 Private Declare Function IIDFromString Lib "ole32.dll" (ByVal lpsz As Long, ByRef lpiid As Any) As Long
 Private Declare Function GetHGlobalFromStream Lib "ole32.dll" (ByVal ppstm As Long, hGlobal As Long) As Long
 Private Declare Function CoTaskMemRealloc Lib "ole32.dll" (ByVal pv As Long, ByVal cb As Long) As Long
-Private Declare Function GetFileVersionInfo Lib "Version.dll" Alias "GetFileVersionInfoA" (ByVal lptstrFilename As String, ByVal dwhandle As Long, ByVal dwlen As Long, lpData As Any) As Long
-Private Declare Function GetFileVersionInfoSize Lib "Version.dll" Alias "GetFileVersionInfoSizeA" (ByVal lptstrFilename As String, lpdwHandle As Long) As Long
-Private Declare Function VerQueryValue Lib "Version.dll" Alias "VerQueryValueA" (pBlock As Any, ByVal lpSubBlock As String, lplpBuffer As Any, puLen As Long) As Long
-Private Declare Function ImageList_GetIconSize Lib "Comctl32.dll" (ByVal hIML As Long, Cx As Long, Cy As Long) As Long
-Private Declare Function SHGetImageListXP Lib "Shell32.dll" Alias "#727" (ByVal iImageList As Long, ByRef riid As Long, ByVal ppv As Long) As Long
+Private Declare Function GetFileVersionInfo Lib "version.dll" Alias "GetFileVersionInfoA" (ByVal lptstrFilename As String, ByVal dwhandle As Long, ByVal dwlen As Long, lpData As Any) As Long
+Private Declare Function GetFileVersionInfoSize Lib "version.dll" Alias "GetFileVersionInfoSizeA" (ByVal lptstrFilename As String, lpdwHandle As Long) As Long
+Private Declare Function VerQueryValue Lib "version.dll" Alias "VerQueryValueA" (pBlock As Any, ByVal lpSubBlock As String, lplpBuffer As Any, puLen As Long) As Long
+Private Declare Function ImageList_GetIconSize Lib "comctl32.dll" (ByVal hIML As Long, Cx As Long, Cy As Long) As Long
+Private Declare Function SHGetImageListXP Lib "shell32.dll" Alias "#727" (ByVal iImageList As Long, ByRef riid As Long, ByVal ppv As Long) As Long
 Private Declare Function DispCallFunc Lib "oleaut32.dll" (ByVal pvInstance As Long, ByVal offsetinVft As Long, ByVal CallConv As Long, ByVal retTYP As Integer, ByVal paCNT As Long, ByVal paTypes As Long, ByVal paValues As Long, ByRef retVAR As Variant) As Long
 
 Private Type RECTF                      ' GDI+ rectangle w/Single vartypes

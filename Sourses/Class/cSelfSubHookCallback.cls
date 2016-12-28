@@ -37,13 +37,13 @@ Private Const IDX_ATABLE                As Long = 12                           '
 Private Const IDX_CALLBACKORDINAL       As Long = 36                           ' Ubound(callback thunkdata)+1, index of the callback
 
 ' Declarations:
-Private Declare Sub RtlMoveMemory Lib "kernel32" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
-Private Declare Function IsBadCodePtr Lib "kernel32" (ByVal lpfn As Long) As Long
-Private Declare Function VirtualAlloc Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
-Private Declare Function VirtualFree Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
-Private Declare Function GetModuleHandleA Lib "kernel32" (ByVal lpModuleName As String) As Long
-Private Declare Function GetModuleHandleW Lib "kernel32" (ByVal lpModuleName As Long) As Long
-Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+Private Declare Sub RtlMoveMemory Lib "kernel32.dll" (ByVal Destination As Long, ByVal Source As Long, ByVal Length As Long)
+Private Declare Function IsBadCodePtr Lib "kernel32.dll" (ByVal lpfn As Long) As Long
+Private Declare Function VirtualAlloc Lib "kernel32.dll" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As Long
+Private Declare Function VirtualFree Lib "kernel32.dll" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
+Private Declare Function GetModuleHandleA Lib "kernel32.dll" (ByVal lpModuleName As String) As Long
+Private Declare Function GetModuleHandleW Lib "kernel32.dll" (ByVal lpModuleName As Long) As Long
+Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Public Enum eThunkType
     SubclassThunk = 0
     HookThunk = 1
@@ -74,14 +74,14 @@ Public Enum eAllMessages
     ALL_MESSAGES = -1                                                          'All messages will callback
 End Enum
 
-Private Declare Function CallWindowProcA Lib "user32" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function CallWindowProcW Lib "user32" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-Private Declare Function GetCurrentProcessId Lib "kernel32" () As Long
-Private Declare Function GetWindowThreadProcessId Lib "user32" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
-Private Declare Function IsWindow Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function IsWindowUnicode Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function SetWindowLongA Lib "user32" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
-Private Declare Function SetWindowLongW Lib "user32" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function CallWindowProcA Lib "user32.dll" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function CallWindowProcW Lib "user32.dll" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal Msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
+Private Declare Function GetCurrentProcessId Lib "kernel32.dll" () As Long
+Private Declare Function GetWindowThreadProcessId Lib "user32.dll" (ByVal hWnd As Long, lpdwProcessId As Long) As Long
+Private Declare Function IsWindow Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function IsWindowUnicode Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function SetWindowLongA Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Private Declare Function SetWindowLongW Lib "user32.dll" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 '-------------------------------------------------------------------------------------------------
 
 '========================================================================================================
@@ -98,10 +98,10 @@ Private Declare Function SetWindowLongW Lib "user32" (ByVal hWnd As Long, ByVal 
 '   e. At a minimum, review shk_SetHook, shk_Unhook & shk_TerminateHooks
 
 '-SelfHook specific declarations----------------------------------------------------------------------------
-Private Declare Function SetWindowsHookExA Lib "user32" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
-Private Declare Function SetWindowsHookExW Lib "user32" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
-Private Declare Function UnhookWindowsHookEx Lib "user32" (ByVal hHook As Long) As Long
-Private Declare Function GetDesktopWindow Lib "user32" () As Long
+Private Declare Function SetWindowsHookExA Lib "user32.dll" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
+Private Declare Function SetWindowsHookExW Lib "user32.dll" (ByVal idHook As Long, ByVal lpfn As Long, ByVal hMod As Long, ByVal dwThreadID As Long) As Long
+Private Declare Function UnhookWindowsHookEx Lib "user32.dll" (ByVal hHook As Long) As Long
+Private Declare Function GetDesktopWindow Lib "user32.dll" () As Long
 
 Public Enum eHookType                                                          ' http://msdn2.microsoft.com/en-us/library/ms644990.aspx
     WH_MSGFILTER = -1
@@ -344,17 +344,17 @@ Public Sub ssc_AddMsg(ByVal lng_hWnd As Long, ByVal When As eMsgWhen, ParamArray
 
     z_ScMem = zMap_VFunction(lng_hWnd, SubclassThunk)
     If z_ScMem Then                                                            'Ensure that the thunk hasn't already released its memory
-        Dim M                           As Long
-        For M = LBound(Messages) To UBound(Messages)
-            Select Case VarType(Messages(M))                                   ' ensure no strings, arrays, doubles, objects, etc are passed
+        Dim m                           As Long
+        For m = LBound(Messages) To UBound(Messages)
+            Select Case VarType(Messages(m))                                   ' ensure no strings, arrays, doubles, objects, etc are passed
                 Case vbByte, vbInteger, vbLong
                     If When And MSG_BEFORE Then                                'If the message is to be added to the before original WndProc table...
-                        If zAddMsg(Messages(M), IDX_BTABLE, z_ScMem) = False Then    'Add the message to the before table
+                        If zAddMsg(Messages(m), IDX_BTABLE, z_ScMem) = False Then    'Add the message to the before table
                             When = (When And Not MSG_BEFORE)
                         End If
                     End If
                     If When And MSG_AFTER Then                                 'If message is to be added to the after original WndProc table...
-                        If zAddMsg(Messages(M), IDX_ATABLE, z_ScMem) = False Then    'Add the message to the after table
+                        If zAddMsg(Messages(m), IDX_ATABLE, z_ScMem) = False Then    'Add the message to the after table
                             When = (When And Not MSG_AFTER)
                         End If
                     End If
@@ -370,15 +370,15 @@ Public Sub ssc_DelMsg(ByVal lng_hWnd As Long, ByVal When As eMsgWhen, ParamArray
 
     z_ScMem = zMap_VFunction(lng_hWnd, SubclassThunk)
     If z_ScMem Then                                                            'Ensure that the thunk hasn't already released its memory
-        Dim M                           As Long
-        For M = LBound(Messages) To UBound(Messages)                           ' ensure no strings, arrays, doubles, objects, etc are passed
-            Select Case VarType(Messages(M))
+        Dim m                           As Long
+        For m = LBound(Messages) To UBound(Messages)                           ' ensure no strings, arrays, doubles, objects, etc are passed
+            Select Case VarType(Messages(m))
                 Case vbByte, vbInteger, vbLong
                     If When And MSG_BEFORE Then                                'If the message is to be removed from the before original WndProc table...
-                        zDelMsg Messages(M), IDX_BTABLE, z_ScMem               'Remove the message to the before table
+                        zDelMsg Messages(m), IDX_BTABLE, z_ScMem               'Remove the message to the before table
                     End If
                     If When And MSG_AFTER Then                                 'If message is to be removed from the after original WndProc table...
-                        zDelMsg Messages(M), IDX_ATABLE, z_ScMem               'Remove the message to the after table
+                        zDelMsg Messages(m), IDX_ATABLE, z_ScMem               'Remove the message to the after table
                     End If
             End Select
         Next
@@ -401,7 +401,7 @@ End Sub
 Private Function zAddMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem As Long) As Boolean
     Dim nCount                          As Long                                'Table entry count
     Dim nBase                           As Long                                'Remember z_ScMem
-    Dim i                               As Long                                'Loop index
+    Dim I                               As Long                                'Loop index
 
     zAddMsg = True
     nBase = zData(nTable, z_ScMem)                                             'Map zData() to the specified table
@@ -411,16 +411,16 @@ Private Function zAddMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem
     Else
 
         nCount = zData(0, nBase)                                               'Get the current table entry count
-        For i = 1 To nCount                                                    'Loop through the table entries
-            If zData(i, nBase) = 0 Then                                        'If the element is free...
-                zData(i, nBase) = uMsg                                         'Use this element
+        For I = 1 To nCount                                                    'Loop through the table entries
+            If zData(I, nBase) = 0 Then                                        'If the element is free...
+                zData(I, nBase) = uMsg                                         'Use this element
                 GoTo Bail                                                      'Bail
-            ElseIf zData(i, nBase) = uMsg Then                                 'If the message is already in the table...
+            ElseIf zData(I, nBase) = uMsg Then                                 'If the message is already in the table...
                 GoTo Bail                                                      'Bail
             End If
-        Next i                                                                 'Next message table entry
+        Next I                                                                 'Next message table entry
 
-        nCount = i                                                             'On drop through: i = nCount + 1, the new table entry count
+        nCount = I                                                             'On drop through: i = nCount + 1, the new table entry count
         If nCount > MSG_ENTRIES Then                                           'Check for message table overflow
             zError "zAddMsg", "Message table overflow. Either increase the value of Const MSG_ENTRIES or use ALL_MESSAGES instead of specific message values"
             zAddMsg = False
@@ -439,7 +439,7 @@ End Function
 Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem As Long)
     Dim nCount                          As Long                                'Table entry count
     Dim nBase                           As Long                                'Remember z_ScMem
-    Dim i                               As Long                                'Loop index
+    Dim I                               As Long                                'Loop index
 
     nBase = zData(nTable, z_ScMem)                                             'Map zData() to the specified table
 
@@ -448,12 +448,12 @@ Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem As L
     Else
         nCount = zData(0, nBase)                                               'Get the table entry count
 
-        For i = 1 To nCount                                                    'Loop through the table entries
-            If zData(i, nBase) = uMsg Then                                     'If the message is found...
-                zData(i, nBase) = 0                                            'Null the msg value -- also frees the element for re-use
+        For I = 1 To nCount                                                    'Loop through the table entries
+            If zData(I, nBase) = uMsg Then                                     'If the message is found...
+                zData(I, nBase) = 0                                            'Null the msg value -- also frees the element for re-use
                 GoTo Bail                                                      'Bail
             End If
-        Next i                                                                 'Next message table entry
+        Next I                                                                 'Next message table entry
 
         '        zError "zDelMsg", "Message &H" & Hex$(uMsg) & " not found in table"
     End If
@@ -634,7 +634,7 @@ Private Function zMap_VFunction(vFuncTarget As Long, _
     If thunkCol Is Nothing Then
         zError "zMap_VFunction", "Thunk hasn't been initialized"
     Else
-        If thunkCol.Count Then
+        If thunkCol.count Then
             On Error GoTo Catch
             z_ScMem = thunkCol(colID)                                          'Get the thunk address
             If IsBadCodePtr(z_ScMem) Then z_ScMem = 0&
@@ -684,39 +684,39 @@ Private Function zAddressOf(ByVal oCallback As Object, ByVal nOrdinal As Long) A
     Dim bSub                            As Byte                                'Value we expect to find pointed at by a vTable method entry
     Dim bVal                            As Byte
     Dim nAddr                           As Long                                'Address of the vTable
-    Dim i                               As Long                                'Loop index
-    Dim j                               As Long                                'Loop limit
+    Dim I                               As Long                                'Loop index
+    Dim J                               As Long                                'Loop limit
 
     RtlMoveMemory VarPtr(nAddr), ObjPtr(oCallback), 4                          'Get the address of the callback object's instance
-    If Not zProbe(nAddr + &H1C, i, bSub) Then                                  'Probe for a Class method
-        If Not zProbe(nAddr + &H6F8, i, bSub) Then                             'Probe for a Form method
+    If Not zProbe(nAddr + &H1C, I, bSub) Then                                  'Probe for a Class method
+        If Not zProbe(nAddr + &H6F8, I, bSub) Then                             'Probe for a Form method
             ' \\LaVolpe - Added propertypage offset
-            If Not zProbe(nAddr + &H710, i, bSub) Then                         'Probe for a PropertyPage method
-                If Not zProbe(nAddr + &H7A4, i, bSub) Then                     'Probe for a UserControl method
+            If Not zProbe(nAddr + &H710, I, bSub) Then                         'Probe for a PropertyPage method
+                If Not zProbe(nAddr + &H7A4, I, bSub) Then                     'Probe for a UserControl method
                     Exit Function                                              'Bail...
                 End If
             End If
         End If
     End If
 
-    i = i + 4                                                                  'Bump to the next entry
+    I = I + 4                                                                  'Bump to the next entry
     'J = I + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
-    j = i + 1024 * 2                                                           'Set a reasonable limit, scan 512 vTable entries
-    Do While i < j
-        RtlMoveMemory VarPtr(nAddr), i, 4                                      'Get the address stored in this vTable entry
+    J = I + 1024 * 2                                                           'Set a reasonable limit, scan 512 vTable entries
+    Do While I < J
+        RtlMoveMemory VarPtr(nAddr), I, 4                                      'Get the address stored in this vTable entry
 
         If IsBadCodePtr(nAddr) Then                                            'Is the entry an invalid code address?
-            RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4            'Return the specified vTable entry address
+            RtlMoveMemory VarPtr(zAddressOf), I - (nOrdinal * 4), 4            'Return the specified vTable entry address
             Exit Do                                                            'Bad method signature, quit loop
         End If
 
         RtlMoveMemory VarPtr(bVal), nAddr, 1                                   'Get the byte pointed to by the vTable entry
         If bVal <> bSub Then                                                   'If the byte doesn't match the expected value...
-            RtlMoveMemory VarPtr(zAddressOf), i - (nOrdinal * 4), 4            'Return the specified vTable entry address
+            RtlMoveMemory VarPtr(zAddressOf), I - (nOrdinal * 4), 4            'Return the specified vTable entry address
             Exit Do                                                            'Bad method signature, quit loop
         End If
 
-        i = i + 4                                                              'Next vTable entry
+        I = I + 4                                                              'Next vTable entry
     Loop
 End Function
 
@@ -805,7 +805,7 @@ End Sub
 
 Private Sub zTerminateThunks(ByVal vType As eThunkType)
 
-    Dim i                               As Long
+    Dim I                               As Long
     Dim oCallback                       As Object
     Dim thunkCol                        As Collection
     Dim z_ScMem                         As Long                                'Thunk base address
@@ -824,8 +824,8 @@ Private Sub zTerminateThunks(ByVal vType As eThunkType)
 
     If Not (thunkCol Is Nothing) Then                                          'Ensure that hooking has been started
         With thunkCol
-            For i = .Count To 1 Step -1                                        'Loop through the collection of hook types in reverse order
-                z_ScMem = .Item(i)                                             'Get the thunk address
+            For I = .count To 1 Step -1                                        'Loop through the collection of hook types in reverse order
+                z_ScMem = .item(I)                                             'Get the thunk address
                 If IsBadCodePtr(z_ScMem) = 0 Then                              'Ensure that the thunk hasn't already released its memory
                     Select Case vType
                         Case SubclassThunk
@@ -840,7 +840,7 @@ Private Sub zTerminateThunks(ByVal vType As eThunkType)
                             RtlMoveMemory VarPtr(oCallback), VarPtr(INDX_OWNER), 4&
                     End Select
                 End If
-            Next i                                                             'Next member of the collection
+            Next I                                                             'Next member of the collection
         End With
         Set thunkCol = Nothing                                                 'Destroy the hook/thunk-address collection
     End If
@@ -890,7 +890,7 @@ Public Function scb_SetCallbackAddr(ByVal nParamCount As Long, _
         Set z_cbFunk = New Collection                                          'If this is the first time through, do the one-time initialization
     Else
         On Error Resume Next                                                   'Catch already initialized?
-        z_ScMem = z_cbFunk.Item("h" & ObjPtr(oCallback) & "." & nOrdinal)      'Test it
+        z_ScMem = z_cbFunk.item("h" & ObjPtr(oCallback) & "." & nOrdinal)      'Test it
         If Err = 0 Then
             scb_SetCallbackAddr = z_ScMem + PROC_OFF                           'we had this one, just reference it
             Exit Function

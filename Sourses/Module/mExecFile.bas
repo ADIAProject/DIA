@@ -55,9 +55,9 @@ Private Type PROCESS_INFORMATION
     dwThreadID                          As Long
 End Type
 
-Private Const STARTF_USESHOWWINDOW  As Long = &H1
-Private Const INFINITE              As Long = -1&
-Private Const NORMAL_PRIORITY_CLASS As Long = &H20
+Private Const STARTF_USESHOWWINDOW   As Long = &H1
+Private Const INFINITE               As Long = -1&
+Private Const NORMAL_PRIORITY_CLASS  As Long = &H20
 
 Private Const ERROR_FILE_NOT_FOUND   As Long = 2
 Private Const ERROR_PATH_NOT_FOUND   As Long = 3
@@ -78,6 +78,7 @@ Private Declare Function CreateProcess Lib "kernel32.dll" Alias "CreateProcessA"
 Private Declare Function GetExitCodeProcess Lib "kernel32.dll" (ByVal hProcess As Long, lpExitCode As Long) As Long
 Private Declare Function WaitForSingleObject Lib "kernel32.dll" (ByVal hHandle As Long, ByVal dwMilliseconds As Long) As Long
 Private Declare Function ShellExecuteForExplore Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, lpParameters As Any, lpDirectory As Any, ByVal nShowCmd As Long) As Long
+
 Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 '!--------------------------------------------------------------------------------
@@ -111,7 +112,7 @@ Public Function RunAndWait(ComLine As String, DefaultDir As String, ShowFlag As 
     nRet = CreateProcess(vbNullString, ComLine, 0&, 0&, 1&, NORMAL_PRIORITY_CLASS, 0&, DefaultDir, SI, PI)
     WaitForSingleObject PI.hProcess, INFINITE
     GetExitCodeProcess PI.hProcess, nRet
-    If mbDebugStandart Then DebugMode str2VbTab & "RunAndWait-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(err.LastDllError)
+    If mbDebugStandart Then DebugMode str2VbTab & "RunAndWait-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
     
     CloseHandle PI.hProcess
     lngExitProc = nRet
@@ -152,7 +153,7 @@ Public Function RunAndWaitNew(ComLine As String, DefaultDir As String, ShowFlag 
         lngExitProc = nRet
         RunAndWaitNew = True
         
-        If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(err.LastDllError)
+        If mbDebugStandart Then DebugMode str2VbTab & "RunAndWaitNew-ReturnCode: " & CStr(nRet) & " - " & ApiErrorText(Err.LastDllError)
     Else
         ' Если Windows2k, то вызываем старую функцию RunAndWait
         RunAndWaitNew = RunAndWait(ComLine, DefaultDir, ShowFlag)

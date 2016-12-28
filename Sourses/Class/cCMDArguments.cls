@@ -78,7 +78,7 @@ Public Function Arguments() As Collection
     Dim lngRet   As Long
     Dim retCount As Long
     Dim rt       As String
-    Dim i        As Integer
+    Dim I        As Integer
     Dim sPtr     As Long
     Dim cmdLine  As String
     Dim retColl  As Collection
@@ -89,8 +89,8 @@ Public Function Arguments() As Collection
 
     If retCount Then
 
-        For i = 0 To retCount - 1
-            CopyMemoryLong VarPtr(sPtr), lngRet + i * 4, 4
+        For I = 0 To retCount - 1
+            CopyMemoryLong VarPtr(sPtr), lngRet + I * 4, 4
             CopyMemoryLong VarPtr(rt), VarPtr(SysAllocString(sPtr)), 4
             retColl.Add rt
         Next

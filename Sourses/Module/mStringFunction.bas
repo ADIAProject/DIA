@@ -92,39 +92,39 @@ End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CompareByDate
-'! Description (Описание)  :   [Check if date1 newer than date2]
-'! Parameters  (Переменные):   Date1 (String)
-'                              Date2 (String)
+'! Description (Описание)  :   [Check if strDate1 newer than strDate2]
+'! Parameters  (Переменные):   strDate1 (String)
+'                              strDate2 (String)
 '                              strResult (ByRef String)
 '!--------------------------------------------------------------------------------
-Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Optional ByRef strResult As String) As eVerCompareResult
+Public Function CompareByDate(ByVal strDate1 As String, ByVal strDate2 As String, Optional ByRef strResult As String) As eVerCompareResult
 
     Dim objRegExp    As RegExp
     Dim objMatch     As Match
     Dim objMatches   As MatchCollection
-    Dim m1           As Integer
-    Dim M2           As Integer
-    Dim d1           As Integer
-    Dim d2           As Integer
-    Dim Y1           As Integer
-    Dim Y2           As Integer
-    Dim strDate1     As String
-    Dim strDate2     As String
+    Dim MM1          As Long
+    Dim MM2          As Long
+    Dim DD1          As Long
+    Dim DD2          As Long
+    Dim YY1          As Long
+    Dim YY2          As Long
+    Dim strResDate1  As String
+    Dim strResDate2  As String
     Dim strDate1_x() As String
     Dim strDate2_x() As String
     Dim lngResult As eVerCompareResult
     
-    If mbDebugDetail Then DebugMode str8VbTab & "CompareByDate: " & Date1 & " compare with " & Date2
+    If mbDebugDetail Then DebugMode str8VbTab & "CompareByDate: " & strDate1 & " compare with " & strDate2
 
-    If InStr(Date1, strUnknownLCase) = 0 Then
-        If InStr(Date1, strComma) Then
-            strDate1_x = Split(Trim$(Date1), strComma)
-            Date1 = strDate1_x(0)
+    If InStr(strDate1, strUnknownLCase) = 0 Then
+        If InStr(strDate1, strComma) Then
+            strDate1_x = Split(Trim$(strDate1), strComma)
+            strDate1 = strDate1_x(0)
         End If
 
-        If InStr(Date2, strComma) Then
-            strDate2_x = Split(Trim$(Date2), strComma)
-            Date2 = strDate2_x(0)
+        If InStr(strDate2, strComma) Then
+            strDate2_x = Split(Trim$(strDate2), strComma)
+            strDate2 = strDate2_x(0)
         End If
 
         Set objRegExp = New RegExp
@@ -135,46 +135,46 @@ Public Function CompareByDate(ByVal Date1 As String, ByVal Date2 As String, Opti
             .Global = True
         End With
 
-        'получаем date1
-        Set objMatches = objRegExp.Execute(Date1)
+        'получаем strDate1
+        Set objMatches = objRegExp.Execute(strDate1)
 
-        If objMatches.Count Then
-            Set objMatch = objMatches.Item(0)
+        If objMatches.count Then
+            Set objMatch = objMatches.item(0)
             With objMatch
-                m1 = .SubMatches(0)
-                d1 = .SubMatches(1)
-                Y1 = .SubMatches(2)
+                MM1 = .SubMatches(0)
+                DD1 = .SubMatches(1)
+                YY1 = .SubMatches(2)
             End With
         End If
 
-        'получаем date2
-        Set objMatches = objRegExp.Execute(Date2)
+        'получаем strDate2
+        Set objMatches = objRegExp.Execute(strDate2)
 
-        If objMatches.Count Then
-            Set objMatch = objMatches.Item(0)
+        If objMatches.count Then
+            Set objMatch = objMatches.item(0)
             With objMatch
-                M2 = .SubMatches(0)
-                d2 = .SubMatches(1)
-                Y2 = .SubMatches(2)
+                MM2 = .SubMatches(0)
+                DD2 = .SubMatches(1)
+                YY2 = .SubMatches(2)
             End With
         End If
         
         If mbDateFormatRus Then
-            strDate1 = Y1 & strDot & d1 & strDot & m1
-            strDate2 = Y2 & strDot & d2 & strDot & M2
+            strResDate1 = YY1 & strDot & DD1 & strDot & MM1
+            strResDate2 = YY2 & strDot & DD2 & strDot & MM2
         Else
-            strDate1 = Y1 & strDot & m1 & strDot & d1
-            strDate2 = Y2 & strDot & M2 & strDot & d2
+            strResDate1 = YY1 & strDot & MM1 & strDot & DD1
+            strResDate2 = YY2 & strDot & MM2 & strDot & DD2
         End If
 
-        lngResult = CompareByVersion(strDate1, strDate2)
+        lngResult = CompareByVersion(strResDate1, strResDate2)
     Else
         lngResult = crUnknownVer
     End If
 
     CompareByDate = lngResult
     strResult = VBA.Choose(lngResult + 3, "?", "<", "=", ">")
-    If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & Date1 & strSpace & strResult & strSpace & Date2
+    If mbDebugStandart Then DebugMode str8VbTab & "CompareByDate-Result: " & strDate1 & strSpace & strResult & strSpace & strDate2
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -191,7 +191,7 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
     Dim strDevVerLocal_xx   As String
     Dim strVersionBD_x()    As String
     Dim strVersionLocal_x() As String
-    Dim i                   As Integer
+    Dim ii                  As Long
     Dim lngResult           As eVerCompareResult
 
     lngResult = crUnknownVer
@@ -234,23 +234,23 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
                 
                 If UBound(strVersionBD_x) > UBound(strVersionLocal_x) Then
 
-                    For i = 0 To UBound(strVersionLocal_x)
+                    For ii = 0 To UBound(strVersionLocal_x)
 
-                        If IsNumeric(strVersionBD_x(i)) Then
-                            If IsNumeric(strVersionLocal_x(i)) Then
-                                If CLng(strVersionBD_x(i)) < CLng(strVersionLocal_x(i)) Then
+                        If IsNumeric(strVersionBD_x(ii)) Then
+                            If IsNumeric(strVersionLocal_x(ii)) Then
+                                If CLng(strVersionBD_x(ii)) < CLng(strVersionLocal_x(ii)) Then
                                     lngResult = crLessVer
 
                                     Exit For
 
-                                ElseIf CLng(strVersionBD_x(i)) > CLng(strVersionLocal_x(i)) Then
+                                ElseIf CLng(strVersionBD_x(ii)) > CLng(strVersionLocal_x(ii)) Then
                                     lngResult = crGreaterVer
 
                                     Exit For
 
                                 Else
 
-                                    If i = UBound(strVersionBD_x) Then
+                                    If ii = UBound(strVersionBD_x) Then
                                         lngResult = crEqualVer
                                     End If
                                 End If
@@ -264,23 +264,23 @@ Public Function CompareByVersion(ByVal strVersionBD As String, ByVal strVersionL
 
                 Else
 
-                    For i = 0 To UBound(strVersionBD_x)
+                    For ii = 0 To UBound(strVersionBD_x)
 
-                        If IsNumeric(strVersionBD_x(i)) Then
-                            If IsNumeric(strVersionLocal_x(i)) Then
-                                If CLng(strVersionBD_x(i)) < CLng(strVersionLocal_x(i)) Then
+                        If IsNumeric(strVersionBD_x(ii)) Then
+                            If IsNumeric(strVersionLocal_x(ii)) Then
+                                If CLng(strVersionBD_x(ii)) < CLng(strVersionLocal_x(ii)) Then
                                     lngResult = crLessVer
 
                                     Exit For
 
-                                ElseIf CLng(strVersionBD_x(i)) > CLng(strVersionLocal_x(i)) Then
+                                ElseIf CLng(strVersionBD_x(ii)) > CLng(strVersionLocal_x(ii)) Then
                                     lngResult = crGreaterVer
 
                                     Exit For
 
                                 Else
 
-                                    If i = UBound(strVersionBD_x) Then
+                                    If ii = UBound(strVersionBD_x) Then
                                         lngResult = crEqualVer
                                     End If
                                 End If
@@ -341,8 +341,8 @@ Public Sub ConvertDate2Rus(ByRef dtDate As String)
 
             With objMatches
 
-                If .Count Then
-                    Set objMatch = .Item(0)
+                If .count Then
+                    Set objMatch = .item(0)
                     MM = Format$(objMatch.SubMatches(0), "00")
                     DD = Format$(objMatch.SubMatches(1), "00")
                     YYYY = DateTime.Year(dtDate)
@@ -439,19 +439,19 @@ End Sub
 '! Parameters  (Переменные):   sStr (String)
 '!--------------------------------------------------------------------------------
 Public Sub RemoveUni(ByRef sStr As String)
-    Dim i           As Long
+    Dim ii          As Long
     Dim Map()       As Byte
     Dim mbChanged   As Boolean
  
     If LenB(sStr) Then
         Map = sStr
-        For i = 1 To UBound(Map) Step 2
+        For ii = 1 To UBound(Map) Step 2
             'Is Unicode
-            If Map(i) Then
+            If Map(ii) Then
                  'Clear upper byte
-                Map(i) = 0
+                Map(ii) = 0
                  'Replace low byte
-                Map(i - 1) = bVopros
+                Map(ii - 1) = bVopros
                 ' str is changed
                 If Not mbChanged Then
                     mbChanged = True

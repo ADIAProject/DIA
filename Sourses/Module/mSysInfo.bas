@@ -1,7 +1,7 @@
 Attribute VB_Name = "mSysInfo"
-Option Explicit
 ' Получения подробной информации о версии операционной системы,
 ' а также модели компьтера/ноутбука/материнской платы
+Option Explicit
 
 #Const mbIDE_DBSProject = False
 ' Программные переменные
@@ -84,7 +84,7 @@ Private Declare Function GetSystemPowerStatus Lib "kernel32" (lpSystemPowerStatu
 
 Public Declare Function GetVersionEx Lib "kernel32.dll" Alias "GetVersionExA" (lpVersionInformation As OSVERSIONINFOEX) As Long
 Public Declare Sub GetNativeSystemInfo Lib "kernel32.dll" (ByRef lpSystemInfo As SYSTEM_INFO)
-Public Declare Function IsUserAnAdmin Lib "Shell32.dll" () As Long
+Public Declare Function IsUserAnAdmin Lib "shell32.dll" () As Long
 
 Private Declare Function IsWow64Process Lib "kernel32" (ByVal hProcess As Long, ByRef Wow64Process As Long) As Long
 Private Declare Function GetDiskFreeSpaceEx Lib "kernel32" Alias "GetDiskFreeSpaceExA" (ByVal lpRootPathName As String, lpFreeBytesAvailableToCaller As Currency, lpTotalNumberOfBytes As Currency, lpTotalNumberOfFreeBytes As Currency) As Long
@@ -248,15 +248,15 @@ Public Sub IsPCisNotebook()
         #If Not mbIDE_DBSProject Then
             'Если не определили по типу корпусу, то определяем по батарее
             Dim BatteryStatus As SYSTEM_POWER_STATUS
-            Dim iii           As Long
+            Dim ii            As Long
             Dim mbBatDev      As Boolean
             
-            For iii = 0 To UBound(arrHwidsLocal)
-                If InStr(arrHwidsLocal(iii).HWID, "ACPI0003") Then
+            For ii = 0 To UBound(arrHwidsLocal)
+                If InStr(arrHwidsLocal(ii).HWID, "ACPI0003") Then
                     mbBatDev = True
                     Exit For
                 End If
-            Next iii
+            Next ii
             
             'Get status system battery
             GetSystemPowerStatus BatteryStatus

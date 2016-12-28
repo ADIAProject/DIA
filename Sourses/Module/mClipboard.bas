@@ -31,7 +31,7 @@ Private Declare Function GlobalFree Lib "kernel32.dll" (ByVal hMem As Long) As L
 Private Declare Function GlobalLock Lib "kernel32.dll" (ByVal hMem As Long) As Long
 Private Declare Function GlobalUnlock Lib "kernel32.dll" (ByVal hMem As Long) As Long
 Private Declare Function GlobalSize Lib "kernel32.dll" (ByVal hMem As Long) As Long
-Private Declare Function OleCreatePictureIndirect Lib "OlePro32.dll" (PicDesc As OLEPIC, RefIID As Guid, ByVal fPictureOwnsHandle As Long, IPic As Any) As Long
+Private Declare Function OleCreatePictureIndirect Lib "olepro32.dll" (PicDesc As OLEPIC, RefIID As GUID, ByVal fPictureOwnsHandle As Long, iPic As Any) As Long
 Private Declare Function CopyImage Lib "user32.dll" (ByVal Handle As Long, ByVal un1 As Long, ByVal n1 As Long, ByVal n2 As Long, ByVal un2 As Long) As Long
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (lpvDest As Any, lpvSource As Any, ByVal cbCopy As Long)
 
@@ -48,7 +48,7 @@ Private Type OLEPIC
     Reserved                            As Long
 End Type
 
-Private Type Guid
+Private Type GUID
     Data1                               As Long
     Data2                               As Integer
     Data3                               As Integer

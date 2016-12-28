@@ -992,7 +992,7 @@ Begin VB.Form frmOptions
          Height          =   645
          Left            =   75
          TabIndex        =   1
-         Top             =   3720
+         Top             =   3735
          Width           =   2850
          _ExtentX        =   5027
          _ExtentY        =   1138
@@ -4095,6 +4095,9 @@ Private Sub SaveOptions()
     IniWriteStrPrivate "OS", "MatchHWIDbyDPName", Abs(mbMatchHWIDbyDPName), strSysIniTemp
     IniWriteStrPrivate "OS", "DP_is_aFolder", chkDP_is_aFolder.Value, strSysIniTemp
     IniWriteStrPrivate "OS", "SortMethodShell", lngSortMethodShell, strSysIniTemp
+    IniWriteStrPrivate "OS", "SortDBTxtFileByHWID", Abs(mbSortDBTxtFileByHWID), strSysIniTemp
+    IniWriteStrPrivate "OS", "ParseHwidByInfDrpFile", Abs(mbParseHwidByInfDrpFile), strSysIniTemp
+    
     
     'Заполяем в цикле подсекции ОС
     For cnt = 1 To lngOSCountNew

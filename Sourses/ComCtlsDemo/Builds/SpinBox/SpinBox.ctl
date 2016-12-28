@@ -173,7 +173,7 @@ Private Const UDS_ARROWKEYS As Long = &H20
 Private Const UDS_NOTHOUSANDS As Long = &H80
 Private Const UDS_HOTTRACK As Long = &H100
 Private Const WM_USER As Long = &H400
-Private Const UM_CHECKVALUECHANGED As Long = (WM_USER + 300)
+Private Const UM_CHECKVALUE As Long = (WM_USER + 300)
 Private Const UDM_SETRANGE As Long = (WM_USER + 101)
 Private Const UDM_GETRANGE As Long = (WM_USER + 102)
 Private Const UDM_SETRANGE32 As Long = (WM_USER + 111)
@@ -1242,7 +1242,7 @@ Select Case wMsg
     Case WM_SETFOCUS
         SetFocusAPI UserControl.hWnd
         Exit Function
-    Case UM_CHECKVALUECHANGED
+    Case UM_CHECKVALUE
         If wParam <> PropValue Then
             PropValue = wParam
             RaiseEvent Change
@@ -1323,10 +1323,10 @@ Select Case wMsg
         Dim KeyCode As Integer
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
-            RaiseEvent KeyDown(KeyCode, GetShiftState())
+            RaiseEvent KeyDown(KeyCode, GetShiftStateFromMsg())
             SpinBoxCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
-            RaiseEvent KeyUp(KeyCode, GetShiftState())
+            RaiseEvent KeyUp(KeyCode, GetShiftStateFromMsg())
         End If
         wParam = KeyCode
     Case WM_CHAR
@@ -1441,7 +1441,7 @@ Select Case wMsg
             Case EN_CHANGE
                 If ChangeFrozen = False Then
                     RaiseEvent TextChange
-                    If SpinBoxUpDownHandle <> 0 Then PostMessage SpinBoxUpDownHandle, UM_CHECKVALUECHANGED, SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&), ByVal 0&
+                    If SpinBoxUpDownHandle <> 0 Then PostMessage SpinBoxUpDownHandle, UM_CHECKVALUE, SendMessage(SpinBoxUpDownHandle, UDM_GETPOS32, 0, ByVal 0&), ByVal 0&
                 Else
                     ChangeFrozen = False
                     Exit Function

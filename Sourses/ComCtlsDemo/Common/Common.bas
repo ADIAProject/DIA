@@ -463,7 +463,6 @@ Public Function GetShiftStateFromParam(ByVal wParam As Long) As ShiftConstants
 Const MK_SHIFT As Long = &H4, MK_CONTROL As Long = &H8
 If (wParam And MK_SHIFT) = MK_SHIFT Then GetShiftStateFromParam = vbShiftMask
 If (wParam And MK_CONTROL) = MK_CONTROL Then GetShiftStateFromParam = GetShiftStateFromParam Or vbCtrlMask
-' Detect if ALT key was pressed. This must not be GetAsyncKeyState.
 If GetKeyState(vbKeyMenu) < 0 Then GetShiftStateFromParam = GetShiftStateFromParam Or vbAltMask
 End Function
 
@@ -474,16 +473,30 @@ If (wParam And MK_RBUTTON) = MK_RBUTTON Then GetMouseStateFromParam = GetMouseSt
 If (wParam And MK_MBUTTON) = MK_MBUTTON Then GetMouseStateFromParam = GetMouseStateFromParam Or vbMiddleButton
 End Function
 
+Public Function GetShiftStateFromMsg() As ShiftConstants
+If GetKeyState(vbKeyShift) < 0 Then GetShiftStateFromMsg = vbShiftMask
+If GetKeyState(vbKeyControl) < 0 Then GetShiftStateFromMsg = GetShiftStateFromMsg Or vbCtrlMask
+If GetKeyState(vbKeyMenu) < 0 Then GetShiftStateFromMsg = GetShiftStateFromMsg Or vbAltMask
+End Function
+
+Public Function GetMouseStateFromMsg() As MouseButtonConstants
+If GetKeyState(vbLeftButton) < 0 Then GetMouseStateFromMsg = vbLeftButton
+If GetKeyState(vbRightButton) < 0 Then GetMouseStateFromMsg = GetMouseStateFromMsg Or vbRightButton
+If GetKeyState(vbMiddleButton) < 0 Then GetMouseStateFromMsg = GetMouseStateFromMsg Or vbMiddleButton
+End Function
+
 Public Function GetShiftState() As ShiftConstants
 GetShiftState = (-vbShiftMask * KeyPressed(vbKeyShift))
-GetShiftState = GetShiftState Or (-vbAltMask * KeyPressed(vbKeyMenu))
 GetShiftState = GetShiftState Or (-vbCtrlMask * KeyPressed(vbKeyControl))
+GetShiftState = GetShiftState Or (-vbAltMask * KeyPressed(vbKeyMenu))
 End Function
 
 Public Function GetMouseState() As MouseButtonConstants
-GetMouseState = (-vbLeftButton * KeyPressed(vbLeftButton))
+Const SM_SWAPBUTTON As Long = 23
+' GetAsyncKeyState requires a mapping of physical mouse buttons to logical mouse buttons.
+GetMouseState = (-vbLeftButton * KeyPressed(IIf(GetSystemMetrics(SM_SWAPBUTTON) = 0, vbLeftButton, vbRightButton)))
+GetMouseState = GetMouseState Or (-vbRightButton * KeyPressed(IIf(GetSystemMetrics(SM_SWAPBUTTON) = 0, vbRightButton, vbLeftButton)))
 GetMouseState = GetMouseState Or (-vbMiddleButton * KeyPressed(vbMiddleButton))
-GetMouseState = GetMouseState Or (-vbRightButton * KeyPressed(vbRightButton))
 End Function
 
 Public Function KeyToggled(ByVal KeyCode As KeyCodeConstants) As Boolean

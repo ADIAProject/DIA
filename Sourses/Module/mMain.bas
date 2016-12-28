@@ -3,8 +3,8 @@ Option Explicit
 
 #Const mbIDE_DBSProject = False
 'Основные параметры программы
-Public Const strDateProgram         As String = "26/12/2016"
-Public Const strVerProgram          As String = "7.12.26"
+Public Const strDateProgram         As String = "28/12/2016"
+Public Const strVerProgram          As String = "7.12.28"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
@@ -154,6 +154,7 @@ Public mbRestartProgram             As Boolean          ' Маркер перезапуска про
 Public mbOnlyUnpackDP               As Boolean          ' Переменная для определения режима - только распаковка драйверов
 Public mbDeleteDriverByHwid         As Boolean          ' Флаг сообщает о том что драйвер был удален на форме frmListHwidAll
 Public strCompModel                 As String           ' Модель компьютера/материнской платы
+Public strCompName                  As String           ' Имя компьютера, без доменного суффикса
 Public strFrmMainCaptionTemp        As String           ' кэпшн основной формы
 Public strFrmMainCaptionTempDate    As String           ' кэпшн основной формы - дата релиза программы
 
@@ -294,6 +295,7 @@ Private Sub Main()
     strWinDir = BackslashAdd2Path(Environ$("WINDIR"))
     strWinTemp = BackslashAdd2Path(Environ$("TMP"))
     strSysDrive = Environ$("SYSTEMDRIVE")
+    strCompName = SafeFileName(Environ$("COMPUTERNAME"))
     
     lngFreeSpaceSysDrive = GetSystemDiskFreeSpace(strSysDrive)
 

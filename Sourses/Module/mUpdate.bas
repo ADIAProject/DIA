@@ -99,11 +99,11 @@ End Function
 Public Function CheckInternetConnection() As Boolean
 
     Dim aux As String * 255
-    Dim R   As Long
+    Dim r   As Long
 
-    R = InternetGetConnectedStateEx(R, aux, 254, 0)
+    r = InternetGetConnectedStateEx(r, aux, 254, 0)
 
-    If R = 1 Then
+    If r = 1 Then
         CheckInternetConnection = True
     Else
         CheckInternetConnection = False
@@ -327,7 +327,7 @@ Public Sub LoadUpdateData()
     Dim strTextNodeName As String
     Dim miNodeIndex     As Integer
     Dim strVersionsTemp As String
-    Dim i               As Long
+    Dim I               As Long
     Dim strUrl_Request  As String
     Dim lngUbound       As Long
 
@@ -366,9 +366,9 @@ Public Sub LoadUpdateData()
                 ReDim strLinkFull(lngUbound, 6)
 
                 ' Данные из файла %ver%.xml - Загрузка описаний изменений
-                For i = 0 To lngUbound
-                    LoadUpdDescription strUpdVersions(i), i
-                Next i
+                For I = 0 To lngUbound
+                    LoadUpdDescription strUpdVersions(I), I
+                Next I
 
             End If
 

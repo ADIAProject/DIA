@@ -134,7 +134,7 @@ Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long
 Private Declare Function Rectangle Lib "gdi32.dll" (ByVal hDC As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
 Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, qRC As RECT, ByVal Edge As Long, ByVal grfFlags As Long) As Long
 Private Declare Function DrawIconEx Lib "user32.dll" (ByVal hDC As Long, ByVal XLeft As Long, ByVal YTop As Long, ByVal hIcon As Long, ByVal CXWidth As Long, ByVal CYWidth As Long, ByVal istepIfAniCur As Long, ByVal hbrFlickerFreeDraw As Long, ByVal diFlags As Long) As Long
-Private Declare Function DrawText Lib "user32" Alias "DrawTextW" (ByVal hDC As Long, ByVal lpchText As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal uFormat As Long) As Long
+Private Declare Function DrawText Lib "user32.dll" Alias "DrawTextW" (ByVal hDC As Long, ByVal lpchText As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal uFormat As Long) As Long
 Private Declare Function FillRect Lib "user32.dll" (ByVal hDC As Long, lpRect As RECT, ByVal hBrush As Long) As Long
 Private Declare Function SetCapture Lib "user32.dll" (ByVal hWnd As Long) As Long
 Private Declare Function ReleaseCapture Lib "user32.dll" () As Long
@@ -395,8 +395,8 @@ End Property
 '!--------------------------------------------------------------------------------
 Private Sub DrawAllColors()
 
-Dim i                                   As Integer
-Dim j                                   As Integer
+Dim I                                   As Integer
+Dim J                                   As Integer
 Dim RC                                  As RECT
 
     picDropDown.Cls
@@ -421,11 +421,11 @@ Dim RC                                  As RECT
     End If
 
     'Other colors
-    For i = 0 To m_ColorsInColumn - 1
-        For j = 0 To m_ColorsInRow - 1
-            DrawRectangle picDropDown.hDC, 8 + j * m_Step, m_OffsetTop + i * m_Step, m_RectSize, m_RectSize, &H808080, m_arrColor(i, j)
-        Next j
-    Next i
+    For I = 0 To m_ColorsInColumn - 1
+        For J = 0 To m_ColorsInRow - 1
+            DrawRectangle picDropDown.hDC, 8 + J * m_Step, m_OffsetTop + I * m_Step, m_RectSize, m_RectSize, &H808080, m_arrColor(I, J)
+        Next J
+    Next I
 
     'Window border
     SetRect RC, 0, 0, picDropDown.ScaleWidth, picDropDown.ScaleHeight
@@ -444,12 +444,12 @@ End Sub
 '                              BrushColor (Long = &HFFFFFF)
 '                              Transparent (Boolean)
 '!--------------------------------------------------------------------------------
-Public Sub DrawRectangle(ByVal lngHDc As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, Optional ByVal PenColor As Long = 0, Optional ByVal BrushColor As Long = &HFFFFFF, Optional ByVal Transparent As Boolean)
+Public Sub DrawRectangle(ByVal lngHDc As Long, ByVal X As Long, ByVal Y As Long, ByVal Cx As Long, ByVal Cy As Long, Optional ByVal PenColor As Long = 0, Optional ByVal BrushColor As Long = &HFFFFFF, Optional ByVal Transparent As Boolean)
 
 Dim hPen                                As Long
 Dim hBrush                              As Long
 
-    If Not CX < 0 Or CY < 0 Then
+    If Not Cx < 0 Or Cy < 0 Then
         hPen = SelectObject(lngHDc, CreatePen(0, 1, PenColor))
 
         If hPen Then
@@ -457,7 +457,7 @@ Dim hBrush                              As Long
                 hBrush = SelectObject(lngHDc, CreateSolidBrush(BrushColor))
             End If
 
-            Rectangle lngHDc, X, Y, X + CX, Y + CY
+            Rectangle lngHDc, X, Y, X + Cx, Y + Cy
 
             If Not Transparent Then
                 DeleteObject SelectObject(lngHDc, hBrush)
@@ -495,37 +495,37 @@ End Sub
 '                              CX (Long)
 '                              CY (Long)
 '!--------------------------------------------------------------------------------
-Private Sub DrawSelectedColorBackground(lngHDc As Long, X As Long, Y As Long, CX As Long, CY As Long)
+Private Sub DrawSelectedColorBackground(lngHDc As Long, X As Long, Y As Long, Cx As Long, Cy As Long)
 
-Dim i                                   As Long
-Dim j                                   As Long
+Dim I                                   As Long
+Dim J                                   As Long
 Dim RC                                  As RECT
 Dim hBrush                              As Long
 
     hBrush = CreateSolidBrush(&HFFFFFF)
 
-    For i = X To X + CX - 1
+    For I = X To X + Cx - 1
 
-        If i Mod 2 = 0 Then
+        If I Mod 2 = 0 Then
 
-            For j = Y + 1 To Y + CY - 1 Step 2
-                SetRect RC, i, j, i + 1, j + 1
+            For J = Y + 1 To Y + Cy - 1 Step 2
+                SetRect RC, I, J, I + 1, J + 1
                 FillRect lngHDc, RC, hBrush
-            Next j
+            Next J
 
         Else
 
-            For j = Y To Y + CY - 1 Step 2
-                SetRect RC, i, j, i + 1, j + 1
+            For J = Y To Y + Cy - 1 Step 2
+                SetRect RC, I, J, I + 1, J + 1
                 FillRect lngHDc, RC, hBrush
-            Next j
+            Next J
 
         End If
 
-    Next i
+    Next I
 
     DeleteObject hBrush
-    SetRect RC, X, Y, X + CX, Y + CY
+    SetRect RC, X, Y, X + Cx, Y + Cy
     DrawEdge lngHDc, RC, BDR_SUNKENOUTER, BF_RECT
 End Sub
 
@@ -539,25 +539,25 @@ Public Sub DropDown()
 Dim ListTop                             As Single
 Dim ListLeft                            As Single
 Dim RC                                  As RECT
-Dim i                                   As Integer
-Dim j                                   As Integer
+Dim I                                   As Integer
+Dim J                                   As Integer
 
     'Get m_ixIndex and m_iyIndex
     m_iXIndex = -1
     m_iYIndex = -1
 
-    For i = 0 To m_ColorsInColumn - 1
-        For j = 0 To m_ColorsInRow - 1
+    For I = 0 To m_ColorsInColumn - 1
+        For J = 0 To m_ColorsInRow - 1
 
-            If m_arrColor(i, j) = m_nSelectedColor Then
-                m_iXIndex = j
-                m_iYIndex = i
+            If m_arrColor(I, J) = m_nSelectedColor Then
+                m_iXIndex = J
+                m_iYIndex = I
 
                 Exit For
 
             End If
 
-        Next j
+        Next J
 
         If m_iXIndex > -1 Or m_iYIndex > -1 Then
 
@@ -565,7 +565,7 @@ Dim j                                   As Integer
 
         End If
 
-    Next i
+    Next I
 
     GetWindowRect UserControl.hWnd, RC
 
@@ -613,38 +613,38 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function GetColorIndex(ByVal X As Single, ByVal Y As Single, ByRef XIndex As Integer, ByRef YIndex As Integer) As Boolean
 
-Dim i                                   As Integer
-Dim j                                   As Integer
+Dim I                                   As Integer
+Dim J                                   As Integer
 
-    For i = 0 To m_ColorsInRow - 1
+    For I = 0 To m_ColorsInRow - 1
 
-        If X >= 8 + i * m_Step - 3 Then
-            If X <= 8 + i * m_Step + m_RectSize + 3 Then
-
-                Exit For
-
-            End If
-        End If
-
-    Next i
-
-    For j = 0 To m_ColorsInColumn - 1
-
-        If Y >= m_OffsetTop + j * m_Step - 3 Then
-            If Y <= m_OffsetTop + j * m_Step + m_RectSize + 3 Then
+        If X >= 8 + I * m_Step - 3 Then
+            If X <= 8 + I * m_Step + m_RectSize + 3 Then
 
                 Exit For
 
             End If
         End If
 
-    Next j
+    Next I
 
-    If i >= m_ColorsInRow Or j >= m_ColorsInColumn Then
+    For J = 0 To m_ColorsInColumn - 1
+
+        If Y >= m_OffsetTop + J * m_Step - 3 Then
+            If Y <= m_OffsetTop + J * m_Step + m_RectSize + 3 Then
+
+                Exit For
+
+            End If
+        End If
+
+    Next J
+
+    If I >= m_ColorsInRow Or J >= m_ColorsInColumn Then
         GetColorIndex = False
     Else
-        XIndex = i
-        YIndex = j
+        XIndex = I
+        YIndex = J
         GetColorIndex = True
     End If
 
@@ -770,8 +770,8 @@ End Sub
 Private Sub picDropDown_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 Dim RC                                  As RECT
-Dim i                                   As Integer
-Dim j                                   As Integer
+Dim I                                   As Integer
+Dim J                                   As Integer
 Dim clickedOnArrowArea                  As Boolean
 
     DrawAllColors
@@ -804,9 +804,9 @@ Dim clickedOnArrowArea                  As Boolean
                 'Other colors
                 SetCapture picDropDown.hWnd
 
-                If GetColorIndex(X, Y, i, j) Then
-                    If Not (m_UseForbiddenColor And (m_arrColor(j, i) = m_nForbiddenColor)) Then
-                        SetRect RC, 8 + i * m_Step - 3, m_OffsetTop + j * m_Step - 3, 8 + i * m_Step + m_RectSize + 3, m_OffsetTop + j * m_Step + m_RectSize + 3
+                If GetColorIndex(X, Y, I, J) Then
+                    If Not (m_UseForbiddenColor And (m_arrColor(J, I) = m_nForbiddenColor)) Then
+                        SetRect RC, 8 + I * m_Step - 3, m_OffsetTop + J * m_Step - 3, 8 + I * m_Step + m_RectSize + 3, m_OffsetTop + J * m_Step + m_RectSize + 3
                         DrawEdge picDropDown.hDC, RC, BDR_SUNKENOUTER, BF_RECT
                         picDropDown.Refresh
                     End If
@@ -828,8 +828,8 @@ End Sub
 Private Sub picDropDown_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 Dim RC                                  As RECT
-Dim i                                   As Integer
-Dim j                                   As Integer
+Dim I                                   As Integer
+Dim J                                   As Integer
 
     DrawAllColors
 
@@ -850,11 +850,11 @@ Dim j                                   As Integer
         Else
 
             'Other colors
-            If GetColorIndex(X, Y, i, j) Then
-                If Not (m_UseForbiddenColor And (m_arrColor(j, i) = m_nForbiddenColor)) Then
-                    SetRect RC, 8 + i * m_Step - 3, m_OffsetTop + j * m_Step - 3, 8 + i * m_Step + m_RectSize + 3, m_OffsetTop + j * m_Step + m_RectSize + 3
+            If GetColorIndex(X, Y, I, J) Then
+                If Not (m_UseForbiddenColor And (m_arrColor(J, I) = m_nForbiddenColor)) Then
+                    SetRect RC, 8 + I * m_Step - 3, m_OffsetTop + J * m_Step - 3, 8 + I * m_Step + m_RectSize + 3, m_OffsetTop + J * m_Step + m_RectSize + 3
 
-                    If m_iXIndex = i And m_iYIndex = j Then
+                    If m_iXIndex = I And m_iYIndex = J Then
                         DrawEdge picDropDown.hDC, RC, BDR_SUNKENOUTER, BF_RECT
                     Else
 
@@ -865,9 +865,9 @@ Dim j                                   As Integer
                         End If
                     End If
 
-                    If m_arrColor(j, i) <> previousTrackedColor Then
-                        RaiseEvent TrackColor(m_arrColor(j, i))
-                        previousTrackedColor = m_arrColor(j, i)
+                    If m_arrColor(J, I) <> previousTrackedColor Then
+                        RaiseEvent TrackColor(m_arrColor(J, I))
+                        previousTrackedColor = m_arrColor(J, I)
                     End If
 
                     picDropDown.Refresh
@@ -888,8 +888,8 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub picDropDown_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Dim i                                   As Integer
-Dim j                                   As Integer
+Dim I                                   As Integer
+Dim J                                   As Integer
 
     If X >= 8 And X <= 8 + 138 And Y >= 8 And Y <= 8 + 18 And m_ColorPalette = System Then
 
@@ -905,7 +905,7 @@ Dim j                                   As Integer
             
             'change by AdiaProject - Call Color Dialog
             With New CommonDialog
-                .Flags = CdlCCRGBInit Or CdlCCFullOpen Or CdlCCAnyColor
+                .flags = CdlCCRGBInit Or CdlCCFullOpen Or CdlCCAnyColor
                 .Color = m_nSelectedColor
                 If .ShowColor = True Then m_nSelectedColor = .Color
             End With
@@ -917,11 +917,11 @@ Dim j                                   As Integer
     Else
 
         'Other colors
-        If GetColorIndex(X, Y, i, j) Then
-            If Not (m_UseForbiddenColor And (m_arrColor(j, i) = m_nForbiddenColor)) Then
-                m_iXIndex = i
-                m_iYIndex = j
-                m_nSelectedColor = m_arrColor(j, i)
+        If GetColorIndex(X, Y, I, J) Then
+            If Not (m_UseForbiddenColor And (m_arrColor(J, I) = m_nForbiddenColor)) Then
+                m_iXIndex = I
+                m_iYIndex = J
+                m_nSelectedColor = m_arrColor(J, I)
                 ReleaseCapture
                 Redraw
                 picDropDown.Visible = False

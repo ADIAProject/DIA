@@ -185,12 +185,12 @@ Private Declare Function DrawEdge Lib "user32.dll" (ByVal hDC As Long, qRC As RE
 Private Declare Function CreateSolidBrush Lib "gdi32.dll" (ByVal crColor As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme.dll" (ByVal hTheme As Long) As Long
-Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRect As RECT, pClipRect As RECT) As Long
+Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pClipRect As RECT) As Long
 Private Declare Function SetPixel Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
-Private Declare Function OleTranslateColor Lib "OlePro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "olepro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
 Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
-Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
+Private Declare Function SetWindowPos Lib "user32.dll" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal Cx As Long, ByVal Cy As Long, ByVal wFlags As Long) As Long
 Private Declare Function GetWindowRect Lib "user32.dll" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 Private Declare Function GetCursorPos Lib "user32.dll" (lpPoint As POINTAPI) As Long
@@ -829,12 +829,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let SelectedFont(ByVal vNewValue As String)
 
-    Dim i As Integer
+    Dim I As Integer
 
-    i = FontExist(vNewValue)
+    I = FontExist(vNewValue)
 
-    If i > -1 Then
-        mListPos = i
+    If I > -1 Then
+        mListPos = I
         RaiseEvent SelectedFontChanged(mListFont(mListPos))
         DrawControl , True
     Else
@@ -935,7 +935,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let Sorted(ByVal vNewValue As Boolean)
 
-    Dim i  As Integer
+    Dim I  As Integer
     Dim fI As Integer
 
     mSorted = vNewValue
@@ -945,9 +945,9 @@ Public Property Let Sorted(ByVal vNewValue As Boolean)
 
         If mSorted = True Then SortList
 
-        For i = 0 To mRecentCount - 1
-            fI = FontExist(mRecent(i).fName)
-            mRecent(i).fIndex = fI
+        For I = 0 To mRecentCount - 1
+            fI = FontExist(mRecent(I).fName)
+            mRecent(I).fIndex = fI
         Next
 
     End If
@@ -1049,12 +1049,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Function AddToUsedList(FontName As String) As Integer
 
-    Dim i As Integer
+    Dim I As Integer
     Dim F As Boolean
 
-    For i = 0 To mUsedCount - 1
+    For I = 0 To mUsedCount - 1
 
-        If LCase$(mUsedList(i)) = LCase$(FontName) Then
+        If LCase$(mUsedList(I)) = LCase$(FontName) Then
             F = True
 
             Exit For
@@ -1284,7 +1284,7 @@ End Sub
 Private Sub DrawList()
     On Local Error Resume Next
 
-    Dim i   As Integer
+    Dim I   As Integer
     Dim Br  As Long
     Dim tC  As Long
     Dim rct As RECT
@@ -1303,44 +1303,44 @@ Private Sub DrawList()
     Br = CreateSolidBrush(tC)
     PicList.Line (0, mRecentCount * (mComboFontSize * 2))-(PicList.ScaleWidth, mRecentCount * (mComboFontSize * 2))
 
-    For i = 0 To mRecentCount - 1
+    For I = 0 To mRecentCount - 1
         PicList.CurrentX = 2
-        PicList.CurrentY = (i * (mComboFontSize * 2)) + 2
+        PicList.CurrentY = (I * (mComboFontSize * 2)) + 2
 
-        If mShowFontInCombo = True Then PicList.FontName = mRecent(i).fName
+        If mShowFontInCombo = True Then PicList.FontName = mRecent(I).fName
         PicList.FontSize = mComboFontSize
         PicList.FontItalic = mComboFontItalic
         PicList.FontBold = mComboFontBold
 
-        If IsUsed(mRecent(i).fName) = False Then
+        If IsUsed(mRecent(I).fName) = False Then
             PicList.ForeColor = mRecentForeColor
         Else
-            SetRect rct, 0, i * (mComboFontSize * 2), PicList.ScaleWidth, (i + 1) * (mComboFontSize * 2)
+            SetRect rct, 0, I * (mComboFontSize * 2), PicList.ScaleWidth, (I + 1) * (mComboFontSize * 2)
             FillRect PicList.hDC, rct, Br
             PicList.ForeColor = mUsedForeColor
         End If
 
-        PicList.Print mRecent(i).fName
+        PicList.Print mRecent(I).fName
     Next
 
-    For i = 0 To mComboFontCount - 1
+    For I = 0 To mComboFontCount - 1
 
-        If IsUsed(fList(i).fName) = False Then
+        If IsUsed(fList(I).fName) = False Then
             PicList.ForeColor = mComboForeColor
         Else
-            SetRect rct, 0, (i * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount) + 2, PicList.ScaleWidth, ((i + 1) * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount)
+            SetRect rct, 0, (I * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount) + 2, PicList.ScaleWidth, ((I + 1) * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount)
             FillRect PicList.hDC, rct, Br
             PicList.ForeColor = mUsedForeColor
         End If
 
         PicList.CurrentX = 2
-        PicList.CurrentY = (i * (mComboFontSize * 2)) + 2 + ((mComboFontSize * 2) * mRecentCount)
+        PicList.CurrentY = (I * (mComboFontSize * 2)) + 2 + ((mComboFontSize * 2) * mRecentCount)
 
-        If mShowFontInCombo = True Then PicList.FontName = fList(i).fName
+        If mShowFontInCombo = True Then PicList.FontName = fList(I).fName
         PicList.FontSize = mComboFontSize
         PicList.FontItalic = mComboFontItalic
         PicList.FontBold = mComboFontBold
-        PicList.Print fList(i).fName
+        PicList.Print fList(I).fName
     Next
 
     DeleteObject Br
@@ -1448,14 +1448,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub FillList()
 
-    Dim i As Integer
+    Dim I As Integer
 
     mListCount = Screen.FontCount - 1
 
     ReDim mListFont(mListCount)
 
-    For i = 0 To Screen.FontCount - 1
-        mListFont(i) = Screen.Fonts(i)
+    For I = 0 To Screen.FontCount - 1
+        mListFont(I) = Screen.Fonts(I)
     Next
 
 End Sub
@@ -1468,14 +1468,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function FontExist(Font2Find As String, Optional StartPos As Integer = 0) As Integer
 
-    Dim i As Integer
+    Dim I As Integer
 
     FontExist = -1
 
-    For i = StartPos To mListCount
+    For I = StartPos To mListCount
 
-        If LCase$(mListFont(i)) Like LCase$(Font2Find) Then
-            FontExist = i
+        If LCase$(mListFont(I)) Like LCase$(Font2Find) Then
+            FontExist = I
 
             Exit For
 
@@ -1525,12 +1525,12 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Function IsUsed(FontName As String) As Boolean
 
-    Dim i As Integer
+    Dim I As Integer
     Dim F As Boolean
 
-    For i = 0 To mUsedCount - 1
+    For I = 0 To mUsedCount - 1
 
-        If LCase$(mUsedList(i)) = LCase$(FontName) Then
+        If LCase$(mUsedList(I)) = LCase$(FontName) Then
             F = True
 
             Exit For
@@ -1552,19 +1552,19 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub LoadRecentFonts(MyHkey As HkeyLoc2, MyGroup As String, MySection As String, myKey As String)
 
-    Dim i  As Integer
+    Dim I  As Integer
     Dim fN As String
     Dim fI As Integer
 
     ReDim mRecent(mRecentMax)
 
-    For i = 0 To mRecentMax - 1
-        fN = ReadValue(MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & i + 1, "")
+    For I = 0 To mRecentMax - 1
+        fN = ReadValue(MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & I + 1, "")
         fI = FontExist(fN)
 
         If fI > -1 Then
-            mRecent(i).fName = fN
-            mRecent(i).fIndex = fI
+            mRecent(I).fName = fN
+            mRecent(I).fIndex = fI
         End If
 
     Next
@@ -1580,33 +1580,33 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub mgSort(ByVal pStart As Long, ByVal pEnd As Long)
 
-    Dim M     As Long
+    Dim m     As Long
     Dim n     As Long
     Dim tStr1 As String
 
-    M = pStart
+    m = pStart
     n = pEnd
     tStr1 = LCase$(mListFont((pStart + pEnd) \ 2))
 
     Do
-        Do While LCase$(mListFont(M)) < tStr1
-            M = M + 1
+        Do While LCase$(mListFont(m)) < tStr1
+            m = m + 1
         Loop
 
         Do While LCase$(mListFont(n)) > tStr1
             n = n - 1
         Loop
 
-        If M <= n Then
-            SwapStrings mListFont(M), mListFont(n)
-            M = M + 1
+        If m <= n Then
+            SwapStrings mListFont(m), mListFont(n)
+            m = m + 1
             n = n - 1
         End If
 
-    Loop Until M > n
+    Loop Until m > n
 
     If pStart < n Then Call mgSort(pStart, n)
-    If M < pEnd Then Call mgSort(M, pEnd)
+    If m < pEnd Then Call mgSort(m, pEnd)
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1661,7 +1661,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub RemoveFromUsedList(FontName As String)
 
-    Dim i     As Integer
+    Dim I     As Integer
     Dim tUL() As String
     Dim fQ    As Integer
 
@@ -1669,10 +1669,10 @@ Public Sub RemoveFromUsedList(FontName As String)
 
     fQ = 1
 
-    For i = 0 To mUsedCount - 1
+    For I = 0 To mUsedCount - 1
 
-        If LCase$(mUsedList(i)) <> LCase$(FontName) Then
-            tUL(fQ - 1) = mUsedList(i)
+        If LCase$(mUsedList(I)) <> LCase$(FontName) Then
+            tUL(fQ - 1) = mUsedList(I)
             fQ = fQ + 1
         End If
 
@@ -1695,10 +1695,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub SaveRecentFonts(MyHkey As HkeyLoc2, MyGroup As String, MySection As String, myKey As String)
 
-    Dim i As Integer
+    Dim I As Integer
 
-    For i = 0 To mRecentCount - 1
-        SetValue MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & i + 1, mRecent(i).fName
+    For I = 0 To mRecentCount - 1
+        SetValue MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & I + 1, mRecent(I).fName
     Next
 
 End Sub
@@ -1710,7 +1710,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SetList()
 
-    Dim i     As Integer
+    Dim I     As Integer
     Dim RecQ  As Integer
     Dim Start As Integer
 
@@ -1724,9 +1724,9 @@ Private Sub SetList()
 
     VScroll1.Value = Start
 
-    For i = Start To Start + mComboFontCount - RecQ
-        fList(RecQ).fName = mListFont(i)
-        fList(RecQ).fIndex = i
+    For I = Start To Start + mComboFontCount - RecQ
+        fList(RecQ).fName = mListFont(I)
+        fList(RecQ).fIndex = I
         fList(RecQ).fRecent = False
         RecQ = RecQ + 1
     Next
@@ -1741,10 +1741,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Integer)
 
-    Dim M         As Integer
+    Dim m         As Integer
     Dim n         As Integer
     Dim TmpLast() As tpRecents
-    Dim a%, B%
+    Dim a%, b%
     Dim myLast    As tpRecents
 
     For n = 0 To mRecentMax - 1
@@ -1782,13 +1782,13 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
     End If
 
     For a% = 0 To mRecentMax
-        For B% = 0 To mRecentMax
+        For b% = 0 To mRecentMax
 
-            If B% <> a% Then
+            If b% <> a% Then
                 If LenB(TmpLast(a%).fName) Then
-                    If TmpLast(a%).fName = TmpLast(B%).fName Then
-                        TmpLast(B%).fName = vbNullString
-                        B% = B% - 1
+                    If TmpLast(a%).fName = TmpLast(b%).fName Then
+                        TmpLast(b%).fName = vbNullString
+                        b% = b% - 1
                     End If
                 End If
             End If
@@ -1796,22 +1796,22 @@ Private Sub SetRecents(Optional CurRecent As String, Optional CurIndex As Intege
         Next
     Next
 
-    M = 0
+    m = 0
 
     ReDim mRecent(mRecentMax)
 
     For n = 0 To mRecentMax - 1
 
         If LenB(Trim$(TmpLast(n).fName)) Then
-            mRecent(M).fName = TmpLast(n).fName
-            mRecent(M).fIndex = TmpLast(n).fIndex
-            mRecent(M).fRecent = True
-            M = M + 1
+            mRecent(m).fName = TmpLast(n).fName
+            mRecent(m).fIndex = TmpLast(n).fIndex
+            mRecent(m).fRecent = True
+            m = m + 1
         End If
 
     Next
 
-    mRecentCount = M
+    mRecentCount = m
 End Sub
 
 '!--------------------------------------------------------------------------------

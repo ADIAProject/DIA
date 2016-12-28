@@ -38,33 +38,33 @@ Private Declare Function OpenThemeData Lib "uxtheme" (ByVal hWnd As Long, ByVal 
 Private Declare Function CloseThemeData Lib "uxtheme" (ByVal hTheme As Long) As Long
 
 ' ------------
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function CreateDIBSection Lib "gdi32" (ByVal hDC As Long, ByRef pBitmapInfo As BITMAPINFO, ByVal un As Long, ByRef lplpVoid As Long, ByVal Handle As Long, ByVal dw As Long) As Long
-Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
-Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
-Private Declare Function DeleteObject Lib "gdi32" (ByVal hObject As Long) As Long
-Private Declare Function DeleteDC Lib "gdi32" (ByVal hDC As Long) As Long
-Private Declare Function LoadImage Lib "user32" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal dwImageType As Long, ByVal dwDesiredWidth As Long, ByVal dwDesiredHeight As Long, ByVal dwFlags As Long) As Long
-Private Declare Function GetIconInfo Lib "user32" (ByVal hIcon As Long, ByRef pIconInfo As ICONINFO) As Long
-Private Declare Function DestroyIcon Lib "user32" (ByVal hIcon As Long) As Long
+Private Declare Sub CopyMemory Lib "kernel32.dll" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+Private Declare Function CreateCompatibleDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
+Private Declare Function CreateDIBSection Lib "gdi32.dll" (ByVal hDC As Long, ByRef pBitmapInfo As BITMAPINFO, ByVal un As Long, ByRef lplpVoid As Long, ByVal Handle As Long, ByVal dw As Long) As Long
+Private Declare Function GetDC Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
+Private Declare Function DeleteDC Lib "gdi32.dll" (ByVal hDC As Long) As Long
+Private Declare Function LoadImage Lib "user32.dll" Alias "LoadImageA" (ByVal hInst As Long, ByVal lpsz As String, ByVal dwImageType As Long, ByVal dwDesiredWidth As Long, ByVal dwDesiredHeight As Long, ByVal dwFlags As Long) As Long
+Private Declare Function GetIconInfo Lib "user32.dll" (ByVal hIcon As Long, ByRef piconinfo As ICONINFO) As Long
+Private Declare Function DestroyIcon Lib "user32.dll" (ByVal hIcon As Long) As Long
 Private Declare Function VarPtrArray Lib "msvbvm60" Alias "VarPtr" (Ptr() As Any) As Long
 Private Declare Sub CreateStreamOnHGlobal Lib "ole32" (ByRef hGlobal As Any, ByVal fDeleteOnRelease As Long, ByRef ppstm As Any)
-Private Declare Function SetMenuItemInfo Lib "user32" Alias "SetMenuItemInfoA" (ByVal hMenu As Long, ByVal uItem As Long, ByVal fByPosition As Long, lpmii As MENUITEMINFO) As Long
-Private Declare Function GetMenuItemInfo Lib "user32" Alias "GetMenuItemInfoA" (ByVal hMenu As Long, ByVal un As Long, ByVal B As Boolean, ByRef lpMenuItemInfo As MENUITEMINFO) As Long
-Private Declare Function GetMenu Lib "user32" (ByVal hWnd As Long) As Long
-Private Declare Function GetSubMenu Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
-Private Declare Function GetMenuInfo Lib "user32" (ByVal hMenu As Long, ByRef LPMENUINFO As MENUINFO) As Long
-Private Declare Function SetMenuInfo Lib "user32" (ByVal hMenu As Long, ByRef LPCMENUINFO As MENUINFO) As Long
-Private Declare Function DrawMenuBar Lib "user32" (ByVal hWnd As Long) As Long
-'Private Declare Function GetMenuItemID Lib "user32" (ByVal hMenu As Long, ByVal nPos As Long) As Long
-Private Declare Function CreateIconFromResourceEx Lib "user32" (ByRef presbits As Any, ByVal dwResSize As Long, ByVal fIcon As Long, ByVal dwVer As Long, ByVal cxDesired As Long, ByVal cyDesired As Long, ByVal Flags As Long) As Long
-'Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
-Private Declare Function Rectangle Lib "gdi32" (ByVal hDC As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
-Private Declare Function CreatePen Lib "gdi32" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
-Private Declare Function GetStockObject Lib "gdi32" (ByVal nIndex As Long) As Long
-Private Declare Function GetSysColor Lib "user32" (ByVal nIndex As Long) As Long
+Private Declare Function SetMenuItemInfo Lib "user32.dll" Alias "SetMenuItemInfoA" (ByVal hMenu As Long, ByVal uItem As Long, ByVal fByPosition As Long, lpmii As MENUITEMINFO) As Long
+Private Declare Function GetMenuItemInfo Lib "user32.dll" Alias "GetMenuItemInfoA" (ByVal hMenu As Long, ByVal un As Long, ByVal b As Boolean, ByRef lpMenuItemInfo As MENUITEMINFO) As Long
+Private Declare Function GetMenu Lib "user32.dll" (ByVal hWnd As Long) As Long
+Private Declare Function GetSubMenu Lib "user32.dll" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Private Declare Function GetMenuInfo Lib "user32.dll" (ByVal hMenu As Long, ByRef LPMENUINFO As MENUINFO) As Long
+Private Declare Function SetMenuInfo Lib "user32.dll" (ByVal hMenu As Long, ByRef LPCMENUINFO As MENUINFO) As Long
+Private Declare Function DrawMenuBar Lib "user32.dll" (ByVal hWnd As Long) As Long
+'Private Declare Function GetMenuItemID Lib "user32.dll" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+Private Declare Function CreateIconFromResourceEx Lib "user32.dll" (ByRef presbits As Any, ByVal dwResSize As Long, ByVal fIcon As Long, ByVal dwVer As Long, ByVal cxDesired As Long, ByVal cyDesired As Long, ByVal flags As Long) As Long
+'Private Declare Function GetSystemMetrics Lib "user32.dll" (ByVal nIndex As Long) As Long
+Private Declare Function Rectangle Lib "gdi32.dll" (ByVal hDC As Long, ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
+Private Declare Function CreatePen Lib "gdi32.dll" (ByVal nPenStyle As Long, ByVal nWidth As Long, ByVal crColor As Long) As Long
+Private Declare Function GetStockObject Lib "gdi32.dll" (ByVal nIndex As Long) As Long
+Private Declare Function GetSysColor Lib "user32.dll" (ByVal nIndex As Long) As Long
 
 
 ' ------------------------------------------------------- GDI Plus -------------------------------------------------------------------
@@ -76,15 +76,15 @@ Private Declare Function GdiplusStartup Lib "gdiplus" (ByRef Token As Long, ByRe
 Private Declare Function GdiplusShutdown Lib "gdiplus" (ByVal Token As Long) As Long
 Private Declare Function GdipDisposeImage Lib "gdiplus" (ByVal Image As Long) As Long
 Private Declare Function GdipGetImageDimension Lib "gdiplus" (ByVal Image As Long, ByRef Width As Single, ByRef Height As Single) As Long
-Private Declare Function GdipCreateBitmapFromScan0 Lib "gdiplus" (ByVal Width As Long, ByVal Height As Long, ByVal Stride As Long, ByVal PixelFormat As Long, Scan0 As Any, BITMAP As Long) As Long
+Private Declare Function GdipCreateBitmapFromScan0 Lib "gdiplus" (ByVal Width As Long, ByVal Height As Long, ByVal stride As Long, ByVal PixelFormat As Long, scan0 As Any, BITMAP As Long) As Long
 Private Declare Function GdipImageRotateFlip Lib "gdiplus" (ByVal Image As Long, ByVal rfType As Long) As Long
 Private Declare Function GdipCreateBitmapFromHICON Lib "gdiplus" (ByVal mHicon As Long, ByRef mBitmap As Long) As Long
 Private Declare Function GdipGetImagePixelFormat Lib "gdiplus" (ByVal Image As Long, ByRef PixelFormat As Long) As Long
-Private Declare Function GdipBitmapLockBits Lib "gdiplus" (ByVal BITMAP As Long, ByRef RECT As RECT, ByVal Flags As ImageLockMode, ByVal PixelFormat As Long, ByRef LockedBitmapData As BitmapData) As Long
+Private Declare Function GdipBitmapLockBits Lib "gdiplus" (ByVal BITMAP As Long, ByRef RECT As RECT, ByVal flags As ImageLockMode, ByVal PixelFormat As Long, ByRef LockedBitmapData As BitmapData) As Long
 Private Declare Function GdipBitmapUnlockBits Lib "gdiplus" (ByVal BITMAP As Long, ByRef LockedBitmapData As BitmapData) As Long
 Private Declare Function GdipCreateBitmapFromHBITMAP Lib "gdiplus" (ByVal hBmp As Long, ByVal hPal As Long, ByRef BITMAP As Long) As Long
 Private Declare Function GdipLoadImageFromStream Lib "gdiplus" (ByVal Stream As Any, ByRef Image As Long) As Long
-Private Declare Function GdipSetImageAttributesColorMatrix Lib "gdiplus" (ByVal imageattr As Long, ByVal ColorAdjust As Long, ByVal EnableFlag As Boolean, ByRef MatrixColor As COLORMATRIX, MatrixGray As Any, ByVal Flags As Long) As Long
+Private Declare Function GdipSetImageAttributesColorMatrix Lib "gdiplus" (ByVal imageattr As Long, ByVal ColorAdjust As Long, ByVal EnableFlag As Boolean, ByRef MatrixColor As COLORMATRIX, MatrixGray As Any, ByVal flags As Long) As Long
 Private Declare Function GdipCreateImageAttributes Lib "gdiplus" (ByRef imageattr As Long) As Long
 Private Declare Function GdipDisposeImageAttributes Lib "gdiplus" (ByVal imageattr As Long) As Long
 
@@ -176,9 +176,9 @@ End Type
 Private Type BitmapData
     Width                               As Long
     Height                              As Long
-    Stride                              As Long
+    stride                              As Long
     PixelFormat                         As Long
-    Scan0                               As Long
+    scan0                               As Long
     Reserved                            As Long
 End Type
 
@@ -209,7 +209,7 @@ Private Type GdiplusStartupInput
 End Type
 
 Private Type COLORMATRIX
-    M(0 To 4, 0 To 4)                   As Single
+    m(0 To 4, 0 To 4)                   As Single
 End Type
 
 Private Type OSVERSIONINFO
@@ -289,7 +289,7 @@ Private Const WM_ENTERIDLE              As Long = &H121
 
 Public Event MenuMessages(ByVal hWnd As Long, ByVal uMsg As Long, ByVal wParam As Long, ByVal lParam As Long)
 
-Private m_hWnd                          As Long
+Private m_Hwnd                          As Long
 
 Private GdipToken                       As Long
 Private m_lWidth                        As Long
@@ -336,7 +336,7 @@ AddIconFromHandle_Error:
 End Function
 
 
-Public Function AddImageFromFile(ByVal FileName As String, Optional bGhosted As Boolean) As Boolean
+Public Function AddImageFromFile(ByVal strFileName As String, Optional bGhosted As Boolean) As Boolean
 
     On Local Error GoTo AddImageFromFile_Error
 
@@ -345,11 +345,11 @@ Public Function AddImageFromFile(ByVal FileName As String, Optional bGhosted As 
     Dim hBmp                            As Long
     Dim hImage                          As Long
 
-    FileType = UCase$(Right$(FileName, 3))
+    FileType = UCase$(Right$(strFileName, 3))
 
     If FileType = "ICO" Or FileType = "CUR" Then
 
-        hIcon = LoadImage(App.hInstance, FileName, IMAGE_ICON, m_lWidth, m_lHeight, LR_LOADFROMFILE)
+        hIcon = LoadImage(App.hInstance, strFileName, IMAGE_ICON, m_lWidth, m_lHeight, LR_LOADFROMFILE)
 
         If hIcon <> 0 Then
             If IsAlphaIcon(hIcon) Then
@@ -363,7 +363,7 @@ Public Function AddImageFromFile(ByVal FileName As String, Optional bGhosted As 
 
     Else
 
-        Call GdipLoadImageFromFile(StrPtr(FileName), hImage)
+        Call GdipLoadImageFromFile(StrPtr(strFileName), hImage)
 
     End If
 
@@ -443,7 +443,7 @@ Private Function AlphaIconToBmp(ByVal IconHandle As Long, ByRef RefBmp As Long) 
 
                     If GdipBitmapLockBits(RefBmp, tRect, ImageLockModeRead, lPixelFormat, tBitmapData) = 0 Then
 
-                        Call GdipCreateBitmapFromScan0(tRect.Right, tRect.Bottom, tBitmapData.Stride, PixelFormat32bppARGB, ByVal tBitmapData.Scan0, AlphaIconToBmp)
+                        Call GdipCreateBitmapFromScan0(tRect.Right, tRect.Bottom, tBitmapData.stride, PixelFormat32bppARGB, ByVal tBitmapData.scan0, AlphaIconToBmp)
 
                         Call GdipBitmapUnlockBits(RefBmp, tBitmapData)
 
@@ -464,10 +464,10 @@ End Function
 
 Public Function Clear()
 
-    Dim i                               As Long
+    Dim I                               As Long
 
-    For i = 0 To UBound(mDIB) - 1
-        With mDIB(i)
+    For I = 0 To UBound(mDIB) - 1
+        With mDIB(I)
             Call DeleteObject(.hDIB)
             Call DeleteDC(.hDC)
         End With
@@ -558,17 +558,17 @@ Private Sub DrawDIB(ByVal DestHdc As Long, ByVal X As Long, ByVal Y As Long, ByV
                 GdipCreateImageAttributes hAttributes
 
                 With tMatrixColor
-                    .M(0, 0) = 0.299
-                    .M(1, 0) = .M(0, 0)
-                    .M(2, 0) = .M(0, 0)
-                    .M(0, 1) = 0.587
-                    .M(1, 1) = .M(0, 1)
-                    .M(2, 1) = .M(0, 1)
-                    .M(0, 2) = 0.114
-                    .M(1, 2) = .M(0, 2)
-                    .M(2, 2) = .M(0, 2)
-                    .M(3, 3) = 0.5
-                    .M(4, 4) = 1
+                    .m(0, 0) = 0.299
+                    .m(1, 0) = .m(0, 0)
+                    .m(2, 0) = .m(0, 0)
+                    .m(0, 1) = 0.587
+                    .m(1, 1) = .m(0, 1)
+                    .m(2, 1) = .m(0, 1)
+                    .m(0, 2) = 0.114
+                    .m(1, 2) = .m(0, 2)
+                    .m(2, 2) = .m(0, 2)
+                    .m(3, 3) = 0.5
+                    .m(4, 4) = 1
                 End With
 
                 GdipSetImageAttributesColorMatrix hAttributes, ColorAdjustTypeDefault, True, tMatrixColor, tMatrixGray, ColorMatrixFlagsDefault
@@ -595,7 +595,7 @@ Public Function Init(ByVal hWnd As Long, ImgWidth As Long, ByVal imgHeight As Lo
 
         m_lWidth = ImgWidth
         m_lHeight = imgHeight
-        m_hWnd = hWnd
+        m_Hwnd = hWnd
 
         If UBound(mDIB) > 0 Then
             Me.Clear
@@ -659,8 +659,8 @@ Private Function IsAlphaIcon(ByVal IconHandle As Long) As Boolean
                             ReDim tARGB(tRect.Right - 1&, tRect.Bottom - 1&)
 
                             With tBitmapData
-                                .Scan0 = VarPtr(tARGB(0&, 0&))
-                                .Stride = 4& * tRect.Right
+                                .scan0 = VarPtr(tARGB(0&, 0&))
+                                .stride = 4& * tRect.Right
                             End With
 
                             If GdipBitmapLockBits(lngColorBmp, tRect, ImageLockModeRead Or ImageLockModeUserInputBuf, lPixelFormat, tBitmapData) = 0 Then
@@ -732,7 +732,7 @@ Private Function KeyExists(ByVal sKey As String) As Boolean
     Exit Function
 
 HandleError:
-    err.Clear
+    Err.Clear
 End Function
 
 Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
@@ -746,7 +746,7 @@ Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
     Dim Aproximate                      As Long
     Dim IconID                          As Long
     Dim hIcon                           As Long
-    Dim i                               As Long
+    Dim I                               As Long
 
 
     Call CopyMemory(tIconHeader, bytIcoData(0), Len(tIconHeader))
@@ -759,17 +759,17 @@ Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
 
         IconID = -1
 
-        For i = 0 To tIconHeader.ihCount - 1
-            If tIconEntry(i).ieBitCount > MaxBitCount Then MaxBitCount = tIconEntry(i).ieBitCount
+        For I = 0 To tIconHeader.ihCount - 1
+            If tIconEntry(I).ieBitCount > MaxBitCount Then MaxBitCount = tIconEntry(I).ieBitCount
         Next
 
 
-        For i = 0 To tIconHeader.ihCount - 1
-            If MaxBitCount = tIconEntry(i).ieBitCount Then
-                MaxSize = CLng(tIconEntry(i).ieWidth) + CLng(tIconEntry(i).ieHeight)
+        For I = 0 To tIconHeader.ihCount - 1
+            If MaxBitCount = tIconEntry(I).ieBitCount Then
+                MaxSize = CLng(tIconEntry(I).ieWidth) + CLng(tIconEntry(I).ieHeight)
                 If MaxSize > Aproximate And MaxSize <= (m_lWidth + m_lHeight) Then
                     Aproximate = MaxSize
-                    IconID = i
+                    IconID = I
                 End If
             End If
         Next
@@ -864,7 +864,7 @@ Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, P
     Dim v                               As Variant
     Dim sKey                            As String
 
-    hMenu = GetMenu(m_hWnd)
+    hMenu = GetMenu(m_Hwnd)
 
     Dim tmpInfo                         As MENUINFO
 
@@ -916,7 +916,7 @@ Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, P
 
     PutImageToVBMenu = SetMenuItemInfo(hSubMenu, MenuPos, True, MII)
 
-    If hSubMenu = hMenu Then DrawMenuBar m_hWnd
+    If hSubMenu = hMenu Then DrawMenuBar m_Hwnd
 
 End Function
 
@@ -948,11 +948,11 @@ Private Function pvAddImagen(ByVal hImage As Long, Optional bGhosted As Boolean)
                 GdipCreateImageAttributes hAttributes
 
                 With tMatrixColor
-                    .M(0, 0) = 1
-                    .M(1, 1) = 1
-                    .M(2, 2) = 1
-                    .M(3, 3) = 0.7
-                    .M(4, 4) = 1
+                    .m(0, 0) = 1
+                    .m(1, 1) = 1
+                    .m(2, 2) = 1
+                    .m(3, 3) = 0.7
+                    .m(4, 4) = 1
 
                 End With
 
@@ -979,7 +979,7 @@ End Function
 
 Public Function RemoveImage(ByVal Index As Long) As Boolean
 
-    Dim i                               As Long
+    Dim I                               As Long
 
     If Index < 0 Or Index > Me.ImageCount Then
         Exit Function
@@ -990,8 +990,8 @@ Public Function RemoveImage(ByVal Index As Long) As Boolean
         Call DeleteDC(.hDC)
     End With
 
-    For i = Index To Me.ImageCount
-        mDIB(i) = mDIB(i + 1)
+    For I = Index To Me.ImageCount
+        mDIB(I) = mDIB(I + 1)
     Next
 
     ReDim Preserve mDIB(Me.ImageCount)
@@ -1017,7 +1017,7 @@ Public Sub RemoveMenuCheckVB(ParamArray vSubMenuPos() As Variant)
     Dim hSubMenu                        As Long
     Dim v                               As Variant
 
-    hMenu = GetMenu(m_hWnd)
+    hMenu = GetMenu(m_Hwnd)
 
     hSubMenu = hMenu
 
@@ -1048,8 +1048,8 @@ End Function
 
 Private Function StopSubclassing() As Boolean
 
-    If m_hWnd <> 0 Then
-        cSubclass.ssc_UnSubclass m_hWnd <> 0
+    If m_Hwnd <> 0 Then
+        cSubclass.ssc_UnSubclass m_Hwnd <> 0
         StopSubclassing = True
     Else
         StopSubclassing = False

@@ -1,17 +1,14 @@
 Attribute VB_Name = "mHighlight"
+'---------------------------------------------------------------------------------------
+' Module      : HighlightActiveControl
+' DateTime    : 06/06/2011 16:23
+' Author      : Giorgio Brausi
+'---------------------------------------------------------------------------------------
+
 Option Explicit
 
 Public glHighlightColor As Long
 
-'---------------------------------------------------------------------------------------
-' Procedure   : HighlightActiveControl
-' DateTime    : 06/06/2011 16:23
-' Author      : Giorgio Brausi
-' Purpose     :
-' Description :
-' Comments    :
-' Returns     :
-'---------------------------------------------------------------------------------------
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub HighlightActiveControl
 '! Description (Описание)  :   [type_description_here]

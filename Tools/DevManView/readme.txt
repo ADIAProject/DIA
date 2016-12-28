@@ -1,8 +1,8 @@
 
 
 
-DevManView v1.41
-Copyright (c) 2009 - 2013 Nir Sofer
+DevManView v1.48
+Copyright (c) 2009 - 2016 Nir Sofer
 Web site: http://www.nirsoft.net
 
 
@@ -27,16 +27,43 @@ System Requirements
 ===================
 
 DevManView works on any version of Windows, starting from Windows 2000
-and up to Windows 7 and Windows Server 2008. For x64 version of Windows,
-you should download the x64 version of DevManView, because the 32-bit
-version of DevManView cannot disable/enable devices on x64 operating
-system.
+and up to Windows 10. For x64 version of Windows, you should download the
+x64 version of DevManView, because the 32-bit version of DevManView
+cannot disable/enable devices on x64 operating system.
 
 
 
 Versions History
 ================
 
+
+* Version 1.48:
+  o When you connect a remote computer or external Registry file,
+    DevManView now displays the computer or directory information in the
+    window title.
+
+* Version 1.47:
+  o DevManView now displays an error message when it fails to
+    disable/enable a device.
+
+* Version 1.46:
+  o Fixed the problem with 'Put Icon On Tray' option.
+
+* Version 1.45:
+  o Added 'Show Only Devices With Location String' option.
+  o Added 'Auto Size Columns On Load' option.
+
+* Version 1.43:
+  o Added 'Container ID' column.
+
+* Version 1.42:
+  o Added secondary sorting support: You can now get a secondary
+    sorting, by holding down the shift key while clicking the column
+    header. Be aware that you only have to hold down the shift key when
+    clicking the second/third/fourth column. To sort the first column you
+    should not hold down the Shift key.
+  o Fixed to display date/time values according to daylight saving
+    time settings.
 
 * Version 1.41:
   o Added 'Clear Recent Files List' for the 'Recent Disabled Devices

@@ -1,5 +1,6 @@
 Attribute VB_Name = "mShellWait"
-Option Explicit 'http://www.vbforums.com/showthread.php?700373-VB6-Shell-amp-Wait&p=4288285&viewfull=1#post4288285
+ 'http://www.vbforums.com/showthread.php?700373-VB6-Shell-amp-Wait&p=4288285&viewfull=1#post4288285
+Option Explicit
 
 '=======================================================================================================================
 '-----------------------------------------------    C O N S T A N T S    -----------------------------------------------
@@ -9,6 +10,7 @@ Public Const INFINITE               As Long = &HFFFFFFFF    'Infinite timeout. P
                                                             'indefinitely until the process terminates.
 
 Private Const STATUS_PENDING        As Long = &H103&        '259
+
 Public Const STILL_ACTIVE           As Long = STATUS_PENDING
 
 Public Const USER_TIMER_MINIMUM     As Long = &HA&          'If uElapse is less than USER_TIMER_MINIMUM (0x0000000A),
@@ -370,7 +372,7 @@ Private Declare Function GetProcessId Lib "kernel32.dll" (ByVal hProcess As Long
 Private Declare Function PathCanonicalizeW Lib "shlwapi.dll" (ByVal lpszDst As Long, ByVal lpszSrc As Long) As bool
 Private Declare Function PathGetArgsW Lib "shlwapi.dll" (ByVal pszPath As Long) As Long
 Private Declare Function SetWaitableTimer Lib "kernel32.dll" (ByVal hTimer As Long, ByRef pDueTime As Currency, Optional ByVal lPeriod As Long, Optional ByVal pfnCompletionRoutine As Long, Optional ByVal lpArgToCompletionRoutine As Long, Optional ByVal fResume As bool) As bool
-Private Declare Function ShellExecuteExW Lib "Shell32.dll" (ByVal pExecInfo As Long) As bool
+Private Declare Function ShellExecuteExW Lib "shell32.dll" (ByVal pExecInfo As Long) As bool
 Private Declare Function SysReAllocString Lib "oleaut32.dll" (ByVal pBSTR As Long, Optional ByVal pszStrPtr As Long) As Long
 Private Declare Sub PathRemoveArgsW Lib "shlwapi.dll" (ByVal pszPath As Long)
 
@@ -397,50 +399,87 @@ Private m_Busy2      As Boolean  'Busy flag for ShellW
 Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As AppWinStyle = vbShowNormal, _
                                                  Optional ByVal Wait As Long) As Long
 
-    Const MAX_PATH = 260&, QS_ALLINPUT = &H4FF&, WAIT_OBJECT_0 = &H0&
-    Dim TimedOut As Boolean, nCount As Long, pHandles As Long, RV As Long, SEI As SHELLEXECUTEINFO
+    Const MAX_PATH = 260&
+    Const QS_ALLINPUT = &H4FF&
+    Const WAIT_OBJECT_0 = &H0&
+    Dim TimedOut   As Boolean
+    Dim nCount     As Long
+    Dim pHandles   As Long
+    Dim RV         As Long
+    Dim SEI        As SHELLEXECUTEINFO
 
-    Err.Clear                               'Reset Err object every time this function is called
-    If m_Busy2 Then Exit Function           'This function shouldn't be called more than once at any given time
-    If LenB(PathName) Then m_Busy2 = True _
-                      Else Exit Function    'See if there's anything to do
+    'Reset Err object every time this function is called
+    Err.Clear
+    'This function shouldn't be called more than once at any given time
+    If m_Busy2 Then
+        Exit Function
+    End If
+
+    'See if there's anything to do
+    If LenB(PathName) Then
+        m_Busy2 = True
+    Else
+        Exit Function
+    End If
+
 
     With SEI
         .cbSize = LenB(SEI)
-        .fMask = SEE_MASK_NOCLOSEPROCESS Or SEE_MASK_DOENVSUBST Or SEE_MASK_FLAG_NO_UI  'Suppress error message
-        .nShow = WindowStyle             '^ Expand environment variables                'boxes by ShellExecuteEx
+        'Suppress error message
+        .fMask = SEE_MASK_NOCLOSEPROCESS Or SEE_MASK_DOENVSUBST Or SEE_MASK_FLAG_NO_UI
 
-        If InStr(PathName, "%") Then              'Expand environment variables, if any
+        '^ Expand environment variables                'boxes by ShellExecuteEx
+        .nShow = WindowStyle
+
+        'Expand environment variables, if any
+        If InStr(PathName, "%") Then
+
             SysReAllocStringLen VarPtr(.lpFile), , ExpandEnvironmentStringsW(StrPtr(PathName)) - 1&
             ExpandEnvironmentStringsW StrPtr(PathName), StrPtr(.lpFile), Len(.lpFile) + 1&
         Else
-           .lpFile = PathName   'ShellExecuteEx doesn't expand environment variables in .lpParameters
+           'ShellExecuteEx doesn't expand environment variables in .lpParameters
+           .lpFile = PathName
+
         End If
 
         Select Case True
-            Case InStr(.lpFile, "\.") <> 0&, InStr(.lpFile, ".\") <> 0&         'Look for "\.", "\..", ".\" or "..\"
-                If Len(.lpFile) < MAX_PATH Then
-                    SysReAllocStringLen VarPtr(.lpVerb), , MAX_PATH - 1&        'Temporarily use .lpVerb as a buffer
+            'Look for "\.", "\..", ".\" or "..\"
+            Case InStr(.lpFile, "\.") <> 0&, InStr(.lpFile, ".\") <> 0&
 
-                    If PathCanonicalizeW(StrPtr(.lpVerb), StrPtr(.lpFile)) Then 'Simplify the given path
-                        SysReAllocString VarPtr(.lpFile), StrPtr(.lpVerb)       'by removing "." & ".."
+                If Len(.lpFile) < MAX_PATH Then
+                    'Temporarily use .lpVerb as a buffer
+                    SysReAllocStringLen VarPtr(.lpVerb), , MAX_PATH - 1&
+
+                    'Simplify the given path
+                    If PathCanonicalizeW(StrPtr(.lpVerb), StrPtr(.lpFile)) Then
+                        'by removing "." & ".."
+                        SysReAllocString VarPtr(.lpFile), StrPtr(.lpVerb)
+
                     End If
 
                    .lpVerb = vbNullString
                 End If
         End Select
 
-        SysReAllocString VarPtr(.lpParameters), PathGetArgsW(StrPtr(.lpFile))   'Separate arguments from the file, if any
+        'Separate arguments from the file, if any
+        SysReAllocString VarPtr(.lpParameters), PathGetArgsW(StrPtr(.lpFile))
 
-        If LenB(.lpParameters) Then                                             'If there are, then trim the
-            PathRemoveArgsW StrPtr(.lpFile)                                     'original arguments from lpFile _
-            If InStr(.lpParameters, """") Then .lpParameters = Replace(.lpParameters, """", """""""")
-        End If                                  'MSDN's instructions don't seem to work in XP
+        'If there are, then trim the
+        If LenB(.lpParameters) Then
+            PathRemoveArgsW StrPtr(.lpFile)
 
-        If ShellExecuteExW(VarPtr(SEI)) Then    'Launch the specified executable or registered file type
-            ShellW = GetProcessId(.hProcess)    'Return the Task ID, a.k.a. Process ID
+            'original arguments from lpFile             'MSDN's instructions don't seem to work in XP
+            'If InStr(.lpParameters, """") Then .lpParameters = Replace(.lpParameters, """", """""""")
+        End If
 
-            If Wait Then                        'If specified, wait Wait milliseconds before returning
+        'Launch the specified executable or registered file type
+        If ShellExecuteExW(VarPtr(SEI)) Then
+            'Return the Task ID, a.k.a. Process ID
+            ShellW = GetProcessId(.hProcess)
+
+            'If specified, wait Wait milliseconds before returning
+            If Wait Then
+
                 .lpFile = vbNullString
                 .lpParameters = vbNullString
 
@@ -451,45 +490,82 @@ Public Function ShellW(ByRef PathName As String, Optional ByVal WindowStyle As A
                     pHandles = VarPtr(.hProcess)
                 End If
 
-                If Wait > INFINITE Then             'If specified waiting time isn't INFINITE or negative,
-                   .hIcon = CreateWaitableTimerW    'then create & set a waitable timer with the given duration
+                'If specified waiting time isn't INFINITE or negative,
+                If Wait > INFINITE Then
+                   'then create & set a waitable timer with the given duration
+                   .hIcon = CreateWaitableTimerW
 
-                    If .hIcon Then                  'Repurpose the unused .hIcon member as hTimer
-                        nCount = nCount + 1&        'and treat it along with .hProcess as a pseudo-array
+                    'Repurpose the unused .hIcon member as hTimer
+                    If .hIcon Then
+                        'and treat it along with .hProcess as a pseudo-array
+                        nCount = nCount + 1&
+
                         pHandles = VarPtr(.hIcon)
-                        Wait = SetWaitableTimer(.hIcon, CCur(-Wait)):   Debug.Assert Wait
-                    End If                              '^ Negative values indicate relative time
+                        Wait = SetWaitableTimer(.hIcon, CCur(-Wait))
+                        Debug.Assert Wait
+                    '^ Negative values indicate relative time
+                    End If
+
                 End If
 
                    'MWFMO will wait for either process termination, timer expiration or input arrival
-                Do: RV = MsgWaitForMultipleObjects(nCount, ByVal pHandles, FALSE_, INFINITE, QS_ALLINPUT)
+                Do
+                    RV = MsgWaitForMultipleObjects(nCount, ByVal pHandles, FALSE_, INFINITE, QS_ALLINPUT)
 
-                    If RV < nCount Then                 'If RV <= WAIT_OBJECT_0 + nCount - 1& Then
+                    If RV < nCount Then
+                    'If RV <= WAIT_OBJECT_0 + nCount - 1& Then
                         If .hIcon Then
-                            TimedOut = RV = 0&          'If MWFMO returned hTimer's index, then the timer expired
-                            RV = CloseHandle(.hIcon):   Debug.Assert RV 'If code stops here, the handle wasn't closed
+                            'If MWFMO returned hTimer's index, then the timer expired
+                            TimedOut = RV = 0&
+
+                            RV = CloseHandle(.hIcon)
+                            'If code stops here, the handle wasn't closed
+                            Debug.Assert RV
+
                         End If
 
-                        Err.Clear                       'Reset Err (in case it was raised elsewhere)
-                        Exit Do                         'and break out of the loop
+                        'Reset Err (in case it was raised elsewhere)
+                        Err.Clear
+
+                        'and break out of the loop
+                        Exit Do
+
                     End If
 
-                    DoEvents                            'Allow the incoming input(s) to be processed
+                    'Allow the incoming input(s) to be processed
+                    DoEvents
+
                 Loop Until g_ExitDoLoops
 
-                If Not (TimedOut Or g_ExitDoLoops) Then 'If the timer hasn't yet expired, then the process has terminated
-                    RV = GetExitCodeProcess(.hProcess, ShellW): Debug.Assert RV 'Return the terminated process' exit code
-                    Err = PROCESS_HAS_TERMINATED        'Set the Err object's properties instead of raising an error
-                    Err.Description = "Exit Code"       'This is similar to the API's use of Get/SetLastError
+                'If the timer hasn't yet expired, then the process has terminated
+                If Not (TimedOut Or g_ExitDoLoops) Then
+
+                    'Return the terminated process' exit code
+                    RV = GetExitCodeProcess(.hProcess, ShellW)
+                    Debug.Assert RV
+
+                    'Set the Err object's properties instead of raising an error
+                    Err = PROCESS_HAS_TERMINATED
+
+                    'This is similar to the API's use of Get/SetLastError
+                    Err.Description = "Exit Code"
+
                 End If
             End If
 
-            If .hProcess Then RV = CloseHandle(.hProcess): Debug.Assert RV 'If code stops here, the handle wasn't closed
+            If .hProcess Then RV = CloseHandle(.hProcess)
+            'If code stops here, the handle wasn't closed
+            Debug.Assert RV
+
         End If
     End With
 
-    m_Busy2 = False     'Reset busy flag
-End Function            'ShellW returns either the Process ID, the Exit Code or zero (check Err.Number to distinguish)
+    'Reset busy flag
+    m_Busy2 = False
+
+'ShellW returns either the Process ID, the Exit Code or zero (check Err.Number to distinguish)
+End Function
+
 
 '=======================================================================================================================
 '----------------------------------------------    R E F E R E N C E S    ----------------------------------------------

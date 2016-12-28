@@ -281,55 +281,55 @@ Private WithEvents mFont     As StdFont
 Attribute mFont.VB_VarHelpID = -1
 Private m_ButtonStyle        As enumButtonStlyes    'Choose your Style
 Private m_Buttonstate        As enumButtonStates    'Normal / Over / Down
-Private m_bIsDown            As Boolean    'Is button is pressed?
-Private m_bMouseInCtl        As Boolean    'Is Mouse in Control
-Private m_bHasFocus          As Boolean    'Has focus?
-Private m_bHandPointer       As Boolean    'Use Hand Pointer
+Private m_bIsDown            As Boolean             'Is button is pressed?
+Private m_bMouseInCtl        As Boolean             'Is Mouse in Control
+Private m_bHasFocus          As Boolean             'Has focus?
+Private m_bHandPointer       As Boolean             'Use Hand Pointer
 Private m_lCursor            As Long
-Private m_bDefault           As Boolean    'Is Default?
+Private m_bDefault           As Boolean             'Is Default?
 Private m_DropDownSymbol     As enumSymbol
 Private m_bDropDownSep       As Boolean
-Private m_ButtonMode         As enumButtonModes    'Command/Check/Option button
+Private m_ButtonMode         As enumButtonModes     'Command/Check/Option button
 Private m_CaptionEffects     As enumCaptionEffects
-Private m_bValue             As Boolean    'Value (Checked/Unchekhed)
-Private m_bShowFocus         As Boolean    'Bool to show focus
-Private m_bParentActive      As Boolean    'Parent form Active or not
-Private m_lParenthWnd        As Long    'Is parent active?
-Private m_WindowsNT          As Boolean    'OS Supports Unicode?
-Private m_bEnabled           As Boolean    'Enabled/Disabled
-Private m_Caption            As String    'String to draw caption
+Private m_bValue             As Boolean             'Value (Checked/Unchekhed)
+Private m_bShowFocus         As Boolean             'Bool to show focus
+Private m_bParentActive      As Boolean             'Parent form Active or not
+Private m_lParenthWnd        As Long                'Is parent active?
+Private m_WindowsNT          As Boolean             'OS Supports Unicode?
+Private m_bEnabled           As Boolean             'Enabled/Disabled
+Private m_Caption            As String              'String to draw caption
 Private m_CaptionAlign       As enumCaptionAlign
-Private m_bColors            As tButtonColors    'Button Colors
-Private m_bUseMaskColor      As Boolean    'Transparent areas
-Private m_lMaskColor         As Long    'Set Transparent color
-Private m_lButtonRgn         As Long    'Button Region
-Private m_bIsSpaceBarDown    As Boolean    'Space bar down boolean
-Private m_ButtonRect         As RECT    'Button Position
+Private m_bColors            As tButtonColors       'Button Colors
+Private m_bUseMaskColor      As Boolean             'Transparent areas
+Private m_lMaskColor         As Long                'Set Transparent color
+Private m_lButtonRgn         As Long                'Button Region
+Private m_bIsSpaceBarDown    As Boolean             'Space bar down boolean
+Private m_ButtonRect         As RECT                'Button Position
 Private m_lXPColor           As enumXPThemeColors
 Private m_bIsThemed          As Boolean
 Private m_bHasUxTheme        As Boolean
-Private m_lDownButton        As Integer    'For click/Dblclick events
-Private m_lDShift            As Integer    'A flag for dblClick
+Private m_lDownButton        As Integer             'For click/Dblclick events
+Private m_lDShift            As Integer             'A flag for dblClick
 Private m_lDX                As Single
 Private m_lDY                As Single
 
 ' --Popup menu variables
-Private m_bPopupEnabled      As Boolean         'Popus is enabled
-Private m_bPopupShown        As Boolean         'Popupmenu is shown
-Private m_bPopupEnabledRBT   As Boolean         'Popus is enabled
-Private m_bPopupInit         As Boolean         'Flag to prevent WM_MOUSLEAVE to redraw the button
-Private mnuDropDown          As VB.Menu         'Popupmenu to be shown
-Private mnuRightButton       As VB.Menu         'Default menu in the popupmenu
-Private MenuAlign            As enumMenuAlign    'PopupMenu Alignments
-Private MenuFlags            As Long            'PopupMenu Flags
+Private m_bPopupEnabled      As Boolean             'Popus is enabled
+Private m_bPopupShown        As Boolean             'Popupmenu is shown
+Private m_bPopupEnabledRBT   As Boolean             'Popus is enabled
+Private m_bPopupInit         As Boolean             'Flag to prevent WM_MOUSLEAVE to redraw the button
+Private mnuDropDown          As VB.Menu             'Popupmenu to be shown
+Private mnuRightButton       As VB.Menu             'Default menu in the popupmenu
+Private MenuAlign            As enumMenuAlign       'PopupMenu Alignments
+Private MenuFlags            As Long                'PopupMenu Flags
 
 ' --Tooltip variables
-Private m_hMode              As Long ' Xp Style
+Private m_hMode              As Long                ' Xp Style
 
 ' --Caption variables
-Private lpSignRect           As RECT    'Drop down Symbol rect
+Private lpSignRect           As RECT                'Drop down Symbol rect
 Private m_bRTL               As Boolean
-Private m_TextRect           As RECT    'Caption drawing area
+Private m_TextRect           As RECT                'Caption drawing area
 
 ' --Picture variables
 Private m_Picture            As StdPicture
@@ -345,9 +345,9 @@ Private m_PicEffectonDown    As enumPicEffect
 Private m_bPicPushOnHover    As Boolean
 Private PicH                 As Long
 Private PicW                 As Long
-Private aLighten(255)        As Byte    'Light Picture
-Private aDarken(255)         As Byte    'Dark Picture
-Private tmppic               As New StdPicture    'Temp picture
+Private aLighten(255)        As Byte                'Light Picture
+Private aDarken(255)         As Byte                'Dark Picture
+Private tmppic               As New StdPicture      'Temp picture
 
 ' --Color Constant
 Private Const COLOR_BTNFACE  As Long = 15
@@ -355,9 +355,9 @@ Private Const COLOR_GRAYTEXT As Long = 17
 Private Const CLR_INVALID    As Long = &HFFFF
 Private Const DIB_RGB_COLORS As Long = 0
 
-Private m_PicRect            As RECT    'Picture drawing area
-Private lh                   As Long    'ScaleHeight of button
-Private lw                   As Long    'ScaleWidth of button
+Private m_PicRect            As RECT                'Picture drawing area
+Private lh                   As Long                'ScaleHeight of button
+Private lw                   As Long                'ScaleWidth of button
 
 Private m_CheckExist         As Boolean
 Private m_DropDownEnable     As Boolean
@@ -439,7 +439,7 @@ Private Const BDR_SUNKEN95         As Long = &HA
 Private Const BDR_RAISED95         As Long = &H5
 
 Private Declare Sub ReleaseCapture Lib "user32.dll" ()
-Private Declare Function OleTranslateColor Lib "OLEPRO32.DLL" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
+Private Declare Function OleTranslateColor Lib "olepro32.dll" (ByVal OLE_COLOR As Long, ByVal HPALETTE As Long, pccolorref As Long) As Long
 Private Declare Function CopyRect Lib "user32.dll" (lpDestRect As RECT, lpSourceRect As RECT) As Long
 Private Declare Function OffsetRect Lib "user32.dll" (lpRect As RECT, ByVal X As Long, ByVal Y As Long) As Long
 Private Declare Function CreateRoundRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long, ByVal X3 As Long, ByVal Y3 As Long) As Long
@@ -465,7 +465,7 @@ Private Declare Function SetTextColor Lib "gdi32.dll" (ByVal hDC As Long, ByVal 
 Private Declare Function GetTextColor Lib "gdi32.dll" (ByVal hDC As Long) As Long
 Private Declare Function StretchDIBits Lib "gdi32.dll" (ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal DX As Long, ByVal DY As Long, ByVal srcX As Long, ByVal srcY As Long, ByVal wSrcWidth As Long, ByVal wSrcHeight As Long, lpBits As Any, lpBitsInfo As Any, ByVal wUsage As Long, ByVal dwRop As Long) As Long
 Private Declare Function CreateRectRgn Lib "gdi32.dll" (ByVal X1 As Long, ByVal Y1 As Long, ByVal X2 As Long, ByVal Y2 As Long) As Long
-Private Declare Function IsAppThemed Lib "uxtheme" () As Long
+Private Declare Function IsAppThemed Lib "uxtheme.dll" () As Long
 Private Declare Function GetSysColor Lib "user32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function OpenThemeData Lib "uxtheme.dll" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme.dll" (ByVal hTheme As Long, ByVal lhDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, pRECT As RECT, pClipRect As RECT) As Long
@@ -513,7 +513,7 @@ End Type
 Private TrackUser32     As Boolean
 
 Private Declare Function TrackMouseEvent Lib "user32.dll" (ByRef lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
-Private Declare Function TrackMouseEventComCtl Lib "Comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
+Private Declare Function TrackMouseEventComCtl Lib "comctl32.dll" Alias "_TrackMouseEvent" (lpEventTrack As TRACKMOUSEEVENT_STRUCT) As Long
 
 '*************************************************************
 '   DRAW TEXT
@@ -1877,7 +1877,7 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
     Dim dG      As Long
     Dim dB      As Long
     Dim Scan    As Long
-    Dim i       As Long
+    Dim I       As Long
     Dim iEnd    As Long
     Dim iOffset As Long
     Dim J       As Long
@@ -1928,8 +1928,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             lGrad(0) = (B1 \ 2 + B2 \ 2) + 256 * (g1 \ 2 + G2 \ 2) + 65536 * (r1 \ 2 + R2 \ 2)
         Else
 
-            For i = 0 To iEnd
-                lGrad(i) = B1 + (dB * i) \ iEnd + 256 * (g1 + (dG * i) \ iEnd) + 65536 * (r1 + (dR * i) \ iEnd)
+            For I = 0 To iEnd
+                lGrad(I) = B1 + (dB * I) \ iEnd + 256 * (g1 + (dG * I) \ iEnd) + 65536 * (r1 + (dR * I) \ iEnd)
             Next
 
         End If
@@ -1947,8 +1947,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             Case [gdHorizontal]
 
                 For J = 0 To jEnd
-                    For i = iOffset To iEnd + iOffset
-                        lBits(i) = lGrad(i - iOffset)
+                    For I = iOffset To iEnd + iOffset
+                        lBits(I) = lGrad(I - iOffset)
                     Next
 
                     iOffset = iOffset + Scan
@@ -1957,8 +1957,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             Case [gdVertical]
 
                 For J = jEnd To 0 Step -1
-                    For i = iOffset To iEnd + iOffset
-                        lBits(i) = lGrad(J)
+                    For I = iOffset To iEnd + iOffset
+                        lBits(I) = lGrad(J)
                     Next
 
                     iOffset = iOffset + Scan
@@ -1968,8 +1968,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
                 iOffset = jEnd * Scan
 
                 For J = 1 To jEnd + 1
-                    For i = iOffset To iEnd + iOffset
-                        lBits(i) = lGrad(iGrad)
+                    For I = iOffset To iEnd + iOffset
+                        lBits(I) = lGrad(iGrad)
                         iGrad = iGrad + 1
                     Next
 
@@ -1981,8 +1981,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
                 iOffset = 0
 
                 For J = 1 To jEnd + 1
-                    For i = iOffset To iEnd + iOffset
-                        lBits(i) = lGrad(iGrad)
+                    For I = iOffset To iEnd + iOffset
+                        lBits(I) = lGrad(iGrad)
                         iGrad = iGrad + 1
                     Next
 
@@ -2724,22 +2724,22 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SetAccessKey()
 
-    Dim i As Long
+    Dim I As Long
 
     UserControl.AccessKeys = vbNullString
 
     If Len(m_Caption) > 1 Then
-        i = InStr(m_Caption, "&")
+        I = InStr(m_Caption, "&")
 
-        If i < Len(m_Caption) Then
-            If i Then
-                If Mid$(m_Caption, i + 1, 1) <> "&" Then
-                    AccessKeys = LCase$(Mid$(m_Caption, i + 1, 1))
+        If I < Len(m_Caption) Then
+            If I Then
+                If Mid$(m_Caption, I + 1, 1) <> "&" Then
+                    AccessKeys = LCase$(Mid$(m_Caption, I + 1, 1))
                 Else
-                    i = InStr(i + 2, m_Caption, "&", vbTextCompare)
+                    I = InStr(I + 2, m_Caption, "&", vbTextCompare)
 
-                    If Mid$(m_Caption, i + 1, 1) <> "&" Then
-                        AccessKeys = LCase$(Mid$(m_Caption, i + 1, 1))
+                    If Mid$(m_Caption, I + 1, 1) <> "&" Then
+                        AccessKeys = LCase$(Mid$(m_Caption, I + 1, 1))
                     End If
                 End If
             End If
@@ -2897,53 +2897,53 @@ Private Function ShiftColor(ByVal Color As Long, ByVal PercentInDecimal As Singl
     '* All Credits goes to Noel Dacara                                          *
     '* A Littlebit modified by me                                               *
     '****************************************************************************
-    Dim R As Long
+    Dim r As Long
     Dim G As Long
-    Dim B As Long
+    Dim b As Long
 
     '  Add or remove a certain color quantity by how many percent.
-    R = Color And 255
+    r = Color And 255
     G = (Color \ 256) And 255
-    B = (Color \ 65536) And 255
-    R = R + PercentInDecimal * 255
+    b = (Color \ 65536) And 255
+    r = r + PercentInDecimal * 255
     ' Percent should already
     G = G + PercentInDecimal * 255
     ' be translated.
-    B = B + PercentInDecimal * 255
+    b = b + PercentInDecimal * 255
 
     ' Ex. 50% -> 50 / 100 = 0.5
     '  When overflow occurs, ....
     If PercentInDecimal > 0 Then
 
         ' RGB values must be between 0-255 only
-        If R > 255 Then
-            R = 255
+        If r > 255 Then
+            r = 255
         End If
 
         If G > 255 Then
             G = 255
         End If
 
-        If B > 255 Then
-            B = 255
+        If b > 255 Then
+            b = 255
         End If
 
     Else
 
-        If R < 0 Then
-            R = 0
+        If r < 0 Then
+            r = 0
         End If
 
         If G < 0 Then
             G = 0
         End If
 
-        If B < 0 Then
-            B = 0
+        If b < 0 Then
+            b = 0
         End If
     End If
 
-    ShiftColor = R + 256& * G + 65536 * B
+    ShiftColor = r + 256& * G + 65536 * b
     ' Return shifted color value
 End Function
 
@@ -3098,10 +3098,10 @@ End Sub
 Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal transColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
                             MonoMask As Boolean = False, Optional ByVal isGreyscale As Boolean = False)
 
-    Dim B           As Long
+    Dim b           As Long
     Dim H           As Long
     Dim F           As Long
-    Dim i           As Long
+    Dim I           As Long
     Dim newW        As Long
     Dim TmpDC       As Long
     Dim TmpBmp      As Long
@@ -3217,8 +3217,8 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
         For H = 0 To DstH - 1
             F = H * DstW
 
-            For B = 0 To newW
-                i = F + B
+            For b = 0 To newW
+                I = F + b
 
                 If m_Buttonstate = eStateOver Then
                     a1 = OverOpacity
@@ -3228,20 +3228,20 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
                 a2 = 255 - a1
 
-                If GetNearestColor(hDC, CLng(DataSrc(i).Red) + 256& * DataSrc(i).Green + 65536 * DataSrc(i).Blue) <> transColor Then
+                If GetNearestColor(hDC, CLng(DataSrc(I).Red) + 256& * DataSrc(I).Green + 65536 * DataSrc(I).Blue) <> transColor Then
 
-                    With DataDest(i)
+                    With DataDest(I)
 
                         If BrushColor > -1 Then
                             If MonoMask Then
-                                If (CLng(DataSrc(i).Red) + DataSrc(i).Green + DataSrc(i).Blue) <= 384 Then
-                                    DataDest(i) = BrushRGB
+                                If (CLng(DataSrc(I).Red) + DataSrc(I).Green + DataSrc(I).Blue) <= 384 Then
+                                    DataDest(I) = BrushRGB
                                 End If
 
                             Else
 
                                 If a1 = 255 Then
-                                    DataDest(i) = BrushRGB
+                                    DataDest(I) = BrushRGB
                                 ElseIf a1 Then
                                     .Red = (a2 * .Red + a1 * BrushRGB.Red) \ 256
                                     .Green = (a2 * .Green + a1 * BrushRGB.Green) \ 256
@@ -3252,7 +3252,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
                         Else
 
                             If isGreyscale Then
-                                gCol = CLng(DataSrc(i).Red * 0.3) + DataSrc(i).Green * 0.59 + DataSrc(i).Blue * 0.11
+                                gCol = CLng(DataSrc(I).Red * 0.3) + DataSrc(I).Green * 0.59 + DataSrc(I).Blue * 0.11
 
                                 If a1 = 255 Then
                                     .Red = gCol
@@ -3268,31 +3268,31 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
                                 If a1 = 255 Then
                                     If PicEffect = epeLighter Then
-                                        .Red = aLighten(DataSrc(i).Red)
-                                        .Green = aLighten(DataSrc(i).Green)
-                                        .Blue = aLighten(DataSrc(i).Blue)
+                                        .Red = aLighten(DataSrc(I).Red)
+                                        .Green = aLighten(DataSrc(I).Green)
+                                        .Blue = aLighten(DataSrc(I).Blue)
                                     ElseIf PicEffect = epeDarker Then
-                                        .Red = aDarken(DataSrc(i).Red)
-                                        .Green = aDarken(DataSrc(i).Green)
-                                        .Blue = aDarken(DataSrc(i).Blue)
+                                        .Red = aDarken(DataSrc(I).Red)
+                                        .Green = aDarken(DataSrc(I).Green)
+                                        .Blue = aDarken(DataSrc(I).Blue)
                                     Else
-                                        DataDest(i) = DataSrc(i)
+                                        DataDest(I) = DataSrc(I)
                                     End If
 
                                 ElseIf a1 Then
 
                                     If PicEffect = epeLighter Then
-                                        .Red = (a2 * .Red + a1 * aLighten(DataSrc(i).Red)) \ 256
-                                        .Green = (a2 * .Green + a1 * aLighten(DataSrc(i).Green)) \ 256
-                                        .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(i).Blue)) \ 256
+                                        .Red = (a2 * .Red + a1 * aLighten(DataSrc(I).Red)) \ 256
+                                        .Green = (a2 * .Green + a1 * aLighten(DataSrc(I).Green)) \ 256
+                                        .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(I).Blue)) \ 256
                                     ElseIf PicEffect = epeDarker Then
-                                        .Red = (a2 * .Red + a1 * aDarken(DataSrc(i).Red)) \ 256
-                                        .Green = (a2 * .Green + a1 * aDarken(DataSrc(i).Green)) \ 256
-                                        .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(i).Blue)) \ 256
+                                        .Red = (a2 * .Red + a1 * aDarken(DataSrc(I).Red)) \ 256
+                                        .Green = (a2 * .Green + a1 * aDarken(DataSrc(I).Green)) \ 256
+                                        .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(I).Blue)) \ 256
                                     Else
-                                        .Red = (a2 * .Red + a1 * DataSrc(i).Red) \ 256
-                                        .Green = (a2 * .Green + a1 * DataSrc(i).Green) \ 256
-                                        .Blue = (a2 * .Blue + a1 * DataSrc(i).Blue) \ 256
+                                        .Red = (a2 * .Red + a1 * DataSrc(I).Red) \ 256
+                                        .Green = (a2 * .Green + a1 * DataSrc(I).Green) \ 256
+                                        .Blue = (a2 * .Blue + a1 * DataSrc(I).Blue) \ 256
                                     End If
                                 End If
                             End If
@@ -3337,10 +3337,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal BrushColor As Long = -1, Optional ByVal isGreyscale As Boolean = False)
 
-    Dim B           As Long
+    Dim b           As Long
     Dim H           As Long
     Dim F           As Long
-    Dim i           As Long
+    Dim I           As Long
     Dim newW        As Long
     Dim TmpDC       As Long
     Dim TmpBmp      As Long
@@ -3442,27 +3442,27 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
         For H = 0 To DstH - 1
             F = H * DstW
 
-            For B = 0 To newW
-                i = F + B
+            For b = 0 To newW
+                I = F + b
 
                 If m_bEnabled Then
                     If m_Buttonstate = eStateOver Then
-                        a1 = (CLng(DataSrc(i).Alpha) * OverOpacity) \ 255
+                        a1 = (CLng(DataSrc(I).Alpha) * OverOpacity) \ 255
                     Else
-                        a1 = (CLng(DataSrc(i).Alpha) * m_PictureOpacity) \ 255
+                        a1 = (CLng(DataSrc(I).Alpha) * m_PictureOpacity) \ 255
                     End If
 
                 Else
-                    a1 = (CLng(DataSrc(i).Alpha) * bDisOpacity) \ 255
+                    a1 = (CLng(DataSrc(I).Alpha) * bDisOpacity) \ 255
                 End If
 
                 a2 = 255 - a1
 
-                With DataDest(i)
+                With DataDest(I)
 
                     If BrushColor <> -1 Then
                         If a1 = 255 Then
-                            DataDest(i) = BrushRGB
+                            DataDest(I) = BrushRGB
                         ElseIf a1 Then
                             .Red = (a2 * .Red + a1 * BrushRGB.Red) \ 256
                             .Green = (a2 * .Green + a1 * BrushRGB.Green) \ 256
@@ -3472,7 +3472,7 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
                     Else
 
                         If isGreyscale Then
-                            gCol = CLng(DataSrc(i).Red * 0.3) + DataSrc(i).Green * 0.59 + DataSrc(i).Blue * 0.11
+                            gCol = CLng(DataSrc(I).Red * 0.3) + DataSrc(I).Green * 0.59 + DataSrc(I).Blue * 0.11
 
                             If a1 = 255 Then
                                 .Red = gCol
@@ -3488,31 +3488,31 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
 
                             If a1 = 255 Then
                                 If PicEffect = epeLighter Then
-                                    .Red = aLighten(DataSrc(i).Red)
-                                    .Green = aLighten(DataSrc(i).Green)
-                                    .Blue = aLighten(DataSrc(i).Blue)
+                                    .Red = aLighten(DataSrc(I).Red)
+                                    .Green = aLighten(DataSrc(I).Green)
+                                    .Blue = aLighten(DataSrc(I).Blue)
                                 ElseIf PicEffect = epeDarker Then
-                                    .Red = aDarken(DataSrc(i).Red)
-                                    .Green = aDarken(DataSrc(i).Green)
-                                    .Blue = aDarken(DataSrc(i).Blue)
+                                    .Red = aDarken(DataSrc(I).Red)
+                                    .Green = aDarken(DataSrc(I).Green)
+                                    .Blue = aDarken(DataSrc(I).Blue)
                                 Else
-                                    DataDest(i) = DataSrc(i)
+                                    DataDest(I) = DataSrc(I)
                                 End If
 
                             ElseIf a1 Then
 
                                 If PicEffect = epeLighter Then
-                                    .Red = (a2 * .Red + a1 * aLighten(DataSrc(i).Red)) \ 256
-                                    .Green = (a2 * .Green + a1 * aLighten(DataSrc(i).Green)) \ 256
-                                    .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(i).Blue)) \ 256
+                                    .Red = (a2 * .Red + a1 * aLighten(DataSrc(I).Red)) \ 256
+                                    .Green = (a2 * .Green + a1 * aLighten(DataSrc(I).Green)) \ 256
+                                    .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(I).Blue)) \ 256
                                 ElseIf PicEffect = epeDarker Then
-                                    .Red = (a2 * .Red + a1 * aDarken(DataSrc(i).Red)) \ 256
-                                    .Green = (a2 * .Green + a1 * aDarken(DataSrc(i).Green)) \ 256
-                                    .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(i).Blue)) \ 256
+                                    .Red = (a2 * .Red + a1 * aDarken(DataSrc(I).Red)) \ 256
+                                    .Green = (a2 * .Green + a1 * aDarken(DataSrc(I).Green)) \ 256
+                                    .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(I).Blue)) \ 256
                                 Else
-                                    .Red = (a2 * .Red + a1 * DataSrc(i).Red) \ 256
-                                    .Green = (a2 * .Green + a1 * DataSrc(i).Green) \ 256
-                                    .Blue = (a2 * .Blue + a1 * DataSrc(i).Blue) \ 256
+                                    .Red = (a2 * .Red + a1 * DataSrc(I).Red) \ 256
+                                    .Green = (a2 * .Green + a1 * DataSrc(I).Green) \ 256
+                                    .Blue = (a2 * .Blue + a1 * DataSrc(I).Blue) \ 256
                                 End If
                             End If
                         End If
@@ -4679,12 +4679,12 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Initialize()
 
-    Dim i As Long
+    Dim I As Long
 
     'Prebuid Lighten/Darken arrays
-    For i = 0 To 255
-        aLighten(i) = Lighten(i)
-        aDarken(i) = Darken(i)
+    For I = 0 To 255
+        aLighten(I) = Lighten(I)
+        aDarken(I) = Darken(I)
     Next
 
     ' --Get the operating system version for text drawing purposes.

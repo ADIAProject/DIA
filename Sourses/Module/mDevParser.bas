@@ -50,16 +50,16 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function CompareDevDBVersion(strDevDBFullFileName As String) As Boolean
 
-    Dim lngValue          As Long
+    Dim lngResult         As Long
     Dim strFilePath_woExt As String
 
-    strFilePath_woExt = GetFileNameOnly_woExt(strDevDBFullFileName)
-    lngValue = IniLongPrivate(strFilePath_woExt, "Version", BackslashAdd2Path(strFilePath_woExt) & "DevDBVersions.ini")
+    strFilePath_woExt = GetFileName_woExt(strDevDBFullFileName)
+    lngResult = IniLongPrivate(GetFileNameFromPath(strFilePath_woExt), "Version", BackslashAdd2Path(GetPathNameFromPath(strFilePath_woExt)) & "DevDBVersions.ini")
 
-    If lngValue = 9999 Then
+    If lngResult = 9999 Then
         CompareDevDBVersion = False
     Else
-        CompareDevDBVersion = Not (lngValue <> lngDevDBVersion)
+        CompareDevDBVersion = Not (lngResult <> lngDevDBVersion)
     End If
 
 End Function
@@ -92,26 +92,26 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub DevParserLocalHwids2()
 
-    Dim strContent    As String
-    Dim I             As Long
-    Dim strCnt        As Long
-    Dim miStatus      As Long
-    Dim strID         As String
-    Dim strIDOrig     As String
-    Dim strIDCutting  As String
-    Dim strName       As String
-    Dim strName_x()   As String
-    Dim miMaxCountArr As Long
-    Dim RecCountArr   As Long
-    Dim strID_x()     As String
-    Dim RegExpDevcon  As RegExp
-    Dim MatchesDevcon As MatchCollection
-    Dim objMatch      As Match
-    Dim strStatus     As String
+    Dim strContent          As String
+    Dim ii                  As Long
+    Dim lngStrCnt           As Long
+    Dim miStatus            As Long
+    Dim strID               As String
+    Dim strIDOrig           As String
+    Dim strIDCutting        As String
+    Dim strName             As String
+    Dim strName_x()         As String
+    Dim miMaxCountArr       As Long
+    Dim lngRecCountArr      As Long
+    Dim strID_x()           As String
+    Dim objRegExpDevcon     As RegExp
+    Dim objMatchesDevcon    As MatchCollection
+    Dim objMatch            As Match
+    Dim strStatus           As String
 
-    Set RegExpDevcon = New RegExp
+    Set objRegExpDevcon = New RegExp
 
-    With RegExpDevcon
+    With objRegExpDevcon
         .Pattern = "(^[^\n\r\s][^\n\r]+)\r\n(\s+[^\n\r]+\r\n)*[^\n\r]*((?:DEVICE IS|DEVICE HAS|DRIVER IS|DRIVER HAS)[^\r]+)"
         .MultiLine = True
         '.IgnoreCase = True
@@ -123,21 +123,20 @@ Public Sub DevParserLocalHwids2()
     If FileExists(strHwidsTxtPath) Then
         FileReadData strHwidsTxtPath, strContent
         strContent = UCase$(strContent)
-        Set MatchesDevcon = RegExpDevcon.Execute(strContent)
+        Set objMatchesDevcon = objRegExpDevcon.Execute(strContent)
         miMaxCountArr = 100
 
         ' максимальное кол-во элементов в массиве
         ReDim arrHwidsLocal(miMaxCountArr)
 
-        strCnt = MatchesDevcon.count
-        RecCountArr = 0
+        lngStrCnt = objMatchesDevcon.count
+        lngRecCountArr = 0
 
-        'For i = 0 To MatchesDevcon.Count - 1
-        For I = 0 To strCnt - 1
-            Set objMatch = MatchesDevcon.item(I)
+        For ii = 0 To lngStrCnt - 1
+            Set objMatch = objMatchesDevcon.item(ii)
 
             ' Если записей в массиве становится больше чем объявлено, то увеличиваем размерность массива
-            If RecCountArr = miMaxCountArr Then
+            If lngRecCountArr = miMaxCountArr Then
                 miMaxCountArr = miMaxCountArr + miMaxCountArr
 
                 ReDim Preserve arrHwidsLocal(miMaxCountArr)
@@ -184,12 +183,12 @@ Public Sub DevParserLocalHwids2()
                     strName = Trim$(strName)
 
                     If Len(strID) > 3 Then
-                        arrHwidsLocal(RecCountArr).HWID = strID
-                        arrHwidsLocal(RecCountArr).DevName = strName
-                        arrHwidsLocal(RecCountArr).Status = miStatus
-                        arrHwidsLocal(RecCountArr).HWIDOrig = strIDOrig
-                        arrHwidsLocal(RecCountArr).HWIDCutting = strIDCutting
-                        RecCountArr = RecCountArr + 1
+                        arrHwidsLocal(lngRecCountArr).HWID = strID
+                        arrHwidsLocal(lngRecCountArr).DevName = strName
+                        arrHwidsLocal(lngRecCountArr).Status = miStatus
+                        arrHwidsLocal(lngRecCountArr).HWIDOrig = strIDOrig
+                        arrHwidsLocal(lngRecCountArr).HWIDCutting = strIDCutting
+                        lngRecCountArr = lngRecCountArr + 1
                     End If
                 End If
 
@@ -212,23 +211,23 @@ Public Sub DevParserLocalHwids2()
 
                 If Len(strID) > 3 Then
                     ' ID оборудования
-                    arrHwidsLocal(RecCountArr).HWID = strID
+                    arrHwidsLocal(lngRecCountArr).HWID = strID
                     ' Наименование оборудования
-                    arrHwidsLocal(RecCountArr).DevName = strName
+                    arrHwidsLocal(lngRecCountArr).DevName = strName
                     ' Статус оборудования
-                    arrHwidsLocal(RecCountArr).Status = miStatus
-                    arrHwidsLocal(RecCountArr).HWIDOrig = strIDOrig
-                    arrHwidsLocal(RecCountArr).HWIDCutting = strIDCutting
-                    RecCountArr = RecCountArr + 1
+                    arrHwidsLocal(lngRecCountArr).Status = miStatus
+                    arrHwidsLocal(lngRecCountArr).HWIDOrig = strIDOrig
+                    arrHwidsLocal(lngRecCountArr).HWIDCutting = strIDCutting
+                    lngRecCountArr = lngRecCountArr + 1
                 End If
             End If
 
         Next
 
         ' Переобъявляем массив на реальное кол-во записей
-        If RecCountArr Then
+        If lngRecCountArr Then
 
-            ReDim Preserve arrHwidsLocal(RecCountArr - 1)
+            ReDim Preserve arrHwidsLocal(lngRecCountArr - 1)
 
         Else
 

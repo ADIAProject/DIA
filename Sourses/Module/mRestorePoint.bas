@@ -94,13 +94,13 @@ ExitFromSub:
     Exit Sub
 
 HandErr:
-    If mbDebugStandart Then DebugMode "CreateRestorePoint:  Err.Number: " & err.Number & " Err.Description: " & err.Description
+    If mbDebugStandart Then DebugMode "CreateRestorePoint:  Err.Number: " & Err.Number & " Err.Description: " & Err.Description
 
-    If err.Number = -2147217389 Then
-        MsgBox "Error ¹: " & err.Number & vbNewLine & "Description: " & err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
-    ElseIf err.Number = -2147217406 Then
-        MsgBox "Error ¹: " & err.Number & vbNewLine & "Description: " & err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Maybe this Function not Supported this operation system.", vbCritical, strProductName
-    ElseIf err.Number <> 0 Then
+    If Err.Number = -2147217389 Then
+        MsgBox "Error ¹: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Probably trouble with WMI.", vbCritical, strProductName
+    ElseIf Err.Number = -2147217406 Then
+        MsgBox "Error ¹: " & Err.Number & vbNewLine & "Description: " & Err.Description & str2vbNewLine & "This Error in Function 'CreateRestorePoint'. Maybe this Function not Supported this operation system.", vbCritical, strProductName
+    ElseIf Err.Number <> 0 Then
         GoTo ExitFromSub
     End If
 

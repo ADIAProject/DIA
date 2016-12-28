@@ -1,11 +1,8 @@
 Attribute VB_Name = "mIniFile"
 Option Explicit
 
-'Читает целый параметр из любого файла .INI
-'Читает строку из любого файла .INI
-'Записывает строку в любой файл .INI
-'Читает список параметров и значений в секции
 Private IndexDevIDMass As Long
+
 Private Declare Function GetPrivateProfileSection Lib "kernel32.dll" Alias "GetPrivateProfileSectionA" (ByVal lpAppName As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
 Private Declare Function GetPrivateProfileInt Lib "kernel32.dll" Alias "GetPrivateProfileIntA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal nDefault As Long, ByVal lpFileName As String) As Long
 Private Declare Function GetPrivateProfileString Lib "kernel32.dll" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Long, ByVal lpFileName As String) As Long
@@ -79,15 +76,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueBoolean(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Boolean
 
-    Dim lngValue As Long
+    Dim lngResult As Long
 
-    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngResult = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If lngValue = 9999 Then
-        lngValue = lngValueDefault
+    If lngResult = 9999 Then
+        lngResult = lngValueDefault
     End If
 
-    GetIniValueBoolean = CBool(lngValue)
+    GetIniValueBoolean = CBool(lngResult)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -100,15 +97,15 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Function GetIniValueLong(ByVal strIniPath As String, ByVal strIniSection As String, ByVal strIniValue As String, ByVal lngValueDefault As Long) As Long
 
-    Dim lngValue As Long
+    Dim lngResult As Long
 
-    lngValue = IniLongPrivate(strIniSection, strIniValue, strIniPath)
+    lngResult = IniLongPrivate(strIniSection, strIniValue, strIniPath)
 
-    If lngValue = 9999 Then
-        lngValue = lngValueDefault
+    If lngResult = 9999 Then
+        lngResult = lngValueDefault
     End If
 
-    GetIniValueLong = lngValue
+    GetIniValueLong = lngResult
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -137,32 +134,32 @@ End Function
 '! Description (Описание)  :   [Читает имена значений и переменных в массив в указанной секции .INI]
 '! Parameters  (Переменные):   SekName (String) - имя секции (регистр не учитывается)
 '                              IniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
-'                              FirstValue (Boolean)   - если требуется прочитать только первую строку в секции
+'                              mbFirstValue (Boolean)   - если требуется прочитать только первую строку в секции
 '! Return Value:Возвр. знач.:  Малый буфер или Нет секции если есть ошибки в работе функции. Иначе возвращает массив переменная=значение
 '!--------------------------------------------------------------------------------
-Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As String, Optional ByVal FirstValue As Boolean)
+Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As String, Optional ByVal mbFirstValue As Boolean)
 
     Dim strBuffer        As String * 32767
     Dim strTemp          As String
     Dim intTemp          As Long
     Dim intTempSmallBuff As Long
     Dim intSize          As Long
-    Dim Index            As Long
+    Dim lngIndex         As Long
     Dim arrSection()     As String
     Dim arrSectionTemp() As String
-    Dim Key              As String
-    Dim Value            As String
-    Dim str              As String
+    Dim strKey           As String
+    Dim strValue         As String
+    Dim strString        As String
     Dim lpKeyValue()     As String
     Dim miRavnoPosition  As Long
 
     On Error GoTo PROC_ERR
 
-    Index = 1
+    lngIndex = 1
     intSize = GetPrivateProfileSection(SekName, strBuffer, 32767, IniFileName)
     strTemp = Left$(strBuffer, intSize)
 
-    If FirstValue Then
+    If mbFirstValue Then
 
         ReDim arrSection(1, 2)
 
@@ -170,19 +167,19 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
         intTempSmallBuff = InStrRev(strTemp, vbNullChar)
 
         If intTempSmallBuff Then
-            str = arrSectionTemp(0)
-            miRavnoPosition = InStr(str, strRavno)
+            strString = arrSectionTemp(0)
+            miRavnoPosition = InStr(strString, strRavno)
 
             If miRavnoPosition Then
-                Key = Left$(str, miRavnoPosition - 1)
-                Value = Mid$(str, miRavnoPosition + 1)
+                strKey = Left$(strString, miRavnoPosition - 1)
+                strValue = Mid$(strString, miRavnoPosition + 1)
             Else
-                Key = str
-                Value = str
+                strKey = strString
+                strValue = strString
             End If
 
-            arrSection(Index, 1) = Key
-            arrSection(Index, 2) = Value
+            arrSection(lngIndex, 1) = strKey
+            arrSection(lngIndex, 2) = strValue
             IndexDevIDMass = 1
             GoTo IF_EXIT
         Else
@@ -206,28 +203,28 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
 
             If intTempSmallBuff Then
                 intTemp = InStr(strTemp, vbNullChar)
-                str = Left$(strTemp, intTemp)
+                strString = Left$(strTemp, intTemp)
 
-                If InStr(str, "---") Then
-                    Key = "Строка без ID"
-                    Value = "Строка без ID"
+                If InStr(strString, "---") Then
+                    strKey = "Строка без ID"
+                    strValue = "Строка без ID"
                     GoTo Save_StrKey
                 End If
 
-                miRavnoPosition = InStr(str, strRavno)
+                miRavnoPosition = InStr(strString, strRavno)
 
                 If miRavnoPosition Then
-                    Key = Left$(str, miRavnoPosition - 1)
-                    Value = Mid$(str, miRavnoPosition + 1)
+                    strKey = Left$(strString, miRavnoPosition - 1)
+                    strValue = Mid$(strString, miRavnoPosition + 1)
                 Else
-                    Key = TrimNull(str)
-                    Value = TrimNull(str)
+                    strKey = TrimNull(strString)
+                    strValue = TrimNull(strString)
                 End If
 
 Save_StrKey:
-                arrSection(Index, 1) = Key
-                arrSection(Index, 2) = Value
-                Index = Index + 1
+                arrSection(lngIndex, 1) = strKey
+                arrSection(lngIndex, 2) = strValue
+                lngIndex = lngIndex + 1
                 strTemp = Mid$(strTemp, intTemp + 1, Len(strTemp))
             Else
 
@@ -243,13 +240,13 @@ Save_StrKey:
 
     Else
 
-        ReDim arrSection(Index, 2)
+        ReDim arrSection(lngIndex, 2)
 
-        arrSection(Index, 1) = "no_section"
-        arrSection(Index, 2) = "no_section"
+        arrSection(lngIndex, 1) = "no_section"
+        arrSection(lngIndex, 2) = "no_section"
     End If
 
-    IndexDevIDMass = Index
+    IndexDevIDMass = lngIndex
 IF_EXIT:
     GetSectionMass = arrSection
 PROC_EXIT:
@@ -344,29 +341,29 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strFullPath As String, Optional ByVal mbKeys As Boolean = True) As String()
 
-    Dim KeyAndVal() As String
-    Dim Key_Val()   As String
-    Dim strBuffer   As String
-    Dim intx        As Long
-    Dim Z()         As String
-    Dim n           As Long
+    Dim strKeyAndVal() As String
+    Dim strKey_Val()   As String
+    Dim strBuffer      As String
+    Dim intx           As Long
+    Dim Z()            As String
+    Dim n              As Long
 
     n = -1
     strBuffer = FillNullChar(5120)
     GetPrivateProfileSection strSection, strBuffer, Len(strBuffer), strFullPath
-    KeyAndVal = Split(strBuffer, vbNullChar)
+    strKeyAndVal = Split(strBuffer, vbNullChar)
 
-    For intx = LBound(KeyAndVal) To UBound(KeyAndVal)
+    For intx = LBound(strKeyAndVal) To UBound(strKeyAndVal)
 
-        If LenB(KeyAndVal(intx)) = 0 Then
+        If LenB(strKeyAndVal(intx)) = 0 Then
 
             Exit For
 
         End If
 
-        Key_Val = Split(KeyAndVal(intx), strRavno)
+        strKey_Val = Split(strKeyAndVal(intx), strRavno)
 
-        If UBound(Key_Val) = -1 Then
+        If UBound(strKey_Val) = -1 Then
 
             Exit For
 
@@ -378,19 +375,19 @@ Public Function LoadIniSectionKeys(ByVal strSection As String, ByVal strFullPath
 
         If mbKeys Then
             ' только ключи
-            Z(n) = Key_Val(0)
+            Z(n) = strKey_Val(0)
         Else
 
             ' только значения ключей
-            If UBound(Key_Val) = 1 Then
-                Z(n) = Key_Val(1)
+            If UBound(strKey_Val) = 1 Then
+                Z(n) = strKey_Val(1)
             End If
         End If
 
     Next
 
-    Erase KeyAndVal
-    Erase Key_Val
+    Erase strKeyAndVal
+    Erase strKey_Val
 
     If n = -1 Then
 

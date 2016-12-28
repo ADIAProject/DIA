@@ -83,6 +83,7 @@ Public lngStatusBtnBackColor             As Long        ' Цвет оформления кнопки
 Public lngFreeSpaceSysDrive              As Long        ' Свободное место на жестком диске
 Public mbCleanTempForEachDP              As Boolean     ' Очистка каталога темп для каждого пакета драйверов при индексации
 Public mbSortDBTxtFileByHWID             As Boolean     ' Сортировать индексный txt-файл по HWID
+Public mbParseHwidByInfDrpFile           As Boolean     ' Обрабатывать файлы infdrp вместо inf при индексации
 
 'Public strImageMenuName                  As String
 'Public mbExMenu                           As Boolean ' Расширенное меню
@@ -190,6 +191,7 @@ Public Sub CreateIni()
         IniWriteStrPrivate "OS", "DP_is_aFolder", "0", strSysIni
         IniWriteStrPrivate "OS", "SortMethodShell", "0", strSysIni
         IniWriteStrPrivate "OS", "SortDBTxtFileByHWID", "0", strSysIni
+        IniWriteStrPrivate "OS", "ParseHwidByInfDrpFile", "0", strSysIni
         'Секция OS_1
         IniWriteStrPrivate "OS_1", "Ver", "5.0;5.1;5.2", strSysIni
         IniWriteStrPrivate "OS_1", "Name", "2000/XP/2003 Server", strSysIni
@@ -324,7 +326,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function GetMainIniParam() As Boolean
 
-    Dim i                           As Long
+    Dim ii                          As Long
     Dim cntOsInIni                  As Integer
     Dim mbAllFolderDRVNotExistCount As Integer
     Dim cntUtilsInIni               As Integer
@@ -476,21 +478,21 @@ Public Function GetMainIniParam() As Boolean
 
         ReDim arrOSList(lngOSCount - 1)
 
-        For i = 0 To UBound(arrOSList)
-            cntOsInIni = i + 1
-            arrOSList(i).Ver = IniStringPrivate("OS_" & cntOsInIni, "Ver", strSysIni)
-            arrOSList(i).Name = IniStringPrivate("OS_" & cntOsInIni, "Name", strSysIni)
-            arrOSList(i).drpFolder = IniStringPrivate("OS_" & cntOsInIni, "drpFolder", strSysIni)
+        For ii = 0 To UBound(arrOSList)
+            cntOsInIni = ii + 1
+            arrOSList(ii).Ver = IniStringPrivate("OS_" & cntOsInIni, "Ver", strSysIni)
+            arrOSList(ii).Name = IniStringPrivate("OS_" & cntOsInIni, "Name", strSysIni)
+            arrOSList(ii).drpFolder = IniStringPrivate("OS_" & cntOsInIni, "drpFolder", strSysIni)
 
-            If arrOSList(i).drpFolder <> "no_key" Then
-                arrOSList(i).drpFolderFull = PathCollect(arrOSList(i).drpFolder)
+            If arrOSList(ii).drpFolder <> "no_key" Then
+                arrOSList(ii).drpFolderFull = PathCollect(arrOSList(ii).drpFolder)
 
-                If PathExists(arrOSList(i).drpFolderFull) = False Then
-                    If mbDebugStandart Then DebugMode "Not find folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & str2vbNewLine & "Folder is not Exist: " & vbNewLine & arrOSList(i).drpFolderFull
-                    arrOSList(i).DPFolderNotExist = True
+                If PathExists(arrOSList(ii).drpFolderFull) = False Then
+                    If mbDebugStandart Then DebugMode "Not find folder with package driver" & vbNewLine & "for OS: " & arrOSList(ii).Name & str2vbNewLine & "Folder is not Exist: " & vbNewLine & arrOSList(ii).drpFolderFull
+                    arrOSList(ii).DPFolderNotExist = True
                     mbAllFolderDRVNotExistCount = mbAllFolderDRVNotExistCount + 1
 
-                    If i <> UBound(arrOSList) Then
+                    If ii <> UBound(arrOSList) Then
                         mbAllFolderDRVNotExist = True
                     Else
                         mbAllFolderDRVNotExist = mbAllFolderDRVNotExist And mbAllFolderDRVNotExistCount = UBound(arrOSList) + 1
@@ -498,43 +500,43 @@ Public Function GetMainIniParam() As Boolean
 
                 Else
                     mbAllFolderDRVNotExist = False
-                    arrOSList(i).DPFolderNotExist = False
+                    arrOSList(ii).DPFolderNotExist = False
                 End If
 
             Else
-                If mbDebugStandart Then DebugMode "Folder with package driver" & vbNewLine & "for OS: " & arrOSList(i).Name & vbNewLine & "Is Not present in options. Correct and start the program again."
+                If mbDebugStandart Then DebugMode "Folder with package driver" & vbNewLine & "for OS: " & arrOSList(ii).Name & vbNewLine & "Is Not present in options. Correct and start the program again."
             End If
 
-            arrOSList(i).devIDFolder = IniStringPrivate("OS_" & cntOsInIni, "devIDFolder", strSysIni)
-            arrOSList(i).devIDFolderFull = PathCollect(arrOSList(i).devIDFolder)
-            arrOSList(i).is64bit = IniLongPrivate("OS_" & cntOsInIni, "is64bit", strSysIni)
+            arrOSList(ii).devIDFolder = IniStringPrivate("OS_" & cntOsInIni, "devIDFolder", strSysIni)
+            arrOSList(ii).devIDFolderFull = PathCollect(arrOSList(ii).devIDFolder)
+            arrOSList(ii).is64bit = IniLongPrivate("OS_" & cntOsInIni, "is64bit", strSysIni)
 
-            If arrOSList(i).is64bit = 9999 Then
-                arrOSList(i).is64bit = 0
+            If arrOSList(ii).is64bit = 9999 Then
+                arrOSList(ii).is64bit = 0
             End If
 
-            arrOSList(i).PathPhysX = IniStringPrivate("OS_" & cntOsInIni, "PathPhysX", strSysIni)
+            arrOSList(ii).PathPhysX = IniStringPrivate("OS_" & cntOsInIni, "PathPhysX", strSysIni)
 
-            If arrOSList(i).PathPhysX = "no_key" Then
-                arrOSList(i).PathPhysX = vbNullString
+            If arrOSList(ii).PathPhysX = "no_key" Then
+                arrOSList(ii).PathPhysX = vbNullString
             End If
 
-            arrOSList(i).PathLanguages = IniStringPrivate("OS_" & cntOsInIni, "PathLanguages", strSysIni)
+            arrOSList(ii).PathLanguages = IniStringPrivate("OS_" & cntOsInIni, "PathLanguages", strSysIni)
 
-            If arrOSList(i).PathLanguages = "no_key" Then
-                arrOSList(i).PathLanguages = vbNullString
+            If arrOSList(ii).PathLanguages = "no_key" Then
+                arrOSList(ii).PathLanguages = vbNullString
             End If
 
-            arrOSList(i).ExcludeFileName = IniStringPrivate("OS_" & cntOsInIni, "ExcludeFileName", strSysIni)
+            arrOSList(ii).ExcludeFileName = IniStringPrivate("OS_" & cntOsInIni, "ExcludeFileName", strSysIni)
 
-            If arrOSList(i).ExcludeFileName = "no_key" Then
-                arrOSList(i).ExcludeFileName = vbNullString
+            If arrOSList(ii).ExcludeFileName = "no_key" Then
+                arrOSList(ii).ExcludeFileName = vbNullString
             End If
 
-            arrOSList(i).PathRuntimes = IniStringPrivate("OS_" & cntOsInIni, "PathRuntimes", strSysIni)
+            arrOSList(ii).PathRuntimes = IniStringPrivate("OS_" & cntOsInIni, "PathRuntimes", strSysIni)
 
-            If arrOSList(i).PathRuntimes = "no_key" Then
-                arrOSList(i).PathRuntimes = vbNullString
+            If arrOSList(ii).PathRuntimes = "no_key" Then
+                arrOSList(ii).PathRuntimes = vbNullString
             End If
 
         Next
@@ -565,19 +567,19 @@ Public Function GetMainIniParam() As Boolean
 
         ReDim arrUtilsList(lngUtilsCount - 1, 3)
 
-        For i = 0 To UBound(arrUtilsList)
-            cntUtilsInIni = i + 1
-            arrUtilsList(i, 0) = IniStringPrivate("Utils_" & cntUtilsInIni, "Name", strSysIni)
-            arrUtilsList(i, 1) = IniStringPrivate("Utils_" & cntUtilsInIni, "Path", strSysIni)
-            arrUtilsList(i, 2) = IniStringPrivate("Utils_" & cntUtilsInIni, "Path64", strSysIni)
-            arrUtilsList(i, 3) = IniStringPrivate("Utils_" & cntUtilsInIni, "Params", strSysIni)
+        For ii = 0 To UBound(arrUtilsList)
+            cntUtilsInIni = ii + 1
+            arrUtilsList(ii, 0) = IniStringPrivate("Utils_" & cntUtilsInIni, "Name", strSysIni)
+            arrUtilsList(ii, 1) = IniStringPrivate("Utils_" & cntUtilsInIni, "Path", strSysIni)
+            arrUtilsList(ii, 2) = IniStringPrivate("Utils_" & cntUtilsInIni, "Path64", strSysIni)
+            arrUtilsList(ii, 3) = IniStringPrivate("Utils_" & cntUtilsInIni, "Params", strSysIni)
 
-            If arrUtilsList(i, 2) = "no_key" Then
-                arrUtilsList(i, 2) = vbNullString
+            If arrUtilsList(ii, 2) = "no_key" Then
+                arrUtilsList(ii, 2) = vbNullString
             End If
 
-            If arrUtilsList(i, 3) = "no_key" Or arrUtilsList(i, 3) = "Дополнительные параметры запуска" Then
-                arrUtilsList(i, 3) = vbNullString
+            If arrUtilsList(ii, 3) = "no_key" Or arrUtilsList(ii, 3) = "Дополнительные параметры запуска" Then
+                arrUtilsList(ii, 3) = vbNullString
             End If
 
         Next
@@ -788,7 +790,6 @@ Public Function GetMainIniParam() As Boolean
     mbCompatiblesHWID = GetIniValueBoolean(strSysIni, "OS", "CompatiblesHWID", 1)
     lngCompatiblesHWIDCount = GetIniValueLong(strSysIni, "OS", "CompatiblesHWIDCount", 5)
     'Проверять совместимость по имени или маркеру
-    'mbMatchHWIDbyMarkers = GetIniValueBoolean(strSysIni, "OS", "MatchHWIDbyMarkers", 1)
     mbMatchHWIDbyDPName = GetIniValueBoolean(strSysIni, "OS", "MatchHWIDbyDPName", 1)
     ' Обрабатывать совместимые HWID
     mbLoadUnSupportedOS = GetIniValueBoolean(strSysIni, "OS", "LoadUnSupportedOS", 0)
@@ -796,6 +797,8 @@ Public Function GetMainIniParam() As Boolean
     ' Сортировка выходных индексных файлов, методы сортировки (*.hwid всегда, *.txt по умолчанию выключено, для ускорения индексации)
     lngSortMethodShell = GetIniValueLong(strSysIni, "OS", "SortMethodShell", 0)
     mbSortDBTxtFileByHWID = GetIniValueBoolean(strSysIni, "OS", "SortDBTxtFileByHWID", 0)
+    ' Обработка файлов infdrp при их наличии
+    mbParseHwidByInfDrpFile = GetIniValueBoolean(strSysIni, "OS", "ParseHwidByInfDrpFile", 0)
     
     '[Button]
     ' Шрифт Кнопок
@@ -866,12 +869,12 @@ Public Function GetMainIniParam() As Boolean
 
         ReDim arrNotebookFilterList(NotebookFilterCount)
 
-        For i = 0 To UBound(arrNotebookFilterList) - 1
-            numFilter = i + 1
-            arrNotebookFilterList(i) = UCase$(IniStringPrivate("NotebookVendor", "Filter_" & numFilter, strSysIni))
+        For ii = 0 To UBound(arrNotebookFilterList) - 1
+            numFilter = ii + 1
+            arrNotebookFilterList(ii) = UCase$(IniStringPrivate("NotebookVendor", "Filter_" & numFilter, strSysIni))
 
-            If arrNotebookFilterList(i) = "no_key" Then
-                arrNotebookFilterList(i) = arrNotebookFilterListDef(i)
+            If arrNotebookFilterList(ii) = "no_key" Then
+                arrNotebookFilterList(ii) = arrNotebookFilterListDef(ii)
             End If
 
         Next

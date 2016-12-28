@@ -6252,10 +6252,10 @@ Select Case wMsg
         Dim KeyCode As Integer
         KeyCode = wParam And &HFF&
         If wMsg = WM_KEYDOWN Then
-            RaiseEvent KeyDown(KeyCode, GetShiftState())
+            RaiseEvent KeyDown(KeyCode, GetShiftStateFromMsg())
             ListViewCharCodeCache = ComCtlsPeekCharCode(hWnd)
         ElseIf wMsg = WM_KEYUP Then
-            RaiseEvent KeyUp(KeyCode, GetShiftState())
+            RaiseEvent KeyUp(KeyCode, GetShiftStateFromMsg())
         End If
         wParam = KeyCode
     Case WM_CHAR
@@ -6274,10 +6274,6 @@ Select Case wMsg
     Case WM_IME_CHAR
         SendMessage hWnd, WM_CHAR, wParam, ByVal lParam
         Exit Function
-    Case WM_LBUTTONDOWN
-        PostMessage hWnd, UM_BUTTONDOWN, MakeDWord(vbLeftButton, 0), ByVal lParam
-    Case WM_RBUTTONDOWN
-        PostMessage hWnd, UM_BUTTONDOWN, MakeDWord(vbRightButton, 0), ByVal lParam
     Case WM_NOTIFY
         Dim NM As NMHDR
         CopyMemory NM, ByVal lParam, LenB(NM)
@@ -6478,10 +6474,14 @@ Select Case wMsg
                     End If
             End Select
         End If
+    Case WM_LBUTTONDOWN
+        PostMessage hWnd, UM_BUTTONDOWN, MakeDWord(vbLeftButton, GetShiftStateFromParam(wParam)), ByVal lParam
+    Case WM_RBUTTONDOWN
+        PostMessage hWnd, UM_BUTTONDOWN, MakeDWord(vbRightButton, GetShiftStateFromParam(wParam)), ByVal lParam
     Case UM_BUTTONDOWN
         ' The control enters a modal message loop on WM_LBUTTONDOWN and WM_RBUTTONDOWN. (DragDetect)
         ' This workaround is necessary to raise 'MouseDown' before the button was released or the mouse was moved.
-        RaiseEvent MouseDown(LoWord(wParam), GetShiftState(), UserControl.ScaleX(Get_X_lParam(lParam), vbPixels, vbTwips), UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips))
+        RaiseEvent MouseDown(LoWord(wParam), HiWord(wParam), UserControl.ScaleX(Get_X_lParam(lParam), vbPixels, vbTwips), UserControl.ScaleY(Get_Y_lParam(lParam), vbPixels, vbTwips))
         ListViewButtonDown = LoWord(wParam)
         ListViewIsClick = True
         Exit Function
@@ -6714,7 +6714,7 @@ Select Case wMsg
                     End If
                     If NMIA.iItem > -1 Or (NMIA.iItem = -1 And (PropView = LvwViewReport Or PropView = LvwViewList)) Then
                         If ListViewButtonDown <> 0 Then
-                            RaiseEvent MouseUp(ListViewButtonDown, GetShiftState(), UserControl.ScaleX(NMIA.PTAction.X, vbPixels, vbTwips), UserControl.ScaleY(NMIA.PTAction.Y, vbPixels, vbTwips))
+                            RaiseEvent MouseUp(ListViewButtonDown, GetShiftStateFromMsg(), UserControl.ScaleX(NMIA.PTAction.X, vbPixels, vbTwips), UserControl.ScaleY(NMIA.PTAction.Y, vbPixels, vbTwips))
                             ListViewButtonDown = 0
                             ListViewIsClick = False
                             RaiseEvent Click

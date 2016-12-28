@@ -293,83 +293,91 @@ Option Explicit
 Private sFile As String
 
 Private Sub cmdContinue_Click()
-        Me.Hide
-        giAction_ = -1
+    Me.Hide
+    giAction_ = -1
 End Sub
 
 Private Sub Form_Load()
-Dim FileName As String
+Dim sFileName As String
 
-    FileName = "error.log"
+    sFileName = "error.log"
     
-    sFile = App.Path + vbBackslash + FileName
-    If mbIsDriveCDRoom Then sFile = "c:\error.log"
+    sFile = App.Path + vbBackslash + sFileName
     
-        With Me.MSFlexGrid1
-             .ColWidth(0) = 1200
-             .ColWidth(1) = 3000
-             .TextMatrix(0, 0) = "Operator"
-             .TextMatrix(0, 1) = "Name of procedure"
-             .Refresh
-        End With
+    If mbIsDriveCDRoom Then
+        sFile = "c:\error.log"
+    End If
+    
+    With Me.MSFlexGrid1
+         .ColWidth(0) = 1200
+         .ColWidth(1) = 3000
+         .TextMatrix(0, 0) = "Operator"
+         .TextMatrix(0, 1) = "Name of procedure"
+         .Refresh
+    End With
+    
 End Sub
 
 'Создание файла error.log
 Private Sub cmdCreateFile_Click()
-Dim iFile As Integer
-Dim ErrText As String
+Dim iFile       As Integer
+Dim strErrText  As String
+
 'On Error GoTo err
     
-    ErrText = "Description error in program " & App.ProductName & vbCrLf & _
-              "====================================" & vbCrLf & vbCrLf & _
-              "DateTime:" & vbTab & CStr(Date + time) & vbCrLf & _
-              "Error Number:" & vbTab & lblErrCode.Caption & vbCrLf & _
-              "Procedure:" & vbTab & lblProc.Caption & vbCrLf & _
-              "Row with error:" & vbTab & lblStmt.Caption & vbCrLf & _
-              "Description error:" & vbTab & lblErrDescr.Text & vbCrLf & vbCrLf & _
-              "Listing executing procedure" & vbCrLf & _
-              "---------------------" & vbCrLf & _
-              StackText & _
-              "Extended information" & vbCrLf & _
-              "---------------------" & vbCrLf & _
-              "Version of program:" & vbTab & App.Major & "." & App.Minor & "." & App.Revision & vbCrLf & _
-              "Work path:" & vbTab & App.Path & vbCrLf & _
-              "Name OS:" & vbTab & OSInfo.Name & vbCrLf & _
-              "Version OS:" & vbTab & OSInfo.VerFull & vbCrLf & _
-              "Build OS:" & vbTab & OSInfo.BuildNumber & vbCrLf & _
-              "Other:" & vbTab & OSInfo.ServicePack & vbCrLf & _
-              "====================================" & vbCrLf & vbCrLf
+    strErrText = "Description error in program " & App.ProductName & vbCrLf & _
+                 "====================================" & vbCrLf & vbCrLf & _
+                 "DateTime:" & vbTab & CStr(Date + Time) & vbCrLf & _
+                 "Error Number:" & vbTab & lblErrCode.Caption & vbCrLf & _
+                 "Procedure:" & vbTab & lblProc.Caption & vbCrLf & _
+                 "Row with error:" & vbTab & lblStmt.Caption & vbCrLf & _
+                 "Description error:" & vbTab & lblErrDescr.Text & vbCrLf & vbCrLf & _
+                 "Listing executing procedure" & vbCrLf & _
+                 "---------------------" & vbCrLf & _
+                 StackText & _
+                 "Extended information" & vbCrLf & _
+                 "---------------------" & vbCrLf & _
+                 "Version of program:" & vbTab & App.Major & "." & App.Minor & "." & App.Revision & vbCrLf & _
+                 "Work path:" & vbTab & App.Path & vbCrLf & _
+                 "Name OS:" & vbTab & OSInfo.Name & vbCrLf & _
+                 "Version OS:" & vbTab & OSInfo.VerFull & vbCrLf & _
+                 "Build OS:" & vbTab & OSInfo.BuildNumber & vbCrLf & _
+                 "Other:" & vbTab & OSInfo.ServicePack & vbCrLf & _
+                 "====================================" & vbCrLf & vbCrLf
 
     iFile = FreeFile
     
-    If PathFileExists(sFile) = 0 Then
+    If FileExists(sFile) = 0 Then
         Open sFile For Output As #iFile
     Else
         Open sFile For Append As #iFile
     End If
     
-    Print #iFile, ErrText
+    Print #iFile, strErrText
     Close #iFile
        
     MsgBox "Error.log saved: " & vbNewLine & sFile _
             & vbNewLine & vbNewLine & "Send error.log to author!"
 
 Exit Sub
-err:
-    MsgBox "Error on create logfile: №" & err.Number & vbCrLf _
-                & "Description: " & err.Description
+'err:
+'    MsgBox "Error on create logfile: №" & err.Number & vbCrLf _
+'                & "Description: " & err.Description
 End Sub
 
 'Чтение стека процедур из таблицы
 Private Function StackText() As String
-Dim i As Integer, ii As Integer
-i = 0
-ii = 0
-StackText = vbNullString
+Dim ii As Integer
+Dim iii As Integer
+
+    ii = 0
+    iii = 0
+    StackText = vbNullString
+    
     With Me.MSFlexGrid1
         
-        ii = .Rows - 1
-        If (.TextMatrix(ii, 0) = vbNullString) And (.TextMatrix(ii, 1) = vbNullString) Then
+        iii = .Rows - 1
+        If (.TextMatrix(iii, 0) = vbNullString) And (.TextMatrix(iii, 1) = vbNullString) Then
             .Rows = .Rows - 1
         End If
         
@@ -378,20 +386,22 @@ StackText = vbNullString
             Exit Function
         End If
         
-        For i = 1 To .Rows - 1
-            StackText = StackText & .TextMatrix(i, 0) & vbTab & .TextMatrix(i, 1) & vbCrLf
-        Next i
+        For ii = 1 To .Rows - 1
+            StackText = StackText & .TextMatrix(ii, 0) & vbTab & .TextMatrix(ii, 1) & vbCrLf
+        Next ii
         
         StackText = StackText & vbCrLf
     End With
+    
 End Function
     
 Private Sub cmdEmail_Click()
-    If PathFileExists(sFile) = 0 Then
+    If FileExists(sFile) = 0 Then
         cmdCreateFile_Click
     End If
+    
     Call ShellExecute(0, "Open", "mailto:Roman<roman-novosib@ngs.ru>" & _
-                                "?Subject=Error_" & Replace$(App.ProductName," ", vbNullString) & "_" & App.Major & "." & App.Minor & "." & App.Revision, vbNullString, vbNullString, 1)
+                                "?Subject=Error_" & Replace$(App.ProductName, " ", vbNullString) & "_" & App.Major & "." & App.Minor & "." & App.Revision, vbNullString, vbNullString, 1)
 End Sub
 
 Private Sub cmdExit_Click()

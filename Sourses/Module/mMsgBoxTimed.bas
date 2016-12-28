@@ -8,6 +8,7 @@ Option Explicit
 ' warranty or guaranty of any kind.  In other words, use at your own risk.
 ' Please send me you comments or suggestions at anirudhav@yahoo.com
 ' Thanks in advance.
+
 Private Const WH_CBT        As Integer = 5
 Private Const HCBT_ACTIVATE As Integer = 5
 Private Const BN_CLICKED    As Integer = 0

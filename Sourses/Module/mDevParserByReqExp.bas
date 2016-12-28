@@ -24,7 +24,7 @@ Private cSortHWID           As cAsmShell
 Private cSortHWID2          As cBlizzard
 
 'The GetInputState() API call will First check if there are any events and what-not that your application may have queued up waiting to be processed. Below is the declare for that function…
-Private Declare Function GetInputState Lib "user32" () As Long
+Private Declare Function GetInputState Lib "user32.dll" () As Long
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DevParserByRegExp
@@ -62,6 +62,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strInfFileName            As String
     Dim strInfPath                As String
     Dim strInfPathRelative        As String
+    Dim strInfPathRelativeDRP     As String
     Dim strInfPathTabQuoted       As String
     Dim strWorkDir                As String
     Dim strWorkDirInfList_x()     As FindListStruct
@@ -70,8 +71,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim jj                        As Long
     Dim k1                        As Long
     Dim k2                        As Long
-    Dim infNum                    As Long
-    Dim infCount                  As Long
+    Dim lngInfN                   As Long
+    Dim lngInfCount               As Long
     Dim strValueID                As String
     Dim strValueID_x()            As String
     Dim strDevName                As String
@@ -121,7 +122,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strVer                    As String
     Dim strVerTemp                As String
     Dim strVerTemp_x()            As String
-    
+    Dim mbParseInfDrp             As Boolean
+
     If mbDebugStandart Then DebugMode vbTab & "DevParserByRegExp-Start"
     
     lngTimeScriptRun = GetTimeStart
@@ -137,10 +139,20 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     objHWIDOutput.CompareMode = BinaryCompare
     
     ' Должно ускорить распаковку, если выключено чтение файла finish.ini
-    If Not mbLoadFinishFile Then
-        strUnpackMask = " *.inf"
+    If Not mbParseHwidByInfDrpFile Then
+
+        If Not mbLoadFinishFile Then
+            strUnpackMask = " *.inf"
+        Else
+            strUnpackMask = " *.inf DriverPack*.ini"
+        End If
+    ' Добавляем к распаковке файлы *.infdrp
     Else
-        strUnpackMask = " *.inf DriverPack*.ini"
+        If Not mbLoadFinishFile Then
+            strUnpackMask = " *.inf *.infdrp"
+        Else
+            strUnpackMask = " *.inf DriverPack*.ini *.infdrp"
+        End If
     End If
     
     'Имя папки с распакованными драйверами
@@ -187,7 +199,11 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
 
         ChangeStatusBarText strMessages(73) & strSpace & strPackFileName
         'Построение списка inf файлов в рабочем каталоге
-        strWorkDirInfList_x = SearchFilesInRoot(strWorkDir, "*.inf", True, False)
+        If Not mbParseHwidByInfDrpFile Then
+            strWorkDirInfList_x = SearchFilesInRoot(strWorkDir, "*.inf", True, False)
+        Else
+            strWorkDirInfList_x = SearchFilesInRoot(strWorkDir, "*.inf;*.infdrp", True, False)
+        End If
     Else
         ' Создаем список файлов *.cat в архиве
         strArchCatFileList = strWorkTempBackSL & "list_" & strPackFileName_woExt & ".txt"
@@ -200,7 +216,11 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
 
         ChangeStatusBarText strMessages(148) & strSpace & strPackFileName
         'Построение списка inf файлов в рабочем каталоге
-        strWorkDirInfList_x = SearchFilesInRoot(strPathDRP & strPackFileName, "*.inf", True, False)
+        If Not mbParseHwidByInfDrpFile Then
+            strWorkDirInfList_x = SearchFilesInRoot(strPathDRP & strPackFileName, "*.inf", True, False)
+        Else
+            strWorkDirInfList_x = SearchFilesInRoot(strPathDRP & strPackFileName, "*.inf;*.infdrp", True, False)
+        End If
     End If
 
     If UBound(strWorkDirInfList_x) = 0 Then
@@ -328,21 +348,45 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         End If
     End If
         
-    infCount = UBound(strWorkDirInfList_x) + 1
-    ChangeStatusBarText strMessages(73) & strSpace & strPackFileName & " (" & infCount & " inf-files)"
+    lngInfCount = UBound(strWorkDirInfList_x) + 1
+    ChangeStatusBarText strMessages(73) & strSpace & strPackFileName & " (" & lngInfCount & " inf-files)"
     
     ' Запускаем цикл обработки inf-файлов
-    For infNum = 0 To UBound(strWorkDirInfList_x)
+    For lngInfN = 0 To UBound(strWorkDirInfList_x)
         
-        If strWorkDirInfList_x(infNum).Size Then
+        mbParseInfDrp = False
+        ' Режим обработки файлов infdrp не включен, тогда...
+        If Not mbParseHwidByInfDrpFile Then
+            ' Если файл infdrp, то пропускаем его
+            If StrComp(strWorkDirInfList_x(lngInfN).Extension, "infdrp") = 0 Then
+                'SkipFile - не обрабатываем файлы *.InfDrp
+                GoTo SkipFileInfDrp
+            End If
+        Else
+            'пока не обрабатываем - задел на будущее
+            If StrComp(strWorkDirInfList_x(lngInfN).Extension, "infdrp") = 0 Then
+                'SkipFile - не обрабатываем файлы *.InfDrp
+                'GoTo SkipFileInfDrp
+                mbParseInfDrp = True
+                GoTo StartParseInfFile
+            Else
+                ' файл с расширением inf, проверяем наличие файла infdrp, если есть то пропускаем оригинальный inf
+                If FileExists(strWorkDirInfList_x(lngInfN).FullPath & "drp") Then
+                    GoTo SkipFileInfDrp
+                End If
+            End If
+        End If
+
+StartParseInfFile:
+        If strWorkDirInfList_x(lngInfN).Size Then
             
             ' полный путь к файлу inf
-            strInfFullName = strWorkDirInfList_x(infNum).FullPath
+            strInfFullName = strWorkDirInfList_x(lngInfN).FullPath
             ' Имя inf файла
-            strInfFileName = strWorkDirInfList_x(infNum).NameLCase
+            strInfFileName = strWorkDirInfList_x(lngInfN).NameLCase
             
-            If (infNum Mod 20) = 0 Then
-                ChangeStatusBarText strMessages(73) & strSpace & strPackFileName & " (" & infNum & strSpace & strMessages(124) & strSpace & infCount & ": " & strInfFileName & ")"
+            If (lngInfN Mod 20) = 0 Then
+                ChangeStatusBarText strMessages(73) & strSpace & strPackFileName & " (" & lngInfN & strSpace & strMessages(124) & strSpace & lngInfCount & ": " & strInfFileName & ")"
             Else
                 If GetInputState Then
                     DoEvents
@@ -357,9 +401,14 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             objStringHash.CompareMode = BinaryCompare
             
             ' путь к файлу inf для записи в параметры - Каталог где лежит inf-файл
-            strInfPath = strWorkDirInfList_x(infNum).RelativePath
+            strInfPath = strWorkDirInfList_x(lngInfN).RelativePath
             strInfPathRelative = strInfPath & strInfFileName
-            strInfPathTabQuoted = vbTab & strInfPathRelative & vbTab
+            strInfPathRelativeDRP = Replace$(strInfPathRelative, ".infdrp", ".inf")
+            If Not mbParseInfDrp Then
+                strInfPathTabQuoted = vbTab & strInfPathRelative & vbTab
+            Else
+                strInfPathTabQuoted = vbTab & strInfPathRelativeDRP & vbTab
+            End If
             
             ' Read INF file
             FileReadData strInfFullName, sFileContent
@@ -376,6 +425,7 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             
             ' Удаляем строки с ; или # в начале и пустые строки
             sFileContent = RegExpReplace.Replace(sFileContent, vbNewLine)
+            
             
             ' Find [strings] section
             Set objMatchesStrSect = RegExpStrSect.Execute(sFileContent)
@@ -984,10 +1034,12 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
             End If
         
         Else
-            If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strWorkDirInfList_x(infNum).FullPath
+            If mbDebugStandart Then DebugMode str3VbTab & "DevParserByRegExp: File is zero = 0 bytes:" & strWorkDirInfList_x(lngInfN).FullPath
         End If
 
-    Next infNum
+SkipFileInfDrp:
+
+    Next
 
     ChangeStatusBarText strMessages(121) & strSpace & strPackFileName
     
