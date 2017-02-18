@@ -25,7 +25,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'Note: this file has been modified for use within Drivers Installer Assistant.
+'Note: this file has been modified for use within Drivers Installer Assistant and Drivers BackUp Solution.
 
 'This code was originally written by Juned Chhipa.
 
@@ -535,7 +535,7 @@ Private Const DT_MULTILINE = (&H1)
 Private Const DT_NOPREFIX = &H800
 Private Const DT_DRAWFLAG As Long = DT_WORDBREAK Or DT_MULTILINE Or DT_NOPREFIX Or DT_VCENTER
 
-Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
+Private Declare Function DrawTextW Lib "user32.dll" (ByVal hDC As Long, ByVal lpchText As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal uFormat As Long) As Long
 Private Declare Function DrawText Lib "user32.dll" Alias "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
 
 '*************************************************************
@@ -607,13 +607,64 @@ Private m_bInitThem             As Boolean
 Private m_bInitThemed           As Boolean
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Initialize()
+
+    Dim ii As Long
+
+    'Prebuid Lighten/Darken arrays
+    For ii = 0 To 255
+        aLighten(ii) = Lighten(ii)
+        aDarken(ii) = Darken(ii)
+    Next
+
+    ' --Get the operating system version for text drawing purposes.
+    m_hMode = LoadLibrary(StrPtr("shell32.dll"))
+    m_WindowsNT = IsWinXPOrLater
+    dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
+
+    Set m_cSubclass = New cSelfSubHookCallback
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [A nice place to stop subclasser]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Terminate()
+
+    On Error GoTo Crash:
+
+    'Delete button region
+    If m_lButtonRgn Then
+        DeleteObject m_lButtonRgn
+    End If
+
+    If Not mFont Is Nothing Then Set mFont = Nothing
+    If m_hMode Then
+        FreeLibrary m_hMode
+        m_hMode = 0&
+    End If
+
+    UnsetPopupMenu
+    UnsetPopupMenuRBT
+
+    m_cSubclass.ssc_Terminate
+    Set m_cSubclass = Nothing
+
+Crash:
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property BackColor
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
 Attribute BackColor.VB_Description = "Returns/sets the background color used for the button."
-Attribute BackColor.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute BackColor.VB_UserMemId = -501
     BackColor = m_bColors.tBackColor
 End Property
@@ -641,7 +692,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ButtonStyle() As enumButtonStlyes
 Attribute ButtonStyle.VB_Description = "Returns/sets a value to determine the style used to draw the button."
-Attribute ButtonStyle.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute ButtonStyle.VB_UserMemId = 1745027102
     ButtonStyle = m_ButtonStyle
 End Property
@@ -664,13 +714,35 @@ Public Property Let ButtonStyle(ByVal New_ButtonStyle As enumButtonStlyes)
 End Property
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Caption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Property Get Caption() As String
+Attribute Caption.VB_Description = "Returns/sets the text displayed in the button."
+Attribute Caption.VB_UserMemId = -518
+    Caption = m_Caption
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Caption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_Caption (String)
+'!--------------------------------------------------------------------------------
+Public Property Let Caption(ByVal New_Caption As String)
+    m_Caption = New_Caption
+    SetAccessKey
+    RedrawButton
+    PropertyChanged "Caption"
+End Property
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property CaptionAlign
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get CaptionAlign() As enumCaptionAlign
 Attribute CaptionAlign.VB_Description = "Returns/Sets the position of the Caption."
-Attribute CaptionAlign.VB_ProcData.VB_Invoke_Property = ";Position"
 Attribute CaptionAlign.VB_UserMemId = 1745027101
     CaptionAlign = m_CaptionAlign
 End Property
@@ -693,7 +765,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get CaptionEffects() As enumCaptionEffects
 Attribute CaptionEffects.VB_Description = "Returns/Sets the Special Effects apply to the caption."
-Attribute CaptionEffects.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute CaptionEffects.VB_UserMemId = 1745027095
     CaptionEffects = m_CaptionEffects
 End Property
 
@@ -709,35 +781,12 @@ Public Property Let CaptionEffects(ByVal New_Effects As enumCaptionEffects)
 End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Caption
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Property Get Caption() As String
-Attribute Caption.VB_Description = "Returns/sets the text displayed in the button."
-Attribute Caption.VB_ProcData.VB_Invoke_Property = ";Text"
-Attribute Caption.VB_UserMemId = -518
-    Caption = m_Caption
-End Property
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property Caption
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   New_Caption (String)
-'!--------------------------------------------------------------------------------
-Public Property Let Caption(ByVal New_Caption As String)
-    m_Caption = New_Caption
-    SetAccessKey
-    RedrawButton
-    PropertyChanged "Caption"
-End Property
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property CheckExist
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get CheckExist() As Boolean
+Attribute CheckExist.VB_UserMemId = 1745027094
     CheckExist = m_CheckExist
 End Property
 
@@ -759,7 +808,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ColorScheme() As enumXPThemeColors
 Attribute ColorScheme.VB_Description = "Returns/Sets the ColorScheme to be used for the Background color."
-Attribute ColorScheme.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute ColorScheme.VB_UserMemId = 1745027093
     ColorScheme = m_lXPColor
 End Property
 
@@ -782,7 +831,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get DisabledPictureMode() As enumDisabledPicMode
 Attribute DisabledPictureMode.VB_Description = "Returns/Sets the effect to be used for picture when button is disabled."
-Attribute DisabledPictureMode.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute DisabledPictureMode.VB_UserMemId = 1745027098
     DisabledPictureMode = m_PicDisabledMode
 End Property
@@ -804,6 +852,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get DropDownEnable() As Boolean
+Attribute DropDownEnable.VB_UserMemId = 1745027092
     DropDownEnable = m_DropDownEnable
 End Property
 
@@ -824,7 +873,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get DropDownSeparator() As Boolean
 Attribute DropDownSeparator.VB_Description = "Returns/Sets the value whether to display DropDown Separator."
-Attribute DropDownSeparator.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute DropDownSeparator.VB_UserMemId = 1745027099
     DropDownSeparator = m_bDropDownSep
 End Property
@@ -847,7 +895,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get DropDownSymbol() As enumSymbol
 Attribute DropDownSymbol.VB_Description = "Returns/Sets the Symbol to be used for displaying PopupMenu."
-Attribute DropDownSymbol.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute DropDownSymbol.VB_UserMemId = 1745027100
     DropDownSymbol = m_DropDownSymbol
 End Property
@@ -870,7 +917,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get Enabled() As Boolean
 Attribute Enabled.VB_Description = "Returns/sets a value to determine whether the button can respond to events."
-Attribute Enabled.VB_ProcData.VB_Invoke_Property = ";Behavior"
 Attribute Enabled.VB_UserMemId = -514
     Enabled = m_bEnabled
 End Property
@@ -894,7 +940,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get Font() As StdFont
 Attribute Font.VB_Description = "Returns/sets the Font used to display text on the button."
-Attribute Font.VB_ProcData.VB_Invoke_Property = ";Font"
 Attribute Font.VB_UserMemId = -512
     Set Font = mFont
 End Property
@@ -919,9 +964,20 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ForeColor() As OLE_COLOR
 Attribute ForeColor.VB_Description = "Returns/sets the text color of the button caption."
-Attribute ForeColor.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute ForeColor.VB_UserMemId = -513
     ForeColor = m_bColors.tForeColor
+End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property ForeColor
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   New_ForeColor (OLE_COLOR)
+'!--------------------------------------------------------------------------------
+Public Property Let ForeColor(ByVal New_ForeColor As OLE_COLOR)
+    m_bColors.tForeColor = New_ForeColor
+    UserControl.ForeColor = m_bColors.tForeColor
+    RedrawButton
+    PropertyChanged "ForeColor"
 End Property
 
 '!--------------------------------------------------------------------------------
@@ -931,7 +987,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ForeColorHover() As OLE_COLOR
 Attribute ForeColorHover.VB_Description = "Returns/sets the text color of the button caption when Mouse is over the control."
-Attribute ForeColorHover.VB_ProcData.VB_Invoke_Property = ";Appearance"
 Attribute ForeColorHover.VB_UserMemId = 1745027097
     ForeColorHover = m_bColors.tForeColorOver
 End Property
@@ -949,25 +1004,12 @@ Public Property Let ForeColorHover(ByVal New_ForeColorHover As OLE_COLOR)
 End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Property ForeColor
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   New_ForeColor (OLE_COLOR)
-'!--------------------------------------------------------------------------------
-Public Property Let ForeColor(ByVal New_ForeColor As OLE_COLOR)
-    m_bColors.tForeColor = New_ForeColor
-    UserControl.ForeColor = m_bColors.tForeColor
-    RedrawButton
-    PropertyChanged "ForeColor"
-End Property
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property HandPointer
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get HandPointer() As Boolean
 Attribute HandPointer.VB_Description = "Returns/sets a value to determine whether the control uses the system's hand pointer as its cursor."
-Attribute HandPointer.VB_ProcData.VB_Invoke_Property = ";Misc"
 Attribute HandPointer.VB_UserMemId = 1745027096
     HandPointer = m_bHandPointer
 End Property
@@ -1044,7 +1086,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get MaskColor() As OLE_COLOR
 Attribute MaskColor.VB_Description = "Returns/sets a color in a button's picture to be transparent."
-Attribute MaskColor.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute MaskColor.VB_UserMemId = 1745027089
     MaskColor = m_lMaskColor
 End Property
 
@@ -1066,7 +1108,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get Mode() As enumButtonModes
 Attribute Mode.VB_Description = "Returns/sets the type of control the button will observe."
-Attribute Mode.VB_ProcData.VB_Invoke_Property = ";Behavior"
+Attribute Mode.VB_UserMemId = 1745027088
     Mode = m_ButtonMode
 End Property
 
@@ -1095,7 +1137,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get MouseIcon() As IPictureDisp
 Attribute MouseIcon.VB_Description = "Sets a custom mouse icon for the button."
-Attribute MouseIcon.VB_ProcData.VB_Invoke_Property = ";Misc"
+Attribute MouseIcon.VB_UserMemId = 1745027087
     Set MouseIcon = UserControl.MouseIcon
 End Property
 
@@ -1133,7 +1175,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get MousePointer() As MousePointerConstants
 Attribute MousePointer.VB_Description = "Returns/sets the type of mouse pointer displayed when cursor over the button."
-Attribute MousePointer.VB_ProcData.VB_Invoke_Property = ";Misc"
+Attribute MousePointer.VB_UserMemId = 1745027086
     MousePointer = UserControl.MousePointer
 End Property
 
@@ -1154,7 +1196,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureAlign() As enumPictureAlign
 Attribute PictureAlign.VB_Description = "Returns/sets a value to determine where to draw the picture in the button."
-Attribute PictureAlign.VB_ProcData.VB_Invoke_Property = ";Position"
+Attribute PictureAlign.VB_UserMemId = 1745027085
     PictureAlign = m_PictureAlign
 End Property
 
@@ -1180,7 +1222,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureDown() As StdPicture
 Attribute PictureDown.VB_Description = "Returns/sets the picture displayed when the control is pressed down or in checked state."
-Attribute PictureDown.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureDown.VB_UserMemId = 1745027084
     Set PictureDown = m_PictureDown
 End Property
 
@@ -1209,7 +1251,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureEffectOnDown() As enumPicEffect
 Attribute PictureEffectOnDown.VB_Description = "Returns/Sets the Picture Effects to be applied when the Button is pressed down."
-Attribute PictureEffectOnDown.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureEffectOnDown.VB_UserMemId = 1745027083
     PictureEffectOnDown = m_PicEffectonDown
 End Property
 
@@ -1231,7 +1273,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureEffectOnOver() As enumPicEffect
 Attribute PictureEffectOnOver.VB_Description = "Returns/Sets the Picture Effects to be applied when the mouseis over the control."
-Attribute PictureEffectOnOver.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureEffectOnOver.VB_UserMemId = 1745027082
     PictureEffectOnOver = m_PicEffectonOver
 End Property
 
@@ -1253,7 +1295,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureHot() As StdPicture
 Attribute PictureHot.VB_Description = "Returns/sets the picture displayed when the cursor is over the control."
-Attribute PictureHot.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureHot.VB_UserMemId = 1745027081
     Set PictureHot = m_PictureHot
 End Property
 
@@ -1282,7 +1324,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureNormal() As StdPicture
 Attribute PictureNormal.VB_Description = "Returns/sets the picture displayed on a normal state button."
-Attribute PictureNormal.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureNormal.VB_UserMemId = 1745027080
     Set PictureNormal = m_Picture
 End Property
 
@@ -1314,7 +1356,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureOpacity() As Byte
 Attribute PictureOpacity.VB_Description = "Returns/Sets a byte value to control the Opacity of the Picture."
-Attribute PictureOpacity.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureOpacity.VB_UserMemId = 1745027079
     PictureOpacity = m_PictureOpacity
 End Property
 
@@ -1336,7 +1378,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureOpacityOnOver() As Byte
 Attribute PictureOpacityOnOver.VB_Description = "Returns/Sets a byte value to control the Opacity of the Picture when Mouse is over the button."
-Attribute PictureOpacityOnOver.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureOpacityOnOver.VB_UserMemId = 1745027078
     PictureOpacityOnOver = m_PicOpacityOnOver
 End Property
 
@@ -1358,7 +1400,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PicturePushOnHover() As Boolean
 Attribute PicturePushOnHover.VB_Description = "Returns/Sets a value to determine whether to Push picture when Mouse is over the control."
-Attribute PicturePushOnHover.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PicturePushOnHover.VB_UserMemId = 1745027077
     PicturePushOnHover = m_bPicPushOnHover
 End Property
 
@@ -1380,7 +1422,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get PictureShadow() As Boolean
 Attribute PictureShadow.VB_Description = "Returns/Sets a value to determine whether to display Picture Shadow"
-Attribute PictureShadow.VB_ProcData.VB_Invoke_Property = ";Appearance"
+Attribute PictureShadow.VB_UserMemId = 1745027076
     PictureShadow = m_PictureShadow
 End Property
 
@@ -1402,7 +1444,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get RightToLeft() As Boolean
 Attribute RightToLeft.VB_Description = "Returns/Sets a value to determine whether to display text in RTL mode."
-Attribute RightToLeft.VB_ProcData.VB_Invoke_Property = ";Text"
 Attribute RightToLeft.VB_UserMemId = -611
     RightToLeft = m_bRTL
 End Property
@@ -1439,7 +1480,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ShowFocusRect() As Boolean
 Attribute ShowFocusRect.VB_Description = "Returns/Sets a value to show Focusrect when the button has focus"
-Attribute ShowFocusRect.VB_ProcData.VB_Invoke_Property = ";Appearance"
     ShowFocusRect = m_bShowFocus
 End Property
 
@@ -1460,7 +1500,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get UseMaskColor() As Boolean
 Attribute UseMaskColor.VB_Description = "Returns/sets a value to determine whether to use MaskColor to create transparent areas of the picture."
-Attribute UseMaskColor.VB_ProcData.VB_Invoke_Property = ";Appearance"
     UseMaskColor = m_bUseMaskColor
 End Property
 
@@ -1486,7 +1525,6 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get Value() As Boolean
 Attribute Value.VB_Description = "Returns/sets the value or state of the button."
-Attribute Value.VB_ProcData.VB_Invoke_Property = ";Behavior"
     Value = m_bValue
 End Property
 
@@ -1745,6 +1783,915 @@ Private Function Darken(ByVal Color As Byte) As Byte
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_Gel
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_Gel(ByVal vState As enumButtonStates)
+
+    '****************************************************************************
+    ' Draws a Gelbutton                                                         *
+    '****************************************************************************
+    Dim lpRect As RECT
+    Dim bColor As Long
+
+    'RECT to fill regions
+    'Original backcolor
+    lh = ScaleHeight
+    lw = ScaleWidth
+    bColor = TranslateColor(m_bColors.tBackColor)
+
+    If Not m_bEnabled Then
+        ' --Fill the button region with background color
+        SetRect lpRect, 0, 0, lw, lh
+        PaintRect bColor, lpRect
+        ' --Make a shining Upper Light
+        DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.05), bColor, gdVertical
+        DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.02), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.08)), gdVertical
+        DrawPicWithCaption
+        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.2)
+        DrawCorners ShiftColor(bColor, -0.23)
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            'Normal State
+            CreateRegion
+            ' --Fill the button region with background color
+            SetRect lpRect, 0, 0, lw, lh
+            PaintRect ShiftColor(bColor, -0.03), lpRect
+            ' --Make a shining Upper Light
+            DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.1), bColor, gdVertical
+            DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.05), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.1)), gdVertical
+            DrawPicWithCaption
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.33)
+
+        Case eStateOver
+            ' --Fill the button region with background color
+            SetRect lpRect, 0, 0, lw, lh
+            PaintRect ShiftColor(bColor, -0.03), lpRect
+            ' --Make a shining Upper Light
+            DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.15), bColor, gdVertical
+            DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.05), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.2)), gdVertical
+            DrawPicWithCaption
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.28)
+
+        Case eStateDown
+            ' --fill the button region with background color
+            SetRect lpRect, 0, 0, lw, lh
+            PaintRect ShiftColor(bColor, -0.03), lpRect
+            ' --Make a shining Upper Light
+            DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.1), bColor, gdVertical
+            DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.08), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.05)), gdVertical
+            DrawPicWithCaption
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.36)
+    End Select
+
+    DrawCorners ShiftColor(bColor, -0.36)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_Office2003
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_Office2003(ByVal vState As enumButtonStates)
+
+    Dim bColor As Long
+
+    lh = UserControl.ScaleHeight
+    lw = UserControl.ScaleWidth
+    bColor = TranslateColor(m_bColors.tBackColor)
+    SetRect m_ButtonRect, 0, 0, lw, lh
+
+    If m_ButtonMode <> ebmCommandButton And m_bValue Then
+        If m_bMouseInCtl Then
+            DrawGradientEx 0, 0, lw, lh, TranslateColor(&H4E91FE), TranslateColor(&H8ED3FF), gdVertical
+        Else
+            DrawGradientEx 0, 0, lw, lh, TranslateColor(&H8CD5FF), TranslateColor(&H55ADFF), gdVertical
+        End If
+
+        DrawPicWithCaption
+        DrawRectangle 0, 0, lw, lh, TranslateColor(&H800000)
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            CreateRegion
+            DrawGradientEx 0, 0, lw, lh / 2, BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.08)), bColor, gdVertical
+            DrawGradientEx 0, lh / 2, lw, lh / 2 + 1, bColor, ShiftColor(bColor, -0.15), gdVertical
+
+        Case eStateOver
+            DrawGradientEx 0, 0, lw, lh, TranslateColor(&HCCF4FF), TranslateColor(&H91D0FF), gdVertical
+
+        Case eStateDown
+            DrawGradientEx 0, 0, lw, lh, TranslateColor(&H4E91FE), TranslateColor(&H8ED3FF), gdVertical
+    End Select
+
+    DrawPicWithCaption
+
+    If m_Buttonstate <> eStateNormal Then
+        DrawRectangle 0, 0, lw, lh, TranslateColor(&H800000)
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_OfficeXP
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_OfficeXP(ByVal vState As enumButtonStates)
+
+    Dim lpRect      As RECT
+    Dim bColor      As Long
+    Dim oColor      As Long
+    Dim BorderColor As Long
+
+    lh = UserControl.ScaleHeight
+    lw = UserControl.ScaleWidth
+    bColor = TranslateColor(m_bColors.tBackColor)
+    SetRect lpRect, 0, 0, lw, lh
+
+    Select Case m_lXPColor
+
+        Case ecsBlue
+            oColor = TranslateColor(&HEED2C1)
+            BorderColor = TranslateColor(&HC56A31)
+
+        Case ecsSilver
+            oColor = TranslateColor(&HE3DFE0)
+            BorderColor = TranslateColor(&HBFB4B2)
+
+        Case ecsOliveGreen
+            oColor = TranslateColor(&HBAD6D4)
+            BorderColor = TranslateColor(&H70A093)
+
+        Case ecsCustom
+            oColor = bColor
+            BorderColor = ShiftColor(bColor, -0.12)
+    End Select
+
+    If m_ButtonMode <> ebmCommandButton And m_bValue Then
+        PaintRect ShiftColor(oColor, -0.05), m_ButtonRect
+        DrawRectangle 0, 0, lw, lh, BorderColor
+
+        If m_bMouseInCtl Then
+            PaintRect ShiftColor(oColor, -0.01), m_ButtonRect
+            DrawRectangle 0, 0, lw, lh, BorderColor
+        End If
+
+        DrawPicWithCaption
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            PaintRect bColor, lpRect
+
+        Case eStateOver
+            PaintRect ShiftColor(oColor, 0.03), lpRect
+
+        Case eStateDown
+            PaintRect ShiftColor(oColor, -0.08), lpRect
+    End Select
+
+    DrawPicWithCaption
+
+    If m_Buttonstate <> eStateNormal Then
+        DrawRectangle 0, 0, lw, lh, BorderColor
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_Outlook2007
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_Outlook2007(ByVal vState As enumButtonStates)
+
+    Dim bColor As Long
+
+    lh = ScaleHeight
+    lw = ScaleWidth
+    bColor = TranslateColor(m_bColors.tBackColor)
+
+    If m_ButtonMode <> ebmCommandButton Then
+        If m_bValue Then
+            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&HA9D9FF), TranslateColor(&H6FC0FF), gdVertical
+            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H3FABFF), TranslateColor(&H75E1FF), gdVertical
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+    
+            If m_bMouseInCtl Then
+                DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&H58C1FF), TranslateColor(&H51AFFF), gdVertical
+                DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H468FFF), TranslateColor(&H5FD3FF), gdVertical
+                DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+            End If
+    
+            DrawPicWithCaption
+    
+            Exit Sub
+        End If
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            PaintRect bColor, m_ButtonRect
+            DrawGradientEx 0, 0, lw, lh / 2.7, BlendColors(ShiftColor(bColor, 0.09), TranslateColor(vbWhite)), BlendColors(ShiftColor(bColor, 0.07), bColor), gdVertical
+            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), bColor, ShiftColor(bColor, 0.03), gdVertical
+            DrawPicWithCaption
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+
+        Case eStateOver
+            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&HE1FFFF), TranslateColor(&HACEAFF), gdVertical
+            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H67D7FF), TranslateColor(&H99E4FF), gdVertical
+            DrawPicWithCaption
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+
+        Case eStateDown
+            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&H58C1FF), TranslateColor(&H51AFFF), gdVertical
+            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H468FFF), TranslateColor(&H5FD3FF), gdVertical
+            DrawPicWithCaption
+            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
+    End Select
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_Standard
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_Standard(ByVal vState As enumButtonStates)
+
+    '****************************************************************************
+    ' Draws  four different styles in one procedure                             *
+    ' Makes reading the code difficult, but saves much space!! ;)               *
+    '****************************************************************************
+    Dim FocusRect As RECT
+    Dim tmpRect   As RECT
+
+    lh = ScaleHeight
+    lw = ScaleWidth
+    SetRect m_ButtonRect, 0, 0, lw, lh
+
+    If Not m_bEnabled Then
+
+        ' --Draws raised edge border
+        If m_ButtonStyle = eStandard Then
+            DrawEdge hDC, m_ButtonRect, BDR_RAISED95, BF_RECT
+        ElseIf m_ButtonStyle = eFlat Then
+            DrawEdge hDC, m_ButtonRect, BDR_RAISEDINNER, BF_RECT
+        End If
+
+        DrawPicWithCaption
+
+        Exit Sub
+
+    End If
+
+    If m_ButtonMode <> ebmCommandButton And m_bValue Then
+        PaintRect ShiftColor(TranslateColor(m_bColors.tBackColor), 0.02), m_ButtonRect
+        DrawPicWithCaption
+
+        If m_ButtonStyle <> eFlatHover Then
+            DrawEdge hDC, m_ButtonRect, BDR_SUNKEN95, BF_RECT
+
+            If m_bShowFocus And m_bHasFocus And m_ButtonStyle = eStandard Then
+                DrawRectangle 4, 4, lw - 7, lh - 7, TranslateColor(vbApplicationWorkspace)
+            End If
+        End If
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            CreateRegion
+            PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
+            DrawPicWithCaption
+
+            Select Case m_ButtonStyle
+
+                Case eStandard
+                    DrawEdge hDC, m_ButtonRect, BDR_RAISED95, BF_RECT
+
+                Case eFlat
+                    DrawEdge hDC, m_ButtonRect, BDR_RAISEDINNER, BF_RECT
+            End Select
+
+        Case eStateOver
+            PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
+            DrawPicWithCaption
+
+            Select Case m_ButtonStyle
+
+                Case eFlatHover, eFlat
+                    ' --Draws flat raised edge border
+                    DrawEdge hDC, m_ButtonRect, BDR_RAISEDINNER, BF_RECT
+
+                Case Else
+                    ' --Draws 3d raised edge border
+                    DrawEdge hDC, m_ButtonRect, BDR_RAISED95, BF_RECT
+            End Select
+
+        Case eStateDown
+            PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
+            DrawPicWithCaption
+
+            Select Case m_ButtonStyle
+
+                Case eStandard
+                    DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(&H99A8AC)
+                    DrawRectangle 0, 0, lw, lh, TranslateColor(vbBlack)
+
+                Case e3DHover
+                    DrawEdge hDC, m_ButtonRect, BDR_SUNKEN95, BF_RECT
+
+                Case eFlatHover, eFlat
+                    ' --Draws flat pressed edge
+                    DrawRectangle 0, 0, lw, lh, TranslateColor(vbWhite)
+                    DrawRectangle 0, 0, lw + 1, lh + 1, TranslateColor(vbGrayText)
+            End Select
+    End Select
+
+    ' --Button has focus but not downstate Or button is Default
+    If m_bHasFocus Or m_bDefault Then
+
+        On Error Resume Next
+
+        If m_bShowFocus And RunMode Then
+            If m_ButtonStyle = e3DHover Or m_ButtonStyle = eStandard Then
+                SetRect FocusRect, 4, 4, lw - 4, lh - 4
+            Else
+                SetRect FocusRect, 3, 3, lw - 3, lh - 3
+            End If
+
+            If m_bParentActive Then
+                DrawFocusRect hDC, FocusRect
+            End If
+        End If
+
+        If vState <> eStateDown Then
+            If m_ButtonStyle = eStandard Then
+                SetRect tmpRect, 0, 0, lw - 1, lh - 1
+                DrawEdge hDC, tmpRect, BDR_RAISED95, BF_RECT
+                DrawRectangle 0, 0, lw - 1, lh - 1, TranslateColor(vbApplicationWorkspace)
+                DrawRectangle 0, 0, lw, lh, TranslateColor(vbBlack)
+            End If
+        End If
+    End If
+
+    On Error GoTo 0
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_Vista
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_Vista(ByVal vState As enumButtonStates)
+
+    '*************************************************************************
+    '* Draws a cool Vista Aero Style Button                                  *
+    '* Use a light background color for best result                          *
+    '*************************************************************************
+    Dim lpRect As RECT
+    Dim Color1 As Long
+    Dim bColor As Long
+
+    'Used to set rect for drawing rectangles
+    'Shifted / Blended color
+    'Original back Color
+    lh = ScaleHeight
+    lw = ScaleWidth
+    Color1 = ShiftColor(TranslateColor(m_bColors.tBackColor), 0.05)
+    bColor = TranslateColor(m_bColors.tBackColor)
+
+    If Not m_bEnabled Then
+        ' --Draw the Disabled Button
+        CreateRegion
+        ' --Fill the button with disabled color
+        SetRect lpRect, 0, 0, lw, lh
+        PaintRect ShiftColor(bColor, 0.03), lpRect
+        DrawPicWithCaption
+        ' --Draws outside disabled color rectangle
+        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.25)
+        DrawRectangle 1, 1, lw - 2, lh - 2, ShiftColor(bColor, 0.25)
+        DrawCorners ShiftColor(bColor, -0.03)
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            CreateRegion
+            ' --Draws a gradient in the full region
+            DrawGradientEx 1, 1, lw - 1, lh, Color1, bColor, gdVertical
+            ' --Draws a gradient in half region to give a glassy look
+            DrawGradientEx 1, lh / 2, lw - 2, lh - 2, ShiftColor(bColor, -0.02), ShiftColor(bColor, -0.15), gdVertical
+            DrawPicWithCaption
+            ' --Draws border rectangle
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&H707070)
+            'outer
+            DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
+
+            'inner
+        Case eStateOver
+            ' --Make gradient in the upper half region
+            DrawGradientEx 1, 1, lw - 2, lh / 2, TranslateColor(&HFFF7E4), TranslateColor(&HFFF3DA), gdVertical
+            ' --Draw gradient in half button downside to give a glass look
+            DrawGradientEx 1, lh / 2, lw - 2, lh - 2, TranslateColor(&HFFE9C1), TranslateColor(&HFDE1AE), gdVertical
+            ' --Draws left side gradient effects horizontal
+            DrawGradientEx 1, 3, 5, lh / 2 - 2, TranslateColor(&HFFEECD), TranslateColor(&HFFF7E4), gdHorizontal
+            'Left
+            DrawGradientEx 1, lh / 2, 5, lh - (lh / 2) - 1, TranslateColor(&HFAD68F), ShiftColor(TranslateColor(&HFDE1AC), 0.01), gdHorizontal
+            'Left
+            ' --Draws right side gradient effects horizontal
+            DrawGradientEx lw - 6, 3, 5, lh / 2 - 2, TranslateColor(&HFFF7E4), TranslateColor(&HFFEECD), gdHorizontal
+            'Right
+            DrawGradientEx lw - 6, lh / 2, 5, lh - (lh / 2) - 1, ShiftColor(TranslateColor(&HFDE1AC), 0.01), TranslateColor(&HFAD68F), gdHorizontal
+            'Right
+            DrawPicWithCaption
+            ' --Draws border rectangle
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&HA77532)
+            'outer
+            DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
+
+            'inner
+        Case eStateDown
+            ' --Draw a gradent in full region
+            DrawGradientEx 1, 1, lw - 1, lh, TranslateColor(&HF6E4C2), TranslateColor(&HF6E4C2), gdVertical
+            ' --Draw gradient in half button downside to give a glass look
+            DrawGradientEx 1, lh / 2, lw - 2, lh - 2, TranslateColor(&HF0D29A), TranslateColor(&HF0D29A), gdVertical
+            ' --Draws down rectangle
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&H5C411D)    '
+            DrawLineApi 1, 1, lw - 1, 1, TranslateColor(&HB39C71)
+            '\Top Lines
+            DrawLineApi 1, 2, lw - 1, 2, TranslateColor(&HD6C6A9)
+            '/
+            DrawLineApi 1, 3, lw - 1, 3, TranslateColor(&HECD9B9)   '
+            DrawLineApi 1, 1, 1, lh / 2 - 1, TranslateColor(&HCFB073)
+            'Left upper
+            DrawLineApi 1, lh / 2, 1, lh - (lh / 2) - 1, TranslateColor(&HC5912B)
+            'Left Bottom
+            ' --Draws left side gradient effects horizontal
+            DrawGradientEx 1, 3, 5, lh / 2 - 2, ShiftColor(TranslateColor(&HE6C891), 0.02), ShiftColor(TranslateColor(&HF6E4C2), -0.01), gdHorizontal
+            'Left
+            DrawGradientEx 1, lh / 2, 5, lh - (lh / 2) - 1, ShiftColor(TranslateColor(&HDCAB4E), 0.02), ShiftColor(TranslateColor(&HF0D29A), -0.01), gdHorizontal
+            'Left
+            ' --Draws right side gradient effects horizontal
+            DrawGradientEx lw - 6, 3, 5, lh / 2 - 2, ShiftColor(TranslateColor(&HF6E4C2), -0.01), ShiftColor(TranslateColor(&HE6C891), 0.02), gdHorizontal
+            'Right
+            DrawGradientEx lw - 6, lh / 2, 5, lh - (lh / 2) - 1, ShiftColor(TranslateColor(&HF0D29A), -0.01), ShiftColor(TranslateColor(&HDCAB4E), 0.02), gdHorizontal
+            'Right
+            DrawPicWithCaption
+    End Select
+
+    ' --Draw a focus rectangle if button has focus
+    If m_bParentActive Then
+        If (m_bHasFocus Or m_bDefault) And vState = eStateNormal Then
+            ' --Draw darker outer rectangle
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&HA77532)
+            ' --Draw light inner rectangle
+            DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(&HFBD848)
+        End If
+
+        If (m_bShowFocus And m_bHasFocus) Then
+            SetRect lpRect, 1.5, 1.5, lw - 2, lh - 2
+            DrawFocusRect hDC, lpRect
+        End If
+    End If
+
+    ' --Create four corners which will be common to all states
+    DrawCorners TranslateColor(&HBE965F)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_VistaToolbar
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_VistaToolbar(ByVal vState As enumButtonStates)
+
+    Dim lpRect As RECT
+
+    'Dim FocusRect        As RECT
+    lh = ScaleHeight
+    lw = ScaleWidth
+
+    If Not m_bEnabled Then
+        ' --Draw Disabled button
+        PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
+        DrawPicWithCaption
+        DrawCorners TranslateColor(m_bColors.tBackColor)
+
+        Exit Sub
+
+    End If
+
+    If vState = eStateNormal Then
+        CreateRegion
+        ' --Set the rect to fill back color
+        SetRect lpRect, 0, 0, lw, lh
+        ' --Simply fill the button with one color (No gradient effect here!!)
+        PaintRect TranslateColor(m_bColors.tBackColor), lpRect
+        DrawPicWithCaption
+    ElseIf vState = eStateOver Then
+        ' --Draws a gradient effect with the folowing colors
+        DrawGradientEx 1, 1, lw - 2, lh - 2, TranslateColor(&HFDF9F1), TranslateColor(&HF8ECD0), gdVertical
+        ' --Draws a gradient in half region to give a Light Effect
+        DrawGradientEx 1, lh / 1.7, lw - 2, lh - 2, TranslateColor(&HF8ECD0), TranslateColor(&HF8ECD0), gdVertical
+        DrawPicWithCaption
+        ' --Draw outside borders
+        DrawRectangle 0, 0, lw, lh, TranslateColor(&HCA9E61)
+        DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
+    ElseIf vState = eStateDown Then
+        DrawGradientEx 1, 1, lw - 2, lh - 2, TranslateColor(&HF1DEB0), TranslateColor(&HF9F1DB), gdVertical
+        DrawPicWithCaption
+        ' --Draws outside borders
+        DrawRectangle 0, 0, lw, lh, TranslateColor(&HCA9E61)
+        DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
+    End If
+
+    If vState = eStateDown Or vState = eStateOver Then
+        DrawCorners ShiftColor(TranslateColor(&HCA9E61), 0.3)
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_WindowsTheme
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_WindowsTheme(ByVal vState As enumButtonStates)
+
+    Dim tmpState As Long
+
+    UserControl.BackColor = GetSysColor(COLOR_BTNFACE)
+
+    If Not m_bEnabled Then
+        tmpState = 4
+        DrawTheme "Button", 1, tmpState
+        DrawPicWithCaption
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            tmpState = 1
+
+        Case eStateOver
+            tmpState = 2
+
+        Case eStateDown
+            tmpState = 3
+    End Select
+
+    If m_Buttonstate = eStateNormal Then
+
+        '        If (m_bHasFocus Or m_bDefault) And m_bParentActive Then
+        'Change by Tanner - do not show a focus rect unless m_bShowFocus is explicitly set!
+        If (m_bHasFocus Or m_bDefault) And m_bParentActive And m_bShowFocus Then
+            tmpState = 5
+        End If
+    End If
+
+    DrawTheme "Button", 1, tmpState
+    DrawPicWithCaption
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_WinXP
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_WinXP(ByVal vState As enumButtonStates)
+
+    '****************************************************************************
+    '* Windows XP Button                                                        *
+    '* Totally written from Scratch and coded by Me!!  hehe                     *
+    '****************************************************************************
+    Dim lpRect As RECT
+    Dim bColor As Long
+
+    lh = ScaleHeight
+    lw = ScaleWidth
+    bColor = TranslateColor(m_bColors.tBackColor)
+    SetRect m_ButtonRect, 0, 0, lw, lh
+
+    If Not m_bEnabled Then
+        CreateRegion
+        PaintRect BlendColors(GetSysColor(COLOR_BTNFACE), ShiftColor(bColor, 0.1)), m_ButtonRect
+        DrawPicWithCaption
+        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.1)
+        DrawCorners ShiftColor(bColor, -0.1)
+
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            CreateRegion
+
+            Select Case m_lXPColor
+
+                Case ecsBlue, ecsOliveGreen, ecsCustom
+                    ' --mimic the XP styles
+                    DrawGradientEx 0, 0, lw, lh, ShiftColor(bColor, 0.07), bColor, gdVertical
+                    DrawGradientEx 0, 0, lw, 4, ShiftColor(bColor, 0.1), ShiftColor(bColor, 0.08), gdVertical
+                    DrawPicWithCaption
+                    DrawLineApi 1, lh - 2, lw - 2, lh - 2, ShiftColor(bColor, -0.09)
+                    'BottomMost line
+                    DrawLineApi 1, lh - 3, lw - 2, lh - 3, ShiftColor(bColor, -0.05)
+                    'Bottom Line
+                    DrawLineApi 1, lh - 4, lw - 2, lh - 4, ShiftColor(bColor, -0.01)
+                    'Bottom Line
+                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, ShiftColor(bColor, -0.08)
+                    'Right Line
+                    DrawLineApi 1, 1, 1, lh - 2, BlendColors(TranslateColor(vbWhite), (bColor))
+
+                    'Left Line
+                Case ecsSilver
+                    ' --mimic the Silver XP style
+                    DrawGradientEx 0, 0, lw, lh / 2, ShiftColor(bColor, 0.22), bColor, gdVertical
+                    DrawGradientEx 0, lh / 2, lw, lh / 2, ShiftColor(bColor, -0.01), ShiftColor(bColor, -0.15), gdVertical
+                    DrawPicWithCaption
+                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(vbWhite)
+                    'Right Line
+                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(vbWhite)
+                    'Left Line
+            End Select
+
+        Case eStateOver
+
+            Select Case m_lXPColor
+
+                Case ecsBlue, ecsOliveGreen, ecsCustom
+                    DrawGradientEx 0, 0, lw, lh, ShiftColor(bColor, 0.07), bColor, gdVertical
+                    DrawGradientEx 0, 0, lw, 4, ShiftColor(bColor, 0.1), ShiftColor(bColor, 0.08), gdVertical
+                    DrawPicWithCaption
+
+                Case ecsSilver
+                    DrawGradientEx 0, 0, lw, lh / 2, ShiftColor(bColor, 0.22), bColor, gdVertical
+                    DrawGradientEx 0, lh / 2, lw, lh / 2, ShiftColor(bColor, -0.01), ShiftColor(bColor, -0.15), gdVertical
+                    DrawPicWithCaption
+            End Select
+
+            ' --Draw the ORANGE border lines....
+            DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&H89D8FD)
+            'uppermost inner hover
+            DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&HCFF0FF)
+            'uppermost outer hover
+            DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&H49BDF9)
+            'Leftmost Line
+            DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&H49BDF9)
+            'Rightmost Line
+            DrawLineApi 2, 2, 2, lh - 3, TranslateColor(&H7AD2FC)
+            'Left Line
+            DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(&H7AD2FC)
+            'Right Line
+            DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&H30B3F8)
+            'BottomMost Line
+            DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&H97E5&)
+
+            'Bottom Line
+        Case eStateDown
+
+            Select Case m_lXPColor
+
+                Case ecsBlue, ecsOliveGreen, ecsCustom
+                    PaintRect ShiftColor(bColor, -0.05), m_ButtonRect
+                    'Paint with Darker color
+                    DrawPicWithCaption
+                    DrawLineApi 1, 1, lw - 2, 1, ShiftColor(bColor, -0.16)
+                    'Topmost Line
+                    DrawLineApi 1, 2, lw - 2, 2, ShiftColor(bColor, -0.1)
+                    'A lighter top line
+                    DrawLineApi 1, lh - 2, lw - 2, lh - 2, ShiftColor(bColor, 0.01)
+                    'Bottom Line
+                    DrawLineApi 1, 1, 1, lh - 2, ShiftColor(bColor, -0.16)
+                    'Leftmost Line
+                    DrawLineApi 2, 2, 2, lh - 2, ShiftColor(bColor, -0.1)
+                    'Left1 Line
+                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, ShiftColor(bColor, 0.04)
+
+                    'Right Line
+                Case ecsSilver
+                    DrawGradientEx 0, 0, lw, lh - 6, ShiftColor(bColor, -0.2), ShiftColor(bColor, 0.05), gdVertical
+                    DrawGradientEx 0, lh - 6, lw, lh - 1, ShiftColor(bColor, 0.08), TranslateColor(vbWhite), gdVertical
+                    DrawPicWithCaption
+                    DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
+            End Select
+    End Select
+
+    If m_bParentActive Then
+        If (m_bHasFocus Or m_bDefault) And (vState <> eStateDown And vState <> eStateOver) Then
+
+            Select Case m_lXPColor
+
+                Case ecsBlue, ecsCustom
+                    DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&HF6D4BC)
+                    'uppermost inner hover
+                    DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&HFFE7CE)
+                    'uppermost outer hover
+                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&HE6AF8E)
+                    'Leftmost Line
+                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HE6AF8E)
+                    'Rightmost Line
+                    DrawLineApi 2, 2, 2, lh - 3, TranslateColor(&HF4D1B8)
+                    'Left Line
+                    DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(&HF4D1B8)
+                    'Right Line
+                    DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&HE4AD89)
+                    'BottomMost Line
+                    DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&HEE8269)
+
+                    'Bottom Line
+                Case ecsOliveGreen
+                    DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&H8FD1C2)
+                    'uppermost inner hover
+                    DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&H80CBB1)
+                    'uppermost outer hover
+                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&H68C8A0)
+                    'Leftmost Line
+                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&H68C8A0)
+                    'Rightmost Line
+                    DrawLineApi 2, 2, 2, lh - 3, TranslateColor(&H68C8A0)
+                    'Left Line
+                    DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(&H68C8A0)
+                    'Right Line
+                    DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&H68C8A0)
+                    'Bottom Line
+                    DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&H66A7A8)
+
+                    'BottomMost Line
+                Case ecsSilver
+                    DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&HF6D4BC)
+                    'uppermost inner hover
+                    DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&HFFE7CE)
+                    'uppermost outer hover
+                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&HE6AF8E)
+                    'Leftmost Line
+                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HE6AF8E)
+                    'Rightmost Line
+                    DrawLineApi 2, 2, 2, lh - 3, TranslateColor(vbWhite)
+                    'Left Line
+                    DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(vbWhite)
+                    'Right Line
+                    DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&HE4AD89)
+                    'BottomMost Line
+                    DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&HEE8269)
+                    'Bottom Line
+            End Select
+
+        End If
+    End If
+
+    On Error Resume Next
+
+    'Some times error occurs that Client site not available
+    If m_bParentActive Then
+
+        'I mean some times ;)
+        If m_bShowFocus And m_bParentActive And (m_bHasFocus Or m_bDefault) Then
+            'show focusrect at runtime only
+            SetRect lpRect, 2, 2, lw - 2, lh - 2
+            'I don't like this ugly focusrect!!
+            DrawFocusRect hDC, lpRect
+        End If
+    End If
+
+    Select Case m_lXPColor
+
+        Case ecsBlue, ecsSilver, ecsCustom
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&H743C00)
+            DrawCorners ShiftColor(TranslateColor(&H743C00), 0.3)
+
+        Case ecsOliveGreen
+            DrawRectangle 0, 0, lw, lh, RGB(55, 98, 6)
+            DrawCorners ShiftColor(RGB(55, 98, 6), 0.3)
+    End Select
+
+    On Error GoTo 0
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub DrawButton_XPToolbar
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   vState (enumButtonStates)
+'!--------------------------------------------------------------------------------
+Private Sub DrawButton_XPToolbar(ByVal vState As enumButtonStates)
+
+    Dim lpRect As RECT
+    Dim bColor As Long
+
+    lh = ScaleHeight
+    lw = ScaleWidth
+    bColor = TranslateColor(m_bColors.tBackColor)
+
+    If vState = eStateDown Then
+        m_bColors.tForeColor = TranslateColor(vbWhite)
+    Else
+        m_bColors.tForeColor = TranslateColor(vbButtonText)
+    End If
+
+    If m_ButtonMode <> ebmCommandButton And m_bValue Then
+        If m_bIsDown Then
+            vState = eStateDown
+        End If
+    End If
+
+    If m_ButtonMode <> ebmCommandButton And m_bValue And vState <> eStateDown Then
+        SetRect lpRect, 0, 0, lw, lh
+        PaintRect TranslateColor(&HFEFEFE), lpRect
+        m_bColors.tForeColor = TranslateColor(vbButtonText)
+        DrawPicWithCaption
+        DrawRectangle 0, 0, lw, lh, TranslateColor(&HAF987A)
+        DrawCorners ShiftColor(TranslateColor(&HC1B3A0), -0.2)
+
+        If vState = eStateOver Then
+            'Right Line
+            DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HEDF0F2)
+            'Bottom
+            DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&HD8DEE4)
+            'Bottom
+            DrawLineApi 1, lh - 3, lw - 1, lh - 3, TranslateColor(&HE8ECEF)
+            'Bottom
+            DrawLineApi 1, lh - 4, lw - 1, lh - 4, TranslateColor(&HF8F9FA)
+        End If
+
+        ' --Necessary to redraw text & pictures 'coz we are painting usercontrol agaon
+        Exit Sub
+
+    End If
+
+    Select Case vState
+
+        Case eStateNormal
+            CreateRegion
+            PaintRect bColor, m_ButtonRect
+            DrawPicWithCaption
+
+        Case eStateOver
+            DrawGradientEx 0, 0, lw, lh / 2, TranslateColor(&HFDFEFE), TranslateColor(&HEEF4F4), gdVertical
+            DrawGradientEx 0, lh / 2, lw, lh / 2, TranslateColor(&HEEF4F4), TranslateColor(&HEAF1F1), gdVertical
+            DrawPicWithCaption
+            DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HE0E7EA)
+            'right line
+            DrawLineApi lw - 3, 2, lw - 3, lh - 2, TranslateColor(&HEAF0F0)
+            DrawLineApi 0, lh - 4, lw, lh - 4, TranslateColor(&HE5EDEE)
+            'Bottom
+            DrawLineApi 0, lh - 3, lw, lh - 3, TranslateColor(&HD6E1E4)
+            'Bottom
+            DrawLineApi 0, lh - 2, lw, lh - 2, TranslateColor(&HC6D2D7)
+            'Bottom
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&HC3CECE)
+            DrawCorners ShiftColor(TranslateColor(&HC9D4D4), -0.05)
+
+        Case eStateDown
+            PaintRect TranslateColor(&HDDE4E5), m_ButtonRect
+            'Paint with Darker color
+            DrawPicWithCaption
+            DrawLineApi 1, 1, lw - 2, 1, ShiftColor(TranslateColor(&HD1DADC), -0.02)
+            'Topmost Line
+            DrawLineApi 1, 2, lw - 2, 2, ShiftColor(TranslateColor(&HDAE1E3), -0.02)
+            'A lighter top line
+            DrawLineApi 1, lh - 3, lw - 2, lh - 3, ShiftColor(TranslateColor(&HDEE5E6), 0.02)
+            'Bottom Line
+            DrawLineApi 1, lh - 2, lw - 2, lh - 2, ShiftColor(TranslateColor(&HE5EAEB), 0.02)
+            DrawRectangle 0, 0, lw, lh, TranslateColor(&H929D9D)
+            DrawCorners ShiftColor(TranslateColor(&HABB4B5), -0.2)
+    End Select
+
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawCaptionEffect
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -1822,7 +2769,7 @@ Private Sub DrawCaptionEx(lpRect As RECT, lColor As Long, OffsetX As Long, Offse
     End Select
     
     If m_WindowsNT Then
-        DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, tRect, dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
+        DrawTextW hDC, StrPtr(m_Caption), -1, tRect, dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     Else
         DrawText hDC, m_Caption, -1, tRect, dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     End If
@@ -1877,7 +2824,7 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
     Dim dG      As Long
     Dim dB      As Long
     Dim Scan    As Long
-    Dim I       As Long
+    Dim ii      As Long
     Dim iEnd    As Long
     Dim iOffset As Long
     Dim J       As Long
@@ -1928,8 +2875,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             lGrad(0) = (B1 \ 2 + B2 \ 2) + 256 * (g1 \ 2 + G2 \ 2) + 65536 * (r1 \ 2 + R2 \ 2)
         Else
 
-            For I = 0 To iEnd
-                lGrad(I) = B1 + (dB * I) \ iEnd + 256 * (g1 + (dG * I) \ iEnd) + 65536 * (r1 + (dR * I) \ iEnd)
+            For ii = 0 To iEnd
+                lGrad(ii) = B1 + (dB * ii) \ iEnd + 256 * (g1 + (dG * ii) \ iEnd) + 65536 * (r1 + (dR * ii) \ iEnd)
             Next
 
         End If
@@ -1947,8 +2894,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             Case [gdHorizontal]
 
                 For J = 0 To jEnd
-                    For I = iOffset To iEnd + iOffset
-                        lBits(I) = lGrad(I - iOffset)
+                    For ii = iOffset To iEnd + iOffset
+                        lBits(ii) = lGrad(ii - iOffset)
                     Next
 
                     iOffset = iOffset + Scan
@@ -1957,8 +2904,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
             Case [gdVertical]
 
                 For J = jEnd To 0 Step -1
-                    For I = iOffset To iEnd + iOffset
-                        lBits(I) = lGrad(J)
+                    For ii = iOffset To iEnd + iOffset
+                        lBits(ii) = lGrad(J)
                     Next
 
                     iOffset = iOffset + Scan
@@ -1968,8 +2915,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
                 iOffset = jEnd * Scan
 
                 For J = 1 To jEnd + 1
-                    For I = iOffset To iEnd + iOffset
-                        lBits(I) = lGrad(iGrad)
+                    For ii = iOffset To iEnd + iOffset
+                        lBits(ii) = lGrad(iGrad)
                         iGrad = iGrad + 1
                     Next
 
@@ -1981,8 +2928,8 @@ Private Sub DrawGradientEx(ByVal X As Long, ByVal Y As Long, ByVal lngWidth As L
                 iOffset = 0
 
                 For J = 1 To jEnd + 1
-                    For I = iOffset To iEnd + iOffset
-                        lBits(I) = lGrad(iGrad)
+                    For ii = iOffset To iEnd + iOffset
+                        lBits(ii) = lGrad(iGrad)
                         iGrad = iGrad + 1
                     Next
 
@@ -2039,7 +2986,7 @@ Private Sub DrawInstallShieldButton(ByVal vState As enumButtonStates)
             DrawGradientEx 0, 0, lw, lh / 2, TranslateColor(vbWhite), TranslateColor(m_bColors.tBackColor), gdVertical
             ' --Draw Bottom Gradient
             DrawGradientEx 0, lh / 2, lw, lh, TranslateColor(m_bColors.tBackColor), TranslateColor(m_bColors.tBackColor), gdVertical
-            DrawPicwithCaption
+            DrawPicWithCaption
             ' --Draw Inner White Border
             DrawRectangle 1, 1, lw - 2, lh, TranslateColor(vbWhite)
             ' --Draw Outer Rectangle
@@ -2051,7 +2998,7 @@ Private Sub DrawInstallShieldButton(ByVal vState As enumButtonStates)
             DrawGradientEx 0, 0, lw, lh / 2, TranslateColor(vbWhite), TranslateColor(m_bColors.tBackColor), gdVertical
             ' --Draw Bottom Gradient
             DrawGradientEx 0, lh / 2, lw, lh, TranslateColor(m_bColors.tBackColor), TranslateColor(m_bColors.tBackColor), gdVertical
-            DrawPicwithCaption
+            DrawPicWithCaption
             ' --Draw Inner White Border
             DrawRectangle 1, 1, lw - 2, lh, TranslateColor(vbWhite)
             ' --Draw Outer Rectangle
@@ -2063,7 +3010,7 @@ Private Sub DrawInstallShieldButton(ByVal vState As enumButtonStates)
             DrawGradientEx 0, 0, lw, lh / 2, TranslateColor(vbWhite), ShiftColor(TranslateColor(m_bColors.tBackColor), -0.1), gdVertical
             ' --Draw Bottom Gradient
             DrawGradientEx 0, lh / 2, lw, lh, ShiftColor(TranslateColor(m_bColors.tBackColor), -0.1), ShiftColor(TranslateColor(m_bColors.tBackColor), -0.05), gdVertical
-            DrawPicwithCaption
+            DrawPicWithCaption
             ' --Draw Inner White Border
             DrawRectangle 1, 1, lw - 2, lh, TranslateColor(vbWhite)
             ' --Draw Outer Rectangle
@@ -2080,6 +3027,7 @@ Private Sub DrawInstallShieldButton(ByVal vState As enumButtonStates)
     End If
 
 End Sub
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawLineApi
 '! Description (Описание)  :   [draw lines]
@@ -2162,7 +3110,7 @@ End Sub
 '! Description (Описание)  :   [Calculate Caption rects and draw the pictures and caption]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Private Sub DrawPicwithCaption()
+Private Sub DrawPicWithCaption()
 
     Dim lpRect     As RECT
     Dim pRECT      As RECT
@@ -2211,7 +3159,8 @@ Private Sub DrawPicwithCaption()
         Else
 
             If Not m_Picture Is Nothing Then
-                SetRect m_TextRect, PicW + 4, 0, lw - 20 - PicW, lh
+                'SetRect m_TextRect, PicW + 4, 0, lw - 20 - PicW, lh
+                SetRect m_TextRect, PicW + 4, 0, lw - PicW, lh
             Else
                 SetRect m_TextRect, 0, 0, lw - 20, lh
             End If
@@ -2225,10 +3174,19 @@ Private Sub DrawPicwithCaption()
             SetRect m_TextRect, 0, 0, lw - PicW, lh
         ElseIf m_PictureAlign = epLeftEdge Or m_PictureAlign = epLeftOfCaption Then
             If m_CheckExist Then
-                SetRect m_TextRect, 0, 0, lw - PicW - 16 - 4, lh
+                If Not m_Picture Is Nothing Then
+                    SetRect m_TextRect, PicW + 4, 0, lw - PicW - 4, lh
+                Else
+                    SetRect m_TextRect, 0, 0, lw - 20, lh
+                End If
             Else
-                SetRect m_TextRect, 0, 0, lw - PicW - 4, lh
+                If Not m_Picture Is Nothing Then
+                    SetRect m_TextRect, 0, 0, lw - PicW - 4, lh
+                Else
+                    SetRect m_TextRect, 0, 0, lw - 4, lh
+                End If
             End If
+                    
         Else
             SetRect m_TextRect, 0, 0, lw - 8, lh
         End If
@@ -2246,7 +3204,9 @@ Private Sub DrawPicwithCaption()
     
     ' --Calc rects for multiline
     If m_WindowsNT Then
-        DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, m_TextRect, DT_CALCRECT Or dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
+        'DrawTextW hDC, StrPtr(m_Caption & vbNullChar), -1, m_TextRect, DT_CALCRECT Or dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
+        DrawTextW hDC, StrPtr(m_Caption), -1, m_TextRect, DT_CALCRECT Or dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
+        'DrawText DIS.hDC, StrPtr(Text), -1, TextRect, DT_CALCRECT Or DT_WORDBREAK Or CLng(IIf((DIS.ItemState And ODS_NOACCEL) = ODS_NOACCEL, DT_HIDEPREFIX, 0))
     Else
         DrawText hDC, m_Caption, -1, m_TextRect, DT_CALCRECT Or dtTextDrawParams Or IIf(m_bRTL, DT_RTLREADING, 0)
     End If
@@ -2263,15 +3223,15 @@ Private Sub DrawPicwithCaption()
         Case ecCenterAlign
             If (lh - lpRect.Bottom) < 0 Then
                 If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                    OffsetRect lpRect, (lw - lpRect.Right + PicW + 4 - 16) \ 2, 1
+                    OffsetRect lpRect, (lw - lpRect.Right + 4 - 16) \ 2, 1
                 Else
-                    OffsetRect lpRect, (lw - lpRect.Right + PicW + 4) \ 2, 1
+                    OffsetRect lpRect, (lw - lpRect.Right + 4) \ 2, 1
                 End If
             Else
                 If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
-                    OffsetRect lpRect, (lw - lpRect.Right + PicW - 4 - 16) \ 2, (lh - lpRect.Bottom) \ 2
+                    OffsetRect lpRect, (lw - lpRect.Right - 4 - 16) \ 2, (lh - lpRect.Bottom) \ 2
                 Else
-                    OffsetRect lpRect, (lw - lpRect.Right + PicW + 4) \ 2, (lh - lpRect.Bottom) \ 2
+                    OffsetRect lpRect, (lw - lpRect.Right + 4) \ 2, (lh - lpRect.Bottom) \ 2
                 End If
             
             End If
@@ -2291,8 +3251,13 @@ Private Sub DrawPicwithCaption()
             Select Case m_PictureAlign
 
                 Case epLeftEdge, epLeftOfCaption
-                    .Left = PicW + 4
-                    .Right = lw - 4
+                    If m_CheckExist Then
+                        .Left = PicW + 8
+                        .Right = lw - 16
+                    Else
+                        .Left = PicW + 4
+                        .Right = lw - 4
+                    End If
                     
                     If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
                         .Right = lw - 4 - 16
@@ -2338,7 +3303,8 @@ Private Sub DrawPicwithCaption()
             End If
             
             If m_CheckExist Then
-                .Left = 16
+                '.Left = 16
+                .Left = .Left + 4
                 .Right = lw - 4
             End If
             
@@ -2357,7 +3323,6 @@ Private Sub DrawPicwithCaption()
         ' --For themed style, we are not able to draw borders
         ' --after drawing the caption. i mean the whole button is painted at once.
         'Code deleted by AdiaProject
-
         If m_bDropDownSep Or m_DropDownSymbol <> ebsNone Then
             .Right = lw - 16
         End If
@@ -2586,6 +3551,18 @@ Private Function Lighten(ByVal Color As Byte) As Byte
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub mFont_FontChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropertyName (String)
+'!--------------------------------------------------------------------------------
+Private Sub mFont_FontChanged(ByVal PropertyName As String)
+    Set UserControl.Font = mFont
+    Refresh
+    RedrawButton
+    PropertyChanged "Font"
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub OLEFontToLogFont
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Font (StdFont)
@@ -2724,22 +3701,22 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SetAccessKey()
 
-    Dim I As Long
+    Dim ii As Long
 
     UserControl.AccessKeys = vbNullString
 
     If Len(m_Caption) > 1 Then
-        I = InStr(m_Caption, "&")
+        ii = InStr(m_Caption, "&")
 
-        If I < Len(m_Caption) Then
-            If I Then
-                If Mid$(m_Caption, I + 1, 1) <> "&" Then
-                    AccessKeys = LCase$(Mid$(m_Caption, I + 1, 1))
+        If ii < Len(m_Caption) Then
+            If ii Then
+                If Mid$(m_Caption, ii + 1, 1) <> "&" Then
+                    AccessKeys = LCase$(Mid$(m_Caption, ii + 1, 1))
                 Else
-                    I = InStr(I + 2, m_Caption, "&", vbTextCompare)
+                    ii = InStr(ii + 2, m_Caption, "&", vbTextCompare)
 
-                    If Mid$(m_Caption, I + 1, 1) <> "&" Then
-                        AccessKeys = LCase$(Mid$(m_Caption, I + 1, 1))
+                    If Mid$(m_Caption, ii + 1, 1) <> "&" Then
+                        AccessKeys = LCase$(Mid$(m_Caption, ii + 1, 1))
                     End If
                 End If
             End If
@@ -2757,6 +3734,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub SetPopupMenu(ByVal Menu As Object, Optional Align As enumMenuAlign, Optional flags = 0)
 Attribute SetPopupMenu.VB_Description = "Sets a dropdown menu to the button."
+Attribute SetPopupMenu.VB_UserMemId = 1610809392
 
     If Not (Menu Is Nothing) Then
         If (TypeOf Menu Is VB.Menu) Then
@@ -2775,6 +3753,7 @@ End Sub
 '! Parameters  (Переменные):   Menu (Object)
 '!--------------------------------------------------------------------------------
 Public Sub SetPopupMenuRBT(ByVal Menu As Object)
+Attribute SetPopupMenuRBT.VB_UserMemId = 1610809393
 
     If Not (Menu Is Nothing) Then
         If (TypeOf Menu Is VB.Menu) Then
@@ -3101,7 +4080,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
     Dim b           As Long
     Dim H           As Long
     Dim F           As Long
-    Dim I           As Long
+    Dim ii          As Long
     Dim newW        As Long
     Dim TmpDC       As Long
     Dim TmpBmp      As Long
@@ -3218,7 +4197,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
             F = H * DstW
 
             For b = 0 To newW
-                I = F + b
+                ii = F + b
 
                 If m_Buttonstate = eStateOver Then
                     a1 = OverOpacity
@@ -3228,20 +4207,20 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
                 a2 = 255 - a1
 
-                If GetNearestColor(hDC, CLng(DataSrc(I).Red) + 256& * DataSrc(I).Green + 65536 * DataSrc(I).Blue) <> transColor Then
+                If GetNearestColor(hDC, CLng(DataSrc(ii).Red) + 256& * DataSrc(ii).Green + 65536 * DataSrc(ii).Blue) <> transColor Then
 
-                    With DataDest(I)
+                    With DataDest(ii)
 
                         If BrushColor > -1 Then
                             If MonoMask Then
-                                If (CLng(DataSrc(I).Red) + DataSrc(I).Green + DataSrc(I).Blue) <= 384 Then
-                                    DataDest(I) = BrushRGB
+                                If (CLng(DataSrc(ii).Red) + DataSrc(ii).Green + DataSrc(ii).Blue) <= 384 Then
+                                    DataDest(ii) = BrushRGB
                                 End If
 
                             Else
 
                                 If a1 = 255 Then
-                                    DataDest(I) = BrushRGB
+                                    DataDest(ii) = BrushRGB
                                 ElseIf a1 Then
                                     .Red = (a2 * .Red + a1 * BrushRGB.Red) \ 256
                                     .Green = (a2 * .Green + a1 * BrushRGB.Green) \ 256
@@ -3252,7 +4231,7 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
                         Else
 
                             If isGreyscale Then
-                                gCol = CLng(DataSrc(I).Red * 0.3) + DataSrc(I).Green * 0.59 + DataSrc(I).Blue * 0.11
+                                gCol = CLng(DataSrc(ii).Red * 0.3) + DataSrc(ii).Green * 0.59 + DataSrc(ii).Blue * 0.11
 
                                 If a1 = 255 Then
                                     .Red = gCol
@@ -3268,31 +4247,31 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
 
                                 If a1 = 255 Then
                                     If PicEffect = epeLighter Then
-                                        .Red = aLighten(DataSrc(I).Red)
-                                        .Green = aLighten(DataSrc(I).Green)
-                                        .Blue = aLighten(DataSrc(I).Blue)
+                                        .Red = aLighten(DataSrc(ii).Red)
+                                        .Green = aLighten(DataSrc(ii).Green)
+                                        .Blue = aLighten(DataSrc(ii).Blue)
                                     ElseIf PicEffect = epeDarker Then
-                                        .Red = aDarken(DataSrc(I).Red)
-                                        .Green = aDarken(DataSrc(I).Green)
-                                        .Blue = aDarken(DataSrc(I).Blue)
+                                        .Red = aDarken(DataSrc(ii).Red)
+                                        .Green = aDarken(DataSrc(ii).Green)
+                                        .Blue = aDarken(DataSrc(ii).Blue)
                                     Else
-                                        DataDest(I) = DataSrc(I)
+                                        DataDest(ii) = DataSrc(ii)
                                     End If
 
                                 ElseIf a1 Then
 
                                     If PicEffect = epeLighter Then
-                                        .Red = (a2 * .Red + a1 * aLighten(DataSrc(I).Red)) \ 256
-                                        .Green = (a2 * .Green + a1 * aLighten(DataSrc(I).Green)) \ 256
-                                        .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(I).Blue)) \ 256
+                                        .Red = (a2 * .Red + a1 * aLighten(DataSrc(ii).Red)) \ 256
+                                        .Green = (a2 * .Green + a1 * aLighten(DataSrc(ii).Green)) \ 256
+                                        .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(ii).Blue)) \ 256
                                     ElseIf PicEffect = epeDarker Then
-                                        .Red = (a2 * .Red + a1 * aDarken(DataSrc(I).Red)) \ 256
-                                        .Green = (a2 * .Green + a1 * aDarken(DataSrc(I).Green)) \ 256
-                                        .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(I).Blue)) \ 256
+                                        .Red = (a2 * .Red + a1 * aDarken(DataSrc(ii).Red)) \ 256
+                                        .Green = (a2 * .Green + a1 * aDarken(DataSrc(ii).Green)) \ 256
+                                        .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(ii).Blue)) \ 256
                                     Else
-                                        .Red = (a2 * .Red + a1 * DataSrc(I).Red) \ 256
-                                        .Green = (a2 * .Green + a1 * DataSrc(I).Green) \ 256
-                                        .Blue = (a2 * .Blue + a1 * DataSrc(I).Blue) \ 256
+                                        .Red = (a2 * .Red + a1 * DataSrc(ii).Red) \ 256
+                                        .Green = (a2 * .Green + a1 * DataSrc(ii).Green) \ 256
+                                        .Blue = (a2 * .Blue + a1 * DataSrc(ii).Blue) \ 256
                                     End If
                                 End If
                             End If
@@ -3340,7 +4319,7 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
     Dim b           As Long
     Dim H           As Long
     Dim F           As Long
-    Dim I           As Long
+    Dim ii          As Long
     Dim newW        As Long
     Dim TmpDC       As Long
     Dim TmpBmp      As Long
@@ -3443,26 +4422,26 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
             F = H * DstW
 
             For b = 0 To newW
-                I = F + b
+                ii = F + b
 
                 If m_bEnabled Then
                     If m_Buttonstate = eStateOver Then
-                        a1 = (CLng(DataSrc(I).Alpha) * OverOpacity) \ 255
+                        a1 = (CLng(DataSrc(ii).Alpha) * OverOpacity) \ 255
                     Else
-                        a1 = (CLng(DataSrc(I).Alpha) * m_PictureOpacity) \ 255
+                        a1 = (CLng(DataSrc(ii).Alpha) * m_PictureOpacity) \ 255
                     End If
 
                 Else
-                    a1 = (CLng(DataSrc(I).Alpha) * bDisOpacity) \ 255
+                    a1 = (CLng(DataSrc(ii).Alpha) * bDisOpacity) \ 255
                 End If
 
                 a2 = 255 - a1
 
-                With DataDest(I)
+                With DataDest(ii)
 
                     If BrushColor <> -1 Then
                         If a1 = 255 Then
-                            DataDest(I) = BrushRGB
+                            DataDest(ii) = BrushRGB
                         ElseIf a1 Then
                             .Red = (a2 * .Red + a1 * BrushRGB.Red) \ 256
                             .Green = (a2 * .Green + a1 * BrushRGB.Green) \ 256
@@ -3472,7 +4451,7 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
                     Else
 
                         If isGreyscale Then
-                            gCol = CLng(DataSrc(I).Red * 0.3) + DataSrc(I).Green * 0.59 + DataSrc(I).Blue * 0.11
+                            gCol = CLng(DataSrc(ii).Red * 0.3) + DataSrc(ii).Green * 0.59 + DataSrc(ii).Blue * 0.11
 
                             If a1 = 255 Then
                                 .Red = gCol
@@ -3488,31 +4467,31 @@ Private Sub TransBlt32(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Lo
 
                             If a1 = 255 Then
                                 If PicEffect = epeLighter Then
-                                    .Red = aLighten(DataSrc(I).Red)
-                                    .Green = aLighten(DataSrc(I).Green)
-                                    .Blue = aLighten(DataSrc(I).Blue)
+                                    .Red = aLighten(DataSrc(ii).Red)
+                                    .Green = aLighten(DataSrc(ii).Green)
+                                    .Blue = aLighten(DataSrc(ii).Blue)
                                 ElseIf PicEffect = epeDarker Then
-                                    .Red = aDarken(DataSrc(I).Red)
-                                    .Green = aDarken(DataSrc(I).Green)
-                                    .Blue = aDarken(DataSrc(I).Blue)
+                                    .Red = aDarken(DataSrc(ii).Red)
+                                    .Green = aDarken(DataSrc(ii).Green)
+                                    .Blue = aDarken(DataSrc(ii).Blue)
                                 Else
-                                    DataDest(I) = DataSrc(I)
+                                    DataDest(ii) = DataSrc(ii)
                                 End If
 
                             ElseIf a1 Then
 
                                 If PicEffect = epeLighter Then
-                                    .Red = (a2 * .Red + a1 * aLighten(DataSrc(I).Red)) \ 256
-                                    .Green = (a2 * .Green + a1 * aLighten(DataSrc(I).Green)) \ 256
-                                    .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(I).Blue)) \ 256
+                                    .Red = (a2 * .Red + a1 * aLighten(DataSrc(ii).Red)) \ 256
+                                    .Green = (a2 * .Green + a1 * aLighten(DataSrc(ii).Green)) \ 256
+                                    .Blue = (a2 * .Blue + a1 * aLighten(DataSrc(ii).Blue)) \ 256
                                 ElseIf PicEffect = epeDarker Then
-                                    .Red = (a2 * .Red + a1 * aDarken(DataSrc(I).Red)) \ 256
-                                    .Green = (a2 * .Green + a1 * aDarken(DataSrc(I).Green)) \ 256
-                                    .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(I).Blue)) \ 256
+                                    .Red = (a2 * .Red + a1 * aDarken(DataSrc(ii).Red)) \ 256
+                                    .Green = (a2 * .Green + a1 * aDarken(DataSrc(ii).Green)) \ 256
+                                    .Blue = (a2 * .Blue + a1 * aDarken(DataSrc(ii).Blue)) \ 256
                                 Else
-                                    .Red = (a2 * .Red + a1 * DataSrc(I).Red) \ 256
-                                    .Green = (a2 * .Green + a1 * DataSrc(I).Green) \ 256
-                                    .Blue = (a2 * .Blue + a1 * DataSrc(I).Blue) \ 256
+                                    .Red = (a2 * .Red + a1 * DataSrc(ii).Red) \ 256
+                                    .Green = (a2 * .Green + a1 * DataSrc(ii).Green) \ 256
+                                    .Blue = (a2 * .Blue + a1 * DataSrc(ii).Blue) \ 256
                                 End If
                             End If
                         End If
@@ -3561,6 +4540,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub UncheckAllValues()
+Attribute UncheckAllValues.VB_UserMemId = 1610809402
 
     ' --Many Thanks to Morgan Haueisen
     Dim objButton As Object
@@ -3602,6 +4582,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub UnsetPopupMenu()
 Attribute UnsetPopupMenu.VB_Description = "Unsets a popupmenu that was previously set for that button."
+Attribute UnsetPopupMenu.VB_UserMemId = 1610809403
 
     ' --Free the popup menu DropDown
     If Not mnuDropDown Is Nothing Then Set mnuDropDown = Nothing
@@ -3616,933 +4597,13 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub UnsetPopupMenuRBT()
+Attribute UnsetPopupMenuRBT.VB_UserMemId = 1610809404
 
     ' --Free the popup menu RBT
     If Not mnuRightButton Is Nothing Then Set mnuRightButton = Nothing
     m_bPopupEnabledRBT = False
     m_bPopupShown = False
     
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_Gel
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_Gel(ByVal vState As enumButtonStates)
-
-    '****************************************************************************
-    ' Draws a Gelbutton                                                         *
-    '****************************************************************************
-    Dim lpRect As RECT
-    Dim bColor As Long
-
-    'RECT to fill regions
-    'Original backcolor
-    lh = ScaleHeight
-    lw = ScaleWidth
-    bColor = TranslateColor(m_bColors.tBackColor)
-
-    If Not m_bEnabled Then
-        ' --Fill the button region with background color
-        SetRect lpRect, 0, 0, lw, lh
-        PaintRect bColor, lpRect
-        ' --Make a shining Upper Light
-        DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.05), bColor, gdVertical
-        DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.02), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.08)), gdVertical
-        DrawPicwithCaption
-        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.2)
-        DrawCorners ShiftColor(bColor, -0.23)
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            'Normal State
-            CreateRegion
-            ' --Fill the button region with background color
-            SetRect lpRect, 0, 0, lw, lh
-            PaintRect ShiftColor(bColor, -0.03), lpRect
-            ' --Make a shining Upper Light
-            DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.1), bColor, gdVertical
-            DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.05), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.1)), gdVertical
-            DrawPicwithCaption
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.33)
-
-        Case eStateOver
-            ' --Fill the button region with background color
-            SetRect lpRect, 0, 0, lw, lh
-            PaintRect ShiftColor(bColor, -0.03), lpRect
-            ' --Make a shining Upper Light
-            DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.15), bColor, gdVertical
-            DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.05), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.2)), gdVertical
-            DrawPicwithCaption
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.28)
-
-        Case eStateDown
-            ' --fill the button region with background color
-            SetRect lpRect, 0, 0, lw, lh
-            PaintRect ShiftColor(bColor, -0.03), lpRect
-            ' --Make a shining Upper Light
-            DrawGradientEx 0, 0, lw, 5, ShiftColor(BlendColors(bColor, TranslateColor(vbWhite)), 0.1), bColor, gdVertical
-            DrawGradientEx 0, 6, lw, lh - 1, ShiftColor(bColor, -0.08), BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.05)), gdVertical
-            DrawPicwithCaption
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.36)
-    End Select
-
-    DrawCorners ShiftColor(bColor, -0.36)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_Office2003
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_Office2003(ByVal vState As enumButtonStates)
-
-    Dim bColor As Long
-
-    lh = UserControl.ScaleHeight
-    lw = UserControl.ScaleWidth
-    bColor = TranslateColor(m_bColors.tBackColor)
-    SetRect m_ButtonRect, 0, 0, lw, lh
-
-    If m_ButtonMode <> ebmCommandButton And m_bValue Then
-        If m_bMouseInCtl Then
-            DrawGradientEx 0, 0, lw, lh, TranslateColor(&H4E91FE), TranslateColor(&H8ED3FF), gdVertical
-        Else
-            DrawGradientEx 0, 0, lw, lh, TranslateColor(&H8CD5FF), TranslateColor(&H55ADFF), gdVertical
-        End If
-
-        DrawPicwithCaption
-        DrawRectangle 0, 0, lw, lh, TranslateColor(&H800000)
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            CreateRegion
-            DrawGradientEx 0, 0, lw, lh / 2, BlendColors(TranslateColor(vbWhite), ShiftColor(bColor, 0.08)), bColor, gdVertical
-            DrawGradientEx 0, lh / 2, lw, lh / 2 + 1, bColor, ShiftColor(bColor, -0.15), gdVertical
-
-        Case eStateOver
-            DrawGradientEx 0, 0, lw, lh, TranslateColor(&HCCF4FF), TranslateColor(&H91D0FF), gdVertical
-
-        Case eStateDown
-            DrawGradientEx 0, 0, lw, lh, TranslateColor(&H4E91FE), TranslateColor(&H8ED3FF), gdVertical
-    End Select
-
-    DrawPicwithCaption
-
-    If m_Buttonstate <> eStateNormal Then
-        DrawRectangle 0, 0, lw, lh, TranslateColor(&H800000)
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_OfficeXP
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_OfficeXP(ByVal vState As enumButtonStates)
-
-    Dim lpRect      As RECT
-    Dim bColor      As Long
-    Dim oColor      As Long
-    Dim BorderColor As Long
-
-    lh = UserControl.ScaleHeight
-    lw = UserControl.ScaleWidth
-    bColor = TranslateColor(m_bColors.tBackColor)
-    SetRect lpRect, 0, 0, lw, lh
-
-    Select Case m_lXPColor
-
-        Case ecsBlue
-            oColor = TranslateColor(&HEED2C1)
-            BorderColor = TranslateColor(&HC56A31)
-
-        Case ecsSilver
-            oColor = TranslateColor(&HE3DFE0)
-            BorderColor = TranslateColor(&HBFB4B2)
-
-        Case ecsOliveGreen
-            oColor = TranslateColor(&HBAD6D4)
-            BorderColor = TranslateColor(&H70A093)
-
-        Case ecsCustom
-            oColor = bColor
-            BorderColor = ShiftColor(bColor, -0.12)
-    End Select
-
-    If m_ButtonMode <> ebmCommandButton And m_bValue Then
-        PaintRect ShiftColor(oColor, -0.05), m_ButtonRect
-        DrawRectangle 0, 0, lw, lh, BorderColor
-
-        If m_bMouseInCtl Then
-            PaintRect ShiftColor(oColor, -0.01), m_ButtonRect
-            DrawRectangle 0, 0, lw, lh, BorderColor
-        End If
-
-        DrawPicwithCaption
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            PaintRect bColor, lpRect
-
-        Case eStateOver
-            PaintRect ShiftColor(oColor, 0.03), lpRect
-
-        Case eStateDown
-            PaintRect ShiftColor(oColor, -0.08), lpRect
-    End Select
-
-    DrawPicwithCaption
-
-    If m_Buttonstate <> eStateNormal Then
-        DrawRectangle 0, 0, lw, lh, BorderColor
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_Outlook2007
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_Outlook2007(ByVal vState As enumButtonStates)
-
-    Dim bColor As Long
-
-    lh = ScaleHeight
-    lw = ScaleWidth
-    bColor = TranslateColor(m_bColors.tBackColor)
-
-    If m_ButtonMode <> ebmCommandButton Then
-        If m_bValue Then
-            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&HA9D9FF), TranslateColor(&H6FC0FF), gdVertical
-            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H3FABFF), TranslateColor(&H75E1FF), gdVertical
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
-    
-            If m_bMouseInCtl Then
-                DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&H58C1FF), TranslateColor(&H51AFFF), gdVertical
-                DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H468FFF), TranslateColor(&H5FD3FF), gdVertical
-                DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
-            End If
-    
-            DrawPicwithCaption
-    
-            Exit Sub
-        End If
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            PaintRect bColor, m_ButtonRect
-            DrawGradientEx 0, 0, lw, lh / 2.7, BlendColors(ShiftColor(bColor, 0.09), TranslateColor(vbWhite)), BlendColors(ShiftColor(bColor, 0.07), bColor), gdVertical
-            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), bColor, ShiftColor(bColor, 0.03), gdVertical
-            DrawPicwithCaption
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
-
-        Case eStateOver
-            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&HE1FFFF), TranslateColor(&HACEAFF), gdVertical
-            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H67D7FF), TranslateColor(&H99E4FF), gdVertical
-            DrawPicwithCaption
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
-
-        Case eStateDown
-            DrawGradientEx 0, 0, lw, lh / 2.7, TranslateColor(&H58C1FF), TranslateColor(&H51AFFF), gdVertical
-            DrawGradientEx 0, lh / 2.7, lw, lh - (lh / 2.7), TranslateColor(&H468FFF), TranslateColor(&H5FD3FF), gdVertical
-            DrawPicwithCaption
-            DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.34)
-    End Select
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_Standard
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_Standard(ByVal vState As enumButtonStates)
-
-    '****************************************************************************
-    ' Draws  four different styles in one procedure                             *
-    ' Makes reading the code difficult, but saves much space!! ;)               *
-    '****************************************************************************
-    Dim FocusRect As RECT
-    Dim tmpRect   As RECT
-
-    lh = ScaleHeight
-    lw = ScaleWidth
-    SetRect m_ButtonRect, 0, 0, lw, lh
-
-    If Not m_bEnabled Then
-
-        ' --Draws raised edge border
-        If m_ButtonStyle = eStandard Then
-            DrawEdge hDC, m_ButtonRect, BDR_RAISED95, BF_RECT
-        ElseIf m_ButtonStyle = eFlat Then
-            DrawEdge hDC, m_ButtonRect, BDR_RAISEDINNER, BF_RECT
-        End If
-
-        DrawPicwithCaption
-
-        Exit Sub
-
-    End If
-
-    If m_ButtonMode <> ebmCommandButton And m_bValue Then
-        PaintRect ShiftColor(TranslateColor(m_bColors.tBackColor), 0.02), m_ButtonRect
-        DrawPicwithCaption
-
-        If m_ButtonStyle <> eFlatHover Then
-            DrawEdge hDC, m_ButtonRect, BDR_SUNKEN95, BF_RECT
-
-            If m_bShowFocus And m_bHasFocus And m_ButtonStyle = eStandard Then
-                DrawRectangle 4, 4, lw - 7, lh - 7, TranslateColor(vbApplicationWorkspace)
-            End If
-        End If
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            CreateRegion
-            PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
-            DrawPicwithCaption
-
-            Select Case m_ButtonStyle
-
-                Case eStandard
-                    DrawEdge hDC, m_ButtonRect, BDR_RAISED95, BF_RECT
-
-                Case eFlat
-                    DrawEdge hDC, m_ButtonRect, BDR_RAISEDINNER, BF_RECT
-            End Select
-
-        Case eStateOver
-            PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
-            DrawPicwithCaption
-
-            Select Case m_ButtonStyle
-
-                Case eFlatHover, eFlat
-                    ' --Draws flat raised edge border
-                    DrawEdge hDC, m_ButtonRect, BDR_RAISEDINNER, BF_RECT
-
-                Case Else
-                    ' --Draws 3d raised edge border
-                    DrawEdge hDC, m_ButtonRect, BDR_RAISED95, BF_RECT
-            End Select
-
-        Case eStateDown
-            PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
-            DrawPicwithCaption
-
-            Select Case m_ButtonStyle
-
-                Case eStandard
-                    DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(&H99A8AC)
-                    DrawRectangle 0, 0, lw, lh, TranslateColor(vbBlack)
-
-                Case e3DHover
-                    DrawEdge hDC, m_ButtonRect, BDR_SUNKEN95, BF_RECT
-
-                Case eFlatHover, eFlat
-                    ' --Draws flat pressed edge
-                    DrawRectangle 0, 0, lw, lh, TranslateColor(vbWhite)
-                    DrawRectangle 0, 0, lw + 1, lh + 1, TranslateColor(vbGrayText)
-            End Select
-    End Select
-
-    ' --Button has focus but not downstate Or button is Default
-    If m_bHasFocus Or m_bDefault Then
-
-        On Error Resume Next
-
-        If m_bShowFocus And RunMode Then
-            If m_ButtonStyle = e3DHover Or m_ButtonStyle = eStandard Then
-                SetRect FocusRect, 4, 4, lw - 4, lh - 4
-            Else
-                SetRect FocusRect, 3, 3, lw - 3, lh - 3
-            End If
-
-            If m_bParentActive Then
-                DrawFocusRect hDC, FocusRect
-            End If
-        End If
-
-        If vState <> eStateDown Then
-            If m_ButtonStyle = eStandard Then
-                SetRect tmpRect, 0, 0, lw - 1, lh - 1
-                DrawEdge hDC, tmpRect, BDR_RAISED95, BF_RECT
-                DrawRectangle 0, 0, lw - 1, lh - 1, TranslateColor(vbApplicationWorkspace)
-                DrawRectangle 0, 0, lw, lh, TranslateColor(vbBlack)
-            End If
-        End If
-    End If
-
-    On Error GoTo 0
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_Vista
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_Vista(ByVal vState As enumButtonStates)
-
-    '*************************************************************************
-    '* Draws a cool Vista Aero Style Button                                  *
-    '* Use a light background color for best result                          *
-    '*************************************************************************
-    Dim lpRect As RECT
-    Dim Color1 As Long
-    Dim bColor As Long
-
-    'Used to set rect for drawing rectangles
-    'Shifted / Blended color
-    'Original back Color
-    lh = ScaleHeight
-    lw = ScaleWidth
-    Color1 = ShiftColor(TranslateColor(m_bColors.tBackColor), 0.05)
-    bColor = TranslateColor(m_bColors.tBackColor)
-
-    If Not m_bEnabled Then
-        ' --Draw the Disabled Button
-        CreateRegion
-        ' --Fill the button with disabled color
-        SetRect lpRect, 0, 0, lw, lh
-        PaintRect ShiftColor(bColor, 0.03), lpRect
-        DrawPicwithCaption
-        ' --Draws outside disabled color rectangle
-        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.25)
-        DrawRectangle 1, 1, lw - 2, lh - 2, ShiftColor(bColor, 0.25)
-        DrawCorners ShiftColor(bColor, -0.03)
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            CreateRegion
-            ' --Draws a gradient in the full region
-            DrawGradientEx 1, 1, lw - 1, lh, Color1, bColor, gdVertical
-            ' --Draws a gradient in half region to give a glassy look
-            DrawGradientEx 1, lh / 2, lw - 2, lh - 2, ShiftColor(bColor, -0.02), ShiftColor(bColor, -0.15), gdVertical
-            DrawPicwithCaption
-            ' --Draws border rectangle
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&H707070)
-            'outer
-            DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
-
-            'inner
-        Case eStateOver
-            ' --Make gradient in the upper half region
-            DrawGradientEx 1, 1, lw - 2, lh / 2, TranslateColor(&HFFF7E4), TranslateColor(&HFFF3DA), gdVertical
-            ' --Draw gradient in half button downside to give a glass look
-            DrawGradientEx 1, lh / 2, lw - 2, lh - 2, TranslateColor(&HFFE9C1), TranslateColor(&HFDE1AE), gdVertical
-            ' --Draws left side gradient effects horizontal
-            DrawGradientEx 1, 3, 5, lh / 2 - 2, TranslateColor(&HFFEECD), TranslateColor(&HFFF7E4), gdHorizontal
-            'Left
-            DrawGradientEx 1, lh / 2, 5, lh - (lh / 2) - 1, TranslateColor(&HFAD68F), ShiftColor(TranslateColor(&HFDE1AC), 0.01), gdHorizontal
-            'Left
-            ' --Draws right side gradient effects horizontal
-            DrawGradientEx lw - 6, 3, 5, lh / 2 - 2, TranslateColor(&HFFF7E4), TranslateColor(&HFFEECD), gdHorizontal
-            'Right
-            DrawGradientEx lw - 6, lh / 2, 5, lh - (lh / 2) - 1, ShiftColor(TranslateColor(&HFDE1AC), 0.01), TranslateColor(&HFAD68F), gdHorizontal
-            'Right
-            DrawPicwithCaption
-            ' --Draws border rectangle
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&HA77532)
-            'outer
-            DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
-
-            'inner
-        Case eStateDown
-            ' --Draw a gradent in full region
-            DrawGradientEx 1, 1, lw - 1, lh, TranslateColor(&HF6E4C2), TranslateColor(&HF6E4C2), gdVertical
-            ' --Draw gradient in half button downside to give a glass look
-            DrawGradientEx 1, lh / 2, lw - 2, lh - 2, TranslateColor(&HF0D29A), TranslateColor(&HF0D29A), gdVertical
-            ' --Draws down rectangle
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&H5C411D)    '
-            DrawLineApi 1, 1, lw - 1, 1, TranslateColor(&HB39C71)
-            '\Top Lines
-            DrawLineApi 1, 2, lw - 1, 2, TranslateColor(&HD6C6A9)
-            '/
-            DrawLineApi 1, 3, lw - 1, 3, TranslateColor(&HECD9B9)   '
-            DrawLineApi 1, 1, 1, lh / 2 - 1, TranslateColor(&HCFB073)
-            'Left upper
-            DrawLineApi 1, lh / 2, 1, lh - (lh / 2) - 1, TranslateColor(&HC5912B)
-            'Left Bottom
-            ' --Draws left side gradient effects horizontal
-            DrawGradientEx 1, 3, 5, lh / 2 - 2, ShiftColor(TranslateColor(&HE6C891), 0.02), ShiftColor(TranslateColor(&HF6E4C2), -0.01), gdHorizontal
-            'Left
-            DrawGradientEx 1, lh / 2, 5, lh - (lh / 2) - 1, ShiftColor(TranslateColor(&HDCAB4E), 0.02), ShiftColor(TranslateColor(&HF0D29A), -0.01), gdHorizontal
-            'Left
-            ' --Draws right side gradient effects horizontal
-            DrawGradientEx lw - 6, 3, 5, lh / 2 - 2, ShiftColor(TranslateColor(&HF6E4C2), -0.01), ShiftColor(TranslateColor(&HE6C891), 0.02), gdHorizontal
-            'Right
-            DrawGradientEx lw - 6, lh / 2, 5, lh - (lh / 2) - 1, ShiftColor(TranslateColor(&HF0D29A), -0.01), ShiftColor(TranslateColor(&HDCAB4E), 0.02), gdHorizontal
-            'Right
-            DrawPicwithCaption
-    End Select
-
-    ' --Draw a focus rectangle if button has focus
-    If m_bParentActive Then
-        If (m_bHasFocus Or m_bDefault) And vState = eStateNormal Then
-            ' --Draw darker outer rectangle
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&HA77532)
-            ' --Draw light inner rectangle
-            DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(&HFBD848)
-        End If
-
-        If (m_bShowFocus And m_bHasFocus) Then
-            SetRect lpRect, 1.5, 1.5, lw - 2, lh - 2
-            DrawFocusRect hDC, lpRect
-        End If
-    End If
-
-    ' --Create four corners which will be common to all states
-    DrawCorners TranslateColor(&HBE965F)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_VistaToolbar
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_VistaToolbar(ByVal vState As enumButtonStates)
-
-    Dim lpRect As RECT
-
-    'Dim FocusRect        As RECT
-    lh = ScaleHeight
-    lw = ScaleWidth
-
-    If Not m_bEnabled Then
-        ' --Draw Disabled button
-        PaintRect TranslateColor(m_bColors.tBackColor), m_ButtonRect
-        DrawPicwithCaption
-        DrawCorners TranslateColor(m_bColors.tBackColor)
-
-        Exit Sub
-
-    End If
-
-    If vState = eStateNormal Then
-        CreateRegion
-        ' --Set the rect to fill back color
-        SetRect lpRect, 0, 0, lw, lh
-        ' --Simply fill the button with one color (No gradient effect here!!)
-        PaintRect TranslateColor(m_bColors.tBackColor), lpRect
-        DrawPicwithCaption
-    ElseIf vState = eStateOver Then
-        ' --Draws a gradient effect with the folowing colors
-        DrawGradientEx 1, 1, lw - 2, lh - 2, TranslateColor(&HFDF9F1), TranslateColor(&HF8ECD0), gdVertical
-        ' --Draws a gradient in half region to give a Light Effect
-        DrawGradientEx 1, lh / 1.7, lw - 2, lh - 2, TranslateColor(&HF8ECD0), TranslateColor(&HF8ECD0), gdVertical
-        DrawPicwithCaption
-        ' --Draw outside borders
-        DrawRectangle 0, 0, lw, lh, TranslateColor(&HCA9E61)
-        DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
-    ElseIf vState = eStateDown Then
-        DrawGradientEx 1, 1, lw - 2, lh - 2, TranslateColor(&HF1DEB0), TranslateColor(&HF9F1DB), gdVertical
-        DrawPicwithCaption
-        ' --Draws outside borders
-        DrawRectangle 0, 0, lw, lh, TranslateColor(&HCA9E61)
-        DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
-    End If
-
-    If vState = eStateDown Or vState = eStateOver Then
-        DrawCorners ShiftColor(TranslateColor(&HCA9E61), 0.3)
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_WindowsTheme
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_WindowsTheme(ByVal vState As enumButtonStates)
-
-    Dim tmpState As Long
-
-    UserControl.BackColor = GetSysColor(COLOR_BTNFACE)
-
-    If Not m_bEnabled Then
-        tmpState = 4
-        DrawTheme "Button", 1, tmpState
-        DrawPicwithCaption
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            tmpState = 1
-
-        Case eStateOver
-            tmpState = 2
-
-        Case eStateDown
-            tmpState = 3
-    End Select
-
-    If m_Buttonstate = eStateNormal Then
-
-        '        If (m_bHasFocus Or m_bDefault) And m_bParentActive Then
-        'Change by Tanner - do not show a focus rect unless m_bShowFocus is explicitly set!
-        If (m_bHasFocus Or m_bDefault) And m_bParentActive And m_bShowFocus Then
-            tmpState = 5
-        End If
-    End If
-
-    DrawTheme "Button", 1, tmpState
-    DrawPicwithCaption
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_WinXP
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_WinXP(ByVal vState As enumButtonStates)
-
-    '****************************************************************************
-    '* Windows XP Button                                                        *
-    '* Totally written from Scratch and coded by Me!!  hehe                     *
-    '****************************************************************************
-    Dim lpRect As RECT
-    Dim bColor As Long
-
-    lh = ScaleHeight
-    lw = ScaleWidth
-    bColor = TranslateColor(m_bColors.tBackColor)
-    SetRect m_ButtonRect, 0, 0, lw, lh
-
-    If Not m_bEnabled Then
-        CreateRegion
-        PaintRect BlendColors(GetSysColor(COLOR_BTNFACE), ShiftColor(bColor, 0.1)), m_ButtonRect
-        DrawPicwithCaption
-        DrawRectangle 0, 0, lw, lh, ShiftColor(bColor, -0.1)
-        DrawCorners ShiftColor(bColor, -0.1)
-
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            CreateRegion
-
-            Select Case m_lXPColor
-
-                Case ecsBlue, ecsOliveGreen, ecsCustom
-                    ' --mimic the XP styles
-                    DrawGradientEx 0, 0, lw, lh, ShiftColor(bColor, 0.07), bColor, gdVertical
-                    DrawGradientEx 0, 0, lw, 4, ShiftColor(bColor, 0.1), ShiftColor(bColor, 0.08), gdVertical
-                    DrawPicwithCaption
-                    DrawLineApi 1, lh - 2, lw - 2, lh - 2, ShiftColor(bColor, -0.09)
-                    'BottomMost line
-                    DrawLineApi 1, lh - 3, lw - 2, lh - 3, ShiftColor(bColor, -0.05)
-                    'Bottom Line
-                    DrawLineApi 1, lh - 4, lw - 2, lh - 4, ShiftColor(bColor, -0.01)
-                    'Bottom Line
-                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, ShiftColor(bColor, -0.08)
-                    'Right Line
-                    DrawLineApi 1, 1, 1, lh - 2, BlendColors(TranslateColor(vbWhite), (bColor))
-
-                    'Left Line
-                Case ecsSilver
-                    ' --mimic the Silver XP style
-                    DrawGradientEx 0, 0, lw, lh / 2, ShiftColor(bColor, 0.22), bColor, gdVertical
-                    DrawGradientEx 0, lh / 2, lw, lh / 2, ShiftColor(bColor, -0.01), ShiftColor(bColor, -0.15), gdVertical
-                    DrawPicwithCaption
-                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(vbWhite)
-                    'Right Line
-                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(vbWhite)
-                    'Left Line
-            End Select
-
-        Case eStateOver
-
-            Select Case m_lXPColor
-
-                Case ecsBlue, ecsOliveGreen, ecsCustom
-                    DrawGradientEx 0, 0, lw, lh, ShiftColor(bColor, 0.07), bColor, gdVertical
-                    DrawGradientEx 0, 0, lw, 4, ShiftColor(bColor, 0.1), ShiftColor(bColor, 0.08), gdVertical
-                    DrawPicwithCaption
-
-                Case ecsSilver
-                    DrawGradientEx 0, 0, lw, lh / 2, ShiftColor(bColor, 0.22), bColor, gdVertical
-                    DrawGradientEx 0, lh / 2, lw, lh / 2, ShiftColor(bColor, -0.01), ShiftColor(bColor, -0.15), gdVertical
-                    DrawPicwithCaption
-            End Select
-
-            ' --Draw the ORANGE border lines....
-            DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&H89D8FD)
-            'uppermost inner hover
-            DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&HCFF0FF)
-            'uppermost outer hover
-            DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&H49BDF9)
-            'Leftmost Line
-            DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&H49BDF9)
-            'Rightmost Line
-            DrawLineApi 2, 2, 2, lh - 3, TranslateColor(&H7AD2FC)
-            'Left Line
-            DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(&H7AD2FC)
-            'Right Line
-            DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&H30B3F8)
-            'BottomMost Line
-            DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&H97E5&)
-
-            'Bottom Line
-        Case eStateDown
-
-            Select Case m_lXPColor
-
-                Case ecsBlue, ecsOliveGreen, ecsCustom
-                    PaintRect ShiftColor(bColor, -0.05), m_ButtonRect
-                    'Paint with Darker color
-                    DrawPicwithCaption
-                    DrawLineApi 1, 1, lw - 2, 1, ShiftColor(bColor, -0.16)
-                    'Topmost Line
-                    DrawLineApi 1, 2, lw - 2, 2, ShiftColor(bColor, -0.1)
-                    'A lighter top line
-                    DrawLineApi 1, lh - 2, lw - 2, lh - 2, ShiftColor(bColor, 0.01)
-                    'Bottom Line
-                    DrawLineApi 1, 1, 1, lh - 2, ShiftColor(bColor, -0.16)
-                    'Leftmost Line
-                    DrawLineApi 2, 2, 2, lh - 2, ShiftColor(bColor, -0.1)
-                    'Left1 Line
-                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, ShiftColor(bColor, 0.04)
-
-                    'Right Line
-                Case ecsSilver
-                    DrawGradientEx 0, 0, lw, lh - 6, ShiftColor(bColor, -0.2), ShiftColor(bColor, 0.05), gdVertical
-                    DrawGradientEx 0, lh - 6, lw, lh - 1, ShiftColor(bColor, 0.08), TranslateColor(vbWhite), gdVertical
-                    DrawPicwithCaption
-                    DrawRectangle 1, 1, lw - 2, lh - 2, TranslateColor(vbWhite)
-            End Select
-    End Select
-
-    If m_bParentActive Then
-        If (m_bHasFocus Or m_bDefault) And (vState <> eStateDown And vState <> eStateOver) Then
-
-            Select Case m_lXPColor
-
-                Case ecsBlue, ecsCustom
-                    DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&HF6D4BC)
-                    'uppermost inner hover
-                    DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&HFFE7CE)
-                    'uppermost outer hover
-                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&HE6AF8E)
-                    'Leftmost Line
-                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HE6AF8E)
-                    'Rightmost Line
-                    DrawLineApi 2, 2, 2, lh - 3, TranslateColor(&HF4D1B8)
-                    'Left Line
-                    DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(&HF4D1B8)
-                    'Right Line
-                    DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&HE4AD89)
-                    'BottomMost Line
-                    DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&HEE8269)
-
-                    'Bottom Line
-                Case ecsOliveGreen
-                    DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&H8FD1C2)
-                    'uppermost inner hover
-                    DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&H80CBB1)
-                    'uppermost outer hover
-                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&H68C8A0)
-                    'Leftmost Line
-                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&H68C8A0)
-                    'Rightmost Line
-                    DrawLineApi 2, 2, 2, lh - 3, TranslateColor(&H68C8A0)
-                    'Left Line
-                    DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(&H68C8A0)
-                    'Right Line
-                    DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&H68C8A0)
-                    'Bottom Line
-                    DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&H66A7A8)
-
-                    'BottomMost Line
-                Case ecsSilver
-                    DrawLineApi 1, 2, lw - 2, 2, TranslateColor(&HF6D4BC)
-                    'uppermost inner hover
-                    DrawLineApi 1, 1, lw - 2, 1, TranslateColor(&HFFE7CE)
-                    'uppermost outer hover
-                    DrawLineApi 1, 1, 1, lh - 2, TranslateColor(&HE6AF8E)
-                    'Leftmost Line
-                    DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HE6AF8E)
-                    'Rightmost Line
-                    DrawLineApi 2, 2, 2, lh - 3, TranslateColor(vbWhite)
-                    'Left Line
-                    DrawLineApi lw - 3, 3, lw - 3, lh - 3, TranslateColor(vbWhite)
-                    'Right Line
-                    DrawLineApi 2, lh - 3, lw - 2, lh - 3, TranslateColor(&HE4AD89)
-                    'BottomMost Line
-                    DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&HEE8269)
-                    'Bottom Line
-            End Select
-
-        End If
-    End If
-
-    On Error Resume Next
-
-    'Some times error occurs that Client site not available
-    If m_bParentActive Then
-
-        'I mean some times ;)
-        If m_bShowFocus And m_bParentActive And (m_bHasFocus Or m_bDefault) Then
-            'show focusrect at runtime only
-            SetRect lpRect, 2, 2, lw - 2, lh - 2
-            'I don't like this ugly focusrect!!
-            DrawFocusRect hDC, lpRect
-        End If
-    End If
-
-    Select Case m_lXPColor
-
-        Case ecsBlue, ecsSilver, ecsCustom
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&H743C00)
-            DrawCorners ShiftColor(TranslateColor(&H743C00), 0.3)
-
-        Case ecsOliveGreen
-            DrawRectangle 0, 0, lw, lh, RGB(55, 98, 6)
-            DrawCorners ShiftColor(RGB(55, 98, 6), 0.3)
-    End Select
-
-    On Error GoTo 0
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub DrawButton_XPToolbar
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   vState (enumButtonStates)
-'!--------------------------------------------------------------------------------
-Private Sub DrawButton_XPToolbar(ByVal vState As enumButtonStates)
-
-    Dim lpRect As RECT
-    Dim bColor As Long
-
-    lh = ScaleHeight
-    lw = ScaleWidth
-    bColor = TranslateColor(m_bColors.tBackColor)
-
-    If vState = eStateDown Then
-        m_bColors.tForeColor = TranslateColor(vbWhite)
-    Else
-        m_bColors.tForeColor = TranslateColor(vbButtonText)
-    End If
-
-    If m_ButtonMode <> ebmCommandButton And m_bValue Then
-        If m_bIsDown Then
-            vState = eStateDown
-        End If
-    End If
-
-    If m_ButtonMode <> ebmCommandButton And m_bValue And vState <> eStateDown Then
-        SetRect lpRect, 0, 0, lw, lh
-        PaintRect TranslateColor(&HFEFEFE), lpRect
-        m_bColors.tForeColor = TranslateColor(vbButtonText)
-        DrawPicwithCaption
-        DrawRectangle 0, 0, lw, lh, TranslateColor(&HAF987A)
-        DrawCorners ShiftColor(TranslateColor(&HC1B3A0), -0.2)
-
-        If vState = eStateOver Then
-            'Right Line
-            DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HEDF0F2)
-            'Bottom
-            DrawLineApi 2, lh - 2, lw - 2, lh - 2, TranslateColor(&HD8DEE4)
-            'Bottom
-            DrawLineApi 1, lh - 3, lw - 1, lh - 3, TranslateColor(&HE8ECEF)
-            'Bottom
-            DrawLineApi 1, lh - 4, lw - 1, lh - 4, TranslateColor(&HF8F9FA)
-        End If
-
-        ' --Necessary to redraw text & pictures 'coz we are painting usercontrol agaon
-        Exit Sub
-
-    End If
-
-    Select Case vState
-
-        Case eStateNormal
-            CreateRegion
-            PaintRect bColor, m_ButtonRect
-            DrawPicwithCaption
-
-        Case eStateOver
-            DrawGradientEx 0, 0, lw, lh / 2, TranslateColor(&HFDFEFE), TranslateColor(&HEEF4F4), gdVertical
-            DrawGradientEx 0, lh / 2, lw, lh / 2, TranslateColor(&HEEF4F4), TranslateColor(&HEAF1F1), gdVertical
-            DrawPicwithCaption
-            DrawLineApi lw - 2, 2, lw - 2, lh - 2, TranslateColor(&HE0E7EA)
-            'right line
-            DrawLineApi lw - 3, 2, lw - 3, lh - 2, TranslateColor(&HEAF0F0)
-            DrawLineApi 0, lh - 4, lw, lh - 4, TranslateColor(&HE5EDEE)
-            'Bottom
-            DrawLineApi 0, lh - 3, lw, lh - 3, TranslateColor(&HD6E1E4)
-            'Bottom
-            DrawLineApi 0, lh - 2, lw, lh - 2, TranslateColor(&HC6D2D7)
-            'Bottom
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&HC3CECE)
-            DrawCorners ShiftColor(TranslateColor(&HC9D4D4), -0.05)
-
-        Case eStateDown
-            PaintRect TranslateColor(&HDDE4E5), m_ButtonRect
-            'Paint with Darker color
-            DrawPicwithCaption
-            DrawLineApi 1, 1, lw - 2, 1, ShiftColor(TranslateColor(&HD1DADC), -0.02)
-            'Topmost Line
-            DrawLineApi 1, 2, lw - 2, 2, ShiftColor(TranslateColor(&HDAE1E3), -0.02)
-            'A lighter top line
-            DrawLineApi 1, lh - 3, lw - 2, lh - 3, ShiftColor(TranslateColor(&HDEE5E6), 0.02)
-            'Bottom Line
-            DrawLineApi 1, lh - 2, lw - 2, lh - 2, ShiftColor(TranslateColor(&HE5EAEB), 0.02)
-            DrawRectangle 0, 0, lw, lh, TranslateColor(&H929D9D)
-            DrawCorners ShiftColor(TranslateColor(&HABB4B5), -0.2)
-    End Select
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub mFont_FontChanged
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   PropertyName (String)
-'!--------------------------------------------------------------------------------
-Private Sub mFont_FontChanged(ByVal PropertyName As String)
-    Set UserControl.Font = mFont
-    Refresh
-    RedrawButton
-    PropertyChanged "Font"
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -4670,29 +4731,6 @@ Private Sub UserControl_GotFocus()
         'I don't like this ugly focusrect!!
         DrawFocusRect hDC, m_ButtonRect
     End If
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Initialize()
-
-    Dim I As Long
-
-    'Prebuid Lighten/Darken arrays
-    For I = 0 To 255
-        aLighten(I) = Lighten(I)
-        aDarken(I) = Darken(I)
-    Next
-
-    ' --Get the operating system version for text drawing purposes.
-    m_hMode = LoadLibrary(StrPtr("shell32.dll"))
-    m_WindowsNT = IsWinXPOrLater
-    dtDefTextDrawParams = DT_WORDBREAK Or DT_VCENTER Or DT_CENTER
-
-    Set m_cSubclass = New cSelfSubHookCallback
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -5230,35 +5268,6 @@ Private Sub UserControl_Resize()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Terminate
-'! Description (Описание)  :   [A nice place to stop subclasser]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Terminate()
-
-    On Error GoTo Crash:
-
-    'Delete button region
-    If m_lButtonRgn Then
-        DeleteObject m_lButtonRgn
-    End If
-
-    If Not mFont Is Nothing Then Set mFont = Nothing
-    If m_hMode Then
-        FreeLibrary m_hMode
-        m_hMode = 0&
-    End If
-
-    UnsetPopupMenu
-    UnsetPopupMenuRBT
-
-    m_cSubclass.ssc_Terminate
-    Set m_cSubclass = Nothing
-
-Crash:
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_WriteProperties
 '! Description (Описание)  :   [Write property values to storage]
 '! Parameters  (Переменные):   PropBag (PropertyBag)
@@ -5303,7 +5312,6 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     End With
 
 End Sub
-
 
 '======================================================================================================
 'Subclass code - The programmer may call any of the following Subclass_??? routines

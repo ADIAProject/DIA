@@ -97,6 +97,12 @@ wParam As Long
 Message As Long
 hWnd As Long
 End Type
+Private Type TRACKMOUSEEVENTSTRUCT
+cbSize As Long
+dwFlags As Long
+hWndTrack As Long
+dwHoverTime As Long
+End Type
 Private Type TMSG
 hWnd As Long
 Message As Long
@@ -141,6 +147,7 @@ Private Declare Function ImmAssociateContext Lib "imm32" (ByVal hWnd As Long, By
 Private Declare Function ImmGetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByRef lpfdwConversion As Long, ByRef lpfdwSentence As Long) As Long
 Private Declare Function ImmSetConversionStatus Lib "imm32" (ByVal hIMC As Long, ByVal lpfdwConversion As Long, ByVal lpfdwSentence As Long) As Long
 Private Declare Function InvalidateRect Lib "user32" (ByVal hWnd As Long, ByRef lpRect As Any, ByVal bErase As Long) As Long
+Private Declare Function TrackMouseEvent Lib "user32" (ByRef lpEventTrack As TRACKMOUSEEVENTSTRUCT) As Long
 Private Declare Function GetSystemDefaultLangID Lib "kernel32" () As Integer
 Private Declare Function GetUserDefaultLangID Lib "kernel32" () As Integer
 Private Declare Function GetUserDefaultUILanguage Lib "kernel32" () As Integer
@@ -164,12 +171,10 @@ Private Declare Function RemoveWindowSubclass_W2K Lib "comctl32" Alias "#412" (B
 Private Declare Function DefSubclassProc_W2K Lib "comctl32" Alias "#413" (ByVal hWnd As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Function VirtualAlloc Lib "kernel32" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal flAllocType As Long, ByVal flProtect As Long) As Long
 Private Declare Function VirtualProtect Lib "kernel32" (ByVal lpAddress As Long, ByVal dwSize As Long, ByVal flNewProtect As Long, ByRef lpflOldProtect As Long) As Long
-Private Declare Function VirtualFree Lib "kernel32" (ByRef lpAddress As Long, ByVal dwSize As Long, ByVal dwFreeType As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32" (ByVal hModule As Long, ByVal lpProcName As String) As Long
 Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleW" (ByVal lpModuleName As Long) As Long
 Private Const MEM_COMMIT As Long = &H1000
 Private Const PAGE_EXECUTE_READWRITE As Long = &H40
-Private Const GWL_WNDPROC As Long = (-4)
 Private Const GWL_STYLE As Long = (-16)
 Private Const GWL_EXSTYLE As Long = (-20)
 Private Const WM_DESTROY As Long = &H2
@@ -390,6 +395,17 @@ Else
         ImmReleaseContext hWnd, hIMC
     End If
 End If
+End Sub
+
+Public Sub ComCtlsRequestMouseLeave(ByVal hWnd As Long)
+Const TME_LEAVE As Long = &H2
+Dim TME As TRACKMOUSEEVENTSTRUCT
+With TME
+.cbSize = LenB(TME)
+.hWndTrack = hWnd
+.dwFlags = TME_LEAVE
+End With
+TrackMouseEvent TME
 End Sub
 
 Public Sub ComCtlsCheckRightToLeft(ByRef Value As Boolean, ByVal UserControlValue As Boolean, ByVal ModeValue As CCRightToLeftModeConstants)
@@ -1094,15 +1110,21 @@ Dim AppForm As Form, CurrControl As Control
 For Each AppForm In Forms
     For Each CurrControl In AppForm.Controls
         Select Case TypeName(CurrControl)
-            Case "Animation", "DTPicker", "MonthView", "Slider", "StatusBar", "TabStrip", "ListBoxW", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "ComboBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel", "CommandLink"
+            Case "Animation", "DTPicker", "MonthView", "Slider", "StatusBar", "TabStrip", "ListBoxW", "ListView", "TreeView", "IPAddress", "ToolBar", "UpDown", "SpinBox", "Pager", "OptionButtonW", "CheckBoxW", "CommandButtonW", "TextBoxW", "HotKey", "CoolBar", "LinkLabel", "CommandLink"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
             Case "ProgressBar", "FrameW", "ToolTip"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
+            Case "ComboBoxW"
+                Call ComCtlsRemoveSubclass(CurrControl.hWnd)
+                If CurrControl.hWndEdit <> 0 Then Call ComCtlsRemoveSubclass(CurrControl.hWndEdit)
+                If CurrControl.hWndList <> 0 Then Call ComCtlsRemoveSubclass(CurrControl.hWndList)
+                Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
             Case "ImageCombo"
                 Call ComCtlsRemoveSubclass(CurrControl.hWnd)
-                Call ComCtlsRemoveSubclass(CurrControl.hWndCombo)
+                If CurrControl.hWndCombo <> 0 Then Call ComCtlsRemoveSubclass(CurrControl.hWndCombo)
                 If CurrControl.hWndEdit <> 0 Then Call ComCtlsRemoveSubclass(CurrControl.hWndEdit)
+                If CurrControl.hWndList <> 0 Then Call ComCtlsRemoveSubclass(CurrControl.hWndList)
                 Call ComCtlsRemoveSubclass(CurrControl.hWndUserControl)
             Case "RichTextBox", "MCIWnd", "SysInfo"
                 CurrControl.IDEStop ' Hidden
@@ -1134,7 +1156,7 @@ CopyMemory DOSHdr, ByVal hMod, LenB(DOSHdr)
 CopyMemory PEHdr, ByVal UnsignedAdd(hMod, DOSHdr.e_lfanew), LenB(PEHdr)
 Const IMAGE_NT_SIGNATURE As Long = &H4550
 If PEHdr.Magic = IMAGE_NT_SIGNATURE Then
-    lpIAT = PEHdr.DataDirectory(15).VirtualAddress + hMod
+    lpIAT = UnsignedAdd(PEHdr.DataDirectory(15).VirtualAddress, hMod)
     IATLen = PEHdr.DataDirectory(15).Size
     IATPos = lpIAT
     Do Until CLngToULng(IATPos) >= CLngToULng(UnsignedAdd(lpIAT, IATLen))

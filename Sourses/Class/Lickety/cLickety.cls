@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "Lickety"
+Attribute VB_Name = "cLickety"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
@@ -16,14 +16,12 @@ Option Explicit
 '=======
 'Lickety
 '=======
-'
 'Load large text file to String array.  Alternative to using Split().
 '
 'Handles ANSI or Unicode, various line delimiters.  Last line can be
 'terminated by LineDelim or not.
 '
 'See comments in LoadBlock() below for credits.
-'
 
 Private Const DEFAULT_BLOCK As Long = 65536 'In bytes.
 Private Const BIGGER_BLOCK_FACTOR As Long = 50
@@ -36,58 +34,6 @@ Public Enum BlockSizes
     'is treated as BlockSizeAuto.
 End Enum
 
-Public Function SplitFile( _
-    ByVal FileName As String, _
-    Optional ByVal BlockSize As BlockSizes = BlockSizeAuto, _
-    Optional ByVal LineDelim As String = vbNewLine, _
-    Optional ByVal Unicode As Boolean = False, _
-    Optional ByVal SkipBOM As Boolean = False) As String()
-    
-    Dim Lines() As String
-    Dim F As Integer
-    Dim Remaining As Long
-    Dim BlockLines() As String
-    Dim LeftOver As String
-    Dim UBoundLinesOld As Long
-    Dim LineIndex As Long
-    
-    Lines = Split(vbNullString) 'Valid String array with Ubound = -1.
-    F = FreeFile(0)
-    Open FileName For Binary Access Read As #F
-    Remaining = LOF(F)
-    If SkipBOM Then
-        If Unicode Then
-            'Skip over UTF-16LE BOM:
-            Remaining = Remaining - 2
-            Seek #F, 3
-        End If
-    End If
-    'Process "auto blocksize" - normally 0 but anything < Len(LineDelim):
-    If BlockSize <= Len(LineDelim) Then
-        If Remaining > USE_BIGGER_BLOCK Then
-            BlockSize = Remaining \ BIGGER_BLOCK_FACTOR
-        Else
-            BlockSize = BlockSizeDefault
-        End If
-    End If
-    Do While Remaining > 0
-        BlockLines = LoadBlock(F, Remaining, LeftOver, BlockSize, LineDelim, Unicode)
-        UBoundLinesOld = UBound(Lines)
-        If UBound(BlockLines) >= 0 Then
-            ReDim Preserve Lines(UBoundLinesOld + UBound(BlockLines) + 1)
-            For LineIndex = 0 To UBound(BlockLines)
-                Lines(UBoundLinesOld + LineIndex + 1) = BlockLines(LineIndex)
-            Next
-        ElseIf Remaining = 0 And Len(LeftOver) > 0 Then
-            'Case where input file did not have a final terminating LineDelim:
-            ReDim Preserve Lines(UBoundLinesOld + 1)
-            Lines(UBoundLinesOld + 1) = LeftOver
-        End If
-    Loop
-    Close #F
-    SplitFile = Lines
-End Function
-
 Private Function LoadBlock( _
     ByVal File As Integer, _
     ByRef Remaining As Long, _
@@ -95,6 +41,7 @@ Private Function LoadBlock( _
     ByVal BlockSize As Long, _
     ByVal LineDelim As String, _
     ByVal Unicode As Boolean) As String()
+Attribute LoadBlock.VB_UserMemId = 1610809345
     
     'Based on SplitB05/SplitC01 by Donald, donald@xbeat.net, 20020601
     'at: http://www.xbeat.net/vbspeed/c_Split.htm
@@ -158,4 +105,55 @@ Private Function LoadBlock( _
     LoadBlock = BlockLines
 End Function
 
+Public Function SplitFile( _
+    ByVal FileName As String, _
+    Optional ByVal BlockSize As BlockSizes = BlockSizeAuto, _
+    Optional ByVal LineDelim As String = vbNewLine, _
+    Optional ByVal Unicode As Boolean = False, _
+    Optional ByVal SkipBOM As Boolean = False) As String()
+    
+    Dim Lines() As String
+    Dim F As Integer
+    Dim Remaining As Long
+    Dim BlockLines() As String
+    Dim LeftOver As String
+    Dim UBoundLinesOld As Long
+    Dim LineIndex As Long
+    
+    Lines = Split(vbNullString) 'Valid String array with Ubound = -1.
+    F = FreeFile(0)
+    Open FileName For Binary Access Read As #F
+    Remaining = LOF(F)
+    If SkipBOM Then
+        If Unicode Then
+            'Skip over UTF-16LE BOM:
+            Remaining = Remaining - 2
+            Seek #F, 3
+        End If
+    End If
+    'Process "auto blocksize" - normally 0 but anything < Len(LineDelim):
+    If BlockSize <= Len(LineDelim) Then
+        If Remaining > USE_BIGGER_BLOCK Then
+            BlockSize = Remaining \ BIGGER_BLOCK_FACTOR
+        Else
+            BlockSize = BlockSizeDefault
+        End If
+    End If
+    Do While Remaining > 0
+        BlockLines = LoadBlock(F, Remaining, LeftOver, BlockSize, LineDelim, Unicode)
+        UBoundLinesOld = UBound(Lines)
+        If UBound(BlockLines) >= 0 Then
+            ReDim Preserve Lines(UBoundLinesOld + UBound(BlockLines) + 1)
+            For LineIndex = 0 To UBound(BlockLines)
+                Lines(UBoundLinesOld + LineIndex + 1) = BlockLines(LineIndex)
+            Next
+        ElseIf Remaining = 0 And Len(LeftOver) > 0 Then
+            'Case where input file did not have a final terminating LineDelim:
+            ReDim Preserve Lines(UBoundLinesOld + 1)
+            Lines(UBoundLinesOld + 1) = LeftOver
+        End If
+    Loop
+    Close #F
+    SplitFile = Lines
+End Function
 

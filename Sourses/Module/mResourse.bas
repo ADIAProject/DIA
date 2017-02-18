@@ -1,5 +1,130 @@
 Attribute VB_Name = "mResource"
 Option Explicit
+' Not add to project (DBS/DIA) - option for compiler
+#Const mbIDE_DBSProject = False
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ExtractResource
+'! Description (Описание)  :   [Извлечение бинарного ресурса программы в файла по имени ресурса и его ID]
+'! Parameters  (Переменные):   strOCXFileName (String)
+'                              strPathOcx (String)
+'!--------------------------------------------------------------------------------
+Public Function ExtractResource(ByVal strOCXFileName As String, ByVal strPathOcx As String) As Boolean
+Attribute ExtractResource.VB_UserMemId = 1610612737
+
+    Dim strCopyOcxFileTo As String
+
+    strCopyOcxFileTo = PathCombine(strPathOcx, strOCXFileName)
+
+    ' Извлекаем ресурс в файл
+    If GetBinaryFileFromResource(strCopyOcxFileTo, "OCX_" & GetFileName_woExt(strOCXFileName), "CUSTOM") Then
+        If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: True"
+        ExtractResource = True
+    Else
+        If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: False"
+    End If
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ExtractResourceAll
+'! Description (Описание)  :   [Выгрузка всех ресурсов программы (OCX-DLL) в заданный каталог]
+'! Parameters  (Переменные):   strPathOcxTo (String)
+'!--------------------------------------------------------------------------------
+Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
+Attribute ExtractResourceAll.VB_UserMemId = 1610612738
+    If mbDebugStandart Then DebugMode "ExtractResourceAll - Start"
+    ExtractResourceAll = True
+
+    If ExtractResource("MSFLXGRD.OCX", strPathOcxTo) = False Then
+        If MsgBox("Extract OCX or DLL: 'MSFLXGRD.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
+
+            End
+
+        End If
+
+        ExtractResourceAll = False
+    End If
+
+    If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
+
+    If ExtractResource("vbscript.dll", strPathOcxTo) = False Then
+        If MsgBox("Extract OCX or DLL: 'vbscript.dll' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
+
+            End
+
+        End If
+
+        ExtractResourceAll = False
+    End If
+
+    #If mbIDE_DBSProject Then
+    'DBSProject
+        If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
+    
+        If ExtractResource("capicom.dll", strPathOcxTo) = False Then
+            If MsgBox("Extract OCX or DLL: capicom.dll' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
+                End
+    
+            End If
+    
+            ExtractResourceAll = False
+    
+        End If
+    #Else
+        If ExtractResource("TABCTL32.OCX", strPathOcxTo) = False Then
+            If MsgBox("Extract OCX or DLL: 'TABCTL32.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
+        
+                End
+        
+            End If
+        
+            ExtractResourceAll = False
+        End If
+    #End If
+    
+    If mbDebugStandart Then DebugMode "ExtractResourceAll - End"
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ExtractrResToFolder
+'! Description (Описание)  :   [Извлечение ресурсов программы в каталог]
+'! Parameters  (Переменные):   strArg (String)
+'!--------------------------------------------------------------------------------
+Public Sub ExtractrResToFolder(strArg As String)
+Attribute ExtractrResToFolder.VB_UserMemId = 1610612739
+
+    Dim strPathToTemp As String
+    Dim strPathTo     As String
+
+    ' Извлекаем путь из параметра
+    strPathToTemp = strArg
+
+    ' Проверяем существоание каталога
+    If LenB(strPathToTemp) Then
+        If PathExists(strPathToTemp) = False Then
+            CreateNewDirectory strPathToTemp
+        End If
+
+        strPathTo = BackslashAdd2Path(strPathToTemp)
+    Else
+        strPathTo = strWorkTemp
+    End If
+
+    ' Запуск извлечения всех (dll-ocx) ресурсов программы и открытие каталога с файлами
+    If ExtractResourceAll(strPathTo) Then
+        If MsgBox(strMessages(135), vbYesNo + vbInformation, strProductName) = vbYes Then
+            ShellEx strPathTo, essSW_SHOWNORMAL
+        End If
+
+    Else
+
+        If MsgBox(strMessages(136), vbYesNo + vbInformation, strProductName) = vbYes Then
+            ShellEx strPathTo, essSW_SHOWNORMAL
+        End If
+    End If
+
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetBinaryFileFromResource
@@ -52,120 +177,3 @@ HandErr:
 
 End Function
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function ExtractResource
-'! Description (Описание)  :   [Извлечение бинарного ресурса программы в файла по имени ресурса и его ID]
-'! Parameters  (Переменные):   strOCXFileName (String)
-'                              strPathOcx (String)
-'!--------------------------------------------------------------------------------
-Public Function ExtractResource(ByVal strOCXFileName As String, ByVal strPathOcx As String) As Boolean
-
-    Dim strCopyOcxFileTo As String
-
-    strCopyOcxFileTo = PathCombine(strPathOcx, strOCXFileName)
-
-    ' Извлекаем ресурс в файл
-    If GetBinaryFileFromResource(strCopyOcxFileTo, "OCX_" & GetFileName_woExt(strOCXFileName), "CUSTOM") Then
-        If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: True"
-        ExtractResource = True
-    Else
-        If mbDebugStandart Then DebugMode str2VbTab & strOCXFileName & ": BinaryFileFromResourse: False"
-    End If
-
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function ExtractResourceAll
-'! Description (Описание)  :   [Выгрузка всех ресурсов программы (OCX-DLL) в заданный каталог]
-'! Parameters  (Переменные):   strPathOcxTo (String)
-'!--------------------------------------------------------------------------------
-Public Function ExtractResourceAll(ByVal strPathOcxTo As String) As Boolean
-    If mbDebugStandart Then DebugMode "ExtractResourceAll - Start"
-    ExtractResourceAll = True
-
-    If ExtractResource("MSFLXGRD.OCX", strPathOcxTo) = False Then
-        If MsgBox("Extract OCX or DLL: 'MSFLXGRD.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
-
-            End
-
-        End If
-
-        ExtractResourceAll = False
-    End If
-
-    If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
-
-    If ExtractResource("TABCTL32.OCX", strPathOcxTo) = False Then
-        If MsgBox("Extract OCX or DLL: 'TABCTL32.OCX' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
-
-            End
-
-        End If
-
-        ExtractResourceAll = False
-    End If
-
-    If mbDebugStandart Then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
-
-    If ExtractResource("vbscript.dll", strPathOcxTo) = False Then
-        If MsgBox("Extract OCX or DLL: 'vbscript.dll' - False" & str2vbNewLine & strMessages(134), vbYesNo + vbQuestion, strProductName) = vbNo Then
-
-            End
-
-        End If
-
-        ExtractResourceAll = False
-    End If
-
-'    if mbDebugStandart then DebugMode vbTab & "ExtractResourceAll - *****************Check Next File********************"
-'
-'    If ExtractResource("capicom.dll", strPathOcxTo) = False Then
-'        If MsgBox("Extract OCX or DLL: capicom.dll' - False" & str2vbNewLine & strMessages(20), vbYesNo + vbQuestion, strProductName) = vbNo Then
-'            End
-'
-'        End If
-'
-'        ExtractResourceAll = False
-'
-'    End If
-    If mbDebugStandart Then DebugMode "ExtractResourceAll - End"
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub ExtractrResToFolder
-'! Description (Описание)  :   [Извлечение ресурсов программы в каталог]
-'! Parameters  (Переменные):   strArg (String)
-'!--------------------------------------------------------------------------------
-Public Sub ExtractrResToFolder(strArg As String)
-
-    Dim strPathToTemp As String
-    Dim strPathTo     As String
-
-    ' Извлекаем путь из параметра
-    strPathToTemp = strArg
-
-    ' Проверяем существоание каталога
-    If LenB(strPathToTemp) Then
-        If PathExists(strPathToTemp) = False Then
-            CreateNewDirectory strPathToTemp
-        End If
-
-        strPathTo = BackslashAdd2Path(strPathToTemp)
-    Else
-        strPathTo = strWorkTemp
-    End If
-
-    ' Запуск извлечения всех (dll-ocx) ресурсов программы и открытие каталога с файлами
-    If ExtractResourceAll(strPathTo) Then
-        If MsgBox(strMessages(135), vbYesNo + vbInformation, strProductName) = vbYes Then
-            ShellEx strPathTo, essSW_SHOWNORMAL
-        End If
-
-    Else
-
-        If MsgBox(strMessages(136), vbYesNo + vbInformation, strProductName) = vbYes Then
-            ShellEx strPathTo, essSW_SHOWNORMAL
-        End If
-    End If
-
-End Sub

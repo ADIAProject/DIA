@@ -1,8 +1,13 @@
 Attribute VB_Name = "mUpdate"
 Option Explicit
 
+' Not add to project (DBS/DIA) - option for compiler
+#Const mbIDE_DBSProject = False
+
+' Переменные программы
 Public mbCheckUpdNotEnd         As Boolean ' Флаг, показывающий окончание процесса обновления (так как асинхронный режим)
 
+' Переменные модуля
 Public strLink()                As String
 Public strLinkFull()            As String
 Public strLinkHistory           As String
@@ -17,12 +22,21 @@ Public strUpdDescription()      As String
 
 Private XMLHTTP                 As MSXML2.XMLHTTP30
 
-Private Const iTimeOutInSecs       As Integer = 5                           ' Таймаут ожидания ответа от сервера в секундах
-Private Const strXMLMainSection    As String = "//driversinstaller"         ' Раздел файла Xml-описателя обновления
-Private Const strUrl_ProjectFolder As String = "Project/"                   ' Каталог проекта на сервере, в нем ищем все файлы xml
-Private Const strUrl_UpdFile       As String = "dia_update2.xml"            ' Файл рееестр всех обновлений программы
-Private Const strUrl_TestFile      As String = "test.txt"                   ' Файл для проверки доступности сайта программы
-Private Const strUrl_TestWWW       As String = "http://ya.ru/"              ' Сайт для проверки наличия соединения интернет
+Private Const iTimeOutInSecs            As Integer = 5                           ' Таймаут ожидания ответа от сервера в секундах
+Private Const strUrl_TestFile           As String = "test.txt"                   ' Файл для проверки доступности сайта программы
+Private Const strUrl_TestWWW            As String = "http://ya.ru/"              ' Сайт для проверки наличия соединения интернет
+    
+#If mbIDE_DBSProject Then
+'DBSProject
+    Private Const strXMLMainSection     As String = "//driversbackuper"          ' Раздел файла Xml-описателя обновления
+    Private Const strUrl_ProjectFolder  As String = "ProjectDBS/"                ' Каталог проекта на сервере, в нем ищем все файлы xml
+    Private Const strUrl_UpdFile        As String = "dbs_update2.xml"            ' Файл рееестр всех обновлений программы
+#Else
+'DIAProject
+    Private Const strXMLMainSection     As String = "//driversinstaller"         ' Раздел файла Xml-описателя обновления
+    Private Const strUrl_ProjectFolder  As String = "Project/"                   ' Каталог проекта на сервере, в нем ищем все файлы xml
+    Private Const strUrl_UpdFile        As String = "dia_update2.xml"            ' Файл рееестр всех обновлений программы
+#End If
 
 Private Declare Function InternetGetConnectedStateEx Lib "wininet.dll" (ByRef lpdwFlags As Long, ByVal lpszConnectionName As String, ByVal dwNameLen As Integer, ByVal dwReserved As Long) As Long
 Private Declare Sub Sleep Lib "kernel32.dll" (ByVal dwMilliseconds As Long)
@@ -158,7 +172,6 @@ Public Sub CheckUpd(Optional ByVal Start As Boolean = True)
             Dim propertyNode As IXMLDOMElement
             
             ' Формируем ссылку для скачивания файла реестра обновлений
-            'strUrl_Request = strAppPathBackSL & "dia_update2.xml"
             strUrl_Request = strUrl_MainWWWSite & strUrl_ProjectFolder & strUrl_UpdFile
             
             Set xmlDoc = New DOMDocument
@@ -327,7 +340,7 @@ Public Sub LoadUpdateData()
     Dim strTextNodeName As String
     Dim miNodeIndex     As Integer
     Dim strVersionsTemp As String
-    Dim I               As Long
+    Dim ii              As Long
     Dim strUrl_Request  As String
     Dim lngUbound       As Long
 
@@ -366,9 +379,9 @@ Public Sub LoadUpdateData()
                 ReDim strLinkFull(lngUbound, 6)
 
                 ' Данные из файла %ver%.xml - Загрузка описаний изменений
-                For I = 0 To lngUbound
-                    LoadUpdDescription strUpdVersions(I), I
-                Next I
+                For ii = 0 To lngUbound
+                    LoadUpdDescription strUpdVersions(ii), ii
+                Next ii
 
             End If
 

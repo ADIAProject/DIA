@@ -10,6 +10,7 @@ Public mbIntel4thGeneration As Boolean
 Private Const strIUSB30     As String = "IUSB3\ROOT_HUB30"
 Private Const strIUSB30_2th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_1E31"
 Private Const strIUSB30_4th As String = "IUSB3\ROOT_HUB30&VID_8086&PID_8C31|IUSB3\ROOT_HUB30&VID_8086&PID_9C31|IUSB3\ROOT_HUB30&VID_8086&PID_0F35|IUSB3\ROOT_HUB30&VID_8086&PID_8CB1|IUSB3\ROOT_HUB30&VID_8086&PID_9CB1"
+
                                       
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub CollectHwidFromReestr

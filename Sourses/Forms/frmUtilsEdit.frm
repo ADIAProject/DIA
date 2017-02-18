@@ -71,9 +71,10 @@ Begin VB.Form frmUtilsEdit
       DefaultExt      =   ""
       DialogType      =   1
       Enabled         =   0   'False
-      FileFlags       =   2621446
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      UseDialogText   =   0   'False
       Locked          =   -1  'True
+      QualifyPaths    =   -1  'True
    End
    Begin prjDIADBS.ctlUcPickBox ucPathUtil64 
       Height          =   315
@@ -87,9 +88,10 @@ Begin VB.Form frmUtilsEdit
       DefaultExt      =   ""
       DialogType      =   1
       Enabled         =   0   'False
-      FileFlags       =   2621446
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      UseDialogText   =   0   'False
       Locked          =   -1  'True
+      QualifyPaths    =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
       Height          =   650
@@ -234,6 +236,11 @@ Option Explicit
 
 Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Get CaptionW
+'! Description (Описание)  :   [Получение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -242,9 +249,33 @@ Public Property Get CaptionW() As String
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Let CaptionW
+'! Description (Описание)  :   [Изменение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [нажали выход]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [нажали ок]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+    SaveOptions
+    Unload Me
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub FontCharsetChange
@@ -259,6 +290,57 @@ Private Sub FontCharsetChange()
         .Size = lngFontOtherForm_Size
         .Charset = lngFont_Charset
     End With
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Activate()
+    txtUtilName_Change
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    If KeyCode = vbKeyEscape Then
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [обработка при загрузке формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+    SetupVisualStyles Me
+
+    With Me
+        strFormName = .Name
+        SetIcon .hWnd, strFormName, False
+        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
+        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
+    End With
+
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+
+    ' Локализация приложения
+    If mbMultiLanguage Then
+        Localise strPCLangCurrentPath
+    Else
+        ' Выставляем шрифт
+        FontCharsetChange
+    End If
 
 End Sub
 
@@ -331,76 +413,6 @@ Private Sub SaveOptions()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [нажали выход]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [нажали ок]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-    SaveOptions
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Activate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Activate()
-    txtUtilName_Change
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-
-    If KeyCode = vbKeyEscape Then
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [обработка при загрузке формы]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    SetupVisualStyles Me
-
-    With Me
-        strFormName = .Name
-        SetIcon .hWnd, strFormName, False
-        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
-        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-    End With
-
-    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
-
-    ' Локализация приложения
-    If mbMultiLanguage Then
-        Localise strPCLangCurrentPath
-    Else
-        ' Выставляем шрифт
-        FontCharsetChange
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtParamUtil_GotFocus
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -457,8 +469,8 @@ Private Sub ucPathUtil64_Click()
     If ucPathUtil64.FileCount Then
         strTempPath = ucPathUtil64.FileName
 
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+        If InStr(1, strTempPath, strAppPathBackSL, vbTextCompare) Then
+            strTempPath = Replace$(strTempPath, strAppPathBackSL, vbNullString, , , vbTextCompare)
         End If
     End If
 
@@ -507,8 +519,8 @@ Private Sub ucPathUtil_Click()
     If ucPathUtil.FileCount Then
         strTempPath = ucPathUtil.FileName
 
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
+        If InStr(1, strTempPath, strAppPathBackSL, vbTextCompare) Then
+            strTempPath = Replace$(strTempPath, strAppPathBackSL, vbNullString, , , vbTextCompare)
         End If
     End If
 

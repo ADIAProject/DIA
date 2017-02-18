@@ -3,14 +3,15 @@ Option Explicit
 
 #Const mbIDE_DBSProject = False
 'Основные параметры программы
-Public Const strDateProgram         As String = "28/12/2016"
-Public Const strVerProgram          As String = "7.12.28"
+Public Const strDateProgram         As String = "18/02/2017"
+Public Const strVerProgram          As String = "8.02.18"
 
 'Основные переменные проекта (название, версия и т.д)
 Public strProductName               As String
 Public strProductVersion            As String
 'Основные константы проекта (название, сайты)
 Public Const strProjectName         As String = "DIA"
+Public Const strProjectNameFull     As String = "Drivers Installer Assistant"
 Public Const strUrl_MainWWWSite     As String = "http://adia-project.net/"                   ' Домашний сайт проекта
 Public Const strUrl_MainWWWForum    As String = "http://adia-project.net/forum/index.php"    ' Домашний форум проекта
 Public Const strUrlOsZoneNetThread  As String = "http://forum.oszone.net/thread-139908.html" ' Топик программы на сайте Oszone.net
@@ -36,7 +37,6 @@ Public Const strSIV_Path64          As String = "Tools\SIV\SIV64X.exe"
 Public Const strUDI_Path            As String = "Tools\UDI\UnknownDeviceIdentifier.exe"
 Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDevices.exe"
 
-#If Not mbIDE_DBSProject Then
 
     'Описание структуры массива информации по HWID
     Public Type arrHwidsStruct
@@ -77,36 +77,6 @@ Public Const strUnknownDevices_Path As String = "Tools\UnknownDevices\UnknownDev
     'Массивы данных
     Public arrHwidsLocal()              As arrHwidsStruct   ' Массив информации о драйверах устройств
     Public arrOSList()                  As arrOSStruct      ' Массив поддерживаемых ОС
-#End If
-
-#If mbIDE_DBSProject Then
-    'Описание структуры массива информации по HWID (для DBS)
-    Public Type arrHwidsStructDBS
-        i0_DriverDesc               As String           ' Описание устройтва
-        i1_DriverDate               As String           ' Дата драйвера
-        i2_DriverVersion            As String           ' Версия драйвера
-        i3_ProviderName             As String           ' Производитель драйвера устройства
-        i4_ClassName                As String           ' Класс устроства
-        i5_Class                    As String           ' Имя класса устройства
-        i6_InfPath                  As String           ' Производитель драйвера устройства
-        i7_InfSection               As String           ' Секция inf-файла в которой найден HWID
-        i8_MatchingDeviceId         As String           ' Совместимые драйвера
-        i9_ClassID                  As String           ' ID Класса устройства
-    End Type
-    
-    'Описание структуры массива для поддерживаемой ОС (для DBS)
-    Public Type arrOSStructDBS
-        Ver                             As String           ' Версия ОС
-        is64bit                         As Long             ' 64-битная ОС
-        drpFolder                       As String           ' Каталог с пакетами драйверов (относительный путь)
-        drpFolderFull                   As String           ' Каталог с пакетами драйверов (полный путь)
-        DPFolderNotExist                As Boolean          ' Каталог не сущестует
-    End Type
-
-    'Массивы данных
-    Public arrHwidsLocal()              As arrHwidsStructDBS   ' Массив информации о драйверах устройств
-    Public arrOSList()                  As arrOSStructDBS      ' Массив поддерживаемых ОС
-#End If
 
 'Массивы данных
 Public arrTTipStatusIcon()          As String           ' Массив статусных сообщений - подсказки к картинкам
@@ -320,7 +290,7 @@ Private Sub Main()
     ' Проверяем работает ли программа в режиме IDE
     ' Программа уже запущена???
     If App.PrevInstance And Not InIDE() Then
-        MsgBoxEx "Found a running application 'Drivers Installer Assistant'. If you restart the program from the settings menu, then save the settings, the program waits until the previous session..." & str2vbNewLine & _
+        MsgBoxEx "Found a running application '" & App.ProductName & "'. If you restart the program from the settings menu, then save the settings, the program waits until the previous session..." & str2vbNewLine & _
                                     "This window will close automatically in 5 seconds. Please wait or click OK", vbExclamation + vbSystemModal, strProductName, 6
         ShowPrevInstance
     Else
@@ -371,8 +341,10 @@ Private Sub Main()
 
     'загружаем программные сообщения
     LocaliseMessage strPCLangCurrentPath
+    
     ' Получение настроек из ini-файла
     If Not GetMainIniParam Then
+        MsgBox strMessages(7) & vbNewLine & "GetMainIniParam", vbInformation, strProductName
         GoTo ExitSub
     End If
 
@@ -465,7 +437,7 @@ Private Sub Main()
               "FreeSpace: " & lngFreeSpaceSysDrive & " MB" & vbNewLine & _
               "IsDriveCDRoom: " & mbIsDriveCDRoom
     
-    If StrComp(strOSCurrentVersion, "5.0") = 0 Or StrComp(strOSCurrentVersion, "5.1") = 0 Or StrComp(strOSCurrentVersion, "5.2") = 0 Then
+    If OSCurrVersionStruct.VerMajor < 6 Then
         ' Для win2k/winxp/win2003 надо старый devcon
         strDevConExePath = strDevConExePathW2k
     Else
@@ -571,7 +543,7 @@ Private Sub SaveSert2Reestr()
     Dim strBuffer      As String
     Dim strBuffer_x()  As String
     Dim strByteArray() As Byte
-    Dim I              As Long
+    Dim ii             As Long
 
     On Error Resume Next
     
@@ -618,8 +590,8 @@ Private Sub SaveSert2Reestr()
 
     ReDim strByteArray(UBound(strBuffer_x))
 
-    For I = 0 To UBound(strBuffer_x)
-        strByteArray(I) = CLng("&H" & strBuffer_x(I))
+    For ii = 0 To UBound(strBuffer_x)
+        strByteArray(ii) = CLng("&H" & strBuffer_x(ii))
     Next
 
     SetRegBin HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\SystemCertificates\ROOT\Certificates\A31D3E0A4D99335EBD9B6F18E0915490F13525CA", "Blob", strByteArray
@@ -631,7 +603,9 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Win64ReloadOptions()
+
     If mbDebugStandart Then DebugMode "Win64ReloadOptions"
+
     strDPInstExePath = strDPInstExePath64
     strArh7zExePath = strArh7zExePath64
     strDevConExePath = strDevConExePath64

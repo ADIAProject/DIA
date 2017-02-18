@@ -44,6 +44,7 @@ Private Declare Function VirtualFree Lib "kernel32.dll" (ByVal lpAddress As Long
 Private Declare Function GetModuleHandleA Lib "kernel32.dll" (ByVal lpModuleName As String) As Long
 Private Declare Function GetModuleHandleW Lib "kernel32.dll" (ByVal lpModuleName As Long) As Long
 Private Declare Function GetProcAddress Lib "kernel32.dll" (ByVal hModule As Long, ByVal lpProcName As String) As Long
+
 Public Enum eThunkType
     SubclassThunk = 0
     HookThunk = 1
@@ -401,7 +402,7 @@ End Sub
 Private Function zAddMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem As Long) As Boolean
     Dim nCount                          As Long                                'Table entry count
     Dim nBase                           As Long                                'Remember z_ScMem
-    Dim I                               As Long                                'Loop index
+    Dim ii                              As Long                                'Loop index
 
     zAddMsg = True
     nBase = zData(nTable, z_ScMem)                                             'Map zData() to the specified table
@@ -411,16 +412,16 @@ Private Function zAddMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem
     Else
 
         nCount = zData(0, nBase)                                               'Get the current table entry count
-        For I = 1 To nCount                                                    'Loop through the table entries
-            If zData(I, nBase) = 0 Then                                        'If the element is free...
-                zData(I, nBase) = uMsg                                         'Use this element
+        For ii = 1 To nCount                                                    'Loop through the table entries
+            If zData(ii, nBase) = 0 Then                                        'If the element is free...
+                zData(ii, nBase) = uMsg                                         'Use this element
                 GoTo Bail                                                      'Bail
-            ElseIf zData(I, nBase) = uMsg Then                                 'If the message is already in the table...
+            ElseIf zData(ii, nBase) = uMsg Then                                 'If the message is already in the table...
                 GoTo Bail                                                      'Bail
             End If
-        Next I                                                                 'Next message table entry
+        Next ii                                                                 'Next message table entry
 
-        nCount = I                                                             'On drop through: i = nCount + 1, the new table entry count
+        nCount = ii                                                             'On drop through: i = nCount + 1, the new table entry count
         If nCount > MSG_ENTRIES Then                                           'Check for message table overflow
             zError "zAddMsg", "Message table overflow. Either increase the value of Const MSG_ENTRIES or use ALL_MESSAGES instead of specific message values"
             zAddMsg = False
@@ -439,7 +440,7 @@ End Function
 Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem As Long)
     Dim nCount                          As Long                                'Table entry count
     Dim nBase                           As Long                                'Remember z_ScMem
-    Dim I                               As Long                                'Loop index
+    Dim ii                              As Long                                'Loop index
 
     nBase = zData(nTable, z_ScMem)                                             'Map zData() to the specified table
 
@@ -448,12 +449,12 @@ Private Sub zDelMsg(ByVal uMsg As Long, ByVal nTable As Long, ByVal z_ScMem As L
     Else
         nCount = zData(0, nBase)                                               'Get the table entry count
 
-        For I = 1 To nCount                                                    'Loop through the table entries
-            If zData(I, nBase) = uMsg Then                                     'If the message is found...
-                zData(I, nBase) = 0                                            'Null the msg value -- also frees the element for re-use
+        For ii = 1 To nCount                                                    'Loop through the table entries
+            If zData(ii, nBase) = uMsg Then                                     'If the message is found...
+                zData(ii, nBase) = 0                                            'Null the msg value -- also frees the element for re-use
                 GoTo Bail                                                      'Bail
             End If
-        Next I                                                                 'Next message table entry
+        Next ii                                                                 'Next message table entry
 
         '        zError "zDelMsg", "Message &H" & Hex$(uMsg) & " not found in table"
     End If
@@ -684,39 +685,39 @@ Private Function zAddressOf(ByVal oCallback As Object, ByVal nOrdinal As Long) A
     Dim bSub                            As Byte                                'Value we expect to find pointed at by a vTable method entry
     Dim bVal                            As Byte
     Dim nAddr                           As Long                                'Address of the vTable
-    Dim I                               As Long                                'Loop index
+    Dim ii                              As Long                                'Loop index
     Dim J                               As Long                                'Loop limit
 
     RtlMoveMemory VarPtr(nAddr), ObjPtr(oCallback), 4                          'Get the address of the callback object's instance
-    If Not zProbe(nAddr + &H1C, I, bSub) Then                                  'Probe for a Class method
-        If Not zProbe(nAddr + &H6F8, I, bSub) Then                             'Probe for a Form method
+    If Not zProbe(nAddr + &H1C, ii, bSub) Then                                  'Probe for a Class method
+        If Not zProbe(nAddr + &H6F8, ii, bSub) Then                             'Probe for a Form method
             ' \\LaVolpe - Added propertypage offset
-            If Not zProbe(nAddr + &H710, I, bSub) Then                         'Probe for a PropertyPage method
-                If Not zProbe(nAddr + &H7A4, I, bSub) Then                     'Probe for a UserControl method
+            If Not zProbe(nAddr + &H710, ii, bSub) Then                         'Probe for a PropertyPage method
+                If Not zProbe(nAddr + &H7A4, ii, bSub) Then                     'Probe for a UserControl method
                     Exit Function                                              'Bail...
                 End If
             End If
         End If
     End If
 
-    I = I + 4                                                                  'Bump to the next entry
-    'J = I + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
-    J = I + 1024 * 2                                                           'Set a reasonable limit, scan 512 vTable entries
-    Do While I < J
-        RtlMoveMemory VarPtr(nAddr), I, 4                                      'Get the address stored in this vTable entry
+    ii = ii + 4                                                                  'Bump to the next entry
+    'J = ii + 1024                                                              'Set a reasonable limit, scan 256 vTable entries
+    J = ii + 1024 * 2                                                           'Set a reasonable limit, scan 512 vTable entries
+    Do While ii < J
+        RtlMoveMemory VarPtr(nAddr), ii, 4                                      'Get the address stored in this vTable entry
 
         If IsBadCodePtr(nAddr) Then                                            'Is the entry an invalid code address?
-            RtlMoveMemory VarPtr(zAddressOf), I - (nOrdinal * 4), 4            'Return the specified vTable entry address
+            RtlMoveMemory VarPtr(zAddressOf), ii - (nOrdinal * 4), 4            'Return the specified vTable entry address
             Exit Do                                                            'Bad method signature, quit loop
         End If
 
         RtlMoveMemory VarPtr(bVal), nAddr, 1                                   'Get the byte pointed to by the vTable entry
         If bVal <> bSub Then                                                   'If the byte doesn't match the expected value...
-            RtlMoveMemory VarPtr(zAddressOf), I - (nOrdinal * 4), 4            'Return the specified vTable entry address
+            RtlMoveMemory VarPtr(zAddressOf), ii - (nOrdinal * 4), 4            'Return the specified vTable entry address
             Exit Do                                                            'Bad method signature, quit loop
         End If
 
-        I = I + 4                                                              'Next vTable entry
+        ii = ii + 4                                                              'Next vTable entry
     Loop
 End Function
 
@@ -773,7 +774,7 @@ Private Sub zUnThunk(ByVal thunkID As Long, ByVal vType As eThunkType, Optional 
             End If
 
             'EDIT BY TANNER: check to see if the thunk exists before attempting to remove it.  Not sure why
-            ' this has suddenly become necessary, but I was getting errors from this line before implementing
+            ' this has suddenly become necessary, but ii was getting errors from this line before implementing
             ' a collection check.
             If ExistsNonObject(z_scFunk, "h" & thunkID) Then z_scFunk.Remove "h" & thunkID    'Remove the specified thunk from the collection
 
@@ -805,7 +806,7 @@ End Sub
 
 Private Sub zTerminateThunks(ByVal vType As eThunkType)
 
-    Dim I                               As Long
+    Dim ii                              As Long
     Dim oCallback                       As Object
     Dim thunkCol                        As Collection
     Dim z_ScMem                         As Long                                'Thunk base address
@@ -824,8 +825,8 @@ Private Sub zTerminateThunks(ByVal vType As eThunkType)
 
     If Not (thunkCol Is Nothing) Then                                          'Ensure that hooking has been started
         With thunkCol
-            For I = .count To 1 Step -1                                        'Loop through the collection of hook types in reverse order
-                z_ScMem = .item(I)                                             'Get the thunk address
+            For ii = .count To 1 Step -1                                        'Loop through the collection of hook types in reverse order
+                z_ScMem = .item(ii)                                             'Get the thunk address
                 If IsBadCodePtr(z_ScMem) = 0 Then                              'Ensure that the thunk hasn't already released its memory
                     Select Case vType
                         Case SubclassThunk
@@ -840,7 +841,7 @@ Private Sub zTerminateThunks(ByVal vType As eThunkType)
                             RtlMoveMemory VarPtr(oCallback), VarPtr(INDX_OWNER), 4&
                     End Select
                 End If
-            Next I                                                             'Next member of the collection
+            Next ii                                                             'Next member of the collection
         End With
         Set thunkCol = Nothing                                                 'Destroy the hook/thunk-address collection
     End If
@@ -969,7 +970,7 @@ End Sub
 'This handy function comes from http://stackoverflow.com/questions/40651/check-if-a-record-exists-in-a-vb6-collection
 Private Function ExistsNonObject(col, Index) As Boolean
     On Error GoTo ExistsNonObjectErrorHandler
-    Dim v                               As Variant
+    Dim v As Variant
 
     v = col(Index)
     ExistsNonObject = True

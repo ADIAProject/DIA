@@ -50,7 +50,7 @@ Private Declare Function RegSetValueEx Lib "advapi32.dll" Alias "RegSetValueExA"
 '!--------------------------------------------------------------------------------
 Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVal SubKeyRef As String, Optional ByVal mbReadKeyRights As Boolean = False) As String
 
-    Dim I                    As Long
+    Dim ii                   As Long
     Dim RC                   As Long
     Dim hkey                 As Long
     Dim sKeyVal              As String
@@ -121,10 +121,10 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
             ' Double Word Registry Key Data Type
             If LenB(tmpVal) Then
 
-                For I = Len(tmpVal) To 1 Step -1
+                For ii = Len(tmpVal) To 1 Step -1
                     ' Convert Each Bit
                     ' Build Value Char. By Char.
-                    sKeyVal = sKeyVal + Hex$(Asc(Mid$(tmpVal, I, 1)))
+                    sKeyVal = sKeyVal + Hex$(Asc(Mid$(tmpVal, ii, 1)))
                 Next
 
                 sKeyVal = Format$("&h" & sKeyVal)
@@ -157,15 +157,15 @@ Public Function GetKeyValue(ByVal KeyRoot As Long, ByVal KeyName As String, ByVa
 
             ReDim Preserve GetKeyValueMultiSZ(Index)
 
-            For I = LBound(GetKeyValueMultiSZ) To UBound(GetKeyValueMultiSZ) - 1
+            For ii = LBound(GetKeyValueMultiSZ) To UBound(GetKeyValueMultiSZ) - 1
 
                 If LenB(sKeyVal) Then
-                    If LenB(GetKeyValueMultiSZ(I)) Then
-                        sKeyVal = sKeyVal & " | " & GetKeyValueMultiSZ(I)
+                    If LenB(GetKeyValueMultiSZ(ii)) Then
+                        sKeyVal = sKeyVal & " | " & GetKeyValueMultiSZ(ii)
                     End If
 
                 Else
-                    sKeyVal = GetKeyValueMultiSZ(I)
+                    sKeyVal = GetKeyValueMultiSZ(ii)
                 End If
 
             Next

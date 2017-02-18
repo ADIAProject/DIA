@@ -111,31 +111,6 @@ Option Explicit
 '
 '' Used for unsigned arithmetic
 'Private Const DW_MSB = &H80000000 ' DWord Most Significant Bit
-'
-'Public Enum eSortOrder
-'    Descending = -1&
-'    Ascending = 1&
-'    #If False Then
-'        Dim Descending, Ascending
-'    #End If
-'End Enum
-'
-'Public Enum eCompareMethod
-'    BinaryCompare = 0&
-'    TextCompare = 1&
-'    #If False Then
-'        Dim BinaryCompare, TextCompare
-'    #End If
-'End Enum
-'
-'Public Enum eCompare
-'    Lesser = -1&
-'    Equal = 0&
-'    Greater = 1&
-'    #If False Then
-'        Dim Lesser, Equal, Greater
-'    #End If
-'End Enum
 
 ' いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
 Public Enum eOptimal

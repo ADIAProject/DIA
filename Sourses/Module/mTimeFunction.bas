@@ -9,7 +9,6 @@ Public Declare Function GetTickCount Lib "kernel32.dll" () As Long
 Private Declare Function PerfCount Lib "kernel32" Alias "QueryPerformanceCounter" (lpPerformanceCount As Currency) As Long
 Private Declare Function PerfFreq Lib "kernel32" Alias "QueryPerformanceFrequency" (lpFrequency As Currency) As Long
 
-
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function CalculateTime
 '! Description (Описание)  :   [Функция расчета времени, исходя из полученных значений в миллисекундах функции GetTickCount]
@@ -103,4 +102,3 @@ Public Function GetTimeStop(ByVal curStart As Currency) As Currency
         GetTimeStop = CDbl(GetTickCount)
     End If
 End Function
-

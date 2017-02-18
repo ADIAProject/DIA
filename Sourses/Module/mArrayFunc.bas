@@ -71,7 +71,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub QuickSortMDArray(pArray As Variant, pbytDimension As Byte, plngColumn As Long, Optional ByVal plngLeft As Long, Optional ByVal plngRight As Long)
 
-    Dim ii            As Long
+    Dim ii           As Long
     Dim lngFirst     As Long
     Dim lngLast      As Long
     Dim vFirst       As Variant
@@ -188,7 +188,7 @@ End Function
     
         Dim strResultAll  As String
         Dim strLine       As String
-        Dim ii             As Long
+        Dim ii            As Long
     
         If mbDebugDetail Then DebugMode "SaveHwidsArray2File-Start: ToFile: " & strPathFile
     

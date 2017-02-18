@@ -464,11 +464,51 @@ Event MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single, Pan
 Event CollapseClick(Button As Integer)
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Initialize()
+Attribute UserControl_Initialize.VB_UserMemId = 1610809407
+    m_bIsWinXpOrLater = IsWinXPOrLater
+    m_IconSize = 16
+    m_ColorFrom = 10395391
+    m_ColorTo = 15790335
+    m_TxtBoxShadow = [No shadow]
+    m_ThemeColor = Blue
+    m_Enabled = True
+    SetDefaultThemeColor m_ThemeColor
+    m_TextBoxHeight = 22
+    m_Alignment = vbCenter
+    m_IconAlignment = vbLeftAligment
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Terminate()
+Attribute UserControl_Terminate.VB_UserMemId = 1610809414
+
+    On Error Resume Next
+
+    If FrameFontHandle <> 0 Then
+        DeleteObject FrameFontHandle
+        FrameFontHandle = 0
+    End If
+
+    'Clean up Font (StdFont)
+    Set PropFont = Nothing
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property Alignment
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get Alignment() As AlignmentConstants
+Attribute Alignment.VB_UserMemId = 1745027101
     Alignment = m_Alignment
 End Property
 
@@ -490,6 +530,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get AtivarResizeDoForm() As Boolean
+Attribute AtivarResizeDoForm.VB_UserMemId = 1745027100
     AtivarResizeDoForm = m_AtivarResizeDoForm
 End Property
 
@@ -509,6 +550,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
+Attribute BackColor.VB_UserMemId = 1745027099
     BackColor = m_BackColor
 End Property
 
@@ -530,6 +572,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get Caption() As String
+Attribute Caption.VB_UserMemId = 1745027098
     Caption = m_Caption
 End Property
 
@@ -549,6 +592,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get Collapsado() As Boolean
+Attribute Collapsado.VB_UserMemId = 1745027097
     Collapsado = m_Collapsado
 End Property
 
@@ -616,6 +660,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get Collapsar() As Boolean
+Attribute Collapsar.VB_UserMemId = 1745027096
     Collapsar = m_Collapsar
 End Property
 
@@ -652,6 +697,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ColorFrom() As OLE_COLOR
 Attribute ColorFrom.VB_Description = "Returns/Sets the Start color for gradient"
+Attribute ColorFrom.VB_UserMemId = 1745027095
     ColorFrom = m_ColorFrom
 End Property
 
@@ -678,6 +724,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get ColorTo() As OLE_COLOR
 Attribute ColorTo.VB_Description = "Returns/Sets the End color for gradient"
+Attribute ColorTo.VB_UserMemId = 1745027094
     ColorTo = m_ColorTo
 End Property
 
@@ -705,6 +752,7 @@ End Property
 '                              Alpha (Long = 128)
 '!--------------------------------------------------------------------------------
 Public Property Get dBlendColor(ByVal oColorFrom As OLE_COLOR, ByVal oColorTo As OLE_COLOR, Optional ByVal Alpha As Long = 128) As Long
+Attribute dBlendColor.VB_UserMemId = 1745027093
 
     Dim lSrcR  As Long
     Dim lSrcG  As Long
@@ -732,6 +780,7 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get Enabled() As Boolean
+Attribute Enabled.VB_UserMemId = 1745027092
     Enabled = m_Enabled
 End Property
 
@@ -754,6 +803,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Get FillColor() As OLE_COLOR
 Attribute FillColor.VB_Description = "Returns/Sets the Fill color for TextBox and Windows style"
+Attribute FillColor.VB_UserMemId = 1745027091
     FillColor = m_FillColorIni
 End Property
 
@@ -1203,6 +1253,7 @@ End Property
 '                              lColor (Long)
 '!--------------------------------------------------------------------------------
 Private Sub APILineEx(lhdcEx As Long, X1 As Long, Y1 As Long, X2 As Long, Y2 As Long, lColor As Long)
+Attribute APILineEx.VB_UserMemId = 1610809374
 
     'Use the API LineTo for Fast Drawing
     Dim PT      As POINTAPI
@@ -1228,6 +1279,7 @@ End Sub
 '                              lColor (OLE_COLOR = -1)
 '!--------------------------------------------------------------------------------
 Private Function APIRectangle(ByVal lngHDc As Long, ByVal X As Long, ByVal Y As Long, ByVal W As Long, ByVal H As Long, Optional lColor As OLE_COLOR = -1) As Long
+Attribute APIRectangle.VB_UserMemId = 1610809375
 
     'Draw an api rectangle
     Dim hPen    As Long
@@ -1252,6 +1304,7 @@ End Function
 '                              lColor2 (Long)
 '!--------------------------------------------------------------------------------
 Private Function BlendColors(ByVal lColor1 As Long, ByVal lColor2 As Long) As Single
+Attribute BlendColors.VB_UserMemId = 1610809376
     BlendColors = RGB(((lColor1 And &HFF) + (lColor2 And &HFF)) / 2, (((lColor1 \ &H100) And &HFF) + ((lColor2 \ &H100) And &HFF)) / 2, (((lColor1 \ &H10000) And &HFF) + ((lColor2 \ &H10000) And &HFF)) / 2)
 End Function
 
@@ -1266,6 +1319,7 @@ End Function
 '                              blnTransparent (Boolean = False)
 '!--------------------------------------------------------------------------------
 Private Sub DrawAPIRoundRect(ByVal blnRounded As Boolean, ByVal LngRoundValue As Long, ByVal MyFillColor As Long, ByVal MyBorderColor As Long, r As RECT, Optional ByVal blnTransparent As Boolean = False)
+Attribute DrawAPIRoundRect.VB_UserMemId = 1610809377
 
     Dim m_roundedRadius As Long
 
@@ -1286,6 +1340,7 @@ End Sub
 '! Parameters  (Переменные):   PenColor (Long)
 '!--------------------------------------------------------------------------------
 Private Sub DrawCorners(PenColor As Long)
+Attribute DrawCorners.VB_UserMemId = 1610809378
 
     With UserControl
         'left top corner
@@ -1315,6 +1370,7 @@ End Sub
 '                              LightCenter (Double = 2.01)
 '!--------------------------------------------------------------------------------
 Private Sub DrawGradCilinder(lhdcEx As Long, lStartColor As Long, lEndColor As Long, r As RECT, Optional ByVal blnVertical As Boolean = True, Optional ByVal LightCenter As Double = 2.01)
+Attribute DrawGradCilinder.VB_UserMemId = 1610809379
 
     If LightCenter <= 1# Then
         LightCenter = 1.01
@@ -1343,6 +1399,7 @@ End Sub
 '                              blnVertical (Long)
 '!--------------------------------------------------------------------------------
 Private Sub DrawGradientEx(lhdcEx As Long, ByVal lEndColor As Long, ByVal lStartColor As Long, ByVal X As Long, ByVal Y As Long, ByVal X2 As Long, ByVal Y2 As Long, Optional blnVertical = True)
+Attribute DrawGradientEx.VB_UserMemId = 1610809380
 
     Dim dR As Single
     Dim dG As Single
@@ -1399,6 +1456,7 @@ End Sub
 '                              LightCenter (Double = 2.01)
 '!--------------------------------------------------------------------------------
 Private Sub DrawGradientInRectangle(lhdcEx As Long, lStartColor As Long, lEndColor As Long, r As RECT, GradientType As jcGradConst, Optional ByVal blnDrawBorder As Boolean = False, Optional lBorderColor As Long = vbBlack, Optional LightCenter As Double = 2.01)
+Attribute DrawGradientInRectangle.VB_UserMemId = 1610809381
 
     Select Case GradientType
 
@@ -1422,11 +1480,439 @@ Private Sub DrawGradientInRectangle(lhdcEx As Long, lStartColor As Long, lEndCol
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Header
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_Header(R_Caption As RECT)
+Attribute Draw_Header.VB_UserMemId = 1610809396
+
+    Dim p_left As Long
+
+    APILineEx UserControl.hDC, 0&, jcTextBoxCenter, UserControl.ScaleWidth, jcTextBoxCenter, IIf(m_Enabled, TranslateColor(&H80000015), TranslateColor(TEXT_INACTIVE))
+    'TranslateColor(&H80000015)&H808080
+    APILineEx UserControl.hDC, 0&, jcTextBoxCenter + 1, UserControl.ScaleWidth, jcTextBoxCenter + 1, vbWhite
+
+    If LenB(m_Caption) Then
+        If m_Alignment = vbLeftJustify Then
+            'm_Indentation
+        ElseIf m_Alignment = vbRightJustify Then
+            p_left = UserControl.ScaleWidth - m_TextWidth - m_Space
+        Else
+            p_left = (UserControl.ScaleWidth - m_TextWidth) / 2
+        End If
+
+        'Draw a line
+        APILineEx UserControl.hDC, p_left, jcTextBoxCenter, p_left + m_TextWidth + m_Space, jcTextBoxCenter, m_FillColor
+        APILineEx UserControl.hDC, p_left, jcTextBoxCenter + 1, p_left + m_TextWidth + m_Space, jcTextBoxCenter + 1, m_FillColor
+        'set caption rect
+        SetRect R_Caption, p_left + m_Space / 2, 0, m_TextWidth + p_left + m_Space / 2, m_TextHeight
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_InnerWedge
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_InnerWedge(R_Caption As RECT)
+Attribute Draw_InnerWedge.VB_UserMemId = 1610809397
+
+    Dim txtWidth        As Integer
+    Dim txtHeight       As Integer
+    Dim r               As RECT
+    Dim m_roundedRadius As Long
+    Dim hFRgn           As Long
+    Dim poly()          As POINTAPI
+    Dim NumCoords       As Long
+    Dim hBrush          As Long
+    Dim hRgn            As Long
+
+    ReDim poly(1 To 4)
+    m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 10&)
+    txtWidth = m_TextWidth + 10
+
+    If txtWidth < 100 Then
+        txtWidth = 100
+    End If
+
+    txtHeight = m_TextHeight + 5
+    NumCoords = 4
+    SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+
+    If (txtWidth + r.Left + txtHeight / 2) >= r.Right - m_Indentation Then
+        txtWidth = r.Right - txtHeight / 2 - r.Left - m_Indentation - 1
+    End If
+
+    'Assign values to points.
+    poly(1).X = r.Left
+    poly(1).Y = r.Top
+    poly(2).X = r.Left
+    poly(2).Y = r.Top + txtHeight
+    poly(3).X = r.Left + txtWidth
+    poly(3).Y = r.Top + txtHeight
+    poly(4).X = r.Left + txtWidth + txtHeight / 2
+    poly(4).Y = r.Top
+    'Creates first region to fill with color.
+    hRgn = CreatePolygonRgn(poly(1), NumCoords, ALTERNATE)
+    'Creates second region to fill with color.
+    hFRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius)
+    'Combine our two regions
+    CombineRgn hRgn, hRgn, hFRgn, RGN_AND
+    'delete second region
+    DeleteObject hFRgn
+    'fill frame
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FillColor, r
+    'If the creation of the region was successful then color.
+    hBrush = CreateSolidBrush(m_TextBoxColor)
+
+    If hRgn Then
+        FillRgn UserControl.hDC, hRgn, hBrush
+    End If
+
+    'draw frame borders
+    APILineEx UserControl.hDC, poly(2).X, poly(2).Y, poly(3).X, poly(3).Y, m_FrameColor
+    APILineEx UserControl.hDC, poly(3).X, poly(3).Y, poly(4).X, poly(4).Y, m_FrameColor
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r, True
+    'delete created region
+    DeleteObject hRgn
+    DeleteObject hBrush
+    'set caption rectangle
+    SetRect R_Caption, poly(1).X + m_Indentation / 2, poly(1).Y, txtWidth + poly(1).X, txtHeight + poly(1).Y + 2
+    '    'set icon coordinates
+    '   iY = (txtHeight - m_IconSize) / 2
+    UserControl.FillStyle = 0
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_jcGradient
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_jcGradient(R_Caption As RECT, iY As Integer)
+Attribute Draw_jcGradient.VB_UserMemId = 1610809398
+
+    Dim r As RECT
+
+    jcTextBoxCenter = m_TextBoxHeight / 2
+    'Draw border rectangle
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), r
+    'Draw header
+    SetRect r, 0, 0, UserControl.ScaleWidth - 2, m_Height
+    DrawGradientInRectangle UserControl.hDC, jcColorTo, jcColorFrom, r, VCilinderGradient, True, jcColorBorderPic
+
+    If m_HeaderStyle = Gradient Then
+        SetRect r, 0, m_Height, UserControl.ScaleWidth - 2, m_TextBoxHeight
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, jcColorBorderPic
+    Else
+        SetRect r, 0, m_Height, UserControl.ScaleWidth - 1, m_TextBoxHeight + m_Height + 2
+        DrawAPIRoundRect False, 0&, m_FillColor, m_FrameColor, r
+    End If
+
+    With UserControl
+        SetRect r, 0, m_Height + m_TextBoxHeight, .ScaleWidth - 2, m_Height
+        DrawGradientInRectangle .hDC, jcColorTo, jcColorFrom, r, VCilinderGradient, True, jcColorBorderPic
+        SetRect r, 1, m_Height * 2 + m_TextBoxHeight, .ScaleWidth - 3, .ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - .ScaleHeight * 0.2
+        DrawGradientInRectangle .hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), r, VerticalGradient, False, m_TextBoxColor
+        'set caption rect
+        SetRect R_Caption, m_Space, m_Height + 1, .ScaleWidth - 2 - m_Space, m_TextBoxHeight + 2
+        'set icon Y coordinate
+    End With
+
+    iY = (m_Height * 2 + m_TextBoxHeight - m_IconSize) / 2
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Messenger
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_Messenger(R_Caption As RECT, iY As Integer)
+Attribute Draw_Messenger.VB_UserMemId = 1610809399
+
+    Dim r As RECT
+
+    jcTextBoxCenter = 0
+    'Draw border rectangle
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), r
+    'Draw header
+    SetRect r, 0, 0, UserControl.ScaleWidth - 2, m_Height * 2
+    DrawGradientInRectangle UserControl.hDC, jcColorFrom, vbWhite, r, VerticalGradient, True, jcColorBorderPic, 2.01
+    PaintShpInBar vbWhite, BlendColors(vbBlack, jcColorFrom), m_Height * 2
+
+    If m_HeaderStyle = Gradient Or m_Enabled = False Then
+        SetRect r, 0&, m_Height * 2, UserControl.ScaleWidth - 2, m_TextBoxHeight + 1
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, jcColorBorderPic
+    Else
+        SetRect r, 0, m_Height * 2 + m_TextBoxHeight + 1, UserControl.ScaleWidth - 2, m_Height * 2 + m_TextBoxHeight + 1
+        APILineEx UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, jcColorBorderPic
+        'vbBlack
+    End If
+
+    SetRect r, 1, 1 + m_Height * 2 + m_TextBoxHeight, UserControl.ScaleWidth - 3, UserControl.ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - UserControl.ScaleHeight * 0.2
+    DrawGradientInRectangle UserControl.hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), r, VerticalGradient, False, m_TextBoxColor
+    'set caption rect
+    SetRect R_Caption, m_Space, m_Height * 2 + 2, UserControl.ScaleWidth - 1 - m_Space, m_TextBoxHeight + 6
+    'set icon coordinates
+    iY = m_Height * 2 + (m_TextBoxHeight - m_IconSize) / 2
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_OuterWedge
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_OuterWedge(R_Caption As RECT)
+Attribute Draw_OuterWedge.VB_UserMemId = 1610809400
+
+    Dim txtWidth        As Integer
+    Dim txtHeight       As Integer
+    Dim r               As RECT
+    Dim r1              As RECT
+    Dim m_roundedRadius As Long
+    Dim poly()          As POINTAPI
+    Dim NumCoords       As Long
+    Dim hBrush          As Long
+    Dim hRgn            As Long
+
+    ReDim poly(1 To 4)
+    m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 10&)
+    txtWidth = m_TextWidth + 10
+
+    If txtWidth < 100 Then
+        txtWidth = 100
+    End If
+
+    txtHeight = m_TextHeight + 5
+    NumCoords = 4
+    SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+
+    If (txtWidth + r.Left + txtHeight / 2) >= r.Right - m_Indentation Then
+        txtWidth = r.Right - txtHeight / 2 - r.Left - m_Indentation - 1
+    End If
+
+    'Assign values to points.
+    poly(1).X = r.Left + 6
+    poly(1).Y = r.Top
+    poly(2).X = r.Left + 6
+    poly(2).Y = r.Top + txtHeight
+    poly(3).X = r.Left + txtWidth + txtHeight / 2
+    poly(3).Y = r.Top + txtHeight
+    poly(4).X = r.Left + txtWidth
+    poly(4).Y = r.Top
+    'Creates first region to fill with color.
+    hRgn = CreatePolygonRgn(poly(1), NumCoords, ALTERNATE)
+    'If the creation of the region was successful then color.
+    hBrush = CreateSolidBrush(m_TextBoxColor)
+
+    If hRgn Then
+        FillRgn UserControl.hDC, hRgn, hBrush
+    End If
+
+    'fill frame
+    SetRect r1, 0&, 0&, txtWidth * 0.9, txtHeight * 1.3
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_TextBoxColor, m_FrameColor, r1
+    SetRect r1, txtWidth * 0.9 - 5, 1, txtWidth * 0.9 + 3, txtHeight * 1.3
+    DrawAPIRoundRect m_RoundedCorner, 0&, m_TextBoxColor, m_TextBoxColor, r1
+    SetRect r1, -1, -1, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FillColor, r1, True
+
+    'draw frame borders
+    With UserControl
+        .ForeColor = m_FrameColor
+        APILineEx .hDC, poly(1).X, poly(1).Y, poly(4).X, poly(4).Y, .ForeColor
+        APILineEx .hDC, poly(4).X, poly(4).Y, poly(3).X, poly(3).Y, .ForeColor
+        RoundRect .hDC, r.Left, r.Top + txtHeight, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius
+        RoundRect .hDC, r.Left, r.Top + txtHeight, r.Left + 10, r.Top + txtHeight + 10, 0, 0
+        .ForeColor = m_FillColor
+        RoundRect .hDC, r.Left + 1, r.Top + txtHeight + 1, r.Left + 10, r.Top + txtHeight + 10, 0, 0
+    End With
+    
+    'delete created region
+    DeleteObject hRgn
+    DeleteObject hBrush
+    'set caption rectangle
+    SetRect R_Caption, poly(1).X + m_Indentation / 2 - 6, poly(1).Y, txtWidth + poly(1).X - 6, txtHeight + poly(1).Y + 2
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Panel
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_Panel(R_Caption As RECT, iY As Integer)
+Attribute Draw_Panel.VB_UserMemId = 1610809401
+
+    Dim r               As RECT
+    Dim m_roundedRadius As Long
+    Dim hFRgn           As Long
+    Dim hRgn            As Long
+
+    jcTextBoxCenter = m_TextBoxHeight / 2
+    'Draw border rectangle
+    UserControl.FillColor = m_FillColor
+
+    If m_ThemeColor = Custom Or m_HeaderStyle = TxtBoxColor Then
+        UserControl.ForeColor = m_FrameColor
+    Else
+        UserControl.ForeColor = jcColorBorderPic
+    End If
+
+    m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 9&)
+    SetRect r, 0&, 0&, UserControl.ScaleWidth, UserControl.ScaleHeight
+
+    If m_HeaderStyle = Gradient Then
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, False, UserControl.ForeColor, 2.03
+    End If
+
+    'Creates first region to fill with color.
+    hRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, 0&, 0&)
+    'Creates second region to fill with color.
+    hFRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius)
+    'Combine our two regions
+    CombineRgn hRgn, hRgn, hFRgn, RGN_AND
+    'delete second region
+    DeleteObject hFRgn
+    SetWindowRgn UserControl.hWnd, hRgn, True
+    UserControl.FillStyle = IIf(m_HeaderStyle = Gradient, 1, 0)
+
+    If UserControl.ForeColor <> UserControl.BackColor Or m_HeaderStyle = TxtBoxColor Then
+        RoundRect UserControl.hDC, r.Left, r.Top, r.Right - 1, r.Bottom - 1, m_roundedRadius, m_roundedRadius
+        UserControl.FillStyle = 0
+        DrawCorners UserControl.ForeColor
+    End If
+
+    'set caption rect
+    SetRect R_Caption, m_Space, 0&, UserControl.ScaleWidth - m_Space, UserControl.ScaleHeight - 2
+    'set icon coordinates
+    iY = (UserControl.ScaleHeight - m_IconSize) / 2
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_TextBox
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iX (Integer)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_TextBox(R_Caption As RECT, iX As Integer, iY As Integer)
+Attribute Draw_TextBox.VB_UserMemId = 1610809402
+
+    Dim r As RECT
+
+    jcTextBoxCenter = m_TextBoxHeight / 2
+    'Draw border rectangle
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
+
+    'Draw textbox border rectangle
+    If m_HeaderStyle = Gradient Then
+        If m_TxtBoxShadow = Shadow Then
+            SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
+            OffsetRect r, 2, 2
+            DrawAPIRoundRect False, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), r
+        End If
+
+        SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 2 - 2 * m_Indentation, m_TextBoxHeight - 1
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, m_FrameColor
+        ', 3.08
+    Else
+        SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
+
+        If m_TxtBoxShadow = Shadow Then
+            OffsetRect r, 2, 2
+            DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), r
+            OffsetRect r, -2, -2
+        End If
+
+        DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, m_TextBoxColor, m_FrameColor, r
+    End If
+
+    'set caption rect
+    SetRect R_Caption, m_Indentation + m_Space * 1.5, 0, UserControl.ScaleWidth - 1 - m_Indentation - m_Space * 1.5, m_TextBoxHeight - 1
+    'set icon coordinates
+    iX = m_Indentation + m_Space * 2
+    iY = (m_TextBoxHeight - m_IconSize) / 2
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_Windows
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'                              iY (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_Windows(R_Caption As RECT, iY As Integer)
+Attribute Draw_Windows.VB_UserMemId = 1610809403
+
+    Dim r As RECT
+
+    jcTextBoxCenter = m_TextBoxHeight / 2
+    'Draw border rectangle
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
+
+    'Draw text box borders
+    If m_HeaderStyle = Gradient Then
+        SetRect r, 0&, 0&, UserControl.ScaleWidth - 2, m_TextBoxHeight - 1
+        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, m_FrameColor
+        ', 3.08
+    Else
+        SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, m_TextBoxHeight
+        DrawAPIRoundRect m_RoundedCornerTxtBox, 10&, m_TextBoxColor, m_FrameColor, r
+    End If
+
+    'set caption rect
+    SetRect R_Caption, m_Space, 0, UserControl.ScaleWidth - m_Space, m_TextBoxHeight
+    '- 1
+    'set icon coordinates
+    iY = (m_TextBoxHeight - m_IconSize) / 2
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Draw_XPDefault
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   R_Caption (RECT)
+'!--------------------------------------------------------------------------------
+Private Sub Draw_XPDefault(R_Caption As RECT)
+Attribute Draw_XPDefault.VB_UserMemId = 1610809404
+
+    Dim p_left As Long
+    Dim r      As RECT
+
+    'Draw border rectangle
+    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
+    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
+
+    If LenB(m_Caption) Then
+        If m_Alignment = vbLeftJustify Then
+            p_left = m_Indentation
+        ElseIf m_Alignment = vbRightJustify Then
+            p_left = UserControl.ScaleWidth - m_TextWidth - m_Indentation - m_Space - 1
+        Else
+            p_left = (UserControl.ScaleWidth - 1 - m_TextWidth) / 2
+        End If
+
+        'Draw a line
+        APILineEx UserControl.hDC, p_left, jcTextBoxCenter, p_left + m_TextWidth + m_Space, jcTextBoxCenter, m_FillColor
+        'set caption rect
+        SetRect R_Caption, p_left + m_Space / 2, 0, m_TextWidth + p_left + m_Space / 2, m_TextHeight
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub EraseRegion
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub EraseRegion()
+Attribute EraseRegion.VB_UserMemId = 1610809382
 
     Dim hRgn As Long
 
@@ -1444,6 +1930,7 @@ End Sub
 '! Parameters  (Переменные):   blnValor (Boolean)
 '!--------------------------------------------------------------------------------
 Private Sub FrameEnabled(ByVal blnValor As Boolean)
+Attribute FrameEnabled.VB_UserMemId = 1610809383
 
     Dim c As Control
 
@@ -1464,10 +1951,33 @@ End Sub
 '! Parameters  (Переменные):   TranslucenceLevel (Byte)
 '!--------------------------------------------------------------------------------
 Private Sub jcTransp(TranslucenceLevel As Byte)
+Attribute jcTransp.VB_UserMemId = 1610809384
 
     If m_bIsWinXpOrLater Then
         SetWindowLong UserControl.Parent.hWnd, GWL_EXSTYLE, WS_EX_LAYERED
         SetLayeredWindowAttributes UserControl.Parent.hWnd, 0, TranslucenceLevel, LWA_ALPHA
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Label_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub Label_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute Label_MouseUp.VB_UserMemId = 1610809405
+    RaiseEvent CollapseClick(Button)
+
+    If (Button = 1) Then
+        If m_Collapsar Then
+            Collapsado = Not m_Collapsado
+        End If
+
+        PaintFrame
     End If
 
 End Sub
@@ -1479,6 +1989,7 @@ End Sub
 '                              LF (LOGFONT)
 '!--------------------------------------------------------------------------------
 Private Sub OLEFontToLogFont(ByVal Font As StdFont, ByRef LF As LOGFONT)
+Attribute OLEFontToLogFont.VB_UserMemId = 1610809385
 
     Dim FontName As String
 
@@ -1508,6 +2019,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub PaintFrame()
+Attribute PaintFrame.VB_UserMemId = 1610809386
 
     Dim R_Caption        As RECT
     Dim RC               As RECT
@@ -1699,8 +2211,9 @@ End Sub
 '                              m_Height (Long)
 '!--------------------------------------------------------------------------------
 Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Long)
+Attribute PaintShpInBar.VB_UserMemId = 1610809387
 
-    Dim I            As Integer
+    Dim ii           As Integer
     Dim x_left       As Integer
     Dim y_top        As Integer
     Dim SpaceBtwnShp As Integer
@@ -1721,10 +2234,10 @@ Private Sub PaintShpInBar(iColorA As Long, iColorB As Long, ByVal m_Height As Lo
     x_left = (UserControl.ScaleWidth - NumShp * RectWidth - (NumShp - 1) * SpaceBtwnShp) / 2
     y_top = (m_Height - RectHeight) / 2
 
-    For I = 0 To NumShp - 1
-        SetRect r, x_left + I * SpaceBtwnShp + I * RectWidth + 1, y_top + 1, 1, 1
+    For ii = 0 To NumShp - 1
+        SetRect r, x_left + ii * SpaceBtwnShp + ii * RectWidth + 1, y_top + 1, 1, 1
         APIRectangle UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, iColorA
-        SetRect r, x_left + I * SpaceBtwnShp + I * RectWidth, y_top, 1, 1
+        SetRect r, x_left + ii * SpaceBtwnShp + ii * RectWidth, y_top, 1, 1
         APIRectangle UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, iColorB
     Next
 
@@ -1736,6 +2249,7 @@ End Sub
 '! Parameters  (Переменные):   Y (Single)
 '!--------------------------------------------------------------------------------
 Function PanelOrTitle(Y As Single) As m_PanelArea
+Attribute PanelOrTitle.VB_UserMemId = 1610809388
 
     If (Y <= 0) Or (Y < m_TextBoxHeight) Then
         PanelOrTitle = xTitle
@@ -1744,6 +2258,25 @@ Function PanelOrTitle(Y As Single) As m_PanelArea
     End If
 
 End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PropFont_FontChanged
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   PropertyName (String)
+'!--------------------------------------------------------------------------------
+Private Sub PropFont_FontChanged(ByVal PropertyName As String)
+Attribute PropFont_FontChanged.VB_UserMemId = 1610809406
+    Dim OldFontHandle As Long
+    
+    OldFontHandle = FrameFontHandle
+    FrameFontHandle = CreateGDIFontFromOLEFont(PropFont)
+    
+    If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
+    If OldFontHandle <> 0 Then DeleteObject OldFontHandle
+    
+    Me.Refresh
+    UserControl.PropertyChanged "Font"
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Refresh
@@ -1764,6 +2297,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SetDefault()
+Attribute SetDefault.VB_UserMemId = 1610809389
 
     Select Case m_Style
 
@@ -1866,6 +2400,7 @@ End Sub
 '! Parameters  (Переменные):   ThemeType (Long)
 '!--------------------------------------------------------------------------------
 Private Sub SetDefaultThemeColor(ByVal ThemeType As Long)
+Attribute SetDefaultThemeColor.VB_UserMemId = 1610809390
 
     Select Case ThemeType
 
@@ -2108,6 +2643,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SetDisabledColor()
+Attribute SetDisabledColor.VB_UserMemId = 1610809391
     m_FrameColorDis = TranslateColor(m_Border_Inactive)
     m_TextBoxColorDis = TranslateColor(m_BtnFace)
     '_Inactive)
@@ -2123,6 +2659,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub SetjcTextDrawParams()
+Attribute SetjcTextDrawParams.VB_UserMemId = 1610809392
 
     If m_Style = Panel Then
         If m_Alignment = vbLeftJustify Then
@@ -2164,11 +2701,12 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long, ByVal DstW As Long, ByVal DstH As Long, ByVal SrcPic As StdPicture, Optional ByVal transColor As Long = -1, Optional ByVal BrushColor As Long = -1, Optional ByVal _
                             MonoMask As Boolean = False, Optional ByVal isGreyscale As Boolean = False, Optional ByVal XPBlend As Boolean = False)
+Attribute TransBlt.VB_UserMemId = 1610809393
 
     Dim b        As Long
     Dim H        As Long
     Dim F        As Long
-    Dim I        As Long
+    Dim ii       As Long
     Dim newW     As Long
     Dim TmpDC    As Long
     Dim TmpBmp   As Long
@@ -2252,37 +2790,37 @@ Private Sub TransBlt(ByVal DstDC As Long, ByVal DstX As Long, ByVal DstY As Long
             F = H * DstW
 
             For b = 0 To newW
-                I = F + b
+                ii = F + b
 
-                If GetNearestColor(hDC, CLng(Data2(I).Red) + 256& * Data2(I).Green + 65536 * Data2(I).Blue) <> transColor Then
+                If GetNearestColor(hDC, CLng(Data2(ii).Red) + 256& * Data2(ii).Green + 65536 * Data2(ii).Blue) <> transColor Then
 
-                    With Data1(I)
+                    With Data1(ii)
 
                         If BrushColor > -1 Then
                             If MonoMask Then
-                                If (CLng(Data2(I).Red) + Data2(I).Green + Data2(I).Blue) <= 384 Then
-                                    Data1(I) = BrushRGB
+                                If (CLng(Data2(ii).Red) + Data2(ii).Green + Data2(ii).Blue) <= 384 Then
+                                    Data1(ii) = BrushRGB
                                 End If
 
                             Else
-                                Data1(I) = BrushRGB
+                                Data1(ii) = BrushRGB
                             End If
 
                         Else
 
                             If isGreyscale Then
-                                gCol = CLng(Data2(I).Red * 0.3) + Data2(I).Green * 0.59 + Data2(I).Blue * 0.11
+                                gCol = CLng(Data2(ii).Red * 0.3) + Data2(ii).Green * 0.59 + Data2(ii).Blue * 0.11
                                 .Red = gCol
                                 .Green = gCol
                                 .Blue = gCol
                             Else
 
                                 If XPBlend Then
-                                    .Red = (CLng(.Red) + Data2(I).Red * 2) \ 3
-                                    .Green = (CLng(.Green) + Data2(I).Green * 2) \ 3
-                                    .Blue = (CLng(.Blue) + Data2(I).Blue * 2) \ 3
+                                    .Red = (CLng(.Red) + Data2(ii).Red * 2) \ 3
+                                    .Green = (CLng(.Green) + Data2(ii).Green * 2) \ 3
+                                    .Blue = (CLng(.Blue) + Data2(ii).Blue * 2) \ 3
                                 Else
-                                    Data1(I) = Data2(I)
+                                    Data1(ii) = Data2(ii)
                                 End If
                             End If
                         End If
@@ -2317,6 +2855,7 @@ End Sub
 '! Parameters  (Переменные):   lColor (Long)
 '!--------------------------------------------------------------------------------
 Private Function TranslateColor(ByVal lColor As Long) As Long
+Attribute TranslateColor.VB_UserMemId = 1610809394
 
     If OleTranslateColor(lColor, 0, TranslateColor) Then
         TranslateColor = -1
@@ -2331,6 +2870,7 @@ End Function
 '                              lngWidth (Long)
 '!--------------------------------------------------------------------------------
 Private Function TrimWord(strCaption As String, lngWidth As Long) As String
+Attribute TrimWord.VB_UserMemId = 1610809395
 
     Dim lngLenOfText As Long
 
@@ -2354,487 +2894,12 @@ Private Function TrimWord(strCaption As String, lngWidth As Long) As String
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_Header
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_Header(R_Caption As RECT)
-
-    Dim p_left As Long
-
-    APILineEx UserControl.hDC, 0&, jcTextBoxCenter, UserControl.ScaleWidth, jcTextBoxCenter, IIf(m_Enabled, TranslateColor(&H80000015), TranslateColor(TEXT_INACTIVE))
-    'TranslateColor(&H80000015)&H808080
-    APILineEx UserControl.hDC, 0&, jcTextBoxCenter + 1, UserControl.ScaleWidth, jcTextBoxCenter + 1, vbWhite
-
-    If LenB(m_Caption) Then
-        If m_Alignment = vbLeftJustify Then
-            'm_Indentation
-        ElseIf m_Alignment = vbRightJustify Then
-            p_left = UserControl.ScaleWidth - m_TextWidth - m_Space
-        Else
-            p_left = (UserControl.ScaleWidth - m_TextWidth) / 2
-        End If
-
-        'Draw a line
-        APILineEx UserControl.hDC, p_left, jcTextBoxCenter, p_left + m_TextWidth + m_Space, jcTextBoxCenter, m_FillColor
-        APILineEx UserControl.hDC, p_left, jcTextBoxCenter + 1, p_left + m_TextWidth + m_Space, jcTextBoxCenter + 1, m_FillColor
-        'set caption rect
-        SetRect R_Caption, p_left + m_Space / 2, 0, m_TextWidth + p_left + m_Space / 2, m_TextHeight
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_InnerWedge
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_InnerWedge(R_Caption As RECT)
-
-    Dim txtWidth        As Integer
-    Dim txtHeight       As Integer
-    Dim r               As RECT
-    Dim m_roundedRadius As Long
-    Dim hFRgn           As Long
-    Dim poly()          As POINTAPI
-    Dim NumCoords       As Long
-    Dim hBrush          As Long
-    Dim hRgn            As Long
-
-    ReDim poly(1 To 4)
-    m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 10&)
-    txtWidth = m_TextWidth + 10
-
-    If txtWidth < 100 Then
-        txtWidth = 100
-    End If
-
-    txtHeight = m_TextHeight + 5
-    NumCoords = 4
-    SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-
-    If (txtWidth + r.Left + txtHeight / 2) >= r.Right - m_Indentation Then
-        txtWidth = r.Right - txtHeight / 2 - r.Left - m_Indentation - 1
-    End If
-
-    'Assign values to points.
-    poly(1).X = r.Left
-    poly(1).Y = r.Top
-    poly(2).X = r.Left
-    poly(2).Y = r.Top + txtHeight
-    poly(3).X = r.Left + txtWidth
-    poly(3).Y = r.Top + txtHeight
-    poly(4).X = r.Left + txtWidth + txtHeight / 2
-    poly(4).Y = r.Top
-    'Creates first region to fill with color.
-    hRgn = CreatePolygonRgn(poly(1), NumCoords, ALTERNATE)
-    'Creates second region to fill with color.
-    hFRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius)
-    'Combine our two regions
-    CombineRgn hRgn, hRgn, hFRgn, RGN_AND
-    'delete second region
-    DeleteObject hFRgn
-    'fill frame
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FillColor, r
-    'If the creation of the region was successful then color.
-    hBrush = CreateSolidBrush(m_TextBoxColor)
-
-    If hRgn Then
-        FillRgn UserControl.hDC, hRgn, hBrush
-    End If
-
-    'draw frame borders
-    APILineEx UserControl.hDC, poly(2).X, poly(2).Y, poly(3).X, poly(3).Y, m_FrameColor
-    APILineEx UserControl.hDC, poly(3).X, poly(3).Y, poly(4).X, poly(4).Y, m_FrameColor
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r, True
-    'delete created region
-    DeleteObject hRgn
-    DeleteObject hBrush
-    'set caption rectangle
-    SetRect R_Caption, poly(1).X + m_Indentation / 2, poly(1).Y, txtWidth + poly(1).X, txtHeight + poly(1).Y + 2
-    '    'set icon coordinates
-    '   iY = (txtHeight - m_IconSize) / 2
-    UserControl.FillStyle = 0
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_jcGradient
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'                              iY (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_jcGradient(R_Caption As RECT, iY As Integer)
-
-    Dim r As RECT
-
-    jcTextBoxCenter = m_TextBoxHeight / 2
-    'Draw border rectangle
-    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), r
-    'Draw header
-    SetRect r, 0, 0, UserControl.ScaleWidth - 2, m_Height
-    DrawGradientInRectangle UserControl.hDC, jcColorTo, jcColorFrom, r, VCilinderGradient, True, jcColorBorderPic
-
-    If m_HeaderStyle = Gradient Then
-        SetRect r, 0, m_Height, UserControl.ScaleWidth - 2, m_TextBoxHeight
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, jcColorBorderPic
-    Else
-        SetRect r, 0, m_Height, UserControl.ScaleWidth - 1, m_TextBoxHeight + m_Height + 2
-        DrawAPIRoundRect False, 0&, m_FillColor, m_FrameColor, r
-    End If
-
-    With UserControl
-        SetRect r, 0, m_Height + m_TextBoxHeight, .ScaleWidth - 2, m_Height
-        DrawGradientInRectangle .hDC, jcColorTo, jcColorFrom, r, VCilinderGradient, True, jcColorBorderPic
-        SetRect r, 1, m_Height * 2 + m_TextBoxHeight, .ScaleWidth - 3, .ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - .ScaleHeight * 0.2
-        DrawGradientInRectangle .hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), r, VerticalGradient, False, m_TextBoxColor
-        'set caption rect
-        SetRect R_Caption, m_Space, m_Height + 1, .ScaleWidth - 2 - m_Space, m_TextBoxHeight + 2
-        'set icon Y coordinate
-    End With
-
-    iY = (m_Height * 2 + m_TextBoxHeight - m_IconSize) / 2
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_Messenger
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'                              iY (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_Messenger(R_Caption As RECT, iY As Integer)
-
-    Dim r As RECT
-
-    jcTextBoxCenter = 0
-    'Draw border rectangle
-    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, BlendColors(jcColorFrom, vbWhite), IIf(m_ThemeColor = Custom, m_FrameColor, jcColorBorderPic), r
-    'Draw header
-    SetRect r, 0, 0, UserControl.ScaleWidth - 2, m_Height * 2
-    DrawGradientInRectangle UserControl.hDC, jcColorFrom, vbWhite, r, VerticalGradient, True, jcColorBorderPic, 2.01
-    PaintShpInBar vbWhite, BlendColors(vbBlack, jcColorFrom), m_Height * 2
-
-    If m_HeaderStyle = Gradient Or m_Enabled = False Then
-        SetRect r, 0&, m_Height * 2, UserControl.ScaleWidth - 2, m_TextBoxHeight + 1
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, jcColorBorderPic
-    Else
-        SetRect r, 0, m_Height * 2 + m_TextBoxHeight + 1, UserControl.ScaleWidth - 2, m_Height * 2 + m_TextBoxHeight + 1
-        APILineEx UserControl.hDC, r.Left, r.Top, r.Right, r.Bottom, jcColorBorderPic
-        'vbBlack
-    End If
-
-    SetRect r, 1, 1 + m_Height * 2 + m_TextBoxHeight, UserControl.ScaleWidth - 3, UserControl.ScaleHeight - (2 + m_Height * 2 + m_TextBoxHeight) - UserControl.ScaleHeight * 0.2
-    DrawGradientInRectangle UserControl.hDC, BlendColors(jcColorFrom, vbWhite), BlendColors(jcColorTo, vbWhite), r, VerticalGradient, False, m_TextBoxColor
-    'set caption rect
-    SetRect R_Caption, m_Space, m_Height * 2 + 2, UserControl.ScaleWidth - 1 - m_Space, m_TextBoxHeight + 6
-    'set icon coordinates
-    iY = m_Height * 2 + (m_TextBoxHeight - m_IconSize) / 2
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_OuterWedge
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_OuterWedge(R_Caption As RECT)
-
-    Dim txtWidth        As Integer
-    Dim txtHeight       As Integer
-    Dim r               As RECT
-    Dim r1              As RECT
-    Dim m_roundedRadius As Long
-    Dim poly()          As POINTAPI
-    Dim NumCoords       As Long
-    Dim hBrush          As Long
-    Dim hRgn            As Long
-
-    ReDim poly(1 To 4)
-    m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 10&)
-    txtWidth = m_TextWidth + 10
-
-    If txtWidth < 100 Then
-        txtWidth = 100
-    End If
-
-    txtHeight = m_TextHeight + 5
-    NumCoords = 4
-    SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-
-    If (txtWidth + r.Left + txtHeight / 2) >= r.Right - m_Indentation Then
-        txtWidth = r.Right - txtHeight / 2 - r.Left - m_Indentation - 1
-    End If
-
-    'Assign values to points.
-    poly(1).X = r.Left + 6
-    poly(1).Y = r.Top
-    poly(2).X = r.Left + 6
-    poly(2).Y = r.Top + txtHeight
-    poly(3).X = r.Left + txtWidth + txtHeight / 2
-    poly(3).Y = r.Top + txtHeight
-    poly(4).X = r.Left + txtWidth
-    poly(4).Y = r.Top
-    'Creates first region to fill with color.
-    hRgn = CreatePolygonRgn(poly(1), NumCoords, ALTERNATE)
-    'If the creation of the region was successful then color.
-    hBrush = CreateSolidBrush(m_TextBoxColor)
-
-    If hRgn Then
-        FillRgn UserControl.hDC, hRgn, hBrush
-    End If
-
-    'fill frame
-    SetRect r1, 0&, 0&, txtWidth * 0.9, txtHeight * 1.3
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_TextBoxColor, m_FrameColor, r1
-    SetRect r1, txtWidth * 0.9 - 5, 1, txtWidth * 0.9 + 3, txtHeight * 1.3
-    DrawAPIRoundRect m_RoundedCorner, 0&, m_TextBoxColor, m_TextBoxColor, r1
-    SetRect r1, -1, -1, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FillColor, r1, True
-
-    'draw frame borders
-    With UserControl
-        .ForeColor = m_FrameColor
-        APILineEx .hDC, poly(1).X, poly(1).Y, poly(4).X, poly(4).Y, .ForeColor
-        APILineEx .hDC, poly(4).X, poly(4).Y, poly(3).X, poly(3).Y, .ForeColor
-        RoundRect .hDC, r.Left, r.Top + txtHeight, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius
-        RoundRect .hDC, r.Left, r.Top + txtHeight, r.Left + 10, r.Top + txtHeight + 10, 0, 0
-        .ForeColor = m_FillColor
-        RoundRect .hDC, r.Left + 1, r.Top + txtHeight + 1, r.Left + 10, r.Top + txtHeight + 10, 0, 0
-    End With
-    
-    'delete created region
-    DeleteObject hRgn
-    DeleteObject hBrush
-    'set caption rectangle
-    SetRect R_Caption, poly(1).X + m_Indentation / 2 - 6, poly(1).Y, txtWidth + poly(1).X - 6, txtHeight + poly(1).Y + 2
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_Panel
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'                              iY (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_Panel(R_Caption As RECT, iY As Integer)
-
-    Dim r               As RECT
-    Dim m_roundedRadius As Long
-    Dim hFRgn           As Long
-    Dim hRgn            As Long
-
-    jcTextBoxCenter = m_TextBoxHeight / 2
-    'Draw border rectangle
-    UserControl.FillColor = m_FillColor
-
-    If m_ThemeColor = Custom Or m_HeaderStyle = TxtBoxColor Then
-        UserControl.ForeColor = m_FrameColor
-    Else
-        UserControl.ForeColor = jcColorBorderPic
-    End If
-
-    m_roundedRadius = IIf(m_RoundedCorner = False, 0&, 9&)
-    SetRect r, 0&, 0&, UserControl.ScaleWidth, UserControl.ScaleHeight
-
-    If m_HeaderStyle = Gradient Then
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, False, UserControl.ForeColor, 2.03
-    End If
-
-    'Creates first region to fill with color.
-    hRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, 0&, 0&)
-    'Creates second region to fill with color.
-    hFRgn = CreateRoundRectRgn(r.Left, r.Top, r.Right, r.Bottom, m_roundedRadius, m_roundedRadius)
-    'Combine our two regions
-    CombineRgn hRgn, hRgn, hFRgn, RGN_AND
-    'delete second region
-    DeleteObject hFRgn
-    SetWindowRgn UserControl.hWnd, hRgn, True
-    UserControl.FillStyle = IIf(m_HeaderStyle = Gradient, 1, 0)
-
-    If UserControl.ForeColor <> UserControl.BackColor Or m_HeaderStyle = TxtBoxColor Then
-        RoundRect UserControl.hDC, r.Left, r.Top, r.Right - 1, r.Bottom - 1, m_roundedRadius, m_roundedRadius
-        UserControl.FillStyle = 0
-        DrawCorners UserControl.ForeColor
-    End If
-
-    'set caption rect
-    SetRect R_Caption, m_Space, 0&, UserControl.ScaleWidth - m_Space, UserControl.ScaleHeight - 2
-    'set icon coordinates
-    iY = (UserControl.ScaleHeight - m_IconSize) / 2
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_TextBox
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'                              iX (Integer)
-'                              iY (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_TextBox(R_Caption As RECT, iX As Integer, iY As Integer)
-
-    Dim r As RECT
-
-    jcTextBoxCenter = m_TextBoxHeight / 2
-    'Draw border rectangle
-    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
-
-    'Draw textbox border rectangle
-    If m_HeaderStyle = Gradient Then
-        If m_TxtBoxShadow = Shadow Then
-            SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
-            OffsetRect r, 2, 2
-            DrawAPIRoundRect False, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), r
-        End If
-
-        SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 2 - 2 * m_Indentation, m_TextBoxHeight - 1
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, m_FrameColor
-        ', 3.08
-    Else
-        SetRect r, m_Indentation, 0, UserControl.ScaleWidth - 1 - m_Indentation, m_TextBoxHeight
-
-        If m_TxtBoxShadow = Shadow Then
-            OffsetRect r, 2, 2
-            DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, BlendColors(m_FillColor, &HA7A7A7), BlendColors(m_FillColor, &HA7A7A7), r
-            OffsetRect r, -2, -2
-        End If
-
-        DrawAPIRoundRect m_RoundedCornerTxtBox, m_TextBoxHeight, m_TextBoxColor, m_FrameColor, r
-    End If
-
-    'set caption rect
-    SetRect R_Caption, m_Indentation + m_Space * 1.5, 0, UserControl.ScaleWidth - 1 - m_Indentation - m_Space * 1.5, m_TextBoxHeight - 1
-    'set icon coordinates
-    iX = m_Indentation + m_Space * 2
-    iY = (m_TextBoxHeight - m_IconSize) / 2
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_Windows
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'                              iY (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_Windows(R_Caption As RECT, iY As Integer)
-
-    Dim r As RECT
-
-    jcTextBoxCenter = m_TextBoxHeight / 2
-    'Draw border rectangle
-    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
-
-    'Draw text box borders
-    If m_HeaderStyle = Gradient Then
-        SetRect r, 0&, 0&, UserControl.ScaleWidth - 2, m_TextBoxHeight - 1
-        DrawGradientInRectangle UserControl.hDC, jcColorFrom, jcColorTo, r, m_GradientHeaderStyle, True, m_FrameColor
-        ', 3.08
-    Else
-        SetRect r, 0&, 0&, UserControl.ScaleWidth - 1, m_TextBoxHeight
-        DrawAPIRoundRect m_RoundedCornerTxtBox, 10&, m_TextBoxColor, m_FrameColor, r
-    End If
-
-    'set caption rect
-    SetRect R_Caption, m_Space, 0, UserControl.ScaleWidth - m_Space, m_TextBoxHeight
-    '- 1
-    'set icon coordinates
-    iY = (m_TextBoxHeight - m_IconSize) / 2
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Draw_XPDefault
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   R_Caption (RECT)
-'!--------------------------------------------------------------------------------
-Private Sub Draw_XPDefault(R_Caption As RECT)
-
-    Dim p_left As Long
-    Dim r      As RECT
-
-    'Draw border rectangle
-    SetRect r, 0&, jcTextBoxCenter, UserControl.ScaleWidth - 1, UserControl.ScaleHeight - 1
-    DrawAPIRoundRect m_RoundedCorner, 10&, m_FillColor, m_FrameColor, r
-
-    If LenB(m_Caption) Then
-        If m_Alignment = vbLeftJustify Then
-            p_left = m_Indentation
-        ElseIf m_Alignment = vbRightJustify Then
-            p_left = UserControl.ScaleWidth - m_TextWidth - m_Indentation - m_Space - 1
-        Else
-            p_left = (UserControl.ScaleWidth - 1 - m_TextWidth) / 2
-        End If
-
-        'Draw a line
-        APILineEx UserControl.hDC, p_left, jcTextBoxCenter, p_left + m_TextWidth + m_Space, jcTextBoxCenter, m_FillColor
-        'set caption rect
-        SetRect R_Caption, p_left + m_Space / 2, 0, m_TextWidth + p_left + m_Space / 2, m_TextHeight
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Label_MouseUp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub Label_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    RaiseEvent CollapseClick(Button)
-
-    If (Button = 1) Then
-        If m_Collapsar Then
-            Collapsado = Not m_Collapsado
-        End If
-
-        PaintFrame
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PropFont_FontChanged
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   PropertyName (String)
-'!--------------------------------------------------------------------------------
-Private Sub PropFont_FontChanged(ByVal PropertyName As String)
-    Dim OldFontHandle As Long
-    
-    OldFontHandle = FrameFontHandle
-    FrameFontHandle = CreateGDIFontFromOLEFont(PropFont)
-    
-    If UserControl.hDC <> 0 Then SendMessage UserControl.hDC, WM_SETFONT, FrameFontHandle, ByVal 1&
-    If OldFontHandle <> 0 Then DeleteObject OldFontHandle
-    
-    Me.Refresh
-    UserControl.PropertyChanged "Font"
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Initialize()
-    m_bIsWinXpOrLater = IsWinXPOrLater
-    m_IconSize = 16
-    m_ColorFrom = 10395391
-    m_ColorTo = 15790335
-    m_TxtBoxShadow = [No shadow]
-    m_ThemeColor = Blue
-    m_Enabled = True
-    SetDefaultThemeColor m_ThemeColor
-    m_TextBoxHeight = 22
-    m_Alignment = vbCenter
-    m_IconAlignment = vbLeftAligment
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_InitProperties
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_InitProperties()
+Attribute UserControl_InitProperties.VB_UserMemId = 1610809408
 
     With Ambient
         Set PropFont = .Font
@@ -2874,6 +2939,7 @@ End Sub
 '                              Y (Single)
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute UserControl_MouseDown.VB_UserMemId = 1610809409
     RaiseEvent MouseDown(Button, Shift, X, Y, PanelOrTitle(Y))
 
     If (Button <> vbLeftButton) Then
@@ -2921,6 +2987,7 @@ End Sub
 '                              Y (Single)
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute UserControl_MouseMove.VB_UserMemId = 1610809410
     RaiseEvent MouseMove(Button, Shift, X, Y)
 End Sub
 
@@ -2933,6 +3000,7 @@ End Sub
 '                              Y (Single)
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute UserControl_MouseUp.VB_UserMemId = 1610809411
     RaiseEvent MouseUp(Button, Shift, X, Y, PanelOrTitle(Y))
 End Sub
 
@@ -2942,6 +3010,7 @@ End Sub
 '! Parameters  (Переменные):   PropBag (PropertyBag)
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+Attribute UserControl_ReadProperties.VB_UserMemId = 1610809412
 
     With PropBag
         Set PropFont = .ReadProperty("Font", Ambient.Font)
@@ -3012,6 +3081,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_Resize()
+Attribute UserControl_Resize.VB_UserMemId = 1610809413
 
     On Error Resume Next
 
@@ -3029,29 +3099,12 @@ Private Sub UserControl_Resize()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Terminate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Terminate()
-
-    On Error Resume Next
-
-    If FrameFontHandle <> 0 Then
-        DeleteObject FrameFontHandle
-        FrameFontHandle = 0
-    End If
-
-    'Clean up Font (StdFont)
-    Set PropFont = Nothing
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_WriteProperties
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   PropBag (PropertyBag)
 '!--------------------------------------------------------------------------------
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+Attribute UserControl_WriteProperties.VB_UserMemId = 1610809415
 
     With PropBag
         .WriteProperty "Font", PropFont, Ambient.Font

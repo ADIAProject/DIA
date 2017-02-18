@@ -97,7 +97,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'Note: this file has been modified for use within Drivers Installer Assistant.
+'Note: this file has been modified for use within Drivers Installer Assistant and Drivers BackUp Solution.
 'This code was originally
 'You may download the original version of this code from the following link (good as of June '12):
 
@@ -309,6 +309,19 @@ Public Event FontNotFound(FontName As String)
 
 Private OldDr   As eBtnState
 Private OldFont As String
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Initialize()
+    CloseMe = False
+    SetWindowLong PicList.hWnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW
+    SetParent PicList.hWnd, 0
+    SetWindowLong PicPreview.hWnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW
+    SetParent PicPreview.hWnd, 0
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property BackColor
@@ -829,12 +842,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let SelectedFont(ByVal vNewValue As String)
 
-    Dim I As Integer
+    Dim ii As Integer
 
-    I = FontExist(vNewValue)
+    ii = FontExist(vNewValue)
 
-    If I > -1 Then
-        mListPos = I
+    If ii > -1 Then
+        mListPos = ii
         RaiseEvent SelectedFontChanged(mListFont(mListPos))
         DrawControl , True
     Else
@@ -935,7 +948,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Property Let Sorted(ByVal vNewValue As Boolean)
 
-    Dim I  As Integer
+    Dim ii As Integer
     Dim fI As Integer
 
     mSorted = vNewValue
@@ -945,9 +958,9 @@ Public Property Let Sorted(ByVal vNewValue As Boolean)
 
         If mSorted = True Then SortList
 
-        For I = 0 To mRecentCount - 1
-            fI = FontExist(mRecent(I).fName)
-            mRecent(I).fIndex = fI
+        For ii = 0 To mRecentCount - 1
+            fI = FontExist(mRecent(ii).fName)
+            mRecent(ii).fIndex = fI
         Next
 
     End If
@@ -1049,12 +1062,12 @@ End Property
 '!--------------------------------------------------------------------------------
 Public Function AddToUsedList(FontName As String) As Integer
 
-    Dim I As Integer
-    Dim F As Boolean
+    Dim ii As Integer
+    Dim F  As Boolean
 
-    For I = 0 To mUsedCount - 1
+    For ii = 0 To mUsedCount - 1
 
-        If LCase$(mUsedList(I)) = LCase$(FontName) Then
+        If LCase$(mUsedList(ii)) = LCase$(FontName) Then
             F = True
 
             Exit For
@@ -1284,7 +1297,7 @@ End Sub
 Private Sub DrawList()
     On Local Error Resume Next
 
-    Dim I   As Integer
+    Dim ii  As Integer
     Dim Br  As Long
     Dim tC  As Long
     Dim rct As RECT
@@ -1303,44 +1316,44 @@ Private Sub DrawList()
     Br = CreateSolidBrush(tC)
     PicList.Line (0, mRecentCount * (mComboFontSize * 2))-(PicList.ScaleWidth, mRecentCount * (mComboFontSize * 2))
 
-    For I = 0 To mRecentCount - 1
+    For ii = 0 To mRecentCount - 1
         PicList.CurrentX = 2
-        PicList.CurrentY = (I * (mComboFontSize * 2)) + 2
+        PicList.CurrentY = (ii * (mComboFontSize * 2)) + 2
 
-        If mShowFontInCombo = True Then PicList.FontName = mRecent(I).fName
+        If mShowFontInCombo = True Then PicList.FontName = mRecent(ii).fName
         PicList.FontSize = mComboFontSize
         PicList.FontItalic = mComboFontItalic
         PicList.FontBold = mComboFontBold
 
-        If IsUsed(mRecent(I).fName) = False Then
+        If IsUsed(mRecent(ii).fName) = False Then
             PicList.ForeColor = mRecentForeColor
         Else
-            SetRect rct, 0, I * (mComboFontSize * 2), PicList.ScaleWidth, (I + 1) * (mComboFontSize * 2)
+            SetRect rct, 0, ii * (mComboFontSize * 2), PicList.ScaleWidth, (ii + 1) * (mComboFontSize * 2)
             FillRect PicList.hDC, rct, Br
             PicList.ForeColor = mUsedForeColor
         End If
 
-        PicList.Print mRecent(I).fName
+        PicList.Print mRecent(ii).fName
     Next
 
-    For I = 0 To mComboFontCount - 1
+    For ii = 0 To mComboFontCount - 1
 
-        If IsUsed(fList(I).fName) = False Then
+        If IsUsed(fList(ii).fName) = False Then
             PicList.ForeColor = mComboForeColor
         Else
-            SetRect rct, 0, (I * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount) + 2, PicList.ScaleWidth, ((I + 1) * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount)
+            SetRect rct, 0, (ii * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount) + 2, PicList.ScaleWidth, ((ii + 1) * (mComboFontSize * 2)) + ((mComboFontSize * 2) * mRecentCount)
             FillRect PicList.hDC, rct, Br
             PicList.ForeColor = mUsedForeColor
         End If
 
         PicList.CurrentX = 2
-        PicList.CurrentY = (I * (mComboFontSize * 2)) + 2 + ((mComboFontSize * 2) * mRecentCount)
+        PicList.CurrentY = (ii * (mComboFontSize * 2)) + 2 + ((mComboFontSize * 2) * mRecentCount)
 
-        If mShowFontInCombo = True Then PicList.FontName = fList(I).fName
+        If mShowFontInCombo = True Then PicList.FontName = fList(ii).fName
         PicList.FontSize = mComboFontSize
         PicList.FontItalic = mComboFontItalic
         PicList.FontBold = mComboFontBold
-        PicList.Print fList(I).fName
+        PicList.Print fList(ii).fName
     Next
 
     DeleteObject Br
@@ -1448,14 +1461,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub FillList()
 
-    Dim I As Integer
+    Dim ii As Integer
 
     mListCount = Screen.FontCount - 1
 
     ReDim mListFont(mListCount)
 
-    For I = 0 To Screen.FontCount - 1
-        mListFont(I) = Screen.Fonts(I)
+    For ii = 0 To Screen.FontCount - 1
+        mListFont(ii) = Screen.Fonts(ii)
     Next
 
 End Sub
@@ -1468,14 +1481,14 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Function FontExist(Font2Find As String, Optional StartPos As Integer = 0) As Integer
 
-    Dim I As Integer
+    Dim ii As Integer
 
     FontExist = -1
 
-    For I = StartPos To mListCount
+    For ii = StartPos To mListCount
 
-        If LCase$(mListFont(I)) Like LCase$(Font2Find) Then
-            FontExist = I
+        If LCase$(mListFont(ii)) Like LCase$(Font2Find) Then
+            FontExist = ii
 
             Exit For
 
@@ -1525,12 +1538,12 @@ End Function
 '!--------------------------------------------------------------------------------
 Private Function IsUsed(FontName As String) As Boolean
 
-    Dim I As Integer
-    Dim F As Boolean
+    Dim ii As Integer
+    Dim F  As Boolean
 
-    For I = 0 To mUsedCount - 1
+    For ii = 0 To mUsedCount - 1
 
-        If LCase$(mUsedList(I)) = LCase$(FontName) Then
+        If LCase$(mUsedList(ii)) = LCase$(FontName) Then
             F = True
 
             Exit For
@@ -1552,19 +1565,19 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub LoadRecentFonts(MyHkey As HkeyLoc2, MyGroup As String, MySection As String, myKey As String)
 
-    Dim I  As Integer
+    Dim ii As Integer
     Dim fN As String
     Dim fI As Integer
 
     ReDim mRecent(mRecentMax)
 
-    For I = 0 To mRecentMax - 1
-        fN = ReadValue(MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & I + 1, "")
+    For ii = 0 To mRecentMax - 1
+        fN = ReadValue(MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & ii + 1, "")
         fI = FontExist(fN)
 
         If fI > -1 Then
-            mRecent(I).fName = fN
-            mRecent(I).fIndex = fI
+            mRecent(ii).fName = fN
+            mRecent(ii).fIndex = fI
         End If
 
     Next
@@ -1607,6 +1620,212 @@ Private Sub mgSort(ByVal pStart As Long, ByVal pEnd As Long)
 
     If pStart < n Then Call mgSort(pStart, n)
     If m < pEnd Then Call mgSort(m, pEnd)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub PicList_KeyDown(KeyCode As Integer, Shift As Integer)
+    UserControl_KeyDown KeyCode, Shift
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_KeyPress
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyAscii (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub PicList_KeyPress(KeyAscii As Integer)
+    UserControl_KeyPress KeyAscii
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_KeyUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub PicList_KeyUp(KeyCode As Integer, Shift As Integer)
+    UserControl_KeyUp KeyCode, Shift
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_LostFocus
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub PicList_LostFocus()
+    PicList.Visible = False
+    PicPreview.Visible = False
+    TmrFocus.Enabled = False
+    CloseMe = True
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_MouseDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub PicList_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+
+    Dim TI As Integer
+
+    TI = Int(Y \ (mComboFontSize * 2))
+
+    If TI < mRecentCount Then
+        mListPos = mRecent(TI).fIndex
+    Else
+        mListPos = fList(TI - mRecentCount).fIndex
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub PicList_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    On Local Error Resume Next
+
+    Dim tFont As String
+    Dim TI    As Integer
+
+    TI = Int(Y \ (mComboFontSize * 2))
+    fPos = TI
+
+    If TmrAutoText.Enabled = False Then
+        SelBox.Move 0, CLng(Y \ (mComboFontSize * 2)) * (mComboFontSize * 2), PicList.ScaleWidth + 2, (mComboFontSize * 2) + 2
+
+        If TI < mRecentCount Then
+            tFont = mRecent(TI).fName
+        Else
+            tFont = fList(TI - mRecentCount).fName
+        End If
+
+        ShowFont tFont
+        DoEvents
+    End If
+
+    If TmrAutoText.Enabled = True Then
+
+        Exit Sub
+
+    End If
+
+    Do
+        GetCursorPos MouseCoords
+
+        If WindowFromPoint(MouseCoords.X, MouseCoords.Y) = PicList.hWnd Then
+            If mUseMouseWheel = True Then
+                GetMessage Msg, Parent.hWnd, 0, 0
+                DispatchMessage Msg
+                TranslateMessage Msg
+                DoEvents
+
+                With Msg
+
+                    If .nMsg = WM_MOUSEWHEEL Then
+                        If VScroll1.Value < VScroll1.Max And Sgn(.wParam) < 0 Then
+                            If VScroll1.Value + 3 > VScroll1.Max Then
+                                VScroll1.Value = VScroll1.Max
+                            Else
+                                VScroll1.Value = VScroll1.Value + 3
+                            End If
+
+                        Else
+
+                            If VScroll1.Value - 3 < 0 Then
+                                VScroll1.Value = 0
+                            Else
+                                VScroll1.Value = VScroll1.Value - 3
+                            End If
+                        End If
+                    End If
+
+                End With
+
+            End If
+
+        ElseIf CloseMe = False Then
+
+            If WindowFromPoint(MouseCoords.X, MouseCoords.Y) = UserControl.hWnd Then Exit Do
+            GetMessage Msg, Parent.hWnd, 0, 0
+            DispatchMessage Msg
+            TranslateMessage Msg
+            DoEvents
+
+            If Msg.nMsg = 513 Then
+                CloseMe = True
+
+                Exit Do
+
+            End If
+
+        Else
+
+            Exit Do
+
+        End If
+
+        DoEvents
+    Loop
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicList_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub PicList_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    SetRecents mListFont(mListPos), mListPos
+    PicList.Visible = False
+    PicPreview.Visible = False
+    TmrFocus.Enabled = False
+    DrawControl , True
+    CloseMe = True
+    RaiseEvent SelectedFontChanged(mListFont(mListPos))
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicPreview_KeyDown
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub PicPreview_KeyDown(KeyCode As Integer, Shift As Integer)
+    UserControl_KeyDown KeyCode, Shift
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicPreview_KeyPress
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyAscii (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub PicPreview_KeyPress(KeyAscii As Integer)
+    UserControl_KeyPress KeyAscii
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub PicPreview_KeyUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub PicPreview_KeyUp(KeyCode As Integer, Shift As Integer)
+    UserControl_KeyUp KeyCode, Shift
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1661,7 +1880,7 @@ End Function
 '!--------------------------------------------------------------------------------
 Public Sub RemoveFromUsedList(FontName As String)
 
-    Dim I     As Integer
+    Dim ii    As Integer
     Dim tUL() As String
     Dim fQ    As Integer
 
@@ -1669,10 +1888,10 @@ Public Sub RemoveFromUsedList(FontName As String)
 
     fQ = 1
 
-    For I = 0 To mUsedCount - 1
+    For ii = 0 To mUsedCount - 1
 
-        If LCase$(mUsedList(I)) <> LCase$(FontName) Then
-            tUL(fQ - 1) = mUsedList(I)
+        If LCase$(mUsedList(ii)) <> LCase$(FontName) Then
+            tUL(fQ - 1) = mUsedList(ii)
             fQ = fQ + 1
         End If
 
@@ -1695,10 +1914,10 @@ End Sub
 '!--------------------------------------------------------------------------------
 Public Sub SaveRecentFonts(MyHkey As HkeyLoc2, MyGroup As String, MySection As String, myKey As String)
 
-    Dim I As Integer
+    Dim ii As Integer
 
-    For I = 0 To mRecentCount - 1
-        SetValue MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & I + 1, mRecent(I).fName
+    For ii = 0 To mRecentCount - 1
+        SetValue MyHkey, MyGroup & "\" & MySection & "\" & myKey, "RecentFontName" & ii + 1, mRecent(ii).fName
     Next
 
 End Sub
@@ -1710,7 +1929,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub SetList()
 
-    Dim I     As Integer
+    Dim ii    As Integer
     Dim RecQ  As Integer
     Dim Start As Integer
 
@@ -1724,9 +1943,9 @@ Private Sub SetList()
 
     VScroll1.Value = Start
 
-    For I = Start To Start + mComboFontCount - RecQ
-        fList(RecQ).fName = mListFont(I)
-        fList(RecQ).fIndex = I
+    For ii = Start To Start + mComboFontCount - RecQ
+        fList(RecQ).fName = mListFont(ii)
+        fList(RecQ).fIndex = ii
         fList(RecQ).fRecent = False
         RecQ = RecQ + 1
     Next
@@ -1996,212 +2215,6 @@ Private Sub SwapStrings(String1 As String, String2 As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_KeyDown
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub PicList_KeyDown(KeyCode As Integer, Shift As Integer)
-    UserControl_KeyDown KeyCode, Shift
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_KeyPress
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyAscii (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub PicList_KeyPress(KeyAscii As Integer)
-    UserControl_KeyPress KeyAscii
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_KeyUp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub PicList_KeyUp(KeyCode As Integer, Shift As Integer)
-    UserControl_KeyUp KeyCode, Shift
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_LostFocus
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub PicList_LostFocus()
-    PicList.Visible = False
-    PicPreview.Visible = False
-    TmrFocus.Enabled = False
-    CloseMe = True
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_MouseDown
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub PicList_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-    Dim TI As Integer
-
-    TI = Int(Y \ (mComboFontSize * 2))
-
-    If TI < mRecentCount Then
-        mListPos = mRecent(TI).fIndex
-    Else
-        mListPos = fList(TI - mRecentCount).fIndex
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_MouseMove
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub PicList_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    On Local Error Resume Next
-
-    Dim tFont As String
-    Dim TI    As Integer
-
-    TI = Int(Y \ (mComboFontSize * 2))
-    fPos = TI
-
-    If TmrAutoText.Enabled = False Then
-        SelBox.Move 0, CLng(Y \ (mComboFontSize * 2)) * (mComboFontSize * 2), PicList.ScaleWidth + 2, (mComboFontSize * 2) + 2
-
-        If TI < mRecentCount Then
-            tFont = mRecent(TI).fName
-        Else
-            tFont = fList(TI - mRecentCount).fName
-        End If
-
-        ShowFont tFont
-        DoEvents
-    End If
-
-    If TmrAutoText.Enabled = True Then
-
-        Exit Sub
-
-    End If
-
-    Do
-        GetCursorPos MouseCoords
-
-        If WindowFromPoint(MouseCoords.X, MouseCoords.Y) = PicList.hWnd Then
-            If mUseMouseWheel = True Then
-                GetMessage Msg, Parent.hWnd, 0, 0
-                DispatchMessage Msg
-                TranslateMessage Msg
-                DoEvents
-
-                With Msg
-
-                    If .nMsg = WM_MOUSEWHEEL Then
-                        If VScroll1.Value < VScroll1.Max And Sgn(.wParam) < 0 Then
-                            If VScroll1.Value + 3 > VScroll1.Max Then
-                                VScroll1.Value = VScroll1.Max
-                            Else
-                                VScroll1.Value = VScroll1.Value + 3
-                            End If
-
-                        Else
-
-                            If VScroll1.Value - 3 < 0 Then
-                                VScroll1.Value = 0
-                            Else
-                                VScroll1.Value = VScroll1.Value - 3
-                            End If
-                        End If
-                    End If
-
-                End With
-
-            End If
-
-        ElseIf CloseMe = False Then
-
-            If WindowFromPoint(MouseCoords.X, MouseCoords.Y) = UserControl.hWnd Then Exit Do
-            GetMessage Msg, Parent.hWnd, 0, 0
-            DispatchMessage Msg
-            TranslateMessage Msg
-            DoEvents
-
-            If Msg.nMsg = 513 Then
-                CloseMe = True
-
-                Exit Do
-
-            End If
-
-        Else
-
-            Exit Do
-
-        End If
-
-        DoEvents
-    Loop
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicList_MouseUp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub PicList_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    SetRecents mListFont(mListPos), mListPos
-    PicList.Visible = False
-    PicPreview.Visible = False
-    TmrFocus.Enabled = False
-    DrawControl , True
-    CloseMe = True
-    RaiseEvent SelectedFontChanged(mListFont(mListPos))
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicPreview_KeyDown
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub PicPreview_KeyDown(KeyCode As Integer, Shift As Integer)
-    UserControl_KeyDown KeyCode, Shift
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicPreview_KeyPress
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyAscii (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub PicPreview_KeyPress(KeyAscii As Integer)
-    UserControl_KeyPress KeyAscii
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub PicPreview_KeyUp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub PicPreview_KeyUp(KeyCode As Integer, Shift As Integer)
-    UserControl_KeyUp KeyCode, Shift
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub TmrAutoText_Timer
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -2283,19 +2296,6 @@ Private Sub UserControl_GotFocus()
         FocusBox.Visible = False
     End If
 
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Initialize()
-    CloseMe = False
-    SetWindowLong PicList.hWnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW
-    SetParent PicList.hWnd, 0
-    SetWindowLong PicPreview.hWnd, GWL_EXSTYLE, WS_EX_TOOLWINDOW
-    SetParent PicPreview.hWnd, 0
 End Sub
 
 '!--------------------------------------------------------------------------------

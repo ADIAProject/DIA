@@ -20,7 +20,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'Note: this file has been modified for use within Drivers Installer Assistant.
+'Note: this file has been modified for use within Drivers Installer Assistant and Drivers BackUp Solution.
 'This code was originally written by Leandro I. Ascierto
 'You may download the original version of this code from the following link (good as of 21 Mar '10):
 'http://leandroascierto.com/blog/scrollcontrol/
@@ -157,6 +157,35 @@ End Enum
 '*************************************************************
 Private mY As Single
 Private mX As Single
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Initialize()
+
+    SI.cbSize = Len(SI)
+    SI.fMask = SIF_ALL
+    mBorderSize = GetSystemMetrics(SM_CYBORDER)
+    
+    Set m_cSubclass = New cSelfSubHookCallback
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Terminate
+'! Description (Описание)  :   [The control is terminating - a good place to stop the subclasser]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Terminate()
+
+    On Error Resume Next
+
+    'Terminate all subclassing
+    m_cSubclass.ssc_Terminate
+    Set m_cSubclass = Nothing
+    
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property AutoScrollToFocus
@@ -453,20 +482,6 @@ Private Sub ScrollVerticalWindow(ByVal NewPos As Long)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Initialize()
-
-    SI.cbSize = Len(SI)
-    SI.fMask = SIF_ALL
-    mBorderSize = GetSystemMetrics(SM_CYBORDER)
-    
-    Set m_cSubclass = New cSelfSubHookCallback
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub UserControl_InitProperties
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -642,22 +657,6 @@ End Sub
 Private Sub UserControl_Show()
     Me.Refresh
     CheckScroll
-End Sub
-
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Terminate
-'! Description (Описание)  :   [The control is terminating - a good place to stop the subclasser]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Terminate()
-
-    On Error Resume Next
-
-    'Terminate all subclassing
-    m_cSubclass.ssc_Terminate
-    Set m_cSubclass = Nothing
-    
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -871,4 +870,3 @@ Private Sub z_WndProc1(ByVal bBefore As Boolean, ByRef bHandled As Boolean, ByRe
     End Select
 
 End Sub
-

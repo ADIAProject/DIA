@@ -698,14 +698,12 @@ End If
 End Property
 
 Public Property Let Value(ByVal NewValue As Long)
-Select Case NewValue
-    Case Me.Min To Me.Max
-        PropValue = NewValue
-    Case Is < Me.Min
-        PropValue = Me.Min
-    Case Is > Me.Max
-        PropValue = Me.Max
-End Select
+If NewValue > Me.Max Then
+    NewValue = Me.Max
+ElseIf NewValue < Me.Min Then
+    NewValue = Me.Min
+End If
+PropValue = NewValue
 If ProgressBarHandle <> 0 Then SendMessage ProgressBarHandle, PBM_SETPOS, PropValue, ByVal 0&
 UserControl.PropertyChanged "Value"
 End Property

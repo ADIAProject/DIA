@@ -23,7 +23,7 @@ Public Sub GetMyAppProperties()
     strAppPath = App.Path
     strAppPathBackSL = BackslashAdd2Path(strAppPath)
     strAppEXEName = App.EXEName
-    
+   
     If GetMyAppPropertiesCheck Then
         strProductVersion = App.Major & strDot & App.Minor & strDot & App.Revision
     Else
@@ -33,7 +33,7 @@ Public Sub GetMyAppProperties()
     On Error Resume Next
     strProductName = App.ProductName & " v." & strProductVersion & " @" & App.CompanyName
     If Error.Number = 326 Then
-        strProductName = "Drivers Installer Assistant" & " v." & strProductVersion & " @" & "Romeo91 (www.adia-project.net)"
+        strProductName = strProjectNameFull & " v." & strProductVersion & " @" & "Romeo91 (www.adia-project.net)"
     End If
 
 End Sub

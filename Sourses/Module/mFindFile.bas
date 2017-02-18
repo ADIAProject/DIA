@@ -47,7 +47,7 @@ Public Type FindListStruct
     NameWoExt                    As String
     Extension                    As String
     Size                         As Long
-    'SizeInString                As String
+    SizeInString                 As String
 End Type
 
 '!--------------------------------------------------------------------------------

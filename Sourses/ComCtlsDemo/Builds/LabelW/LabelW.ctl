@@ -125,7 +125,6 @@ Private PropRightToLeft As Boolean
 Private PropRightToLeftMode As CCRightToLeftModeConstants
 Private PropAlignment As VBRUN.AlignmentConstants
 Private PropBorderStyle As CCBorderStyleConstants
-Private PropBackStyle As CCBackStyleConstants
 Private PropCaption As String
 Private PropUseMnemonic As Boolean
 Private PropAutoSize As Boolean

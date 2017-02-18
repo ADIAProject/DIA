@@ -38,7 +38,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   615
       Left            =   4200
-      TabIndex        =   7
+      TabIndex        =   4
       Top             =   5400
       Width           =   2655
    End
@@ -55,7 +55,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   615
       Left            =   75
-      TabIndex        =   6
+      TabIndex        =   2
       ToolTipText     =   "Создать файл с описанием ошибки"
       Top             =   5400
       Width           =   1380
@@ -73,7 +73,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   615
       Left            =   1560
-      TabIndex        =   5
+      TabIndex        =   3
       ToolTipText     =   "Не забудьте прикрепить к письму созданный файл error.log"
       Top             =   5400
       Width           =   2580
@@ -91,7 +91,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   1680
       Left            =   75
-      TabIndex        =   8
+      TabIndex        =   13
       Top             =   840
       Width           =   8500
       Begin VB.TextBox lblErrDescr 
@@ -108,7 +108,7 @@ Begin VB.Form frmError
          Left            =   75
          MultiLine       =   -1  'True
          ScrollBars      =   2  'Vertical
-         TabIndex        =   9
+         TabIndex        =   0
          Top             =   600
          Width           =   8325
       End
@@ -126,7 +126,7 @@ Begin VB.Form frmError
          EndProperty
          Height          =   315
          Left            =   75
-         TabIndex        =   11
+         TabIndex        =   10
          Top             =   240
          Width           =   3705
       End
@@ -145,13 +145,14 @@ Begin VB.Form frmError
          ForeColor       =   &H000000FF&
          Height          =   330
          Left            =   3960
-         TabIndex        =   10
+         TabIndex        =   11
          Top             =   240
          Width           =   1410
       End
    End
    Begin VB.CommandButton cmdExit 
       Caption         =   "Close program"
+      Default         =   -1  'True
       BeginProperty Font 
          Name            =   "Tahoma"
          Size            =   9
@@ -163,14 +164,14 @@ Begin VB.Form frmError
       EndProperty
       Height          =   615
       Left            =   6960
-      TabIndex        =   4
+      TabIndex        =   5
       Top             =   5400
       Width           =   1575
    End
    Begin MSFlexGridLib.MSFlexGrid MSFlexGrid1 
       Height          =   2450
       Left            =   75
-      TabIndex        =   0
+      TabIndex        =   1
       Top             =   2895
       Width           =   8505
       _ExtentX        =   15002
@@ -204,7 +205,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   330
       Left            =   75
-      TabIndex        =   13
+      TabIndex        =   6
       Top             =   75
       Width           =   5355
    End
@@ -223,7 +224,7 @@ Begin VB.Form frmError
       ForeColor       =   &H000000FF&
       Height          =   360
       Left            =   5520
-      TabIndex        =   12
+      TabIndex        =   7
       Top             =   75
       Width           =   3015
    End
@@ -242,7 +243,7 @@ Begin VB.Form frmError
       ForeColor       =   &H000000FF&
       Height          =   360
       Left            =   4800
-      TabIndex        =   3
+      TabIndex        =   9
       Top             =   450
       Width           =   3735
    End
@@ -260,7 +261,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   330
       Left            =   75
-      TabIndex        =   2
+      TabIndex        =   8
       Top             =   450
       Width           =   4635
    End
@@ -278,7 +279,7 @@ Begin VB.Form frmError
       EndProperty
       Height          =   375
       Left            =   75
-      TabIndex        =   1
+      TabIndex        =   12
       Top             =   2520
       Width           =   8415
    End
@@ -292,38 +293,24 @@ Option Explicit
 
 Private sFile As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdContinue_Click
+'! Description (Описание)  :   [Продолжение программы, даже при ошибке]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdContinue_Click()
     Me.Hide
     giAction_ = -1
 End Sub
 
-Private Sub Form_Load()
-Dim sFileName As String
-
-    sFileName = "error.log"
-    
-    sFile = App.Path + vbBackslash + sFileName
-    
-    If mbIsDriveCDRoom Then
-        sFile = "c:\error.log"
-    End If
-    
-    With Me.MSFlexGrid1
-         .ColWidth(0) = 1200
-         .ColWidth(1) = 3000
-         .TextMatrix(0, 0) = "Operator"
-         .TextMatrix(0, 1) = "Name of procedure"
-         .Refresh
-    End With
-    
-End Sub
-
-'Создание файла error.log
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdCreateFile_Click
+'! Description (Описание)  :   [Создание файла error.log]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Sub cmdCreateFile_Click()
 Dim iFile       As Integer
 Dim strErrText  As String
-
-'On Error GoTo err
     
     strErrText = "Description error in program " & App.ProductName & vbCrLf & _
                  "====================================" & vbCrLf & vbCrLf & _
@@ -356,16 +343,76 @@ Dim strErrText  As String
     Print #iFile, strErrText
     Close #iFile
        
-    MsgBox "Error.log saved: " & vbNewLine & sFile _
-            & vbNewLine & vbNewLine & "Send error.log to author!"
+    MsgBox "Error.log saved: " & vbNewLine & _
+            sFile & vbNewLine & vbNewLine & _
+            "Send error.log to author!"
 
-Exit Sub
-'err:
-'    MsgBox "Error on create logfile: №" & err.Number & vbCrLf _
-'                & "Description: " & err.Description
 End Sub
 
-'Чтение стека процедур из таблицы
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdEmail_Click
+'! Description (Описание)  :   [Отправить E-mail]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdEmail_Click()
+    If FileExists(sFile) = 0 Then
+        cmdCreateFile_Click
+    End If
+    
+    Call ShellExecute(0, "Open", "mailto:Roman<roman-novosib@ngs.ru>" & _
+                                "?Subject=Error_" & Replace$(App.ProductName, " ", vbNullString) & "_" & App.Major & "." & App.Minor & "." & App.Revision, vbNullString, vbNullString, 1)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [Нажимаем выход]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Me.Hide
+    giAction_ = 0
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [Загрузка формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+Dim sFileName As String
+
+    sFileName = "error.log"
+    
+    sFile = App.Path + vbBackslash + sFileName
+    
+    If mbIsDriveCDRoom Then
+        sFile = "c:\error.log"
+    End If
+    
+    With Me.MSFlexGrid1
+         .ColWidth(0) = 1200
+         .ColWidth(1) = 3000
+         .TextMatrix(0, 0) = "Operator"
+         .TextMatrix(0, 1) = "Name of procedure"
+         .Refresh
+    End With
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_QueryUnload
+'! Description (Описание)  :   [Выход из формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    Set frmError = Nothing
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function StackText
+'! Description (Описание)  :   [Чтение стека процедур из таблицы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Private Function StackText() As String
 Dim ii As Integer
 Dim iii As Integer
@@ -394,21 +441,4 @@ Dim iii As Integer
     End With
     
 End Function
-    
-Private Sub cmdEmail_Click()
-    If FileExists(sFile) = 0 Then
-        cmdCreateFile_Click
-    End If
-    
-    Call ShellExecute(0, "Open", "mailto:Roman<roman-novosib@ngs.ru>" & _
-                                "?Subject=Error_" & Replace$(App.ProductName, " ", vbNullString) & "_" & App.Major & "." & App.Minor & "." & App.Revision, vbNullString, vbNullString, 1)
-End Sub
 
-Private Sub cmdExit_Click()
-    Me.Hide
-    giAction_ = 0
-End Sub
-
-Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-    Set frmError = Nothing
-End Sub

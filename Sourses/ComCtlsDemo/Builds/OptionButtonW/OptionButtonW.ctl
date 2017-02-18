@@ -972,7 +972,8 @@ Value = PropValue
 End Property
 
 Public Property Let Value(ByVal NewValue As OLE_OPTEXCLUSIVE)
-If PropValue = NewValue Then Exit Property
+Dim Changed As Boolean
+Changed = CBool(PropValue <> NewValue)
 PropValue = NewValue
 If OptionButtonHandle <> 0 Then
     If Not (GetWindowLong(OptionButtonHandle, GWL_STYLE) And BS_OWNERDRAW) = BS_OWNERDRAW Then
@@ -982,7 +983,7 @@ If OptionButtonHandle <> 0 Then
     End If
 End If
 UserControl.PropertyChanged "Value"
-RaiseEvent Click
+If Changed = True Then RaiseEvent Click
 End Property
 
 Public Property Get Caption() As String

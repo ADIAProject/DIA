@@ -8,13 +8,22 @@ Global Proc_Lin_(1 To 2000) As Long
 Global Proc_Ptr_            As Long
 Global SysLog_Name_         As String
 
-
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Enter_Proc_
+'! Description (Описание)  :   [Вход в процедуру - запоминаем строку]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Enter_Proc_(NamP As String)
        Proc_Ptr_ = Proc_Ptr_ + 1
        Proc_Nam_(Proc_Ptr_) = NamP
        Proc_Lin_(Proc_Ptr_) = giCount_
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Exit_Proc_
+'! Description (Описание)  :   [Выход из процедуры]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Exit_Proc_()
        If (Proc_Ptr_ > 0) Then
           Proc_Nam_(Proc_Ptr_) = vbNullString
@@ -23,6 +32,11 @@ Public Sub Exit_Proc_()
        Proc_Ptr_ = Proc_Ptr_ - 1
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Show_Err_
+'! Description (Описание)  :   [Показать ошибку - вывести форму]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub Show_Err_(errNum As Long, errDescr As String)
 Dim ptrRow As Long
 Dim ii     As Long
@@ -95,11 +109,16 @@ Dim SysNum As Integer
        
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub App_Terminate
+'! Description (Описание)  :   [Закрытие приложения]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub App_Terminate()
-Dim ObjCurrFrm As Object
+Dim objCurrFrm As Object
 
-       For Each ObjCurrFrm In Forms
-           Unload ObjCurrFrm
+       For Each objCurrFrm In Forms
+           Unload objCurrFrm
        Next
        
        End

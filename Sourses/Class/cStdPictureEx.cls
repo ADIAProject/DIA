@@ -6,7 +6,7 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "StdPictureEx"
+Attribute VB_Name = "cStdPictureEx"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = True
@@ -16,7 +16,7 @@ Attribute VB_Exposed = False
 '========================================================================================================
 ' The class is defined as predeclared. This means you do not create an instance of it. An instance is
 '   created automatically when your project is run, similar to a .bas module. You do not unload it or set
-'   it to Nothing. You can access its properties/methods directly by its name, i.e., StdPictureEx.LoadPicture
+'   it to Nothing. You can access its properties/methods directly by its name, i.e., cStdPictureEx.LoadPicture
 
 ' Requirements: This class requires GDI+ and XP operating system or higher. If the class fails to load
 '   GDI+ or runs on a system lower than XP, then all functions may fail over to VB's standard picture
@@ -51,13 +51,13 @@ Attribute VB_Exposed = False
 '   render semi-transparency in bitmaps. When the class' IsManaged property returns true, then if the
 '   Picture.Type value is vbPicTypeBitmap, the bitmap bits are premultiplied. Because of this bitmap
 '   format, you should not pass the stdPicture outside of your project. The receiving end may not know
-'   how to render the image. If needed, you can call the StdPictureEx.SavePicture method and convert
+'   how to render the image. If needed, you can call the cStdPictureEx.SavePicture method and convert
 '   the bitmap to a standard bitmap. Any transparency in the bitmap will be rendered over a background
 '   color you provided to SavePicture. That method, in that case, always produces a 24bpp bitmap.
 
 ' When possible, the cached data is done so that VB also has access to it via the stdPicture itself.
 '   This applies to non-CMYK JPGs, single-frame GIFs, many icons and most bitmaps. For all other cases,
-'   the cached data is stored by this class and is not accessible by VB. The StdPictureEx.SavePicture
+'   the cached data is stored by this class and is not accessible by VB. The cStdPictureEx.SavePicture
 '   method can be used to save this cached data to file. Bitmap and metafile formats are not cached.
 '   General rule of thumb. If caching original data is wanted and VB can load the image without color
 '   loss, then the image will be loaded via GDI+ and data will be cached by VB/COM. If this cannot be
@@ -302,7 +302,7 @@ Private m_PageGUID(0 To 3, 0 To 1) As Long ' used to change frames/pages of GIF/
 Private m_hDC As Long                   ' general usage. Is zero if class failed to initialize properly
 Private m_RefCount As Long              ' number of m_PicRef() items
 Private m_PicRefs() As PICREF           ' collection of managed picture data (-1 LBound)
-Private m_Primary As StdPictureEx       ' subclassing class instance if not this class instance
+Private m_Primary As cStdPictureEx       ' subclassing class instance if not this class instance
 Private m_Hwnd As Long                  ' management window handle
 Private m_ThunkPtr As Long              ' address of IPicture/IPictureDisp subclassing thunk
 Private m_VistaPlus As Boolean          ' are we running in Vista or better?
@@ -366,7 +366,7 @@ Public Function LoadPicture(Optional ImageSource As Variant, _
 '
 '     KeepOriginalFormat. Applies to all image formats except BMP, WMF, EMF
 '       Setting to True requires more memory to cache the format. Cached data is always the bits.
-'       Caching original format data allows StdPictureEx.SavePicture to save the original data
+'       Caching original format data allows cStdPictureEx.SavePicture to save the original data
 '          Tip: do not set this to true if loading from a resource file unless animating a GIF
 '              or navigating multipage TIF. You have it cached in resource file, no need to re-cache.
 '          If needed, you can remove the cached data by calling this method again & set this parameter to false
@@ -831,7 +831,7 @@ Public Property Get HasOriginalFormat(Picture As StdPicture) As Boolean
     ' returns whether original image format/data is maintained. If maintained and not needed,
     '   you can call this class LoadPicture and pass the KeepOriginalFormat parameter as false to
     '   reload image without caching the data, reducing memory usage, i.e.,
-    '   Set Image1.Picture = StdPictureEx.LoadPicture(Image1.Picture)
+    '   Set Image1.Picture = cStdPictureEx.LoadPicture(Image1.Picture)
     ' Note: When your project is uncompiled, VB ensures loaded pictures cache original data/format.
     '   But when compiled, those same Pictures no longer have their data cached. In other words do
     '   not assume that this property will return the same result for design-time loaded images

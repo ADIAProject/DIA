@@ -6,6 +6,8 @@ Public Declare Function IsAppThemed Lib "uxtheme.dll" () As Long
 Public mbAeroEnabled As Boolean
 Public mbAppThemed   As Boolean
 
+Private Declare Function DwmIsCompositionEnabled Lib "dwmapi" (ByRef pfEnabled As Long) As Long
+
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IsAeroEnabled
 '! Description (Описание)  :   [type_description_here]

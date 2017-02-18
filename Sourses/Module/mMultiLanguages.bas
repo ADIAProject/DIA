@@ -1,7 +1,5 @@
 Attribute VB_Name = "mMultiLanguages"
-Option Explicit
-
-'Note: this file has been writen for use within Drivers Installer Assistant.
+'Note: this file has been writen for use within Drivers Installer Assistant and Drivers BackUp Solution.
 
 ' Модуль для организации поддержки многоязычности в программе
 ' В процессе обработки создается массив данных о языковых файлах arrLanguage() , данные беруться из секции [Lang]
@@ -17,6 +15,7 @@ Option Explicit
 
 ' данные вносятся в языковой файл в подсекции с именами form
 ' параметрами являются имена контролов
+Option Explicit
 
 Public mbMultiLanguage                As Boolean
 Public arrLanguage()                  As String     ' Массив данных о языковых файлах
@@ -149,23 +148,23 @@ End Function
 Public Function GetUserLocaleInfo(ByVal dwLocaleID As Long, ByVal dwLCType As Long) As String
 
     Dim sReturn As String
-    Dim r       As Long
+    Dim lngRet  As Long
 
     'call the function passing the Locale type
     'variable to retrieve the required size of
     'the string buffer needed
-    r = GetLocaleInfo(dwLocaleID, dwLCType, sReturn, 0)
+    lngRet = GetLocaleInfo(dwLocaleID, dwLCType, sReturn, 0)
 
     'if successful..
-    If r Then
+    If lngRet Then
         'pad the buffer with spaces
-        sReturn = FillNullChar(r)
+        sReturn = FillNullChar(lngRet)
         'and call again passing the buffer
-        r = GetLocaleInfo(dwLocaleID, dwLCType, sReturn, Len(sReturn))
+        lngRet = GetLocaleInfo(dwLocaleID, dwLCType, sReturn, Len(sReturn))
 
-        'if successful (r > 0)
-        If r Then
-            'r holds the size of the string
+        'if successful (lngRet > 0)
+        If lngRet Then
+            'lngRet holds the size of the string
             'including the terminating null
             GetUserLocaleInfo = TrimNull(sReturn)
         End If
@@ -302,4 +301,3 @@ Public Function LocaliseString(ByVal strPathFile As String, ByVal strSection As 
     End If
 
 End Function
-

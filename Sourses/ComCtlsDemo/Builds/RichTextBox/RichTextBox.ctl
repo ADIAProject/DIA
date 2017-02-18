@@ -270,9 +270,9 @@ Attribute MouseUp.VB_Description = "Occurs when the user releases the mouse butt
 Attribute MouseUp.VB_UserMemId = -607
 Public Event OLECompleteDrag()
 Attribute OLECompleteDrag.VB_Description = "Occurs at the OLE drag/drop source control after a drag/drop has been completed or canceled."
-Public Event OLEGetDropEffect(Effect As Long, Button As Integer, Shift As Integer)
+Public Event OLEGetDropEffect(ByRef Effect As Long, ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
 Attribute OLEGetDropEffect.VB_Description = "Occurs during an OLE drag/drop operation to specify the effect of which indicates what the result of the drop operation would be."
-Public Event OLEStartDrag(AllowedEffects As Long)
+Public Event OLEStartDrag(ByRef AllowedEffects As Long)
 Attribute OLEStartDrag.VB_Description = "Occurs when an OLE drag/drop operation is initiated."
 Public Event OLEGetContextMenu(ByVal SelType As Integer, ByVal LpOleObject As Long, ByVal SelStart As Long, ByVal SelEnd As Long, ByRef hMenu As Long)
 Attribute OLEGetContextMenu.VB_Description = "This is a request to provide a popup menu to use on a right-click. The rich text box control destroys the popup menu when it is finished."
@@ -293,13 +293,15 @@ Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmd
 Private Declare Function MoveWindow Lib "user32" (ByVal hWnd As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal bRepaint As Long) As Long
 Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
 Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongW" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Private Declare Function SetWindowPos Lib "user32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal CX As Long, ByVal CY As Long, ByVal wFlags As Long) As Long
 Private Declare Function LockWindowUpdate Lib "user32" (ByVal hWndLock As Long) As Long
 Private Declare Function EnableWindow Lib "user32" (ByVal hWnd As Long, ByVal fEnable As Long) As Long
 Private Declare Function RedrawWindow Lib "user32" (ByVal hWnd As Long, ByVal lprcUpdate As Long, ByVal hrgnUpdate As Long, ByVal fuRedraw As Long) As Long
 Private Declare Function LoadCursor Lib "user32" Alias "LoadCursorW" (ByVal hInstance As Long, ByVal lpCursorName As Any) As Long
 Private Declare Function SetCursor Lib "user32" (ByVal hCursor As Long) As Long
+Private Declare Function GetMessagePos Lib "user32" () As Long
 Private Declare Function ScreenToClient Lib "user32" (ByVal hWnd As Long, ByRef lpPoint As POINTAPI) As Long
-Private Declare Function GetScrollPos Lib "user32" (ByVal hWnd As Long, ByVal nBar As Long) As Long
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
 Private Declare Function CLSIDFromString Lib "ole32" (ByVal lpszProgID As Long, ByRef pCLSID As Any) As Long
 Private Declare Function StgCreateDocFile Lib "ole32" Alias "StgCreateDocfile" (ByVal pwcsName As Long, ByVal grfMode As Long, ByVal Reserved As Long, ByRef ppStgOpen As OLEGuids.IStorage) As Long
@@ -342,7 +344,6 @@ EPSN_DISABLED = 4
 End Enum
 Private Declare Function OpenThemeData Lib "uxtheme" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme" (ByVal Theme As Long) As Long
-Private Declare Function GetWindowTheme Lib "uxtheme" (ByVal hWnd As Long) As Long
 Private Declare Function IsThemeBackgroundPartiallyTransparent Lib "uxtheme" (ByVal Theme As Long, iPartId As Long, iStateId As Long) As Long
 Private Declare Function DrawThemeParentBackground Lib "uxtheme" (ByVal hWnd As Long, ByVal hDC As Long, ByRef pRect As RECT) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByRef pRect As RECT, ByRef pClipRect As RECT) As Long
@@ -357,6 +358,12 @@ Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As
 #End If
 
 Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80, RDW_NOCHILDREN As Long = &H40, RDW_FRAME As Long = &H400
+Private Const SWP_FRAMECHANGED As Long = &H20
+Private Const SWP_DRAWFRAME As Long = SWP_FRAMECHANGED
+Private Const SWP_NOMOVE As Long = &H2
+Private Const SWP_NOOWNERZORDER As Long = &H200
+Private Const SWP_NOSIZE As Long = &H1
+Private Const SWP_NOZORDER As Long = &H4
 Private Const GWL_STYLE As Long = (-16)
 Private Const GWL_EXSTYLE As Long = (-20)
 Private Const CF_UNICODETEXT As Long = 13
@@ -374,6 +381,7 @@ Private Const SB_HORZ As Long = 0, SB_VERT As Long = 1
 Private Const WM_MOUSEACTIVATE As Long = &H21, MA_NOACTIVATE As Long = &H3, MA_NOACTIVATEANDEAT As Long = &H4, HTBORDER As Long = 18
 Private Const SW_HIDE As Long = &H0
 Private Const WM_SETFOCUS As Long = &H7
+Private Const WM_KILLFOCUS As Long = &H8
 Private Const WM_ENABLE As Long = &HA
 Private Const WM_THEMECHANGED As Long = &H31A
 Private Const WM_STYLECHANGED As Long = &H7D
@@ -395,6 +403,7 @@ Private Const WM_LBUTTONDBLCLK As Long = &H203
 Private Const WM_MBUTTONDBLCLK As Long = &H209
 Private Const WM_RBUTTONDBLCLK As Long = &H206
 Private Const WM_MOUSEMOVE As Long = &H200
+Private Const WM_MOUSELEAVE As Long = &H2A3
 Private Const WM_HSCROLL As Long = &H114
 Private Const WM_VSCROLL As Long = &H115
 Private Const WM_CONTEXTMENU As Long = &H7B
@@ -682,6 +691,8 @@ Private Const PHYSICALWIDTH As Long = 110
 Private Const PHYSICALHEIGHT As Long = 111
 Private Const PHYSICALOFFSETX As Long = 112
 Private Const PHYSICALOFFSETY As Long = 113
+Private Const HORZRES As Long = 8
+Private Const VERTRES As Long = 10
 Private Const LOGPIXELSX As Long = 88
 Private Const LOGPIXELSY As Long = 90
 Implements ISubclass
@@ -693,10 +704,13 @@ Private RichTextBoxFontHandle As Long
 Private RichTextBoxIMCHandle As Long
 Private RichTextBoxCharCodeCache As Long
 Private RichTextBoxIsClick As Boolean
+Private RichTextBoxMouseOver As Boolean
+Private RichTextBoxFocused As Boolean
 Private RichTextBoxDataObjectValue As Variant
 Private RichTextBoxDataObjectFormat As Variant
 Private RichTextBoxOleCallback As RtfOleCallback
 Private RichTextBoxIsOleCallback As Boolean
+Private RichTextBoxEnabledVisualStyles As Boolean
 Private DispIDMousePointer As Long
 Private WithEvents PropFont As StdFont
 Attribute PropFont.VB_VarHelpID = -1
@@ -843,7 +857,7 @@ PropUseSystemPasswordChar = .ReadProperty("UseSystemPasswordChar", False)
 PropMultiLine = .ReadProperty("MultiLine", False)
 PropMaxLength = .ReadProperty("MaxLength", 0)
 PropScrollBars = .ReadProperty("ScrollBars", vbSBNone)
-PropWantReturn = .ReadProperty("WantReturn", False)
+PropWantReturn = .ReadProperty("WantReturn", True)
 PropDisableNoScroll = .ReadProperty("DisableNoScroll", False)
 PropAutoURLDetect = .ReadProperty("AutoURLDetect", True)
 PropBulletIndent = .ReadProperty("BulletIndent", 0)
@@ -880,7 +894,7 @@ With PropBag
 .WriteProperty "MultiLine", PropMultiLine, False
 .WriteProperty "MaxLength", PropMaxLength, 0
 .WriteProperty "ScrollBars", PropScrollBars, vbSBNone
-.WriteProperty "WantReturn", PropWantReturn, False
+.WriteProperty "WantReturn", PropWantReturn, True
 .WriteProperty "DisableNoScroll", PropDisableNoScroll, False
 .WriteProperty "AutoURLDetect", PropAutoURLDetect, True
 .WriteProperty "BulletIndent", PropBulletIndent, 0
@@ -1147,7 +1161,8 @@ End Property
 
 Public Property Let VisualStyles(ByVal Value As Boolean)
 PropVisualStyles = Value
-If RichTextBoxHandle <> 0 And EnabledVisualStyles() = True Then
+RichTextBoxEnabledVisualStyles = EnabledVisualStyles()
+If RichTextBoxHandle <> 0 And RichTextBoxEnabledVisualStyles = True Then
     If PropVisualStyles = True Then
         ActivateVisualStyles RichTextBoxHandle
     Else
@@ -2734,7 +2749,7 @@ End Property
 
 Public Sub SelPrint(ByVal hDC As Long, Optional ByVal CallStartEndDoc As Boolean = True, Optional ByVal DocName As String = "RICHTEXT", Optional ByVal LeftMargin As Long, Optional ByVal TopMargin As Long, Optional ByVal RightMargin As Long, Optional ByVal BottomMargin As Long)
 Attribute SelPrint.VB_Description = "Sends formatted text in a rich text box control to a device for printing."
-If RichTextBoxHandle <> 0 Then
+If RichTextBoxHandle <> 0 And hDC <> 0 Then
     Dim RECR As RECHARRANGE, Length As Long
     If SendMessage(RichTextBoxHandle, EM_SELECTIONTYPE, 0, ByVal 0&) = RtfSelTypeEmpty Then
         RECR.Min = 0
@@ -2753,7 +2768,7 @@ End Sub
 
 Public Sub PrintDoc(ByVal hDC As Long, Optional ByVal CallStartEndDoc As Boolean = True, Optional ByVal DocName As String = "RICHTEXT", Optional ByVal LeftMargin As Long, Optional ByVal TopMargin As Long, Optional ByVal RightMargin As Long, Optional ByVal BottomMargin As Long)
 Attribute PrintDoc.VB_Description = "Sends formatted text in a rich text box control to a device for printing."
-If RichTextBoxHandle <> 0 Then
+If RichTextBoxHandle <> 0 And hDC <> 0 Then
     Dim Length As Long, REGTLEX As REGETTEXTLENGTHEX
     REGTLEX.Flags = GTL_PRECISE Or GTL_NUMCHARS
     REGTLEX.CodePage = CP_UNICODE
@@ -3181,59 +3196,74 @@ End If
 End Function
 
 Private Sub CreatePrintJob(ByVal Min As Long, ByVal Max As Long, ByVal Length As Long, ByVal hDC As Long, ByVal CallStartEndDoc As Boolean, ByVal DocName As String, ByVal LeftMargin As Long, ByVal TopMargin As Long, ByVal RightMargin As Long, ByVal BottomMargin As Long)
-If RichTextBoxHandle <> 0 Then
+If RichTextBoxHandle <> 0 And hDC <> 0 Then
     Dim REFR As REFORMATRANGE
     With REFR
     .hDC = hDC
     .hDCTarget = hDC
     .CharRange.Min = Min
     .CharRange.Max = Max
-    Dim PhysCX As Long, PhysCY As Long, PhysOffsetCX As Long, PhysOffsetCY As Long
-    PhysCX = GetDeviceCaps(hDC, PHYSICALWIDTH)
-    PhysCY = GetDeviceCaps(hDC, PHYSICALHEIGHT)
-    PhysOffsetCX = GetDeviceCaps(hDC, PHYSICALOFFSETX)
-    PhysOffsetCY = GetDeviceCaps(hDC, PHYSICALOFFSETY)
+    Dim IsPrinterDC As Boolean, PhysCX As Long, PhysCY As Long, PhysOffsetCX As Long, PhysOffsetCY As Long
+    IsPrinterDC = CBool(GetDeviceCaps(hDC, PHYSICALWIDTH) > 0 And GetDeviceCaps(hDC, PHYSICALHEIGHT) > 0)
+    If IsPrinterDC = True Then
+        PhysCX = MulDiv(GetDeviceCaps(hDC, PHYSICALWIDTH), 1440, GetDeviceCaps(hDC, LOGPIXELSX))
+        PhysCY = MulDiv(GetDeviceCaps(hDC, PHYSICALHEIGHT), 1440, GetDeviceCaps(hDC, LOGPIXELSY))
+        PhysOffsetCX = MulDiv(GetDeviceCaps(hDC, PHYSICALOFFSETX), 1440, GetDeviceCaps(hDC, LOGPIXELSX))
+        PhysOffsetCY = MulDiv(GetDeviceCaps(hDC, PHYSICALOFFSETY), 1440, GetDeviceCaps(hDC, LOGPIXELSY))
+    Else
+        Dim hDCScreen As Long
+        hDCScreen = GetDC(0)
+        If hDCScreen <> 0 Then
+            PhysCX = MulDiv(GetDeviceCaps(hDCScreen, HORZRES), 1440, GetDeviceCaps(hDCScreen, LOGPIXELSX))
+            PhysCY = MulDiv(GetDeviceCaps(hDCScreen, VERTRES), 1440, GetDeviceCaps(hDCScreen, LOGPIXELSY))
+            ReleaseDC 0, hDCScreen
+        End If
+    End If
     With .RCPage
     .Left = 0
     .Top = 0
-    .Right = MulDiv(PhysCX, 1440, GetDeviceCaps(hDC, LOGPIXELSX))
-    .Bottom = MulDiv(PhysCY, 1440, GetDeviceCaps(hDC, LOGPIXELSY))
+    .Right = PhysCX
+    .Bottom = PhysCY
     End With
     With .RC
     .Left = PhysOffsetCX + LeftMargin
     .Top = PhysOffsetCY + TopMargin
-    .Right = PhysOffsetCX + PhysCX + RightMargin
-    .Bottom = PhysOffsetCY + PhysCY + BottomMargin
+    .Right = PhysOffsetCX + PhysCX - RightMargin
+    .Bottom = PhysOffsetCY + PhysCY - BottomMargin
     End With
-    If CallStartEndDoc = True Then
-        Dim DI As DOCINFO
-        With DI
-        .cbSize = LenB(DI)
-        .lpszDocName = StrPtr(DocName)
-        .lpszOutput = 0
-        .lpszDatatype = 0
-        .fwType = 0
-        End With
-        StartDoc hDC, DI
-    End If
-    Dim NextCharPos As Long, Success As Boolean
-    Success = True
-    Do While Success = True
-        Success = CBool(StartPage(hDC) > 0)
-        If Success = False Then Exit Do
-        NextCharPos = SendMessage(RichTextBoxHandle, EM_FORMATRANGE, 1, ByVal VarPtr(REFR))
-        Success = CBool(EndPage(hDC) > 0)
-        If NextCharPos < Length Then .CharRange.Min = NextCharPos Else Exit Do
-    Loop
-    End With
-    SendMessage RichTextBoxHandle, EM_FORMATRANGE, 0, ByVal 0&
-    If CallStartEndDoc = True Then
-        If Success = True Then
-            EndDoc hDC
-        Else
-            AbortDoc hDC
+    If IsPrinterDC = True Then
+        If CallStartEndDoc = True Then
+            Dim DI As DOCINFO
+            With DI
+            .cbSize = LenB(DI)
+            .lpszDocName = StrPtr(DocName)
+            .lpszOutput = 0
+            .lpszDatatype = 0
+            .fwType = 0
+            End With
+            StartDoc hDC, DI
         End If
+        Dim NextCharPos As Long, Success As Boolean
+        Do
+            Success = CBool(StartPage(hDC) > 0)
+            If Success = False Then Exit Do
+            NextCharPos = SendMessage(RichTextBoxHandle, EM_FORMATRANGE, 1, ByVal VarPtr(REFR))
+            Success = CBool(EndPage(hDC) > 0)
+            If NextCharPos < Length Then .CharRange.Min = NextCharPos Else Exit Do
+        Loop While Success = True
+        SendMessage RichTextBoxHandle, EM_FORMATRANGE, 0, ByVal 0&
+        If CallStartEndDoc = True Then
+            If Success = True Then
+                EndDoc hDC
+            Else
+                AbortDoc hDC
+            End If
+        End If
+    Else
+        SendMessage RichTextBoxHandle, EM_FORMATRANGE, 1, ByVal VarPtr(REFR)
+        SendMessage RichTextBoxHandle, EM_FORMATRANGE, 0, ByVal 0&
     End If
+    End With
 End If
 End Sub
 
@@ -3258,7 +3288,12 @@ Friend Sub FIRichEditOleCallback_GetDragDropEffect(ByVal Drag As Boolean, ByVal 
 If Drag = True Then
     RaiseEvent OLEStartDrag(dwEffect) ' AllowedEffects
 Else
-    RaiseEvent OLEGetDropEffect(dwEffect, GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState))  ' Effect
+    Dim Pos As Long, P As POINTAPI
+    Pos = GetMessagePos()
+    P.X = Get_X_lParam(Pos)
+    P.Y = Get_Y_lParam(Pos)
+    ScreenToClient UserControl.hWnd, P
+    RaiseEvent OLEGetDropEffect(dwEffect, GetMouseStateFromParam(KeyState), GetShiftStateFromParam(KeyState), UserControl.ScaleX(P.X, vbPixels, vbContainerPosition), UserControl.ScaleY(P.Y, vbPixels, vbContainerPosition))
 End If
 End Sub
 
@@ -3363,18 +3398,20 @@ Select Case wMsg
             End If
             If Handled = True Then Exit Function
         End If
-
+    
     #If ImplementThemedBorder = True Then
-
+    
     Case WM_THEMECHANGED, WM_STYLECHANGED, WM_ENABLE
-        ' Redraw the border depending on the state.
-        RedrawWindow hWnd, 0, 0, RDW_FRAME Or RDW_INVALIDATE Or RDW_UPDATENOW Or RDW_NOCHILDREN
+        If wMsg = WM_THEMECHANGED Then RichTextBoxEnabledVisualStyles = EnabledVisualStyles()
+        If PropBorder = True And PropVisualStyles = True Then
+            If RichTextBoxEnabledVisualStyles = True Then SetWindowPos hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_DRAWFRAME
+        End If
     Case WM_NCPAINT
         ' For some reason, Microsoft never updated its rich edit library after the release
         ' of Windows XP to make the rich edit control theme-aware.
         ' In order to support themes it is necessary to do a workaround.
         If PropBorder = True And PropVisualStyles = True Then
-            If EnabledVisualStyles() = True Then
+            If RichTextBoxEnabledVisualStyles = True Then
                 Dim Theme As Long
                 Theme = OpenThemeData(hWnd, StrPtr("Edit"))
                 If Theme <> 0 Then
@@ -3421,7 +3458,13 @@ Select Case wMsg
                             RichTextBoxState = EPSN_DISABLED
                             Brush = CreateSolidBrush(WinColor(vbButtonFace))
                         Else
-                            RichTextBoxState = EPSN_NORMAL
+                            If RichTextBoxFocused = True Then
+                                RichTextBoxState = EPSN_FOCUSED
+                            ElseIf RichTextBoxMouseOver = True Then
+                                RichTextBoxState = EPSN_HOT
+                            Else
+                                RichTextBoxState = EPSN_NORMAL
+                            End If
                             Brush = CreateSolidBrush(WinColor(PropBackColor))
                         End If
                         FillRect hDC, RC2, Brush
@@ -3435,12 +3478,23 @@ Select Case wMsg
                 End If
             End If
         End If
-
+    
     #End If
-
+    
 End Select
 WindowProcControl = ComCtlsDefaultProc(hWnd, wMsg, wParam, lParam)
 Select Case wMsg
+    
+    #If ImplementThemedBorder = True Then
+    
+    Case WM_SETFOCUS, WM_KILLFOCUS
+        RichTextBoxFocused = CBool(wMsg = WM_SETFOCUS)
+        If PropBorder = True And PropVisualStyles = True Then
+            If RichTextBoxEnabledVisualStyles = True Then SetWindowPos hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_DRAWFRAME
+        End If
+    
+    #End If
+    
     Case WM_LBUTTONDBLCLK, WM_MBUTTONDBLCLK, WM_RBUTTONDBLCLK
         RaiseEvent DblClick
     Case WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
@@ -3459,6 +3513,19 @@ Select Case wMsg
                 RaiseEvent MouseDown(vbRightButton, GetShiftStateFromParam(wParam), X, Y)
                 RichTextBoxIsClick = True
             Case WM_MOUSEMOVE
+                If RichTextBoxMouseOver = False Then
+                    RichTextBoxMouseOver = True
+                    
+                    #If ImplementThemedBorder = True Then
+                    
+                    If PropBorder = True And PropVisualStyles = True Then
+                        If RichTextBoxEnabledVisualStyles = True Then SetWindowPos hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_DRAWFRAME
+                    End If
+                    
+                    #End If
+                    
+                    Call ComCtlsRequestMouseLeave(hWnd)
+                End If
                 RaiseEvent MouseMove(GetMouseStateFromParam(wParam), GetShiftStateFromParam(wParam), X, Y)
             Case WM_LBUTTONUP, WM_MBUTTONUP, WM_RBUTTONUP
                 Select Case wMsg
@@ -3474,6 +3541,17 @@ Select Case wMsg
                     If (X >= 0 And X <= UserControl.Width) And (Y >= 0 And Y <= UserControl.Height) Then RaiseEvent Click
                 End If
         End Select
+    Case WM_MOUSELEAVE
+        RichTextBoxMouseOver = False
+        
+        #If ImplementThemedBorder = True Then
+        
+        If PropBorder = True And PropVisualStyles = True Then
+            If RichTextBoxEnabledVisualStyles = True Then SetWindowPos hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOOWNERZORDER Or SWP_NOZORDER Or SWP_DRAWFRAME
+        End If
+        
+        #End If
+        
 End Select
 End Function
 

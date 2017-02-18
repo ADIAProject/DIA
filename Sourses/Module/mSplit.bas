@@ -127,7 +127,7 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
 
     Dim p()    As Long
     Dim c      As Long
-    Dim I      As Long
+    Dim ii     As Long
     Dim J      As Long
     Dim K      As Long
     Dim LD     As Long
@@ -180,16 +180,16 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                     If Compare = [SplitBinaryCompare] Then
 
                         Do
-                            I = InStrB(I + 1, Expression, Delimiter)
-                        Loop Until (I And 1) = 1 Or (I = 0)
+                            ii = InStrB(ii + 1, Expression, Delimiter)
+                        Loop Until (ii And 1) = 1 Or (ii = 0)
 
                     Else
-                        I = InStr(Expression, Delimiter)
+                        ii = InStr(Expression, Delimiter)
                     End If
                 End If
 
                 ' did we find an item?
-                If I Then
+                If ii Then
 
                     ReDim p(3)
 
@@ -220,20 +220,20 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                             End If
 
                             ' exit if nothing found
-                            If I = 0 Then
+                            If ii = 0 Then
 
                                 Exit For
 
                             End If
 
                             ' remember position
-                            p(c) = I - 1
+                            p(c) = ii - 1
                             ' find next
-                            I = I + LD - 1
+                            ii = ii + LD - 1
 
                             Do
-                                I = InStrB(I + 1, Expression, Delimiter)
-                            Loop Until (I And 1) = 1 Or (I = 0)
+                                ii = InStrB(ii + 1, Expression, Delimiter)
+                            Loop Until (ii And 1) = 1 Or (ii = 0)
 
                         Next c
 
@@ -252,16 +252,16 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                             End If
 
                             ' exit if nothing found
-                            If I = 0 Then
+                            If ii = 0 Then
 
                                 Exit For
 
                             End If
 
                             ' remember position
-                            p(c) = (I - 1) * 2
+                            p(c) = (ii - 1) * 2
                             ' find next
-                            I = InStr(I + LD2, Expression, Delimiter)
+                            ii = InStr(ii + LD2, Expression, Delimiter)
                         Next c
 
                     End If
@@ -273,21 +273,21 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
                     m_H(4) = RP
                     m_A(0) = z_Split
                     ' keep it simple, stupid!
-                    I = 0
+                    ii = 0
 
                     For c = 0 To c
                         K = p(c)
-                        J = K - I
+                        J = K - ii
 
                         If J Then
-                            r(c) = SysAllocStringByteLen(PS + I, J)
+                            r(c) = SysAllocStringByteLen(PS + ii, J)
                         End If
 
-                        I = K + LD
+                        ii = K + LD
                     Next c
 
                 Else
-                    'I = FALSE/0
+                    'ii = FALSE/0
                     ' one item
                     z_Split = InitStringArray(, , 0.0001)
                     ' set pointer
@@ -314,4 +314,3 @@ Public Function z_Split(Expression As String, Optional Delimiter As String = str
     End If
 
 End Function
-

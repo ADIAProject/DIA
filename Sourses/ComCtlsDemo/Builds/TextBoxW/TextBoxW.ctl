@@ -204,7 +204,6 @@ Private Declare Function SetCaretPos Lib "user32" (ByVal X As Long, ByVal Y As L
 Private Declare Function ShowCaret Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function DestroyCaret Lib "user32" () As Long
 Private Declare Function DragDetect Lib "user32" (ByVal hWnd As Long, ByVal PX As Integer, ByVal PY As Integer) As Long
-Private Declare Function ReleaseCapture Lib "user32" () As Long
 Private Const ICC_STANDARD_CLASSES As Long = &H4000
 Private Const RDW_UPDATENOW As Long = &H100, RDW_INVALIDATE As Long = &H1, RDW_ERASE As Long = &H4, RDW_ALLCHILDREN As Long = &H80
 Private Const GWL_STYLE As Long = (-16)
@@ -1045,7 +1044,9 @@ End If
 End Property
 
 Public Property Let Text(ByVal Value As String)
-If Me.Text = Value Then Exit Property
+If PropMaxLength > 0 Then Value = Left$(Value, PropMaxLength)
+Dim Changed As Boolean
+Changed = CBool(Me.Text <> Value)
 PropText = Value
 If TextBoxHandle <> 0 Then
     TextBoxChangeFrozen = True
@@ -1053,7 +1054,7 @@ If TextBoxHandle <> 0 Then
     TextBoxChangeFrozen = False
 End If
 UserControl.PropertyChanged "Text"
-RaiseEvent Change
+If Changed = True Then RaiseEvent Change
 End Property
 
 Public Property Get Default() As String
@@ -1424,11 +1425,11 @@ If TextBoxHandle = 0 Then TextBoxHandle = CreateWindowEx(dwExStyle, StrPtr("Edit
 If TextBoxHandle <> 0 Then
     If PropPasswordChar <> 0 And PropUseSystemPasswordChar = False Then SendMessage TextBoxHandle, EM_SETPASSWORDCHAR, PropPasswordChar, ByVal 0&
     SendMessage TextBoxHandle, EM_SETLIMITTEXT, PropMaxLength, ByVal 0&
+    SendMessage TextBoxHandle, WM_SETTEXT, 0, ByVal StrPtr(PropText)
 End If
 Set Me.Font = PropFont
 Me.VisualStyles = PropVisualStyles
 Me.Enabled = UserControl.Enabled
-Me.Text = PropText
 Me.Alignment = PropAlignment
 If Not PropCueBanner = vbNullString Then Me.CueBanner = PropCueBanner
 If PropNetAddressValidator = True Then Me.NetAddressType = PropNetAddressType
@@ -1752,7 +1753,7 @@ If TextBoxHandle <> 0 And PropNetAddressValidator = True Then
                         TextBoxNetAddressString = HiByte(HiWord(.sin_addr)) & "." & LoByte(HiWord(.sin_addr)) & "." & HiByte(LoWord(.sin_addr)) & "." & LoByte(LoWord(.sin_addr))
                         End With
                     Case NET_ADDRESS_IPV6
-                        Dim NETADDRINFO_IPV6 As NET_ADDRESS_INFO_IPV6, Buffer As String, Temp As String, i As Long, ii As Long
+                        Dim NETADDRINFO_IPV6 As NET_ADDRESS_INFO_IPV6, Buffer As String, Temp As String, i As Long
                         CopyMemory ByVal VarPtr(NETADDRINFO_IPV6), NETADDRINFO_UNSPECIFIED.Data(0), LenB(NETADDRINFO_IPV6)
                         With NETADDRINFO_IPV6
                         For i = 1 To 8

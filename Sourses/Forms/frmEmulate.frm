@@ -59,10 +59,10 @@ Begin VB.Form frmEmulate
          DefaultExt      =   ""
          DialogType      =   1
          Enabled         =   0   'False
-         FileFlags       =   2621446
          Filters         =   "Supported files *hwids*.txt|*hwids*.txt|All Files (*.*)"
          UseDialogText   =   0   'False
          Locked          =   -1  'True
+         QualifyPaths    =   -1  'True
       End
       Begin prjDIADBS.LabelW lblInfo 
          Height          =   495
@@ -167,7 +167,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.TextBoxW txtPCModel 
          Height          =   315
          Left            =   120
-         TabIndex        =   5
+         TabIndex        =   6
          Top             =   2160
          Width           =   7905
          _ExtentX        =   13944
@@ -227,7 +227,7 @@ Begin VB.Form frmEmulate
       Begin prjDIADBS.CheckBoxW chkIsNotebook 
          Height          =   255
          Left            =   120
-         TabIndex        =   6
+         TabIndex        =   5
          Top             =   1860
          Width           =   7905
          _ExtentX        =   13944
@@ -278,6 +278,11 @@ Option Explicit
 Private strFilePath As String
 Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Get CaptionW
+'! Description (Описание)  :   [Получение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -286,9 +291,57 @@ Public Property Get CaptionW() As String
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Let CaptionW
+'! Description (Описание)  :   [Изменение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [нажали выход]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [нажали ок]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+
+    Dim strFilePath As String
+
+    strFilePath = ucFilePath.Path
+
+    If LenB(strFilePath) Then
+        'Переопределение массива данных о дайверах эмулируемой системы
+        LoadAndParseFile strFilePath
+        
+        'Переопределение версии и разрядности системы для режима эмуляции
+        mbIsWin64 = CBool(chk64bit.Value)
+        strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
+        
+        'Переопределение модели компьютера
+        mbIsNotebook = CBool(chkIsNotebook.Value)
+        strCompModel = txtPCModel
+        
+        ' А теперь обновляем статус всех пакетов
+        frmMain.UpdateStatusButtonAll
+        
+        ' Обновить список неизвестных дров и описание для кнопки
+        frmMain.LoadCmdViewAllDeviceCaption
+        ChangeStatusBarText strMessages(114)
+        Unload Me
+    End If
+
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub EnablerCmdOK
@@ -324,6 +377,57 @@ Private Sub FontCharsetChange()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    If KeyCode = vbKeyEscape Then
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [обработка при загрузке формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+    ' Устанавливаем картинки кнопок и убираем описание кнопок
+    SetupVisualStyles Me
+
+    With Me
+        strFormName = .Name
+        SetIcon .hWnd, strFormName, False
+        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
+        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
+    End With
+
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+
+    ' Локализация приложения
+    If mbMultiLanguage Then
+        Localise strPCLangCurrentPath
+    Else
+        ' Выставляем шрифт
+        FontCharsetChange
+    End If
+
+    ' Загружаем список операционных систем
+    LoadListOS
+    LoadDefaultParam
+
+    cmbOS.Enabled = False
+    chk64bit.Enabled = False
+    chkIsNotebook.Enabled = False
+    txtPCModel.Enabled = False
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub LoadAndParseFile
 '! Description (Описание)  :   [Загрузка файла и переопределение массива]
 '! Parameters  (Переменные):   strFilePath (String)
@@ -337,7 +441,7 @@ Private Sub LoadAndParseFile(ByVal strFilePath As String)
 
     'FileReadData strFilePath, strContentFile
     'arrFileStrings = Split(strContentFile, vbNewLine)
-    With New Lickety
+    With New cLickety
         arrFileStrings = .SplitFile(strFilePath, Unicode:=False, LineDelim:=vbNewLine)
     End With
 
@@ -458,100 +562,6 @@ Private Sub Localise(ByVal strPathFile As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [нажали выход]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [нажали ок]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-
-    Dim strFilePath As String
-
-    strFilePath = ucFilePath.Path
-
-    If LenB(strFilePath) Then
-        'Переопределение массива данных о дайверах эмулируемой системы
-        LoadAndParseFile strFilePath
-        
-        'Переопределение версии и разрядности системы для режима эмуляции
-        mbIsWin64 = CBool(chk64bit.Value)
-        strOSCurrentVersion = Mid$(cmbOS.Text, 2, 3)
-        
-        'Переопределение модели компьютера
-        mbIsNotebook = CBool(chkIsNotebook.Value)
-        strCompModel = txtPCModel
-        
-        ' А теперь обновляем статус всех пакетов
-        frmMain.UpdateStatusButtonAll
-        
-        ' Обновить список неизвестных дров и описание для кнопки
-        frmMain.LoadCmdViewAllDeviceCaption
-        ChangeStatusBarText strMessages(114)
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-
-    If KeyCode = vbKeyEscape Then
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [обработка при загрузке формы]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    ' Устанавливаем картинки кнопок и убираем описание кнопок
-    SetupVisualStyles Me
-
-    With Me
-        strFormName = .Name
-        SetIcon .hWnd, strFormName, False
-        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
-        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-    End With
-
-    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
-
-    ' Локализация приложения
-    If mbMultiLanguage Then
-        Localise strPCLangCurrentPath
-    Else
-        ' Выставляем шрифт
-        FontCharsetChange
-    End If
-
-    ' Загружаем список операционных систем
-    LoadListOS
-    LoadDefaultParam
-
-    cmbOS.Enabled = False
-    chk64bit.Enabled = False
-    chkIsNotebook.Enabled = False
-    txtPCModel.Enabled = False
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub ParseFileName
 '! Description (Описание)  :   [Parsing filename snap of the OS, and get OS parametrs]
 '! Parameters  (Переменные):   strFilePath (String)
@@ -649,4 +659,3 @@ Private Sub ucFilePath_Click()
     End If
 
 End Sub
-

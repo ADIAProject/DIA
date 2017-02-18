@@ -55,7 +55,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-'Note: this file has been modified for use within Drivers Installer Assistant.
+'Note: this file has been modified for use within Drivers Installer Assistant and Drivers BackUp Solution.
 'This code was originally written by Grid2000.com.
 'You may download the original version of this code from the following link (good as of June '12):
 ' http://www.freevbcode.com/ShowCode.Asp?ID=6638
@@ -97,10 +97,10 @@ Option Explicit
 'API-Declaration
 '---------------------------------------------------------
 Private Type RECT
-    Left                                As Long
-    Top                                 As Long
-    Right                               As Long
-    Bottom                              As Long
+    Left                        As Long
+    Top                         As Long
+    Right                       As Long
+    Bottom                      As Long
 End Type
 
 ' --Formatting Text Consts
@@ -118,14 +118,14 @@ Private Const DT_VCENTER        As Long = &H4
 Private Const DT_SINGLELINE     As Long = &H20
 Private Const DT_WORD_ELLIPSIS  As Long = &H40000
 
-Private Const DI_NORMAL                 As Long = &H3
-Private Const BF_RECT                   As Long = &HF
-Private Const BDR_SUNKENOUTER           As Long = &H2
-Private Const BDR_RAISEDINNER           As Long = &H4
-Private Const BDR_RAISED                As Long = &H5
-Private Const GWL_EXSTYLE               As Integer = -20
-Private Const WS_EX_TOPMOST             As Long = &H8
-Private Const WS_EX_TOOLWINDOW          As Long = &H80
+Private Const DI_NORMAL         As Long = &H3
+Private Const BF_RECT           As Long = &HF
+Private Const BDR_SUNKENOUTER   As Long = &H2
+Private Const BDR_RAISEDINNER   As Long = &H4
+Private Const BDR_RAISED        As Long = &H5
+Private Const GWL_EXSTYLE       As Integer = -20
+Private Const WS_EX_TOPMOST     As Long = &H8
+Private Const WS_EX_TOOLWINDOW  As Long = &H80
 
 Private Declare Function SelectObject Lib "gdi32.dll" (ByVal hDC As Long, ByVal hObject As Long) As Long
 Private Declare Function DeleteObject Lib "gdi32.dll" (ByVal hObject As Long) As Long
@@ -200,7 +200,26 @@ Public Event MouseOut()
 Public Event DropDownOpen()
 Public Event DropDownClose()
 
-Implements OLEGuids.IOleInPlaceActiveObjectVB
+'Implements OLEGuids.IOleInPlaceActiveObjectVB
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub UserControl_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub UserControl_Initialize()
+    m_nBorderColor = RGB(8, 36, 107)
+    m_nFillColor = RGB(181, 190, 214)
+    m_nDarkFillColor = RGB(132, 146, 181)
+    m_nShadowColor = VBColorToRGB(vbButtonShadow)
+    m_nBackColor = vbButtonFace
+    m_nForbiddenColor = vbButtonFace
+    m_UseForbiddenColor = False
+    m_Style = ColorButtonStyles.ColorRectAndIconAbove
+    m_ColorPalette = ColorPalettes.System
+    m_DropDownCaption = Def_DropDownCaption
+    Flag = True
+End Sub
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Property BackColor
@@ -208,7 +227,6 @@ Implements OLEGuids.IOleInPlaceActiveObjectVB
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get BackColor() As OLE_COLOR
-Attribute BackColor.VB_UserMemId = 1745027079
     BackColor = m_nBackColor
 End Property
 
@@ -230,7 +248,6 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get ColorPalette() As ColorPalettes
-Attribute ColorPalette.VB_UserMemId = 1745027078
     ColorPalette = m_ColorPalette
 End Property
 
@@ -273,7 +290,6 @@ End Property
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Property Get DropDownCaption() As String
-Attribute DropDownCaption.VB_UserMemId = 1745027077
     DropDownCaption = m_DropDownCaption
 End Property
 
@@ -395,7 +411,7 @@ End Property
 '!--------------------------------------------------------------------------------
 Private Sub DrawAllColors()
 
-Dim I                                   As Integer
+Dim ii                                  As Integer
 Dim J                                   As Integer
 Dim RC                                  As RECT
 
@@ -421,11 +437,11 @@ Dim RC                                  As RECT
     End If
 
     'Other colors
-    For I = 0 To m_ColorsInColumn - 1
+    For ii = 0 To m_ColorsInColumn - 1
         For J = 0 To m_ColorsInRow - 1
-            DrawRectangle picDropDown.hDC, 8 + J * m_Step, m_OffsetTop + I * m_Step, m_RectSize, m_RectSize, &H808080, m_arrColor(I, J)
+            DrawRectangle picDropDown.hDC, 8 + J * m_Step, m_OffsetTop + ii * m_Step, m_RectSize, m_RectSize, &H808080, m_arrColor(ii, J)
         Next J
-    Next I
+    Next ii
 
     'Window border
     SetRect RC, 0, 0, picDropDown.ScaleWidth, picDropDown.ScaleHeight
@@ -445,6 +461,7 @@ End Sub
 '                              Transparent (Boolean)
 '!--------------------------------------------------------------------------------
 Public Sub DrawRectangle(ByVal lngHDc As Long, ByVal X As Long, ByVal Y As Long, ByVal Cx As Long, ByVal Cy As Long, Optional ByVal PenColor As Long = 0, Optional ByVal BrushColor As Long = &HFFFFFF, Optional ByVal Transparent As Boolean)
+Attribute DrawRectangle.VB_UserMemId = 1610809350
 
 Dim hPen                                As Long
 Dim hBrush                              As Long
@@ -497,32 +514,32 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub DrawSelectedColorBackground(lngHDc As Long, X As Long, Y As Long, Cx As Long, Cy As Long)
 
-Dim I                                   As Long
+Dim ii                                  As Long
 Dim J                                   As Long
 Dim RC                                  As RECT
 Dim hBrush                              As Long
 
     hBrush = CreateSolidBrush(&HFFFFFF)
 
-    For I = X To X + Cx - 1
+    For ii = X To X + Cx - 1
 
-        If I Mod 2 = 0 Then
+        If ii Mod 2 = 0 Then
 
             For J = Y + 1 To Y + Cy - 1 Step 2
-                SetRect RC, I, J, I + 1, J + 1
+                SetRect RC, ii, J, ii + 1, J + 1
                 FillRect lngHDc, RC, hBrush
             Next J
 
         Else
 
             For J = Y To Y + Cy - 1 Step 2
-                SetRect RC, I, J, I + 1, J + 1
+                SetRect RC, ii, J, ii + 1, J + 1
                 FillRect lngHDc, RC, hBrush
             Next J
 
         End If
 
-    Next I
+    Next ii
 
     DeleteObject hBrush
     SetRect RC, X, Y, X + Cx, Y + Cy
@@ -539,19 +556,19 @@ Public Sub DropDown()
 Dim ListTop                             As Single
 Dim ListLeft                            As Single
 Dim RC                                  As RECT
-Dim I                                   As Integer
+Dim ii                                  As Integer
 Dim J                                   As Integer
 
     'Get m_ixIndex and m_iyIndex
     m_iXIndex = -1
     m_iYIndex = -1
 
-    For I = 0 To m_ColorsInColumn - 1
+    For ii = 0 To m_ColorsInColumn - 1
         For J = 0 To m_ColorsInRow - 1
 
-            If m_arrColor(I, J) = m_nSelectedColor Then
+            If m_arrColor(ii, J) = m_nSelectedColor Then
                 m_iXIndex = J
-                m_iYIndex = I
+                m_iYIndex = ii
 
                 Exit For
 
@@ -565,7 +582,7 @@ Dim J                                   As Integer
 
         End If
 
-    Next I
+    Next ii
 
     GetWindowRect UserControl.hWnd, RC
 
@@ -613,20 +630,20 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Function GetColorIndex(ByVal X As Single, ByVal Y As Single, ByRef XIndex As Integer, ByRef YIndex As Integer) As Boolean
 
-Dim I                                   As Integer
+Dim ii                                  As Integer
 Dim J                                   As Integer
 
-    For I = 0 To m_ColorsInRow - 1
+    For ii = 0 To m_ColorsInRow - 1
 
-        If X >= 8 + I * m_Step - 3 Then
-            If X <= 8 + I * m_Step + m_RectSize + 3 Then
+        If X >= 8 + ii * m_Step - 3 Then
+            If X <= 8 + ii * m_Step + m_RectSize + 3 Then
 
                 Exit For
 
             End If
         End If
 
-    Next I
+    Next ii
 
     For J = 0 To m_ColorsInColumn - 1
 
@@ -640,10 +657,10 @@ Dim J                                   As Integer
 
     Next J
 
-    If I >= m_ColorsInRow Or J >= m_ColorsInColumn Then
+    If ii >= m_ColorsInRow Or J >= m_ColorsInColumn Then
         GetColorIndex = False
     Else
-        XIndex = I
+        XIndex = ii
         YIndex = J
         GetColorIndex = True
     End If
@@ -726,31 +743,6 @@ Private Sub InitColorArray()
 
 End Sub
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Redraw
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Redraw()
-    UserControl.Cls
-    UserControl.BackColor = m_nBackColor
-    DrawSelectedColor
-    UserControl.Refresh
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function VBColorToRGB
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   VBColor (Long)
-'!--------------------------------------------------------------------------------
-Public Function VBColorToRGB(ByVal VBColor As Long) As Long
-
-    If OleTranslateColor(VBColor, 0, VBColorToRGB) Then
-        VBColorToRGB = VBColor
-    End If
-
-End Function
-
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
     On Error Resume Next
     Dim This As OLEGuids.IOleInPlaceActiveObjectVB
@@ -770,7 +762,7 @@ End Sub
 Private Sub picDropDown_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 Dim RC                                  As RECT
-Dim I                                   As Integer
+Dim ii                                  As Integer
 Dim J                                   As Integer
 Dim clickedOnArrowArea                  As Boolean
 
@@ -804,9 +796,9 @@ Dim clickedOnArrowArea                  As Boolean
                 'Other colors
                 SetCapture picDropDown.hWnd
 
-                If GetColorIndex(X, Y, I, J) Then
-                    If Not (m_UseForbiddenColor And (m_arrColor(J, I) = m_nForbiddenColor)) Then
-                        SetRect RC, 8 + I * m_Step - 3, m_OffsetTop + J * m_Step - 3, 8 + I * m_Step + m_RectSize + 3, m_OffsetTop + J * m_Step + m_RectSize + 3
+                If GetColorIndex(X, Y, ii, J) Then
+                    If Not (m_UseForbiddenColor And (m_arrColor(J, ii) = m_nForbiddenColor)) Then
+                        SetRect RC, 8 + ii * m_Step - 3, m_OffsetTop + J * m_Step - 3, 8 + ii * m_Step + m_RectSize + 3, m_OffsetTop + J * m_Step + m_RectSize + 3
                         DrawEdge picDropDown.hDC, RC, BDR_SUNKENOUTER, BF_RECT
                         picDropDown.Refresh
                     End If
@@ -828,7 +820,7 @@ End Sub
 Private Sub picDropDown_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 Dim RC                                  As RECT
-Dim I                                   As Integer
+Dim ii                                  As Integer
 Dim J                                   As Integer
 
     DrawAllColors
@@ -850,11 +842,11 @@ Dim J                                   As Integer
         Else
 
             'Other colors
-            If GetColorIndex(X, Y, I, J) Then
-                If Not (m_UseForbiddenColor And (m_arrColor(J, I) = m_nForbiddenColor)) Then
-                    SetRect RC, 8 + I * m_Step - 3, m_OffsetTop + J * m_Step - 3, 8 + I * m_Step + m_RectSize + 3, m_OffsetTop + J * m_Step + m_RectSize + 3
+            If GetColorIndex(X, Y, ii, J) Then
+                If Not (m_UseForbiddenColor And (m_arrColor(J, ii) = m_nForbiddenColor)) Then
+                    SetRect RC, 8 + ii * m_Step - 3, m_OffsetTop + J * m_Step - 3, 8 + ii * m_Step + m_RectSize + 3, m_OffsetTop + J * m_Step + m_RectSize + 3
 
-                    If m_iXIndex = I And m_iYIndex = J Then
+                    If m_iXIndex = ii And m_iYIndex = J Then
                         DrawEdge picDropDown.hDC, RC, BDR_SUNKENOUTER, BF_RECT
                     Else
 
@@ -865,9 +857,9 @@ Dim J                                   As Integer
                         End If
                     End If
 
-                    If m_arrColor(J, I) <> previousTrackedColor Then
-                        RaiseEvent TrackColor(m_arrColor(J, I))
-                        previousTrackedColor = m_arrColor(J, I)
+                    If m_arrColor(J, ii) <> previousTrackedColor Then
+                        RaiseEvent TrackColor(m_arrColor(J, ii))
+                        previousTrackedColor = m_arrColor(J, ii)
                     End If
 
                     picDropDown.Refresh
@@ -888,7 +880,7 @@ End Sub
 '!--------------------------------------------------------------------------------
 Private Sub picDropDown_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-Dim I                                   As Integer
+Dim ii                                  As Integer
 Dim J                                   As Integer
 
     If X >= 8 And X <= 8 + 138 And Y >= 8 And Y <= 8 + 18 And m_ColorPalette = System Then
@@ -917,11 +909,11 @@ Dim J                                   As Integer
     Else
 
         'Other colors
-        If GetColorIndex(X, Y, I, J) Then
-            If Not (m_UseForbiddenColor And (m_arrColor(J, I) = m_nForbiddenColor)) Then
-                m_iXIndex = I
+        If GetColorIndex(X, Y, ii, J) Then
+            If Not (m_UseForbiddenColor And (m_arrColor(J, ii) = m_nForbiddenColor)) Then
+                m_iXIndex = ii
                 m_iYIndex = J
-                m_nSelectedColor = m_arrColor(J, I)
+                m_nSelectedColor = m_arrColor(J, ii)
                 ReleaseCapture
                 Redraw
                 picDropDown.Visible = False
@@ -933,6 +925,18 @@ Dim J                                   As Integer
         End If
     End If
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Redraw
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Redraw()
+    UserControl.Cls
+    UserControl.BackColor = m_nBackColor
+    DrawSelectedColor
+    UserControl.Refresh
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -952,25 +956,6 @@ Private Sub UserControl_ExitFocus()
     End If
 
     Redraw
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub UserControl_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub UserControl_Initialize()
-    m_nBorderColor = RGB(8, 36, 107)
-    m_nFillColor = RGB(181, 190, 214)
-    m_nDarkFillColor = RGB(132, 146, 181)
-    m_nShadowColor = VBColorToRGB(vbButtonShadow)
-    m_nBackColor = vbButtonFace
-    m_nForbiddenColor = vbButtonFace
-    m_UseForbiddenColor = False
-    m_Style = ColorButtonStyles.ColorRectAndIconAbove
-    m_ColorPalette = ColorPalettes.System
-    m_DropDownCaption = Def_DropDownCaption
-    Flag = True
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1127,3 +1112,16 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     End With
 
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function VBColorToRGB
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   VBColor (Long)
+'!--------------------------------------------------------------------------------
+Public Function VBColorToRGB(ByVal VBColor As Long) As Long
+
+    If OleTranslateColor(VBColor, 0, VBColorToRGB) Then
+        VBColorToRGB = VBColor
+    End If
+
+End Function

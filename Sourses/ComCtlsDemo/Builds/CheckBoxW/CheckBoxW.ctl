@@ -1058,16 +1058,16 @@ End Property
 Public Property Let Value(ByVal NewValue As Integer)
 Select Case NewValue
     Case vbUnchecked, vbChecked, vbGrayed
-        PropValue = NewValue
     Case vbFalse
-        PropValue = vbUnchecked
+        NewValue = vbUnchecked
     Case vbTrue
-        PropValue = vbChecked
+        NewValue = vbChecked
     Case Else
         Err.Raise 380
 End Select
 Dim Changed As Boolean
-Changed = CBool(Me.Value <> PropValue)
+Changed = CBool(Me.Value <> NewValue)
+PropValue = NewValue
 If CheckBoxHandle <> 0 Then
     If Not (GetWindowLong(CheckBoxHandle, GWL_STYLE) And BS_OWNERDRAW) = BS_OWNERDRAW Then
         SendMessage CheckBoxHandle, BM_SETCHECK, PropValue, ByVal 0&

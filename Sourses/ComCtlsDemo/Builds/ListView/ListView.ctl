@@ -742,6 +742,7 @@ Private Const LVNI_SELECTED As Long = &H2
 Private Const LVNI_CUT As Long = &H4
 Private Const LVNI_DROPHILITED As Long = &H8
 Private Const LVNI_VISIBLEORDER As Long = &H10
+Private Const LVNI_VISIBLEONLY As Long = &H40
 Private Const LVNI_ABOVE As Long = &H100
 Private Const LVNI_BELOW As Long = &H200
 Private Const LVNI_TOLEFT As Long = &H400
@@ -827,7 +828,6 @@ Private Const HDFT_HASNOVALUE As Long = &H8000&
 Private Const HDF_RTLREADING As Long = &H4
 Private Const HDF_SORTDOWN As Long = &H200
 Private Const HDF_SORTUP As Long = &H400
-Private Const HDF_FIXEDWIDTH As Long = &H100
 Private Const HDF_SPLITBUTTON As Long = &H1000000
 Private Const HDF_CHECKBOX As Long = &H40
 Private Const HDF_CHECKED As Long = &H80
@@ -909,6 +909,7 @@ Private Const LVCFMT_LEFT As Long = &H0
 Private Const LVCFMT_RIGHT As Long = &H1
 Private Const LVCFMT_CENTER As Long = &H2
 Private Const LVCFMT_JUSTIFYMASK As Long = &H3
+Private Const LVCFMT_FIXED_WIDTH As Long = &H100
 Private Const LVCFMT_IMAGE As Long = &H800
 Private Const LVCFMT_BITMAP_ON_RIGHT As Long = &H1000
 Private Const LVCFMT_COL_HAS_IMAGES As Long = &H8000&
@@ -1054,6 +1055,7 @@ Private PropGroupView As Boolean
 Private PropGroupSubsetCount As Long
 Private PropUseColumnChevron As Boolean
 Private PropUseColumnFilterBar As Boolean
+Private PropAutoSelectFirstItem As Boolean
 
 Private Sub IOleInPlaceActiveObjectVB_TranslateAccelerator(ByRef Handled As Boolean, ByRef RetVal As Long, ByVal wMsg As Long, ByVal wParam As Long, ByVal lParam As Long, ByVal Shift As Long)
 If wMsg = WM_KEYDOWN Or wMsg = WM_KEYUP Then
@@ -1226,6 +1228,7 @@ PropGroupView = False
 PropGroupSubsetCount = 0
 PropUseColumnChevron = False
 PropUseColumnFilterBar = False
+PropAutoSelectFirstItem = True
 If Ambient.UserMode = True Then
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 5)
 Else
@@ -1298,6 +1301,7 @@ PropGroupView = .ReadProperty("GroupView", False)
 PropGroupSubsetCount = .ReadProperty("GroupSubsetCount", 0)
 PropUseColumnChevron = .ReadProperty("UseColumnChevron", False)
 PropUseColumnFilterBar = .ReadProperty("UseColumnFilterBar", PropUseColumnFilterBar)
+PropAutoSelectFirstItem = .ReadProperty("AutoSelectFirstItem", True)
 End With
 If Ambient.UserMode = True Then
     Call ComCtlsSetSubclass(UserControl.hWnd, Me, 5)
@@ -1371,6 +1375,7 @@ With PropBag
 .WriteProperty "GroupSubsetCount", PropGroupSubsetCount, 0
 .WriteProperty "UseColumnChevron", PropUseColumnChevron, False
 .WriteProperty "UseColumnFilterBar", PropUseColumnFilterBar, False
+.WriteProperty "AutoSelectFirstItem", PropAutoSelectFirstItem, True
 End With
 End Sub
 
@@ -3271,6 +3276,16 @@ End If
 UserControl.PropertyChanged "UseColumnFilterBar"
 End Property
 
+Public Property Get AutoSelectFirstItem() As Boolean
+Attribute AutoSelectFirstItem.VB_Description = "Returns/sets a value that determines whether or not the first item will be selected automatically."
+AutoSelectFirstItem = PropAutoSelectFirstItem
+End Property
+
+Public Property Let AutoSelectFirstItem(ByVal Value As Boolean)
+PropAutoSelectFirstItem = Value
+UserControl.PropertyChanged "AutoSelectFirstItem"
+End Property
+
 Public Property Get ListItems() As LvwListItems
 Attribute ListItems.VB_Description = "Returns a reference to a collection of the list item objects."
 If PropListItems Is Nothing Then
@@ -4021,7 +4036,7 @@ If ListViewHandle <> 0 Then
         With LVC
         .Mask = LVCF_FMT
         SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
-        FColumnHeaderResizable = Not CBool((.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH)
+        FColumnHeaderResizable = Not CBool((.fmt And LVCFMT_FIXED_WIDTH) = LVCFMT_FIXED_WIDTH)
         End With
     Else
         FColumnHeaderResizable = Resizable
@@ -4037,9 +4052,9 @@ If ListViewHandle <> 0 And ComCtlsSupportLevel() >= 2 Then
     .Mask = LVCF_FMT
     SendMessage ListViewHandle, LVM_GETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     If Value = True Then
-        If (.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH Then .fmt = .fmt And Not HDF_FIXEDWIDTH
+        If (.fmt And LVCFMT_FIXED_WIDTH) = LVCFMT_FIXED_WIDTH Then .fmt = .fmt And Not LVCFMT_FIXED_WIDTH
     Else
-        If Not (.fmt And HDF_FIXEDWIDTH) = HDF_FIXEDWIDTH Then .fmt = .fmt Or HDF_FIXEDWIDTH
+        If Not (.fmt And LVCFMT_FIXED_WIDTH) = LVCFMT_FIXED_WIDTH Then .fmt = .fmt Or LVCFMT_FIXED_WIDTH
     End If
     SendMessage ListViewHandle, LVM_SETCOLUMN, Index - 1, ByVal VarPtr(LVC)
     End With
@@ -4219,7 +4234,7 @@ Friend Property Let FColumnHeaderFilterValue(ByVal Index As Long, ByVal Value As
 If ListViewHandle <> 0 Then
     ListViewHeaderHandle = Me.hWndHeader
     If ListViewHeaderHandle <> 0 Then
-        Dim HDI As HDITEM, ErrVal As Long
+        Dim HDI As HDITEM
         With HDI
         .Mask = HDI_FILTER
         SendMessage ListViewHeaderHandle, HDM_GETITEM, Index - 1, ByVal VarPtr(HDI)
@@ -5226,11 +5241,12 @@ If ListViewHandle <> 0 Then
             Case Else
                 If PropGroupView = False Or ComCtlsSupportLevel() = 0 Then
                     ' Not supported if ComCtlsSupportLevel() >= 1 and group view property is set to true.
-                    Dim LVRC As RECT, iItemResult As Long
+                    Dim LVRC As RECT, iItemResult As Long, Flags As Long
                     SendMessage ListViewHandle, LVM_GETVIEWRECT, 0, ByVal VarPtr(LVRC)
                     SetRect LVRC, 0, 0, (LVRC.Right - LVRC.Left), (LVRC.Bottom - LVRC.Top)
                     iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, -1, ByVal LVNI_ALL)
                     iItemResult = -1
+                    If ComCtlsSupportLevel() >= 2 Then Flags = LVNI_ALL Or LVNI_VISIBLEONLY Else Flags = LVNI_ALL
                     Do While iItem > -1
                         SetRect RC, LVIR_BOUNDS, 0, 0, 0
                         SendMessage ListViewHandle, LVM_GETITEMRECT, iItem, ByVal VarPtr(RC)
@@ -5244,7 +5260,7 @@ If ListViewHandle <> 0 Then
                                 End If
                             End If
                         End If
-                        iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, iItem, ByVal LVNI_ALL Or &H40)
+                        iItem = SendMessage(ListViewHandle, LVM_GETNEXTITEM, iItem, ByVal Flags)
                     Loop
                     If iItemResult > -1 Then
                         ' Now try to move top-left to get the topmost visible list item.
@@ -6616,7 +6632,17 @@ Select Case wMsg
             Select Case NM.Code
                 Case LVN_INSERTITEM
                     If ListViewListItemsControl = 0 Then
-                        Me.FListItemSelected(1) = True
+                        Dim LVI As LVITEM
+                        With LVI
+                        If PropAutoSelectFirstItem = True Then
+                            .StateMask = LVIS_SELECTED Or LVIS_FOCUSED
+                            .State = LVIS_SELECTED Or LVIS_FOCUSED
+                        Else
+                            .StateMask = LVIS_FOCUSED
+                            .State = LVIS_FOCUSED
+                        End If
+                        End With
+                        SendMessage ListViewHandle, LVM_SETITEMSTATE, 0, ByVal VarPtr(LVI)
                         ListViewFocusIndex = 1
                     End If
                     ListViewListItemsControl = ListViewListItemsControl + 1

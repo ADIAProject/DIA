@@ -29,10 +29,6 @@ Private Type POINTAPI
 X As Long
 Y As Long
 End Type
-Private Type SIZEAPI
-CX As Long
-CY As Long
-End Type
 Public Event Click()
 Attribute Click.VB_Description = "Occurs when the user presses and then releases a mouse button over an object."
 Attribute Click.VB_UserMemId = -600

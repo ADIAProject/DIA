@@ -1,8 +1,97 @@
 List of revisions:
 
+14-Feb-2017
+- Improved the SelPrint and PrintDoc methods in the RichTextBox control.
+  It can now also be used on a non-printer DC, e.g. DC of a PictureBox.
+
+13-Feb-2017
+- Two bugfixes in the SelPrint and PrintDoc methods in the RichtTextBox control.
+  - RightMargin/BottomMargin were added to the printable area instead deducted.
+  - The printable area was not converted from device units to twips. (the paper area was not wrong)
+
+09-Feb-2017
+- Improved the themed border appearance in the RichTextBox control.
+  It can be now in a 'hot' and 'focused' state, beside the already exist 'disabled' and 'normal' state.
+
+06-Feb-2017
+- Bugfix in the Text property of a ComboItem in the ImageCombo control.
+
+03-Feb-2017
+- Bugfix in the RightToLeft property in the TabStrip control. (TCIF_RTLREADING now used instead of WS_EX_RTLREADING)
+
+21-Jan-2017
+- Fixed a bug that the item's checkboxes/options were not drawn grayed in a disabled non-standard Style ListBoxW control.
+  On update from 18-Oct-2016 was only the text fixed to drawn grayed in that case, but not the button itself.
+
+20-Jan-2017
+- Enhanced the Style property with '2 - Option' in the ListBoxW control.
+  Also included the OptionIndex run-time property.
+- Included the AutoSelectFirstItem property in the ListView control. (Default is True)
+  Setting to False equals MS 5.0 ListView behavior and True equals MS 6.0 ListView behavior.
+
+19-Jan-2017
+- Two minor bugfixes in the ListBoxW control.
+  - Direct clicking the checkbox (Checkbox Style and MultiColumn set to True) was not possible when not selected before. (behavior bug)
+  - If both RightToLeft and MultiColumn are set True the top index goes negative and everything is unpredictable and unstable. (MS bug?)
+    Solution was to set (in that specific case) the right-to-left alignment after the control was created.
+
+15-Jan-2017
+- Included the ItemBeforeCheck event (with 'Cancel' parameter) in the ListBoxW control.
+- Bugfix that the checked state was not unchecked by default of a new inserted item in a Checkbox Style ListBoxW control.
+- Included X/Y parameter in the OLEGetDropEffect event in the RichTextBox control.
+
+14-Jan-2017
+- The Locked property in the ComboBoxW control works now like the original VB ComboBox.
+  So, beside the locking of the edit control, the list portion is locked as well.
+  The drop-down list can be shown but no item can be selected by mouse or key from the user.
+  That also means that now the Locked property is available when having the style set to 'DropDownList'.
+- Same ComboBoxW improvements implemented into the ImageCombo control.
+
+13-Jan-2017
+- 16-bit barrier for thumb scrolling circumvented in the ComboBoxW control. (like as for the ListBoxW control)
+- Included the ScrollTrack property in the ComboBoxW control.
+- .hWndList in the ComboBoxW control is now working on Windows 2000.
+  Message CB_GETCOMBOBOXINFO is not supported on Windows 2000. (similar issue as 29-Feb-2016 update)
+  Thus the message got replaced by the API GetComboBoxInfo in user32.dll.
+
+10-Jan-2017
+- Bugfix for the 32-bit thumb scrolling support in the ListBoxW control.
+  It now also works in a multi-column list box or when doing a 'HorizontalExtent' scrolling.
+
+09-Jan-2017
+- 16-bit barrier for thumb scrolling circumvented in the ListBoxW control. (standard windows list box limitation)
+- Included the ScrollTrack property in the ListBoxW control.
+
+08-Jan-2017
+- Some minor internal improvements.
+
+07-Jan-2017
+- Included the InsertMark/InsertMarkColor property and HitTestInsertMark function in the ListBoxW control.
+  The InsertMark property and the HitTestInsertMark function have both an optional 'After' parameter.
+- Bugfix that NewIndex property was not initialized with -1 in the ListBoxW control. (no bug in ComboBoxW control)
+
+04-Jan-2017
+- Fixed a bug that when setting the Text property by code it did not respect the MaxLength property in the TextBoxW, ComboBoxW and ImageCombo control.
+- Some other minor internal improvements.
+
+02-Jan-2017
+- Included the Scroll event in the ListBoxW control.
+  It will be fired whenever the TopIndex have been changed, either by code or by user action.
+
+30-Dec-2016
+- Bugfix in the Value property in the CheckBoxW and OptionButtonW control. (related to 23-Dec-2016 update)
+
+29-Dec-2016
+- The default value of the WantReturn property was wrong declared in ReadProperties/WriteProperties in the RichTextBox control.
+
+27-Dec-2016
+- Internal improvement in the key events (such as KeyDown) and some mouse events.
+  It is also necessary to replace the Common.bas module. (included the GetShiftStateFromMsg/GetMouseStateFromMsg function)
+- Renamed OLEGetDragEffect to OLEStartDrag in the RichTextBox control. (also Button/Shift parameter are removed as anyway always zero)
+
 26-Dec-2016
-- Internal improvement in the mouse events.
-  It is necessary to replace the Common.bas module. (new function GetShiftStateFromParam and GetMouseStateFromParam)
+- Internal improvement in the mouse events. The correct button value will be passed now in case left and right button are "swapped". (windows setting)
+  It is also necessary to replace the Common.bas module. (included the GetShiftStateFromParam/GetMouseStateFromParam function)
 
 23-Dec-2016
 - Bugfix that the Click event was not fired when changing the Value property by code in the CheckBoxW and OptionButtonW control.

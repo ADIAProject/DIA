@@ -132,12 +132,12 @@ End Function
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function GetSectionMass
 '! Description (Описание)  :   [Читает имена значений и переменных в массив в указанной секции .INI]
-'! Parameters  (Переменные):   SekName (String) - имя секции (регистр не учитывается)
-'                              IniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
+'! Parameters  (Переменные):   strSekName (String) - имя секции (регистр не учитывается)
+'                              strIniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
 '                              mbFirstValue (Boolean)   - если требуется прочитать только первую строку в секции
 '! Return Value:Возвр. знач.:  Малый буфер или Нет секции если есть ошибки в работе функции. Иначе возвращает массив переменная=значение
 '!--------------------------------------------------------------------------------
-Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As String, Optional ByVal mbFirstValue As Boolean)
+Public Function GetSectionMass(ByVal strSekName As String, ByVal strIniFileName As String, Optional ByVal mbFirstValue As Boolean)
 
     Dim strBuffer        As String * 32767
     Dim strTemp          As String
@@ -156,7 +156,7 @@ Public Function GetSectionMass(ByVal SekName As String, ByVal IniFileName As Str
     On Error GoTo PROC_ERR
 
     lngIndex = 1
-    intSize = GetPrivateProfileSection(SekName, strBuffer, 32767, IniFileName)
+    intSize = GetPrivateProfileSection(strSekName, strBuffer, 32767, strIniFileName)
     strTemp = Left$(strBuffer, intSize)
 
     If mbFirstValue Then
@@ -266,22 +266,22 @@ End Function
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniDelAllKeyPrivate
 '! Description (Описание)  :   [Удаляет все ключи в заданной секции в приватном файле .INI - заодно удаляет и саму секцию!?]
-'! Parameters  (Переменные):   SekName (String) - имя секции (регистр не учитывается)
-'                              IniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
+'! Parameters  (Переменные):   strSekName (String) - имя секции (регистр не учитывается)
+'                              strIniFileName (String) - имя файла .ini (если путь к файлу не указан,файл ищется в папке Windows)
 '!--------------------------------------------------------------------------------
-Public Function IniDelAllKeyPrivate(SekName As String, IniFileName As String)
-    WritePrivateProfileString SekName, vbNullString, vbNullString, IniFileName
+Public Function IniDelAllKeyPrivate(ByVal strSekName As String, ByVal strIniFileName As String)
+    WritePrivateProfileString strSekName, vbNullString, vbNullString, strIniFileName
 End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniLongPrivate
 '! Description (Описание)  :   [Читает целый параметр из любого файла .INI, возвращяет 9999, если ключ не найден]
-'! Parameters  (Переменные):   SekName (String)
-'                              KeyName (String)
-'                              IniFileName (String)
+'! Parameters  (Переменные):   strSekName (String)
+'                              strKeyName (String)
+'                              strIniFileName (String)
 '!--------------------------------------------------------------------------------
-Public Function IniLongPrivate(ByVal SekName As String, ByVal KeyName As String, ByVal IniFileName As String) As Long
-    IniLongPrivate = GetPrivateProfileInt(SekName, KeyName, 9999, IniFileName)
+Public Function IniLongPrivate(ByVal strSekName As String, ByVal strKeyName As String, ByVal strIniFileName As String) As Long
+    IniLongPrivate = GetPrivateProfileInt(strSekName, strKeyName, 9999, strIniFileName)
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -301,11 +301,11 @@ End Function
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IniStringPrivate
 '! Description (Описание)  :   [Читает строковый параметр из любого файла .INI,"no_key" - возвращаемое функцией значение, если ключ не найден]
-'! Parameters  (Переменные):   SekName (String)
-'                              KeyName (String)
-'                              IniFileName (String)
+'! Parameters  (Переменные):   strSekName (String)
+'                              strKeyName (String)
+'                              strIniFileName (String)
 '!--------------------------------------------------------------------------------
-Public Function IniStringPrivate(ByVal SekName As String, ByVal KeyName As String, ByVal IniFileName As String) As String
+Public Function IniStringPrivate(ByVal strSekName As String, ByVal strKeyName As String, ByVal strIniFileName As String) As String
 
     'строковый буфер(под значение ключа)
     Dim sTemp()     As Byte
@@ -314,7 +314,7 @@ Public Function IniStringPrivate(ByVal SekName As String, ByVal KeyName As Strin
     ReDim sTemp(4096)
     'в неё запишется количество символов в строке ключа
     'ограничение - параметр не может быть больше 4096 символов
-    nTemp = GetPrivateProfileStringW(StrPtr(SekName), StrPtr(KeyName), StrPtr("no_key"), VarPtr(sTemp(0)), -1, StrPtr(IniFileName))
+    nTemp = GetPrivateProfileStringW(StrPtr(strSekName), StrPtr(strKeyName), StrPtr("no_key"), VarPtr(sTemp(0)), -1, StrPtr(strIniFileName))
     IniStringPrivate = Left$(sTemp(), nTemp * 2)
     IniStringPrivate = TrimNull(IniStringPrivate)
     Erase sTemp
@@ -323,13 +323,13 @@ End Function
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub IniWriteStrPrivate
 '! Description (Описание)  :   [Записывает строковый параметр в любой файл .INI]
-'! Parameters  (Переменные):   SekName (String)
-'                              KeyName (String)
+'! Parameters  (Переменные):   strSekName (String)
+'                              strKeyName (String)
 '                              Param (String)
-'                              IniFileName (String)
+'                              strIniFileName (String)
 '!--------------------------------------------------------------------------------
-Public Sub IniWriteStrPrivate(ByVal SekName As String, ByVal KeyName As String, ByVal Param As String, ByVal IniFileName As String)
-    WritePrivateProfileString SekName, KeyName, Param, IniFileName
+Public Sub IniWriteStrPrivate(ByVal strSekName As String, ByVal strKeyName As String, ByVal Param As String, ByVal strIniFileName As String)
+    WritePrivateProfileString strSekName, strKeyName, Param, strIniFileName
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -423,8 +423,8 @@ Public Sub NormIniFile(ByVal sFileName As String)
         ub = &HFFFF
 
         For nf = 0 To UBound(slArray)
-
-            If Len(slArray(nf)) Then
+            
+            If LenB(slArray(nf)) Then
                 ub = ub + IIf(Left$(slArray(nf), vbNull) = Chr$(&H5B), 2, vbNull)
 
                 ReDim Preserve sOutArray(ub)

@@ -86,12 +86,17 @@ Private Declare Function GetFileSize Lib "kernel32" (ByVal hFile As Long, ByRef 
 Private Declare Function GetFileTime Lib "kernel32" (ByVal hFile As Long, ByVal lpCreationTime As Long, ByVal lpLastAccessTime As Long, ByVal lpLastWriteTime As Long) As Long
 Private Declare Function FileTimeToLocalFileTime Lib "kernel32" (ByVal lpFileTime As Long, ByVal lpLocalFileTime As Long) As Long
 Private Declare Function FileTimeToSystemTime Lib "kernel32" (ByVal lpFileTime As Long, ByVal lpSystemTime As Long) As Long
-Private Declare Function ReadFile Lib "kernel32" (ByVal hFile As Long, ByVal lpBuffer As Long, ByVal NumberOfBytesToRead As Long, ByRef NumberOfBytesRead As Long, ByVal lpOverlapped As Long) As Long
 Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As Long) As Long
 Private Declare Function GetCommandLine Lib "kernel32" Alias "GetCommandLineW" () As Long
 Private Declare Function PathGetArgs Lib "shlwapi" Alias "PathGetArgsW" (ByVal lpszPath As Long) As Long
 Private Declare Function SysReAllocString Lib "oleaut32" (ByVal pbString As Long, ByVal pszStrPtr As Long) As Long
 Private Declare Function GetModuleFileName Lib "kernel32" Alias "GetModuleFileNameW" (ByVal hModule As Long, ByVal lpFileName As Long, ByVal nSize As Long) As Long
+Private Declare Function OpenClipboard Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function EmptyClipboard Lib "user32" () As Long
+Private Declare Function CloseClipboard Lib "user32" () As Long
+Private Declare Function IsClipboardFormatAvailable Lib "user32" (ByVal wFormat As Long) As Long
+Private Declare Function GetClipboardData Lib "user32" (ByVal wFormat As Long) As Long
+Private Declare Function SetClipboardData Lib "user32" (ByVal wFormat As Long, ByVal hMem As Long) As Long
 Private Declare Function GetKeyState Lib "user32" (ByVal nVirtKey As Long) As Integer
 Private Declare Function GetAsyncKeyState Lib "user32" (ByVal VKey As Long) As Integer
 Private Declare Function GetWindowText Lib "user32" Alias "GetWindowTextW" (ByVal hWnd As Long, ByVal lpString As Long, ByVal cch As Long) As Long
@@ -116,12 +121,12 @@ Private Declare Function CreateSolidBrush Lib "gdi32" (ByVal crColor As Long) As
 Private Declare Function CreateCompatibleDC Lib "gdi32" (ByVal hDC As Long) As Long
 Private Declare Function CreateCompatibleBitmap Lib "gdi32" (ByVal hDC As Long, ByVal nWidth As Long, ByVal nHeight As Long) As Long
 Private Declare Function GetIconInfo Lib "user32" (ByVal hIcon As Long, ByRef pIconInfo As ICONINFO) As Long
-Private Declare Function CreateIconIndirect Lib "user32" (ByRef pIconInfo As ICONINFO) As Long
 Private Declare Function MulDiv Lib "kernel32" (ByVal nNumber As Long, ByVal nNumerator As Long, ByVal nDenominator As Long) As Long
 Private Declare Function CreateFontIndirect Lib "gdi32" Alias "CreateFontIndirectW" (ByRef lpLogFont As LOGFONT) As Long
 Private Declare Function GlobalAlloc Lib "kernel32" (ByVal uFlags As Long, ByVal dwBytes As Long) As Long
 Private Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) As Long
 Private Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) As Long
+Private Declare Function GlobalSize Lib "kernel32" (ByVal hMem As Long) As Long
 Private Declare Function OleTranslateColor Lib "oleaut32" (ByVal Color As Long, ByVal hPal As Long, ByRef RGBResult As Long) As Long
 Private Declare Function OleLoadPicture Lib "oleaut32" (ByVal pStream As IUnknown, ByVal lSize As Long, ByVal fRunmode As Long, ByRef riid As Any, ByRef pIPicture As IPicture) As Long
 Private Declare Function OleLoadPicturePath Lib "oleaut32" (ByVal lpszPath As Long, ByVal pUnkCaller As Long, ByVal dwReserved As Long, ByVal ClrReserved As OLE_COLOR, ByRef riid As CLSID, ByRef pIPicture As IPicture) As Long
@@ -222,7 +227,7 @@ End Function
 Public Function FileDateTime(ByVal PathName As String) As Date
 Const INVALID_HANDLE_VALUE As Long = (-1)
 Const GENERIC_READ As Long = &H80000000, FILE_SHARE_READ As Long = &H1, OPEN_EXISTING As Long = 3, FILE_FLAG_SEQUENTIAL_SCAN As Long = &H8000000
-Dim hFile As Long, Length As Double
+Dim hFile As Long
 If Left$(PathName, 2) = "\\" Then PathName = "UNC\" & Mid$(PathName, 3)
 hFile = CreateFile(StrPtr("\\?\" & PathName), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0)
 If hFile <> INVALID_HANDLE_VALUE Then
@@ -280,6 +285,51 @@ Else
     GetAppPath = App.Path & IIf(Right$(App.Path, 1) = "\", "", "\")
 End If
 End Function
+
+Public Function GetClipboardText() As String
+Const CF_UNICODETEXT As Long = 13
+Dim lpText As Long, Length As Long
+Dim hMem As Long, lpMem As Long
+If OpenClipboard(0) <> 0 Then
+    If IsClipboardFormatAvailable(CF_UNICODETEXT) <> 0 Then
+        lpText = GetClipboardData(CF_UNICODETEXT)
+        If lpText <> 0 Then
+            Length = GlobalSize(lpText)
+            If Length > 0 Then
+                lpMem = GlobalLock(lpText)
+                If lpMem <> 0 Then
+                    GetClipboardText = String((Length \ 2) - 1, vbNullChar)
+                    CopyMemory ByVal StrPtr(GetClipboardText), ByVal lpMem, Length
+                    GlobalUnlock lpMem
+                End If
+            End If
+        End If
+    End If
+    CloseClipboard
+End If
+End Function
+
+Public Sub SetClipboardText(ByRef Text As String)
+Const CF_UNICODETEXT As Long = 13
+Const GMEM_MOVEABLE As Long = &H2
+Dim Buffer As String, Length As Long
+Dim hMem As Long, lpMem As Long
+If OpenClipboard(0) <> 0 Then
+    EmptyClipboard
+    Buffer = Text & vbNullChar
+    Length = LenB(Buffer)
+    hMem = GlobalAlloc(GMEM_MOVEABLE, Length)
+    If hMem <> 0 Then
+        lpMem = GlobalLock(hMem)
+        If lpMem <> 0 Then
+            CopyMemory ByVal lpMem, ByVal StrPtr(Buffer), Length
+            GlobalUnlock hMem
+            SetClipboardData CF_UNICODETEXT, hMem
+        End If
+    End If
+    CloseClipboard
+End If
+End Sub
 
 Public Function AccelCharCode(ByVal Caption As String) As Integer
 If Caption = vbNullString Then Exit Function
@@ -663,6 +713,7 @@ If OleTranslateColor(Color, hPal, WinColor) <> 0 Then WinColor = -1
 End Function
 
 Public Function PictureFromByteStream(ByRef ByteStream As Variant) As IPictureDisp
+Const GMEM_MOVEABLE As Long = &H2
 Dim IID As CLSID, Stream As IUnknown, NewPicture As IPicture
 Dim B() As Byte, ByteCount As Long
 Dim hMem As Long, lpMem As Long
@@ -680,7 +731,7 @@ End With
 If VarType(ByteStream) = (vbArray + vbByte) Then
     B() = ByteStream
     ByteCount = (UBound(B()) - LBound(B())) + 1
-    hMem = GlobalAlloc(&H2, ByteCount)
+    hMem = GlobalAlloc(GMEM_MOVEABLE, ByteCount)
     If hMem <> 0 Then
         lpMem = GlobalLock(hMem)
         If lpMem <> 0 Then

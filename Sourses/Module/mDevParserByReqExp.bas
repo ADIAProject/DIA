@@ -123,6 +123,8 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
     Dim strVerTemp                As String
     Dim strVerTemp_x()            As String
     Dim mbParseInfDrp             As Boolean
+    Dim lngLinesArrMax            As Long
+    Dim lngLinesArrHwidMax        As Long
 
     If mbDebugStandart Then DebugMode vbTab & "DevParserByRegExp-Start"
     
@@ -335,8 +337,10 @@ Public Sub DevParserByRegExp(ByVal strPackFileName As String, ByVal strPathDRP A
         .Global = True
     End With
 
-    ReDim strLinesArr(150000)
-    ReDim strLinesArrHwid(50000)
+    lngLinesArrMax = 100000
+    lngLinesArrHwidMax = 20000
+    ReDim strLinesArr(lngLinesArrMax)
+    ReDim strLinesArrHwid(lngLinesArrHwidMax)
     
     ' „тение списка содержимого архива *.Cat
     If FileExists(strArchCatFileList) Then
@@ -826,11 +830,20 @@ StartParseInfFile:
                                                         
                                                         '»тогова€ строка
                                                         'strDevID & vbTab & strInfFileName & vbTab & strManSection & vbTab & strVer & vbTab & strManSectEmptyList & vbTab & lngCatFileExists & vbTab & strDevName
+                                                        ' ѕереопределение массива если превышаем заданную размерность
+                                                        If lngNumLines >= lngLinesArrMax Then
+                                                            lngLinesArrMax = 2 * lngLinesArrMax
+                                                            ReDim Preserve strLinesArr(lngLinesArrMax)
+                                                        End If
                                                         strLinesArr(lngNumLines) = (strDevID & strInfPathTabQuoted & strManSection) & (strPartString2Index & strDevName)
                                                         lngNumLines = lngNumLines + 1
                                                         
                                                         If Not objHWIDOutput.Exists(strDevID) Then
                                                             objHWIDOutput.Add strDevID, 1
+                                                            If lngNumLinesHwid >= lngLinesArrHwidMax Then
+                                                                lngLinesArrHwidMax = 2 * lngLinesArrHwidMax
+                                                                ReDim Preserve strLinesArrHwid(lngLinesArrHwidMax)
+                                                            End If
                                                             strLinesArrHwid(lngNumLinesHwid) = strDevID
                                                             lngNumLinesHwid = lngNumLinesHwid + 1
                                                         End If
@@ -994,11 +1007,20 @@ StartParseInfFile:
                                                                                                         
                                                     '»тогова€ строка
                                                     'strDevID & vbTab & strInfFileName & vbTab & strManSection & vbTab & strVer & vbTab & strManSectEmptyList & vbTab & lngCatFileExists & vbTab & strDevName
+                                                    ' ѕереопределение массива если превышаем заданную размерность
+                                                    If lngNumLines >= lngLinesArrMax Then
+                                                        lngLinesArrMax = 2 * lngLinesArrMax
+                                                        ReDim Preserve strLinesArr(lngLinesArrMax)
+                                                    End If
                                                     strLinesArr(lngNumLines) = (strDevID & strInfPathTabQuoted & strManSection) & (strPartString2Index & strDevName)
                                                     lngNumLines = lngNumLines + 1
                                                     
                                                     If Not objHWIDOutput.Exists(strDevID) Then
                                                         objHWIDOutput.Add strDevID, 1
+                                                        If lngNumLinesHwid >= lngLinesArrHwidMax Then
+                                                            lngLinesArrHwidMax = 2 * lngLinesArrHwidMax
+                                                            ReDim Preserve strLinesArrHwid(lngLinesArrHwidMax)
+                                                        End If
                                                         strLinesArrHwid(lngNumLinesHwid) = strDevID
                                                         lngNumLinesHwid = lngNumLinesHwid + 1
                                                     End If
@@ -1222,4 +1244,3 @@ SkipFileInfDrp:
 
     If mbDebugStandart Then DebugMode vbTab & "DevParserByRegExp-End"
 End Sub
-

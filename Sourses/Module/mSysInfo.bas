@@ -3,7 +3,9 @@ Attribute VB_Name = "mSysInfo"
 ' а также модели компьтера/ноутбука/материнской платы
 Option Explicit
 
+' Not add to project (DBS/DIA) - option for compiler
 #Const mbIDE_DBSProject = False
+
 ' Программные переменные
 Public strOSArchitecture        As String        ' Архитетуктура ОС
 Public strOSCurrentVersion      As String
@@ -96,13 +98,81 @@ Private Const TOKEN_ELEVATION_TYPE As Long = 18
 Private Declare Function OpenProcessToken Lib "advapi32.dll" (ByVal ProcessHandle As Long, ByVal DesiredAccess As Long, TokenHandle As Long) As Long
 Private Declare Function GetTokenInformation Lib "advapi32.dll" (ByVal TokenHandle As Long, ByVal TokenInformationClass As Long, TokenInformation As Any, ByVal TokenInformationLength As Long, ReturnLength As Long) As Long
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   GetFileName4Snap
+'! Description (Описание)  :   [Получение имени файла для снимка системы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetFileName4Snap() As String
+Attribute GetFileName4Snap.VB_UserMemId = 1610612751
+    If mbIsNotebook Then
+        If Not OSCurrVersionStruct.ClientOrServer Then
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%" & "_%DATE%")
+        Else
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%" & "_%DATE%")
+        End If
+    Else
+        If Not OSCurrVersionStruct.ClientOrServer Then
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%" & "_%DATE%")
+        Else
+            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%" & "_%DATE%")
+        End If
+    End If
+End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMB_Manufacturer
+'! Procedure   (Функция)   :   Function GetMBInfo
+'! Description (Описание)  :   [Итоговая строка производитель/модель материнской платы/ноутбука]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetMBInfo() As String
+Attribute GetMBInfo.VB_UserMemId = 1610612739
+
+    Dim strMB_Manufacturer As String
+    Dim strMB_Model        As String
+    Dim mbMB_Model         As Boolean
+    Dim mbMB_Manufacturer  As Boolean
+
+    ' Получаем производителя PC, через реестр, если невозможно, то через WMI
+    strMB_Manufacturer = GetMB_ManufacturerReg
+    If LenB(strMB_Manufacturer) = 0 Then
+        strMB_Manufacturer = GetMB_ManufacturerWMI
+    End If
+    
+    ' Получаем модель PC
+    strMB_Model = GetMB_ModelReg
+    If LenB(strMB_Model) = 0 Then
+        strMB_Model = GetMB_ModelWMI
+    End If
+    
+    mbMB_Model = LenB(strMB_Model)
+    mbMB_Manufacturer = LenB(strMB_Manufacturer)
+
+    If mbMB_Manufacturer Then
+        If mbMB_Model Then
+            GetMBInfo = strMB_Manufacturer & strDash & strMB_Model
+        Else
+            GetMBInfo = strMB_Manufacturer
+        End If
+    Else
+        If mbMB_Model Then
+            GetMBInfo = strMB_Model
+        Else
+            GetMBInfo = "Unknown"
+        End If
+    End If
+    
+    If InStr(GetMBInfo, "_") Then
+        GetMBInfo = Replace$(GetMBInfo, "_", strDash)
+    End If
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetMB_ManufacturerWMI
 '! Description (Описание)  :   [Получение производителя материнской платы, используется WMI]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function GetMB_Manufacturer() As String
+Public Function GetMB_ManufacturerWMI() As String
 
     Dim colItems           As Object
     Dim objItem            As Object
@@ -117,10 +187,11 @@ Public Function GetMB_Manufacturer() As String
 
     ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
     Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
+    If Err.Number = 429 Then Exit Function
+    
     Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
 
     For Each objItem In colItems
-
         sAnsComputerSystem = sAnsComputerSystem & objItem.Manufacturer
     Next
 
@@ -132,7 +203,7 @@ Public Function GetMB_Manufacturer() As String
     Next
 
     ' итог
-    If StrComp(sAnsComputerSystem, "System manufacturer", vbTextCompare) = 0 Then
+    If StrComp(LCase$(sAnsComputerSystem), "system manufacturer") = 0 Then
         strTemp = Trim$(sAnsBaseBoard)
         mbIsNotebook = False
     Else
@@ -144,22 +215,71 @@ Public Function GetMB_Manufacturer() As String
     Set objRegExp = New RegExp
 
     With objRegExp
-'        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(Technology)/ig"
         .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(CO., LTD.)|(ELECTRONICS)|(Technology)/ig"
         .IgnoreCase = True
         .Global = True
         'Заменяем найденные значения " "
-        GetMB_Manufacturer = Trim$(.Replace(strTemp, strSpace))
+        GetMB_ManufacturerWMI = Trim$(.Replace(strTemp, strSpace))
     End With
+    
+    Set objRegExp = Nothing
 
 End Function
 
+'How define PC manufacturing from Reestr
+'[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SystemInformation]
+'"SystemManufacturer"="Hewlett-Packard"
+'"SystemProductName"="HP Compaq Pro 6300 MT"
+'[HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS]
+'"BaseBoardManufacturer"="ASUSTeK COMPUTER INC."
+'"BaseBoardProduct"="P8H67-M LX"
+'"SystemManufacturer"="System manufacturer"
+'"SystemProductName"="System Product Name"
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMB_Model
+'! Procedure   (Функция)   :   Function GetMB_ManufacturerReg
+'! Description (Описание)  :   [Получение производителя материнской платы, используется реестр]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetMB_ManufacturerReg() As String
+
+    Dim regParam      As String
+    Dim objRegExp     As RegExp
+    Dim strTemp       As String
+
+    regParam = GetRegString(HKEY_LOCAL_MACHINE, "SYSTEM\CurrentControlSet\Control\SystemInformation", "SystemManufacturer")
+    
+    ' итог
+    If StrComp(LCase$(regParam), "system manufacturer") = 0 Then
+        ' Если стандартное значение, то определяем по другой веткее реестра
+        regParam = GetRegString(HKEY_LOCAL_MACHINE, "HARDWARE\DESCRIPTION\System\BIOS", "BaseBoardManufacturer")
+        strTemp = Trim$(regParam)
+        mbIsNotebook = False
+    Else
+        strTemp = Trim$(regParam)
+        mbIsNotebook = True
+    End If
+
+    ' удаляем лишние символы в наименовании
+    Set objRegExp = New RegExp
+
+    With objRegExp
+        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(CO., LTD.)|(ELECTRONICS)|(Technology)/ig"
+        .IgnoreCase = True
+        .Global = True
+        'Заменяем найденные значения " "
+        GetMB_ManufacturerReg = Trim$(.Replace(strTemp, strSpace))
+    End With
+    
+    Set objRegExp = Nothing
+
+End Function
+
+'!-------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetMB_ModelWMI
 '! Description (Описание)  :   [Получение модели материнской платы, используется WMI]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function GetMB_Model() As String
+Public Function GetMB_ModelWMI() As String
 
     Dim colItems           As Object
     Dim objItem            As Object
@@ -175,10 +295,11 @@ Public Function GetMB_Model() As String
 
     ' получение данных из Win32_ComputerSystem - чаще всего есть если Ноутбук
     Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
+    If Err.Number = 429 Then Exit Function
+    
     Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_ComputerSystem", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
 
     For Each objItem In colItems
-
         sAnsComputerSystem = sAnsComputerSystem & objItem.Model
     Next
 
@@ -186,12 +307,11 @@ Public Function GetMB_Model() As String
     Set colItems = objWMIService.ExecQuery("SELECT * FROM Win32_BaseBoard", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
 
     For Each objItem In colItems
-
         sAnsBaseBoard = sAnsBaseBoard & objItem.Product
     Next
 
     ' итог
-    If StrComp(sAnsComputerSystem, "System Product Name", vbTextCompare) = 0 Then
+    If StrComp(LCase$(sAnsComputerSystem), "system product name") = 0 Then
         strTemp = Trim$(sAnsBaseBoard)
         mbIsNotebook = False
     Else
@@ -209,12 +329,85 @@ Public Function GetMB_Model() As String
         .IgnoreCase = True
         .Global = True
         'Заменяем найденные значения " "
-        GetMB_Model = Trim$(.Replace(strTemp, strSpace))
+        GetMB_ModelWMI = Trim$(.Replace(strTemp, strSpace))
     End With
+    
+    Set objRegExp = Nothing
 
 End Function
 
-' уточнение про "статус" компьютер-ноутбук по корпусу или батарее
+' How define PC manufacturing from Reestr
+'[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SystemInformation]
+'"SystemManufacturer"="Hewlett-Packard"
+'"SystemProductName"="HP Compaq Pro 6300 MT"
+'[HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS]
+'"BaseBoardManufacturer"="ASUSTeK COMPUTER INC."
+'"BaseBoardProduct"="P8H67-M LX"
+'"SystemManufacturer"="System manufacturer"
+'"SystemProductName"="System Product Name"
+'!-------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function GetMB_ModelReg
+'! Description (Описание)  :   [Получение модели материнской платы, используется реестр]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetMB_ModelReg() As String
+
+    Dim regParam      As String
+    Dim objRegExp     As RegExp
+    Dim strTemp       As String
+
+    regParam = GetRegString(HKEY_LOCAL_MACHINE, "SYSTEM\CurrentControlSet\Control\SystemInformation", "SystemProductName")
+    
+    ' итог
+    If StrComp(LCase$(regParam), "system product name") = 0 Then
+        ' Если стандартное значение, то определяем по другой веткее реестра
+        regParam = GetRegString(HKEY_LOCAL_MACHINE, "HARDWARE\DESCRIPTION\System\BIOS", "BaseBoardProduct")
+        strTemp = Trim$(regParam)
+        mbIsNotebook = False
+    Else
+        strTemp = Trim$(regParam)
+        mbIsNotebook = True
+    End If
+
+    ' удаляем лишние символы в наименовании
+    Set objRegExp = New RegExp
+
+    With objRegExp
+        .Pattern = "/(, inc.)|(inc.)|(corporation)|(corp.)|(computer)|(co., ltd.)|(co., ltd)|(co.,ltd)|(co.)|(ltd)|(international)|(CO., LTD.)|(ELECTRONICS)|(Technology)/ig"
+        .IgnoreCase = True
+        .Global = True
+        'Заменяем найденные значения " "
+        GetMB_ModelReg = Trim$(.Replace(strTemp, strSpace))
+    End With
+    
+    Set objRegExp = Nothing
+
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   GetSystemDiskFreeSpace
+'! Description (Описание)  :   [Определения свободного места на системном диске]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function GetSystemDiskFreeSpace(ByVal strDrive As String) As Long
+Attribute GetSystemDiskFreeSpace.VB_UserMemId = 1610612752
+Dim BytesFreeToCalller  As Currency
+Dim TotalBytes          As Currency
+Dim TotalFreeBytes      As Currency
+Dim TotalBytesUsed      As Currency
+
+    If LenB(strDrive) Then
+        GetDiskFreeSpaceEx strDrive, BytesFreeToCalller, TotalBytes, TotalFreeBytes
+        GetSystemDiskFreeSpace = (TotalFreeBytes * 10000 / 1024 / 1024)
+    End If
+    
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   GetSystemDiskFreeSpace
+'! Description (Описание)  :   [уточнение про "статус" компьютер-ноутбук по корпусу или батарее]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Sub IsPCisNotebook()
     
     If mbIsNotebook Then
@@ -229,6 +422,8 @@ Public Sub IsPCisNotebook()
     
         ' получение данных из Win32_SystemEnclosure - тип корпуса
         Set objWMIService = CreateObject("winmgmts:\\.\root\CIMV2")
+        If Err.Number = 429 Then Exit Sub
+        
         Set colItems = objWMIService.ExecQuery("Select * from Win32_SystemEnclosure", "WQL", wbemFlagReturnImmediately + wbemFlagForwardOnly)
         
         For Each objItem In colItems
@@ -275,55 +470,55 @@ ExitSub:
         
     End If
 End Sub
+
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function GetMBInfo
-'! Description (Описание)  :   [Итоговая строка производитель/модель материнской платы/ноутбука]
+'! Procedure   (Функция)   :   IsUserAnAdministrator
+'! Description (Описание)  :   [Пользователь является администратором]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function GetMBInfo() As String
-
-    Dim strMB_Manufacturer As String
-    Dim strMB_Model        As String
-    Dim mbMB_Model         As Boolean
-    Dim mbMB_Manufacturer  As Boolean
-
-    strMB_Manufacturer = GetMB_Manufacturer()
-    strMB_Model = GetMB_Model()
-    
-    mbMB_Model = LenB(strMB_Model)
-    mbMB_Manufacturer = LenB(strMB_Manufacturer)
-
-    If mbMB_Manufacturer Then
-        If mbMB_Model Then
-            GetMBInfo = strMB_Manufacturer & strDash & strMB_Model
-        Else
-            GetMBInfo = strMB_Manufacturer
-        End If
-    Else
-        If mbMB_Model Then
-            GetMBInfo = strMB_Model
-        Else
-            GetMBInfo = "Unknown"
-        End If
-    End If
-    
-    If InStr(GetMBInfo, "_") Then
-        GetMBInfo = Replace$(GetMBInfo, "_", strDash)
-    End If
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWin10OrLater
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function IsWin10OrLater() As Boolean
-
+Public Function IsUserAnAdministrator() As Boolean
+Attribute IsUserAnAdministrator.VB_UserMemId = 1610612753
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
     End If
+    
+    If OSCurrVersionStruct.VerMajor = 5 Then
+        If IsUserAnAdmin() Then
+            IsUserAnAdministrator = True
+        End If
+    Else
+        ' If we’re on Vista onwards, check for UAC elevation token
+        ' as we may be an admin but we’re not elevated yet, so the
+        ' IsUserAnAdmin() function will return false
+        If OSCurrVersionStruct.VerMajor >= 6 Then
+            Dim Result As Long
+            Dim hProcessID As Long
+            Dim hToken As Long
+            Dim lReturnLength As Long
+            Dim tokenElevationType As Long
+            
+            ' We need to get the token for the current process
+            'hProcessID = GetCurrentProcess()
+            hProcessID = App.hInstance
+            If hProcessID <> 0 Then
+                If OpenProcessToken(hProcessID, TOKEN_READ, hToken) = 1 Then
+                    Result = GetTokenInformation(hToken, TOKEN_ELEVATION_TYPE, tokenElevationType, 4, lReturnLength)
+                    If Result = 0 Then
+                        CloseHandle hProcessID
+                        ' Couldn’t get token information
+                        Exit Function
+                    End If
+                    If tokenElevationType <> 1 Then
+                        IsUserAnAdministrator = True
+                    End If
+                    CloseHandle hToken
+                End If
+                CloseHandle hProcessID
+            End If
+            Exit Function
+        End If
+    End If
 
-    IsWin10OrLater = OSCurrVersionStruct.VerFull >= "10.0"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -332,6 +527,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function IsWin10() As Boolean
+Attribute IsWin10.VB_UserMemId = 1610612741
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
@@ -341,11 +537,42 @@ Public Function IsWin10() As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsWin10OrLater
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function IsWin10OrLater() As Boolean
+Attribute IsWin10OrLater.VB_UserMemId = 1610612740
+
+    If Not OSCurrVersionStruct.IsInitialize Then
+        OSCurrVersionStruct = OSInfo
+    End If
+
+    IsWin10OrLater = OSCurrVersionStruct.VerFull >= "10.0"
+End Function
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function IsWin7
+'! Description (Описание)  :   [type_description_here]0
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Function IsWin7() As Boolean
+Attribute IsWin7.VB_UserMemId = 1610612743
+
+    If Not OSCurrVersionStruct.IsInitialize Then
+        OSCurrVersionStruct = OSInfo
+    End If
+
+    IsWin7 = OSCurrVersionStruct.VerFull = "6.1"
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function IsWin7OrLater
 '! Description (Описание)  :   [type_description_here]0
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function IsWin7OrLater() As Boolean
+Attribute IsWin7OrLater.VB_UserMemId = 1610612742
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
@@ -359,17 +586,19 @@ Public Function IsWin7OrLater() As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWin7
-'! Description (Описание)  :   [type_description_here]0
+'! Procedure   (Функция)   :   Function IsWinVista
+'! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function IsWin7() As Boolean
+Public Function IsWinVista() As Boolean
+Attribute IsWinVista.VB_UserMemId = 1610612745
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
     End If
 
-    IsWin7 = OSCurrVersionStruct.VerFull = "6.1"
+    IsWinVista = OSCurrVersionStruct.VerFull = "6.0"
+
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -378,6 +607,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function IsWinVistaOrLater() As Boolean
+Attribute IsWinVistaOrLater.VB_UserMemId = 1610612744
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
@@ -391,18 +621,18 @@ Public Function IsWinVistaOrLater() As Boolean
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWinVista
+'! Procedure   (Функция)   :   Function IsWinXP
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function IsWinVista() As Boolean
+Public Function IsWinXP() As Boolean
+Attribute IsWinXP.VB_UserMemId = 1610612747
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
     End If
 
-    IsWinVista = OSCurrVersionStruct.VerFull = "6.0"
-
+    IsWinXP = OSCurrVersionStruct.VerFull = "5.1"
 End Function
 
 '!--------------------------------------------------------------------------------
@@ -411,6 +641,7 @@ End Function
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function IsWinXPOrLater() As Boolean
+Attribute IsWinXPOrLater.VB_UserMemId = 1610612746
 
     If Not OSCurrVersionStruct.IsInitialize Then
         OSCurrVersionStruct = OSInfo
@@ -423,67 +654,14 @@ Public Function IsWinXPOrLater() As Boolean
     End If
 End Function
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWinXP
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function IsWinXP() As Boolean
-
-    If Not OSCurrVersionStruct.IsInitialize Then
-        OSCurrVersionStruct = OSInfo
-    End If
-
-    IsWinXP = OSCurrVersionStruct.VerFull = "5.1"
-End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function IsWow64
-'! Description (Описание)  :   [Проверяет является ли запущенный процесс 64-битным]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function OS_Is_x64() As Boolean
-
-    Dim SI As SYSTEM_INFO
-    Dim lngIts64 As Long
-
-    strOSArchitecture = "x86"
-
-    If APIFunctionPresent("GetNativeSystemInfo", "kernel32.dll") Then
-        GetNativeSystemInfo SI
-
-        Select Case SI.wProcessorArchitecture
-
-            Case PROCESSOR_ARCHITECTURE_IA64
-                OS_Is_x64 = True
-                strOSArchitecture = "ia64"
-
-            Case PROCESSOR_ARCHITECTURE_AMD64
-                OS_Is_x64 = True
-                strOSArchitecture = "amd64"
-
-            Case Else
-                OS_Is_x64 = False
-        End Select
-        
-        If APIFunctionPresent("IsWow64Process", "kernel32.dll") Then
-            ' IsWow64Process function exists
-            ' Now use the function to determine if
-            ' we are running under Wow64
-            IsWow64Process GetCurrentProcess(), lngIts64
-            If mbDebugStandart Then DebugMode "IsWow64: " & CBool(lngIts64)
-        End If
-
-    End If
-
-End Function
-
+'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WinPE
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Function OSInfo
 '! Description (Описание)  :   [Получение расширенной информации о версии Windows]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Function OSInfo() As OSInfoStruct
+Attribute OSInfo.VB_UserMemId = 1610612749
 
     Dim OSVerInfo As OSVERSIONINFOEX
     Dim OSN       As String
@@ -537,6 +715,13 @@ Public Function OSInfo() As OSInfoStruct
                     Else
                         OSN = "Server 2012 R2"
                     End If
+                ElseIf .dwMinorVersion = 4 Then
+
+                    If .wProductType = VER_NT_WORKSTATION Then
+                        OSN = "10 (Beta)"
+                    Else
+                        OSN = "Server 2014 (Beta)"
+                    End If
                 End If
 
             ElseIf .dwMajorVersion = 10 Then
@@ -546,7 +731,7 @@ Public Function OSInfo() As OSInfoStruct
                     If .wProductType = VER_NT_WORKSTATION Then
                         OSN = "10"
                     Else
-                        OSN = "Server 2014"
+                        OSN = "Server 2016"
                     End If
 
                 ElseIf .dwMinorVersion = 1 Then
@@ -554,7 +739,7 @@ Public Function OSInfo() As OSInfoStruct
                     If .wProductType = VER_NT_WORKSTATION Then
                         OSN = "10.1 ?"
                     Else
-                        OSN = "Server 2014 R2 ?"
+                        OSN = "Server 2016 R2 ?"
                     End If
 
                 Else
@@ -587,6 +772,7 @@ End Function
 '! Parameters  (Переменные):   Nfo (Long)
 '!--------------------------------------------------------------------------------
 Public Function OSInfoWMI(ByVal Nfo As Long) As String
+Attribute OSInfoWMI.VB_UserMemId = 1610612750
 
     'Defining Variables
     Dim objWMI   As Object
@@ -661,89 +847,43 @@ Public Function OSInfoWMI(ByVal Nfo As Long) As String
 End Function
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   GetFileName4Snap
-'! Description (Описание)  :   [Получение имени файла для снимка системы]
+'! Procedure   (Функция)   :   Function IsWow64
+'! Description (Описание)  :   [Проверяет является ли запущенный процесс 64-битным]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
-Public Function GetFileName4Snap() As String
-    If mbIsNotebook Then
-        If Not OSCurrVersionStruct.ClientOrServer Then
-            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "-Server_%OSBIT%" & "_%DATE%")
-        Else
-            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%-Notebook_" & strOSCurrentVersion & "_%OSBIT%" & "_%DATE%")
-        End If
-    Else
-        If Not OSCurrVersionStruct.ClientOrServer Then
-            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "-Server_%OSBIT%" & "_%DATE%")
-        Else
-            GetFileName4Snap = ExpandFileNameByEnvironment("hwids_%PCMODEL%_" & strOSCurrentVersion & "_%OSBIT%" & "_%DATE%")
-        End If
-    End If
-End Function
+Public Function OS_Is_x64() As Boolean
+Attribute OS_Is_x64.VB_UserMemId = 1610612748
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   GetSystemDiskFreeSpace
-'! Description (Описание)  :   [Определения свободного места на системном диске]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function GetSystemDiskFreeSpace(ByVal strDrive As String) As Long
-Dim BytesFreeToCalller  As Currency
-Dim TotalBytes          As Currency
-Dim TotalFreeBytes      As Currency
-Dim TotalBytesUsed      As Currency
+    Dim SI As SYSTEM_INFO
+    Dim lngIts64 As Long
 
-    If LenB(strDrive) Then
-        GetDiskFreeSpaceEx strDrive, BytesFreeToCalller, TotalBytes, TotalFreeBytes
-        GetSystemDiskFreeSpace = (TotalFreeBytes * 10000 / 1024 / 1024)
-    End If
-    
-End Function
+    strOSArchitecture = "x86"
 
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   IsUserAnAdministrator
-'! Description (Описание)  :   [Определения свободного места на системном диске]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Function IsUserAnAdministrator() As Boolean
-    If Not OSCurrVersionStruct.IsInitialize Then
-        OSCurrVersionStruct = OSInfo
-    End If
-    
-    If OSCurrVersionStruct.VerMajor = 5 Then
-        If IsUserAnAdmin() Then
-            IsUserAnAdministrator = True
+    If APIFunctionPresent("GetNativeSystemInfo", "kernel32.dll") Then
+        GetNativeSystemInfo SI
+
+        Select Case SI.wProcessorArchitecture
+
+            Case PROCESSOR_ARCHITECTURE_IA64
+                OS_Is_x64 = True
+                strOSArchitecture = "ia64"
+
+            Case PROCESSOR_ARCHITECTURE_AMD64
+                OS_Is_x64 = True
+                strOSArchitecture = "amd64"
+
+            Case Else
+                OS_Is_x64 = False
+        End Select
+        
+        If APIFunctionPresent("IsWow64Process", "kernel32.dll") Then
+            ' IsWow64Process function exists
+            ' Now use the function to determine if
+            ' we are running under Wow64
+            IsWow64Process GetCurrentProcess(), lngIts64
+            If mbDebugStandart Then DebugMode "IsWow64: " & CBool(lngIts64)
         End If
-    Else
-        ' If we’re on Vista onwards, check for UAC elevation token
-        ' as we may be an admin but we’re not elevated yet, so the
-        ' IsUserAnAdmin() function will return false
-        If OSCurrVersionStruct.VerMajor >= 6 Then
-            Dim Result As Long
-            Dim hProcessID As Long
-            Dim hToken As Long
-            Dim lReturnLength As Long
-            Dim tokenElevationType As Long
-            
-            ' We need to get the token for the current process
-            'hProcessID = GetCurrentProcess()
-            hProcessID = App.hInstance
-            If hProcessID <> 0 Then
-                If OpenProcessToken(hProcessID, TOKEN_READ, hToken) = 1 Then
-                    Result = GetTokenInformation(hToken, TOKEN_ELEVATION_TYPE, tokenElevationType, 4, lReturnLength)
-                    If Result = 0 Then
-                        CloseHandle hProcessID
-                        ' Couldn’t get token information
-                        Exit Function
-                    End If
-                    If tokenElevationType <> 1 Then
-                        IsUserAnAdministrator = True
-                    End If
-                    CloseHandle hToken
-                End If
-                CloseHandle hProcessID
-            End If
-            Exit Function
-        End If
+
     End If
 
 End Function

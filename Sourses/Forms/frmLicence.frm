@@ -17,6 +17,7 @@ Begin VB.Form frmLicence
    Icon            =   "frmLicence.frx":0000
    KeyPreview      =   -1  'True
    LinkTopic       =   "Form1"
+   MinButton       =   0   'False
    ScaleHeight     =   6285
    ScaleWidth      =   9480
    StartUpPosition =   2  'CenterScreen
@@ -62,7 +63,6 @@ Begin VB.Form frmLicence
       HideSelection   =   0   'False
       MultiLine       =   -1  'True
       ScrollBars      =   2
-      WantReturn      =   -1  'True
       TextRTF         =   "frmLicence.frx":0082
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
@@ -131,6 +131,11 @@ Private lngFormWidthMin  As Long
 Private lngFormHeightMin As Long
 Private strFormName      As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Get CaptionW
+'! Description (Описание)  :   [Получение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -139,6 +144,11 @@ Public Property Get CaptionW() As String
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Let CaptionW
+'! Description (Описание)  :   [Изменение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
@@ -182,76 +192,6 @@ Private Sub CheckEditLicense(strPathFile As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FontCharsetChange()
-
-    ' Выставляем шрифт
-    With Me.Font
-        .Name = strFontOtherForm_Name
-        .Size = lngFontOtherForm_Size
-        .Charset = lngFont_Charset
-    End With
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadLicence
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadLicence()
-
-    Dim strPathLicence As String
-
-    strPathLicence = strWorkTempBackSL & "licence.rtf"
-
-    Select Case strPCLangCurrentID
-
-        Case "0419"
-            strPathLicence = PathCollect(strToolsDocs_Path & "\0419\licence.rtf")
-
-        Case Else
-            strPathLicence = PathCollect(strToolsDocs_Path & "\0409\licence.rtf")
-    End Select
-
-    If FileExists(strPathLicence) Then
-        LicenceRTF.LoadFile strPathLicence
-        
-        ' Проверка лицензии на неправомерное изменение
-        CheckEditLicense strPathLicence
-        LicenceRTF.SetFocus
-    Else
-
-        If Not mbSilentRun Then
-            MsgBox strMessages(39), vbInformation, strProductName
-        End If
-
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
-    ' Чекбокс
-    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
-    'Кнопки
-    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkAgreeLicence_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -266,9 +206,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub cmdExit_Click()
-
     Unload Me
-
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -284,6 +222,22 @@ Private Sub cmdOK_Click()
     frmLicence.Hide
     Set frmMain = New frmMain
     frmMain.Show
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub FontCharsetChange()
+
+    ' Выставляем шрифт
+    With Me.Font
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
+    End With
+
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -479,3 +433,57 @@ End Sub
 '    ShellExecute Me.hWnd, "OPEN", strBuffer, vbNullString, vbNullString, 5
 '
 'End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadLicence
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadLicence()
+
+    Dim strPathLicence As String
+
+    strPathLicence = strWorkTempBackSL & "licence.rtf"
+
+    Select Case strPCLangCurrentID
+
+        Case "0419"
+            strPathLicence = PathCollect(strToolsDocs_Path & "\0419\licence.rtf")
+
+        Case Else
+            strPathLicence = PathCollect(strToolsDocs_Path & "\0409\licence.rtf")
+    End Select
+
+    If FileExists(strPathLicence) Then
+        LicenceRTF.LoadFile strPathLicence
+        
+        ' Проверка лицензии на неправомерное изменение
+        CheckEditLicense strPathLicence
+        LicenceRTF.SetFocus
+    Else
+
+        If Not mbSilentRun Then
+            MsgBox strMessages(39), vbInformation, strProductName
+        End If
+
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    ' Чекбокс
+    chkAgreeLicence.Caption = LocaliseString(strPathFile, strFormName, "chkAgreeLicence", chkAgreeLicence.Caption)
+    'Кнопки
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    cmdExit.Caption = LocaliseString(strPathFile, strFormName, "cmdExit", cmdExit.Caption)
+End Sub

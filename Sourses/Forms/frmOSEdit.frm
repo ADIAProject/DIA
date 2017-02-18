@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin VB.Form frmOSEdit 
-   BorderStyle     =   3  'Fixed Dialog
+   BorderStyle     =   1  'Fixed Single
    Caption         =   "Редактирование записи"
    ClientHeight    =   5895
    ClientLeft      =   45
@@ -109,9 +109,10 @@ Begin VB.Form frmOSEdit
          DefaultExt      =   ""
          DialogType      =   1
          Enabled         =   0   'False
-         FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         UseDialogText   =   0   'False
          Locked          =   -1  'True
+         QualifyPaths    =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucLangPath 
          Height          =   315
@@ -124,9 +125,10 @@ Begin VB.Form frmOSEdit
          DefaultExt      =   ""
          DialogType      =   1
          Enabled         =   0   'False
-         FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         UseDialogText   =   0   'False
          Locked          =   -1  'True
+         QualifyPaths    =   -1  'True
       End
       Begin prjDIADBS.ctlUcPickBox ucRuntimesPath 
          Height          =   315
@@ -139,9 +141,10 @@ Begin VB.Form frmOSEdit
          DefaultExt      =   ""
          DialogType      =   1
          Enabled         =   0   'False
-         FileFlags       =   2621446
          Filters         =   "Supported files|*.7z|7z Files (*.7z)"
+         UseDialogText   =   0   'False
          Locked          =   -1  'True
+         QualifyPaths    =   -1  'True
       End
       Begin prjDIADBS.LabelW lblRuntimes 
          Height          =   255
@@ -279,7 +282,9 @@ Begin VB.Form frmOSEdit
       UseAutoForeColor=   0   'False
       DefaultExt      =   ""
       Enabled         =   0   'False
+      FileFlags       =   524288
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      UseDialogText   =   0   'False
       Locked          =   -1  'True
    End
    Begin prjDIADBS.ctlUcPickBox ucPathDB 
@@ -292,7 +297,9 @@ Begin VB.Form frmOSEdit
       _ExtentY        =   556
       DefaultExt      =   ""
       Enabled         =   0   'False
+      FileFlags       =   524288
       Filters         =   "Supported files|*.*|All Files (*.*)"
+      UseDialogText   =   0   'False
       Locked          =   -1  'True
    End
    Begin prjDIADBS.ctlJCbutton cmdOK 
@@ -438,6 +445,11 @@ Option Explicit
 
 Private strFormName As String
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Get CaptionW
+'! Description (Описание)  :   [Получение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -446,13 +458,51 @@ Public Property Get CaptionW() As String
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Let CaptionW
+'! Description (Описание)  :   [Изменение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click
 '! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub chkNotCheckBitOS_Click()
+    chk64bit.Enabled = Not chkNotCheckBitOS.Value
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdExit_Click
+'! Description (Описание)  :   [Выход без сохранения]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdExit_Click()
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub cmdOK_Click
+'! Description (Описание)  :   [Сохранить и выйти]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub cmdOK_Click()
+
+    If ucPathDB.Path = "Путь до каталога хранения БД" Then
+        ucPathDB.Path = BackslashAdd2Path(ucPathDRP.Path) & "dev_db"
+    End If
+
+    SaveOptions
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [Изменение шрифта формы]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub FontCharsetChange()
@@ -463,6 +513,58 @@ Private Sub FontCharsetChange()
         .Size = lngFontOtherForm_Size
         .Charset = lngFont_Charset
     End With
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Activate
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Activate()
+    txtOSVer_Change
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyDown
+'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
+'! Parameters  (Переменные):   KeyCode (Integer)
+'                              Shift (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+
+    If KeyCode = vbKeyEscape Then
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+    SetupVisualStyles Me
+
+    With Me
+        strFormName = .Name
+        SetIcon .hWnd, strFormName, False
+        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
+        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
+    End With
+
+    ' Устанавливаем картинки кнопок
+    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
+    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
+
+    ' Локализация приложения
+    If mbMultiLanguage Then
+        Localise strPCLangCurrentPath
+    Else
+        ' Выставляем шрифт
+        FontCharsetChange
+    End If
 
 End Sub
 
@@ -584,91 +686,6 @@ Private Sub SaveOptions()
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub chkNotCheckBitOS_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub chkNotCheckBitOS_Click()
-    chk64bit.Enabled = Not chkNotCheckBitOS.Value
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdExit_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdExit_Click()
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub cmdOK_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub cmdOK_Click()
-
-    If ucPathDB.Path = "Путь до каталога хранения БД" Then
-        ucPathDB.Path = BackslashAdd2Path(ucPathDRP.Path) & "dev_db"
-    End If
-
-    SaveOptions
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Activate
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Activate()
-    txtOSVer_Change
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyDown
-'! Description (Описание)  :   [обработка нажатий клавиш клавиатуры]
-'! Parameters  (Переменные):   KeyCode (Integer)
-'                              Shift (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
-
-    If KeyCode = vbKeyEscape Then
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    SetupVisualStyles Me
-
-    With Me
-        strFormName = .Name
-        SetIcon .hWnd, strFormName, False
-        .Left = (lngRightWorkArea - lngLeftWorkArea) / 2 - .Width / 2
-        .Top = (lngBottomWorkArea - lngTopWorkArea) / 2 - .Height / 2
-    End With
-
-    ' Устанавливаем картинки кнопок
-    LoadIconImage2Object cmdOK, "BTN_SAVE", strPathImageMainWork
-    LoadIconImage2Object cmdExit, "BTN_EXIT", strPathImageMainWork
-
-    ' Локализация приложения
-    If mbMultiLanguage Then
-        Localise strPCLangCurrentPath
-    Else
-        ' Выставляем шрифт
-        FontCharsetChange
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtExcludeFileName_GotFocus
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -737,21 +754,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucLangPath_Click()
-
-    Dim strTempPath As String
-
-    If ucLangPath.FileCount Then
-        strTempPath = ucLangPath.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-        End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucLangPath.Path = strTempPath
-    End If
-
+    ucPickBoxBtnClick ucLangPath
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -778,21 +781,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucPathDB_Click()
-
-    Dim strTempPath As String
-
-    If ucPathDB.FileCount Then
-        strTempPath = ucPathDB.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-        End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucPathDB.Path = strTempPath
-    End If
-
+    ucPickBoxBtnClick ucPathDB
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -819,21 +808,8 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucPathDRP_Click()
-
-    Dim strTempPath As String
-
-    If ucPathDRP.FileCount Then
-        strTempPath = ucPathDRP.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-        End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucPathDRP.Path = strTempPath
-    End If
-
+    ucPickBoxBtnClick ucPathDRP
+    txtOSVer_Change
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -860,21 +836,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucPhysXPath_Click()
-
-    Dim strTempPath As String
-
-    If ucPhysXPath.FileCount Then
-        strTempPath = ucPhysXPath.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-        End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucPhysXPath.Path = strTempPath
-    End If
-
+    ucPickBoxBtnClick ucPhysXPath
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -901,21 +863,7 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub ucRuntimesPath_Click()
-
-    Dim strTempPath As String
-
-    If ucRuntimesPath.FileCount Then
-        strTempPath = ucRuntimesPath.FileName
-
-        If InStr(1, strTempPath, strAppPath, vbTextCompare) Then
-            strTempPath = Replace$(strTempPath, strAppPath, vbNullString, , , vbTextCompare)
-        End If
-    End If
-
-    If LenB(strTempPath) Then
-        ucRuntimesPath.Path = strTempPath
-    End If
-
+    ucPickBoxBtnClick ucRuntimesPath
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -936,3 +884,27 @@ Private Sub ucRuntimesPath_LostFocus()
     HighlightActiveControl Me, ucRuntimesPath, False
 End Sub
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub ucPickBoxBtnClick
+'! Description (Описание)  :   [Действия при нажатии кнопки ucPickBox, замена пути]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub ucPickBoxBtnClick(ByRef objBtn As Object)
+
+    Dim strTempPath As String
+
+    With objBtn
+        If .FileCount Then
+            strTempPath = .Path
+        
+            If InStr(1, strTempPath, strAppPathBackSL, vbTextCompare) Then
+                strTempPath = Replace$(strTempPath, strAppPathBackSL, vbNullString, , , vbTextCompare)
+            End If
+        
+            If LenB(strTempPath) Then
+                .Path = strTempPath
+            End If
+        End If
+    End With
+
+End Sub

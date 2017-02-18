@@ -434,6 +434,17 @@ Public Sub DelSpaceAfterZPT(ByRef strVersion As String)
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function FillNullChar
+'! Description (Описание)  :   [Заполнение строки буфера "нулями"]
+'! Parameters  (Переменные):   lLen (Long)
+'!--------------------------------------------------------------------------------
+Public Function FillNullChar(ByVal lLen As Long) As String
+Attribute FillNullChar.VB_UserMemId = 1610612750
+    FillNullChar = MemAPIs.AllocStr(vbNullString, lLen)
+    MemAPIs.ZeroMemByV StrPtr(FillNullChar), lLen + lLen
+End Function
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub RemoveUni
 '! Description (Описание)  :   [Удаление Unicode символов]
 '! Parameters  (Переменные):   sStr (String)
@@ -611,18 +622,10 @@ End Function
 Public Function TrimNull(ByVal startstr As String) As String
     Dim lngPtr As Long
     
-    lngPtr = lstrlenW(StrPtr(startstr))
-    TrimNull = Left$(startstr, lngPtr)
+    If LenB(startstr) Then
+        lngPtr = lstrlenW(StrPtr(startstr))
+        TrimNull = Left$(startstr, lngPtr)
+    Else
+        TrimNull = startstr
+    End If
 End Function
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function FillNullChar
-'! Description (Описание)  :   [получаем значение из буфера данных]
-'! Parameters  (Переменные):   lLen (Long)
-'!--------------------------------------------------------------------------------
-Public Function FillNullChar(ByVal lLen As Long) As String
-    FillNullChar = MemAPIs.AllocStr(vbNullString, lLen)
-    MemAPIs.ZeroMemByV StrPtr(FillNullChar), lLen + lLen
-End Function
-
-

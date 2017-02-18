@@ -9,6 +9,14 @@ Begin VB.PropertyPage PPListViewGeneral
    PaletteMode     =   0  'Halftone
    ScaleHeight     =   7050
    ScaleWidth      =   6450
+   Begin VB.CheckBox CheckAutoSelectFirstItem 
+      Caption         =   "AutoSelectFirstItem"
+      Height          =   285
+      Left            =   4200
+      TabIndex        =   49
+      Top             =   6600
+      Width           =   2160
+   End
    Begin VB.ComboBox ComboVisualTheme 
       Height          =   315
       Left            =   1800
@@ -515,6 +523,7 @@ With PropertyPage.SelectedControls(0)
 .GroupSubsetCount = CLng(TextGroupSubsetCount.Text)
 .UseColumnChevron = CBool(CheckUseColumnChevron.Value = vbChecked)
 .UseColumnFilterBar = CBool(CheckUseColumnFilterBar.Value = vbChecked)
+.AutoSelectFirstItem = CBool(CheckAutoSelectFirstItem.Value = vbChecked)
 End With
 Call PropertyPage_SelectionChanged
 End Sub
@@ -601,6 +610,7 @@ CheckSnapToGrid.Value = IIf(.SnapToGrid = True, vbChecked, vbUnchecked)
 CheckGroupView.Value = IIf(.GroupView = True, vbChecked, vbUnchecked)
 CheckUseColumnChevron.Value = IIf(.UseColumnChevron = True, vbChecked, vbUnchecked)
 CheckUseColumnFilterBar.Value = IIf(.UseColumnFilterBar = True, vbChecked, vbUnchecked)
+CheckAutoSelectFirstItem.Value = IIf(.AutoSelectFirstItem = True, vbChecked, vbUnchecked)
 End With
 FreezeChanged = False
 End Sub
@@ -914,6 +924,11 @@ PropertyPage.Changed = True
 End Sub
 
 Private Sub CheckUseColumnFilterBar_Click()
+If FreezeChanged = True Then Exit Sub
+PropertyPage.Changed = True
+End Sub
+
+Private Sub CheckAutoSelectFirstItem_Click()
 If FreezeChanged = True Then Exit Sub
 PropertyPage.Changed = True
 End Sub

@@ -521,6 +521,11 @@ Private strFormName      As String
 
 Private mbFirstStartForm As Boolean
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Get CaptionW
+'! Description (Описание)  :   [Получение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Get CaptionW() As String
     Dim lngLenStr As Long
     
@@ -529,6 +534,11 @@ Public Property Get CaptionW() As String
     DefWindowProc Me.hWnd, WM_GETTEXT, Len(CaptionW) + 1, ByVal StrPtr(CaptionW)
 End Property
 
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Property Let CaptionW
+'! Description (Описание)  :   [Изменение Caption-формы]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
 Public Property Let CaptionW(ByVal NewValue As String)
     DefWindowProc Me.hWnd, WM_SETTEXT, 0, ByVal StrPtr(NewValue & vbNullChar)
 End Property
@@ -547,274 +557,6 @@ Public Sub BlockControl(ByVal mbBlock As Boolean)
     cmdOK.Enabled = mbBlock
     cmdReNewHW.Enabled = mbBlock
 End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FindCheckCountList
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FindCheckCountList()
-
-    Dim ii      As Integer
-    Dim miCount As Integer
-
-    For ii = 1 To lvDevices.ListItems.count
-
-        If lvDevices.ListItems.item(ii).Checked Then
-            miCount = miCount + 1
-        End If
-
-    Next
-
-    If miCount Then
-        If Not cmdOK.Enabled Then
-            cmdOK.Enabled = True
-        End If
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FontCharsetChange
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub FontCharsetChange()
-
-    ' Выставляем шрифт
-    With Me.Font
-        .Name = strFontOtherForm_Name
-        .Size = lngFontOtherForm_Size
-        .Charset = lngFont_Charset
-    End With
-
-    
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FormLoadAction
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Sub FormLoadAction()
-
-    ' Локализация приложения
-    If mbMultiLanguage Then
-        Localise strPCLangCurrentPath
-    Else
-        ' Выставляем шрифт
-        FontCharsetChange
-    End If
-    
-    LoadListbyMode
-    
-    lngDeviceCount = UBound(arrHwidsLocal) + 1
-    LoadFormCaption
-    cmdGoSite.Enabled = LenB(txtFindText.Text)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub FormLoadDefaultParam
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Public Sub FormLoadDefaultParam()
-
-    If Not (lvDevices Is Nothing) Then
-        lvDevices.ColumnHeaders.Clear
-        lvDevices.ListItems.Clear
-    End If
-
-    optGrp1.Value = 0
-    optGrp2.Value = 1
-    optGrp3.Value = False
-    optGrp4.Value = True
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadFormCaption
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadFormCaption()
-
-    Dim MeCaptionView As String
-
-    MeCaptionView = LocaliseString(strPCLangCurrentPath, strFormName, strFormName, Me.Caption)
-    Me.CaptionW = MeCaptionView & " (" & lvDevices.ListItems.count & strSpace & strMessages(124) & strSpace & lngDeviceCount & ")"
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub LoadListbyMode
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub LoadListbyMode()
-
-    Dim lngModeList As Long
-    Dim mbOpt1      As Boolean
-    Dim mbOpt2      As Boolean
-    Dim mbOpt3      As Boolean
-    Dim mbOpt4      As Boolean
-
-    mbOpt1 = CBool(optGrp1.Value)
-    mbOpt2 = CBool(optGrp2.Value)
-    mbOpt3 = optGrp3.Value
-    mbOpt4 = optGrp4.Value
-
-    ' Microsoft
-    If mbOpt1 And Not mbOpt2 Then
-
-        'All
-        If mbOpt3 Then
-            lngModeList = 1
-            'NotInBase
-        Else
-            lngModeList = 5
-        End If
-
-        ' OEM
-    ElseIf Not mbOpt1 And mbOpt2 Then
-
-        'All
-        If mbOpt3 Then
-            lngModeList = 2
-            'NotInBase
-        Else
-            lngModeList = 6
-        End If
-
-        ' Ничего
-    ElseIf Not mbOpt1 And Not mbOpt2 Then
-        lngModeList = 9999
-        ' Microsoft+OEM
-    Else
-
-        'All
-        If mbOpt3 Then
-            lngModeList = 3
-            'NotInBase
-        Else
-            lngModeList = 4
-        End If
-    End If
-
-    If lngModeList <> 9999 Then
-        LoadList_Device lngModeList
-    Else
-        If Not (lvDevices Is Nothing) Then
-            lvDevices.ListItems.Clear
-        End If
-        With lvDevices.ColumnHeaders
-            If .count Then
-                .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
-                .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
-            End If
-        End With
-    End If
-
-    LoadFormCaption
-    FindCheckCountList
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Localise
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   StrPathFile (String)
-'!--------------------------------------------------------------------------------
-Private Sub Localise(ByVal strPathFile As String)
-    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
-    FontCharsetChange
-    ' Название формы
-    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
-    'Кнопки
-    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
-    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
-    frFindDrvInternet.Caption = LocaliseString(strPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
-    chkParseHwid.Caption = LocaliseString(strPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
-    cmdGoSite.Caption = LocaliseString(strPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
-    optGrp1.Caption = LocaliseString(strPathFile, strFormName, "optGrp1", optGrp1.Caption)
-    optGrp2.Caption = LocaliseString(strPathFile, strFormName, "optGrp2", optGrp2.Caption)
-    optGrp3.Caption = LocaliseString(strPathFile, strFormName, "optGrp3", optGrp3.Caption)
-    optGrp4.Caption = LocaliseString(strPathFile, strFormName, "optGrp4", optGrp4.Caption)
-    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
-    cmdReNewHW.Caption = LocaliseString(strPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
-    cmdBackUpDrivers.Caption = LocaliseString(strPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub OpenDeviceProp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strHwid (String)
-'!--------------------------------------------------------------------------------
-Private Sub OpenDeviceProp(ByVal strHwid As String)
-
-    Dim cmdString       As String
-    Dim cmdStringParams As String
-    Dim nRetShellEx     As Boolean
-
-    cmdString = "rundll32.exe"
-    cmdStringParams = "devmgr.dll,DeviceProperties_RunDLL /DeviceID " & strHwid
-    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
-    If mbDebugStandart Then DebugMode "cmdStringParams: " & cmdStringParams
-    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL, cmdStringParams)
-    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Function ParseHwid
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   strValuer (String)
-'!--------------------------------------------------------------------------------
-Private Function ParseHwid(ByVal strValuer As String) As String
-
-    Dim strValuer_x() As String
-    Dim miSubSys      As Long
-    Dim miREV         As Long
-    Dim miMI          As Long
-    Dim miCC          As Long
-
-    ' Удаление дубликатов
-    If chkParseHwid.Value Then
-
-        ' разбиваем по "\"
-        If InStr(strValuer, vbBackslash) Then
-            strValuer_x = Split(strValuer, vbBackslash)
-            strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
-            miSubSys = InStr(strValuer, "&SUBSYS")
-
-            If miSubSys Then
-                strValuer = Left$(strValuer, miSubSys - 1)
-            End If
-
-            miREV = InStr(strValuer, "&REV_")
-
-            If miREV Then
-                strValuer = Left$(strValuer, miREV - 1)
-            End If
-
-            miMI = InStr(strValuer, "&MI_")
-
-            If miMI Then
-                strValuer = Left$(strValuer, miMI - 1)
-            End If
-
-            miCC = InStr(strValuer, "&CC_")
-
-            If miCC Then
-                strValuer = Left$(strValuer, miCC - 1)
-            End If
-        End If
-    End If
-
-    ParseHwid = strValuer
-End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub chkParseHwid_Click
@@ -944,6 +686,89 @@ Private Sub cmdUnCheckAll_Click()
     End With
 
     FindCheckCountList
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FindCheckCountList
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub FindCheckCountList()
+
+    Dim ii      As Integer
+    Dim miCount As Integer
+
+    For ii = 1 To lvDevices.ListItems.count
+
+        If lvDevices.ListItems.item(ii).Checked Then
+            miCount = miCount + 1
+        End If
+
+    Next
+
+    If miCount Then
+        If Not cmdOK.Enabled Then
+            cmdOK.Enabled = True
+        End If
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FontCharsetChange
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub FontCharsetChange()
+
+    ' Выставляем шрифт
+    With Me.Font
+        .Name = strFontOtherForm_Name
+        .Size = lngFontOtherForm_Size
+        .Charset = lngFont_Charset
+    End With
+
+    
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadAction
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub FormLoadAction()
+
+    ' Локализация приложения
+    If mbMultiLanguage Then
+        Localise strPCLangCurrentPath
+    Else
+        ' Выставляем шрифт
+        FontCharsetChange
+    End If
+    
+    LoadListbyMode
+    
+    lngDeviceCount = UBound(arrHwidsLocal) + 1
+    LoadFormCaption
+    cmdGoSite.Enabled = LenB(txtFindText.Text)
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub FormLoadDefaultParam
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Public Sub FormLoadDefaultParam()
+
+    If Not (lvDevices Is Nothing) Then
+        lvDevices.ColumnHeaders.Clear
+        lvDevices.ListItems.Clear
+    End If
+
+    optGrp1.Value = 0
+    optGrp2.Value = 1
+    optGrp3.Value = False
+    optGrp4.Value = True
 End Sub
 
 Private Sub Form_Activate()
@@ -1091,6 +916,98 @@ Private Sub Form_Resize()
 
     End With
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadFormCaption
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadFormCaption()
+
+    Dim MeCaptionView As String
+
+    MeCaptionView = LocaliseString(strPCLangCurrentPath, strFormName, strFormName, Me.Caption)
+    Me.CaptionW = MeCaptionView & " (" & lvDevices.ListItems.count & strSpace & strMessages(124) & strSpace & lngDeviceCount & ")"
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub LoadListbyMode
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub LoadListbyMode()
+
+    Dim lngModeList As Long
+    Dim mbOpt1      As Boolean
+    Dim mbOpt2      As Boolean
+    Dim mbOpt3      As Boolean
+    Dim mbOpt4      As Boolean
+
+    mbOpt1 = CBool(optGrp1.Value)
+    mbOpt2 = CBool(optGrp2.Value)
+    mbOpt3 = optGrp3.Value
+    mbOpt4 = optGrp4.Value
+
+    ' Microsoft
+    If mbOpt1 And Not mbOpt2 Then
+
+        'All
+        If mbOpt3 Then
+            lngModeList = 1
+            'NotInBase
+        Else
+            lngModeList = 5
+        End If
+
+        ' OEM
+    ElseIf Not mbOpt1 And mbOpt2 Then
+
+        'All
+        If mbOpt3 Then
+            lngModeList = 2
+            'NotInBase
+        Else
+            lngModeList = 6
+        End If
+
+        ' Ничего
+    ElseIf Not mbOpt1 And Not mbOpt2 Then
+        lngModeList = 9999
+        ' Microsoft+OEM
+    Else
+
+        'All
+        If mbOpt3 Then
+            lngModeList = 3
+            'NotInBase
+        Else
+            lngModeList = 4
+        End If
+    End If
+
+    If lngModeList <> 9999 Then
+        LoadList_Device lngModeList
+    Else
+        If Not (lvDevices Is Nothing) Then
+            lvDevices.ListItems.Clear
+        End If
+        With lvDevices.ColumnHeaders
+            If .count Then
+                .item(1).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(2).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(3).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(4).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(5).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(6).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(7).AutoSize LvwColumnHeaderAutoSizeToHeader
+                .item(8).AutoSize LvwColumnHeaderAutoSizeToHeader
+            End If
+        End With
+    End If
+
+    LoadFormCaption
+    FindCheckCountList
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -1300,6 +1217,31 @@ Private Sub LoadList_Device(Optional ByVal lngMode As Long = 0)
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Localise
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   StrPathFile (String)
+'!--------------------------------------------------------------------------------
+Private Sub Localise(ByVal strPathFile As String)
+    ' Выставляем шрифт элементов (действует только на те для которых не поддерживается Юникод)
+    FontCharsetChange
+    ' Название формы
+    Me.CaptionW = LocaliseString(strPathFile, strFormName, strFormName, Me.Caption)
+    'Кнопки
+    cmdOK.Caption = LocaliseString(strPathFile, strFormName, "cmdOK", cmdOK.Caption)
+    frGroup.Caption = LocaliseString(strPathFile, strFormName, "frGroup", frGroup.Caption)
+    frFindDrvInternet.Caption = LocaliseString(strPathFile, strFormName, "frFindDrvInternet", frFindDrvInternet.Caption)
+    chkParseHwid.Caption = LocaliseString(strPathFile, strFormName, "chkParseHwid", chkParseHwid.Caption)
+    cmdGoSite.Caption = LocaliseString(strPathFile, strFormName, "cmdGoSite", cmdGoSite.Caption)
+    optGrp1.Caption = LocaliseString(strPathFile, strFormName, "optGrp1", optGrp1.Caption)
+    optGrp2.Caption = LocaliseString(strPathFile, strFormName, "optGrp2", optGrp2.Caption)
+    optGrp3.Caption = LocaliseString(strPathFile, strFormName, "optGrp3", optGrp3.Caption)
+    optGrp4.Caption = LocaliseString(strPathFile, strFormName, "optGrp4", optGrp4.Caption)
+    lblWait.Caption = LocaliseString(strPathFile, strFormName, "lblWait", lblWait.Caption)
+    cmdReNewHW.Caption = LocaliseString(strPathFile, strFormName, "cmdReNewHW", cmdReNewHW.Caption)
+    cmdBackUpDrivers.Caption = LocaliseString(strPathFile, strFormName, "cmdBackUpDrivers", cmdBackUpDrivers.Caption)
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub lvDevices_ColumnClick
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   ColumnHeader (LvwColumnHeader)
@@ -1463,6 +1405,25 @@ Private Sub mnuContextProperties_Click()
 End Sub
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub OpenDeviceProp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strHwid (String)
+'!--------------------------------------------------------------------------------
+Private Sub OpenDeviceProp(ByVal strHwid As String)
+
+    Dim cmdString       As String
+    Dim cmdStringParams As String
+    Dim nRetShellEx     As Boolean
+
+    cmdString = "rundll32.exe"
+    cmdStringParams = "devmgr.dll,DeviceProperties_RunDLL /DeviceID " & strHwid
+    If mbDebugStandart Then DebugMode "cmdString: " & cmdString
+    If mbDebugStandart Then DebugMode "cmdStringParams: " & cmdStringParams
+    nRetShellEx = ShellEx(cmdString, essSW_SHOWNORMAL, cmdStringParams)
+    If mbDebugStandart Then DebugMode "cmdString: " & nRetShellEx
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub optGrp1_Click
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
@@ -1501,10 +1462,60 @@ End Sub
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Public Sub optGrp4_Click()
+Attribute optGrp4_Click.VB_UserMemId = 1610809377
     If Not mbFirstStartForm Then
         LoadListbyMode
     End If
 End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Function ParseHwid
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   strValuer (String)
+'!--------------------------------------------------------------------------------
+Private Function ParseHwid(ByVal strValuer As String) As String
+
+    Dim strValuer_x() As String
+    Dim miSubSys      As Long
+    Dim miREV         As Long
+    Dim miMI          As Long
+    Dim miCC          As Long
+
+    ' Удаление дубликатов
+    If chkParseHwid.Value Then
+
+        ' разбиваем по "\"
+        If InStr(strValuer, vbBackslash) Then
+            strValuer_x = Split(strValuer, vbBackslash)
+            strValuer = strValuer_x(0) & vbBackslash & strValuer_x(1)
+            miSubSys = InStr(strValuer, "&SUBSYS")
+
+            If miSubSys Then
+                strValuer = Left$(strValuer, miSubSys - 1)
+            End If
+
+            miREV = InStr(strValuer, "&REV_")
+
+            If miREV Then
+                strValuer = Left$(strValuer, miREV - 1)
+            End If
+
+            miMI = InStr(strValuer, "&MI_")
+
+            If miMI Then
+                strValuer = Left$(strValuer, miMI - 1)
+            End If
+
+            miCC = InStr(strValuer, "&CC_")
+
+            If miCC Then
+                strValuer = Left$(strValuer, miCC - 1)
+            End If
+        End If
+    End If
+
+    ParseHwid = strValuer
+End Function
 
 '!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub txtFindText_Change
@@ -1514,4 +1525,3 @@ End Sub
 Private Sub txtFindText_Change()
     cmdGoSite.Enabled = LenB(txtFindText.Text)
 End Sub
-

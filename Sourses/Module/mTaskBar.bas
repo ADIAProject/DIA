@@ -56,4 +56,3 @@ Public Function VPadding(ByVal Form As Form)
         DoEvents
     End With
 End Function
-

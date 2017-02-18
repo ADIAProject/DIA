@@ -302,6 +302,41 @@ Private classicThemeWorkaround          As Boolean
 'Tanner's addition: convert this class to ise IDE-safe subclassing
 Private cSubclass                       As cSelfSubHookCallback
 
+Private Sub Class_Initialize()
+Attribute Class_Initialize.VB_UserMemId = 1610809370
+
+    Set cColl = New Collection
+
+    'Tanner's addition 20 September '12:
+    ' Double-check that theming is enabled. If it isn't, fall back to subclassing (e.g. Windows XP style)
+    Dim hTheme                          As Long
+    Dim sClass                          As String
+    sClass = "Window"
+    hTheme = OpenThemeData(frmMain.hWnd, StrPtr(sClass))
+    If hTheme = 0 Then
+        classicThemeWorkaround = True
+    Else
+        CloseThemeData hTheme
+    End If
+
+    ReDim mDIB(0)
+
+    InitGDI
+
+    'Tanner's fix: initialize an IDE-safe subclasser
+    Set cSubclass = New cSelfSubHookCallback
+
+End Sub
+
+Private Sub Class_Terminate()
+Attribute Class_Terminate.VB_UserMemId = 1610809371
+
+    cSubclass.ssc_Terminate
+    Clear
+    TerminateGDI
+
+End Sub
+
 Public Property Get CanWeTheme() As Boolean
     CanWeTheme = Not classicThemeWorkaround
 End Property
@@ -309,7 +344,6 @@ End Property
 Public Property Get ImageCount() As Long
     ImageCount = UBound(mDIB) - 1
 End Property
-
 
 Public Function AddIconFromHandle(ByVal hIcon As Long, Optional bGhosted As Boolean) As Boolean
 
@@ -334,7 +368,6 @@ Public Function AddIconFromHandle(ByVal hIcon As Long, Optional bGhosted As Bool
 AddIconFromHandle_Error:
 
 End Function
-
 
 Public Function AddImageFromFile(ByVal strFileName As String, Optional bGhosted As Boolean) As Boolean
 
@@ -374,7 +407,6 @@ Public Function AddImageFromFile(ByVal strFileName As String, Optional bGhosted 
 AddImageFromFile_Error:
 
 End Function
-
 
 Public Function AddImageFromStream(ByRef bvData() As Byte, Optional bGhosted As Boolean) As Boolean
 
@@ -417,7 +449,6 @@ Public Function AddImageFromStream(ByRef bvData() As Byte, Optional bGhosted As 
 AddImageFromStream_Error:
 
 End Function
-
 
 Private Function AlphaIconToBmp(ByVal IconHandle As Long, ByRef RefBmp As Long) As Long
 
@@ -464,10 +495,10 @@ End Function
 
 Public Function Clear()
 
-    Dim I                               As Long
+    Dim ii As Long
 
-    For I = 0 To UBound(mDIB) - 1
-        With mDIB(I)
+    For ii = 0 To UBound(mDIB) - 1
+        With mDIB(ii)
             Call DeleteObject(.hDIB)
             Call DeleteDC(.hDC)
         End With
@@ -516,7 +547,6 @@ Private Function CreateNewDib() As Long
     ReDim Preserve mDIB(Index + 1)
 
 End Function
-
 
 Private Sub DrawCheck(ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal X2 As Long, ByVal Y2 As Long, bDisabled As Boolean)
     Dim hPen As Long, OldPen            As Long
@@ -746,7 +776,7 @@ Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
     Dim Aproximate                      As Long
     Dim IconID                          As Long
     Dim hIcon                           As Long
-    Dim I                               As Long
+    Dim ii                              As Long
 
 
     Call CopyMemory(tIconHeader, bytIcoData(0), Len(tIconHeader))
@@ -759,17 +789,17 @@ Private Function LoadIconFromStream(ByRef bytIcoData() As Byte) As Long
 
         IconID = -1
 
-        For I = 0 To tIconHeader.ihCount - 1
-            If tIconEntry(I).ieBitCount > MaxBitCount Then MaxBitCount = tIconEntry(I).ieBitCount
+        For ii = 0 To tIconHeader.ihCount - 1
+            If tIconEntry(ii).ieBitCount > MaxBitCount Then MaxBitCount = tIconEntry(ii).ieBitCount
         Next
 
 
-        For I = 0 To tIconHeader.ihCount - 1
-            If MaxBitCount = tIconEntry(I).ieBitCount Then
-                MaxSize = CLng(tIconEntry(I).ieWidth) + CLng(tIconEntry(I).ieHeight)
+        For ii = 0 To tIconHeader.ihCount - 1
+            If MaxBitCount = tIconEntry(ii).ieBitCount Then
+                MaxSize = CLng(tIconEntry(ii).ieWidth) + CLng(tIconEntry(ii).ieHeight)
                 If MaxSize > Aproximate And MaxSize <= (m_lWidth + m_lHeight) Then
                     Aproximate = MaxSize
-                    IconID = I
+                    IconID = ii
                 End If
             End If
         Next
@@ -852,7 +882,6 @@ Public Function PutImageToApiMenu(ByVal imageID As Long, ByVal hMenu As Long, By
     PutImageToApiMenu = SetMenuItemInfo(hMenu, MenuPos, True, MII)
 
 End Function
-
 
 Public Function PutImageToVBMenu(ByVal imageID As Long, ByVal MenuPos As Long, ParamArray vSubMenuPos() As Variant) As Boolean
 
@@ -976,10 +1005,9 @@ Private Function pvAddImagen(ByVal hImage As Long, Optional bGhosted As Boolean)
     End If
 End Function
 
-
 Public Function RemoveImage(ByVal Index As Long) As Boolean
 
-    Dim I                               As Long
+    Dim ii As Long
 
     If Index < 0 Or Index > Me.ImageCount Then
         Exit Function
@@ -990,8 +1018,8 @@ Public Function RemoveImage(ByVal Index As Long) As Boolean
         Call DeleteDC(.hDC)
     End With
 
-    For I = Index To Me.ImageCount
-        mDIB(I) = mDIB(I + 1)
+    For ii = Index To Me.ImageCount
+        mDIB(ii) = mDIB(ii + 1)
     Next
 
     ReDim Preserve mDIB(Me.ImageCount)
@@ -1034,7 +1062,6 @@ Public Sub RemoveMenuCheckVB(ParamArray vSubMenuPos() As Variant)
     SetMenuInfo hSubMenu, MI
 End Sub
 
-
 Private Function SetSubclassing(ByVal hWnd As Long) As Boolean
 
     If cSubclass.ssc_Subclass(hWnd, , , Me) Then
@@ -1061,40 +1088,6 @@ Private Sub TerminateGDI()
     If GdipToken <> 0 Then Call GdiplusShutdown(GdipToken)
 End Sub
 
-Private Sub Class_Initialize()
-
-    Set cColl = New Collection
-
-    'Tanner's addition 20 September '12:
-    ' Double-check that theming is enabled. If it isn't, fall back to subclassing (e.g. Windows XP style)
-    Dim hTheme                          As Long
-    Dim sClass                          As String
-    sClass = "Window"
-    hTheme = OpenThemeData(frmMain.hWnd, StrPtr(sClass))
-    If hTheme = 0 Then
-        classicThemeWorkaround = True
-    Else
-        CloseThemeData hTheme
-    End If
-
-    ReDim mDIB(0)
-
-    InitGDI
-
-    'Tanner's fix: initialize an IDE-safe subclasser
-    Set cSubclass = New cSelfSubHookCallback
-
-End Sub
-
-
-Private Sub Class_Terminate()
-
-    cSubclass.ssc_Terminate
-    Clear
-    TerminateGDI
-
-End Sub
-
 'All events subclassed by this window are processed here.
 Private Sub z_myWndProc(ByVal bBefore As Boolean, _
                       ByRef bHandled As Boolean, _
@@ -1104,6 +1097,7 @@ Private Sub z_myWndProc(ByVal bBefore As Boolean, _
                       ByVal wParam As Long, _
                       ByVal lParam As Long, _
                       ByRef lParamUser As Long)
+Attribute z_myWndProc.VB_UserMemId = 1610809372
     '*************************************************************************************************
     '* bBefore    - Indicates whether the callback is before or after the original WndProc. Usually
     '*              you will know unless the callback for the uMsg value is specified as

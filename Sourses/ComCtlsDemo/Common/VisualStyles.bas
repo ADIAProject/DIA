@@ -86,13 +86,14 @@ Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function DrawText Lib "user32" Alias "DrawTextW" (ByVal hDC As Long, ByVal lpStr As Long, ByVal nCount As Long, ByRef lpRect As RECT, ByVal wFormat As Long) As Long
 Private Declare Function TrackMouseEvent Lib "user32" (ByRef lpEventTrack As TRACKMOUSEEVENTSTRUCT) As Long
 Private Declare Function TransparentBlt Lib "msimg32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal XSrc As Long, ByVal YSrc As Long, ByVal nWidthSrc As Long, ByVal nHeightSrc As Long, ByVal crTransparent As Long) As Long
+Private Declare Function IsThemeBackgroundPartiallyTransparent Lib "uxtheme" (ByVal Theme As Long, iPartId As Long, iStateId As Long) As Long
+Private Declare Function DrawThemeParentBackground Lib "uxtheme" (ByVal hWnd As Long, ByVal hDC As Long, ByRef pRect As RECT) As Long
 Private Declare Function DrawThemeBackground Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByRef pRect As RECT, ByRef pClipRect As RECT) As Long
 Private Declare Function DrawThemeText Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByVal pszText As Long, ByVal iCharCount As Long, ByVal dwTextFlags As Long, ByVal dwTextFlags2 As Long, ByRef pRect As RECT) As Long
 Private Declare Function OpenThemeData Lib "uxtheme" (ByVal hWnd As Long, ByVal pszClassList As Long) As Long
 Private Declare Function CloseThemeData Lib "uxtheme" (ByVal Theme As Long) As Long
 Private Declare Function GetThemeBackgroundRegion Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByRef pRect As RECT, ByRef hRgn As Long) As Long
 Private Declare Function GetThemeBackgroundContentRect Lib "uxtheme" (ByVal Theme As Long, ByVal hDC As Long, ByVal iPartId As Long, ByVal iStateId As Long, ByRef pBoundingRect As RECT, ByRef pContentRect As RECT) As Long
-Private Declare Function DrawThemeParentBackground Lib "uxtheme" (ByVal hWnd As Long, ByVal hDC As Long, ByRef pRect As RECT) As Long
 Private Declare Function IsAppThemed Lib "uxtheme" () As Long
 Private Declare Function IsThemeActive Lib "uxtheme" () As Long
 Private Declare Function GetThemeAppProperties Lib "uxtheme" () As Long
@@ -169,7 +170,7 @@ For Each CurrControl In Form.Controls
     Select Case TypeName(CurrControl)
         Case "Frame"
             SetWindowSubclass CurrControl.hWnd, AddressOf RedirectFrame, ObjPtr(CurrControl), 0
-        Case "CommandButton", "CheckBox", "OptionButton"
+        Case "CommandButton", "CommandButtonW", "CheckBox", "CheckBoxW", "OptionButton", "OptionButtonW"
             If CurrControl.Style = vbButtonGraphical Then
                 If CurrControl.Enabled = True Then SetProp CurrControl.hWnd, StrPtr("Enabled"), 1
                 SetWindowSubclass CurrControl.hWnd, AddressOf RedirectButton, ObjPtr(CurrControl), ObjPtr(CurrControl)
@@ -295,17 +296,17 @@ Dim CX As Long, CY As Long, X As Long, Y As Long
 ButtonState = SendMessage(hWnd, BM_GETSTATE, 0, ByVal 0&)
 Enabled = IIf(GetProp(hWnd, StrPtr("Enabled")) = 1, True, Button.Enabled)
 Select Case TypeName(Button)
-    Case "CommandButton"
+    Case "CommandButton", "CommandButtonW"
         Default = Button.Default
         If GetFocus() <> hWnd Then
             On Error Resume Next
             If CLng(Button.Parent.ActiveControl.Default) > 0 Then Else Default = False
             On Error GoTo 0
         End If
-    Case "CheckBox"
+    Case "CheckBox", "CheckBoxW"
         Checked = IIf(Button.Value = vbChecked, True, False)
         Default = False
-    Case "OptionButton"
+    Case "OptionButton", "OptionButtonW"
         Checked = Button.Value
         Default = False
 End Select
@@ -343,7 +344,8 @@ GetClientRect hWnd, ClientRect
 Theme = OpenThemeData(hWnd, StrPtr("Button"))
 GetThemeBackgroundRegion Theme, hDC, BP_PUSHBUTTON, ButtonState, ClientRect, RgnClip
 ExtSelectClipRgn hDC, RgnClip, RGN_DIFF
-If DrawThemeParentBackground(hWnd, hDC, ClientRect) <> S_OK Then Call DrawRect(hDC, 0, 0, ClientRect.Right, ClientRect.Bottom, Button.BackColor)
+Call DrawRect(hDC, 0, 0, ClientRect.Right, ClientRect.Bottom, Button.BackColor)
+If IsThemeBackgroundPartiallyTransparent(Theme, BP_PUSHBUTTON, ButtonState) <> 0 Then DrawThemeParentBackground hWnd, hDC, ClientRect
 ExtSelectClipRgn hDC, 0, RGN_COPY
 DeleteObject RgnClip
 DrawThemeBackground Theme, hDC, BP_PUSHBUTTON, ButtonState, ClientRect, ClientRect

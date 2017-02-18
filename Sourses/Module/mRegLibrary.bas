@@ -1,6 +1,6 @@
 Attribute VB_Name = "mRegLibrary"
 Option Explicit
-
+' Not add to project (DBS/DIA) - option for compiler
 #Const mbIDE_DBSProject = False
 
 ' Переменные регистрации внешних компонентов
@@ -90,17 +90,21 @@ Public Function RegisterAddComponent() As Boolean
 
     RegisterAddComponent = True
     
-    lngRet = RegOCX(strWorkTempBackSL & "TabCtl32.OCX", strTabCtl32Reference, strTabCtl32Ver, strTabCtl32VerDll)
-    If lngRet = 0 Then
-        If MsgBox("System OCX or DLL: 'TabCtl32.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
-
+    ' Only DIA
+    #If Not mbIDE_DBSProject Then
+        lngRet = RegOCX(strWorkTempBackSL & "TabCtl32.OCX", strTabCtl32Reference, strTabCtl32Ver, strTabCtl32VerDll)
+        If lngRet = 0 Then
+            If MsgBox("System OCX or DLL: 'TabCtl32.OCX'" & str2vbNewLine & strMessages(8), vbYesNo + vbQuestion, strProductName) = vbNo Then
+    
+                RegisterAddComponent = False
+                Exit Function
+    
+            End If
+        ElseIf lngRet = -1 Then
             RegisterAddComponent = False
-            Exit Function
-
         End If
-    ElseIf lngRet = -1 Then
-        RegisterAddComponent = False
-    End If
+    #End If
+    
 
     If mbDebugStandart Then DebugMode "RegisterAddComponent - *****************Check Next File********************"
 

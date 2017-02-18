@@ -125,6 +125,31 @@ Private Const SND_FILENAME      As Long = &H20000    'sound is file name
 Private Const EM_GETSEL         As Long = &HB0
 
 '!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Initialize
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Initialize()
+Attribute Form_Initialize.VB_UserMemId = 1610809350
+    'position the elements and
+    'set some initial settings
+    twipsx = Screen.TwipsPerPixelX
+    twipsy = Screen.TwipsPerPixelY
+    Me.KeyPreview = True
+    Me.AutoRedraw = True
+
+    With Label1
+        .Move 4 * twipsx, 40 * twipsx, Me.ScaleWidth - (7 * twipsx), Me.ScaleHeight - (44 * twipsx)
+        .AutoSize = False
+        .WordWrap = True
+        '.BackStyle = vbTransparent
+        .Alignment = vbCenter
+    End With
+
+    'LABEL1
+End Sub
+
+'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub DrawGradientBackground
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):   Colour1 (Long)
@@ -221,6 +246,113 @@ Private Sub FontCharsetChange()
         .Charset = lngFont_Charset
     End With
 
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Click
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Click()
+Attribute Form_Click.VB_UserMemId = 1610809349
+    Timer1.Enabled = False
+    ReleaseCapture
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_KeyPress
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   KeyAscii (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_KeyPress(KeyAscii As Integer)
+Attribute Form_KeyPress.VB_UserMemId = 1610809351
+
+    If KeyAscii = vbKeyEscape Then
+        Unload Me
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Load
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):
+'!--------------------------------------------------------------------------------
+Private Sub Form_Load()
+Attribute Form_Load.VB_UserMemId = 1610809352
+    SetupVisualStyles Me
+    strFormName = Me.Name
+    lblNameProg.Caption = strFrmMainCaptionTemp & vbNewLine & " v." & strProductVersion & strSpace & strFrmMainCaptionTempDate & strDateProgram & ")"
+    ' Выставляем шрифт
+    FontCharsetChange
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute Form_MouseMove.VB_UserMemId = 1610809353
+
+    'trap the mouse movements while
+    'in the form
+    If GetCapture() = Me.hWnd Then
+        If X < 0 Or X > Me.Width Or Y < 0 Or Y > Me.Height Then
+            ReleaseCapture
+            Label1.ForeColor = &H80000012
+            Label1.Font.Underline = False
+        End If
+
+    Else
+        Label1.ForeColor = RGB(0, 0, 255)
+        Label1.Font.Underline = True
+        SetCapture Me.hWnd
+    End If
+
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_MouseUp
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute Form_MouseUp.VB_UserMemId = 1610809354
+    Timer1.Enabled = False
+    ReleaseCapture
+    CheckUpd False
+    Unload Me
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Form_Unload
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Cancel (Integer)
+'!--------------------------------------------------------------------------------
+Private Sub Form_Unload(Cancel As Integer)
+Attribute Form_Unload.VB_UserMemId = 1610809355
+    Set frmNotify = Nothing
+End Sub
+
+'!--------------------------------------------------------------------------------
+'! Procedure   (Функция)   :   Sub Label1_MouseMove
+'! Description (Описание)  :   [type_description_here]
+'! Parameters  (Переменные):   Button (Integer)
+'                              Shift (Integer)
+'                              X (Single)
+'                              Y (Single)
+'!--------------------------------------------------------------------------------
+Private Sub Label1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Attribute Label1_MouseMove.VB_UserMemId = 1610809356
+    Form_MouseMove Button, Shift, X, Y
 End Sub
 
 '!--------------------------------------------------------------------------------
@@ -323,135 +455,12 @@ Public Sub ShowMessage(ByVal sMsg As String, Optional img As StdPicture, Optiona
 End Sub
 
 '!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Click
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Click()
-    Timer1.Enabled = False
-    ReleaseCapture
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Initialize
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Initialize()
-    'position the elements and
-    'set some initial settings
-    twipsx = Screen.TwipsPerPixelX
-    twipsy = Screen.TwipsPerPixelY
-    Me.KeyPreview = True
-    Me.AutoRedraw = True
-
-    With Label1
-        .Move 4 * twipsx, 40 * twipsx, Me.ScaleWidth - (7 * twipsx), Me.ScaleHeight - (44 * twipsx)
-        .AutoSize = False
-        .WordWrap = True
-        '.BackStyle = vbTransparent
-        .Alignment = vbCenter
-    End With
-
-    'LABEL1
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_KeyPress
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   KeyAscii (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_KeyPress(KeyAscii As Integer)
-
-    If KeyAscii = vbKeyEscape Then
-        Unload Me
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Load
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):
-'!--------------------------------------------------------------------------------
-Private Sub Form_Load()
-    SetupVisualStyles Me
-    strFormName = Me.Name
-    lblNameProg.Caption = strFrmMainCaptionTemp & vbNewLine & " v." & strProductVersion & strSpace & strFrmMainCaptionTempDate & strDateProgram & ")"
-    ' Выставляем шрифт
-    FontCharsetChange
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_MouseMove
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-
-    'trap the mouse movements while
-    'in the form
-    If GetCapture() = Me.hWnd Then
-        If X < 0 Or X > Me.Width Or Y < 0 Or Y > Me.Height Then
-            ReleaseCapture
-            Label1.ForeColor = &H80000012
-            Label1.Font.Underline = False
-        End If
-
-    Else
-        Label1.ForeColor = RGB(0, 0, 255)
-        Label1.Font.Underline = True
-        SetCapture Me.hWnd
-    End If
-
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_MouseUp
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    Timer1.Enabled = False
-    ReleaseCapture
-    CheckUpd False
-    Unload Me
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Form_Unload
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Cancel (Integer)
-'!--------------------------------------------------------------------------------
-Private Sub Form_Unload(Cancel As Integer)
-    Set frmNotify = Nothing
-End Sub
-
-'!--------------------------------------------------------------------------------
-'! Procedure   (Функция)   :   Sub Label1_MouseMove
-'! Description (Описание)  :   [type_description_here]
-'! Parameters  (Переменные):   Button (Integer)
-'                              Shift (Integer)
-'                              X (Single)
-'                              Y (Single)
-'!--------------------------------------------------------------------------------
-Private Sub Label1_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    Form_MouseMove Button, Shift, X, Y
-End Sub
-
-'!--------------------------------------------------------------------------------
 '! Procedure   (Функция)   :   Sub Timer1_Timer
 '! Description (Описание)  :   [type_description_here]
 '! Parameters  (Переменные):
 '!--------------------------------------------------------------------------------
 Private Sub Timer1_Timer()
+Attribute Timer1_Timer.VB_UserMemId = 1610809357
 
     Select Case notify_mode
 
